@@ -1,0 +1,11 @@
+Build
+DerivedData
+*.xcworkspace/xcuserdata
+*.xcworkspace/xcshareddata
+Juggle/Juggle.xcodeproj/project.xcworkspace/xcuserdata
+Juggle/Juggle.xcodeproj/project.xcworkspace/xcshareddata
+Juggle/Juggle.xcodeproj/xcuserdata
+
+JuggleDemo/JuggleDemo.xcodeproj/project.xcworkspace/xcuserdata
+JuggleDemo/JuggleDemo.xcodeproj/project.xcworkspace/xcshareddata
+JuggleDemo/JuggleDemo.xcodeproj/xcuserdata
