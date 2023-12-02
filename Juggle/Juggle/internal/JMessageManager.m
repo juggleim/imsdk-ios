@@ -37,8 +37,9 @@
 //    <#code#>
 //}
 //
-//- (void)sendMessage:(JMessageContent *)content conversation:(JConversation *)conversation {
-//    <#code#>
-//}
+
+- (void)sendMessage:(JMessageContent *)content conversation:(JConversation *)conversation {
+    
+}
 
 @end

@@ -7,7 +7,12 @@
 #import "JuggleConst.h"
 
 @protocol JConnectionDelegate <NSObject>
-- (void)connectionStatusDidChange:(JConnectionStatus)status;
+/// 连接状态变化的回调
+/// - Parameters:
+///   - status: 变化后的状态
+///   - code: 连接错误码，在 JConnectionStatusDisconnected 状态时有效，其它状态均为 0。
+- (void)connectionStatusDidChange:(JConnectionStatus)status
+                     errorCode:(JErrorCode)code;
 @end
 
 @protocol JConnectionProtocol <NSObject>

@@ -21,7 +21,6 @@
 		A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA2572B14B153008B114C /* JConversationInfo.m */; };
 		A08AA25B2B14C4C0008B114C /* JuggleConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA25A2B14BB34008B114C /* JuggleConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA25E2B1619FB008B114C /* JMessageContent.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA25C2B1619FB008B114C /* JMessageContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A08AA25F2B1619FB008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA25D2B1619FB008B114C /* JMessageContent.m */; };
 		A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA2622B162A11008B114C /* JFMResultSet.m */; };
 		A08AA26E2B162A11008B114C /* JFMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA2632B162A11008B114C /* JFMDatabase.h */; };
 		A08AA26F2B162A11008B114C /* JFMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA2642B162A11008B114C /* JFMDatabaseAdditions.m */; };
@@ -158,6 +157,9 @@
 		A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */; };
 		A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */; };
 		A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */; };
+		A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4152B1ADECE008B114C /* JTextMessage.h */; };
+		A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4162B1ADECE008B114C /* JTextMessage.m */; };
+		A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4192B1B4F79008B114C /* JMessageContent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -176,7 +178,6 @@
 		A08AA2572B14B153008B114C /* JConversationInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationInfo.m; sourceTree = "<group>"; };
 		A08AA25A2B14BB34008B114C /* JuggleConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleConst.h; sourceTree = "<group>"; };
 		A08AA25C2B1619FB008B114C /* JMessageContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageContent.h; sourceTree = "<group>"; };
-		A08AA25D2B1619FB008B114C /* JMessageContent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageContent.m; sourceTree = "<group>"; };
 		A08AA2622B162A11008B114C /* JFMResultSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFMResultSet.m; sourceTree = "<group>"; };
 		A08AA2632B162A11008B114C /* JFMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JFMDatabase.h; sourceTree = "<group>"; };
 		A08AA2642B162A11008B114C /* JFMDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JFMDatabaseAdditions.m; sourceTree = "<group>"; };
@@ -314,6 +315,9 @@
 		A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SRWebSocket.h"; sourceTree = "<group>"; };
 		A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSecurityPolicy.h; sourceTree = "<group>"; };
 		A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+SRWebSocket.m"; sourceTree = "<group>"; };
+		A08AA4152B1ADECE008B114C /* JTextMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTextMessage.h; sourceTree = "<group>"; };
+		A08AA4162B1ADECE008B114C /* JTextMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTextMessage.m; sourceTree = "<group>"; };
+		A08AA4192B1B4F79008B114C /* JMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMessageContent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +376,7 @@
 		A08AA24D2B14AED9008B114C /* model */ = {
 			isa = PBXGroup;
 			children = (
+				A08AA4142B1ADE4F008B114C /* messages */,
 				A08AA24E2B14AF1F008B114C /* JMessage.h */,
 				A08AA24F2B14AF1F008B114C /* JMessage.m */,
 				A08AA2522B14AF2E008B114C /* JConversation.h */,
@@ -379,7 +384,7 @@
 				A08AA2562B14B153008B114C /* JConversationInfo.h */,
 				A08AA2572B14B153008B114C /* JConversationInfo.m */,
 				A08AA25C2B1619FB008B114C /* JMessageContent.h */,
-				A08AA25D2B1619FB008B114C /* JMessageContent.m */,
+				A08AA4192B1B4F79008B114C /* JMessageContent.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -415,6 +420,7 @@
 		A08AA27E2B175620008B114C /* internal */ = {
 			isa = PBXGroup;
 			children = (
+				A08AA41B2B1B5B92008B114C /* core */,
 				A08AA3AC2B19CC91008B114C /* proto */,
 				A08AA27F2B175646008B114C /* JConnectionManager.h */,
 				A08AA2802B175646008B114C /* JConnectionManager.m */,
@@ -422,10 +428,6 @@
 				A08AA2842B1756E3008B114C /* JMessageManager.m */,
 				A08AA2872B175726008B114C /* JConversationManager.h */,
 				A08AA2882B175726008B114C /* JConversationManager.m */,
-				A08AA28C2B1758F1008B114C /* JWebSocket.h */,
-				A08AA28D2B1758F1008B114C /* JWebSocket.m */,
-				A08AA3B42B19DF75008B114C /* JuggleCore.h */,
-				A08AA3B52B19DF75008B114C /* JuggleCore.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -638,6 +640,26 @@
 			path = IOConsumer;
 			sourceTree = "<group>";
 		};
+		A08AA4142B1ADE4F008B114C /* messages */ = {
+			isa = PBXGroup;
+			children = (
+				A08AA4152B1ADECE008B114C /* JTextMessage.h */,
+				A08AA4162B1ADECE008B114C /* JTextMessage.m */,
+			);
+			path = messages;
+			sourceTree = "<group>";
+		};
+		A08AA41B2B1B5B92008B114C /* core */ = {
+			isa = PBXGroup;
+			children = (
+				A08AA28C2B1758F1008B114C /* JWebSocket.h */,
+				A08AA28D2B1758F1008B114C /* JWebSocket.m */,
+				A08AA3B42B19DF75008B114C /* JuggleCore.h */,
+				A08AA3B52B19DF75008B114C /* JuggleCore.m */,
+			);
+			path = core;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -698,6 +720,7 @@
 				A08AA3792B19CB78008B114C /* FieldMask.pbobjc.h in Headers */,
 				A08AA3602B19CB77008B114C /* GPBCodedOutputStream_PackagePrivate.h in Headers */,
 				A08AA28E2B1758F1008B114C /* JWebSocket.h in Headers */,
+				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3A02B19CB78008B114C /* GPBUnknownFieldSet.h in Headers */,
 				A08AA3782B19CB78008B114C /* Struct.pbobjc.h in Headers */,
 				A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */,
@@ -842,6 +865,7 @@
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
+				A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */,
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
 				A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
@@ -865,7 +889,7 @@
 				A08AA38A2B19CB78008B114C /* GPBArray.m in Sources */,
 				A08AA4032B19EEDB008B114C /* SRHash.m in Sources */,
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
-				A08AA25F2B1619FB008B114C /* JMessageContent.m in Sources */,
+				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,
 				A08AA3902B19CB78008B114C /* GPBDuration.pbobjc.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

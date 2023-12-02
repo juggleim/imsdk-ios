@@ -18,3 +18,9 @@ typedef NS_ENUM(NSUInteger, JConnectionStatus) {
     JConnectionStatusTokenIncorrect = 3,
     JConnectionStatusDisconnected = 4
 };
+
+typedef NS_ENUM(NSUInteger, JErrorCode) {
+    JErrorCodeNone = 0,
+    
+    JErrorCodeWebSocketFailure = 21001,
+};
