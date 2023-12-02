@@ -17,6 +17,7 @@
 
 - (instancetype)initWithCore:(JuggleCore *)core {
     JConnectionManager *m = [[JConnectionManager alloc] init];
+    [core.webSocket setConnectDelegate:m];
     m.core = core;
     return m;
 }
@@ -43,7 +44,7 @@
 
 - (void)connectCompleteWithCode:(JErrorCode)error
                          userId:(NSString *)userId {
-
+    NSLog(@"[Juggle] connect complete, error code is %d", error);
 }
 
 @end

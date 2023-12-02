@@ -38,7 +38,8 @@
 //}
 //
 
-- (void)sendMessage:(JMessageContent *)content conversation:(JConversation *)conversation {
+- (void)sendMessage:(JMessageContent *)content
+     inConversation:(JConversation *)conversation {
     
 }
 

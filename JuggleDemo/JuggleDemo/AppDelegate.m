@@ -8,6 +8,12 @@
 #import "AppDelegate.h"
 #import <Juggle/Juggle.h>
 
+#define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
+#define kToken2 @"CgZhcHBrZXkaINodQgLnbhTbt0SzC8b/JFwjgUAdIfUZTEFK8DvDLgM1"
+#define kToken3 @"CgZhcHBrZXkaINMDzs7BBTTZTwjKtM10zyxL4DBWFuZL6Z/OAU0Iajpv"
+#define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
+#define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
+
 @interface AppDelegate () <JConnectionDelegate>
 
 @end
@@ -18,7 +24,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [JuggleIM.shared initWithAppKey:@"appkey"];
-    [JuggleIM.shared.connectionManager connectWithToken:@"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"];
+    [JuggleIM.shared.connectionManager connectWithToken:kToken5];
     [JuggleIM.shared.connectionManager setDelegate:self];
     
     return YES;

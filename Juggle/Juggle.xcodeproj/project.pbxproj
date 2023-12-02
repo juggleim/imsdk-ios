@@ -160,6 +160,22 @@
 		A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4152B1ADECE008B114C /* JTextMessage.h */; };
 		A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4162B1ADECE008B114C /* JTextMessage.m */; };
 		A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4192B1B4F79008B114C /* JMessageContent.m */; };
+		A08AA42F2B1B78FE008B114C /* Onlinestatus.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4212B1B78FE008B114C /* Onlinestatus.pbobjc.h */; };
+		A08AA4302B1B78FE008B114C /* Innermessages.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4222B1B78FE008B114C /* Innermessages.pbobjc.h */; };
+		A08AA4312B1B78FE008B114C /* Rpcmessagewrap.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4232B1B78FE008B114C /* Rpcmessagewrap.pbobjc.h */; };
+		A08AA4322B1B78FE008B114C /* Tokens.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4242B1B78FE008B114C /* Tokens.pbobjc.h */; };
+		A08AA4332B1B78FE008B114C /* Usermessages.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4252B1B78FE008B114C /* Usermessages.pbobjc.h */; };
+		A08AA4342B1B78FE008B114C /* Message.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4262B1B78FE008B114C /* Message.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA4362B1B78FE008B114C /* Onlinestatus.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4282B1B78FE008B114C /* Onlinestatus.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA4372B1B78FE008B114C /* Innermessages.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4292B1B78FE008B114C /* Innermessages.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA4382B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA42A2B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA4392B1B78FE008B114C /* Usermessages.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA42B2B1B78FE008B114C /* Usermessages.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA43A2B1B78FE008B114C /* Tokens.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA42C2B1B78FE008B114C /* Tokens.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */; };
+		A08AA43C2B1B78FE008B114C /* Message.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */; };
+		A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */; };
+		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -318,6 +334,22 @@
 		A08AA4152B1ADECE008B114C /* JTextMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTextMessage.h; sourceTree = "<group>"; };
 		A08AA4162B1ADECE008B114C /* JTextMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTextMessage.m; sourceTree = "<group>"; };
 		A08AA4192B1B4F79008B114C /* JMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMessageContent.m; sourceTree = "<group>"; };
+		A08AA4212B1B78FE008B114C /* Onlinestatus.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Onlinestatus.pbobjc.h; sourceTree = "<group>"; };
+		A08AA4222B1B78FE008B114C /* Innermessages.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Innermessages.pbobjc.h; sourceTree = "<group>"; };
+		A08AA4232B1B78FE008B114C /* Rpcmessagewrap.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rpcmessagewrap.pbobjc.h; sourceTree = "<group>"; };
+		A08AA4242B1B78FE008B114C /* Tokens.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tokens.pbobjc.h; sourceTree = "<group>"; };
+		A08AA4252B1B78FE008B114C /* Usermessages.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Usermessages.pbobjc.h; sourceTree = "<group>"; };
+		A08AA4262B1B78FE008B114C /* Message.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.pbobjc.m; sourceTree = "<group>"; };
+		A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appmessages.pbobjc.m; sourceTree = "<group>"; };
+		A08AA4282B1B78FE008B114C /* Onlinestatus.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Onlinestatus.pbobjc.m; sourceTree = "<group>"; };
+		A08AA4292B1B78FE008B114C /* Innermessages.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Innermessages.pbobjc.m; sourceTree = "<group>"; };
+		A08AA42A2B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Rpcmessagewrap.pbobjc.m; sourceTree = "<group>"; };
+		A08AA42B2B1B78FE008B114C /* Usermessages.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Usermessages.pbobjc.m; sourceTree = "<group>"; };
+		A08AA42C2B1B78FE008B114C /* Tokens.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tokens.pbobjc.m; sourceTree = "<group>"; };
+		A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appmessages.pbobjc.h; sourceTree = "<group>"; };
+		A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.pbobjc.h; sourceTree = "<group>"; };
+		A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JMessageContent+internal.h"; sourceTree = "<group>"; };
+		A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JMessageContent+internal.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -428,6 +460,8 @@
 				A08AA2842B1756E3008B114C /* JMessageManager.m */,
 				A08AA2872B175726008B114C /* JConversationManager.h */,
 				A08AA2882B175726008B114C /* JConversationManager.m */,
+				A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */,
+				A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -530,8 +564,7 @@
 		A08AA3AC2B19CC91008B114C /* proto */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3AE2B19CC91008B114C /* ImWebSocket.pbobjc.m */,
-				A08AA3AF2B19CC91008B114C /* ImWebSocket.pbobjc.h */,
+				A08AA4202B1B78FE008B114C /* oc */,
 			);
 			path = proto;
 			sourceTree = "<group>";
@@ -660,6 +693,29 @@
 			path = core;
 			sourceTree = "<group>";
 		};
+		A08AA4202B1B78FE008B114C /* oc */ = {
+			isa = PBXGroup;
+			children = (
+				A08AA3AE2B19CC91008B114C /* ImWebSocket.pbobjc.m */,
+				A08AA3AF2B19CC91008B114C /* ImWebSocket.pbobjc.h */,
+				A08AA4212B1B78FE008B114C /* Onlinestatus.pbobjc.h */,
+				A08AA4222B1B78FE008B114C /* Innermessages.pbobjc.h */,
+				A08AA4232B1B78FE008B114C /* Rpcmessagewrap.pbobjc.h */,
+				A08AA4242B1B78FE008B114C /* Tokens.pbobjc.h */,
+				A08AA4252B1B78FE008B114C /* Usermessages.pbobjc.h */,
+				A08AA4262B1B78FE008B114C /* Message.pbobjc.m */,
+				A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */,
+				A08AA4282B1B78FE008B114C /* Onlinestatus.pbobjc.m */,
+				A08AA4292B1B78FE008B114C /* Innermessages.pbobjc.m */,
+				A08AA42A2B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m */,
+				A08AA42B2B1B78FE008B114C /* Usermessages.pbobjc.m */,
+				A08AA42C2B1B78FE008B114C /* Tokens.pbobjc.m */,
+				A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */,
+				A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */,
+			);
+			path = oc;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -682,6 +738,7 @@
 				A08AA2772B162A12008B114C /* JFMDatabaseAdditions.h in Headers */,
 				A08AA3772B19CB77008B114C /* Wrappers.pbobjc.h in Headers */,
 				A08AA3F82B19EEDB008B114C /* SRDelegateController.h in Headers */,
+				A08AA4312B1B78FE008B114C /* Rpcmessagewrap.pbobjc.h in Headers */,
 				A08AA3942B19CB78008B114C /* GPBArray_PackagePrivate.h in Headers */,
 				A08AA37D2B19CB78008B114C /* GPBUtilities_PackagePrivate.h in Headers */,
 				A08AA36C2B19CB77008B114C /* GPBDuration.pbobjc.h in Headers */,
@@ -711,7 +768,9 @@
 				A08AA38D2B19CB78008B114C /* GPBRuntimeTypes.h in Headers */,
 				A08AA4042B19EEDB008B114C /* SRMutex.h in Headers */,
 				A08AA3F12B19EEDA008B114C /* SRProxyConnect.h in Headers */,
+				A08AA42F2B1B78FE008B114C /* Onlinestatus.pbobjc.h in Headers */,
 				A08AA26E2B162A11008B114C /* JFMDatabase.h in Headers */,
+				A08AA4322B1B78FE008B114C /* Tokens.pbobjc.h in Headers */,
 				A08AA37B2B19CB78008B114C /* Type.pbobjc.h in Headers */,
 				A08AA39B2B19CB78008B114C /* GPBDescriptor_PackagePrivate.h in Headers */,
 				A08AA2582B14B153008B114C /* JConversationInfo.h in Headers */,
@@ -728,12 +787,15 @@
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
 				A08AA2712B162A11008B114C /* JFMDatabaseQueue.h in Headers */,
+				A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
+				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
 				A08AA4012B19EEDB008B114C /* SRError.h in Headers */,
 				A08AA3802B19CB78008B114C /* GPBWrappers.pbobjc.h in Headers */,
 				A08AA2702B162A11008B114C /* JFMResultSet.h in Headers */,
 				A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */,
+				A08AA4332B1B78FE008B114C /* Usermessages.pbobjc.h in Headers */,
 				A08AA39A2B19CB78008B114C /* GPBCodedInputStream.h in Headers */,
 				A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */,
 				A08AA2762B162A11008B114C /* JFMDatabasePool.h in Headers */,
@@ -751,6 +813,7 @@
 				A08AA3702B19CB77008B114C /* GPBCodedOutputStream.h in Headers */,
 				A08AA3A72B19CB78008B114C /* GPBDictionary_PackagePrivate.h in Headers */,
 				A08AA25E2B1619FB008B114C /* JMessageContent.h in Headers */,
+				A08AA43C2B1B78FE008B114C /* Message.pbobjc.h in Headers */,
 				A08AA3B22B19CC91008B114C /* ImWebSocket.pbobjc.h in Headers */,
 				A08AA3862B19CB78008B114C /* GPBCodedInputStream_PackagePrivate.h in Headers */,
 				A08AA40F2B19EEDB008B114C /* NSURLRequest+SRWebSocket.h in Headers */,
@@ -759,6 +822,7 @@
 				A08AA3FF2B19EEDB008B114C /* SRRandom.h in Headers */,
 				A08AA38F2B19CB78008B114C /* GPBUtilities.h in Headers */,
 				A08AA3722B19CB77008B114C /* GPBRootObject_PackagePrivate.h in Headers */,
+				A08AA4302B1B78FE008B114C /* Innermessages.pbobjc.h in Headers */,
 				A08AA3922B19CB78008B114C /* GPBWireFormat.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -840,6 +904,7 @@
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
+				A08AA4392B1B78FE008B114C /* Usermessages.pbobjc.m in Sources */,
 				A08AA3B12B19CC91008B114C /* ImWebSocket.pbobjc.m in Sources */,
 				A08AA36D2B19CB77008B114C /* GPBExtensionInternals.m in Sources */,
 				A08AA40D2B19EEDB008B114C /* SRIOConsumerPool.m in Sources */,
@@ -854,6 +919,7 @@
 				A08AA3EC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m in Sources */,
 				A08AA3652B19CB77008B114C /* GPBDescriptor.m in Sources */,
 				A08AA38E2B19CB78008B114C /* GPBFieldMask.pbobjc.m in Sources */,
+				A08AA43A2B1B78FE008B114C /* Tokens.pbobjc.m in Sources */,
 				A08AA2552B14AF2E008B114C /* JConversation.m in Sources */,
 				A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */,
 				A08AA2512B14AF1F008B114C /* JMessage.m in Sources */,
@@ -861,14 +927,18 @@
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
+				A08AA4362B1B78FE008B114C /* Onlinestatus.pbobjc.m in Sources */,
 				A08AA21E2B148BFF008B114C /* JuggleIM.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
+				A08AA4372B1B78FE008B114C /* Innermessages.pbobjc.m in Sources */,
 				A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */,
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
 				A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */,
+				A08AA4342B1B78FE008B114C /* Message.pbobjc.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
+				A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
@@ -878,12 +948,14 @@
 				A08AA26F2B162A11008B114C /* JFMDatabaseAdditions.m in Sources */,
 				A08AA3812B19CB78008B114C /* GPBApi.pbobjc.m in Sources */,
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,
+				A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */,
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
 				A08AA2862B1756E3008B114C /* JMessageManager.m in Sources */,
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,
 				A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */,
 				A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */,
+				A08AA4382B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m in Sources */,
 				A08AA3672B19CB77008B114C /* GPBEmpty.pbobjc.m in Sources */,
 				A08AA39F2B19CB78008B114C /* GPBDictionary.m in Sources */,
 				A08AA38A2B19CB78008B114C /* GPBArray.m in Sources */,

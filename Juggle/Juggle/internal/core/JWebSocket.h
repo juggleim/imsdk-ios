@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import "JuggleConst.h"
+#import "JMessageContent.h"
+#import "JConversation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)connect:(JConnectInfo *)info;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
-- (void)sendMessage:(NSData *)message;
+- (void)sendIMMessage:(JMessageContent *)content
+       inConversation:(JConversation *)conversation;
 
 @end
 

@@ -9,6 +9,8 @@
 #import "SRWebSocket.h"
 #import "JuggleConstInternal.h"
 #import "ImWebSocket.pbobjc.h"
+#import "Appmessages.pbobjc.h"
+#import "JMessageContent+internal.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -36,22 +38,39 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @interface JWebSocket () <SRWebSocketDelegate>
 @property(nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property(nonatomic, strong) JConnectInfo *connectInfo;
+@property(nonatomic, strong) SRWebSocket *sws;
 @end
 
 @implementation JWebSocket
 
 - (void)connect:(JConnectInfo *)info {
-    SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
-    sws.delegate = self;
-    [sws open];
+    self.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
+    self.sws.delegate = self;
+    [self.sws open];
 }
 
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate {
     _connectDelegate = delegate;
 }
 
-- (void)sendMessage:(NSData *)message {
+- (void)sendIMMessage:(JMessageContent *)content
+       inConversation:(nonnull JConversation *)conversation {
     
+    //TODO:
+    UpMsg *upMsg = [[UpMsg alloc] init];
+    upMsg.msgType = [[content class] contentType];
+    upMsg.msgContent = [content encode];
+    upMsg.flags = 1;
+    upMsg.clientUid = @"11";
+    
+    PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
+    publishMsg.index = 1;
+    publishMsg.topic = @"topic";
+    publishMsg.targetId = @"userid2";
+    publishMsg.timestamp = 123456;
+    publishMsg.data_p = [upMsg data];
+    
+    [self.sws sendData:publishMsg.data error:nil];
 }
 
 #pragma mark - SRWebSocketDelegate
@@ -67,15 +86,21 @@ typedef NS_ENUM(NSUInteger, JQos) {
         NSLog(@"[Juggle]Web socket receive message error, msg is %@", err.description);
         code = JErrorCodeWebSocketFailure;
     } else {
-        code = msg.connectAckMsgBody.code;
+        
+        if (msg.testofOneOfCase == ImWebsocketMsg_Testof_OneOfCase_ConnectAckMsgBody) {
+            if (self.connectDelegate) {
+                [self.connectDelegate connectCompleteWithCode:msg.connectAckMsgBody.code
+                                                       userId:msg.connectAckMsgBody.userId];
+            }
+        }
+        
     }
     
-    if (self.connectDelegate) {
-        [self.connectDelegate connectCompleteWithCode:code
-                                               userId:msg.connectAckMsgBody.userId];
-    }
+    
     
     NSLog(@"connect userId is %@", msg.connectAckMsgBody.userId);
+    
+    
 }
 
 #pragma mark - inner

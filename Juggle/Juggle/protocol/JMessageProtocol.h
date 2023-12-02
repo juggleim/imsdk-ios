@@ -23,7 +23,7 @@
 ///   - content: 消息实体
 ///   - conversation: 会话
 - (void)sendMessage:(JMessageContent *)content
-       conversation:(JConversation *)conversation;
+     inConversation:(JConversation *)conversation;
 
 //从本地获取消息，如果本地消息存在缺失，会尝试从远端把缺失的消息拉取回来。
 //TODO: 走的回调待补充，回调中需要标识是否还存在没拉完的消息
