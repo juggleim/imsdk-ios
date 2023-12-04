@@ -15,6 +15,10 @@
     return kUnknownType;
 }
 
++ (JMessageFlag)flags {
+    return JMessageFlagIsCountable|JMessageFlagIsSave;
+}
+
 - (NSDictionary *)encodeToJson {
     NSDictionary *dic = [[NSDictionary alloc] init];
     return dic;

@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
-@property (nonatomic, assign) int msgIndex;
+@property (nonatomic, assign) int32_t msgIndex;
 @end
 
 @implementation JWebSocket
@@ -71,12 +71,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation {
     dispatch_async(self.sendQueue, ^{
-        //TODO:
         UpMsg *upMsg = [[UpMsg alloc] init];
         upMsg.msgType = [[content class] contentType];
         upMsg.msgContent = [content encode];
-        upMsg.flags = 1;
-        upMsg.clientUid = @"11";
+        upMsg.flags = [[content class] flags];
+        upMsg.clientUid = [self createClientUid];
 
         PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
         publishMsg.index = self.msgIndex++;
@@ -119,7 +118,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    NSLog(@"cnm");
     [self sendConnectMsgByWebSocket:webSocket];
 }
 
@@ -177,6 +175,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (err != nil) {
         NSLog(@"WebSocket send connect error, msg is %@", err.description);
     }
+}
+
+- (NSString *)createClientUid {
+    long long ts = [[NSDate date] timeIntervalSince1970];
+    ts = ts % 1000;
+    int32_t msgId = self.msgIndex % 1000;
+    return [NSString stringWithFormat:@"%04lld%04d", ts, msgId];
 }
 
 //TODO: test
