@@ -157,7 +157,7 @@
 		A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */; };
 		A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */; };
 		A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */; };
-		A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4152B1ADECE008B114C /* JTextMessage.h */; };
+		A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4152B1ADECE008B114C /* JTextMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4162B1ADECE008B114C /* JTextMessage.m */; };
 		A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4192B1B4F79008B114C /* JMessageContent.m */; };
 		A08AA42F2B1B78FE008B114C /* Onlinestatus.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4212B1B78FE008B114C /* Onlinestatus.pbobjc.h */; };
@@ -176,6 +176,8 @@
 		A08AA43C2B1B78FE008B114C /* Message.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */; };
 		A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */; };
 		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
+		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; };
+		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -350,6 +352,8 @@
 		A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.pbobjc.h; sourceTree = "<group>"; };
 		A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JMessageContent+internal.h"; sourceTree = "<group>"; };
 		A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JMessageContent+internal.m"; sourceTree = "<group>"; };
+		A08AA4412B1C3B33008B114C /* JImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageMessage.h; sourceTree = "<group>"; };
+		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -678,6 +682,8 @@
 			children = (
 				A08AA4152B1ADECE008B114C /* JTextMessage.h */,
 				A08AA4162B1ADECE008B114C /* JTextMessage.m */,
+				A08AA4412B1C3B33008B114C /* JImageMessage.h */,
+				A08AA4422B1C3B33008B114C /* JImageMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -723,6 +729,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3962B19CB78008B114C /* GPBMessage.h in Headers */,
 				A08AA21D2B148BFF008B114C /* JuggleIM.h in Headers */,
 				A08AA3FA2B19EEDB008B114C /* SRHash.h in Headers */,
@@ -747,6 +754,7 @@
 				A08AA3622B19CB77008B114C /* GPBAny.pbobjc.h in Headers */,
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,
 				A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */,
+				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
 				A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */,
 				A08AA3B62B19DF75008B114C /* JuggleCore.h in Headers */,
 				A08AA24B2B14A546008B114C /* JConversationProtocol.h in Headers */,
@@ -779,7 +787,6 @@
 				A08AA3792B19CB78008B114C /* FieldMask.pbobjc.h in Headers */,
 				A08AA3602B19CB77008B114C /* GPBCodedOutputStream_PackagePrivate.h in Headers */,
 				A08AA28E2B1758F1008B114C /* JWebSocket.h in Headers */,
-				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3A02B19CB78008B114C /* GPBUnknownFieldSet.h in Headers */,
 				A08AA3782B19CB78008B114C /* Struct.pbobjc.h in Headers */,
 				A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */,
@@ -950,6 +957,7 @@
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,
 				A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */,
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
+				A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */,
 				A08AA2862B1756E3008B114C /* JMessageManager.m in Sources */,
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,

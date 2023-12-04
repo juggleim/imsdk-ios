@@ -40,7 +40,8 @@
 
 - (void)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation {
-    
+    [self.core.webSocket sendIMMessage:content
+                        inConversation:conversation];
 }
 
 @end

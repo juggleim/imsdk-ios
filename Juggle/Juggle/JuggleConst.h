@@ -12,11 +12,16 @@ typedef NS_ENUM(NSUInteger, JPullDirection) {
 };
 
 typedef NS_ENUM(NSUInteger, JConnectionStatus) {
-    JConnectionStatusUnknown = 0,
+    //未连接
+    JConnectionStatusIdle = 0,
+    //已连接
     JConnectionStatusConnected = 1,
-    JConnectionStatusConnecting = 2,
-    JConnectionStatusTokenIncorrect = 3,
-    JConnectionStatusDisconnected = 4
+    //连接断开（用户主动断开）
+    JConnectionStatusDisconnected = 2,
+    //连接中
+    JConnectionStatusConnecting = 3,
+    //连接 token 错误
+    JConnectionStatusTokenIncorrect = 4
 };
 
 typedef NS_ENUM(NSUInteger, JErrorCode) {

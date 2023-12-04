@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSString *content;
 
+- (instancetype)initWithContent:(NSString *)content;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -36,17 +36,32 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @interface JWebSocket () <SRWebSocketDelegate>
-@property(nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
-@property(nonatomic, strong) JConnectInfo *connectInfo;
-@property(nonatomic, strong) SRWebSocket *sws;
+@property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
+@property (nonatomic, strong) JConnectInfo *connectInfo;
+@property (nonatomic, strong) SRWebSocket *sws;
+@property (nonatomic, strong) dispatch_queue_t sendQueue;
+@property (nonatomic, strong) dispatch_queue_t receiveQueue;
+/// 所有上行数据的自增 index
+@property (nonatomic, assign) int msgIndex;
 @end
 
 @implementation JWebSocket
 
+- (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue receiveQueue:(dispatch_queue_t)receiveQueue {
+    JWebSocket *ws = [[JWebSocket alloc] init];
+    ws.sendQueue = sendQueue;
+    ws.receiveQueue = receiveQueue;
+    ws.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
+    ws.sws.delegateDispatchQueue = ws.receiveQueue;
+    ws.sws.delegate = ws;
+    return ws;
+}
+
 - (void)connect:(JConnectInfo *)info {
-    self.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
-    self.sws.delegate = self;
-    [self.sws open];
+    dispatch_async(self.sendQueue, ^{
+        self.connectInfo = info;
+        [self.sws open];
+    });
 }
 
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate {
@@ -55,26 +70,56 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation {
-    
-    //TODO:
-    UpMsg *upMsg = [[UpMsg alloc] init];
-    upMsg.msgType = [[content class] contentType];
-    upMsg.msgContent = [content encode];
-    upMsg.flags = 1;
-    upMsg.clientUid = @"11";
-    
-    PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
-    publishMsg.index = 1;
-    publishMsg.topic = @"topic";
-    publishMsg.targetId = @"userid2";
-    publishMsg.timestamp = 123456;
-    publishMsg.data_p = [upMsg data];
-    
-    [self.sws sendData:publishMsg.data error:nil];
+    dispatch_async(self.sendQueue, ^{
+        //TODO:
+        UpMsg *upMsg = [[UpMsg alloc] init];
+        upMsg.msgType = [[content class] contentType];
+        upMsg.msgContent = [content encode];
+        upMsg.flags = 1;
+        upMsg.clientUid = @"11";
+
+        PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
+        publishMsg.index = self.msgIndex++;
+        switch (conversation.conversationType) {
+            case JConversationTypePrivate:
+                publishMsg.topic = @"p_msg";
+                break;
+                
+            case JConversationTypeGroup:
+                publishMsg.topic = @"g_msg";
+                break;
+                
+                //TODO: 聊天室和系统会话还没做
+            case JConversationTypeChatroom:
+    //            publishMsg.topic
+                break;
+                
+            case JConversationTypeSystem:
+    //
+                break;
+            default:
+                break;
+        }
+        publishMsg.targetId = conversation.conversationId;
+        publishMsg.data_p = [upMsg data];
+
+        ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
+        sm.version = JuggleProtocolVersion;
+        sm.cmd = JCmdTypePublish;
+        sm.qos = JQosYes;
+        sm.publishMsgBody = publishMsg;
+
+        NSError *err = nil;
+        [self.sws sendData:sm.data error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket send IM message error, msg is %@", err.description);
+        }
+    });
 }
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+    NSLog(@"cnm");
     [self sendConnectMsgByWebSocket:webSocket];
 }
 
@@ -130,7 +175,36 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *err = nil;
     [sws sendData:sm.data error:&err];
     if (err != nil) {
-        NSLog(@"WebSocket send data error, msg is %@", err.description);
+        NSLog(@"WebSocket send connect error, msg is %@", err.description);
+    }
+}
+
+//TODO: test
+- (void)qryHistoryMessages {
+    QryHisMsgsReq *req = [[QryHisMsgsReq alloc] init];
+    req.converId = @"userid2:userid1";
+    req.type = ChannelType_Private;
+    req.startTime = [[NSDate date] timeIntervalSince1970];
+    req.count = 5;
+    req.order = 0;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = 3;
+    body.topic = @"topic";
+    body.targetId = @"userid1";
+    body.timestamp = [[NSDate date] timeIntervalSince1970];
+    body.data_p = [req data];
+    
+    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
+    sm.version = JuggleProtocolVersion;
+    sm.cmd = JCmdTypeQuery;
+    sm.qos = JQosYes;
+    sm.qryMsgBody = body;
+    
+    NSError *err = nil;
+    [self.sws sendData:sm.data error:&err];
+    if (err != nil) {
+        NSLog(@"WebSocket query history message error, msg is %@", err.description);
     }
 }
 

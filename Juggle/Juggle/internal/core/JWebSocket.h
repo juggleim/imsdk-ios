@@ -23,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JWebSocket : NSObject
-
+- (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
+                      receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(JConnectInfo *)info;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 

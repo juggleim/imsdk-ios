@@ -7,6 +7,7 @@
 
 #import "AppDelegate.h"
 #import <Juggle/Juggle.h>
+#import <Juggle/JTextMessage.h>
 
 #define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
 #define kToken2 @"CgZhcHBrZXkaINodQgLnbhTbt0SzC8b/JFwjgUAdIfUZTEFK8DvDLgM1"
@@ -28,6 +29,14 @@
     [JuggleIM.shared.connectionManager setDelegate:self];
     
     return YES;
+}
+
+- (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
+    if (JConnectionStatusConnected == status) {
+        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
+    }
 }
 
 

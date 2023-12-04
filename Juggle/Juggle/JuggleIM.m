@@ -24,6 +24,7 @@ static JuggleIM *_instance;
     dispatch_once(&onceToken, ^{
         _instance = [[self alloc] init];
         JuggleCore *core = [[JuggleCore alloc] init];
+        core.delegateQueue = dispatch_get_main_queue();
         _instance.core = core;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core];
         _instance.messageManager = [[JMessageManager alloc] initWithCore:core];
@@ -37,5 +38,8 @@ static JuggleIM *_instance;
     NSLog(@"init appkey is %@", appKey);
 }
 
+- (void)setDelegateQueue:(dispatch_queue_t)delegateQueue {
+    self.core.delegateQueue = delegateQueue;
+}
 
 @end

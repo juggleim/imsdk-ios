@@ -44,6 +44,9 @@ typedef NS_ENUM(NSUInteger, JConversationType) {
 // 会话类型
 @property(nonatomic, assign) JConversationType conversationType;
 
+- (instancetype)initWithConversationType:(JConversationType)type
+                          conversationId:(NSString *)conversationId;
+
 @end
 
 NS_ASSUME_NONNULL_END

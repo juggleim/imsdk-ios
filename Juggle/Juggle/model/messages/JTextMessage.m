@@ -12,6 +12,12 @@
 
 @implementation JTextMessage
 
+- (instancetype)initWithContent:(NSString *)content {
+    JTextMessage *text = [[JTextMessage alloc] init];
+    text.content = content;
+    return text;
+}
+
 + (NSString *)contentType {
     return kTextType;
 }
