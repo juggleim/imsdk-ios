@@ -119,7 +119,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    [self sendConnectMsgByWebSocket:webSocket];
+    dispatch_async(self.sendQueue, ^{
+        [self sendConnectMsgByWebSocket:webSocket];
+    });
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
@@ -132,10 +134,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     } else {
         
         if (msg.testofOneOfCase == ImWebsocketMsg_Testof_OneOfCase_ConnectAckMsgBody) {
-            if (self.connectDelegate) {
-                [self.connectDelegate connectCompleteWithCode:msg.connectAckMsgBody.code
-                                                       userId:msg.connectAckMsgBody.userId];
-            }
+            [self handleConnectAckMsg:msg];
         }
         
     }
@@ -210,6 +209,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     [self.sws sendData:sm.data error:&err];
     if (err != nil) {
         NSLog(@"WebSocket query history message error, msg is %@", err.description);
+    }
+}
+
+- (void)handleConnectAckMsg:(ImWebsocketMsg *)msg {
+    if (self.connectDelegate) {
+        [self.connectDelegate connectCompleteWithCode:msg.connectAckMsgBody.code
+                                               userId:msg.connectAckMsgBody.userId];
     }
 }
 
