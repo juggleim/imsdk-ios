@@ -42,11 +42,7 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     [self changeStatus:JConnectionStatusInternalConnecting];
     
     //TODO: navi
-    
-    JConnectInfo *info = [[JConnectInfo alloc] init];
-    info.appKey = self.core.appKey;
-    info.token = token;
-    [self.core.webSocket connect:info];
+    [self.core.webSocket connect:self.core.appKey token:token];
 }
 
 - (void)disconnect:(BOOL)receivePush {

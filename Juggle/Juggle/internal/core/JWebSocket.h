@@ -17,15 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
                          userId:(NSString *)userId;
 @end
 
-@interface JConnectInfo : NSObject
-@property (nonatomic, copy) NSString *appKey;
-@property (nonatomic, copy) NSString *token;
-@end
-
 @interface JWebSocket : NSObject
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
-- (void)connect:(JConnectInfo *)info;
+- (void)connect:(NSString *)appKey
+          token:(NSString *)token;
+- (void)disconnect:(BOOL)needPush;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)sendIMMessage:(JMessageContent *)content

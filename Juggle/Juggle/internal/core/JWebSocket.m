@@ -7,38 +7,15 @@
 
 #import "JWebSocket.h"
 #import "SRWebSocket.h"
-#import "JuggleConstInternal.h"
-#import "ImWebSocket.pbobjc.h"
-#import "Appmessages.pbobjc.h"
 #import "JMessageContent+internal.h"
 #import "JUtility.h"
-
-typedef NS_ENUM(NSUInteger, JCmdType) {
-    JCmdTypeConnect = 0,
-    JCmdTypeConnectAck = 1,
-    JCmdTypeDisconnect = 2,
-    JCmdTypePublish = 3,
-    JCmdTypePublishAck = 4,
-    JCmdTypeQuery = 5,
-    JCmdTypeQueryAck = 6,
-    JCmdTypeQueryConfirm = 7,
-    JCmdTypePing = 8,
-    JCmdTypePong = 9
-};
-
-typedef NS_ENUM(NSUInteger, JQos) {
-    //不需要响应 ack
-    JQosNo = 0,
-    //需要响应 ack
-    JQosYes = 1
-};
-
-@implementation JConnectInfo
-@end
+#import "JuggleConstInternal.h"
+#import "JPBData.h"
 
 @interface JWebSocket () <SRWebSocketDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
-@property (nonatomic, strong) JConnectInfo *connectInfo;
+@property (nonatomic, copy) NSString *appKey;
+@property (nonatomic, copy) NSString *token;
 @property (nonatomic, strong) SRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
@@ -58,10 +35,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return ws;
 }
 
-- (void)connect:(JConnectInfo *)info {
+- (void)connect:(NSString *)appKey token:(NSString *)token {
     dispatch_async(self.sendQueue, ^{
-        self.connectInfo = info;
+        self.appKey = appKey;
+        self.token = token;
         [self.sws open];
+    });
+}
+
+- (void)disconnect:(BOOL)needPush {
+    dispatch_async(self.sendQueue, ^{
+        
     });
 }
 
@@ -72,45 +56,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation {
     dispatch_async(self.sendQueue, ^{
-        UpMsg *upMsg = [[UpMsg alloc] init];
-        upMsg.msgType = [[content class] contentType];
-        upMsg.msgContent = [content encode];
-        upMsg.flags = [[content class] flags];
-        upMsg.clientUid = [self createClientUid];
-
-        PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
-        publishMsg.index = self.msgIndex++;
-        switch (conversation.conversationType) {
-            case JConversationTypePrivate:
-                publishMsg.topic = @"p_msg";
-                break;
-                
-            case JConversationTypeGroup:
-                publishMsg.topic = @"g_msg";
-                break;
-                
-                //TODO: 聊天室和系统会话还没做
-            case JConversationTypeChatroom:
-    //            publishMsg.topic
-                break;
-                
-            case JConversationTypeSystem:
-    //
-                break;
-            default:
-                break;
-        }
-        publishMsg.targetId = conversation.conversationId;
-        publishMsg.data_p = [upMsg data];
-
-        ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
-        sm.version = JuggleProtocolVersion;
-        sm.cmd = JCmdTypePublish;
-        sm.qos = JQosYes;
-        sm.publishMsgBody = publishMsg;
+        NSData *d = [JPBData sendMessageDataWithType:[[content class] contentType]
+                                             msgData:[content encode]
+                                               flags:[[content class] flags]
+                                           clientUid:[self createClientUid]
+                                               index:self.msgIndex++
+                                    conversationType:conversation.conversationType
+                                      conversationId:conversation.conversationId];
 
         NSError *err = nil;
-        [self.sws sendData:sm.data error:&err];
+        [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket send IM message error, msg is %@", err.description);
         }
@@ -129,59 +84,61 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
-    NSLog(@"[Juggle] websocket did close with code(%d), reason(%@)", code, reason);
+    NSLog(@"[Juggle] websocket did close with code(%ld), reason(%@)", (long)code, reason);
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
-    NSError *err = nil;
-    ImWebsocketMsg *msg = [[ImWebsocketMsg alloc] initWithData:data error:&err];
-    JErrorCode code = JErrorCodeNone;
-    if (err != nil) {
-        NSLog(@"[Juggle]Websocket receive message parse error, msg is %@", err.description);
-        code = JErrorCodeWebSocketParseFailure;
-    } else {
-        
-        if (msg.testofOneOfCase == ImWebsocketMsg_Testof_OneOfCase_ConnectAckMsgBody) {
-            [self handleConnectAckMsg:msg];
-        }
-        
+    JAck *ack = [JPBData ackWithData:data];
+    switch (ack.ackType) {
+        case JAckTypeParseError:
+            break;
+        case JAckTypeConnect:
+            [self handleConnectAckMsg:ack.connectAck];
+            break;
+            
+        case JAckTypePublishMsg:
+            [self handlePublishAckMsg:ack.publishMsgAck];
+            
+        default:
+            break;
     }
-    
-    
-    
-    NSLog(@"connect userId is %@", msg.connectAckMsgBody.userId);
     
     
 }
 
 #pragma mark - inner
 - (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
-    ConnectMsgBody *connectMsg = [[ConnectMsgBody alloc] init];
-    connectMsg.protoId = JProtoId;
-    connectMsg.sdkVersion = JSDKVersion;
-    connectMsg.appkey = self.connectInfo.appKey;
-    connectMsg.token = self.connectInfo.token;
-    
-    connectMsg.deviceId = [JUtility getDeviceId];
-    connectMsg.platform = JPlatform;
-    connectMsg.deviceCompany = JDeviceCompany;
-    connectMsg.deviceModel = [JUtility currentDeviceModel];
-    connectMsg.deviceOsVersion = [JUtility currentSystemVersion];
-    connectMsg.pushToken = @"pushToken";//TODO: 
-    connectMsg.networkId = [JUtility currentNetWork];
-    connectMsg.ispNum = [JUtility currentCarrier];
-    connectMsg.clientIp = @"";
-    
-    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
-    sm.version = JuggleProtocolVersion;
-    sm.cmd = JCmdTypeConnect;
-    sm.qos = JQosYes;
-    sm.connectMsgBody = connectMsg;
+    NSData *d = [JPBData connectDataWithAppKey:self.appKey
+                                         token:self.token
+                                      deviceId:[JUtility getDeviceId]
+                                      platform:JPlatform
+                                 deviceCompany:JDeviceCompany
+                                   deviceModel:[JUtility currentDeviceModel]
+                               deviceOsVersion:[JUtility currentSystemVersion]
+                                     pushToken:@"pushToken"//TODO:
+                                     networkId:[JUtility currentNetWork]
+                                        ispNum:[JUtility currentCarrier]
+                                      clientIp:@""];
     NSError *err = nil;
-    [sws sendData:sm.data error:&err];
+    [sws sendData:d error:&err];
     if (err != nil) {
         NSLog(@"WebSocket send connect error, msg is %@", err.description);
     }
+}
+
+- (void)sendDisconnectMsgByWebSocket:(BOOL)needPush {
+//    DisconnectMsgBody *body = [[DisconnectMsgBody alloc] init];
+//    if (needPush) {
+//        body.code = 1;
+//    } else {
+//        body.code = 0;
+//    }
+//    body.timestamp = [[NSDate date] timeIntervalSince1970];
+//
+//    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
+//    sm.version = JuggleProtocolVersion;
+//    sm.cmd = JCmdTypeDisconnect;
+//    sm
 }
 
 - (NSString *)createClientUid {
@@ -193,38 +150,43 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 //TODO: test
 - (void)qryHistoryMessages {
-    QryHisMsgsReq *req = [[QryHisMsgsReq alloc] init];
-    req.targetId = @"userid2:userid1";
-    req.channelType = ChannelType_Private;
-    req.startTime = [[NSDate date] timeIntervalSince1970];
-    req.count = 5;
-    req.order = 0;
-    
-    QueryMsgBody *body = [[QueryMsgBody alloc] init];
-    body.index = 3;
-    body.topic = @"topic";
-    body.targetId = @"userid1";
-    body.timestamp = [[NSDate date] timeIntervalSince1970];
-    body.data_p = [req data];
-    
-    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
-    sm.version = JuggleProtocolVersion;
-    sm.cmd = JCmdTypeQuery;
-    sm.qos = JQosYes;
-    sm.qryMsgBody = body;
-    
-    NSError *err = nil;
-    [self.sws sendData:sm.data error:&err];
-    if (err != nil) {
-        NSLog(@"WebSocket query history message error, msg is %@", err.description);
+//    QryHisMsgsReq *req = [[QryHisMsgsReq alloc] init];
+//    req.targetId = @"userid2:userid1";
+//    req.channelType = ChannelType_Private;
+//    req.startTime = [[NSDate date] timeIntervalSince1970];
+//    req.count = 5;
+//    req.order = 0;
+//    
+//    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+//    body.index = 3;
+//    body.topic = @"topic";
+//    body.targetId = @"userid1";
+//    body.timestamp = [[NSDate date] timeIntervalSince1970];
+//    body.data_p = [req data];
+//    
+//    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
+//    sm.version = JuggleProtocolVersion;
+//    sm.cmd = JCmdTypeQuery;
+//    sm.qos = JQosYes;
+//    sm.qryMsgBody = body;
+//    
+//    NSError *err = nil;
+//    [self.sws sendData:sm.data error:&err];
+//    if (err != nil) {
+//        NSLog(@"WebSocket query history message error, msg is %@", err.description);
+//    }
+}
+
+- (void)handleConnectAckMsg:(JConnectAck *)connectAck {
+    NSLog(@"connect userId is %@", connectAck.userId);
+    if (self.connectDelegate) {
+        [self.connectDelegate connectCompleteWithCode:connectAck.code
+                                               userId:connectAck.userId];
     }
 }
 
-- (void)handleConnectAckMsg:(ImWebsocketMsg *)msg {
-    if (self.connectDelegate) {
-        [self.connectDelegate connectCompleteWithCode:msg.connectAckMsgBody.code
-                                               userId:msg.connectAckMsgBody.userId];
-    }
+- (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
+    NSLog(@"handlePublishAckMsg, msgId is %@", ack.msgId);
 }
 
 @end
