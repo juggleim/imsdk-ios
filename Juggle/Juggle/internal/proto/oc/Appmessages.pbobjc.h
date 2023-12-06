@@ -30,8 +30,11 @@ CF_EXTERN_C_BEGIN
 
 @class Conversation;
 @class DownMsg;
+@class IndexScope;
 @class MentionInfo;
+@class MentionMsg;
 @class PushData;
+@class SimpleMsg;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -202,10 +205,10 @@ GPB_FINAL @interface PushData : GPBMessage
 #pragma mark - DownMsg
 
 typedef GPB_ENUM(DownMsg_FieldNumber) {
-  DownMsg_FieldNumber_FromId = 1,
-  DownMsg_FieldNumber_Type = 2,
+  DownMsg_FieldNumber_TargetId = 1,
+  DownMsg_FieldNumber_ChannelType = 2,
   DownMsg_FieldNumber_MsgType = 3,
-  DownMsg_FieldNumber_GroupId = 4,
+  DownMsg_FieldNumber_SenderId = 4,
   DownMsg_FieldNumber_MsgId = 5,
   DownMsg_FieldNumber_MsgIndex = 6,
   DownMsg_FieldNumber_MsgContent = 7,
@@ -216,17 +219,18 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_ClientUid = 12,
   DownMsg_FieldNumber_PushData = 13,
   DownMsg_FieldNumber_MentionInfo = 14,
+  DownMsg_FieldNumber_IsReaded = 15,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *fromId;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
-@property(nonatomic, readwrite) ChannelType type;
+@property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *groupId;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
 
@@ -252,19 +256,21 @@ GPB_FINAL @interface DownMsg : GPBMessage
 /** Test to see if @c mentionInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasMentionInfo;
 
+@property(nonatomic, readwrite) BOOL isReaded;
+
 @end
 
 /**
- * Fetches the raw value of a @c DownMsg's @c type property, even
+ * Fetches the raw value of a @c DownMsg's @c channelType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t DownMsg_Type_RawValue(DownMsg *message);
+int32_t DownMsg_ChannelType_RawValue(DownMsg *message);
 /**
- * Sets the raw value of an @c DownMsg's @c type property, allowing
+ * Sets the raw value of an @c DownMsg's @c channelType property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetDownMsg_Type_RawValue(DownMsg *message, int32_t value);
+void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
 
 #pragma mark - Notify
 
@@ -432,8 +438,8 @@ void SetQryMsgLatestIndexResp_ChannelType_RawValue(QryMsgLatestIndexResp *messag
 #pragma mark - QryHisMsgsReq
 
 typedef GPB_ENUM(QryHisMsgsReq_FieldNumber) {
-  QryHisMsgsReq_FieldNumber_ConverId = 1,
-  QryHisMsgsReq_FieldNumber_Type = 2,
+  QryHisMsgsReq_FieldNumber_TargetId = 1,
+  QryHisMsgsReq_FieldNumber_ChannelType = 2,
   QryHisMsgsReq_FieldNumber_StartTime = 3,
   QryHisMsgsReq_FieldNumber_Count = 4,
   QryHisMsgsReq_FieldNumber_Order = 5,
@@ -441,9 +447,9 @@ typedef GPB_ENUM(QryHisMsgsReq_FieldNumber) {
 
 GPB_FINAL @interface QryHisMsgsReq : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *converId;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
-@property(nonatomic, readwrite) ChannelType type;
+@property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite) int64_t startTime;
 
@@ -454,16 +460,16 @@ GPB_FINAL @interface QryHisMsgsReq : GPBMessage
 @end
 
 /**
- * Fetches the raw value of a @c QryHisMsgsReq's @c type property, even
+ * Fetches the raw value of a @c QryHisMsgsReq's @c channelType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t QryHisMsgsReq_Type_RawValue(QryHisMsgsReq *message);
+int32_t QryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message);
 /**
- * Sets the raw value of an @c QryHisMsgsReq's @c type property, allowing
+ * Sets the raw value of an @c QryHisMsgsReq's @c channelType property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetQryHisMsgsReq_Type_RawValue(QryHisMsgsReq *message, int32_t value);
+void SetQryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message, int32_t value);
 
 #pragma mark - QryConversationsReq
 
@@ -487,6 +493,7 @@ GPB_FINAL @interface QryConversationsReq : GPBMessage
 
 typedef GPB_ENUM(QryConversationsResp_FieldNumber) {
   QryConversationsResp_FieldNumber_ConversationsArray = 1,
+  QryConversationsResp_FieldNumber_IsFinished = 2,
 };
 
 GPB_FINAL @interface QryConversationsResp : GPBMessage
@@ -495,48 +502,145 @@ GPB_FINAL @interface QryConversationsResp : GPBMessage
 /** The number of items in @c conversationsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger conversationsArray_Count;
 
+@property(nonatomic, readwrite) BOOL isFinished;
+
 @end
 
 #pragma mark - Conversation
 
 typedef GPB_ENUM(Conversation_FieldNumber) {
-  Conversation_FieldNumber_ConverId = 1,
   Conversation_FieldNumber_TargetId = 2,
-  Conversation_FieldNumber_Type = 3,
+  Conversation_FieldNumber_ChannelType = 3,
   Conversation_FieldNumber_UpdateTime = 4,
   Conversation_FieldNumber_UnreadCount = 5,
   Conversation_FieldNumber_Msg = 6,
+  Conversation_FieldNumber_LatestReadedMsgIndex = 7,
+  Conversation_FieldNumber_LatestMentionMsg = 8,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *converId;
-
+/** string converId = 1; */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
-@property(nonatomic, readwrite) ChannelType type;
+@property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite) int64_t updateTime;
 
-@property(nonatomic, readwrite) int32_t unreadCount;
+@property(nonatomic, readwrite) int64_t unreadCount;
 
 @property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
 /** Test to see if @c msg has been set. */
 @property(nonatomic, readwrite) BOOL hasMsg;
 
+@property(nonatomic, readwrite) int64_t latestReadedMsgIndex;
+
+@property(nonatomic, readwrite, strong, null_resettable) MentionMsg *latestMentionMsg;
+/** Test to see if @c latestMentionMsg has been set. */
+@property(nonatomic, readwrite) BOOL hasLatestMentionMsg;
+
 @end
 
 /**
- * Fetches the raw value of a @c Conversation's @c type property, even
+ * Fetches the raw value of a @c Conversation's @c channelType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t Conversation_Type_RawValue(Conversation *message);
+int32_t Conversation_ChannelType_RawValue(Conversation *message);
 /**
- * Sets the raw value of an @c Conversation's @c type property, allowing
+ * Sets the raw value of an @c Conversation's @c channelType property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetConversation_Type_RawValue(Conversation *message, int32_t value);
+void SetConversation_ChannelType_RawValue(Conversation *message, int32_t value);
+
+#pragma mark - MentionMsg
+
+typedef GPB_ENUM(MentionMsg_FieldNumber) {
+  MentionMsg_FieldNumber_MentionType = 1,
+  MentionMsg_FieldNumber_SenderId = 2,
+  MentionMsg_FieldNumber_MsgId = 3,
+  MentionMsg_FieldNumber_MsgIndex = 4,
+  MentionMsg_FieldNumber_MsgTime = 5,
+};
+
+GPB_FINAL @interface MentionMsg : GPBMessage
+
+@property(nonatomic, readwrite) MentionType mentionType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgIndex;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@end
+
+/**
+ * Fetches the raw value of a @c MentionMsg's @c mentionType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t MentionMsg_MentionType_RawValue(MentionMsg *message);
+/**
+ * Sets the raw value of an @c MentionMsg's @c mentionType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value);
+
+#pragma mark - QryMentionMsgsReq
+
+typedef GPB_ENUM(QryMentionMsgsReq_FieldNumber) {
+  QryMentionMsgsReq_FieldNumber_TargetId = 1,
+  QryMentionMsgsReq_FieldNumber_ChannelType = 2,
+  QryMentionMsgsReq_FieldNumber_StartIndex = 3,
+  QryMentionMsgsReq_FieldNumber_Count = 4,
+  QryMentionMsgsReq_FieldNumber_Order = 5,
+};
+
+GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite) int64_t startIndex;
+
+@property(nonatomic, readwrite) int32_t count;
+
+@property(nonatomic, readwrite) int32_t order;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryMentionMsgsReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryMentionMsgsReq_ChannelType_RawValue(QryMentionMsgsReq *message);
+/**
+ * Sets the raw value of an @c QryMentionMsgsReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryMentionMsgsReq_ChannelType_RawValue(QryMentionMsgsReq *message, int32_t value);
+
+#pragma mark - QryMentionMsgsResp
+
+typedef GPB_ENUM(QryMentionMsgsResp_FieldNumber) {
+  QryMentionMsgsResp_FieldNumber_MentionMsgsArray = 1,
+  QryMentionMsgsResp_FieldNumber_IsFinished = 2,
+};
+
+GPB_FINAL @interface QryMentionMsgsResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MentionMsg*> *mentionMsgsArray;
+/** The number of items in @c mentionMsgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger mentionMsgsArray_Count;
+
+@property(nonatomic, readwrite) BOOL isFinished;
+
+@end
 
 #pragma mark - SyncConversationsReq
 
@@ -564,6 +668,129 @@ GPB_FINAL @interface DelConversationReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<Conversation*> *conversationsArray;
 /** The number of items in @c conversationsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger conversationsArray_Count;
+
+@end
+
+#pragma mark - ClearUnreadReq
+
+typedef GPB_ENUM(ClearUnreadReq_FieldNumber) {
+  ClearUnreadReq_FieldNumber_ConversationsArray = 1,
+};
+
+GPB_FINAL @interface ClearUnreadReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<Conversation*> *conversationsArray;
+/** The number of items in @c conversationsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger conversationsArray_Count;
+
+@end
+
+#pragma mark - RecallMsgReq
+
+typedef GPB_ENUM(RecallMsgReq_FieldNumber) {
+  RecallMsgReq_FieldNumber_TargetId = 1,
+  RecallMsgReq_FieldNumber_ChannelType = 2,
+  RecallMsgReq_FieldNumber_MsgId = 3,
+  RecallMsgReq_FieldNumber_MsgTime = 4,
+  RecallMsgReq_FieldNumber_MsgType = 5,
+  RecallMsgReq_FieldNumber_MsgContent = 6,
+};
+
+GPB_FINAL @interface RecallMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
+
+@end
+
+/**
+ * Fetches the raw value of a @c RecallMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RecallMsgReq_ChannelType_RawValue(RecallMsgReq *message);
+/**
+ * Sets the raw value of an @c RecallMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRecallMsgReq_ChannelType_RawValue(RecallMsgReq *message, int32_t value);
+
+#pragma mark - MarkReadReq
+
+typedef GPB_ENUM(MarkReadReq_FieldNumber) {
+  MarkReadReq_FieldNumber_TargetId = 1,
+  MarkReadReq_FieldNumber_ChannelType = 2,
+  MarkReadReq_FieldNumber_MsgsArray = 3,
+  MarkReadReq_FieldNumber_IndexScopesArray = 4,
+};
+
+GPB_FINAL @interface MarkReadReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleMsg*> *msgsArray;
+/** The number of items in @c msgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgsArray_Count;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<IndexScope*> *indexScopesArray;
+/** The number of items in @c indexScopesArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger indexScopesArray_Count;
+
+@end
+
+/**
+ * Fetches the raw value of a @c MarkReadReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t MarkReadReq_ChannelType_RawValue(MarkReadReq *message);
+/**
+ * Sets the raw value of an @c MarkReadReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetMarkReadReq_ChannelType_RawValue(MarkReadReq *message, int32_t value);
+
+#pragma mark - SimpleMsg
+
+typedef GPB_ENUM(SimpleMsg_FieldNumber) {
+  SimpleMsg_FieldNumber_MsgId = 1,
+  SimpleMsg_FieldNumber_MsgTime = 2,
+  SimpleMsg_FieldNumber_MsgIndex = 3,
+};
+
+GPB_FINAL @interface SimpleMsg : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@property(nonatomic, readwrite) int64_t msgIndex;
+
+@end
+
+#pragma mark - IndexScope
+
+typedef GPB_ENUM(IndexScope_FieldNumber) {
+  IndexScope_FieldNumber_StartIndex = 1,
+  IndexScope_FieldNumber_EndIndex = 2,
+};
+
+GPB_FINAL @interface IndexScope : GPBMessage
+
+@property(nonatomic, readwrite) int64_t startIndex;
+
+@property(nonatomic, readwrite) int64_t endIndex;
 
 @end
 

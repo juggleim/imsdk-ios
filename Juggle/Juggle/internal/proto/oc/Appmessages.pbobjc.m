@@ -35,18 +35,26 @@
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
 GPBObjCClassDeclaration(AddHisMsgReq);
+GPBObjCClassDeclaration(ClearUnreadReq);
 GPBObjCClassDeclaration(Conversation);
 GPBObjCClassDeclaration(DelConversationReq);
 GPBObjCClassDeclaration(DownMsg);
 GPBObjCClassDeclaration(DownMsgSet);
+GPBObjCClassDeclaration(IndexScope);
+GPBObjCClassDeclaration(MarkReadReq);
 GPBObjCClassDeclaration(MentionInfo);
+GPBObjCClassDeclaration(MentionMsg);
 GPBObjCClassDeclaration(Notify);
 GPBObjCClassDeclaration(PushData);
 GPBObjCClassDeclaration(QryConversationsReq);
 GPBObjCClassDeclaration(QryConversationsResp);
 GPBObjCClassDeclaration(QryHisMsgsReq);
+GPBObjCClassDeclaration(QryMentionMsgsReq);
+GPBObjCClassDeclaration(QryMentionMsgsResp);
 GPBObjCClassDeclaration(QryMsgLatestIndexReq);
 GPBObjCClassDeclaration(QryMsgLatestIndexResp);
+GPBObjCClassDeclaration(RecallMsgReq);
+GPBObjCClassDeclaration(SimpleMsg);
 GPBObjCClassDeclaration(SyncConversationsReq);
 GPBObjCClassDeclaration(SyncMsgReq);
 GPBObjCClassDeclaration(UpMsg);
@@ -462,10 +470,10 @@ typedef struct PushData__storage_ {
 
 @implementation DownMsg
 
-@dynamic fromId;
-@dynamic type;
+@dynamic targetId;
+@dynamic channelType;
 @dynamic msgType;
-@dynamic groupId;
+@dynamic senderId;
 @dynamic msgId;
 @dynamic msgIndex;
 @dynamic msgContent;
@@ -476,14 +484,15 @@ typedef struct PushData__storage_ {
 @dynamic clientUid;
 @dynamic hasPushData, pushData;
 @dynamic hasMentionInfo, mentionInfo;
+@dynamic isReaded;
 
 typedef struct DownMsg__storage_ {
   uint32_t _has_storage_[1];
-  ChannelType type;
+  ChannelType channelType;
   int32_t flags;
-  NSString *fromId;
+  NSString *targetId;
   NSString *msgType;
-  NSString *groupId;
+  NSString *senderId;
   NSString *msgId;
   NSData *msgContent;
   NSString *platform;
@@ -502,21 +511,21 @@ typedef struct DownMsg__storage_ {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "fromId",
+        .name = "targetId",
         .dataTypeSpecific.clazz = Nil,
-        .number = DownMsg_FieldNumber_FromId,
+        .number = DownMsg_FieldNumber_TargetId,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(DownMsg__storage_, fromId),
+        .offset = (uint32_t)offsetof(DownMsg__storage_, targetId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
-        .name = "type",
+        .name = "channelType",
         .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
-        .number = DownMsg_FieldNumber_Type,
+        .number = DownMsg_FieldNumber_ChannelType,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(DownMsg__storage_, type),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .offset = (uint32_t)offsetof(DownMsg__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
       {
@@ -529,11 +538,11 @@ typedef struct DownMsg__storage_ {
         .dataType = GPBDataTypeString,
       },
       {
-        .name = "groupId",
+        .name = "senderId",
         .dataTypeSpecific.clazz = Nil,
-        .number = DownMsg_FieldNumber_GroupId,
+        .number = DownMsg_FieldNumber_SenderId,
         .hasIndex = 3,
-        .offset = (uint32_t)offsetof(DownMsg__storage_, groupId),
+        .offset = (uint32_t)offsetof(DownMsg__storage_, senderId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
@@ -627,6 +636,15 @@ typedef struct DownMsg__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "isReaded",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DownMsg_FieldNumber_IsReaded,
+        .hasIndex = 15,
+        .offset = 16,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(DownMsg)
@@ -638,7 +656,7 @@ typedef struct DownMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\013\001\006\000\003\007\000\004\007\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000";
+        "\r\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -651,15 +669,15 @@ typedef struct DownMsg__storage_ {
 
 @end
 
-int32_t DownMsg_Type_RawValue(DownMsg *message) {
+int32_t DownMsg_ChannelType_RawValue(DownMsg *message) {
   GPBDescriptor *descriptor = [DownMsg descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:DownMsg_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:DownMsg_FieldNumber_ChannelType];
   return GPBGetMessageRawEnumField(message, field);
 }
 
-void SetDownMsg_Type_RawValue(DownMsg *message, int32_t value) {
+void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value) {
   GPBDescriptor *descriptor = [DownMsg descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:DownMsg_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:DownMsg_FieldNumber_ChannelType];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -1151,18 +1169,18 @@ void SetQryMsgLatestIndexResp_ChannelType_RawValue(QryMsgLatestIndexResp *messag
 
 @implementation QryHisMsgsReq
 
-@dynamic converId;
-@dynamic type;
+@dynamic targetId;
+@dynamic channelType;
 @dynamic startTime;
 @dynamic count;
 @dynamic order;
 
 typedef struct QryHisMsgsReq__storage_ {
   uint32_t _has_storage_[1];
-  ChannelType type;
+  ChannelType channelType;
   int32_t count;
   int32_t order;
-  NSString *converId;
+  NSString *targetId;
   int64_t startTime;
 } QryHisMsgsReq__storage_;
 
@@ -1174,21 +1192,21 @@ typedef struct QryHisMsgsReq__storage_ {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "converId",
+        .name = "targetId",
         .dataTypeSpecific.clazz = Nil,
-        .number = QryHisMsgsReq_FieldNumber_ConverId,
+        .number = QryHisMsgsReq_FieldNumber_TargetId,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(QryHisMsgsReq__storage_, converId),
+        .offset = (uint32_t)offsetof(QryHisMsgsReq__storage_, targetId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
-        .name = "type",
+        .name = "channelType",
         .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
-        .number = QryHisMsgsReq_FieldNumber_Type,
+        .number = QryHisMsgsReq_FieldNumber_ChannelType,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(QryHisMsgsReq__storage_, type),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .offset = (uint32_t)offsetof(QryHisMsgsReq__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
       {
@@ -1229,7 +1247,7 @@ typedef struct QryHisMsgsReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\002\001\010\000\003\t\000";
+        "\003\001\010\000\002\013\000\003\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1242,15 +1260,15 @@ typedef struct QryHisMsgsReq__storage_ {
 
 @end
 
-int32_t QryHisMsgsReq_Type_RawValue(QryHisMsgsReq *message) {
+int32_t QryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message) {
   GPBDescriptor *descriptor = [QryHisMsgsReq descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryHisMsgsReq_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryHisMsgsReq_FieldNumber_ChannelType];
   return GPBGetMessageRawEnumField(message, field);
 }
 
-void SetQryHisMsgsReq_Type_RawValue(QryHisMsgsReq *message, int32_t value) {
+void SetQryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message, int32_t value) {
   GPBDescriptor *descriptor = [QryHisMsgsReq descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryHisMsgsReq_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryHisMsgsReq_FieldNumber_ChannelType];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -1332,6 +1350,7 @@ typedef struct QryConversationsReq__storage_ {
 @implementation QryConversationsResp
 
 @dynamic conversationsArray, conversationsArray_Count;
+@dynamic isFinished;
 
 typedef struct QryConversationsResp__storage_ {
   uint32_t _has_storage_[1];
@@ -1354,6 +1373,15 @@ typedef struct QryConversationsResp__storage_ {
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "isFinished",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryConversationsResp_FieldNumber_IsFinished,
+        .hasIndex = 0,
+        .offset = 1,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(QryConversationsResp)
@@ -1363,6 +1391,11 @@ typedef struct QryConversationsResp__storage_ {
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(QryConversationsResp__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\002\n\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
@@ -1377,21 +1410,23 @@ typedef struct QryConversationsResp__storage_ {
 
 @implementation Conversation
 
-@dynamic converId;
 @dynamic targetId;
-@dynamic type;
+@dynamic channelType;
 @dynamic updateTime;
 @dynamic unreadCount;
 @dynamic hasMsg, msg;
+@dynamic latestReadedMsgIndex;
+@dynamic hasLatestMentionMsg, latestMentionMsg;
 
 typedef struct Conversation__storage_ {
   uint32_t _has_storage_[1];
-  ChannelType type;
-  int32_t unreadCount;
-  NSString *converId;
+  ChannelType channelType;
   NSString *targetId;
   DownMsg *msg;
+  MentionMsg *latestMentionMsg;
   int64_t updateTime;
+  int64_t unreadCount;
+  int64_t latestReadedMsgIndex;
 } Conversation__storage_;
 
 // This method is threadsafe because it is initially called
@@ -1402,37 +1437,28 @@ typedef struct Conversation__storage_ {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "converId",
-        .dataTypeSpecific.clazz = Nil,
-        .number = Conversation_FieldNumber_ConverId,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(Conversation__storage_, converId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-      {
         .name = "targetId",
         .dataTypeSpecific.clazz = Nil,
         .number = Conversation_FieldNumber_TargetId,
-        .hasIndex = 1,
+        .hasIndex = 0,
         .offset = (uint32_t)offsetof(Conversation__storage_, targetId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
       {
-        .name = "type",
+        .name = "channelType",
         .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
-        .number = Conversation_FieldNumber_Type,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(Conversation__storage_, type),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .number = Conversation_FieldNumber_ChannelType,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(Conversation__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
       {
         .name = "updateTime",
         .dataTypeSpecific.clazz = Nil,
         .number = Conversation_FieldNumber_UpdateTime,
-        .hasIndex = 3,
+        .hasIndex = 2,
         .offset = (uint32_t)offsetof(Conversation__storage_, updateTime),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
@@ -1441,18 +1467,36 @@ typedef struct Conversation__storage_ {
         .name = "unreadCount",
         .dataTypeSpecific.clazz = Nil,
         .number = Conversation_FieldNumber_UnreadCount,
-        .hasIndex = 4,
+        .hasIndex = 3,
         .offset = (uint32_t)offsetof(Conversation__storage_, unreadCount),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeInt32,
+        .dataType = GPBDataTypeInt64,
       },
       {
         .name = "msg",
         .dataTypeSpecific.clazz = GPBObjCClass(DownMsg),
         .number = Conversation_FieldNumber_Msg,
-        .hasIndex = 5,
+        .hasIndex = 4,
         .offset = (uint32_t)offsetof(Conversation__storage_, msg),
         .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "latestReadedMsgIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = Conversation_FieldNumber_LatestReadedMsgIndex,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(Conversation__storage_, latestReadedMsgIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "latestMentionMsg",
+        .dataTypeSpecific.clazz = GPBObjCClass(MentionMsg),
+        .number = Conversation_FieldNumber_LatestMentionMsg,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(Conversation__storage_, latestMentionMsg),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
     };
@@ -1466,7 +1510,7 @@ typedef struct Conversation__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\001\010\000\002\010\000\004\n\000\005\013\000";
+        "\006\002\010\000\003\013\000\004\n\000\005\013\000\007\024\000\010P\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1479,17 +1523,292 @@ typedef struct Conversation__storage_ {
 
 @end
 
-int32_t Conversation_Type_RawValue(Conversation *message) {
+int32_t Conversation_ChannelType_RawValue(Conversation *message) {
   GPBDescriptor *descriptor = [Conversation descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:Conversation_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:Conversation_FieldNumber_ChannelType];
   return GPBGetMessageRawEnumField(message, field);
 }
 
-void SetConversation_Type_RawValue(Conversation *message, int32_t value) {
+void SetConversation_ChannelType_RawValue(Conversation *message, int32_t value) {
   GPBDescriptor *descriptor = [Conversation descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:Conversation_FieldNumber_Type];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:Conversation_FieldNumber_ChannelType];
   GPBSetMessageRawEnumField(message, field, value);
 }
+
+#pragma mark - MentionMsg
+
+@implementation MentionMsg
+
+@dynamic mentionType;
+@dynamic senderId;
+@dynamic msgId;
+@dynamic msgIndex;
+@dynamic msgTime;
+
+typedef struct MentionMsg__storage_ {
+  uint32_t _has_storage_[1];
+  MentionType mentionType;
+  NSString *senderId;
+  NSString *msgId;
+  int64_t msgIndex;
+  int64_t msgTime;
+} MentionMsg__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "mentionType",
+        .dataTypeSpecific.enumDescFunc = MentionType_EnumDescriptor,
+        .number = MentionMsg_FieldNumber_MentionType,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, mentionType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "senderId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MentionMsg_FieldNumber_SenderId,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, senderId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MentionMsg_FieldNumber_MsgId,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, msgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MentionMsg_FieldNumber_MsgIndex,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, msgIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "msgTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MentionMsg_FieldNumber_MsgTime,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, msgTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MentionMsg)
+                                   messageName:@"MentionMsg"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(MentionMsg__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\005\001\013\000\002\010\000\003\005\000\004\010\000\005\007\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t MentionMsg_MentionType_RawValue(MentionMsg *message) {
+  GPBDescriptor *descriptor = [MentionMsg descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MentionMsg_FieldNumber_MentionType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value) {
+  GPBDescriptor *descriptor = [MentionMsg descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MentionMsg_FieldNumber_MentionType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - QryMentionMsgsReq
+
+@implementation QryMentionMsgsReq
+
+@dynamic targetId;
+@dynamic channelType;
+@dynamic startIndex;
+@dynamic count;
+@dynamic order;
+
+typedef struct QryMentionMsgsReq__storage_ {
+  uint32_t _has_storage_[1];
+  ChannelType channelType;
+  int32_t count;
+  int32_t order;
+  NSString *targetId;
+  int64_t startIndex;
+} QryMentionMsgsReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "targetId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_TargetId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, targetId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "channelType",
+        .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
+        .number = QryMentionMsgsReq_FieldNumber_ChannelType,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "startIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_StartIndex,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, startIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "count",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_Count,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, count),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "order",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_Order,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, order),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(QryMentionMsgsReq)
+                                   messageName:@"QryMentionMsgsReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(QryMentionMsgsReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\003\001\010\000\002\013\000\003\n\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t QryMentionMsgsReq_ChannelType_RawValue(QryMentionMsgsReq *message) {
+  GPBDescriptor *descriptor = [QryMentionMsgsReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryMentionMsgsReq_FieldNumber_ChannelType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetQryMentionMsgsReq_ChannelType_RawValue(QryMentionMsgsReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [QryMentionMsgsReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:QryMentionMsgsReq_FieldNumber_ChannelType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - QryMentionMsgsResp
+
+@implementation QryMentionMsgsResp
+
+@dynamic mentionMsgsArray, mentionMsgsArray_Count;
+@dynamic isFinished;
+
+typedef struct QryMentionMsgsResp__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *mentionMsgsArray;
+} QryMentionMsgsResp__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "mentionMsgsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(MentionMsg),
+        .number = QryMentionMsgsResp_FieldNumber_MentionMsgsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(QryMentionMsgsResp__storage_, mentionMsgsArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "isFinished",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsResp_FieldNumber_IsFinished,
+        .hasIndex = 0,
+        .offset = 1,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(QryMentionMsgsResp)
+                                   messageName:@"QryMentionMsgsResp"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(QryMentionMsgsResp__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\000mentionMsgs\000\002\n\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
 
 #pragma mark - SyncConversationsReq
 
@@ -1589,6 +1908,401 @@ typedef struct DelConversationReq__storage_ {
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(DelConversationReq__storage_)
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - ClearUnreadReq
+
+@implementation ClearUnreadReq
+
+@dynamic conversationsArray, conversationsArray_Count;
+
+typedef struct ClearUnreadReq__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *conversationsArray;
+} ClearUnreadReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "conversationsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(Conversation),
+        .number = ClearUnreadReq_FieldNumber_ConversationsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(ClearUnreadReq__storage_, conversationsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ClearUnreadReq)
+                                   messageName:@"ClearUnreadReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(ClearUnreadReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - RecallMsgReq
+
+@implementation RecallMsgReq
+
+@dynamic targetId;
+@dynamic channelType;
+@dynamic msgId;
+@dynamic msgTime;
+@dynamic msgType;
+@dynamic msgContent;
+
+typedef struct RecallMsgReq__storage_ {
+  uint32_t _has_storage_[1];
+  ChannelType channelType;
+  NSString *targetId;
+  NSString *msgId;
+  NSString *msgType;
+  NSData *msgContent;
+  int64_t msgTime;
+} RecallMsgReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "targetId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RecallMsgReq_FieldNumber_TargetId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, targetId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "channelType",
+        .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
+        .number = RecallMsgReq_FieldNumber_ChannelType,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "msgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RecallMsgReq_FieldNumber_MsgId,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, msgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RecallMsgReq_FieldNumber_MsgTime,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, msgTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "msgType",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RecallMsgReq_FieldNumber_MsgType,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, msgType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgContent",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RecallMsgReq_FieldNumber_MsgContent,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(RecallMsgReq__storage_, msgContent),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBytes,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RecallMsgReq)
+                                   messageName:@"RecallMsgReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(RecallMsgReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\006\001\010\000\002\013\000\003\005\000\004\007\000\005\007\000\006\n\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t RecallMsgReq_ChannelType_RawValue(RecallMsgReq *message) {
+  GPBDescriptor *descriptor = [RecallMsgReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecallMsgReq_FieldNumber_ChannelType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRecallMsgReq_ChannelType_RawValue(RecallMsgReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [RecallMsgReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecallMsgReq_FieldNumber_ChannelType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - MarkReadReq
+
+@implementation MarkReadReq
+
+@dynamic targetId;
+@dynamic channelType;
+@dynamic msgsArray, msgsArray_Count;
+@dynamic indexScopesArray, indexScopesArray_Count;
+
+typedef struct MarkReadReq__storage_ {
+  uint32_t _has_storage_[1];
+  ChannelType channelType;
+  NSString *targetId;
+  NSMutableArray *msgsArray;
+  NSMutableArray *indexScopesArray;
+} MarkReadReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "targetId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MarkReadReq_FieldNumber_TargetId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(MarkReadReq__storage_, targetId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "channelType",
+        .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
+        .number = MarkReadReq_FieldNumber_ChannelType,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(MarkReadReq__storage_, channelType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "msgsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(SimpleMsg),
+        .number = MarkReadReq_FieldNumber_MsgsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(MarkReadReq__storage_, msgsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "indexScopesArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(IndexScope),
+        .number = MarkReadReq_FieldNumber_IndexScopesArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(MarkReadReq__storage_, indexScopesArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MarkReadReq)
+                                   messageName:@"MarkReadReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(MarkReadReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\003\001\010\000\002\013\000\004\000indexScopes\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t MarkReadReq_ChannelType_RawValue(MarkReadReq *message) {
+  GPBDescriptor *descriptor = [MarkReadReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MarkReadReq_FieldNumber_ChannelType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetMarkReadReq_ChannelType_RawValue(MarkReadReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [MarkReadReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MarkReadReq_FieldNumber_ChannelType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - SimpleMsg
+
+@implementation SimpleMsg
+
+@dynamic msgId;
+@dynamic msgTime;
+@dynamic msgIndex;
+
+typedef struct SimpleMsg__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *msgId;
+  int64_t msgTime;
+  int64_t msgIndex;
+} SimpleMsg__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "msgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SimpleMsg_FieldNumber_MsgId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(SimpleMsg__storage_, msgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SimpleMsg_FieldNumber_MsgTime,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(SimpleMsg__storage_, msgTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "msgIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SimpleMsg_FieldNumber_MsgIndex,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(SimpleMsg__storage_, msgIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SimpleMsg)
+                                   messageName:@"SimpleMsg"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SimpleMsg__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\003\001\005\000\002\007\000\003\010\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - IndexScope
+
+@implementation IndexScope
+
+@dynamic startIndex;
+@dynamic endIndex;
+
+typedef struct IndexScope__storage_ {
+  uint32_t _has_storage_[1];
+  int64_t startIndex;
+  int64_t endIndex;
+} IndexScope__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "startIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = IndexScope_FieldNumber_StartIndex,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(IndexScope__storage_, startIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "endIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = IndexScope_FieldNumber_EndIndex,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(IndexScope__storage_, endIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(IndexScope)
+                                   messageName:@"IndexScope"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(IndexScope__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\n\000\002\010\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG
