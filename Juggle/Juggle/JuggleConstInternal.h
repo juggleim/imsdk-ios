@@ -9,5 +9,5 @@
 #define JProtoId @"1"
 #define JSDKVersion @"1.0.0"
 #define JPlatform @"iOS"
-#define JDeviceCompany @"apple"
+#define JDeviceCompany @"Apple"
 #define JuggleProtocolVersion 1

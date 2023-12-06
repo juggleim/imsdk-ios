@@ -27,5 +27,25 @@ typedef NS_ENUM(NSUInteger, JConnectionStatus) {
 typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeNone = 0,
     
-    JErrorCodeWebSocketFailure = 21001,
+    JErrorCodeWebSocketParseFailure = 21001,
+};
+
+/*!
+ 当前所处的网络
+ */
+typedef NS_ENUM(NSUInteger, JNetworkStatus) {
+    /*!
+     当前网络不可用
+     */
+    JNetworkStatusNotReachable = 0,
+
+    /*!
+     当前处于 WiFi 网络
+     */
+    JNetworkStatusReachableViaWiFi = 1,
+
+    /*!
+     移动网络
+     */
+    JNetworkStatusReachableViaWWAN = 2,
 };

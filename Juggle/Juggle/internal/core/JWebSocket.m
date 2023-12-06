@@ -11,6 +11,7 @@
 #import "ImWebSocket.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "JMessageContent+internal.h"
+#import "JUtility.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -126,8 +127,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     ImWebsocketMsg *msg = [[ImWebsocketMsg alloc] initWithData:data error:&err];
     JErrorCode code = JErrorCodeNone;
     if (err != nil) {
-        NSLog(@"[Juggle]Web socket receive message error, msg is %@", err.description);
-        code = JErrorCodeWebSocketFailure;
+        NSLog(@"[Juggle]Web socket receive message parse error, msg is %@", err.description);
+        code = JErrorCodeWebSocketParseFailure;
     } else {
         
         if (msg.testofOneOfCase == ImWebsocketMsg_Testof_OneOfCase_ConnectAckMsgBody) {
@@ -154,16 +155,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.appkey = self.connectInfo.appKey;
     connectMsg.token = self.connectInfo.token;
     
-    //TODO:
-    connectMsg.deviceId = @"iOS_Simulator1";
+    connectMsg.deviceId = [JUtility getDeviceId];
     connectMsg.platform = JPlatform;
     connectMsg.deviceCompany = JDeviceCompany;
-    connectMsg.deviceModel = @"iOS_Simulator";
-    connectMsg.deviceOsVersion = @"iOS9";
-    connectMsg.pushToken = @"pushToken";
-    connectMsg.networkId = @"4G";
-    connectMsg.ispNum = @"ispNum";
-    connectMsg.clientIp = @"clientIp";
+    connectMsg.deviceModel = [JUtility currentDeviceModel];
+    connectMsg.deviceOsVersion = [JUtility currentSystemVersion];
+    connectMsg.pushToken = @"pushToken";//TODO: 
+    connectMsg.networkId = [JUtility currentNetWork];
+    connectMsg.ispNum = [JUtility currentCarrier];
+    connectMsg.clientIp = @"";
     
     ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
     sm.version = JuggleProtocolVersion;
@@ -187,8 +187,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 //TODO: test
 - (void)qryHistoryMessages {
     QryHisMsgsReq *req = [[QryHisMsgsReq alloc] init];
-    req.converId = @"userid2:userid1";
-    req.type = ChannelType_Private;
+    req.targetId = @"userid2:userid1";
+    req.channelType = ChannelType_Private;
     req.startTime = [[NSDate date] timeIntervalSince1970];
     req.count = 5;
     req.order = 0;

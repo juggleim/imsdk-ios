@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
+		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
+		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
+		A05EED632B20826B00809F13 /* JReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED612B20826A00809F13 /* JReachability.h */; };
 		A08AA1E72B148B68008B114C /* Juggle.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* Juggle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JuggleIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JuggleIM.m */; };
@@ -181,6 +185,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
+		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
+		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
+		A05EED612B20826A00809F13 /* JReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JReachability.h; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* Juggle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Juggle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* Juggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Juggle.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JuggleIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIM.h; sourceTree = "<group>"; };
@@ -367,6 +375,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A05EED642B20827300809F13 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				A05EED5C2B207D5200809F13 /* JUtility.h */,
+				A05EED5D2B207D5200809F13 /* JUtility.m */,
+				A05EED612B20826A00809F13 /* JReachability.h */,
+				A05EED602B20826A00809F13 /* JReachability.m */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		A08AA1D92B148B68008B114C = {
 			isa = PBXGroup;
 			children = (
@@ -456,6 +475,7 @@
 		A08AA27E2B175620008B114C /* internal */ = {
 			isa = PBXGroup;
 			children = (
+				A05EED642B20827300809F13 /* utility */,
 				A08AA41B2B1B5B92008B114C /* core */,
 				A08AA3AC2B19CC91008B114C /* proto */,
 				A08AA27F2B175646008B114C /* JConnectionManager.h */,
@@ -804,6 +824,7 @@
 				A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */,
 				A08AA4332B1B78FE008B114C /* Usermessages.pbobjc.h in Headers */,
 				A08AA39A2B19CB78008B114C /* GPBCodedInputStream.h in Headers */,
+				A05EED5E2B207D5200809F13 /* JUtility.h in Headers */,
 				A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */,
 				A08AA2762B162A11008B114C /* JFMDatabasePool.h in Headers */,
 				A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */,
@@ -828,6 +849,7 @@
 				A08AA2852B1756E3008B114C /* JMessageManager.h in Headers */,
 				A08AA3FF2B19EEDB008B114C /* SRRandom.h in Headers */,
 				A08AA38F2B19CB78008B114C /* GPBUtilities.h in Headers */,
+				A05EED632B20826B00809F13 /* JReachability.h in Headers */,
 				A08AA3722B19CB77008B114C /* GPBRootObject_PackagePrivate.h in Headers */,
 				A08AA4302B1B78FE008B114C /* Innermessages.pbobjc.h in Headers */,
 				A08AA3922B19CB78008B114C /* GPBWireFormat.h in Headers */,
@@ -911,6 +933,7 @@
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
+				A05EED622B20826B00809F13 /* JReachability.m in Sources */,
 				A08AA4392B1B78FE008B114C /* Usermessages.pbobjc.m in Sources */,
 				A08AA3B12B19CC91008B114C /* ImWebSocket.pbobjc.m in Sources */,
 				A08AA36D2B19CB77008B114C /* GPBExtensionInternals.m in Sources */,
@@ -963,6 +986,7 @@
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,
 				A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */,
 				A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */,
+				A05EED5F2B207D5200809F13 /* JUtility.m in Sources */,
 				A08AA4382B1B78FE008B114C /* Rpcmessagewrap.pbobjc.m in Sources */,
 				A08AA3672B19CB77008B114C /* GPBEmpty.pbobjc.m in Sources */,
 				A08AA39F2B19CB78008B114C /* GPBDictionary.m in Sources */,
