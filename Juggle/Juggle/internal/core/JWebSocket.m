@@ -124,12 +124,20 @@ typedef NS_ENUM(NSUInteger, JQos) {
     });
 }
 
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
+    NSLog(@"[Juggle] websocket did fail with error, %@", error.description);
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
+    NSLog(@"[Juggle] websocket did close with code(%d), reason(%@)", code, reason);
+}
+
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
     NSError *err = nil;
     ImWebsocketMsg *msg = [[ImWebsocketMsg alloc] initWithData:data error:&err];
     JErrorCode code = JErrorCodeNone;
     if (err != nil) {
-        NSLog(@"[Juggle]Web socket receive message parse error, msg is %@", err.description);
+        NSLog(@"[Juggle]Websocket receive message parse error, msg is %@", err.description);
         code = JErrorCodeWebSocketParseFailure;
     } else {
         
