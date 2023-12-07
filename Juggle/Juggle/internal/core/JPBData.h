@@ -63,6 +63,7 @@ typedef NS_ENUM(NSUInteger, JAckType) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
 
++ (NSData *)disconnectData:(BOOL)needPush;
 
 + (JAck *)ackWithData:(NSData *)data;
 @end

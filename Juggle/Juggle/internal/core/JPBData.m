@@ -76,6 +76,22 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return sm.data;
 }
 
++ (NSData *)disconnectData:(BOOL)needPush {
+    DisconnectMsgBody *body = [[DisconnectMsgBody alloc] init];
+    if (needPush) {
+        body.code = 0;
+    } else {
+        body.code = 1;
+    }
+    body.timestamp = [[NSDate date] timeIntervalSince1970];
+
+    ImWebsocketMsg *sm = [self createImWebsocketMsg];
+    sm.cmd = JCmdTypeDisconnect;
+    sm.qos = JQosNo;
+    sm.disconnectMsgBody = body;
+    return sm.data;
+}
+
 + (NSData *)sendMessageDataWithType:(NSString *)contentType
                             msgData:(NSData *)msgData
                               flags:(int)flags

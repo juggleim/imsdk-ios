@@ -46,7 +46,8 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
 }
 
 - (void)disconnect:(BOOL)receivePush {
-    
+    NSLog(@"[Juggle] disconnect, receivePush is %d", receivePush);
+    [self.core.webSocket disconnect:receivePush];
 }
 
 - (void)setDelegate:(id<JConnectionDelegate>)delegate {

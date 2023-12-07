@@ -45,7 +45,7 @@
 
 - (void)disconnect:(BOOL)needPush {
     dispatch_async(self.sendQueue, ^{
-        
+        [self sendDisconnectMsgByWebSocket:needPush];
     });
 }
 
@@ -127,18 +127,12 @@
 }
 
 - (void)sendDisconnectMsgByWebSocket:(BOOL)needPush {
-//    DisconnectMsgBody *body = [[DisconnectMsgBody alloc] init];
-//    if (needPush) {
-//        body.code = 1;
-//    } else {
-//        body.code = 0;
-//    }
-//    body.timestamp = [[NSDate date] timeIntervalSince1970];
-//
-//    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
-//    sm.version = JuggleProtocolVersion;
-//    sm.cmd = JCmdTypeDisconnect;
-//    sm
+    NSData *d = [JPBData disconnectData:needPush];
+    NSError *err = nil;
+    [self.sws sendData:d error:&err];
+    if (err != nil) {
+        NSLog(@"WebSocket send disconnect error, msg is %@", err.description);
+    }
 }
 
 - (NSString *)createClientUid {

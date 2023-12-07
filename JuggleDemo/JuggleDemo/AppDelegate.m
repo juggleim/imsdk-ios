@@ -33,9 +33,11 @@
 
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     if (JConnectionStatusConnected == status) {
-        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
+//        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
+//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+//        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
+        
+        [JuggleIM.shared.connectionManager disconnect:NO];
     }
 }
 
