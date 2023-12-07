@@ -53,6 +53,10 @@
     _connectDelegate = delegate;
 }
 
+- (void)registerMessageType:(Class)messageClass {
+    [JPBData registerMessageType:messageClass];
+}
+
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation {
     dispatch_async(self.sendQueue, ^{
@@ -68,6 +72,28 @@
         [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket send IM message error, msg is %@", err.description);
+            //TODO: callback
+        }
+    });
+}
+
+- (void)queryHisMsgsFrom:(JConversation *)conversation
+               startTime:(long long)startTime
+                   count:(int)count
+               direction:(JPullDirection)direction
+                 success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
+                   error:(void (^)(JErrorCode))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+       NSData *d = [JPBData queryHisMsgsFrom:conversation
+                                   startTime:startTime
+                                       count:count
+                                   direction:direction
+                                       index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket query history message error, msg is %@", err.description);
+            //TODO: callback
         }
     });
 }
@@ -95,9 +121,11 @@
         case JAckTypeConnect:
             [self handleConnectAckMsg:ack.connectAck];
             break;
-            
         case JAckTypePublishMsg:
             [self handlePublishAckMsg:ack.publishMsgAck];
+            break;
+        case JAckTypeQryMsg:
+            [self handleQryAckMsg:ack.qryMsgAck];
             
         default:
             break;
@@ -142,35 +170,6 @@
     return [NSString stringWithFormat:@"%04lld%04d", ts, msgId];
 }
 
-//TODO: test
-- (void)qryHistoryMessages {
-//    QryHisMsgsReq *req = [[QryHisMsgsReq alloc] init];
-//    req.targetId = @"userid2:userid1";
-//    req.channelType = ChannelType_Private;
-//    req.startTime = [[NSDate date] timeIntervalSince1970];
-//    req.count = 5;
-//    req.order = 0;
-//    
-//    QueryMsgBody *body = [[QueryMsgBody alloc] init];
-//    body.index = 3;
-//    body.topic = @"topic";
-//    body.targetId = @"userid1";
-//    body.timestamp = [[NSDate date] timeIntervalSince1970];
-//    body.data_p = [req data];
-//    
-//    ImWebsocketMsg *sm = [[ImWebsocketMsg alloc] init];
-//    sm.version = JuggleProtocolVersion;
-//    sm.cmd = JCmdTypeQuery;
-//    sm.qos = JQosYes;
-//    sm.qryMsgBody = body;
-//    
-//    NSError *err = nil;
-//    [self.sws sendData:sm.data error:&err];
-//    if (err != nil) {
-//        NSLog(@"WebSocket query history message error, msg is %@", err.description);
-//    }
-}
-
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
     NSLog(@"connect userId is %@", connectAck.userId);
     if (self.connectDelegate) {
@@ -183,4 +182,7 @@
     NSLog(@"handlePublishAckMsg, msgId is %@", ack.msgId);
 }
 
+- (void)handleQryAckMsg:(JQryMsgAck *)ack {
+    NSLog(@"handleQryMsg");
+}
 @end

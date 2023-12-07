@@ -62,6 +62,8 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
             if (error == JErrorCodeNone) {
                 self.core.userId = userId;
                 [self.delegate connectionStatusDidChange:JConnectionStatusConnected errorCode:JErrorCodeNone];
+            } else {
+                [self reconnect];
             }
         }
     });
@@ -99,6 +101,14 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
             [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
         }
     });
+}
+
+- (void)reconnect {
+    NSLog(@"[Juggle] reconnect");
+}
+
+- (void)syncConversationList {
+    
 }
 
 @end

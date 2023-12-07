@@ -9,7 +9,9 @@
 #import "ImWebSocket.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "JugglePBConst.h"
-
+#import "JMessageContent+internal.h"
+#import "JMessage+internal.h"
+#import <objc/runtime.h>
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -37,10 +39,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JPublishMsgAck
 @end
 
+@implementation JQryMsgAck
+@end
+
 @implementation JAck
 @end
 
 @implementation JPBData
+
+static NSMutableDictionary *messageTypeDic;
 
 + (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
@@ -83,7 +90,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     } else {
         body.code = 1;
     }
-    body.timestamp = [[NSDate date] timeIntervalSince1970];
+    body.timestamp = [[NSDate date] timeIntervalSince1970]*1000;
 
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypeDisconnect;
@@ -137,6 +144,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return sm.data;
 }
 
++ (NSData *)queryHisMsgsFrom:(JConversation *)conversation
+                   startTime:(long long)startTime
+                       count:(int)count
+                   direction:(JPullDirection)direction
+                       index:(int)index {
+    QryHisMsgsReq *r = [[QryHisMsgsReq alloc] init];
+    r.targetId = conversation.conversationId;
+    r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    r.startTime = startTime;
+    r.count = count;
+    if (direction == JPullDirectionNewToOld) {
+        r.order = 0;
+    } else {
+        r.order = 1;
+    }
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = @"qry_hismsgs";
+    body.targetId = conversation.conversationId;
+    body.data_p = r.data;
+
+    ImWebsocketMsg *m = [self createImWebsocketMsg];
+    m.cmd = JCmdTypeQuery;
+    m.qos = JQosYes;
+    m.qryMsgBody = body;
+    return m.data;
+}
+
 + (JAck *)ackWithData:(NSData *)data {
     JAck *ack = [[JAck alloc] init];
     
@@ -170,6 +206,34 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
             break;
             
+        case ImWebsocketMsg_Testof_OneOfCase_QryAckMsgBody:
+        {
+            NSError *e = nil;
+            DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+            if (e != nil) {
+                NSLog(@"[Juggle]Websocket query message parse error, msg is %@", err.description);
+                ack.ackType = JAckTypeParseError;
+                return ack;
+            }
+            ack.ackType = JAckTypeQryMsg;
+            JQryMsgAck *a = [[JQryMsgAck alloc] init];
+            a.index = msg.qryAckMsgBody.index;
+            a.code = msg.qryAckMsgBody.code;
+            a.timestamp = msg.qryAckMsgBody.timestamp;
+            a.syncTime = set.syncTime;
+            a.isFinished = set.isFinished;
+            NSMutableArray *arr = [[NSMutableArray alloc] init];
+            if (set.msgsArray_Count > 0) {
+                [set.msgsArray enumerateObjectsUsingBlock:^(DownMsg * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    JMessage *msg = [self messageWithDownMsg:obj];
+                    [arr addObject:msg];
+                }];
+            }
+            a.msgs = arr;
+            ack.qryMsgAck = a;
+        }
+            break;
+            
             //TODO: 
         default:
             break;
@@ -177,11 +241,99 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return ack;
 }
 
++ (void)registerMessageType:(Class)messageClass {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        messageTypeDic = [[NSMutableDictionary alloc] init];
+    });
+    NSString *contentType = nil;
+    if (class_getClassMethod(messageClass, @selector(contentType))) {
+        contentType = [messageClass contentType];
+    }
+    [messageTypeDic setObject:messageClass forKey:contentType];
+}
+
 #pragma mark - internal
 + (ImWebsocketMsg *)createImWebsocketMsg {
     ImWebsocketMsg *m = [[ImWebsocketMsg alloc] init];
     m.version = JuggleProtocolVersion;
     return m;
+}
+
++ (int32_t)channelTypeFromConversationType:(JConversationType)type {
+    int32_t result = ChannelType_Unknown;
+    switch (type) {
+        case JConversationTypePrivate:
+            result = ChannelType_Private;
+            break;
+            
+        case JConversationTypeGroup:
+            result = ChannelType_Group;
+            break;
+            
+        case JConversationTypeChatroom:
+            result = ChannelType_Chatroom;
+            break;
+            
+        case JConversationTypeSystem:
+            result = ChannelType_System;
+            break;
+            
+        default:
+            break;
+    }
+    return result;
+}
+
++ (JConversationType)conversationTypeFromChannelType:(int32_t)channelType {
+    JConversationType result = JConversationTypeUnknown;
+    switch (channelType) {
+        case ChannelType_Private:
+            result = JConversationTypePrivate;
+            break;
+            
+        case ChannelType_Group:
+            result = JConversationTypeGroup;
+            break;
+            
+        case ChannelType_Chatroom:
+            result = JConversationTypeChatroom;
+            break;
+            
+        case ChannelType_System:
+            result = JConversationTypeSystem;
+            break;
+            
+        default:
+            break;
+    }
+    return result;
+}
+
++ (JMessage *)messageWithDownMsg:(DownMsg *)downMsg {
+    JMessage *msg = [[JMessage alloc] init];
+    JConversation *conversation = [[JConversation alloc] init];
+    conversation.conversationType = [self conversationTypeFromChannelType:downMsg.channelType];
+    conversation.conversationId = downMsg.targetId;
+    msg.conversation = conversation;
+    msg.messageType = downMsg.msgType;
+    msg.messageId = downMsg.msgId;
+    msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
+    msg.hasRead = downMsg.isReaded;
+    msg.timestamp = downMsg.msgTime;
+    msg.senderUserId = downMsg.senderId;
+    msg.msgIndex = downMsg.msgIndex;
+    msg.content = [self contentWithData:downMsg.msgContent
+                            contentType:downMsg.msgType];
+    return msg;
+}
+
++ (JMessageContent *)contentWithData:(NSData *)data
+                         contentType:(NSString *)type {
+    Class cls = messageTypeDic[type];
+    id content = [[cls alloc] init];
+    [content decode:data];
+    return content;
 }
 
 @end

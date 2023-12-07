@@ -6,6 +6,9 @@
 //
 
 #import "JMessageManager.h"
+#import "JuggleConst.h"
+#import "JTextMessage.h"
+#import "JImageMessage.h"
 
 @interface JMessageManager ()
 @property (nonatomic, strong) JuggleCore *core;
@@ -17,6 +20,8 @@
 - (instancetype)initWithCore:(JuggleCore *)core {
     JMessageManager *m = [[JMessageManager alloc] init];
     m.core = core;
+    [m.core.webSocket registerMessageType:[JTextMessage class]];
+    [m.core.webSocket registerMessageType:[JImageMessage class]];
     return m;
 }
 
@@ -42,6 +47,25 @@
      inConversation:(JConversation *)conversation {
     [self.core.webSocket sendIMMessage:content
                         inConversation:conversation];
+}
+
+- (void)registerMessageType:(Class)messageClass {
+    [self.core.webSocket registerMessageType:messageClass];
+}
+
+#pragma mark - internal
+- (void)getRemoteMessagesFrom:(JConversation *)conversation
+                    startTime:(long long)startTime
+                        count:(int)count
+                    direction:(JPullDirection)direction
+                      success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock {
+    [self.core.webSocket queryHisMsgsFrom:conversation
+                                startTime:startTime
+                                    count:count
+                                direction:direction
+                                  success:successBlock
+                                    error:errorBlock];
 }
 
 @end

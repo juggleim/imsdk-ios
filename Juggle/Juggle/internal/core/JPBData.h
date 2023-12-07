@@ -7,6 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import "JConversation.h"
+#import "JMessage.h"
+#import "JuggleConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,7 +32,12 @@ typedef NS_ENUM(NSUInteger, JAckType) {
 @end
 
 @interface JQryMsgAck : NSObject
-
+@property (nonatomic, assign) int index;
+@property (nonatomic, assign) int code;
+@property (nonatomic, assign) long long timestamp;
+@property (nonatomic, assign) long long syncTime;
+@property (nonatomic, assign) BOOL isFinished;
+@property (nonatomic, strong) NSArray *msgs;
 @end
 
 @interface JAck : NSObject
@@ -63,7 +70,15 @@ typedef NS_ENUM(NSUInteger, JAckType) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
 
++ (NSData *)queryHisMsgsFrom:(JConversation *)conversation
+                   startTime:(long long)startTime
+                       count:(int)count
+                   direction:(JPullDirection)direction
+                       index:(int)index;
+
 + (NSData *)disconnectData:(BOOL)needPush;
+
++ (void)registerMessageType:(Class)messageClass;
 
 + (JAck *)ackWithData:(NSData *)data;
 @end

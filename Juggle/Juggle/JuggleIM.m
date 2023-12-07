@@ -24,7 +24,6 @@ static JuggleIM *_instance;
     dispatch_once(&onceToken, ^{
         _instance = [[self alloc] init];
         JuggleCore *core = [[JuggleCore alloc] init];
-        core.delegateQueue = dispatch_get_main_queue();
         _instance.core = core;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core];
         _instance.messageManager = [[JMessageManager alloc] initWithCore:core];

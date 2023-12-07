@@ -20,7 +20,10 @@ typedef NS_ENUM(NSUInteger, JMessageDirection) {
 /// 消息状态
 /// TODO: 发送和接收状态要不要做区分
 typedef NS_ENUM(NSUInteger, JMessageState) {
-    JMessageStateUnknown = 0
+    JMessageStateUnknown = 0,
+    JMessageStateSending,
+    JMessageStateSent,
+    JMessageStateFail
 };
 
 @interface JMessage : NSObject
@@ -35,6 +38,8 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, assign) JMessageDirection direction;
 /// 消息状态
 @property (nonatomic, assign) JMessageState messageState;
+/// 是否已读
+@property (nonatomic, assign) BOOL hasRead;
 /// 消息发送的时间戳（服务端时间，全局唯一）
 @property (nonatomic, assign) long long timestamp;
 /// 发送者 userId

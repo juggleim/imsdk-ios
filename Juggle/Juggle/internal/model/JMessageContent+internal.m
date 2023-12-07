@@ -15,4 +15,9 @@
     return data;
 }
 
+- (void)decode:(NSData *)data {
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    [self decodeWithJson:dic];
+}
+
 @end

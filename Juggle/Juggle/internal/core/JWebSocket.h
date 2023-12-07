@@ -25,9 +25,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)disconnect:(BOOL)needPush;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
+- (void)registerMessageType:(Class)messageClass;
+
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation;
-
+- (void)queryHisMsgsFrom:(JConversation *)conversation
+               startTime:(long long)startTime
+                   count:(int)count
+               direction:(JPullDirection)direction
+                 success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                   error:(void (^)(JErrorCode code))errorBlock;
 @end
 
 

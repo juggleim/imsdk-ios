@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JMessageContent (internal)
 
 - (NSData *)encode;
+- (void)decode:(NSData *)data;
 
 @end
 

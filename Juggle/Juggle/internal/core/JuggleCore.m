@@ -14,6 +14,7 @@
     if (self) {
         self.sendQueue = dispatch_queue_create("com.juggle.im.wssendqueue", DISPATCH_QUEUE_SERIAL);
         self.receiveQueue = dispatch_queue_create("com.juggle.im.wsreceivequeue", DISPATCH_QUEUE_SERIAL);
+        self.delegateQueue = dispatch_get_main_queue();
         self.webSocket = [[JWebSocket alloc] initWithSendQueque:self.sendQueue
                                                    receiveQueue:self.receiveQueue];
     }

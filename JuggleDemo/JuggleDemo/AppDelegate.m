@@ -33,11 +33,22 @@
 
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     if (JConnectionStatusConnected == status) {
+        //send message
 //        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
 //        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
         
-        [JuggleIM.shared.connectionManager disconnect:NO];
+        //disconnect
+//        [JuggleIM.shared.connectionManager disconnect:NO];
+        
+        //get remote msgs
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+        [JuggleIM.shared.messageManager getRemoteMessagesFrom:c
+                                                    startTime:[[NSDate date] timeIntervalSince1970]*1000
+                                                        count:20
+                                                    direction:JPullDirectionNewToOld
+                                                      success:nil
+                                                        error:nil];
     }
 }
 

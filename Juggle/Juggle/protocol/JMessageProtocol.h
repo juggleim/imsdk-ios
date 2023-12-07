@@ -46,5 +46,36 @@
 /// - Parameter messageId: 消息 id
 - (void)deleteMessageByMessageId:(NSString *)messageId;
 
+
+/*!
+ 注册自定义的消息类型
+
+ @param messageClass    自定义消息的类，该自定义消息需要继承于 RCMessageContent
+
+ @discussion
+ 如果您需要自定义消息，必须调用此方法注册该自定义消息的消息类型，否则 SDK 将无法识别和解析该类型消息。
+ @discussion 请在初始化 appkey 之后，token 连接之前调用该方法注册自定义消息
+
+ @warning 如果您使用 IMLib，请使用此方法注册自定义的消息类型；
+ 如果您使用 IMKit，请使用 RCIM 中的同名方法注册自定义的消息类型，而不要使用此方法。
+ 
+ @remarks 消息操作
+ */
+
+/// 注册自定义消息，没有注册的自定义消息 SDK 无法正常进行解析
+/// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent
+- (void)registerMessageType:(Class)messageClass;
+
 - (void)setDelegate:(id<JMessageDelegate>)delegate;
+
+
+
+
+//TODO: delete
+- (void)getRemoteMessagesFrom:(JConversation *)conversation
+                    startTime:(long long)startTime
+                        count:(int)count
+                    direction:(JPullDirection)direction
+                      success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
 @end
