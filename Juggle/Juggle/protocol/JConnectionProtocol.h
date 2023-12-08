@@ -22,4 +22,7 @@
 
 - (void)setDelegate:(id<JConnectionDelegate>) delegate;
 
+// TODO: delete
+- (void)syncConversations;
+
 @end

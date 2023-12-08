@@ -107,8 +107,15 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     NSLog(@"[Juggle] reconnect");
 }
 
-- (void)syncConversationList {
-    
+- (void)syncConversations {
+    [self.core.webSocket syncConversations:0
+                                     count:100
+                                    userId:self.core.userId
+                                   success:^(NSArray * _Nonnull conversations, BOOL isRemaining) {
+        
+    } error:^(JErrorCode code) {
+        
+    }];
 }
 
 @end

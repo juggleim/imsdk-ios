@@ -35,6 +35,11 @@ NS_ASSUME_NONNULL_BEGIN
                direction:(JPullDirection)direction
                  success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
                    error:(void (^)(JErrorCode code))errorBlock;
+- (void)syncConversations:(long long)startTime
+                    count:(int)count
+                   userId:(NSString *)userId
+                  success:(void (^)(NSArray *conversations, BOOL isRemaining))successBlock
+                    error:(void (^)(JErrorCode code))errorBlock;
 @end
 
 

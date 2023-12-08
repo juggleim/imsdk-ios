@@ -84,7 +84,7 @@
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-       NSData *d = [JPBData queryHisMsgsFrom:conversation
+       NSData *d = [JPBData queryHisMsgsDataFrom:conversation
                                    startTime:startTime
                                        count:count
                                    direction:direction
@@ -93,6 +93,25 @@
         [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket query history message error, msg is %@", err.description);
+            //TODO: callback
+        }
+    });
+}
+
+- (void)syncConversations:(long long)startTime
+                    count:(int)count
+                   userId:(NSString *)userId
+                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
+                    error:(void (^)(JErrorCode))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSData *d = [JPBData syncConversationsData:startTime
+                                             count:count
+                                            userId:userId
+                                             index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket sync conversations error, msg is %@", err.description);
             //TODO: callback
         }
     });

@@ -70,13 +70,18 @@ typedef NS_ENUM(NSUInteger, JAckType) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
 
-+ (NSData *)queryHisMsgsFrom:(JConversation *)conversation
-                   startTime:(long long)startTime
-                       count:(int)count
-                   direction:(JPullDirection)direction
-                       index:(int)index;
++ (NSData *)queryHisMsgsDataFrom:(JConversation *)conversation
+                       startTime:(long long)startTime
+                           count:(int)count
+                       direction:(JPullDirection)direction
+                           index:(int)index;
 
 + (NSData *)disconnectData:(BOOL)needPush;
+
++ (NSData *)syncConversationsData:(long long)startTime
+                            count:(int)count
+                           userId:(NSString *)userId
+                            index:(int)index;
 
 + (void)registerMessageType:(Class)messageClass;
 

@@ -144,11 +144,11 @@ static NSMutableDictionary *messageTypeDic;
     return sm.data;
 }
 
-+ (NSData *)queryHisMsgsFrom:(JConversation *)conversation
-                   startTime:(long long)startTime
-                       count:(int)count
-                   direction:(JPullDirection)direction
-                       index:(int)index {
++ (NSData *)queryHisMsgsDataFrom:(JConversation *)conversation
+                       startTime:(long long)startTime
+                           count:(int)count
+                       direction:(JPullDirection)direction
+                           index:(int)index {
     QryHisMsgsReq *r = [[QryHisMsgsReq alloc] init];
     r.targetId = conversation.conversationId;
     r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
@@ -166,10 +166,25 @@ static NSMutableDictionary *messageTypeDic;
     body.targetId = conversation.conversationId;
     body.data_p = r.data;
 
-    ImWebsocketMsg *m = [self createImWebsocketMsg];
-    m.cmd = JCmdTypeQuery;
-    m.qos = JQosYes;
-    m.qryMsgBody = body;
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
++ (NSData *)syncConversationsData:(long long)startTime
+                            count:(int)count
+                           userId:(NSString *)userId
+                            index:(int)index {
+    SyncConversationsReq *req = [[SyncConversationsReq alloc] init];
+    req.startTime = startTime;
+    req.count = count;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = @"sync_convers";
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
     return m.data;
 }
 
@@ -254,6 +269,14 @@ static NSMutableDictionary *messageTypeDic;
 }
 
 #pragma mark - internal
++ (ImWebsocketMsg *)createImWebSocketMsgWithQueryMsg:(QueryMsgBody *)body {
+    ImWebsocketMsg *m = [self createImWebsocketMsg];
+    m.cmd = JCmdTypeQuery;
+    m.qos = JQosYes;
+    m.qryMsgBody = body;
+    return m;
+}
+
 + (ImWebsocketMsg *)createImWebsocketMsg {
     ImWebsocketMsg *m = [[ImWebsocketMsg alloc] init];
     m.version = JuggleProtocolVersion;
