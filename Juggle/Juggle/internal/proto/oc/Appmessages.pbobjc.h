@@ -794,6 +794,45 @@ GPB_FINAL @interface IndexScope : GPBMessage
 
 @end
 
+#pragma mark - ModifyMsgReq
+
+typedef GPB_ENUM(ModifyMsgReq_FieldNumber) {
+  ModifyMsgReq_FieldNumber_TargetId = 1,
+  ModifyMsgReq_FieldNumber_ChannelType = 2,
+  ModifyMsgReq_FieldNumber_MsgId = 3,
+  ModifyMsgReq_FieldNumber_MsgTime = 4,
+  ModifyMsgReq_FieldNumber_MsgIndex = 5,
+  ModifyMsgReq_FieldNumber_MsgContent = 6,
+};
+
+GPB_FINAL @interface ModifyMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@property(nonatomic, readwrite) int64_t msgIndex;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
+
+@end
+
+/**
+ * Fetches the raw value of a @c ModifyMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ModifyMsgReq_ChannelType_RawValue(ModifyMsgReq *message);
+/**
+ * Sets the raw value of an @c ModifyMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetModifyMsgReq_ChannelType_RawValue(ModifyMsgReq *message, int32_t value);
+
 NS_ASSUME_NONNULL_END
 
 CF_EXTERN_C_END

@@ -152,9 +152,12 @@
         case JAckTypePublishMsg:
             [self handlePublishAckMsg:ack.publishMsgAck];
             break;
-        case JAckTypeQryMsg:
-            [self handleQryAckMsg:ack.qryMsgAck];
-            
+        case JAckTypeQryHisMsgs:
+            [self handleQryHisMsgs:ack.qryHisMsgsAck];
+            break;
+        case JAckTypeSyncConvs:
+            [self handleSyncConvsAck:ack.syncConvsAck];
+            break;
         default:
             break;
     }
@@ -210,8 +213,12 @@
     NSLog(@"handlePublishAckMsg, msgId is %@", ack.msgId);
 }
 
-- (void)handleQryAckMsg:(JQryMsgAck *)ack {
+- (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
     NSLog(@"handleQryMsg");
+}
+
+- (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
+    NSLog(@"handleSyncConvsAck");
 }
 
 - (void)setBlockArray:(NSArray *)arr

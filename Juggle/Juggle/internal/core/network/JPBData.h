@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JConversation.h"
 #import "JMessage.h"
+#import "JConversationInfo.h"
 #import "JuggleConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,7 +18,8 @@ typedef NS_ENUM(NSUInteger, JAckType) {
     JAckTypeCmdMatchError,
     JAckTypeConnect,
     JAckTypePublishMsg,
-    JAckTypeQryMsg
+    JAckTypeQryHisMsgs,
+    JAckTypeSyncConvs
 };
 
 @interface JConnectAck : NSObject
@@ -32,20 +34,29 @@ typedef NS_ENUM(NSUInteger, JAckType) {
 @property (nonatomic, assign) long long timestamp;
 @end
 
-@interface JQryMsgAck : NSObject
+@interface JQryAck : NSObject
 @property (nonatomic, assign) int index;
 @property (nonatomic, assign) int code;
 @property (nonatomic, assign) long long timestamp;
-@property (nonatomic, assign) long long syncTime;
+@end
+
+@interface JQryHisMsgsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
-@property (nonatomic, strong) NSArray *msgs;
+@property (nonatomic, strong) NSArray<JMessage *> *msgs;
+@end
+
+@interface JSyncConvsAck : JQryAck
+@property (nonatomic, assign) BOOL isFinished;
+@property (nonatomic, strong) NSArray<JConversationInfo *> *convs;
+
 @end
 
 @interface JAck : NSObject
 @property (nonatomic, assign) JAckType ackType;
 @property (nonatomic, strong) JConnectAck *connectAck;
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;
-@property (nonatomic, strong) JQryMsgAck *qryMsgAck;
+@property (nonatomic, strong) JQryHisMsgsAck *qryHisMsgsAck;
+@property (nonatomic, strong) JSyncConvsAck *syncConvsAck;
 @end
 
 @interface JPBData : NSObject

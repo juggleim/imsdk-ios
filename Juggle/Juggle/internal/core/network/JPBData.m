@@ -33,12 +33,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JQosYes = 1
 };
 
-typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
-    JQryMsgAckTypeUnknown = 0,
-    JQryMsgAckTypeHisMsgs,
-    JQryMsgAckTypeSyncConvs
-};
-
 #define kPMsg @"p_msg"
 #define kGMsg @"g_msg"
 #define kQryHisMsgs @"qry_hismsgs"
@@ -50,7 +44,18 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
 @implementation JPublishMsgAck
 @end
 
-@implementation JQryMsgAck
+@implementation JQryAck
+- (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
+    self.index = body.index;
+    self.code = body.code;
+    self.timestamp = body.timestamp;
+}
+@end
+
+@implementation JQryHisMsgsAck
+@end
+
+@implementation JSyncConvsAck
 @end
 
 @implementation JAck
@@ -262,13 +267,14 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
                 ack.ackType = JAckTypeCmdMatchError;
                 return ack;
             }
-            JQryMsgAckType type = [self qryMsgAckTypeWithCmd:cachedCmd];
+            JAckType type = [self ackTypeWithCmd:cachedCmd];
             switch (type) {
-                case JQryMsgAckTypeHisMsgs:
+                case JAckTypeQryHisMsgs:
                     ack = [self queryHistoryMessagesAckWithImWebsocketMsg:msg];
                     break;
                     
-                case JQryMsgAckTypeSyncConvs:
+                case JAckTypeSyncConvs:
+                    ack = [self syncConversationsAckWithImWebsocketMsg:msg];
                     break;
                     
                 default:
@@ -311,9 +317,8 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
 
 - (JMessage *)messageWithDownMsg:(DownMsg *)downMsg {
     JMessage *msg = [[JMessage alloc] init];
-    JConversation *conversation = [[JConversation alloc] init];
-    conversation.conversationType = [self conversationTypeFromChannelType:downMsg.channelType];
-    conversation.conversationId = downMsg.targetId;
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:downMsg.channelType]
+                                                                   conversationId:downMsg.targetId];
     msg.conversation = conversation;
     msg.messageType = downMsg.msgType;
     msg.messageId = downMsg.msgId;
@@ -325,6 +330,17 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
     msg.content = [self contentWithData:downMsg.msgContent
                             contentType:downMsg.msgType];
     return msg;
+}
+
+- (JConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
+    JConversationInfo *info = [[JConversationInfo alloc] init];
+    JConversation *c = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:conversation.channelType]
+                                                                   conversationId:conversation.targetId];
+    info.conversation = c;
+    info.unreadCount = (int)conversation.unreadCount;
+    info.updateTime = conversation.updateTime;
+    info.lastMessage = [self messageWithDownMsg:conversation.msg];
+    return info;
 }
 
 - (JMessageContent *)contentWithData:(NSData *)data
@@ -340,16 +356,13 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
     NSError *e = nil;
     DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[Juggle]Websocket query message parse error, msg is %@", e.description);
+        NSLog(@"[Juggle]Websocket query history messages parse error, msg is %@", e.description);
         ack.ackType = JAckTypeParseError;
         return ack;
     }
-    ack.ackType = JAckTypeQryMsg;
-    JQryMsgAck *a = [[JQryMsgAck alloc] init];
-    a.index = msg.qryAckMsgBody.index;
-    a.code = msg.qryAckMsgBody.code;
-    a.timestamp = msg.qryAckMsgBody.timestamp;
-    a.syncTime = set.syncTime;
+    ack.ackType = JAckTypeQryHisMsgs;
+    JQryHisMsgsAck *a = [[JQryHisMsgsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     a.isFinished = set.isFinished;
     NSMutableArray *arr = [[NSMutableArray alloc] init];
     if (set.msgsArray_Count > 0) {
@@ -359,9 +372,36 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
         }];
     }
     a.msgs = arr;
-    ack.qryMsgAck = a;
+    ack.qryHisMsgsAck = a;
     return ack;
 }
+
+- (JAck *)syncConversationsAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JAck *ack = [[JAck alloc] init];
+    NSError *e = nil;
+    QryConversationsResp *resp = [[QryConversationsResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if (e != nil) {
+        NSLog(@"[Juggle]Websocket sync conversations parse error, msg is %@", e.description);
+        ack.ackType = JAckTypeParseError;
+        return ack;
+    }
+    ack.ackType = JAckTypeSyncConvs;
+    JSyncConvsAck *a = [[JSyncConvsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.isFinished = resp.isFinished;
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    if (resp.conversationsArray_Count > 0) {
+        [resp.conversationsArray enumerateObjectsUsingBlock:^(Conversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            JConversationInfo *info = [self conversationWithPBConversation:obj];
+            [arr addObject:info];
+        }];
+    }
+    a.convs = arr;
+    ack.syncConvsAck = a;
+    return ack;
+}
+
+
 
 #pragma mark - helper
 - (int32_t)channelTypeFromConversationType:(JConversationType)type {
@@ -414,14 +454,14 @@ typedef NS_ENUM(NSUInteger, JQryMsgAckType) {
     return result;
 }
 
-- (JQryMsgAckType)qryMsgAckTypeWithCmd:(NSString *)cmd {
+- (JAckType)ackTypeWithCmd:(NSString *)cmd {
     NSNumber *n = self.cmdAckPair[cmd];
     return n.unsignedIntegerValue;
 }
 
 #pragma mark - getter&setter
 - (NSDictionary *)cmdAckPair {
-    return @{kQryHisMsgs:@(JQryMsgAckTypeHisMsgs),
-             kSyncConvers:@(JQryMsgAckTypeSyncConvs)};
+    return @{kQryHisMsgs:@(JAckTypeQryHisMsgs),
+             kSyncConvers:@(JAckTypeSyncConvs)};
 }
 @end
