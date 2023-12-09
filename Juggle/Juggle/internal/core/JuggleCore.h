@@ -7,6 +7,20 @@
 
 #import <Foundation/Foundation.h>
 #import "JWebSocket.h"
+#import "JDBManager.h"
+
+typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
+    //未连接
+    JConnectionStatusInternalIdle = 0,
+    //已连接
+    JConnectionStatusInternalConnected = 1,
+    //连接断开（用户主动断开）
+    JConnectionStatusInternalDisconnected = 2,
+    //连接中
+    JConnectionStatusInternalConnecting = 3,
+    //连接 token 错误
+    JConnectionStatusInternalTokenIncorrect = 4
+};
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
+@property (nonatomic, strong) JDBManager *dbManager;
+@property (nonatomic, assign) JConnectionStatusInternal status;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, JAckType) {
     JAckTypeParseError,
+    JAckTypeCmdMatchError,
     JAckTypeConnect,
     JAckTypePublishMsg,
     JAckTypeQryMsg
@@ -47,10 +48,8 @@ typedef NS_ENUM(NSUInteger, JAckType) {
 @property (nonatomic, strong) JQryMsgAck *qryMsgAck;
 @end
 
-
-
 @interface JPBData : NSObject
-+ (NSData *)connectDataWithAppKey:(NSString *)appKey
+- (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
                          deviceId:(NSString *)deviceId
                          platform:(NSString *)platform
@@ -62,7 +61,7 @@ typedef NS_ENUM(NSUInteger, JAckType) {
                            ispNum:(NSString *)ispNum
                          clientIp:(NSString *)clientIp;
 
-+ (NSData *)sendMessageDataWithType:(NSString *)contentType
+- (NSData *)sendMessageDataWithType:(NSString *)contentType
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
@@ -70,22 +69,22 @@ typedef NS_ENUM(NSUInteger, JAckType) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
 
-+ (NSData *)queryHisMsgsDataFrom:(JConversation *)conversation
+- (NSData *)queryHisMsgsDataFrom:(JConversation *)conversation
                        startTime:(long long)startTime
                            count:(int)count
                        direction:(JPullDirection)direction
                            index:(int)index;
 
-+ (NSData *)disconnectData:(BOOL)needPush;
+- (NSData *)disconnectData:(BOOL)needPush;
 
-+ (NSData *)syncConversationsData:(long long)startTime
+- (NSData *)syncConversationsData:(long long)startTime
                             count:(int)count
                            userId:(NSString *)userId
                             index:(int)index;
 
-+ (void)registerMessageType:(Class)messageClass;
+- (void)registerMessageType:(Class)messageClass;
 
-+ (JAck *)ackWithData:(NSData *)data;
+- (JAck *)ackWithData:(NSData *)data;
 @end
 
 NS_ASSUME_NONNULL_END

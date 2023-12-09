@@ -21,6 +21,8 @@
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
 @property (nonatomic, assign) int32_t msgIndex;
+@property (nonatomic, strong) NSMutableDictionary *msgBlockDic;
+@property (nonatomic, strong) JPBData *pbData;
 @end
 
 @implementation JWebSocket
@@ -29,6 +31,8 @@
     JWebSocket *ws = [[JWebSocket alloc] init];
     ws.sendQueue = sendQueue;
     ws.receiveQueue = receiveQueue;
+    ws.pbData = [[JPBData alloc] init];
+    ws.msgBlockDic = [[NSMutableDictionary alloc] init];
     ws.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
     ws.sws.delegateDispatchQueue = ws.receiveQueue;
     ws.sws.delegate = ws;
@@ -54,13 +58,14 @@
 }
 
 - (void)registerMessageType:(Class)messageClass {
-    [JPBData registerMessageType:messageClass];
+    [self.pbData registerMessageType:messageClass];
 }
 
+#pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation {
     dispatch_async(self.sendQueue, ^{
-        NSData *d = [JPBData sendMessageDataWithType:[[content class] contentType]
+        NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                              msgData:[content encode]
                                                flags:[[content class] flags]
                                            clientUid:[self createClientUid]
@@ -84,11 +89,13 @@
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-       NSData *d = [JPBData queryHisMsgsDataFrom:conversation
-                                   startTime:startTime
-                                       count:count
-                                   direction:direction
-                                       index:self.msgIndex++];
+        NSArray *arr = [NSArray arrayWithObjects:successBlock, errorBlock, nil];
+        [self setBlockArray:arr forKey:@(self.msgIndex)];
+        NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
+                                            startTime:startTime
+                                                count:count
+                                            direction:direction
+                                                index:self.msgIndex++];
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {
@@ -104,7 +111,9 @@
                   success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                     error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSData *d = [JPBData syncConversationsData:startTime
+        NSArray *arr = [NSArray arrayWithObjects:successBlock, errorBlock, nil];
+        [self setBlockArray:arr forKey:@(self.msgIndex)];
+        NSData *d = [self.pbData syncConversationsData:startTime
                                              count:count
                                             userId:userId
                                              index:self.msgIndex++];
@@ -133,7 +142,7 @@
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
-    JAck *ack = [JPBData ackWithData:data];
+    JAck *ack = [self.pbData ackWithData:data];
     switch (ack.ackType) {
         case JAckTypeParseError:
             break;
@@ -155,7 +164,7 @@
 
 #pragma mark - inner
 - (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
-    NSData *d = [JPBData connectDataWithAppKey:self.appKey
+    NSData *d = [self.pbData connectDataWithAppKey:self.appKey
                                          token:self.token
                                       deviceId:[JUtility getDeviceId]
                                       platform:JPlatform
@@ -174,7 +183,7 @@
 }
 
 - (void)sendDisconnectMsgByWebSocket:(BOOL)needPush {
-    NSData *d = [JPBData disconnectData:needPush];
+    NSData *d = [self.pbData disconnectData:needPush];
     NSError *err = nil;
     [self.sws sendData:d error:&err];
     if (err != nil) {
@@ -203,5 +212,12 @@
 
 - (void)handleQryAckMsg:(JQryMsgAck *)ack {
     NSLog(@"handleQryMsg");
+}
+
+- (void)setBlockArray:(NSArray *)arr
+               forKey:(NSNumber *)index {
+    dispatch_async(self.receiveQueue, ^{
+        [self.msgBlockDic setObject:arr forKey:index];
+    });
 }
 @end

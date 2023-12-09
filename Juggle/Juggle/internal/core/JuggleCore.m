@@ -17,8 +17,17 @@
         self.delegateQueue = dispatch_get_main_queue();
         self.webSocket = [[JWebSocket alloc] initWithSendQueque:self.sendQueue
                                                    receiveQueue:self.receiveQueue];
+        self.dbManager = [[JDBManager alloc] init];
     }
     return self;
 }
 
+
+- (void)setToken:(NSString *)token {
+    if ([_token isEqualToString:token]) {
+        return;
+    }
+    self.userId = @"";
+    _token = token;
+}
 @end

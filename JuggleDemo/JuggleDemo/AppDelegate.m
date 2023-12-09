@@ -42,16 +42,16 @@
 //        [JuggleIM.shared.connectionManager disconnect:NO];
         
         //get remote msgs
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        [JuggleIM.shared.messageManager getRemoteMessagesFrom:c
-//                                                    startTime:[[NSDate date] timeIntervalSince1970]*1000
-//                                                        count:20
-//                                                    direction:JPullDirectionNewToOld
-//                                                      success:nil
-//                                                        error:nil];
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+        [JuggleIM.shared.messageManager getRemoteMessagesFrom:c
+                                                    startTime:[[NSDate date] timeIntervalSince1970]*1000
+                                                        count:20
+                                                    direction:JPullDirectionNewToOld
+                                                      success:nil
+                                                        error:nil];
         
         //sync conversations
-        [JuggleIM.shared.connectionManager syncConversations];
+//        [JuggleIM.shared.connectionManager syncConversations];
     }
 }
 
