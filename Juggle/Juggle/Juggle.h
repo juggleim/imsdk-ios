@@ -17,3 +17,6 @@ FOUNDATION_EXPORT const unsigned char JuggleVersionString[];
 
 
 #import <Juggle/JuggleIM.h>
+#import <Juggle/JTextMessage.h>
+#import <Juggle/JImageMessage.h>
+

@@ -5,8 +5,8 @@
 //  Created by Nathan on 2023/11/27.
 //
 
-#import "JConversationInfo.h"
-#import "JConversation.h"
+#import <Juggle/JConversation.h>
+#import <Juggle/JConversationInfo.h>
 
 @protocol JConversationProtocol <NSObject>
 

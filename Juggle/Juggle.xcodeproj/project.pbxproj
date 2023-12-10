@@ -192,7 +192,7 @@
 		A08AA43C2B1B78FE008B114C /* Message.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42E2B1B78FE008B114C /* Message.pbobjc.h */; };
 		A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */; };
 		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
-		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; };
+		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
 /* End PBXBuildFile section */
 
@@ -811,6 +811,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
 				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3962B19CB78008B114C /* GPBMessage.h in Headers */,
 				A08AA21D2B148BFF008B114C /* JuggleIM.h in Headers */,
@@ -837,7 +838,6 @@
 				A08AA3622B19CB77008B114C /* GPBAny.pbobjc.h in Headers */,
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,
 				A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */,
-				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
 				A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */,
 				A08AA3B62B19DF75008B114C /* JuggleCore.h in Headers */,
 				A08AA24B2B14A546008B114C /* JConversationProtocol.h in Headers */,

@@ -5,9 +5,9 @@
 //  Created by Nathan on 2023/11/27.
 //
 
-#import "JMessage.h"
-#import "JConversation.h"
-#import "JuggleConst.h"
+#import <Juggle/JMessage.h>
+#import <Juggle/JConversation.h>
+#import <Juggle/JuggleConst.h>
 
 @protocol JMessageDelegate <NSObject>
 

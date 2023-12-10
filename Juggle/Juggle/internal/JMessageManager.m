@@ -66,14 +66,12 @@
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
                                success:^(long clientMsgNo, NSString *msgId, long long timestamp) {
-        NSLog(@"[Juggle] sendIMMessage success, clientMsgNo is %d", clientMsgNo);
         self.sendSyncTime = timestamp;
         //TODO: 更新 DB，msgId 和 消息状态
         if (successBlock) {
             successBlock(clientMsgNo);
         }
     } error:^(JErrorCode errorCode, long clientMsgNo) {
-        NSLog(@"[Juggle] sendIMMessage error, clientMsgNo is %d", clientMsgNo);
         if (errorBlock) {
             errorBlock(errorCode, clientMsgNo);
         }

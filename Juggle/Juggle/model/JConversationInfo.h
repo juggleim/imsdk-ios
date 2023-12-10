@@ -6,8 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JConversation.h"
-#import "JMessage.h"
+
+#import <Juggle/JConversation.h>
+#import <Juggle/JMessage.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

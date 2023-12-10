@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JConnectionProtocol.h"
-#import "JMessageProtocol.h"
-#import "JConversationProtocol.h"
+#import <Juggle/JConnectionProtocol.h>
+#import <Juggle/JMessageProtocol.h>
+#import <Juggle/JConversationProtocol.h>
 
 @protocol JConnectionProtocol;
 @protocol JMessageProtocol;

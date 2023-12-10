@@ -4,7 +4,7 @@
 //
 //  Created by Nathan on 2023/11/27.
 //
-#import "JuggleConst.h"
+#import <Juggle/JuggleConst.h>
 
 @protocol JConnectionDelegate <NSObject>
 /// 连接状态变化的回调
