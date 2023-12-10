@@ -10,9 +10,9 @@
 /// 连接状态变化的回调
 /// - Parameters:
 ///   - status: 变化后的状态
-///   - code: 连接错误码，在 JConnectionStatusDisconnected 状态时有效，其它状态均为 0。
+///   - code: 连接错误码，在 JConnectionStatusFailure 状态时有效，其它状态均为 0。
 - (void)connectionStatusDidChange:(JConnectionStatus)status
-                     errorCode:(JErrorCode)code;
+                        errorCode:(JErrorCode)code;
 @end
 
 @protocol JConnectionProtocol <NSObject>
@@ -22,7 +22,7 @@
 
 - (void)setDelegate:(id<JConnectionDelegate>) delegate;
 
-// TODO: delete
+// TODO: delete，测试用接口
 - (void)syncConversations;
 
 @end

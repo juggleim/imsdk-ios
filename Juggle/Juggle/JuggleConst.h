@@ -21,7 +21,9 @@ typedef NS_ENUM(NSUInteger, JConnectionStatus) {
     //连接中
     JConnectionStatusConnecting = 3,
     //连接 token 错误
-    JConnectionStatusTokenIncorrect = 4
+    JConnectionStatusTokenIncorrect = 4,
+    //连接失败，用户可根据 JErrorCode 来决定相应的处理
+    JConnectionStatusFailure = 5
 };
 
 typedef NS_ENUM(NSUInteger, JErrorCode) {

@@ -46,17 +46,12 @@
 
 - (void)connectCompleteWithCode:(JErrorCode)error
                          userId:(NSString *)userId {
-    dispatch_async(self.core.delegateQueue, ^{
-        NSLog(@"[Juggle] connect complete, error code is %lu", (unsigned long)error);
-        if (self.delegate) {
-            if (error == JErrorCodeNone) {
-                self.core.userId = userId;
-                [self.delegate connectionStatusDidChange:JConnectionStatusConnected errorCode:JErrorCodeNone];
-            } else {
-                [self reconnect];
-            }
-        }
-    });
+    if (error == JErrorCodeNone) {
+        self.core.userId = userId;
+        [self changeStatus:JConnectionStatusInternalConnected];
+    } else {
+        [self reconnect];
+    }
 }
 
 
@@ -87,9 +82,11 @@
             default:
                 break;
         }
-        if (self.delegate) {
-            [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
-        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (self.delegate) {
+                [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
+            }
+        });
     });
 }
 
