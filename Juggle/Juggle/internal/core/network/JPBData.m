@@ -37,11 +37,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kGMsg @"g_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
+#define kNtf @"ntf"
+#define kMsg @"msg"
 
 @implementation JConnectAck
 @end
 
 @implementation JPublishMsgAck
+@end
+
+@implementation JPublishMsgNtf
 @end
 
 @implementation JQryAck
@@ -286,15 +291,30 @@ typedef NS_ENUM(NSUInteger, JQos) {
         case ImWebsocketMsg_Testof_OneOfCase_PublishMsgBody:
         {
             NSError *err = nil;
-            DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
-            if (err != nil) {
-                NSLog(@"[Juggle]Websocket receive publish message parse error, msg is %@", err.description);
-                obj.rcvType = JPBRcvTypeParseError;
-                return obj;
+            if ([msg.publishMsgBody.topic isEqualToString:kNtf]) {
+                Notify *ntf = [[Notify alloc] initWithData:msg.publishMsgBody.data_p error:&err];
+                if (err != nil) {
+                    NSLog(@"[Juggle]Websocket receive publish message notify parse error, msg is %@", err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                if (ntf.type == NotifyType_Msg) {
+                    obj.rcvType = JPBRcvTypePublishMsgNtf;
+                    JPublishMsgNtf *n = [[JPublishMsgNtf alloc] init];
+                    n.syncTime = ntf.syncTime;
+                    obj.publishMsgNtf = n;
+                }
+            } else if ([msg.publishMsgBody.topic isEqualToString:kMsg]) {
+                DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
+                if (err != nil) {
+                    NSLog(@"[Juggle]Websocket receive publish message parse error, msg is %@", err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                obj.rcvType = JPBRcvTypePublishMsg;
+                JConcreteMessage *message = [self messageWithDownMsg:downMsg];
+                obj.rcvMessage = message;
             }
-            obj.rcvType = JPBRcvTypePublishMsg;
-            JConcreteMessage *message = [self messageWithDownMsg:downMsg];
-            obj.rcvMessage = message;
         }
             break;
             

@@ -21,7 +21,13 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePublishMsgAck,
     JPBRcvTypeQryHisMsgsAck,
     JPBRcvTypeSyncConvsAck,
-    JPBRcvTypePublishMsg
+    JPBRcvTypePublishMsg,
+    JPBRcvTypePublishMsgNtf
+};
+
+typedef NS_ENUM(NSUInteger, JPBNotifyType) {
+    JPBNotifyTypeDefault = 0,
+    JPBNotifyTypeMsg
 };
 
 @interface JConnectAck : NSObject
@@ -52,6 +58,10 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
 @property (nonatomic, strong) NSArray<JConversationInfo *> *convs;
 @end
 
+@interface JPublishMsgNtf : NSObject
+@property (nonatomic, assign) long long syncTime;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -59,6 +69,7 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
 @property (nonatomic, strong) JQryHisMsgsAck *qryHisMsgsAck;
 @property (nonatomic, strong) JSyncConvsAck *syncConvsAck;
 @property (nonatomic, strong) JConcreteMessage *rcvMessage;
+@property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @end
 
 @interface JPBData : NSObject

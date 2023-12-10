@@ -13,6 +13,11 @@
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
+//TODO: 消息收发时间，应该放到 DB 里
+//TODO: 消息拉取回来在 messageManager 里做排重
+//sendSyncTime 和 receiveSyncTime 都在 receiveQueue 里处理
+@property (nonatomic, assign) long long sendSyncTime;
+@property (nonatomic, assign) long long receiveSyncTime;
 @end
 
 @implementation JMessageManager
@@ -44,10 +49,36 @@
 //}
 //
 
-- (void)sendMessage:(JMessageContent *)content
-     inConversation:(JConversation *)conversation {
+- (JMessage *)sendMessage:(JMessageContent *)content
+     inConversation:(JConversation *)conversation
+            success:(void (^)(long))successBlock
+              error:(void (^)(JErrorCode, long))errorBlock{
+    //TODO: save message
+    JMessage *message = [[JMessage alloc] init];
+    message.content = content;
+    message.conversation = conversation;
+    message.messageType = [[content class] contentType];
+    message.direction = JMessageDirectionSend;
+    message.messageState = JMessageStateSending;
+    message.senderUserId = self.core.userId;
+    
     [self.core.webSocket sendIMMessage:content
-                        inConversation:conversation];
+                        inConversation:conversation
+                           clientMsgNo:message.clientMsgNo
+                               success:^(long clientMsgNo, NSString *msgId, long long timestamp) {
+        NSLog(@"[Juggle] sendIMMessage success, clientMsgNo is %d", clientMsgNo);
+        self.sendSyncTime = timestamp;
+        //TODO: 更新 DB，msgId 和 消息状态
+        if (successBlock) {
+            successBlock(clientMsgNo);
+        }
+    } error:^(JErrorCode errorCode, long clientMsgNo) {
+        NSLog(@"[Juggle] sendIMMessage error, clientMsgNo is %d", clientMsgNo);
+        if (errorBlock) {
+            errorBlock(errorCode, clientMsgNo);
+        }
+    }];
+    return message;
 }
 
 - (void)registerMessageType:(Class)messageClass {
@@ -56,11 +87,18 @@
 
 #pragma mark - JWebSocketMessageDelegate
 - (void)messageDidReceive:(JConcreteMessage *)message {
+    self.receiveSyncTime = message.timestamp;
     dispatch_async(self.core.delegateQueue, ^{
         if (self.delegate) {
             [self.delegate messageDidReceive:message];
         }
     });
+}
+
+- (void)syncNotify:(long long)syncTime {
+    if (syncTime > self.receiveSyncTime) {
+        
+    }
 }
 
 #pragma mark - internal

@@ -12,6 +12,37 @@
 #import "JuggleConstInternal.h"
 #import "JPBData.h"
 
+@interface JBlockObj : NSObject
+@end
+
+@implementation JBlockObj
+@end
+
+@interface JSendMessageObj : JBlockObj
+@property (nonatomic, assign) long clientMsgNo;
+@property (nonatomic, copy) void (^successBlock)(long clientMsgNo, NSString *msgId, long long timestamp);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode, long clientMsgNo);
+@end
+
+@implementation JSendMessageObj
+@end
+
+@interface JQryHisMsgsObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull msgs, BOOL isRemaining);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
+@end
+
+@implementation JQryHisMsgsObj
+@end
+
+@interface JSyncConvsObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, BOOL isRemaining);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
+@end
+
+@implementation JSyncConvsObj
+@end
+
 @interface JWebSocket () <SRWebSocketDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
@@ -22,7 +53,7 @@
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
 @property (nonatomic, assign) int32_t msgIndex;
-@property (nonatomic, strong) NSMutableDictionary *msgBlockDic;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockObj *> *msgBlockDic;
 @property (nonatomic, strong) JPBData *pbData;
 @end
 
@@ -68,8 +99,12 @@
 
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(nonnull JConversation *)conversation {
+       inConversation:(nonnull JConversation *)conversation
+          clientMsgNo:(long)clientMsgNo
+              success:(void (^)(long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+                error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                              msgData:[content encode]
                                                flags:[[content class] flags]
@@ -82,7 +117,15 @@
         [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket send IM message error, msg is %@", err.description);
-            //TODO: callback
+            if (errorBlock) {
+                errorBlock(JErrorCodeWebSocketParseFailure, clientMsgNo);
+            }
+        } else {
+            JSendMessageObj *obj = [[JSendMessageObj alloc] init];
+            obj.clientMsgNo = clientMsgNo;
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
         }
     });
 }
@@ -94,8 +137,10 @@
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSArray *arr = [NSArray arrayWithObjects:successBlock, errorBlock, nil];
-        [self setBlockArray:arr forKey:@(self.msgIndex)];
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self setBlockObject:obj forKey:@(self.msgIndex)];
         NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
                                             startTime:startTime
                                                 count:count
@@ -116,8 +161,10 @@
                   success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                     error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSArray *arr = [NSArray arrayWithObjects:successBlock, errorBlock, nil];
-        [self setBlockArray:arr forKey:@(self.msgIndex)];
+        JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self setBlockObject:obj forKey:@(self.msgIndex)];
         NSData *d = [self.pbData syncConversationsData:startTime
                                              count:count
                                             userId:userId
@@ -165,6 +212,10 @@
             break;
         case JPBRcvTypePublishMsg:
             [self handleReceiveMessage:obj.rcvMessage];
+            break;
+        case JPBRcvTypePublishMsgNtf:
+            [self handlePublishMsgNtf:obj.publishMsgNtf];
+            break;
         default:
             break;
     }
@@ -218,6 +269,16 @@
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
     NSLog(@"handlePublishAckMsg, msgId is %@", ack.msgId);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSendMessageObj class]]) {
+        JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;
+        if (ack.code != 0) {
+            sendMessageObj.errorBlock(ack.code, sendMessageObj.clientMsgNo);
+        } else {
+            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp);
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
@@ -235,10 +296,23 @@
     }
 }
 
-- (void)setBlockArray:(NSArray *)arr
+- (void)handlePublishMsgNtf:(JPublishMsgNtf *)ntf {
+    NSLog(@"handlePublishMsgNtf");
+    if (self.messageDelegate) {
+        [self.messageDelegate syncNotify:ntf.syncTime];
+    }
+}
+
+- (void)setBlockObject:(JBlockObj *)obj
                forKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{
-        [self.msgBlockDic setObject:arr forKey:index];
+        [self.msgBlockDic setObject:obj forKey:index];
+    });
+}
+
+- (void)removeBlockObjectForKey:(NSNumber *)index {
+    dispatch_async(self.receiveQueue, ^{
+        [self.msgBlockDic removeObjectForKey:index];
     });
 }
 @end

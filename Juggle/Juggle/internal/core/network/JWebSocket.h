@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JWebSocketMessageDelegate <NSObject>
 - (void)messageDidReceive:(JConcreteMessage *)message;
+- (void)syncNotify:(long long)syncTime;
 @end
 
 @interface JWebSocket : NSObject
@@ -35,7 +36,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerMessageType:(Class)messageClass;
 
 - (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(JConversation *)conversation;
+       inConversation:(JConversation *)conversation
+          clientMsgNo:(long)clientMsgNo
+              success:(void (^)(long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+                error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock;
+
 - (void)queryHisMsgsFrom:(JConversation *)conversation
                startTime:(long long)startTime
                    count:(int)count
