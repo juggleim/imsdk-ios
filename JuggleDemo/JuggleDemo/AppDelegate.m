@@ -25,7 +25,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [JuggleIM.shared initWithAppKey:@"appkey"];
-    [JuggleIM.shared.connectionManager connectWithToken:kToken5];
+    [JuggleIM.shared.connectionManager connectWithToken:kToken1];
     [JuggleIM.shared.connectionManager setDelegate:self];
     
     return YES;
@@ -34,9 +34,9 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     if (JConnectionStatusConnected == status) {
         //send message
-//        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
+        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+        [JuggleIM.shared.messageManager sendMessage:text inConversation:conversation];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];
@@ -51,7 +51,7 @@
 //                                                        error:nil];
         
         //sync conversations
-        [JuggleIM.shared.connectionManager syncConversations];
+//        [JuggleIM.shared.connectionManager syncConversations];
     }
 }
 

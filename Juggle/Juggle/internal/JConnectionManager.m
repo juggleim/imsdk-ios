@@ -37,6 +37,7 @@
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[Juggle] disconnect, receivePush is %d", receivePush);
+    [self changeStatus:JConnectionStatusInternalDisconnected];
     [self.core.webSocket disconnect:receivePush];
 }
 
