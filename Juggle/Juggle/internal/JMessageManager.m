@@ -86,18 +86,36 @@
 }
 
 #pragma mark - JWebSocketMessageDelegate
-- (void)messageDidReceive:(JConcreteMessage *)message {
-    self.receiveSyncTime = message.timestamp;
-    dispatch_async(self.core.delegateQueue, ^{
-        if (self.delegate) {
-            [self.delegate messageDidReceive:message];
+- (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
+                isFinished:(BOOL)isFinished {
+    //TODO: 排重
+    //TODO: cmd message 吞掉
+    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.direction == JMessageDirectionSend) {
+            if (obj.timestamp > self.sendSyncTime) {
+                self.sendSyncTime = obj.timestamp;
+            }
+        } else {
+            if (obj.timestamp > self.receiveSyncTime) {
+                self.receiveSyncTime = obj.timestamp;
+            }
         }
-    });
+        dispatch_async(self.core.delegateQueue, ^{
+            if (self.delegate) {
+                [self.delegate messageDidReceive:obj];
+            }
+        });
+    }];
+    
+    if (!isFinished) {
+        [self sync];
+    }
+    
 }
 
 - (void)syncNotify:(long long)syncTime {
     if (syncTime > self.receiveSyncTime) {
-        
+        [self sync];
     }
 }
 
@@ -106,7 +124,7 @@
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock {
     [self.core.webSocket queryHisMsgsFrom:conversation
                                 startTime:startTime
@@ -114,6 +132,12 @@
                                 direction:direction
                                   success:successBlock
                                     error:errorBlock];
+}
+
+- (void)sync {
+    [self.core.webSocket syncMessagesWithReceiveTime:self.receiveSyncTime
+                                            sendTime:self.sendSyncTime
+                                              userId:self.core.userId];
 }
 
 @end

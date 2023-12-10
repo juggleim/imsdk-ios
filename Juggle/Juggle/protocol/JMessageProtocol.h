@@ -12,7 +12,7 @@
 @protocol JMessageDelegate <NSObject>
 
 - (void)messageDidReceive:(JMessage *)message;
-- (void)messageDidUpdate:(JMessage *)message;
+//- (void)messageDidUpdate:(JMessage *)message;
 
 @end
 
@@ -78,6 +78,6 @@
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 @end

@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kGMsg @"g_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
+#define kSyncMsgs @"sync_msgs"
 #define kNtf @"ntf"
 #define kMsg @"msg"
 
@@ -177,6 +178,28 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return sm.data;
 }
 
+- (NSData *)syncMessagesDataWithReceiveTime:(long long)receiveTime
+                                   sendTime:(long long)sendTime
+                                     userId:(NSString *)userId
+                                      index:(int)index {
+    SyncMsgReq *r = [[SyncMsgReq alloc] init];
+    r.syncTime = receiveTime;
+    r.containsSendBox = YES;
+    r.sendBoxSyncTime = sendTime;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = kSyncMsgs;
+    body.targetId = userId;
+    body.data_p = r.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)queryHisMsgsDataFrom:(JConversation *)conversation
                        startTime:(long long)startTime
                            count:(int)count
@@ -282,6 +305,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self syncConversationsAckWithImWebsocketMsg:msg];
                     break;
                     
+                case JPBRcvTypeSyncMsgsAck:
+                    obj = [self syncMsgsAckWithImWebsocketMsg:msg];
+                    break;
                 default:
                     break;
             }
@@ -292,6 +318,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         {
             NSError *err = nil;
             if ([msg.publishMsgBody.topic isEqualToString:kNtf]) {
+                NSLog(@"[Juggle] publish msg notify");
                 Notify *ntf = [[Notify alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
                     NSLog(@"[Juggle]Websocket receive publish message notify parse error, msg is %@", err.description);
@@ -305,6 +332,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj.publishMsgNtf = n;
                 }
             } else if ([msg.publishMsgBody.topic isEqualToString:kMsg]) {
+                NSLog(@"[Juggle] publish msg direct");
                 DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
                     NSLog(@"[Juggle]Websocket receive publish message parse error, msg is %@", err.description);
@@ -385,15 +413,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (JPBRcvObj *)queryHistoryMessagesAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
-    JPBRcvObj *ack = [[JPBRcvObj alloc] init];
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
         NSLog(@"[Juggle]Websocket query history messages parse error, msg is %@", e.description);
-        ack.rcvType = JPBRcvTypeParseError;
-        return ack;
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
     }
-    ack.rcvType = JPBRcvTypeQryHisMsgsAck;
+    obj.rcvType = JPBRcvTypeQryHisMsgsAck;
     JQryHisMsgsAck *a = [[JQryHisMsgsAck alloc] init];
     [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     a.isFinished = set.isFinished;
@@ -405,20 +433,20 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }];
     }
     a.msgs = arr;
-    ack.qryHisMsgsAck = a;
-    return ack;
+    obj.qryHisMsgsAck = a;
+    return obj;
 }
 
 - (JPBRcvObj *)syncConversationsAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
-    JPBRcvObj *ack = [[JPBRcvObj alloc] init];
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     QryConversationsResp *resp = [[QryConversationsResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
         NSLog(@"[Juggle]Websocket sync conversations parse error, msg is %@", e.description);
-        ack.rcvType = JPBRcvTypeParseError;
-        return ack;
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
     }
-    ack.rcvType = JPBRcvTypeSyncConvsAck;
+    obj.rcvType = JPBRcvTypeSyncConvsAck;
     JSyncConvsAck *a = [[JSyncConvsAck alloc] init];
     [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     a.isFinished = resp.isFinished;
@@ -430,11 +458,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }];
     }
     a.convs = arr;
-    ack.syncConvsAck = a;
-    return ack;
+    obj.syncConvsAck = a;
+    return obj;
 }
 
-
+- (JPBRcvObj *)syncMsgsAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if (e != nil) {
+        NSLog(@"[Juggle]Websocket sync messages parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeSyncMsgsAck;
+    //sync 和 query history 共用一个 ack
+    JQryHisMsgsAck *a = [[JQryHisMsgsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.isFinished = set.isFinished;
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    if (set.msgsArray_Count > 0) {
+        [set.msgsArray enumerateObjectsUsingBlock:^(DownMsg * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            JConcreteMessage *msg = [self messageWithDownMsg:obj];
+            [arr addObject:msg];
+        }];
+    }
+    a.msgs = arr;
+    obj.qryHisMsgsAck = a;
+    return obj;
+}
 
 #pragma mark - helper
 - (int32_t)channelTypeFromConversationType:(JConversationType)type {
@@ -495,6 +547,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #pragma mark - getter&setter
 - (NSDictionary *)cmdAckPair {
     return @{kQryHisMsgs:@(JPBRcvTypeQryHisMsgsAck),
-             kSyncConvers:@(JPBRcvTypeSyncConvsAck)};
+             kSyncConvers:@(JPBRcvTypeSyncConvsAck),
+             kSyncMsgs:@(JPBRcvTypeSyncMsgsAck)
+    };
 }
 @end

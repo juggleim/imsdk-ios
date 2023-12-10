@@ -19,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>
-- (void)messageDidReceive:(JConcreteMessage *)message;
+- (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
+                isFinished:(BOOL)isFinished;
 - (void)syncNotify:(long long)syncTime;
 @end
 
@@ -41,16 +42,20 @@ NS_ASSUME_NONNULL_BEGIN
               success:(void (^)(long clientMsgNo, NSString *msgId, long long timestamp))successBlock
                 error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock;
 
+- (void)syncMessagesWithReceiveTime:(long long)receiveTime
+                           sendTime:(long long)sendTime
+                             userId:(NSString *)userId;
+
 - (void)queryHisMsgsFrom:(JConversation *)conversation
                startTime:(long long)startTime
                    count:(int)count
                direction:(JPullDirection)direction
-                 success:(void (^)(NSArray *messages, BOOL isRemaining))successBlock
+                 success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                    error:(void (^)(JErrorCode code))errorBlock;
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId
-                  success:(void (^)(NSArray *conversations, BOOL isRemaining))successBlock
+                  success:(void (^)(NSArray *conversations, BOOL isFinished))successBlock
                     error:(void (^)(JErrorCode code))errorBlock;
 @end
 

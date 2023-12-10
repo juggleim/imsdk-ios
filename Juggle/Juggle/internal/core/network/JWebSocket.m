@@ -28,7 +28,7 @@
 @end
 
 @interface JQryHisMsgsObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull msgs, BOOL isRemaining);
+@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull msgs, BOOL isFinished);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
 @end
 
@@ -36,7 +36,7 @@
 @end
 
 @interface JSyncConvsObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, BOOL isRemaining);
+@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, BOOL isFinished);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
 @end
 
@@ -130,6 +130,22 @@
     });
 }
 
+- (void)syncMessagesWithReceiveTime:(long long)receiveTime
+                           sendTime:(long long)sendTime
+                             userId:(NSString *)userId {
+    dispatch_async(self.sendQueue, ^{
+        NSData *d = [self.pbData syncMessagesDataWithReceiveTime:receiveTime
+                                                        sendTime:sendTime
+                                                          userId:userId
+                                                           index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket sync messages error, msg is %@", err.description);
+        }
+    });
+}
+
 - (void)queryHisMsgsFrom:(JConversation *)conversation
                startTime:(long long)startTime
                    count:(int)count
@@ -216,6 +232,9 @@
         case JPBRcvTypePublishMsgNtf:
             [self handlePublishMsgNtf:obj.publishMsgNtf];
             break;
+        case JPBRcvTypeSyncMsgsAck:
+            [self handleSyncMsgsAck:obj.qryHisMsgsAck];
+            break;
         default:
             break;
     }
@@ -289,10 +308,17 @@
     NSLog(@"handleSyncConvsAck");
 }
 
+//sync 和 queryHisMsgs 共用一个 ack
+- (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
+    if (self.messageDelegate) {
+        [self.messageDelegate messagesDidReceive:ack.msgs isFinished:ack.isFinished];
+    }
+}
+
 - (void)handleReceiveMessage:(JConcreteMessage *)message {
     NSLog(@"handleReceiveMessage");
     if (self.messageDelegate) {
-        [self.messageDelegate messageDidReceive:message];
+        [self.messageDelegate messagesDidReceive:@[message] isFinished:YES];
     }
 }
 
