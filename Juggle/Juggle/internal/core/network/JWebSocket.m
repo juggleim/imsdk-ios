@@ -14,6 +14,7 @@
 
 @interface JWebSocket () <SRWebSocketDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
+@property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, strong) SRWebSocket *sws;
@@ -55,6 +56,10 @@
 
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate {
     _connectDelegate = delegate;
+}
+
+- (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate {
+    _messageDelegate = delegate;
 }
 
 - (void)registerMessageType:(Class)messageClass {
@@ -142,22 +147,24 @@
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
-    JAck *ack = [self.pbData ackWithData:data];
-    switch (ack.ackType) {
-        case JAckTypeParseError:
+    JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
+    switch (obj.rcvType) {
+        case JPBRcvTypeParseError:
             break;
-        case JAckTypeConnect:
-            [self handleConnectAckMsg:ack.connectAck];
+        case JPBRcvTypeConnectAck:
+            [self handleConnectAckMsg:obj.connectAck];
             break;
-        case JAckTypePublishMsg:
-            [self handlePublishAckMsg:ack.publishMsgAck];
+        case JPBRcvTypePublishMsgAck:
+            [self handlePublishAckMsg:obj.publishMsgAck];
             break;
-        case JAckTypeQryHisMsgs:
-            [self handleQryHisMsgs:ack.qryHisMsgsAck];
+        case JPBRcvTypeQryHisMsgsAck:
+            [self handleQryHisMsgs:obj.qryHisMsgsAck];
             break;
-        case JAckTypeSyncConvs:
-            [self handleSyncConvsAck:ack.syncConvsAck];
+        case JPBRcvTypeSyncConvsAck:
+            [self handleSyncConvsAck:obj.syncConvsAck];
             break;
+        case JPBRcvTypePublishMsg:
+            [self handleReceiveMessage:obj.rcvMessage];
         default:
             break;
     }
@@ -219,6 +226,13 @@
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
     NSLog(@"handleSyncConvsAck");
+}
+
+- (void)handleReceiveMessage:(JConcreteMessage *)message {
+    NSLog(@"handleReceiveMessage");
+    if (self.messageDelegate) {
+        [self.messageDelegate messageDidReceive:message];
+    }
 }
 
 - (void)setBlockArray:(NSArray *)arr

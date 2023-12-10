@@ -10,7 +10,7 @@
 #import "JTextMessage.h"
 #import "JImageMessage.h"
 
-@interface JMessageManager ()
+@interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
 @end
@@ -20,6 +20,7 @@
 - (instancetype)initWithCore:(JuggleCore *)core {
     JMessageManager *m = [[JMessageManager alloc] init];
     m.core = core;
+    [m.core.webSocket setMessageDelegate:m];
     [m.core.webSocket registerMessageType:[JTextMessage class]];
     [m.core.webSocket registerMessageType:[JImageMessage class]];
     return m;
@@ -51,6 +52,15 @@
 
 - (void)registerMessageType:(Class)messageClass {
     [self.core.webSocket registerMessageType:messageClass];
+}
+
+#pragma mark - JWebSocketMessageDelegate
+- (void)messageDidReceive:(JConcreteMessage *)message {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (self.delegate) {
+            [self.delegate messageDidReceive:message];
+        }
+    });
 }
 
 #pragma mark - internal

@@ -15,7 +15,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate>
 
 @end
 
@@ -27,6 +27,7 @@
     [JuggleIM.shared initWithAppKey:@"appkey"];
     [JuggleIM.shared.connectionManager connectWithToken:kToken1];
     [JuggleIM.shared.connectionManager setDelegate:self];
+    [JuggleIM.shared.messageManager setDelegate:self];
     
     return YES;
 }
@@ -53,6 +54,11 @@
         //sync conversations
 //        [JuggleIM.shared.connectionManager syncConversations];
     }
+}
+
+- (void)messageDidReceive:(JMessage *)message {
+    JTextMessage *text = message.content;
+    NSLog(@"messageDidReceive, content is %@", text.content);
 }
 
 

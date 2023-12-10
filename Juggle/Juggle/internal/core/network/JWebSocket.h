@@ -9,12 +9,17 @@
 #import "JuggleConst.h"
 #import "JMessageContent.h"
 #import "JConversation.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol JWebSocketConnectDelegate <NSObject>
 - (void)connectCompleteWithCode:(JErrorCode)error
                          userId:(NSString *)userId;
+@end
+
+@protocol JWebSocketMessageDelegate <NSObject>
+- (void)messageDidReceive:(JConcreteMessage *)message;
 @end
 
 @interface JWebSocket : NSObject
@@ -24,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
           token:(NSString *)token;
 - (void)disconnect:(BOOL)needPush;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
+
+- (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
 
 - (void)registerMessageType:(Class)messageClass;
 

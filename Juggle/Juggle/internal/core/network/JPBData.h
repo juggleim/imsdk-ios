@@ -10,16 +10,18 @@
 #import "JMessage.h"
 #import "JConversationInfo.h"
 #import "JuggleConst.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, JAckType) {
-    JAckTypeParseError,
-    JAckTypeCmdMatchError,
-    JAckTypeConnect,
-    JAckTypePublishMsg,
-    JAckTypeQryHisMsgs,
-    JAckTypeSyncConvs
+typedef NS_ENUM(NSUInteger, JPBRcvType) {
+    JPBRcvTypeParseError,
+    JPBRcvTypeCmdMatchError,
+    JPBRcvTypeConnectAck,
+    JPBRcvTypePublishMsgAck,
+    JPBRcvTypeQryHisMsgsAck,
+    JPBRcvTypeSyncConvsAck,
+    JPBRcvTypePublishMsg
 };
 
 @interface JConnectAck : NSObject
@@ -48,15 +50,15 @@ typedef NS_ENUM(NSUInteger, JAckType) {
 @interface JSyncConvsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
 @property (nonatomic, strong) NSArray<JConversationInfo *> *convs;
-
 @end
 
-@interface JAck : NSObject
-@property (nonatomic, assign) JAckType ackType;
+@interface JPBRcvObj : NSObject
+@property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;
 @property (nonatomic, strong) JQryHisMsgsAck *qryHisMsgsAck;
 @property (nonatomic, strong) JSyncConvsAck *syncConvsAck;
+@property (nonatomic, strong) JConcreteMessage *rcvMessage;
 @end
 
 @interface JPBData : NSObject
@@ -95,7 +97,7 @@ typedef NS_ENUM(NSUInteger, JAckType) {
 
 - (void)registerMessageType:(Class)messageClass;
 
-- (JAck *)ackWithData:(NSData *)data;
+- (JPBRcvObj *)rcvObjWithData:(NSData *)data;
 @end
 
 NS_ASSUME_NONNULL_END
