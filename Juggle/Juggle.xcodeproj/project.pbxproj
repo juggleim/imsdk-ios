@@ -13,8 +13,6 @@
 		A05EED632B20826B00809F13 /* JReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED612B20826A00809F13 /* JReachability.h */; };
 		A06A2F092B20B2B6009B9588 /* JPBData.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F072B20B2B6009B9588 /* JPBData.h */; };
 		A06A2F0A2B20B2B6009B9588 /* JPBData.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F082B20B2B6009B9588 /* JPBData.m */; };
-		A06A2F0E2B220ADF009B9588 /* JMessage+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F0C2B220ADF009B9588 /* JMessage+internal.h */; };
-		A06A2F0F2B220ADF009B9588 /* JMessage+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F0D2B220ADF009B9588 /* JMessage+internal.m */; };
 		A06A2F132B233351009B9588 /* JDBHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F112B233351009B9588 /* JDBHelper.h */; };
 		A06A2F142B233351009B9588 /* JDBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F122B233351009B9588 /* JDBHelper.m */; };
 		A06A2F192B233A08009B9588 /* JMessageDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F172B233A07009B9588 /* JMessageDB.h */; };
@@ -23,6 +21,8 @@
 		A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F1C2B233A15009B9588 /* JConversationDB.m */; };
 		A06A2F212B233A6C009B9588 /* JDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F1F2B233A6C009B9588 /* JDBManager.h */; };
 		A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F202B233A6C009B9588 /* JDBManager.m */; };
+		A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */; };
+		A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */; };
 		A08AA1E72B148B68008B114C /* Juggle.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* Juggle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JuggleIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JuggleIM.m */; };
@@ -204,8 +204,6 @@
 		A06A2F072B20B2B6009B9588 /* JPBData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPBData.h; sourceTree = "<group>"; };
 		A06A2F082B20B2B6009B9588 /* JPBData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPBData.m; sourceTree = "<group>"; };
 		A06A2F0B2B20B34B009B9588 /* JugglePBConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JugglePBConst.h; sourceTree = "<group>"; };
-		A06A2F0C2B220ADF009B9588 /* JMessage+internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JMessage+internal.h"; sourceTree = "<group>"; };
-		A06A2F0D2B220ADF009B9588 /* JMessage+internal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JMessage+internal.m"; sourceTree = "<group>"; };
 		A06A2F112B233351009B9588 /* JDBHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDBHelper.h; sourceTree = "<group>"; };
 		A06A2F122B233351009B9588 /* JDBHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDBHelper.m; sourceTree = "<group>"; };
 		A06A2F172B233A07009B9588 /* JMessageDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageDB.h; sourceTree = "<group>"; };
@@ -214,6 +212,8 @@
 		A06A2F1C2B233A15009B9588 /* JConversationDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationDB.m; sourceTree = "<group>"; };
 		A06A2F1F2B233A6C009B9588 /* JDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDBManager.h; sourceTree = "<group>"; };
 		A06A2F202B233A6C009B9588 /* JDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDBManager.m; sourceTree = "<group>"; };
+		A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteMessage.h; sourceTree = "<group>"; };
+		A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteMessage.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* Juggle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Juggle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* Juggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Juggle.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JuggleIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIM.h; sourceTree = "<group>"; };
@@ -416,8 +416,8 @@
 			children = (
 				A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */,
 				A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */,
-				A06A2F0C2B220ADF009B9588 /* JMessage+internal.h */,
-				A06A2F0D2B220ADF009B9588 /* JMessage+internal.m */,
+				A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */,
+				A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -844,9 +844,9 @@
 				A08AA3A32B19CB78008B114C /* GPBUnknownField.h in Headers */,
 				A08AA36F2B19CB77008B114C /* GPBDictionary.h in Headers */,
 				A08AA4102B19EEDB008B114C /* SRWebSocket.h in Headers */,
-				A06A2F0E2B220ADF009B9588 /* JMessage+internal.h in Headers */,
 				A08AA3752B19CB77008B114C /* Duration.pbobjc.h in Headers */,
 				A08AA2542B14AF2E008B114C /* JConversation.h in Headers */,
+				A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */,
 				A08AA3A42B19CB78008B114C /* GPBUnknownFieldSet_PackagePrivate.h in Headers */,
 				A08AA3732B19CB77008B114C /* Api.pbobjc.h in Headers */,
 				A08AA37A2B19CB78008B114C /* Timestamp.pbobjc.h in Headers */,
@@ -999,6 +999,7 @@
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
 				A08AA28A2B175726008B114C /* JConversationManager.m in Sources */,
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,
+				A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
 				A05EED622B20826B00809F13 /* JReachability.m in Sources */,
@@ -1022,7 +1023,6 @@
 				A08AA2552B14AF2E008B114C /* JConversation.m in Sources */,
 				A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */,
 				A08AA2512B14AF1F008B114C /* JMessage.m in Sources */,
-				A06A2F0F2B220ADF009B9588 /* JMessage+internal.m in Sources */,
 				A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */,
 				A08AA2742B162A11008B114C /* JFMDatabase.m in Sources */,
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
@@ -1211,6 +1211,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.im.Juggle;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1240,6 +1241,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.im.Juggle;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";

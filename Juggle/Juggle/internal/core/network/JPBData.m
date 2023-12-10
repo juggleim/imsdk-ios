@@ -10,7 +10,7 @@
 #import "Appmessages.pbobjc.h"
 #import "JugglePBConst.h"
 #import "JMessageContent+internal.h"
-#import "JMessage+internal.h"
+#import "JConcreteMessage.h"
 #import <objc/runtime.h>
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
@@ -316,7 +316,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (JMessage *)messageWithDownMsg:(DownMsg *)downMsg {
-    JMessage *msg = [[JMessage alloc] init];
+    JConcreteMessage *msg = [[JConcreteMessage alloc] init];
     JConversation *conversation = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:downMsg.channelType]
                                                                    conversationId:downMsg.targetId];
     msg.conversation = conversation;
