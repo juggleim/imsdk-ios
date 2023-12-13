@@ -50,20 +50,21 @@ NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS sync ("
                                         ")";
 
 @implementation JDBManager
-- (void)openIMDB:(NSString *)appKey
+- (BOOL)openIMDB:(NSString *)appKey
           userId:(NSString *)userId {
     NSString *path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:YES];
     if (path.length > 0) {
-        [[JDBHelper sharedInstance] openDB:path];
+        return [[JDBHelper sharedInstance] openDB:path];
     } else {
-        [self buildDB:appKey
-               userId:(NSString *)userId];
+        return [self buildDB:appKey
+                      userId:(NSString *)userId];
     }
 }
 
 #pragma mark - internal
-- (void)buildDB:(NSString *)appKey
+- (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {
+    BOOL result = NO;
     NSString *path = [self dbDirectoryWith:appKey userId:userId];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:path
@@ -72,8 +73,9 @@ NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS sync ("
                                                         error:nil];
     }
     path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:NO];
-    [[JDBHelper sharedInstance] openDB:path];
+    result = [[JDBHelper sharedInstance] openDB:path];
     [self createTables];
+    return result;
 }
 
 - (void)createTables {

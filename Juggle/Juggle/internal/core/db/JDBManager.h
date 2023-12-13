@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JDBManager : NSObject
 
-- (void)openIMDB:(NSString *)appKey
+- (BOOL)openIMDB:(NSString *)appKey
           userId:(NSString *)userId;
 
 @end

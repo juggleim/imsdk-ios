@@ -33,7 +33,13 @@ static JuggleIM *_instance;
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
+    if ([self.core.appKey isEqualToString:appKey]) {
+        return;
+    }
+    //appKey 更新了，则原来缓存的 userId 和 token 不再适用
     self.core.appKey = appKey;
+    self.core.userId = @"";
+    self.core.token = @"";
     NSLog(@"init appkey is %@", appKey);
 }
 

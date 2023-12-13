@@ -13,6 +13,9 @@
 ///   - code: 连接错误码，在 JConnectionStatusFailure 状态时有效，其它状态均为 0。
 - (void)connectionStatusDidChange:(JConnectionStatus)status
                         errorCode:(JErrorCode)code;
+
+- (void)dbDidOpen;
+- (void)dbDidClose;
 @end
 
 @protocol JConnectionProtocol <NSObject>

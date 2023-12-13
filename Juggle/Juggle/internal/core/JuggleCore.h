@@ -24,6 +24,11 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     JConnectionStatusInternalFailure
 };
 
+typedef NS_ENUM(NSUInteger, JDBStatus) {
+    JDBStatusClosed,
+    JDBStatusOpen
+};
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JuggleCore : NSObject
@@ -35,7 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
 @property (nonatomic, strong) JDBManager *dbManager;
-@property (nonatomic, assign) JConnectionStatusInternal status;
+@property (nonatomic, assign) JConnectionStatusInternal connectionStatus;
+@property (nonatomic, assign) JDBStatus dbStatus;
 @end
 
 NS_ASSUME_NONNULL_END

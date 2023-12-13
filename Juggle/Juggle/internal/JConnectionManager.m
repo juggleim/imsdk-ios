@@ -19,13 +19,24 @@
 - (instancetype)initWithCore:(JuggleCore *)core {
     JConnectionManager *m = [[JConnectionManager alloc] init];
     [core.webSocket setConnectDelegate:m];
-    core.status = JConnectionStatusInternalIdle;
+    core.connectionStatus = JConnectionStatusInternalIdle;
     m.core = core;
     return m;
 }
 
 - (void)connectWithToken:(NSString *)token {
-    self.core.token = token;
+    //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
+    
+    if (![self.core.token isEqualToString:token]) {
+        //token 更新了，则原来缓存的 userId 不再适用
+        self.core.token = token;
+        self.core.userId = @"";
+    }
+    if (self.core.userId.length > 0) {
+        if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
+            [self dbOpenNotice:JDBStatusOpen];
+        }
+    }
     [self changeStatus:JConnectionStatusInternalConnecting];
     
     
@@ -49,7 +60,13 @@
                          userId:(NSString *)userId {
     if (error == JErrorCodeNone) {
         self.core.userId = userId;
-//        [self.core.dbManager openIMDB:self.core.appKey userId:userId];
+        if (self.core.dbStatus != JDBStatusOpen) {
+            if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
+                [self dbOpenNotice:JDBStatusOpen];
+            } else {
+                NSLog(@"[Juggle] db open fail");
+            }
+        }
         [self changeStatus:JConnectionStatusInternalConnected];
     } else {
         [self reconnect];
@@ -60,7 +77,7 @@
 #pragma mark -- internal
 - (void)changeStatus:(JConnectionStatusInternal)status {
     dispatch_async(self.core.sendQueue, ^{
-        self.core.status = status;
+        self.core.connectionStatus = status;
         if (status == JConnectionStatusInternalIdle) {
             return;
         }
@@ -87,6 +104,21 @@
         dispatch_async(self.core.delegateQueue, ^{
             if (self.delegate) {
                 [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
+            }
+        });
+    });
+}
+
+- (void)dbOpenNotice:(JDBStatus)status {
+    dispatch_async(self.core.sendQueue, ^{
+        self.core.dbStatus = status;
+        dispatch_async(self.core.delegateQueue, ^{
+            if (self.delegate) {
+                if (status == JDBStatusOpen) {
+                    [self.delegate dbDidOpen];
+                } else {
+                    [self.delegate dbDidClose];
+                }
             }
         });
     });

@@ -32,6 +32,10 @@
     return YES;
 }
 
+- (void)dbDidOpen {
+    NSLog(@"lifei, dbDidOpen");
+}
+
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
