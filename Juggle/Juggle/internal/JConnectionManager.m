@@ -31,7 +31,7 @@
     
     
     //TODO: navi
-//    [self.core.dbManager openIMDB:self userId:<#(nonnull NSString *)#>]
+//    [self.core.dbManager openIMDB:self.core.appKey userId:];
     [self.core.webSocket connect:self.core.appKey token:token];
 }
 
@@ -49,6 +49,7 @@
                          userId:(NSString *)userId {
     if (error == JErrorCodeNone) {
         self.core.userId = userId;
+//        [self.core.dbManager openIMDB:self.core.appKey userId:userId];
         [self changeStatus:JConnectionStatusInternalConnected];
     } else {
         [self reconnect];

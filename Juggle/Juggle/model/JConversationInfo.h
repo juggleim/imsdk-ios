@@ -18,6 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int unreadCount;
 @property (nonatomic, assign) long long updateTime;
 @property (nonatomic, strong) JMessage *lastMessage;
+@property (nonatomic, assign) BOOL isTop;
+@property (nonatomic, assign) long long topTime;
+@property (nonatomic, assign) BOOL mute;
+@property (nonatomic, copy) NSString *draft;
 
 @end
 

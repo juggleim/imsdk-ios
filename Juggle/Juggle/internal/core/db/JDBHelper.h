@@ -20,10 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)closeDB;
 
-- (BOOL)executeUpdate:(NSString *)sql withArgumentsInArray:(NSArray *)arguments;
+- (BOOL)executeUpdate:(NSString *)sql withArgumentsInArray:(nullable NSArray *)arguments;
 
 - (void)executeQuery:(NSString *)sql
-withArgumentsInArray:(NSArray *)arguments
+withArgumentsInArray:(nullable NSArray *)arguments
           syncResult:(void (^)(JFMResultSet *resultSet))syncResultBlock;
 
 - (void)executeTransaction:(void (^)(JFMDatabase *db, BOOL *rollback))transactionBlock;

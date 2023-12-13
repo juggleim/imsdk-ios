@@ -310,6 +310,7 @@
 
 //sync 和 queryHisMsgs 共用一个 ack
 - (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
+    NSLog(@"handleSyncMsgsAck");
     if (self.messageDelegate) {
         [self.messageDelegate messagesDidReceive:ack.msgs isFinished:ack.isFinished];
     }

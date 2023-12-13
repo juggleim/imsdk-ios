@@ -112,6 +112,7 @@
 }
 
 - (void)syncNotify:(long long)syncTime {
+    NSLog(@"[Juggle] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.receiveSyncTime);
     if (syncTime > self.receiveSyncTime) {
         [self sync];
     }
