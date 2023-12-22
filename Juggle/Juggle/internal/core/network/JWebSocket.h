@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol JWebSocketConnectDelegate <NSObject>
 - (void)connectCompleteWithCode:(JErrorCode)error
                          userId:(NSString *)userId;
+- (void)webSocketDidFail;
+- (void)webSocketDidClose;
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>

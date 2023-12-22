@@ -203,10 +203,16 @@
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
     NSLog(@"[Juggle] websocket did fail with error, %@", error.description);
+    if (self.connectDelegate) {
+        [self.connectDelegate webSocketDidFail];
+    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     NSLog(@"[Juggle] websocket did close with code(%ld), reason(%@)", (long)code, reason);
+    if (self.connectDelegate) {
+        [self.connectDelegate webSocketDidClose];
+    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {

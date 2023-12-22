@@ -21,7 +21,9 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     //连接 token 错误
     JConnectionStatusInternalTokenIncorrect = 4,
     //
-    JConnectionStatusInternalFailure
+    JConnectionStatusInternalFailure,
+    
+    JConnectionStatusInternalWaitingForConnecting
 };
 
 typedef NS_ENUM(NSUInteger, JDBStatus) {

@@ -56,6 +56,7 @@
     _delegate = delegate;
 }
 
+#pragma mark - JWebSocketConnectDelegate
 - (void)connectCompleteWithCode:(JErrorCode)error
                          userId:(NSString *)userId {
     if (error == JErrorCodeNone) {
@@ -69,16 +70,31 @@
         }
         [self changeStatus:JConnectionStatusInternalConnected];
     } else {
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
         [self reconnect];
     }
 }
 
+- (void)webSocketDidFail {
+    [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+    [self reconnect];
+}
+
+- (void)webSocketDidClose {
+    dispatch_async(self.core.sendQueue, ^{
+        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected) {
+            return;
+        }
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+        [self reconnect];
+    });
+}
 
 #pragma mark -- internal
 - (void)changeStatus:(JConnectionStatusInternal)status {
     dispatch_async(self.core.sendQueue, ^{
-        self.core.connectionStatus = status;
         if (status == JConnectionStatusInternalIdle) {
+            self.core.connectionStatus = status;
             return;
         }
         JConnectionStatus outStatus = JConnectionStatusIdle;
@@ -97,10 +113,22 @@
                 
             case JConnectionStatusInternalTokenIncorrect:
                 outStatus = JConnectionStatusTokenIncorrect;
+                break;
+                
+            case JConnectionStatusInternalWaitingForConnecting:
+                //已经在连接中，不需要再对外抛回调
+                if (self.core.connectionStatus == JConnectionStatusInternalConnecting ||
+                    self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
+                    self.core.connectionStatus = JConnectionStatusInternalWaitingForConnecting;
+                    return;
+                }
+                outStatus = JConnectionStatusConnecting;
+                break;
                 
             default:
                 break;
         }
+        self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
             if (self.delegate) {
                 [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
@@ -125,6 +153,7 @@
 }
 
 - (void)reconnect {
+    //需要在 sendQueue 里
     NSLog(@"[Juggle] reconnect");
 }
 
