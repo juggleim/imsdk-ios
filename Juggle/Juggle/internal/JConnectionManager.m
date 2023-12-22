@@ -69,6 +69,8 @@
             }
         }
         [self changeStatus:JConnectionStatusInternalConnected];
+        //TODO: operation queue
+        [self syncConversations];
     } else {
         [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
         [self reconnect];

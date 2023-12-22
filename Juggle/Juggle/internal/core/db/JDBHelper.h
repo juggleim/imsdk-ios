@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, readonly, assign) BOOL isDBOpened;
 
-+ (instancetype)sharedInstance;
-
 - (BOOL)openDB:(NSString *)path;
 
 - (void)closeDB;

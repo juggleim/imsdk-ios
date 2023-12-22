@@ -7,54 +7,26 @@
 
 #import "JDBManager.h"
 #import "JDBHelper.h"
+#import "JMessageDB.h"
+#import "JConversationDB.h"
+#import "JSyncDB.h"
 
 #define kJuggle @"juggle"
 #define kJuggleDBName @"juggledb"
 
-NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
-                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                        "conversation_type SMALLINT,"
-                                        "conversation_id VARCHAR (64),"
-                                        "type VARCHAR (64),"
-                                        "message_uid VARCHAR (64),"
-                                        "direction BOOLEAN,"
-                                        "state SMALLINT,"
-                                        "has_read BOOLEAN,"
-                                        "timestamp INTEGER,"
-                                        "sender VARCHAR (64),"
-                                        "content TEXT,"
-                                        "extra TEXT,"
-                                        "message_index INTEGER,"
-                                        "is_deleted BOOLEAN"
-                                        ")";
-
-NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversation_info ("
-                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                        "conversation_type SMALLINT,"
-                                        "conversation_id VARCHAR (64),"
-                                        "draft TEXT,"
-                                        "timestamp INTEGER,"
-                                        "last_message_id INTEGER,"
-                                        "last_read_message_index INTEGER,"
-                                        "is_top BOOLEAN,"
-                                        "top_time INTEGER,"
-                                        "mute BOOLEAN,"
-                                        "last_mention_message_id INTEGER"
-                                        ")";
-
-NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS sync ("
-                                        "user_id VARCHAR(64) PRIMARY KEY,"
-                                        "conversation_time INTEGER,"
-                                        "send_time INTEGER,"
-                                        "receive_time INTEGER"
-                                        ")";
+@interface JDBManager ()
+@property (nonatomic, strong) JDBHelper *dbHelper;
+@property (nonatomic, strong) JMessageDB *messageDb;
+@property (nonatomic, strong) JConversationDB *conversationDb;
+@property (nonatomic, strong) JSyncDB *syncDb;
+@end
 
 @implementation JDBManager
 - (BOOL)openIMDB:(NSString *)appKey
           userId:(NSString *)userId {
     NSString *path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:YES];
     if (path.length > 0) {
-        return [[JDBHelper sharedInstance] openDB:path];
+        return [self.dbHelper openDB:path];
     } else {
         return [self buildDB:appKey
                       userId:(NSString *)userId];
@@ -73,15 +45,15 @@ NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS sync ("
                                                         error:nil];
     }
     path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:NO];
-    result = [[JDBHelper sharedInstance] openDB:path];
+    result = [self.dbHelper openDB:path];
     [self createTables];
     return result;
 }
 
 - (void)createTables {
-    [[JDBHelper sharedInstance] executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
-    [[JDBHelper sharedInstance] executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
-    [[JDBHelper sharedInstance] executeUpdate:kCreateSyncTable withArgumentsInArray:nil];
+    [self.messageDb createTables];
+    [self.conversationDb createTables];
+    [self.syncDb createTables];
 }
 
 //DB 目录
@@ -105,6 +77,17 @@ NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS sync ("
         return @"";
     }
     return path;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.dbHelper = [[JDBHelper alloc] init];
+        self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
+        self.messageDb = [[JMessageDB alloc] initWithDBHelper:self.dbHelper];
+        self.syncDb = [[JSyncDB alloc] initWithDBHelper:self.dbHelper];
+    }
+    return self;
 }
 
 @end

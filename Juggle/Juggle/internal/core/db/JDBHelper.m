@@ -13,15 +13,6 @@
 
 @implementation JDBHelper
 
-+ (instancetype)sharedInstance {
-    static id instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[[self class] alloc] init];
-    });
-    return instance;
-}
-
 - (BOOL)openDB:(NSString *)path {
     [self closeDB];
     if (path.length > 0) {

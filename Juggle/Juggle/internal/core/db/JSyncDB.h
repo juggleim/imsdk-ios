@@ -1,8 +1,8 @@
 //
-//  JMessageDB.h
+//  JSyncDB.h
 //  Juggle
 //
-//  Created by Nathan on 2023/12/8.
+//  Created by Nathan on 2023/12/22.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JMessageDB : NSObject
+@interface JSyncDB : NSObject
 
 - (void)createTables;
 
