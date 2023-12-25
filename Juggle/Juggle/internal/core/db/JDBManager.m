@@ -9,7 +9,7 @@
 #import "JDBHelper.h"
 #import "JMessageDB.h"
 #import "JConversationDB.h"
-#import "JSyncDB.h"
+#import "JProfileDB.h"
 
 #define kJuggle @"juggle"
 #define kJuggleDBName @"juggledb"
@@ -18,7 +18,7 @@
 @property (nonatomic, strong) JDBHelper *dbHelper;
 @property (nonatomic, strong) JMessageDB *messageDb;
 @property (nonatomic, strong) JConversationDB *conversationDb;
-@property (nonatomic, strong) JSyncDB *syncDb;
+@property (nonatomic, strong) JProfileDB *profileDb;
 @end
 
 @implementation JDBManager
@@ -31,6 +31,31 @@
         return [self buildDB:appKey
                       userId:(NSString *)userId];
     }
+}
+
+#pragma mark - sync table
+- (long long)getConversationSyncTime {
+    return [self.profileDb getConversationSyncTime];
+}
+
+- (long long)getMessageSendSyncTime {
+    return [self.profileDb getMessageSendSyncTime];
+}
+
+- (long long)getMessageReceiveSyncTime {
+    return [self.profileDb getMessageReceiveSyncTime];
+}
+
+- (void)setConversationSyncTime:(long long)time {
+    [self.profileDb setConversationSyncTime:time];
+}
+
+- (void)setMessageSendSyncTime:(long long)time {
+    [self.profileDb setMessageSendSyncTime:time];
+}
+
+- (void)setMessageReceiveSyncTime:(long long)time {
+    [self.profileDb setMessageReceiveSyncTime:time];
 }
 
 #pragma mark - internal
@@ -53,7 +78,7 @@
 - (void)createTables {
     [self.messageDb createTables];
     [self.conversationDb createTables];
-    [self.syncDb createTables];
+    [self.profileDb createTables];
 }
 
 //DB 目录
@@ -85,7 +110,7 @@
         self.dbHelper = [[JDBHelper alloc] init];
         self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
         self.messageDb = [[JMessageDB alloc] initWithDBHelper:self.dbHelper];
-        self.syncDb = [[JSyncDB alloc] initWithDBHelper:self.dbHelper];
+        self.profileDb = [[JProfileDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;
 }

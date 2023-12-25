@@ -1,20 +1,21 @@
 //
-//  JDBManager.h
+//  JSyncDB.h
 //  Juggle
 //
-//  Created by Nathan on 2023/12/8.
+//  Created by Nathan on 2023/12/22.
 //
 
 #import <Foundation/Foundation.h>
+#import "JDBHelper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JDBManager : NSObject
+@interface JProfileDB : NSObject
 
-- (BOOL)openIMDB:(NSString *)appKey
-          userId:(NSString *)userId;
+- (void)createTables;
 
-#pragma mark - sync table
+- (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
+
 - (long long)getConversationSyncTime;
 - (long long)getMessageSendSyncTime;
 - (long long)getMessageReceiveSyncTime;
@@ -22,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setConversationSyncTime:(long long)time;
 - (void)setMessageSendSyncTime:(long long)time;
 - (void)setMessageReceiveSyncTime:(long long)time;
-
 @end
 
 NS_ASSUME_NONNULL_END
