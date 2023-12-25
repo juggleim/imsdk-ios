@@ -196,6 +196,8 @@
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
 		A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376132B3571CE0076CB84 /* JProfileDB.h */; };
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
+		A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */; };
+		A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -391,6 +393,8 @@
 		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
 		A0F376132B3571CE0076CB84 /* JProfileDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JProfileDB.h; sourceTree = "<group>"; };
 		A0F376142B3571CE0076CB84 /* JProfileDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JProfileDB.m; sourceTree = "<group>"; };
+		A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteConversationInfo.h; sourceTree = "<group>"; };
+		A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteConversationInfo.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -422,6 +426,8 @@
 				A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */,
 				A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */,
 				A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */,
+				A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */,
+				A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -870,6 +876,7 @@
 				A08AA42F2B1B78FE008B114C /* Onlinestatus.pbobjc.h in Headers */,
 				A08AA26E2B162A11008B114C /* JFMDatabase.h in Headers */,
 				A06A2F092B20B2B6009B9588 /* JPBData.h in Headers */,
+				A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */,
 				A08AA4322B1B78FE008B114C /* Tokens.pbobjc.h in Headers */,
 				A08AA37B2B19CB78008B114C /* Type.pbobjc.h in Headers */,
 				A08AA39B2B19CB78008B114C /* GPBDescriptor_PackagePrivate.h in Headers */,
@@ -1004,6 +1011,7 @@
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
+				A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */,
 				A08AA28A2B175726008B114C /* JConversationManager.m in Sources */,
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,
 				A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */,

@@ -25,9 +25,11 @@ static JuggleIM *_instance;
         _instance = [[self alloc] init];
         JuggleCore *core = [[JuggleCore alloc] init];
         _instance.core = core;
-        _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core];
         _instance.messageManager = [[JMessageManager alloc] initWithCore:core];
         _instance.conversationManager = [[JConversationManager alloc] initWithCore:core];
+        _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
+                                                           conversationManager:_instance.conversationManager
+                                                                messageManager:_instance.messageManager];
     });
     return _instance;
 }

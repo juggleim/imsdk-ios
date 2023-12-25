@@ -55,4 +55,26 @@
     _token = token;
     [[NSUserDefaults standardUserDefaults] setObject:token forKey:kToken];
 }
+
+- (void)getSyncTimeFromDB {
+    _conversationSyncTime = [self.dbManager getConversationSyncTime];
+    _messageSendSyncTime = [self.dbManager getMessageSendSyncTime];
+    _messageReceiveSyncTime = [self.dbManager getMessageReceiveSyncTime];
+}
+
+- (void)setConversationSyncTime:(long long)conversationSyncTime {
+    _conversationSyncTime = conversationSyncTime;
+    [self.dbManager setConversationSyncTime:conversationSyncTime];
+}
+
+- (void)setMessageSendSyncTime:(long long)messageSendSyncTime {
+    _messageSendSyncTime = messageSendSyncTime;
+    [self.dbManager setMessageSendSyncTime:messageSendSyncTime];
+}
+
+- (void)setMessageReceiveSyncTime:(long long)messageReceiveSyncTime {
+    _messageReceiveSyncTime = messageReceiveSyncTime;
+    [self.dbManager setMessageReceiveSyncTime:messageReceiveSyncTime];
+}
+
 @end

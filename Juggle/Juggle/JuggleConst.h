@@ -29,7 +29,7 @@ typedef NS_ENUM(NSUInteger, JConnectionStatus) {
 typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeNone = 0,
     
-    JErrorCodeWebSocketParseFailure = 21001,
+    JErrorCodeWebSocketFailure = 21001,
 };
 
 /*!

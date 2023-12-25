@@ -118,7 +118,7 @@
         if (err != nil) {
             NSLog(@"WebSocket send IM message error, msg is %@", err.description);
             if (errorBlock) {
-                errorBlock(JErrorCodeWebSocketParseFailure, clientMsgNo);
+                errorBlock(JErrorCodeWebSocketFailure, clientMsgNo);
             }
         } else {
             JSendMessageObj *obj = [[JSendMessageObj alloc] init];
@@ -153,10 +153,7 @@
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
-        obj.successBlock = successBlock;
-        obj.errorBlock = errorBlock;
-        [self setBlockObject:obj forKey:@(self.msgIndex)];
+        NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
                                             startTime:startTime
                                                 count:count
@@ -166,7 +163,14 @@
         [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket query history message error, msg is %@", err.description);
-            //TODO: callback
+            if (errorBlock) {
+                errorBlock(JErrorCodeWebSocketFailure);
+            }
+        } else {
+            JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
         }
     });
 }
@@ -177,10 +181,7 @@
                   success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                     error:(void (^)(JErrorCode))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
-        obj.successBlock = successBlock;
-        obj.errorBlock = errorBlock;
-        [self setBlockObject:obj forKey:@(self.msgIndex)];
+        NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData syncConversationsData:startTime
                                              count:count
                                             userId:userId
@@ -189,7 +190,14 @@
         [self.sws sendData:d error:&err];
         if (err != nil) {
             NSLog(@"WebSocket sync conversations error, msg is %@", err.description);
-            //TODO: callback
+            if (errorBlock) {
+                errorBlock(JErrorCodeWebSocketFailure);
+            }
+        } else {
+            JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
         }
     });
 }
@@ -312,6 +320,15 @@
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
     NSLog(@"handleSyncConvsAck");
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSyncConvsObj class]]) {
+        JSyncConvsObj *syncConvsObj = (JSyncConvsObj *)obj;
+        if (ack.code != 0) {
+            syncConvsObj.errorBlock(ack.code);
+        } else {
+            syncConvsObj.successBlock(ack.convs, ack.isFinished);
+        }
+    }
 }
 
 //sync 和 queryHisMsgs 共用一个 ack

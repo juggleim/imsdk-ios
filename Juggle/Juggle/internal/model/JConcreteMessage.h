@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConcreteMessage : JMessage
-@property (nonatomic, assign) int64_t msgIndex;
+@property (nonatomic, assign) long long msgIndex;
 @end
 
 NS_ASSUME_NONNULL_END

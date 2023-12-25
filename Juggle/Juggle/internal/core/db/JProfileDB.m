@@ -37,7 +37,7 @@ NSString *const kValue = @"value";
            withArgumentsInArray:@[kConversationTime]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
-            long long time = [[resultSet stringForColumn:kValue] longLongValue];
+            time = [[resultSet stringForColumn:kValue] longLongValue];
         }
     }];
     return time;
@@ -49,7 +49,7 @@ NSString *const kValue = @"value";
            withArgumentsInArray:@[kSendTime]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
-            long long time = [[resultSet stringForColumn:kValue] longLongValue];
+            time = [[resultSet stringForColumn:kValue] longLongValue];
         }
     }];
     return time;
@@ -61,7 +61,7 @@ NSString *const kValue = @"value";
            withArgumentsInArray:@[kReceiveTime]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
-            long long time = [[resultSet stringForColumn:kReceiveTime] longLongValue];
+            time = [[resultSet stringForColumn:kReceiveTime] longLongValue];
         }
     }];
     return time;

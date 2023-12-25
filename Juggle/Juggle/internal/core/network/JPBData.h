@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JConversation.h"
 #import "JMessage.h"
-#import "JConversationInfo.h"
+#import "JConcreteConversationInfo.h"
 #import "JuggleConst.h"
 #import "JConcreteMessage.h"
 
@@ -56,7 +56,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 
 @interface JSyncConvsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
-@property (nonatomic, strong) NSArray<JConversationInfo *> *convs;
+@property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *convs;
 @end
 
 @interface JPublishMsgNtf : NSObject

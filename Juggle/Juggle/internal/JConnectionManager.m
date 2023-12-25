@@ -10,17 +10,23 @@
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JuggleCore *core;
+@property (nonatomic, strong) JConversationManager *conversationManager;
+@property (nonatomic, strong) JMessageManager *messageManager;
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
 
 @end
 
 @implementation JConnectionManager
 
-- (instancetype)initWithCore:(JuggleCore *)core {
+- (instancetype)initWithCore:(JuggleCore *)core
+         conversationManager:(nonnull JConversationManager *)conversationManager
+              messageManager:(nonnull JMessageManager *)messageManager {
     JConnectionManager *m = [[JConnectionManager alloc] init];
     [core.webSocket setConnectDelegate:m];
     core.connectionStatus = JConnectionStatusInternalIdle;
     m.core = core;
+    m.conversationManager = conversationManager;
+    m.messageManager = messageManager;
     return m;
 }
 
@@ -70,7 +76,7 @@
         }
         [self changeStatus:JConnectionStatusInternalConnected];
         //TODO: operation queue
-        [self syncConversations];
+        [self.conversationManager syncConversations];
     } else {
         [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
         [self reconnect];
@@ -142,6 +148,9 @@
 - (void)dbOpenNotice:(JDBStatus)status {
     dispatch_async(self.core.sendQueue, ^{
         self.core.dbStatus = status;
+        if (status == JDBStatusOpen) {
+            [self.core getSyncTimeFromDB];
+        }
         dispatch_async(self.core.delegateQueue, ^{
             if (self.delegate) {
                 if (status == JDBStatusOpen) {
@@ -157,17 +166,6 @@
 - (void)reconnect {
     //需要在 sendQueue 里
     NSLog(@"[Juggle] reconnect");
-}
-
-- (void)syncConversations {
-    [self.core.webSocket syncConversations:0
-                                     count:100
-                                    userId:self.core.userId
-                                   success:^(NSArray * _Nonnull conversations, BOOL isFinished) {
-        
-    } error:^(JErrorCode code) {
-        
-    }];
 }
 
 @end

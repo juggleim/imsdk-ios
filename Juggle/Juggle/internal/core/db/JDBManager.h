@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JConcreteConversationInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setConversationSyncTime:(long long)time;
 - (void)setMessageSendSyncTime:(long long)time;
 - (void)setMessageReceiveSyncTime:(long long)time;
+
+#pragma mark - conversation table
+- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations;
+
+
+#pragma mark - message table
 
 @end
 

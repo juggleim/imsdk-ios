@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JDBHelper.h"
+#import "JConcreteConversationInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)createTables;
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
+
+- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations;
+
 
 @end
 

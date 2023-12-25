@@ -39,16 +39,16 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        //send message
-        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-        [JuggleIM.shared.messageManager sendMessage:text
-                                     inConversation:conversation
-                                            success:^(long clientMsgNo) {
-            NSLog(@"lifei, sendMessage success, ");
-        } error:^(JErrorCode errorCode, long messageId) {
-            NSLog(@"lifei, sendMessage error");
-        }];
+//        //send message
+//        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
+//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+//        [JuggleIM.shared.messageManager sendMessage:text
+//                                     inConversation:conversation
+//                                            success:^(long clientMsgNo) {
+//            NSLog(@"lifei, sendMessage success, ");
+//        } error:^(JErrorCode errorCode, long messageId) {
+//            NSLog(@"lifei, sendMessage error");
+//        }];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];

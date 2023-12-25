@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long topTime;
 @property (nonatomic, assign) BOOL mute;
 @property (nonatomic, copy) NSString *draft;
+//TODO: mention
+//@property (nonatomic, strong) JMessage *lastMentionMessage;
 
 @end
 

@@ -393,14 +393,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return msg;
 }
 
-- (JConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
-    JConversationInfo *info = [[JConversationInfo alloc] init];
+- (JConcreteConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
+    JConcreteConversationInfo *info = [[JConcreteConversationInfo alloc] init];
     JConversation *c = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:conversation.channelType]
                                                                    conversationId:conversation.targetId];
     info.conversation = c;
     info.unreadCount = (int)conversation.unreadCount;
     info.updateTime = conversation.updateTime;
     info.lastMessage = [self messageWithDownMsg:conversation.msg];
+    info.lastReadMessageIndex = conversation.latestReadedMsgIndex;
+    //TODO: mention
+//    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;
 }
 
@@ -453,7 +456,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSMutableArray *arr = [[NSMutableArray alloc] init];
     if (resp.conversationsArray_Count > 0) {
         [resp.conversationsArray enumerateObjectsUsingBlock:^(Conversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            JConversationInfo *info = [self conversationWithPBConversation:obj];
+            JConcreteConversationInfo *info = [self conversationWithPBConversation:obj];
             [arr addObject:info];
         }];
     }

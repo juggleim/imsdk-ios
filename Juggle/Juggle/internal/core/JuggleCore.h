@@ -42,8 +42,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
 @property (nonatomic, strong) JDBManager *dbManager;
+//send queue
 @property (nonatomic, assign) JConnectionStatusInternal connectionStatus;
 @property (nonatomic, assign) JDBStatus dbStatus;
+//receive queue
+@property (nonatomic, assign) long long conversationSyncTime;
+@property (nonatomic, assign) long long messageSendSyncTime;
+@property (nonatomic, assign) long long messageReceiveSyncTime;
+
+- (void)getSyncTimeFromDB;
 @end
 
 NS_ASSUME_NONNULL_END

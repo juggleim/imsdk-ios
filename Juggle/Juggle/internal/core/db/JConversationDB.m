@@ -20,6 +20,10 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "mute BOOLEAN,"
                                         "last_mention_message_id INTEGER"
                                         ")";
+NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
+                                        "(conversation_type, conversation_id, timestamp, last_message_id,"
+                                        "last_read_message_index, is_top, mute, last_mention_message_id)"
+                                        "values (?, ?, ?, ?, ?, ?, ?, ?)";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -29,6 +33,14 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
 
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
+}
+
+- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations {
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), obj.lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.mute), @(0)];//TODO: mention
+        }];
+    }];
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

@@ -58,6 +58,13 @@
     [self.profileDb setMessageReceiveSyncTime:time];
 }
 
+#pragma mark - conversation table
+- (void)insertConversations:(NSArray *)conversations {
+    [self.conversationDb insertConversations:conversations];
+}
+
+#pragma mark - message table
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {

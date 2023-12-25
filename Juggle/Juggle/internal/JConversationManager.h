@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationManager : NSObject <JConversationProtocol>
 - (instancetype)initWithCore:(JuggleCore *)core;
+- (void)syncConversations;
 @end
 
 NS_ASSUME_NONNULL_END
