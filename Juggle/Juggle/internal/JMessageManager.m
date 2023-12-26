@@ -9,6 +9,8 @@
 #import "JuggleConst.h"
 #import "JTextMessage.h"
 #import "JImageMessage.h"
+#import "JFileMessage.h"
+#import "JVoiceMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
@@ -28,6 +30,8 @@
     [m.core.webSocket setMessageDelegate:m];
     [m.core.webSocket registerMessageType:[JTextMessage class]];
     [m.core.webSocket registerMessageType:[JImageMessage class]];
+    [m.core.webSocket registerMessageType:[JFileMessage class]];
+    [m.core.webSocket registerMessageType:[JVoiceMessage class]];
     return m;
 }
 
