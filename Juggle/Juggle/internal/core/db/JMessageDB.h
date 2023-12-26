@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JDBHelper.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 
-- (nullable JMessage *)getMessageWithMessageId:(NSString *)messageId;
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
 @end
 
 NS_ASSUME_NONNULL_END

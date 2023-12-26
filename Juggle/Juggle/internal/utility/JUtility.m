@@ -12,12 +12,12 @@
 
 @import CoreTelephony;
 
-#define kUUID @"JUUID"
+#define jUUID @"JUUID"
 
 @implementation JUtility
 
 + (NSString *)getDeviceId {
-    NSString *uuid = [[NSUserDefaults standardUserDefaults] objectForKey:kUUID];
+    NSString *uuid = [[NSUserDefaults standardUserDefaults] objectForKey:jUUID];
     if (uuid.length == 0) {
         CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
         NSString *UUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
@@ -29,7 +29,7 @@
                                         range:NSMakeRange(0, UUID.length)];
 
         uuid = [UUID_temp copy];
-        [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:kUUID];
+        [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:jUUID];
     }
     return uuid;
 }

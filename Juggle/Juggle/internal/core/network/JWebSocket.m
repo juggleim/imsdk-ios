@@ -93,10 +93,6 @@
     _messageDelegate = delegate;
 }
 
-- (void)registerMessageType:(Class)messageClass {
-    [self.pbData registerMessageType:messageClass];
-}
-
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation

@@ -20,23 +20,23 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "mute BOOLEAN,"
                                         "last_mention_message_id VARCHAR (64)"
                                         ")";
-NSString *const kCreateConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
+NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
                                         "(conversation_type, conversation_id, timestamp, last_message_id,"
                                         "last_read_message_index, is_top, mute, last_mention_message_id)"
                                         "values (?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 
-NSString *const kConversationType = @"conversation_type";
-NSString *const kConversationId = @"conversation_id";
-NSString *const kDraft = @"draft";
-NSString *const kTimestamp = @"timestamp";
-NSString *const kLastMessageId = @"last_message_id";
-NSString *const kLastReadMessageIndex = @"last_read_message_index";
-NSString *const kIsTop = @"is_top";
-NSString *const kTopTime = @"top_time";
-NSString *const kMute = @"mute";
-NSString *const kLastMentionMessageId = @"last_mention_message_id";
+NSString *const jConversationType = @"conversation_type";
+NSString *const jConversationId = @"conversation_id";
+NSString *const jDraft = @"draft";
+NSString *const jConversationTimestamp = @"timestamp";
+NSString *const jLastMessageId = @"last_message_id";
+NSString *const jLastReadMessageIndex = @"last_read_message_index";
+NSString *const jIsTop = @"is_top";
+NSString *const jTopTime = @"top_time";
+NSString *const jMute = @"mute";
+NSString *const jLastMentionMessageId = @"last_mention_message_id";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -59,13 +59,16 @@ NSString *const kLastMentionMessageId = @"last_mention_message_id";
 
 - (JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation {
     __block JConcreteConversationInfo *info;
+    __block NSString *lastMessageId;
     [self.dbHelper executeQuery:kGetConversation
            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
             info = [self conversationInfoWith:resultSet];
+            lastMessageId = [resultSet stringForColumn:jLastMessageId];
         }
     }];
+    info.lastMessage = [self.messageDB getMessageWithMessageId:lastMessageId];
     return info;
 }
 
@@ -79,17 +82,15 @@ NSString *const kLastMentionMessageId = @"last_mention_message_id";
 - (JConcreteConversationInfo *)conversationInfoWith:(JFMResultSet *)rs {
     JConcreteConversationInfo *info = [[JConcreteConversationInfo alloc] init];
     JConversation *c = [[JConversation alloc] init];
-    c.conversationType = [rs intForColumn:kConversationType];
-    c.conversationId = [rs stringForColumn:kConversationId];
+    c.conversationType = [rs intForColumn:jConversationType];
+    c.conversationId = [rs stringForColumn:jConversationId];
     info.conversation = c;
-    info.draft = [rs stringForColumn:kDraft];
-    info.updateTime = [rs longLongIntForColumn:kTimestamp];
-    NSString *lastMessageId = [rs stringForColumn:kLastMessageId];
-    info.lastMessage = [self.messageDB getMessageWithMessageId:lastMessageId];
-    info.lastReadMessageIndex = [rs longLongIntForColumn:kLastReadMessageIndex];
-    info.isTop = [rs boolForColumn:kIsTop];
-    info.topTime = [rs longLongIntForColumn:kTopTime];
-    info.mute = [rs boolForColumn:kMute];
+    info.draft = [rs stringForColumn:jDraft];
+    info.updateTime = [rs longLongIntForColumn:jConversationTimestamp];
+    info.lastReadMessageIndex = [rs longLongIntForColumn:jLastReadMessageIndex];
+    info.isTop = [rs boolForColumn:jIsTop];
+    info.topTime = [rs longLongIntForColumn:jTopTime];
+    info.mute = [rs boolForColumn:jMute];
     return info;
 }
 @end

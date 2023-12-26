@@ -36,8 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
 
-- (void)registerMessageType:(Class)messageClass;
-
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
           clientMsgNo:(long)clientMsgNo

@@ -9,9 +9,8 @@
 #import "ImWebSocket.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "JugglePBConst.h"
-#import "JMessageContent+internal.h"
 #import "JConcreteMessage.h"
-#import <objc/runtime.h>
+#import "JMessageTypeCenter.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -38,8 +37,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
-#define kNtf @"ntf"
-#define kMsg @"msg"
+#define jNtf @"ntf"
+#define jMsg @"msg"
 
 @implementation JConnectAck
 @end
@@ -68,7 +67,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @interface JPBData ()
-@property (nonatomic, strong) NSMutableDictionary *messageTypeDic;
 @property (nonatomic, strong) NSMutableDictionary *msgCmdDic;
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @end
@@ -78,7 +76,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     self = [super init];
     if (self) {
         self.msgCmdDic = [[NSMutableDictionary alloc] init];
-        self.messageTypeDic = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -328,7 +325,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         case ImWebsocketMsg_Testof_OneOfCase_PublishMsgBody:
         {
             NSError *err = nil;
-            if ([msg.publishMsgBody.topic isEqualToString:kNtf]) {
+            if ([msg.publishMsgBody.topic isEqualToString:jNtf]) {
                 NSLog(@"[Juggle] publish msg notify");
                 Notify *ntf = [[Notify alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
@@ -342,7 +339,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     n.syncTime = ntf.syncTime;
                     obj.publishMsgNtf = n;
                 }
-            } else if ([msg.publishMsgBody.topic isEqualToString:kMsg]) {
+            } else if ([msg.publishMsgBody.topic isEqualToString:jMsg]) {
                 NSLog(@"[Juggle] publish msg direct");
                 DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
@@ -362,14 +359,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
             break;
     }
     return obj;
-}
-
-- (void)registerMessageType:(Class)messageClass {
-    NSString *contentType = nil;
-    if (class_getClassMethod(messageClass, @selector(contentType))) {
-        contentType = [messageClass contentType];
-        [self.messageTypeDic setObject:messageClass forKey:contentType];
-    }
 }
 
 #pragma mark - internal
@@ -399,8 +388,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.timestamp = downMsg.msgTime;
     msg.senderUserId = downMsg.senderId;
     msg.msgIndex = downMsg.msgIndex;
-    msg.content = [self contentWithData:downMsg.msgContent
-                            contentType:downMsg.msgType];
+    msg.content = [[JMessageTypeCenter shared] contentWithData:downMsg.msgContent
+                                                   contentType:downMsg.msgType];
     return msg;
 }
 
@@ -416,14 +405,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;
-}
-
-- (JMessageContent *)contentWithData:(NSData *)data
-                         contentType:(NSString *)type {
-    Class cls = self.messageTypeDic[type];
-    id content = [[cls alloc] init];
-    [content decode:data];
-    return content;
 }
 
 - (JPBRcvObj *)queryHistoryMessagesAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {

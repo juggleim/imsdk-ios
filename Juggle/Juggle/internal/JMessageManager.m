@@ -11,6 +11,7 @@
 #import "JImageMessage.h"
 #import "JFileMessage.h"
 #import "JVoiceMessage.h"
+#import "JMessageTypeCenter.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
@@ -28,10 +29,10 @@
     JMessageManager *m = [[JMessageManager alloc] init];
     m.core = core;
     [m.core.webSocket setMessageDelegate:m];
-    [m.core.webSocket registerMessageType:[JTextMessage class]];
-    [m.core.webSocket registerMessageType:[JImageMessage class]];
-    [m.core.webSocket registerMessageType:[JFileMessage class]];
-    [m.core.webSocket registerMessageType:[JVoiceMessage class]];
+    [m registerMessageType:[JTextMessage class]];
+    [m registerMessageType:[JImageMessage class]];
+    [m registerMessageType:[JFileMessage class]];
+    [m registerMessageType:[JVoiceMessage class]];
     return m;
 }
 
@@ -84,7 +85,7 @@
 }
 
 - (void)registerMessageType:(Class)messageClass {
-    [self.core.webSocket registerMessageType:messageClass];
+    [[JMessageTypeCenter shared] registerMessageType:messageClass];
 }
 
 #pragma mark - JWebSocketMessageDelegate

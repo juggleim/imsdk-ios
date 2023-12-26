@@ -10,9 +10,9 @@
 #define kSendQueue "com.juggle.im.wssendqueue"
 #define kReceiveQueue "com.juggle.im.wsreceivequeue"
 
-#define kAppKey @"JuggleAppKey"
-#define kUserId @"JuggleUserId"
-#define kToken @"JuggleToken"
+#define jAppKey @"JuggleAppKey"
+#define jUserId @"JuggleUserId"
+#define jToken @"JuggleToken"
 
 @implementation JuggleCore
 
@@ -25,9 +25,9 @@
         self.webSocket = [[JWebSocket alloc] initWithSendQueque:self.sendQueue
                                                    receiveQueue:self.receiveQueue];
         self.dbManager = [[JDBManager alloc] init];
-        _appKey = [[NSUserDefaults standardUserDefaults] objectForKey:kAppKey];
-        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:kUserId];
-        _token = [[NSUserDefaults standardUserDefaults] objectForKey:kToken];
+        _appKey = [[NSUserDefaults standardUserDefaults] objectForKey:jAppKey];
+        _userId = [[NSUserDefaults standardUserDefaults] objectForKey:jUserId];
+        _token = [[NSUserDefaults standardUserDefaults] objectForKey:jToken];
     }
     return self;
 }
@@ -37,7 +37,7 @@
         return;
     }
     _appKey = appKey;
-    [[NSUserDefaults standardUserDefaults] setObject:appKey forKey:kAppKey];
+    [[NSUserDefaults standardUserDefaults] setObject:appKey forKey:jAppKey];
 }
 
 - (void)setUserId:(NSString *)userId {
@@ -45,7 +45,7 @@
         return;
     }
     _userId = userId;
-    [[NSUserDefaults standardUserDefaults] setObject:userId forKey:kUserId];
+    [[NSUserDefaults standardUserDefaults] setObject:userId forKey:jUserId];
 }
 
 - (void)setToken:(NSString *)token {
@@ -53,7 +53,7 @@
         return;
     }
     _token = token;
-    [[NSUserDefaults standardUserDefaults] setObject:token forKey:kToken];
+    [[NSUserDefaults standardUserDefaults] setObject:token forKey:jToken];
 }
 
 - (void)getSyncTimeFromDB {
