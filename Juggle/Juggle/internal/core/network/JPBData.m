@@ -267,6 +267,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
+    if (msg.cmd == JCmdTypePong) {
+        obj.rcvType = JPBRcvTypePong;
+        return obj;
+    }
     switch (msg.testofOneOfCase) {
         case ImWebsocketMsg_Testof_OneOfCase_ConnectAckMsgBody:
         {

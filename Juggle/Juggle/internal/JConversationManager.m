@@ -46,11 +46,11 @@
 //- (void)clearUnreadCountByConversation:(JConversation *)conversation { 
 //    <#code#>
 //}
-//
-//- (JConversationInfo *)getConversationInfo:(JConversation *)conversation { 
-//    <#code#>
-//}
-//
+
+- (JConversationInfo *)getConversationInfo:(JConversation *)conversation {
+    return [self.core.dbManager getConversationInfo:conversation];
+}
+
 //- (NSArray<JConversationInfo *> *)getConversationInfoList { 
 //    <#code#>
 //}

@@ -23,7 +23,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeSyncConvsAck,
     JPBRcvTypeSyncMsgsAck,
     JPBRcvTypePublishMsg,
-    JPBRcvTypePublishMsgNtf
+    JPBRcvTypePublishMsgNtf,
+    JPBRcvTypePong
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {

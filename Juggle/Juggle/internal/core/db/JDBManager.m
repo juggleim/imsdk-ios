@@ -63,6 +63,10 @@
     [self.conversationDb insertConversations:conversations];
 }
 
+- (JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation {
+    return [self.conversationDb getConversationInfo:conversation];
+}
+
 #pragma mark - message table
 
 #pragma mark - internal
@@ -115,9 +119,10 @@
     self = [super init];
     if (self) {
         self.dbHelper = [[JDBHelper alloc] init];
-        self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
         self.messageDb = [[JMessageDB alloc] initWithDBHelper:self.dbHelper];
         self.profileDb = [[JProfileDB alloc] initWithDBHelper:self.dbHelper];
+        self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
+        self.conversationDb.messageDB = self.messageDb;
     }
     return self;
 }

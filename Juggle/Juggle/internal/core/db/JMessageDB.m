@@ -30,6 +30,13 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
 
 @implementation JMessageDB
 
+- (JMessage *)getMessageWithMessageId:(NSString *)messageId {
+    JMessage *message;
+    message.messageId = messageId;
+    //TODO:
+    return message;
+}
+
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
 }
@@ -39,4 +46,5 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
     db.dbHelper = dbHelper;
     return db;
 }
+
 @end

@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)createTables;
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
+
+- (nullable JMessage *)getMessageWithMessageId:(NSString *)messageId;
 @end
 
 NS_ASSUME_NONNULL_END

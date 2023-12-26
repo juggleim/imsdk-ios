@@ -260,6 +260,8 @@
         case JPBRcvTypeSyncMsgsAck:
             [self handleSyncMsgsAck:obj.qryHisMsgsAck];
             break;
+        case JPBRcvTypePong:
+            [self handlePong];
         default:
             break;
     }
@@ -362,6 +364,10 @@
     if (self.messageDelegate) {
         [self.messageDelegate syncNotify:ntf.syncTime];
     }
+}
+
+- (void)handlePong {
+    NSLog(@"handlePong");
 }
 
 - (void)setBlockObject:(JBlockObj *)obj
