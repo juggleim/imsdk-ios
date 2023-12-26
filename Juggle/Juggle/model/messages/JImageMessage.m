@@ -9,6 +9,8 @@
 
 #define kImageType @"jg:img"
 #define kDigest @"[Image]"
+#define kURL @"url"
+#define kThumbnail @"thumbnail"
 
 @implementation JImageMessage
 
@@ -17,13 +19,13 @@
 }
 
 - (NSDictionary *)encodeToJson {
-    return @{@"origin":self.imageURL?:@"",
-             @"thumbnail":self.thumbnailURL?:@""};
+    return @{kURL:self.imageURL?:@"",
+             kThumbnail:self.thumbnailURL?:@""};
 }
 
 - (void)decodeWithJson:(NSDictionary *)json {
-    self.imageURL = json[@"origin"]?:@"";
-    self.thumbnailURL = json[@"thumbnail"]?:@"";
+    self.imageURL = json[kURL]?:@"";
+    self.thumbnailURL = json[kThumbnail]?:@"";
 }
 
 - (NSString *)conversationDigest {

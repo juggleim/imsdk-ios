@@ -9,6 +9,7 @@
 
 
 #define kTextType @"jg:text"
+#define kContent @"content"
 
 @implementation JTextMessage
 
@@ -23,11 +24,11 @@
 }
 
 - (NSDictionary *)encodeToJson {
-    return @{@"content":self.content?:@""};
+    return @{kContent:self.content?:@""};
 }
 
 - (void)decodeWithJson:(NSDictionary *)json {
-    self.content = json[@"content"]?:@"";
+    self.content = json[kContent]?:@"";
 }
 
 - (NSString *)conversationDigest {
