@@ -82,7 +82,11 @@
         //TODO: operation queue
         [self.conversationManager syncConversations];
     } else {
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+        if ([self checkConnectionFailure:error]) {
+            [self changeStatus:JConnectionStatusInternalFailure];
+        } else {
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+        }
     }
 }
 
@@ -92,7 +96,8 @@
 
 - (void)webSocketDidClose {
     dispatch_async(self.core.sendQueue, ^{
-        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected) {
+        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected
+            || self.core.connectionStatus == JConnectionStatusInternalFailure) {
             return;
         }
         [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
@@ -141,6 +146,10 @@
                 outStatus = JConnectionStatusConnecting;
                 break;
                 
+            case JConnectionStatusInternalFailure:
+                outStatus = JConnectionStatusFailure;
+                break;
+                
             default:
                 break;
         }
@@ -174,6 +183,23 @@
 - (void)reconnect {
     //需要在 sendQueue 里
     NSLog(@"[Juggle] reconnect");
+}
+
+- (BOOL)checkConnectionFailure:(JErrorCode)code {
+    if (code == JErrorCodeAppKeyEmpty ||
+        code == JErrorCodeTokenEmpty ||
+        code == JErrorCodeAppKeyInvalid ||
+        code == JErrorCodeTokenIllegal ||
+        code == JErrorCodeTokenUnauthorized ||
+        code == JErrorCodeTokenExpired ||
+        code == JErrorCodeAppProhibited ||
+        code == JErrorCodeUserProhibited ||
+        code == JErrorCodeUserKickedByOtherClient ||
+        code == JErrorCodeUserLogOut
+        ) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

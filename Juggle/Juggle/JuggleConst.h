@@ -28,6 +28,26 @@ typedef NS_ENUM(NSUInteger, JConnectionStatus) {
 
 typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeNone = 0,
+    //未传 AppKey
+    JErrorCodeAppKeyEmpty = 11001,
+    //未传 Token
+    JErrorCodeTokenEmpty = 11002,
+    //AppKey 不存在
+    JErrorCodeAppKeyInvalid = 11003,
+    //Token 不合法
+    JErrorCodeTokenIllegal = 11004,
+    //Token 未授权
+    JErrorCodeTokenUnauthorized = 11005,
+    //Token 已过期
+    JErrorCodeTokenExpired = 11006,
+    //App 已封禁
+    JErrorCodeAppProhibited = 11009,
+    //用户被封禁
+    JErrorCodeUserProhibited = 11010,
+    //用户被踢下线
+    JErrorCodeUserKickedByOtherClient = 11011,
+    //用户注销下线
+    JErrorCodeUserLogOut = 11012,
     
     JErrorCodeWebSocketFailure = 21001,
 };
