@@ -44,6 +44,8 @@
         JImageMessage *image = [[JImageMessage alloc] init];
         image.thumbnailUrl = @"http://sadfasdf.com";
         image.url = @"http://fsadfasdf.dd";
+        image.width = 640;
+        image.height = 480;
         JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
 
         JFileMessage *file = [[JFileMessage alloc] init];
@@ -113,7 +115,7 @@
     if ([content isKindOfClass:[JTextMessage class]]) {
         NSLog(@"lifei, text messageDidReceive, content is %@", ((JTextMessage *)content).content);
     } else if ([content isKindOfClass:[JImageMessage class]]) {
-        NSLog(@"lifei, image messageDidReceive, thumb is %@, url is %@", ((JImageMessage *)content).thumbnailUrl, ((JImageMessage *)content).url);
+        NSLog(@"lifei, image messageDidReceive, thumb is %@, url is %@, width is %d, height is %d", ((JImageMessage *)content).thumbnailUrl, ((JImageMessage *)content).url, ((JImageMessage *)content).width, ((JImageMessage *)content).height);
     } else if ([content isKindOfClass:[JFileMessage class]]) {
         NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %d, type is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {

@@ -27,6 +27,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = false";
+NSString *const jInsertMessage = @"INSERT OR REPLACE INTO message (conversation_type, conversation_id, type, message_uid, direction, state, has_read, timestamp, sender, content, message_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -59,6 +60,16 @@ NSString *const jIsDeleted = @"is_deleted";
         }
     }];
     return message;
+}
+
+- (void)insertMessage:(JMessage *)message inDb:(JFMDatabase *)db {
+    long long msgIndex = 0;
+    if ([message isKindOfClass:[JConcreteMessage class]]) {
+        msgIndex = ((JConcreteMessage *)message).msgIndex;
+    }
+    NSData *data = [message.content encode];
+    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.messageType, message.messageId, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex)];
 }
 
 - (void)createTables {

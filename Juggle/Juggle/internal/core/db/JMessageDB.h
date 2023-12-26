@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
+
+- (void)insertMessage:(JMessage *)message
+                 inDb:(JFMDatabase *)db;
 @end
 
 NS_ASSUME_NONNULL_END

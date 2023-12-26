@@ -23,8 +23,8 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
                                         "(conversation_type, conversation_id, timestamp, last_message_id,"
-                                        "last_read_message_index, is_top, mute, last_mention_message_id)"
-                                        "values (?, ?, ?, ?, ?, ?, ?, ?)";
+                                        "last_read_message_index, is_top, top_time, mute, last_mention_message_id)"
+                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 
 NSString *const jConversationType = @"conversation_type";
@@ -52,7 +52,8 @@ NSString *const jLastMentionMessageId = @"last_mention_message_id";
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), obj.lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.mute), @(0)];//TODO: mention
+            [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), obj.lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0)];//TODO: mention
+            [self.messageDB insertMessage:obj.lastMessage inDb:db];
         }];
     }];
 }
