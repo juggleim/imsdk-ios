@@ -10,8 +10,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JImageMessage : JMessageContent
-@property (nonatomic, copy) NSString *imageURL;
-@property (nonatomic, copy) NSString *thumbnailURL;
+@property (nonatomic, copy) NSString *url;
+@property (nonatomic, copy) NSString *thumbnailUrl;
 @end
 
 NS_ASSUME_NONNULL_END

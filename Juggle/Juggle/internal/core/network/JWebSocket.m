@@ -312,7 +312,7 @@
 }
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
-    NSLog(@"handlePublishAckMsg, msgId is %@", ack.msgId);
+    NSLog(@"handlePublishAckMsg, msgId is %@, code is %d", ack.msgId, ack.code);
     JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
         JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;

@@ -39,16 +39,19 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-//        //send message
-//        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"text1"];
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        [JuggleIM.shared.messageManager sendMessage:text
-//                                     inConversation:conversation
-//                                            success:^(long clientMsgNo) {
-//            NSLog(@"lifei, sendMessage success, ");
-//        } error:^(JErrorCode errorCode, long messageId) {
-//            NSLog(@"lifei, sendMessage error");
-//        }];
+        //send message
+        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"tttt"];
+        JImageMessage *image = [[JImageMessage alloc] init];
+        image.thumbnailUrl = @"http://sadfasdf.com";
+        image.url = @"http://fsadfasdf.dd";
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+        [JuggleIM.shared.messageManager sendMessage:text
+                                     inConversation:conversation
+                                            success:^(long clientMsgNo) {
+            NSLog(@"lifei, sendMessage success, ");
+        } error:^(JErrorCode errorCode, long messageId) {
+            NSLog(@"lifei, sendMessage error");
+        }];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];
@@ -68,8 +71,17 @@
 }
 
 - (void)messageDidReceive:(JMessage *)message {
-    JTextMessage *text = message.content;
-    NSLog(@"lifei, messageDidReceive, content is %@", text.content);
+    NSLog(@"lifei, messageDidReceive conversationType is %d, conversationId is %@", message.conversation.conversationType, message.conversation.conversationId);
+    JMessageContent *content = message.content;
+    if ([content isKindOfClass:[JTextMessage class]]) {
+        NSLog(@"lifei, text messageDidReceive, content is %@", ((JTextMessage *)content).content);
+    } else if ([content isKindOfClass:[JImageMessage class]]) {
+        NSLog(@"lifei, image messageDidReceive, url is %@", ((JImageMessage *)content).url);
+    } else if ([content isKindOfClass:[JFileMessage class]]) {
+        NSLog(@"lifei, file messageDidReceive, name is %@", ((JFileMessage *)content).url);
+    } else if ([content isKindOfClass:[JVoiceMessage class]]) {
+        NSLog(@"lifei, voice messageDidReceive, name is %@", ((JVoiceMessage *)content).url);
+    }
 }
 
 

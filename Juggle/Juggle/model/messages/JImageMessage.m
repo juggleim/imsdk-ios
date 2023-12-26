@@ -19,13 +19,13 @@
 }
 
 - (NSDictionary *)encodeToJson {
-    return @{kURL:self.imageURL?:@"",
-             kThumbnail:self.thumbnailURL?:@""};
+    return @{kURL:self.url?:@"",
+             kThumbnail:self.thumbnailUrl?:@""};
 }
 
 - (void)decodeWithJson:(NSDictionary *)json {
-    self.imageURL = json[kURL]?:@"";
-    self.thumbnailURL = json[kThumbnail]?:@"";
+    self.url = json[kURL]?:@"";
+    self.thumbnailUrl = json[kThumbnail]?:@"";
 }
 
 - (NSString *)conversationDigest {

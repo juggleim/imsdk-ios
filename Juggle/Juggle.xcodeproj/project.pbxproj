@@ -200,9 +200,9 @@
 		A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */; };
 		A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */; };
 		A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */; };
-		A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376212B3A83B20076CB84 /* JFileMessage.h */; };
+		A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376212B3A83B20076CB84 /* JFileMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0F376242B3A83B20076CB84 /* JFileMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376222B3A83B20076CB84 /* JFileMessage.m */; };
-		A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376252B3A89780076CB84 /* JVoiceMessage.h */; };
+		A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376252B3A89780076CB84 /* JVoiceMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0F376282B3A89780076CB84 /* JVoiceMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376262B3A89780076CB84 /* JVoiceMessage.m */; };
 /* End PBXBuildFile section */
 
@@ -841,6 +841,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
+				A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */,
 				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
 				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3962B19CB78008B114C /* GPBMessage.h in Headers */,
@@ -931,7 +933,6 @@
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
 				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
 				A08AA25B2B14C4C0008B114C /* JuggleConst.h in Headers */,
-				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
 				A08AA3972B19CB78008B114C /* GPBProtocolBuffers_RuntimeSupport.h in Headers */,
 				A08AA3742B19CB77008B114C /* SourceContext.pbobjc.h in Headers */,
 				A08AA3EF2B19EEDA008B114C /* SRConstants.h in Headers */,
@@ -955,7 +956,6 @@
 				A08AA4302B1B78FE008B114C /* Innermessages.pbobjc.h in Headers */,
 				A06A2F1D2B233A15009B9588 /* JConversationDB.h in Headers */,
 				A08AA3922B19CB78008B114C /* GPBWireFormat.h in Headers */,
-				A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
