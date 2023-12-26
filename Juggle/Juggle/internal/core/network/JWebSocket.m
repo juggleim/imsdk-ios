@@ -202,6 +202,17 @@
     });
 }
 
+- (void)sendPing {
+    dispatch_async(self.sendQueue, ^{
+        NSData *d = [self.pbData pingData];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket ping error, msg is %@", err.description);
+        }
+    });
+}
+
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{

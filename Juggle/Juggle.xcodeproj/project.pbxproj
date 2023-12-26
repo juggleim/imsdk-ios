@@ -198,6 +198,8 @@
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
 		A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */; };
 		A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */; };
+		A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */; };
+		A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -395,6 +397,8 @@
 		A0F376142B3571CE0076CB84 /* JProfileDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JProfileDB.m; sourceTree = "<group>"; };
 		A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteConversationInfo.h; sourceTree = "<group>"; };
 		A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteConversationInfo.m; sourceTree = "<group>"; };
+		A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JHeartBeatManager.h; sourceTree = "<group>"; };
+		A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JHeartBeatManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -559,6 +563,8 @@
 				A08AA2842B1756E3008B114C /* JMessageManager.m */,
 				A08AA2872B175726008B114C /* JConversationManager.h */,
 				A08AA2882B175726008B114C /* JConversationManager.m */,
+				A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */,
+				A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -836,6 +842,7 @@
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
 				A08AA1E72B148B68008B114C /* Juggle.h in Headers */,
+				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
 				A08AA2772B162A12008B114C /* JFMDatabaseAdditions.h in Headers */,
 				A08AA3772B19CB77008B114C /* Wrappers.pbobjc.h in Headers */,
@@ -1041,6 +1048,7 @@
 				A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */,
 				A08AA2742B162A11008B114C /* JFMDatabase.m in Sources */,
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
+				A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */,
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
 				A08AA4362B1B78FE008B114C /* Onlinestatus.pbobjc.m in Sources */,

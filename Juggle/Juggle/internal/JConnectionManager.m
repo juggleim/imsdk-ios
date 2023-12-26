@@ -7,11 +7,13 @@
 
 #import "JConnectionManager.h"
 #import "JWebSocket.h"
+#import "JHeartBeatManager.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JuggleCore *core;
 @property (nonatomic, strong) JConversationManager *conversationManager;
 @property (nonatomic, strong) JMessageManager *messageManager;
+@property (nonatomic, strong) JHeartBeatManager *heartBeatManager;
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
 
 @end
@@ -27,6 +29,8 @@
     m.core = core;
     m.conversationManager = conversationManager;
     m.messageManager = messageManager;
+    JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
+    m.heartBeatManager = heartBeatManager;
     return m;
 }
 
@@ -79,13 +83,11 @@
         [self.conversationManager syncConversations];
     } else {
         [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
-        [self reconnect];
     }
 }
 
 - (void)webSocketDidFail {
     [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
-    [self reconnect];
 }
 
 - (void)webSocketDidClose {
@@ -94,7 +96,6 @@
             return;
         }
         [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
-        [self reconnect];
     });
 }
 
@@ -104,6 +105,12 @@
         if (status == JConnectionStatusInternalIdle) {
             self.core.connectionStatus = status;
             return;
+        }
+        if (status == JConnectionStatusInternalConnected && self.core.connectionStatus != JConnectionStatusInternalConnected) {
+            [self.heartBeatManager start];
+        }
+        if (self.core.connectionStatus == JConnectionStatusInternalConnected && status != JConnectionStatusInternalConnected) {
+            [self.heartBeatManager stop];
         }
         JConnectionStatus outStatus = JConnectionStatusIdle;
         switch (status) {
@@ -124,6 +131,7 @@
                 break;
                 
             case JConnectionStatusInternalWaitingForConnecting:
+                [self reconnect];
                 //已经在连接中，不需要再对外抛回调
                 if (self.core.connectionStatus == JConnectionStatusInternalConnecting ||
                     self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {

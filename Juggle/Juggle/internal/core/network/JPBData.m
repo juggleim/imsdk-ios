@@ -250,6 +250,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)pingData {
+    ImWebsocketMsg *m = [self createImWebsocketMsg];
+    m.cmd = JCmdTypePing;
+    m.qos = JQosNo;
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     

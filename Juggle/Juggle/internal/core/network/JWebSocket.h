@@ -59,6 +59,8 @@ NS_ASSUME_NONNULL_BEGIN
                    userId:(NSString *)userId
                   success:(void (^)(NSArray *conversations, BOOL isFinished))successBlock
                     error:(void (^)(JErrorCode code))errorBlock;
+
+- (void)sendPing;
 @end
 
 

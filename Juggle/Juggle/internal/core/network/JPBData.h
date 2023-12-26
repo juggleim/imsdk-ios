@@ -112,6 +112,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                            userId:(NSString *)userId
                             index:(int)index;
 
+- (NSData *)pingData;
+
 - (void)registerMessageType:(Class)messageClass;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;
