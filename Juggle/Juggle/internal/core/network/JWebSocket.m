@@ -19,9 +19,9 @@
 @end
 
 @interface JSendMessageObj : JBlockObj
-@property (nonatomic, assign) long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long clientMsgNo, NSString *msgId, long long timestamp);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode, long clientMsgNo);
+@property (nonatomic, assign) long long clientMsgNo;
+@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode, long long clientMsgNo);
 @end
 
 @implementation JSendMessageObj
@@ -96,15 +96,16 @@
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(nonnull JConversation *)conversation
-          clientMsgNo:(long)clientMsgNo
-              success:(void (^)(long clientMsgNo, NSString *msgId, long long timestamp))successBlock
-                error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock{
+          clientMsgNo:(long long)clientMsgNo
+            clientUid:(NSString *)clientUid
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+                error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                              msgData:[content encode]
                                                flags:[[content class] flags]
-                                           clientUid:[self createClientUid]
+                                           clientUid:clientUid
                                                index:self.msgIndex++
                                     conversationType:conversation.conversationType
                                       conversationId:conversation.conversationId];
@@ -292,13 +293,6 @@
     if (err != nil) {
         NSLog(@"WebSocket send disconnect error, msg is %@", err.description);
     }
-}
-
-- (NSString *)createClientUid {
-    long long ts = [[NSDate date] timeIntervalSince1970];
-    ts = ts % 1000;
-    int32_t msgId = self.msgIndex % 1000;
-    return [NSString stringWithFormat:@"%04lld%04d", ts, msgId];
 }
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {

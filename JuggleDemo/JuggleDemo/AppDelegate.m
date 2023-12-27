@@ -25,7 +25,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [JuggleIM.shared initWithAppKey:@"appkey"];
-    [JuggleIM.shared.connectionManager connectWithToken:kToken1];
+    [JuggleIM.shared.connectionManager connectWithToken:kToken4];
     [JuggleIM.shared.connectionManager setDelegate:self];
     [JuggleIM.shared.messageManager setDelegate:self];
     
@@ -39,8 +39,9 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        sleep(5);
         //send message
-//        [self sendMessage];
+        [self sendMessage];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];
@@ -80,33 +81,33 @@
 
     [JuggleIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
-                                        success:^(long clientMsgNo) {
+                                        success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long messageId) {
+    } error:^(JErrorCode errorCode, long long messageId) {
         NSLog(@"lifei, sendMessage error");
     }];
-    sleep(1);
+    sleep(2);
     [JuggleIM.shared.messageManager sendMessage:image
                                  inConversation:conversation
-                                        success:^(long clientMsgNo) {
+                                        success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long messageId) {
+    } error:^(JErrorCode errorCode, long long messageId) {
         NSLog(@"lifei, sendMessage error");
     }];
-    sleep(1);
+    sleep(2);
     [JuggleIM.shared.messageManager sendMessage:file
                                  inConversation:conversation
-                                        success:^(long clientMsgNo) {
+                                        success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long messageId) {
+    } error:^(JErrorCode errorCode, long long messageId) {
         NSLog(@"lifei, sendMessage error");
     }];
-    sleep(1);
+    sleep(2);
     [JuggleIM.shared.messageManager sendMessage:voice
                                  inConversation:conversation
-                                        success:^(long clientMsgNo) {
+                                        success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long clientMsgNo) {
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
     JConversationInfo *conversationInfo = [JuggleIM.shared.conversationManager getConversationInfo:conversation];

@@ -68,6 +68,19 @@
 }
 
 #pragma mark - message table
+- (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
+    [self.messageDb insertMessages:messages];
+}
+
+- (void)updateMessageAfterSend:(long long)clientMsgNo
+                     messageId:(NSString *)messageId
+                     timestamp:(long long)timestamp
+                  messageIndex:(long long)messageIndex {
+    [self.messageDb updateMessageAfterSend:clientMsgNo
+                                 messageId:messageId
+                                 timestamp:timestamp
+                              messageIndex:messageIndex];
+}
 
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey

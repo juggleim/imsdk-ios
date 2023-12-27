@@ -38,9 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
-          clientMsgNo:(long)clientMsgNo
-              success:(void (^)(long clientMsgNo, NSString *msgId, long long timestamp))successBlock
-                error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock;
+          clientMsgNo:(long long)clientMsgNo
+            clientUid:(NSString *)clientUid
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+                error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock;
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime

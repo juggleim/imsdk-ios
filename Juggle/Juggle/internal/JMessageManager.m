@@ -16,6 +16,7 @@
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
+@property (nonatomic, assign) int increaseId;
 //TODO: 消息拉取回来在 messageManager 里做排重
 @end
 
@@ -41,7 +42,7 @@
 }
 
 //
-//- (void)deleteMessageByClientId:(long)clientMsgNo {
+//- (void)deleteMessageByClientId:(long long)clientMsgNo {
 //    <#code#>
 //}
 //
@@ -56,27 +57,33 @@
 
 - (JMessage *)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation
-            success:(void (^)(long))successBlock
-              error:(void (^)(JErrorCode, long))errorBlock{
-    //TODO: save message
-    JMessage *message = [[JMessage alloc] init];
+            success:(void (^)(long long))successBlock
+              error:(void (^)(JErrorCode, long long))errorBlock{
+    JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
     message.messageType = [[content class] contentType];
     message.direction = JMessageDirectionSend;
     message.messageState = JMessageStateSending;
     message.senderUserId = self.core.userId;
+    message.clientUid = [self createClientUid];
     
+    [self.core.dbManager insertMessages:@[message]];
     [self.core.webSocket sendIMMessage:content
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
-                               success:^(long clientMsgNo, NSString *msgId, long long timestamp) {
+                             clientUid:message.clientUid
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp) {
         self.core.messageSendSyncTime = timestamp;
+        [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
+                                          messageId:msgId
+                                          timestamp:timestamp
+                                       messageIndex:message.msgIndex];
         //TODO: 更新 DB，msgId 和 消息状态
         if (successBlock) {
             successBlock(clientMsgNo);
         }
-    } error:^(JErrorCode errorCode, long clientMsgNo) {
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
         if (errorBlock) {
             errorBlock(errorCode, clientMsgNo);
         }
@@ -142,6 +149,12 @@
     [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
                                             sendTime:self.core.messageSendSyncTime
                                               userId:self.core.userId];
+}
+
+- (NSString *)createClientUid {
+    long long ts = [[NSDate date] timeIntervalSince1970];
+    ts = ts % 1000;
+    return [NSString stringWithFormat:@"%03lld%03d", ts, self.increaseId++];
 }
 
 @end

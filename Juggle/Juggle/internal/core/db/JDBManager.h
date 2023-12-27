@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JConcreteConversationInfo.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,6 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
 
 #pragma mark - message table
+- (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
+- (void)updateMessageAfterSend:(long long)clientMsgNo
+                     messageId:(NSString *)messageId
+                     timestamp:(long long)timestamp
+                  messageIndex:(long long)messageIndex;
 
 @end
 

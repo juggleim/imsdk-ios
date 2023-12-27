@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 /// 消息类型
 @property (nonatomic, copy) NSString *messageType;
 /// 本端消息唯一编号（只对当前设备生效）
-@property (nonatomic, assign) long clientMsgNo;
+@property (nonatomic, assign) long long clientMsgNo;
 /// 消息 id，全局唯一
 @property (nonatomic, copy) NSString *messageId;
 /// 消息方向，发送/接收

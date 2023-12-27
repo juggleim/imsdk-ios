@@ -24,8 +24,8 @@
 ///   - conversation: 会话
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
-                  success:(void (^)(long clientMsgNo))successBlock
-                    error:(void (^)(JErrorCode errorCode, long clientMsgNo))errorBlock;
+                  success:(void (^)(long long clientMsgNo))successBlock
+                    error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock;
 
 //从本地获取消息，如果本地消息存在缺失，会尝试从远端把缺失的消息拉取回来。
 //TODO: 走的回调待补充，回调中需要标识是否还存在没拉完的消息
@@ -42,7 +42,7 @@
 
 /// 根据 clientMsgNo 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter clientMsgNo: 本端消息唯一编号
-- (void)deleteMessageByClientId:(long)clientMsgNo;
+- (void)deleteMessageByClientId:(long long)clientMsgNo;
 
 /// 根据 messageId 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter messageId: 消息 id

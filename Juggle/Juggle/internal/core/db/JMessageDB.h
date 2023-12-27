@@ -19,6 +19,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
 
+- (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
+
+- (void)updateMessageAfterSend:(long long)clientMsgNo
+                     messageId:(NSString *)messageId
+                     timestamp:(long long)timestamp
+                  messageIndex:(long long)messageIndex;
+
+#pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;
 @end
