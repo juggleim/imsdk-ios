@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JMessageManager : NSObject <JMessageProtocol>
 - (instancetype)initWithCore:(JuggleCore *)core;
+- (void)syncMessages;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -16,14 +16,14 @@
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JuggleCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
-//TODO: 消息收发时间，应该放到 DB 里
 //TODO: 消息拉取回来在 messageManager 里做排重
-//sendSyncTime 和 receiveSyncTime 都在 receiveQueue 里处理
-@property (nonatomic, assign) long long sendSyncTime;
-@property (nonatomic, assign) long long receiveSyncTime;
 @end
 
 @implementation JMessageManager
+
+- (void)syncMessages {
+    [self sync];
+}
 
 - (instancetype)initWithCore:(JuggleCore *)core {
     JMessageManager *m = [[JMessageManager alloc] init];
@@ -71,7 +71,7 @@
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
                                success:^(long clientMsgNo, NSString *msgId, long long timestamp) {
-        self.sendSyncTime = timestamp;
+        self.core.messageSendSyncTime = timestamp;
         //TODO: 更新 DB，msgId 和 消息状态
         if (successBlock) {
             successBlock(clientMsgNo);
@@ -95,12 +95,12 @@
     //TODO: cmd message 吞掉
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.direction == JMessageDirectionSend) {
-            if (obj.timestamp > self.sendSyncTime) {
-                self.sendSyncTime = obj.timestamp;
+            if (obj.timestamp > self.core.messageSendSyncTime) {
+                self.core.messageSendSyncTime = obj.timestamp;
             }
         } else {
-            if (obj.timestamp > self.receiveSyncTime) {
-                self.receiveSyncTime = obj.timestamp;
+            if (obj.timestamp > self.core.messageReceiveSyncTime) {
+                self.core.messageReceiveSyncTime = obj.timestamp;
             }
         }
         dispatch_async(self.core.delegateQueue, ^{
@@ -117,8 +117,8 @@
 }
 
 - (void)syncNotify:(long long)syncTime {
-    NSLog(@"[Juggle] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.receiveSyncTime);
-    if (syncTime > self.receiveSyncTime) {
+    NSLog(@"[Juggle] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.core.messageReceiveSyncTime);
+    if (syncTime > self.core.messageReceiveSyncTime) {
         [self sync];
     }
 }
@@ -139,8 +139,8 @@
 }
 
 - (void)sync {
-    [self.core.webSocket syncMessagesWithReceiveTime:self.receiveSyncTime
-                                            sendTime:self.sendSyncTime
+    [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
+                                            sendTime:self.core.messageSendSyncTime
                                               userId:self.core.userId];
 }
 

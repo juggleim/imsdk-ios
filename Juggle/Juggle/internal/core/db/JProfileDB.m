@@ -61,7 +61,7 @@ NSString *const kValue = @"value";
            withArgumentsInArray:@[kReceiveTime]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
-            time = [[resultSet stringForColumn:kReceiveTime] longLongValue];
+            time = [[resultSet stringForColumn:kValue] longLongValue];
         }
     }];
     return time;

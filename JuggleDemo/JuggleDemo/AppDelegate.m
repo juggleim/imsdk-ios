@@ -40,57 +40,7 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //send message
-        JTextMessage *text = [[JTextMessage alloc] initWithContent:@"tttt"];
-        JImageMessage *image = [[JImageMessage alloc] init];
-        image.thumbnailUrl = @"http://sadfasdf.com";
-        image.url = @"http://fsadfasdf.dd";
-        image.width = 640;
-        image.height = 480;
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
-
-        JFileMessage *file = [[JFileMessage alloc] init];
-        file.name = @"fileName";
-        file.url = @"fsafasdf";
-        file.size = 1000;
-        file.type = @"exe";
-
-        JVoiceMessage *voice = [[JVoiceMessage alloc] init];
-        voice.url = @"voiceURL";
-        voice.duration = 60;
-
-        [JuggleIM.shared.messageManager sendMessage:text
-                                     inConversation:conversation
-                                            success:^(long clientMsgNo) {
-            NSLog(@"lifei, sendMessage success, ");
-        } error:^(JErrorCode errorCode, long messageId) {
-            NSLog(@"lifei, sendMessage error");
-        }];
-        sleep(1);
-        [JuggleIM.shared.messageManager sendMessage:image
-                                     inConversation:conversation
-                                            success:^(long clientMsgNo) {
-            NSLog(@"lifei, sendMessage success, ");
-        } error:^(JErrorCode errorCode, long messageId) {
-            NSLog(@"lifei, sendMessage error");
-        }];
-        sleep(1);
-        [JuggleIM.shared.messageManager sendMessage:file
-                                     inConversation:conversation
-                                            success:^(long clientMsgNo) {
-            NSLog(@"lifei, sendMessage success, ");
-        } error:^(JErrorCode errorCode, long messageId) {
-            NSLog(@"lifei, sendMessage error");
-        }];
-        sleep(1);
-        [JuggleIM.shared.messageManager sendMessage:voice
-                                     inConversation:conversation
-                                            success:^(long clientMsgNo) {
-            NSLog(@"lifei, sendMessage success, ");
-        } error:^(JErrorCode errorCode, long clientMsgNo) {
-            NSLog(@"lifei, sendMessage error");
-        }];
-        JConversationInfo *conversationInfo = [JuggleIM.shared.conversationManager getConversationInfo:conversation];
-        NSLog(@"lifei, getConversationInfo");
+//        [self sendMessage];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];
@@ -107,6 +57,60 @@
         //sync conversations
 //        [JuggleIM.shared.connectionManager syncConversations];
     }
+}
+
+- (void)sendMessage {
+    JTextMessage *text = [[JTextMessage alloc] initWithContent:@"tttt"];
+    JImageMessage *image = [[JImageMessage alloc] init];
+    image.thumbnailUrl = @"http://sadfasdf.com";
+    image.url = @"http://fsadfasdf.dd";
+    image.width = 640;
+    image.height = 480;
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+
+    JFileMessage *file = [[JFileMessage alloc] init];
+    file.name = @"fileName";
+    file.url = @"fsafasdf";
+    file.size = 1000;
+    file.type = @"exe";
+
+    JVoiceMessage *voice = [[JVoiceMessage alloc] init];
+    voice.url = @"voiceURL";
+    voice.duration = 60;
+
+    [JuggleIM.shared.messageManager sendMessage:text
+                                 inConversation:conversation
+                                        success:^(long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long messageId) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(1);
+    [JuggleIM.shared.messageManager sendMessage:image
+                                 inConversation:conversation
+                                        success:^(long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long messageId) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(1);
+    [JuggleIM.shared.messageManager sendMessage:file
+                                 inConversation:conversation
+                                        success:^(long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long messageId) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(1);
+    [JuggleIM.shared.messageManager sendMessage:voice
+                                 inConversation:conversation
+                                        success:^(long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long clientMsgNo) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    JConversationInfo *conversationInfo = [JuggleIM.shared.conversationManager getConversationInfo:conversation];
+    NSLog(@"lifei, getConversationInfo");
 }
 
 - (void)messageDidReceive:(JMessage *)message {
