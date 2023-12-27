@@ -21,26 +21,31 @@
     return m;
 }
 
-- (void)syncConversations {
-//    dispatch_async(self.core.sendQueue, ^{
-        [self.core.webSocket syncConversations:self.core.conversationSyncTime
-                                         count:kConversationSyncCount
-                                        userId:self.core.userId
-                                       success:^(NSArray * _Nonnull conversations, BOOL isFinished) {
-            if (conversations.lastObject) {
-                JConcreteConversationInfo *last = conversations.lastObject;
-                if (last.updateTime > 0) {
-                    self.core.conversationSyncTime = last.updateTime;
-                }
-                [self.core.dbManager insertConversations:conversations];
+- (void)syncConversations:(void (^)(void))completeBlock {
+    [self.core.webSocket syncConversations:self.core.conversationSyncTime
+                                     count:kConversationSyncCount
+                                    userId:self.core.userId
+                                   success:^(NSArray * _Nonnull conversations, BOOL isFinished) {
+        if (conversations.lastObject) {
+            JConcreteConversationInfo *last = conversations.lastObject;
+            if (last.updateTime > 0) {
+                self.core.conversationSyncTime = last.updateTime;
             }
-            if (!isFinished) {
-                [self syncConversations];
+            [self.core.dbManager insertConversations:conversations];
+        }
+        if (!isFinished) {
+            [self syncConversations:completeBlock];
+        } else {
+            if (completeBlock) {
+                completeBlock();
             }
-        } error:^(JErrorCode code) {
-            
-        }];
-//    });
+        }
+    } error:^(JErrorCode code) {
+        NSLog(@"[Juggle] sync conversation fail, code is %lu", (unsigned long)code);
+        if (completeBlock) {
+            completeBlock();
+        }
+    }];
 }
 
 //- (void)clearUnreadCountByConversation:(JConversation *)conversation { 

@@ -51,6 +51,9 @@ NSString *const jIsDeleted = @"is_deleted";
 @implementation JMessageDB
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId {
+    if (messageId.length == 0) {
+        return nil;
+    }
     __block JConcreteMessage *message;
     [self.dbHelper executeQuery:kGetMessageWithMessageId
            withArgumentsInArray:@[messageId]

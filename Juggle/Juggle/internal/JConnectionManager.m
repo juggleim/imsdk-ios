@@ -80,7 +80,9 @@
         }
         [self changeStatus:JConnectionStatusInternalConnected];
         //TODO: operation queue
-        [self.conversationManager syncConversations];
+        [self.conversationManager syncConversations:^{
+//            [self.messageManager syncMessages];
+        }];
     } else {
         if ([self checkConnectionFailure:error]) {
             [self changeStatus:JConnectionStatusInternalFailure];
