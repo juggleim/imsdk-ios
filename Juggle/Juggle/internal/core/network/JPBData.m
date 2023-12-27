@@ -383,6 +383,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.conversation = conversation;
     msg.messageType = downMsg.msgType;
     msg.messageId = downMsg.msgId;
+    msg.clientUid = downMsg.clientUid;
     msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
     msg.hasRead = downMsg.isReaded;
     msg.timestamp = downMsg.msgTime;
