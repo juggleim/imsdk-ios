@@ -658,6 +658,7 @@ typedef struct PublishMsgBody__storage_ {
 @dynamic code;
 @dynamic msgId;
 @dynamic timestamp;
+@dynamic msgIndex;
 
 typedef struct PublishAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -665,6 +666,7 @@ typedef struct PublishAckMsgBody__storage_ {
   int32_t code;
   NSString *msgId;
   int64_t timestamp;
+  int64_t msgIndex;
 } PublishAckMsgBody__storage_;
 
 // This method is threadsafe because it is initially called
@@ -710,6 +712,15 @@ typedef struct PublishAckMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },
+      {
+        .name = "msgIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PublishAckMsgBody_FieldNumber_MsgIndex,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, msgIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(PublishAckMsgBody)
@@ -721,7 +732,7 @@ typedef struct PublishAckMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\003\005\000";
+        "\002\003\005\000\005\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
