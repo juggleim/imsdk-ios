@@ -52,9 +52,13 @@
         //getMessages
         NSArray *messages = [JuggleIM.shared.messageManager getMessagesFrom:conversation
                                                                       count:100
-                                                                       time:1703668763844
+                                                                       time:0
                                                                   direction:JPullDirectionOlder];
         NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
+        
+        
+//        [JuggleIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
+//        [JuggleIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
 //        sleep(5);

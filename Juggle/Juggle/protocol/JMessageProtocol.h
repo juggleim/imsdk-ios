@@ -42,7 +42,7 @@
 
 /// 根据 clientMsgNo 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter clientMsgNo: 本端消息唯一编号
-- (void)deleteMessageByClientId:(long long)clientMsgNo;
+- (void)deleteMessageByClientMsgNo:(long long)clientMsgNo;
 
 /// 根据 messageId 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter messageId: 消息 id

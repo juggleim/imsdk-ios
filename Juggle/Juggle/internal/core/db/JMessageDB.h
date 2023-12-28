@@ -31,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
                                     time:(long long)time
                                direction:(JPullDirection)direction;
 
+- (void)deleteMessageByClientId:(long long)clientMsgNo;
+- (void)deleteMessageByMessageId:(NSString *)messageId;
+
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;

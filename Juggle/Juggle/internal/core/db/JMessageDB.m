@@ -28,7 +28,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = false";
-NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = false";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
@@ -37,6 +37,9 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, message_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, message_index = ? WHERE id = ?";
+NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
+NSString *const jClientMsgNoIs = @" id = ?";
+NSString *const jMessageIdIs = @" message_uid = ?";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -130,6 +133,20 @@ NSString *const jIsDeleted = @"is_deleted";
         result = [messages copy];
     }
     return result;
+}
+
+- (void)deleteMessageByClientId:(long long)clientMsgNo {
+    NSString *sql = jDeleteMessage;
+    sql = [sql stringByAppendingString:jClientMsgNoIs];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:@[@(clientMsgNo)]];
+}
+
+- (void)deleteMessageByMessageId:(NSString *)messageId {
+    NSString *sql = jDeleteMessage;
+    sql = [sql stringByAppendingString:jMessageIdIs];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:@[messageId]];
 }
 
 - (void)createTables {

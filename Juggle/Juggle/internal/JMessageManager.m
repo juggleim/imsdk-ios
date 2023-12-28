@@ -41,15 +41,15 @@
     _delegate = delegate;
 }
 
-//
-//- (void)deleteMessageByClientId:(long long)clientMsgNo {
-//    <#code#>
-//}
-//
-//- (void)deleteMessageByMessageId:(NSString *)messageId {
-//    <#code#>
-//}
-//
+
+- (void)deleteMessageByClientMsgNo:(long long)clientMsgNo {
+    [self.core.dbManager deleteMessageByClientId:clientMsgNo];
+}
+
+- (void)deleteMessageByMessageId:(NSString *)messageId {
+    [self.core.dbManager deleteMessageByMessageId:messageId];
+}
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

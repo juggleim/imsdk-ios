@@ -40,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction;
+- (void)deleteMessageByClientId:(long long)clientMsgNo;
+- (void)deleteMessageByMessageId:(NSString *)messageId;
 @end
 
 NS_ASSUME_NONNULL_END

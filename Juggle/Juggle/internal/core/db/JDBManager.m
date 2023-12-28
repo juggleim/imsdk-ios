@@ -96,6 +96,14 @@
                                  direction:direction];
 }
 
+- (void)deleteMessageByClientId:(long long)clientMsgNo {
+    [self.messageDb deleteMessageByClientId:clientMsgNo];
+}
+
+- (void)deleteMessageByMessageId:(NSString *)messageId {
+    [self.messageDb deleteMessageByMessageId:messageId];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {
