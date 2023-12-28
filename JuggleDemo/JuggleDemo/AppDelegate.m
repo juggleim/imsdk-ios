@@ -55,8 +55,6 @@
 //                                                      success:nil
 //                                                        error:nil];
         
-        //sync conversations
-//        [JuggleIM.shared.connectionManager syncConversations];
     }
 }
 

@@ -25,7 +25,4 @@
 
 - (void)setDelegate:(id<JConnectionDelegate>) delegate;
 
-// TODO: delete，测试用接口
-- (void)syncConversations;
-
 @end
