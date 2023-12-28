@@ -86,6 +86,16 @@
                               messageIndex:messageIndex];
 }
 
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction {
+    return [self.messageDb getMessagesFrom:conversation
+                                     count:count
+                                      time:time
+                                 direction:direction];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {

@@ -27,7 +27,7 @@
                   success:(void (^)(long long clientMsgNo))successBlock
                     error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock;
 
-//从本地获取消息，如果本地消息存在缺失，会尝试从远端把缺失的消息拉取回来。
+//从本地获取消息，结果按时间顺序从旧到新排列。如果本地消息存在缺失，会尝试从远端把缺失的消息拉取回来。
 //TODO: 走的回调待补充，回调中需要标识是否还存在没拉完的消息
 /// 获取消息列表
 /// - Parameters:

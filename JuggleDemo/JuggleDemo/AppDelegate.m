@@ -40,10 +40,21 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-        sleep(10);
-        NSArray *array = [JuggleIM.shared.conversationManager getConversationInfoList];
-        NSLog(@"conversation count is %d", array.count);
+//        sleep(10);
+//        NSArray *array = [JuggleIM.shared.conversationManager getConversationInfoList];
+//        NSLog(@"conversation count is %d", array.count);
         
+        //getConversation
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+        JConversationInfo *conversationInfo = [JuggleIM.shared.conversationManager getConversationInfo:conversation];
+        NSLog(@"lifei, getConversationInfo");
+        
+        //getMessages
+        NSArray *messages = [JuggleIM.shared.messageManager getMessagesFrom:conversation
+                                                                      count:100
+                                                                       time:1703668763844
+                                                                  direction:JPullDirectionOlder];
+        NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
         
         //send message
 //        sleep(5);
@@ -114,8 +125,6 @@
     } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
-    JConversationInfo *conversationInfo = [JuggleIM.shared.conversationManager getConversationInfo:conversation];
-    NSLog(@"lifei, getConversationInfo");
 }
 
 - (void)messageDidReceive:(JMessage *)message {

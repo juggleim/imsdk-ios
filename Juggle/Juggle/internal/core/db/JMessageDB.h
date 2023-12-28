@@ -26,6 +26,11 @@ NS_ASSUME_NONNULL_BEGIN
                      timestamp:(long long)timestamp
                   messageIndex:(long long)messageIndex;
 
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction;
+
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;

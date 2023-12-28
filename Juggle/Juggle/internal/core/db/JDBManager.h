@@ -36,7 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
                   messageIndex:(long long)messageIndex;
-
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction;
 @end
 
 NS_ASSUME_NONNULL_END

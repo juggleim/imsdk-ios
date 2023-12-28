@@ -50,10 +50,16 @@
 //    <#code#>
 //}
 //
-//- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation count:(int)count time:(long long)time direction:(JPullDirection)direction {
-//    <#code#>
-//}
-//
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction {
+    return [self.core.dbManager getMessagesFrom:conversation
+                                          count:count
+                                           time:time
+                                      direction:direction];
+}
+
 
 - (JMessage *)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation

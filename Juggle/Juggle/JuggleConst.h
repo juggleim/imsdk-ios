@@ -7,8 +7,8 @@
 
 /// 拉取消息的方向
 typedef NS_ENUM(NSUInteger, JPullDirection) {
-    JPullDirectionOldToNew = 0,
-    JPullDirectionNewToOld = 1,
+    JPullDirectionNewer = 0,
+    JPullDirectionOlder = 1,
 };
 
 typedef NS_ENUM(NSUInteger, JConnectionStatus) {

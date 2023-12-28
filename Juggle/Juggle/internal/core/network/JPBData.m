@@ -207,7 +207,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     r.startTime = startTime;
     r.count = count;
-    if (direction == JPullDirectionNewToOld) {
+    if (direction == JPullDirectionOlder) {
         r.order = 0;
     } else {
         r.order = 1;
