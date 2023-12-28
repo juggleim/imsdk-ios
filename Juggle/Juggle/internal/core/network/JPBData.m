@@ -287,6 +287,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.code = msg.pubAckMsgBody.code;
             a.msgId = msg.pubAckMsgBody.msgId;
             a.timestamp = msg.pubAckMsgBody.timestamp;
+            a.msgIndex = msg.pubAckMsgBody.msgIndex;
             obj.publishMsgAck = a;
         }
             break;

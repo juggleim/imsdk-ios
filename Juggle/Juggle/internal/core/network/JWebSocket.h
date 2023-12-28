@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
                 error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock;
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime

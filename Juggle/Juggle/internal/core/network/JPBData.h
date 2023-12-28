@@ -42,6 +42,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, assign) int code;
 @property (nonatomic, copy) NSString *msgId;
 @property (nonatomic, assign) long long timestamp;
+@property (nonatomic, assign) long long msgIndex;
 @end
 
 @interface JQryAck : NSObject

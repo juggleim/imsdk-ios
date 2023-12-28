@@ -73,12 +73,12 @@
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
                              clientUid:message.clientUid
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp) {
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex) {
         self.core.messageSendSyncTime = timestamp;
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
-                                       messageIndex:message.msgIndex];
+                                       messageIndex:msgIndex];
         //TODO: 更新 DB，msgId 和 消息状态
         if (successBlock) {
             successBlock(clientMsgNo);
@@ -153,8 +153,8 @@
 
 - (NSString *)createClientUid {
     long long ts = [[NSDate date] timeIntervalSince1970];
-    ts = ts % 1000;
-    return [NSString stringWithFormat:@"%03lld%03d", ts, self.increaseId++];
+    ts = ts % 1000000;
+    return [NSString stringWithFormat:@"%06lld%03d", ts, self.increaseId++];
 }
 
 @end

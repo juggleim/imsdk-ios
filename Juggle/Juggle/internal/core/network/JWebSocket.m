@@ -20,7 +20,7 @@
 
 @interface JSendMessageObj : JBlockObj
 @property (nonatomic, assign) long long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp);
+@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode, long long clientMsgNo);
 @end
 
@@ -98,7 +98,7 @@
        inConversation:(nonnull JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
                 error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
@@ -311,7 +311,7 @@
         if (ack.code != 0) {
             sendMessageObj.errorBlock(ack.code, sendMessageObj.clientMsgNo);
         } else {
-            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp);
+            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.msgIndex);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
