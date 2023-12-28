@@ -25,7 +25,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [JuggleIM.shared initWithAppKey:@"appkey"];
-    [JuggleIM.shared.connectionManager connectWithToken:kToken4];
+    [JuggleIM.shared.connectionManager connectWithToken:kToken1];
     [JuggleIM.shared.connectionManager setDelegate:self];
     [JuggleIM.shared.messageManager setDelegate:self];
     

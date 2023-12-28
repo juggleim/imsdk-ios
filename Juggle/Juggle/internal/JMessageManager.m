@@ -100,14 +100,29 @@
                 isFinished:(BOOL)isFinished {
     //TODO: 排重
     //TODO: cmd message 吞掉
-    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.direction == JMessageDirectionSend) {
-            if (obj.timestamp > self.core.messageSendSyncTime) {
-                self.core.messageSendSyncTime = obj.timestamp;
+    
+    [self.core.dbManager insertMessages:messages];
+    
+    //标识是否存在发送的消息
+    __block BOOL sendDirection = NO;
+    //标识是否存在接收的消息
+    __block BOOL receiveDirection = NO;
+    [messages enumerateObjectsWithOptions:NSEnumerationReverse
+                               usingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (!sendDirection) {
+            if (obj.direction == JMessageDirectionSend) {
+                sendDirection = YES;
+                if (obj.timestamp > self.core.messageSendSyncTime) {
+                    self.core.messageSendSyncTime = obj.timestamp;
+                }
             }
-        } else {
-            if (obj.timestamp > self.core.messageReceiveSyncTime) {
-                self.core.messageReceiveSyncTime = obj.timestamp;
+        }
+        if (!receiveDirection) {
+            if (obj.direction == JMessageDirectionReceive) {
+                receiveDirection = YES;
+                if (obj.timestamp > self.core.messageReceiveSyncTime) {
+                    self.core.messageReceiveSyncTime = obj.timestamp;
+                }
             }
         }
         dispatch_async(self.core.delegateQueue, ^{
