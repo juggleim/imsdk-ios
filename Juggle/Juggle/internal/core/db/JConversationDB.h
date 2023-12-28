@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations;
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
-
+- (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
 @end
 
 NS_ASSUME_NONNULL_END

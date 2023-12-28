@@ -24,7 +24,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "content TEXT,"
                                         "extra TEXT,"
                                         "message_index INTEGER,"
-                                        "is_deleted BOOLEAN"
+                                        "is_deleted BOOLEAN DEFAULT 0"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = false";
@@ -110,8 +110,6 @@ NSString *const jIsDeleted = @"is_deleted";
 }
 
 #pragma mark - internal
-
-
 - (JConcreteMessage *)messageWith:(JFMResultSet *)rs {
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     JConversation *c = [[JConversation alloc] init];

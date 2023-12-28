@@ -14,6 +14,8 @@
 @implementation JDBHelper
 
 - (BOOL)openDB:(NSString *)path {
+    //TODO: delete
+    NSLog(@"openDB, path is %@", path);
     [self closeDB];
     if (path.length > 0) {
         self.dbQueue = [JFMDatabaseQueue databaseQueueWithPath:path];

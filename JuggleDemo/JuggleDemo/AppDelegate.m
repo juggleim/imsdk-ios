@@ -39,9 +39,15 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        sleep(5);
+        //getConversationList
+        sleep(10);
+        NSArray *array = [JuggleIM.shared.conversationManager getConversationInfoList];
+        NSLog(@"conversation count is %d", array.count);
+        
+        
         //send message
-        [self sendMessage];
+//        sleep(5);
+//        [self sendMessage];
         
         //disconnect
 //        [JuggleIM.shared.connectionManager disconnect:NO];

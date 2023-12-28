@@ -56,9 +56,9 @@
     return [self.core.dbManager getConversationInfo:conversation];
 }
 
-//- (NSArray<JConversationInfo *> *)getConversationInfoList { 
-//    <#code#>
-//}
+- (NSArray<JConversationInfo *> *)getConversationInfoList {
+    return [self.core.dbManager getConversationInfoList];
+}
 //
 //- (int)getTotalUnreadCount { 
 //    <#code#>

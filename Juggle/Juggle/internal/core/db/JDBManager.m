@@ -67,6 +67,10 @@
     return [self.conversationDb getConversationInfo:conversation];
 }
 
+- (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
+    return [self.conversationDb getConversationInfoList];
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];

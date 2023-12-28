@@ -26,6 +26,7 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "last_read_message_index, is_top, top_time, mute, last_mention_message_id)"
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -71,6 +72,25 @@ NSString *const jLastMentionMessageId = @"last_mention_message_id";
     }];
     info.lastMessage = [self.messageDB getMessageWithMessageId:lastMessageId];
     return info;
+}
+
+- (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
+    NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
+    [self.dbHelper executeQuery:jGetConversations
+           withArgumentsInArray:nil
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
+            JConcreteMessage *message = [[JConcreteMessage alloc] init];
+            message.messageId = [resultSet stringForColumn:jLastMessageId];
+            info.lastMessage = message;
+            [array addObject:info];
+        }
+    }];
+    [array enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.lastMessage = [self.messageDB getMessageWithMessageId:obj.lastMessage.messageId];
+    }];
+    return array;
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
