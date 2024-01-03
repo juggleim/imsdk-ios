@@ -85,13 +85,12 @@
                                           messageId:msgId
                                           timestamp:timestamp
                                        messageIndex:msgIndex];
-        //TODO: 更新 DB，msgId 和 消息状态
         if (successBlock) {
             successBlock(clientMsgNo);
         }
-    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
         if (errorBlock) {
-            errorBlock(errorCode, clientMsgNo);
+            errorBlock((JErrorCode)errorCode, clientMsgNo);
         }
     }];
     return message;
@@ -163,7 +162,11 @@
                                     count:count
                                 direction:direction
                                   success:successBlock
-                                    error:errorBlock];
+                                    error:^(JErrorCodeInternal code) {
+        if (errorBlock) {
+            errorBlock((JErrorCode)code);
+        }
+    }];
 }
 
 - (void)sync {

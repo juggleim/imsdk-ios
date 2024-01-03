@@ -40,7 +40,7 @@
                 completeBlock();
             }
         }
-    } error:^(JErrorCode code) {
+    } error:^(JErrorCodeInternal code) {
         NSLog(@"[Juggle] sync conversation fail, code is %lu", (unsigned long)code);
         if (completeBlock) {
             completeBlock();

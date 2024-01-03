@@ -19,7 +19,6 @@ typedef NS_ENUM(NSUInteger, JMessageDirection) {
 };
 
 /// 消息状态
-/// TODO: 发送和接收状态要不要做区分
 typedef NS_ENUM(NSUInteger, JMessageState) {
     JMessageStateUnknown = 0,
     JMessageStateSending,

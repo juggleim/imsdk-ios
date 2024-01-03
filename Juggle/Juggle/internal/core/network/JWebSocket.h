@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JuggleConst.h"
+#import "JuggleConstInternal.h"
 #import "JMessageContent.h"
 #import "JConversation.h"
 #import "JConcreteMessage.h"
@@ -14,7 +15,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol JWebSocketConnectDelegate <NSObject>
-- (void)connectCompleteWithCode:(JErrorCode)error
+- (void)connectCompleteWithCode:(JErrorCodeInternal)error
                          userId:(NSString *)userId;
 - (void)webSocketDidFail;
 - (void)webSocketDidClose;
@@ -30,7 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(NSString *)appKey
-          token:(NSString *)token;
+          token:(NSString *)token
+        servers:(NSArray *)servers;
 - (void)disconnect:(BOOL)needPush;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
@@ -41,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
-                error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock;
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
@@ -52,12 +54,12 @@ NS_ASSUME_NONNULL_BEGIN
                    count:(int)count
                direction:(JPullDirection)direction
                  success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
-                   error:(void (^)(JErrorCode code))errorBlock;
+                   error:(void (^)(JErrorCodeInternal code))errorBlock;
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId
                   success:(void (^)(NSArray *conversations, BOOL isFinished))successBlock
-                    error:(void (^)(JErrorCode code))errorBlock;
+                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 @end

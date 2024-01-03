@@ -25,6 +25,8 @@
 		A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */; };
 		A07CE41C2B3AF131006E3F4D /* JMessageTypeCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41A2B3AF131006E3F4D /* JMessageTypeCenter.h */; };
 		A07CE41D2B3AF131006E3F4D /* JMessageTypeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41B2B3AF131006E3F4D /* JMessageTypeCenter.m */; };
+		A07CE4202B3ECBDD006E3F4D /* JNaviManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */; };
+		A07CE4212B3ECBDD006E3F4D /* JNaviManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */; };
 		A08AA1E72B148B68008B114C /* Juggle.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* Juggle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JuggleIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JuggleIM.m */; };
@@ -228,6 +230,8 @@
 		A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteMessage.m; sourceTree = "<group>"; };
 		A07CE41A2B3AF131006E3F4D /* JMessageTypeCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageTypeCenter.h; sourceTree = "<group>"; };
 		A07CE41B2B3AF131006E3F4D /* JMessageTypeCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageTypeCenter.m; sourceTree = "<group>"; };
+		A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JNaviManager.h; sourceTree = "<group>"; };
+		A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JNaviManager.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* Juggle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Juggle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* Juggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Juggle.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JuggleIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIM.h; sourceTree = "<group>"; };
@@ -579,6 +583,8 @@
 				A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */,
 				A07CE41A2B3AF131006E3F4D /* JMessageTypeCenter.h */,
 				A07CE41B2B3AF131006E3F4D /* JMessageTypeCenter.m */,
+				A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */,
+				A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -879,6 +885,7 @@
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,
 				A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */,
 				A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */,
+				A07CE4202B3ECBDD006E3F4D /* JNaviManager.h in Headers */,
 				A08AA3B62B19DF75008B114C /* JuggleCore.h in Headers */,
 				A08AA24B2B14A546008B114C /* JConversationProtocol.h in Headers */,
 				A08AA3A32B19CB78008B114C /* GPBUnknownField.h in Headers */,
@@ -1058,6 +1065,7 @@
 				A08AA3FC2B19EEDB008B114C /* SRMutex.m in Sources */,
 				A08AA3712B19CB77008B114C /* GPBStruct.pbobjc.m in Sources */,
 				A08AA3822B19CB78008B114C /* GPBWellKnownTypes.m in Sources */,
+				A07CE4212B3ECBDD006E3F4D /* JNaviManager.m in Sources */,
 				A0F376242B3A83B20076CB84 /* JFileMessage.m in Sources */,
 				A08AA3EC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m in Sources */,
 				A08AA3652B19CB77008B114C /* GPBDescriptor.m in Sources */,

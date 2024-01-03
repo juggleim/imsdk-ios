@@ -6,6 +6,7 @@
 //
 
 #import "JuggleCore.h"
+#import "JuggleConstInternal.h"
 
 #define kSendQueue "com.juggle.im.wssendqueue"
 #define kReceiveQueue "com.juggle.im.wsreceivequeue"
@@ -75,6 +76,20 @@
 - (void)setMessageReceiveSyncTime:(long long)messageReceiveSyncTime {
     _messageReceiveSyncTime = messageReceiveSyncTime;
     [self.dbManager setMessageReceiveSyncTime:messageReceiveSyncTime];
+}
+
+- (NSString *)naviUrl {
+    if (!_naviUrl) {
+        _naviUrl = JNaviURL;
+    }
+    return _naviUrl;
+}
+
+- (NSArray *)servers {
+    if (!_servers) {
+        _servers = @[JWebSocketURL];
+    }
+    return _servers;
 }
 
 @end

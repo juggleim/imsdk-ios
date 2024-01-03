@@ -30,6 +30,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)initWithAppKey:(NSString *)appKey;
 
+/*!
+ 设置服务器地址
+
+ @param serverUrl  服务器地址
+ */
+- (void)setServer:(NSString *)serverUrl;
+
 /// 连接管理类
 @property(nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类

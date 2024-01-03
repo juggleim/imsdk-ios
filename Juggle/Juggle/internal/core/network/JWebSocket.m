@@ -12,6 +12,9 @@
 #import "JuggleConstInternal.h"
 #import "JPBData.h"
 
+#define jWebSocketPrefix @"ws://"
+#define jWebSocketSuffix @"/im"
+
 @interface JBlockObj : NSObject
 @end
 
@@ -21,7 +24,7 @@
 @interface JSendMessageObj : JBlockObj
 @property (nonatomic, assign) long long clientMsgNo;
 @property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode, long long clientMsgNo);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode, long long clientMsgNo);
 @end
 
 @implementation JSendMessageObj
@@ -29,7 +32,7 @@
 
 @interface JQryHisMsgsObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull msgs, BOOL isFinished);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
 @implementation JQryHisMsgsObj
@@ -37,7 +40,7 @@
 
 @interface JSyncConvsObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, BOOL isFinished);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
 @implementation JSyncConvsObj
@@ -48,6 +51,7 @@
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSArray *servers;
 @property (nonatomic, strong) SRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
@@ -65,17 +69,23 @@
     ws.receiveQueue = receiveQueue;
     ws.pbData = [[JPBData alloc] init];
     ws.msgBlockDic = [[NSMutableDictionary alloc] init];
-    ws.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:JWebSocketURL]]];
-    ws.sws.delegateDispatchQueue = ws.receiveQueue;
-    ws.sws.delegate = ws;
     return ws;
 }
 
-- (void)connect:(NSString *)appKey token:(NSString *)token {
+- (void)connect:(NSString *)appKey
+          token:(NSString *)token
+        servers:(nonnull NSArray *)servers {
     dispatch_async(self.sendQueue, ^{
         self.appKey = appKey;
         self.token = token;
-        [self.sws open];
+        self.servers = servers;
+        if (servers.count > 0) {
+            NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, self.servers[0], jWebSocketSuffix];
+            self.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
+            self.sws.delegateDispatchQueue = self.receiveQueue;
+            self.sws.delegate = self;
+            [self.sws open];
+        }
     });
 }
 
@@ -99,7 +109,7 @@
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
-                error:(void (^)(JErrorCode errorCode, long long clientMsgNo))errorBlock{
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
@@ -115,7 +125,7 @@
         if (err != nil) {
             NSLog(@"WebSocket send IM message error, msg is %@", err.description);
             if (errorBlock) {
-                errorBlock(JErrorCodeWebSocketFailure, clientMsgNo);
+                errorBlock(JErrorCodeInternalWebSocketFailure, clientMsgNo);
             }
         } else {
             JSendMessageObj *obj = [[JSendMessageObj alloc] init];
@@ -148,7 +158,7 @@
                    count:(int)count
                direction:(JPullDirection)direction
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
-                   error:(void (^)(JErrorCode))errorBlock {
+                   error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
@@ -161,7 +171,7 @@
         if (err != nil) {
             NSLog(@"WebSocket query history message error, msg is %@", err.description);
             if (errorBlock) {
-                errorBlock(JErrorCodeWebSocketFailure);
+                errorBlock(JErrorCodeInternalWebSocketFailure);
             }
         } else {
             JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
@@ -176,7 +186,7 @@
                     count:(int)count
                    userId:(NSString *)userId
                   success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
-                    error:(void (^)(JErrorCode))errorBlock {
+                    error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData syncConversationsData:startTime
@@ -188,7 +198,7 @@
         if (err != nil) {
             NSLog(@"WebSocket sync conversations error, msg is %@", err.description);
             if (errorBlock) {
-                errorBlock(JErrorCodeWebSocketFailure);
+                errorBlock(JErrorCodeInternalWebSocketFailure);
             }
         } else {
             JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];

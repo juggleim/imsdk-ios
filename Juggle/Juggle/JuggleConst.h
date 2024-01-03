@@ -48,8 +48,6 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeUserKickedByOtherClient = 11011,
     //用户注销下线
     JErrorCodeUserLogOut = 11012,
-    
-    JErrorCodeWebSocketFailure = 21001,
 };
 
 /*!

@@ -34,6 +34,9 @@ typedef NS_ENUM(NSUInteger, JDBStatus) {
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JuggleCore : NSObject
+//TODO: 线程控制
+@property (nonatomic, copy) NSString *naviUrl;
+@property (nonatomic, strong) NSArray *servers;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *userId;

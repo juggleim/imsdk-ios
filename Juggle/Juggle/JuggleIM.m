@@ -49,4 +49,8 @@ static JuggleIM *_instance;
     self.core.delegateQueue = delegateQueue;
 }
 
+- (void)setServer:(NSString *)serverUrl {
+    [self.core setNaviUrl:serverUrl];
+}
+
 @end

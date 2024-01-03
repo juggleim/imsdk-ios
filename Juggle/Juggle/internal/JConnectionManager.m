@@ -8,6 +8,8 @@
 #import "JConnectionManager.h"
 #import "JWebSocket.h"
 #import "JHeartBeatManager.h"
+#import "JNaviManager.h"
+#import "JuggleConstInternal.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JuggleCore *core;
@@ -15,7 +17,7 @@
 @property (nonatomic, strong) JMessageManager *messageManager;
 @property (nonatomic, strong) JHeartBeatManager *heartBeatManager;
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
-
+@property (nonatomic, strong) NSTimer *reconnectTimer;
 @end
 
 @implementation JConnectionManager
@@ -49,11 +51,16 @@
     }
     [self changeStatus:JConnectionStatusInternalConnecting];
     
-    
-    
-    //TODO: navi
-//    [self.core.dbManager openIMDB:self.core.appKey userId:];
-    [self.core.webSocket connect:self.core.appKey token:token];
+    [JNaviManager requestNavi:[NSURL URLWithString:self.core.naviUrl]
+                       appKey:self.core.appKey
+                        token:token
+                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+        self.core.servers = servers;
+        [self.core.webSocket connect:self.core.appKey token:token servers:self.core.servers];
+    } failure:^(JErrorCodeInternal errorCode) {
+        [self reconnect];
+    }];
+//    [self.core.webSocket connect:self.core.appKey token:token];
 }
 
 - (void)disconnect:(BOOL)receivePush {
@@ -67,9 +74,9 @@
 }
 
 #pragma mark - JWebSocketConnectDelegate
-- (void)connectCompleteWithCode:(JErrorCode)error
+- (void)connectCompleteWithCode:(JErrorCodeInternal)error
                          userId:(NSString *)userId {
-    if (error == JErrorCodeNone) {
+    if (error == JErrorCodeInternalNone) {
         self.core.userId = userId;
         if (self.core.dbStatus != JDBStatusOpen) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
@@ -185,19 +192,38 @@
 - (void)reconnect {
     //需要在 sendQueue 里
     NSLog(@"[Juggle] reconnect");
+    //TODO: 线程控制，间隔控制
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.reconnectTimer) {
+            return;
+        }
+        self.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5
+                                                               target:self
+                                                             selector:@selector(reconnectTimerFired)
+                                                             userInfo:nil
+                                                              repeats:NO];
+    });
 }
 
-- (BOOL)checkConnectionFailure:(JErrorCode)code {
-    if (code == JErrorCodeAppKeyEmpty ||
-        code == JErrorCodeTokenEmpty ||
-        code == JErrorCodeAppKeyInvalid ||
-        code == JErrorCodeTokenIllegal ||
-        code == JErrorCodeTokenUnauthorized ||
-        code == JErrorCodeTokenExpired ||
-        code == JErrorCodeAppProhibited ||
-        code == JErrorCodeUserProhibited ||
-        code == JErrorCodeUserKickedByOtherClient ||
-        code == JErrorCodeUserLogOut
+- (void)reconnectTimerFired {
+    if (self.reconnectTimer) {
+        [self.reconnectTimer invalidate];
+    }
+    self.reconnectTimer = nil;
+    [self connectWithToken:self.core.token];
+}
+
+- (BOOL)checkConnectionFailure:(JErrorCodeInternal)code {
+    if (code == JErrorCodeInternalAppKeyEmpty ||
+        code == JErrorCodeInternalTokenEmpty ||
+        code == JErrorCodeInternalAppKeyInvalid ||
+        code == JErrorCodeInternalTokenIllegal ||
+        code == JErrorCodeInternalTokenUnauthorized ||
+        code == JErrorCodeInternalTokenExpired ||
+        code == JErrorCodeInternalAppProhibited ||
+        code == JErrorCodeInternalUserProhibited ||
+        code == JErrorCodeInternalUserKickedByOtherClient ||
+        code == JErrorCodeInternalUserLogOut
         ) {
         return YES;
     }
