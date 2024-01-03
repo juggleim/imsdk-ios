@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:JuggleDemo/JuggleDemo.xcodeproj">
+      location = "group:/Users/feili/workspace/iOS/juggle/JuggleDemo/JetIMDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Juggle/Juggle.xcodeproj">
+      location = "group:/Users/feili/workspace/iOS/juggle/Juggle/JetIM.xcodeproj">
    </FileRef>
 </Workspace>
