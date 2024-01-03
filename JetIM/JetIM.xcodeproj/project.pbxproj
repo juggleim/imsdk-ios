@@ -27,9 +27,9 @@
 		A07CE41D2B3AF131006E3F4D /* JMessageTypeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41B2B3AF131006E3F4D /* JMessageTypeCenter.m */; };
 		A07CE4202B3ECBDD006E3F4D /* JNaviManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */; };
 		A07CE4212B3ECBDD006E3F4D /* JNaviManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */; };
-		A08AA1E72B148B68008B114C /* Jet.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* Jet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A08AA21D2B148BFF008B114C /* JetIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JetIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A08AA21E2B148BFF008B114C /* JetIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JetIM.m */; };
+		A08AA1E72B148B68008B114C /* JetIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JetIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08AA21D2B148BFF008B114C /* JIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08AA21E2B148BFF008B114C /* JIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JIM.m */; };
 		A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA2212B14934F008B114C /* JConnectionProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA2222B149419008B114C /* JMessageProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA24B2B14A546008B114C /* JConversationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA24A2B14A525008B114C /* JConversationProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -233,9 +233,9 @@
 		A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JNaviManager.h; sourceTree = "<group>"; };
 		A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JNaviManager.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A08AA1E62B148B68008B114C /* Jet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Jet.h; sourceTree = "<group>"; };
-		A08AA21B2B148BFF008B114C /* JetIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JetIM.h; sourceTree = "<group>"; };
-		A08AA21C2B148BFF008B114C /* JetIM.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JetIM.m; sourceTree = "<group>"; };
+		A08AA1E62B148B68008B114C /* JetIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JetIM.h; sourceTree = "<group>"; };
+		A08AA21B2B148BFF008B114C /* JIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIM.h; sourceTree = "<group>"; };
+		A08AA21C2B148BFF008B114C /* JIM.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIM.m; sourceTree = "<group>"; };
 		A08AA2212B14934F008B114C /* JConnectionProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnectionProtocol.h; sourceTree = "<group>"; };
 		A08AA2222B149419008B114C /* JMessageProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageProtocol.h; sourceTree = "<group>"; };
 		A08AA24A2B14A525008B114C /* JConversationProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConversationProtocol.h; sourceTree = "<group>"; };
@@ -503,9 +503,9 @@
 				A08AA2602B162968008B114C /* vendor */,
 				A08AA24D2B14AED9008B114C /* model */,
 				A08AA24C2B14AECB008B114C /* protocol */,
-				A08AA1E62B148B68008B114C /* Jet.h */,
-				A08AA21B2B148BFF008B114C /* JetIM.h */,
-				A08AA21C2B148BFF008B114C /* JetIM.m */,
+				A08AA1E62B148B68008B114C /* JetIM.h */,
+				A08AA21B2B148BFF008B114C /* JIM.h */,
+				A08AA21C2B148BFF008B114C /* JIM.m */,
 				A08AA25A2B14BB34008B114C /* JetIMConst.h */,
 				A08AA3B32B19D3D9008B114C /* JetIMConstInternal.h */,
 			);
@@ -858,7 +858,7 @@
 				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
 				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
 				A08AA3962B19CB78008B114C /* GPBMessage.h in Headers */,
-				A08AA21D2B148BFF008B114C /* JetIM.h in Headers */,
+				A08AA21D2B148BFF008B114C /* JIM.h in Headers */,
 				A08AA3FA2B19EEDB008B114C /* SRHash.h in Headers */,
 				A08AA3882B19CB78008B114C /* GPBBootstrap.h in Headers */,
 				A08AA4082B19EEDB008B114C /* SRURLUtilities.h in Headers */,
@@ -867,7 +867,7 @@
 				A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */,
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
-				A08AA1E72B148B68008B114C /* Jet.h in Headers */,
+				A08AA1E72B148B68008B114C /* JetIM.h in Headers */,
 				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
 				A08AA2772B162A12008B114C /* JFMDatabaseAdditions.h in Headers */,
@@ -1083,7 +1083,7 @@
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
 				A08AA4362B1B78FE008B114C /* Onlinestatus.pbobjc.m in Sources */,
-				A08AA21E2B148BFF008B114C /* JetIM.m in Sources */,
+				A08AA21E2B148BFF008B114C /* JIM.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,

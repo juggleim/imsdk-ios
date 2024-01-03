@@ -6,7 +6,7 @@
 //
 
 #import "AppDelegate.h"
-#import <JetIM/Jet.h>
+#import <JetIM/JetIM.h>
 #import <JetIM/JTextMessage.h>
 
 #define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
@@ -24,10 +24,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JetIM.shared initWithAppKey:@"appkey"];
-    [JetIM.shared.connectionManager connectWithToken:kToken1];
-    [JetIM.shared.connectionManager setDelegate:self];
-    [JetIM.shared.messageManager setDelegate:self];
+    [JIM.shared initWithAppKey:@"appkey"];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
+    [JIM.shared.connectionManager setDelegate:self];
+    [JIM.shared.messageManager setDelegate:self];
     
     return YES;
 }
@@ -46,11 +46,11 @@
         
         //getConversation
         JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
-        JConversationInfo *conversationInfo = [JetIM.shared.conversationManager getConversationInfo:conversation];
+        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
         //getMessages
-        NSArray *messages = [JetIM.shared.messageManager getMessagesFrom:conversation
+        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
                                                                       count:100
                                                                        time:0
                                                                   direction:JPullDirectionOlder];
@@ -98,7 +98,7 @@
     voice.url = @"voiceURL";
     voice.duration = 60;
 
-    [JetIM.shared.messageManager sendMessage:text
+    [JIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
@@ -106,7 +106,7 @@
         NSLog(@"lifei, sendMessage error");
     }];
     sleep(2);
-    [JetIM.shared.messageManager sendMessage:image
+    [JIM.shared.messageManager sendMessage:image
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
@@ -114,7 +114,7 @@
         NSLog(@"lifei, sendMessage error");
     }];
     sleep(2);
-    [JetIM.shared.messageManager sendMessage:file
+    [JIM.shared.messageManager sendMessage:file
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
@@ -122,7 +122,7 @@
         NSLog(@"lifei, sendMessage error");
     }];
     sleep(2);
-    [JetIM.shared.messageManager sendMessage:voice
+    [JIM.shared.messageManager sendMessage:voice
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");

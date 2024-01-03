@@ -164,7 +164,7 @@
         }
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
-            if (self.delegate) {
+            if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:)]) {
                 [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
             }
         });
@@ -178,10 +178,12 @@
             [self.core getSyncTimeFromDB];
         }
         dispatch_async(self.core.delegateQueue, ^{
-            if (self.delegate) {
-                if (status == JDBStatusOpen) {
+            if (status == JDBStatusOpen) {
+                if ([self.delegate respondsToSelector:@selector(dbDidOpen)]) {
                     [self.delegate dbDidOpen];
-                } else {
+                }
+            } else {
+                if ([self.delegate respondsToSelector:@selector(dbDidClose)]) {
                     [self.delegate dbDidClose];
                 }
             }

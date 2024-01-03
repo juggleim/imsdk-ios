@@ -229,14 +229,14 @@
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
     NSLog(@"[JetIM] websocket did fail with error, %@", error.description);
-    if (self.connectDelegate) {
+    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
         [self.connectDelegate webSocketDidFail];
     }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     NSLog(@"[JetIM] websocket did close with code(%ld), reason(%@)", (long)code, reason);
-    if (self.connectDelegate) {
+    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
         [self.connectDelegate webSocketDidClose];
     }
 }
@@ -307,7 +307,7 @@
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
     NSLog(@"connect userId is %@", connectAck.userId);
-    if (self.connectDelegate) {
+    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:)]) {
         [self.connectDelegate connectCompleteWithCode:connectAck.code
                                                userId:connectAck.userId];
     }
@@ -347,21 +347,21 @@
 //sync 和 queryHisMsgs 共用一个 ack
 - (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
     NSLog(@"handleSyncMsgsAck");
-    if (self.messageDelegate) {
+    if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
         [self.messageDelegate messagesDidReceive:ack.msgs isFinished:ack.isFinished];
     }
 }
 
 - (void)handleReceiveMessage:(JConcreteMessage *)message {
     NSLog(@"handleReceiveMessage");
-    if (self.messageDelegate) {
+    if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
         [self.messageDelegate messagesDidReceive:@[message] isFinished:YES];
     }
 }
 
 - (void)handlePublishMsgNtf:(JPublishMsgNtf *)ntf {
     NSLog(@"handlePublishMsgNtf");
-    if (self.messageDelegate) {
+    if ([self.messageDelegate respondsToSelector:@selector(syncNotify:)]) {
         [self.messageDelegate syncNotify:ntf.syncTime];
     }
 }

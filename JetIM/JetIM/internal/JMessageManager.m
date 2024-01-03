@@ -131,7 +131,7 @@
             }
         }
         dispatch_async(self.core.delegateQueue, ^{
-            if (self.delegate) {
+            if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
                 [self.delegate messageDidReceive:obj];
             }
         });

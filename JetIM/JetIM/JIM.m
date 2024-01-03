@@ -11,13 +11,13 @@
 #import "JConversationManager.h"
 #import "JetIMCore.h"
 
-@interface JetIM ()
+@interface JIM ()
 @property (nonatomic, strong) JetIMCore *core;
 @end
 
-@implementation JetIM
+@implementation JIM
 
-static JetIM *_instance;
+static JIM *_instance;
 
 + (instancetype)shared {
     static dispatch_once_t onceToken;
