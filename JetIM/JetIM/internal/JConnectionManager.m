@@ -165,7 +165,7 @@
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:)]) {
-                [self.delegate connectionStatusDidChange:outStatus errorCode:errorCode];
+                [self.delegate connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode];
             }
         });
     });
