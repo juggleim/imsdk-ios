@@ -10,9 +10,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JImageMessage : JMessageContent
+/// 图片的远端地址
 @property (nonatomic, copy) NSString *url;
+/// 缩略图的远端地址
 @property (nonatomic, copy) NSString *thumbnailUrl;
+/// 图片高度
 @property (nonatomic, assign) int height;
+/// 图片宽度
 @property (nonatomic, assign) int width;
 @end
 
