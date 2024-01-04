@@ -13,7 +13,7 @@
 ///   - code: 连接错误码，在 JConnectionStatusFailure 状态时有效，其它状态均为 0。
 - (void)connectionStatusDidChange:(JConnectionStatus)status
                         errorCode:(JErrorCode)code;
-
+/// 数据库打开的回调，设备离线的情况下也可以打开本地数据库查看历史消息
 - (void)dbDidOpen;
 - (void)dbDidClose;
 @end
