@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, assign) JMessageState messageState;
 /// 是否已读
 @property (nonatomic, assign) BOOL hasRead;
-/// 消息发送的时间戳（服务端时间，全局唯一）
+/// 消息发送的时间戳（服务端时间）
 @property (nonatomic, assign) long long timestamp;
 /// 发送者 userId
 @property (nonatomic, copy) NSString *senderUserId;

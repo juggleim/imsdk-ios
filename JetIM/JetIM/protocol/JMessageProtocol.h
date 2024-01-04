@@ -12,7 +12,6 @@
 @protocol JMessageDelegate <NSObject>
 
 - (void)messageDidReceive:(JMessage *)message;
-//- (void)messageDidUpdate:(JMessage *)message;
 
 @end
 
@@ -73,7 +72,6 @@
 
 
 
-//TODO: delete
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
                     startTime:(long long)startTime
                         count:(int)count

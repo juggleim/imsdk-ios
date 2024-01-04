@@ -24,7 +24,7 @@
 - (JConversationInfo *)getConversationInfo:(JConversation *)conversation;
 
 /// 获取消息未读的总数
-- (int)getTotalUnreadCount;
+//- (int)getTotalUnreadCount;
 
 /// TODO:
 /// 根据类型获取会话信息列表
@@ -33,10 +33,10 @@
 
 /// 获取某一个会话的未读数
 /// - Parameter conversation: 会话对象
-- (int)getUnreadCountByConversation:(JConversation *)conversation;
+//- (int)getUnreadCountByConversation:(JConversation *)conversation;
 
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象
-- (void)clearUnreadCountByConversation:(JConversation *)conversation;
+//- (void)clearUnreadCountByConversation:(JConversation *)conversation;
 
 @end
