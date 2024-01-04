@@ -49,7 +49,7 @@
             [self dbOpenNotice:JDBStatusOpen];
         }
     }
-    [self changeStatus:JConnectionStatusInternalConnecting];
+    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone];
     
     [JNaviManager requestNavi:[NSURL URLWithString:self.core.naviUrl]
                        appKey:self.core.appKey
@@ -58,14 +58,17 @@
         self.core.servers = servers;
         [self.core.webSocket connect:self.core.appKey token:token servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
-        [self reconnect];
+        if (errorCode == JErrorCodeInternalTokenIllegal) {
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal];
+        } else {
+            [self reconnect];
+        }
     }];
-//    [self.core.webSocket connect:self.core.appKey token:token];
 }
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self changeStatus:JConnectionStatusInternalDisconnected];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
     [self.core.webSocket disconnect:receivePush];
 }
 
@@ -85,22 +88,22 @@
                 NSLog(@"[JetIM] db open fail");
             }
         }
-        [self changeStatus:JConnectionStatusInternalConnected];
+        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{
             [self.messageManager syncMessages];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
-            [self changeStatus:JConnectionStatusInternalFailure];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:error];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
         }
     }
 }
 
 - (void)webSocketDidFail {
-    [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
 }
 
 - (void)webSocketDidClose {
@@ -109,12 +112,13 @@
             || self.core.connectionStatus == JConnectionStatusInternalFailure) {
             return;
         }
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting];
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
     });
 }
 
 #pragma mark -- internal
-- (void)changeStatus:(JConnectionStatusInternal)status {
+- (void)changeStatus:(JConnectionStatusInternal)status
+           errorCode:(JErrorCodeInternal)errorCode {
     dispatch_async(self.core.sendQueue, ^{
         if (status == JConnectionStatusInternalIdle) {
             self.core.connectionStatus = status;
@@ -139,11 +143,7 @@
             case JConnectionStatusInternalConnecting:
                 outStatus = JConnectionStatusConnecting;
                 break;
-                
-            case JConnectionStatusInternalTokenIncorrect:
-                outStatus = JConnectionStatusTokenIncorrect;
-                break;
-                
+
             case JConnectionStatusInternalWaitingForConnecting:
                 [self reconnect];
                 //已经在连接中，不需要再对外抛回调
@@ -165,7 +165,7 @@
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:)]) {
-                [self.delegate connectionStatusDidChange:outStatus errorCode:JErrorCodeNone];
+                [self.delegate connectionStatusDidChange:outStatus errorCode:errorCode];
             }
         });
     });

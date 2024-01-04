@@ -37,7 +37,11 @@
         if (statusCode != 200) {
             NSLog(@"[JetIM] request navi error, http code is %ld", (long)statusCode);
             if (failure) {
-                failure(JErrorCodeInternalNaviFailure);
+                if (statusCode == 401) {
+                    failure(JErrorCodeInternalTokenIllegal);
+                } else {
+                    failure(JErrorCodeInternalNaviFailure);
+                }
             }
             return;
         }
