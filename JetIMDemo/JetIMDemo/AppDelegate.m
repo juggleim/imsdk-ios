@@ -25,7 +25,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:@"fasdf"];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     
@@ -98,19 +98,20 @@
     voice.url = @"voiceURL";
     voice.duration = 60;
 
-    [JIM.shared.messageManager sendMessage:text
+    JMessage *m = [JIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long messageId) {
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
+    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
     sleep(2);
     [JIM.shared.messageManager sendMessage:image
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long messageId) {
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
     sleep(2);
@@ -118,7 +119,7 @@
                                  inConversation:conversation
                                         success:^(long long clientMsgNo) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long messageId) {
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
     sleep(2);
