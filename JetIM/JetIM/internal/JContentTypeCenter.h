@@ -1,5 +1,5 @@
 //
-//  JMessageTypeCenter.h
+//  JContentTypeCenter.h
 //  JetIM
 //
 //  Created by Nathan on 2023/12/26.
@@ -10,10 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JMessageTypeCenter : NSObject
+@interface JContentTypeCenter : NSObject
 + (instancetype)shared;
 
-- (void)registerMessageType:(Class)messageClass;
+- (void)registerContentType:(Class)messageClass;
 
 - (JMessageContent *)contentWithData:(NSData *)data
                          contentType:(NSString *)type;

@@ -11,7 +11,7 @@
 #import "JImageMessage.h"
 #import "JFileMessage.h"
 #import "JVoiceMessage.h"
-#import "JMessageTypeCenter.h"
+#import "JContentTypeCenter.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -30,10 +30,10 @@
     JMessageManager *m = [[JMessageManager alloc] init];
     m.core = core;
     [m.core.webSocket setMessageDelegate:m];
-    [m registerMessageType:[JTextMessage class]];
-    [m registerMessageType:[JImageMessage class]];
-    [m registerMessageType:[JFileMessage class]];
-    [m registerMessageType:[JVoiceMessage class]];
+    [m registerContentType:[JTextMessage class]];
+    [m registerContentType:[JImageMessage class]];
+    [m registerContentType:[JFileMessage class]];
+    [m registerContentType:[JVoiceMessage class]];
     return m;
 }
 
@@ -68,7 +68,7 @@
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
-    message.messageType = [[content class] contentType];
+    message.contentType = [[content class] contentType];
     message.direction = JMessageDirectionSend;
     message.messageState = JMessageStateSending;
     message.senderUserId = self.core.userId;
@@ -96,8 +96,8 @@
     return message;
 }
 
-- (void)registerMessageType:(Class)messageClass {
-    [[JMessageTypeCenter shared] registerMessageType:messageClass];
+- (void)registerContentType:(Class)messageClass {
+    [[JContentTypeCenter shared] registerContentType:messageClass];
 }
 
 #pragma mark - JWebSocketMessageDelegate

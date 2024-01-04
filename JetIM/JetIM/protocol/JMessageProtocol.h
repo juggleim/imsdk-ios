@@ -65,7 +65,7 @@
 
 /// 注册自定义消息，没有注册的自定义消息 SDK 无法正常进行解析
 /// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent
-- (void)registerMessageType:(Class)messageClass;
+- (void)registerContentType:(Class)messageClass;
 
 - (void)setDelegate:(id<JMessageDelegate>)delegate;
 

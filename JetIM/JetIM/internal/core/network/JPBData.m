@@ -10,7 +10,7 @@
 #import "Appmessages.pbobjc.h"
 #import "JetIMPBConst.h"
 #import "JConcreteMessage.h"
-#import "JMessageTypeCenter.h"
+#import "JContentTypeCenter.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -382,7 +382,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConversation *conversation = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:downMsg.channelType]
                                                                    conversationId:downMsg.targetId];
     msg.conversation = conversation;
-    msg.messageType = downMsg.msgType;
+    msg.contentType = downMsg.msgType;
     msg.messageId = downMsg.msgId;
     msg.clientUid = downMsg.clientUid;
     msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
@@ -390,7 +390,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.timestamp = downMsg.msgTime;
     msg.senderUserId = downMsg.senderId;
     msg.msgIndex = downMsg.msgIndex;
-    msg.content = [[JMessageTypeCenter shared] contentWithData:downMsg.msgContent
+    msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
     return msg;
 }

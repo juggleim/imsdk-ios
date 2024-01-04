@@ -29,7 +29,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @interface JMessage : NSObject
 @property (nonatomic, strong) JConversation *conversation;
 /// 消息类型
-@property (nonatomic, copy) NSString *messageType;
+@property (nonatomic, copy) NSString *contentType;
 /// 本端消息唯一编号（只对当前设备生效）
 @property (nonatomic, assign) long long clientMsgNo;
 /// 消息 id，全局唯一

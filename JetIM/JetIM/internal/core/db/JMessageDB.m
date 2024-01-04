@@ -7,7 +7,7 @@
 
 #import "JMessageDB.h"
 #import "JMessageContent+internal.h"
-#import "JMessageTypeCenter.h"
+#import "JContentTypeCenter.h"
 
 NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -44,7 +44,7 @@ NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
 NSString *const jMessageId = @"id";
-NSString *const jMessageType = @"type";
+NSString *const jContentType = @"type";
 NSString *const jMessageUId = @"message_uid";
 NSString *const jMessageClientUid = @"client_uid";
 NSString *const jDirection = @"direction";
@@ -170,7 +170,7 @@ NSString *const jIsDeleted = @"is_deleted";
     }
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.messageType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex)];
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex)];
 }
 
 #pragma mark - internal
@@ -180,7 +180,7 @@ NSString *const jIsDeleted = @"is_deleted";
     c.conversationType = [rs intForColumn:jMessageConversationType];
     c.conversationId = [rs stringForColumn:jMessageConversationId];
     message.conversation = c;
-    message.messageType = [rs stringForColumn:jMessageType];
+    message.contentType = [rs stringForColumn:jContentType];
     message.clientMsgNo = [rs longLongIntForColumn:jMessageId];
     message.messageId = [rs stringForColumn:jMessageUId];
     message.clientUid = [rs stringForColumn:jMessageClientUid];
@@ -191,8 +191,8 @@ NSString *const jIsDeleted = @"is_deleted";
     message.senderUserId = [rs stringForColumn:jSender];
     NSString *content = [rs stringForColumn:jContent];
     NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
-    message.content = [[JMessageTypeCenter shared] contentWithData:data
-                                                       contentType:message.messageType];
+    message.content = [[JContentTypeCenter shared] contentWithData:data
+                                                       contentType:message.contentType];
     message.msgIndex = [rs longLongIntForColumn:jMessageIndex];
     return message;
 }
