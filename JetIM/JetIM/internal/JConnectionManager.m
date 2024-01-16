@@ -137,7 +137,7 @@
                 break;
                 
             case JConnectionStatusInternalDisconnected:
-                outStatus = JConnectionStatusConnected;
+                outStatus = JConnectionStatusDisconnected;
                 break;
                 
             case JConnectionStatusInternalConnecting:
