@@ -7,6 +7,7 @@
 
 #import "JNaviManager.h"
 
+#define jNaviServerSuffix @"/navigator/general"
 #define jNaviAppKey @"x-appkey"
 #define jNaviToken @"x-token"
 #define jNaviData @"data"
@@ -15,12 +16,13 @@
 
 @implementation JNaviManager
 
-+ (void)requestNavi:(NSURL *)url
++ (void)requestNavi:(NSString *)url
              appKey:(NSString *)appKey
               token:(NSString *)token
             success:(void (^)(NSString *userId, NSArray<NSString *> *servers))success
             failure:(void (^)(JErrorCodeInternal))failure {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    NSURL *u = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", url, jNaviServerSuffix]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:u];
     [request setHTTPMethod:@"GET"];
     [request setValue:appKey forHTTPHeaderField:jNaviAppKey];
     [request setValue:token forHTTPHeaderField:jNaviToken];

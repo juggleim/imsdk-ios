@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JNaviManager : NSObject
 
-+ (void)requestNavi:(NSURL *)url
++ (void)requestNavi:(NSString *)url
              appKey:(NSString *)appKey
               token:(NSString *)token
             success:(void (^)(NSString *userId, NSArray<NSString *> *servers))success

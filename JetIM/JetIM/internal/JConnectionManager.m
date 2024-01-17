@@ -51,7 +51,7 @@
     }
     [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone];
     
-    [JNaviManager requestNavi:[NSURL URLWithString:self.core.naviUrl]
+    [JNaviManager requestNavi:self.core.naviUrl
                        appKey:self.core.appKey
                         token:token
                       success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {

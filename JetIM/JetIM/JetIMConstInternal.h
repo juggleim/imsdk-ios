@@ -6,7 +6,7 @@
 //
 
 #define JWebSocketURL @"120.48.178.248:9002"
-#define JNaviURL @"http://120.48.178.248:8083/navigator/general"
+#define JNaviURL @"http://120.48.178.248:8083"
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
 
