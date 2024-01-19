@@ -34,6 +34,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 #define kPMsg @"p_msg"
 #define kGMsg @"g_msg"
+#define kCMsg @"c_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
@@ -154,11 +155,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
             publishMsg.topic = kGMsg;
             break;
             
-            //TODO: 聊天室和系统会话还没做
         case JConversationTypeChatroom:
-//            publishMsg.topic
+            publishMsg.topic = kCMsg;
             break;
             
+        //TODO: 系统会话还没做
         case JConversationTypeSystem:
 //
             break;
