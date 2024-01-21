@@ -117,17 +117,13 @@
         if (!sendDirection) {
             if (obj.direction == JMessageDirectionSend) {
                 sendDirection = YES;
-                if (obj.timestamp > self.core.messageSendSyncTime) {
-                    self.core.messageSendSyncTime = obj.timestamp;
-                }
+                self.core.messageSendSyncTime = obj.timestamp;
             }
         }
         if (!receiveDirection) {
             if (obj.direction == JMessageDirectionReceive) {
                 receiveDirection = YES;
-                if (obj.timestamp > self.core.messageReceiveSyncTime) {
-                    self.core.messageReceiveSyncTime = obj.timestamp;
-                }
+                self.core.messageReceiveSyncTime = obj.timestamp;
             }
         }
         dispatch_async(self.core.delegateQueue, ^{

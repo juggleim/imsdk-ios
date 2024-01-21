@@ -64,18 +64,24 @@
 }
 
 - (void)setConversationSyncTime:(long long)conversationSyncTime {
-    _conversationSyncTime = conversationSyncTime;
-    [self.dbManager setConversationSyncTime:conversationSyncTime];
+    if (conversationSyncTime > _conversationSyncTime) {
+        _conversationSyncTime = conversationSyncTime;
+        [self.dbManager setConversationSyncTime:conversationSyncTime];
+    }
 }
 
 - (void)setMessageSendSyncTime:(long long)messageSendSyncTime {
-    _messageSendSyncTime = messageSendSyncTime;
-    [self.dbManager setMessageSendSyncTime:messageSendSyncTime];
+    if (messageSendSyncTime > _messageSendSyncTime) {
+        _messageSendSyncTime = messageSendSyncTime;
+        [self.dbManager setMessageSendSyncTime:messageSendSyncTime];
+    }
 }
 
 - (void)setMessageReceiveSyncTime:(long long)messageReceiveSyncTime {
-    _messageReceiveSyncTime = messageReceiveSyncTime;
-    [self.dbManager setMessageReceiveSyncTime:messageReceiveSyncTime];
+    if (messageReceiveSyncTime > _messageReceiveSyncTime) {
+        _messageReceiveSyncTime = messageReceiveSyncTime;
+        [self.dbManager setMessageReceiveSyncTime:messageReceiveSyncTime];
+    }
 }
 
 - (NSString *)naviUrl {
