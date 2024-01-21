@@ -7,7 +7,7 @@
 
 #import "JHeartBeatManager.h"
 
-#define kPingInterval 180
+#define kPingInterval 30
 
 @interface JHeartBeatManager ()
 @property (nonatomic, strong) JetIMCore *core;
