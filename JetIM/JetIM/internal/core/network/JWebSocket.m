@@ -342,6 +342,7 @@
             syncConvsObj.successBlock(ack.convs, ack.isFinished);
         }
     }
+    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 //sync 和 queryHisMsgs 共用一个 ack

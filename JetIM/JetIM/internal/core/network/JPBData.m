@@ -389,6 +389,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
     msg.hasRead = downMsg.isReaded;
     msg.timestamp = downMsg.msgTime;
+    msg.messageState = JMessageStateSent;
     msg.senderUserId = downMsg.senderId;
     msg.msgIndex = downMsg.msgIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
