@@ -63,7 +63,7 @@
         
         //send message
         sleep(2);
-//        [self sendMessage];
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];

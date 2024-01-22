@@ -342,7 +342,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj.publishMsgNtf = n;
                 }
             } else if ([msg.publishMsgBody.topic isEqualToString:jMsg]) {
-                NSLog(@"[JetIM] publish msg direct");
+                NSLog(@"[JetIM] publish msg directly");
                 DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
                     NSLog(@"[JetIM]Websocket receive publish message parse error, msg is %@", err.description);
