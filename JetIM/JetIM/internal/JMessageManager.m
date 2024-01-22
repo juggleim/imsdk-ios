@@ -113,8 +113,7 @@
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.direction == JMessageDirectionSend) {
             sendTime = obj.timestamp;
-        }
-        if (obj.direction == JMessageDirectionReceive) {
+        } else if (obj.direction == JMessageDirectionReceive) {
             receiveTime = obj.timestamp;
         }
         dispatch_async(self.core.delegateQueue, ^{
