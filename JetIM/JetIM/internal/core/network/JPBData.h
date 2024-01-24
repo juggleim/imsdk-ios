@@ -45,6 +45,12 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, assign) long long msgIndex;
 @end
 
+@interface JPublishMsgBody : NSObject
+@property (nonatomic, strong) JConcreteMessage *rcvMessage;
+@property (nonatomic, assign) int index;
+@property (nonatomic, assign) int qos;
+@end
+
 @interface JQryAck : NSObject
 @property (nonatomic, assign) int index;
 @property (nonatomic, assign) int code;
@@ -71,7 +77,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;
 @property (nonatomic, strong) JQryHisMsgsAck *qryHisMsgsAck;
 @property (nonatomic, strong) JSyncConvsAck *syncConvsAck;
-@property (nonatomic, strong) JConcreteMessage *rcvMessage;
+@property (nonatomic, strong) JPublishMsgBody *publishMsgBody;
 @property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @end
 
@@ -115,6 +121,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                             index:(int)index;
 
 - (NSData *)pingData;
+
+- (NSData *)publishAckData:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;
 @end

@@ -47,6 +47,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JPublishMsgAck
 @end
 
+@implementation JPublishMsgBody
+@end
+
 @implementation JPublishMsgNtf
 @end
 
@@ -255,6 +258,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)publishAckData:(int)index {
+    PublishAckMsgBody *body = [[PublishAckMsgBody alloc] init];
+    body.index = index;
+    
+    ImWebsocketMsg *m = [self createImWebsocketMsg];
+    m.cmd = JCmdTypePublishAck;
+    m.qos = JQosNo;
+    m.pubAckMsgBody = body;
+    
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -350,8 +365,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     return obj;
                 }
                 obj.rcvType = JPBRcvTypePublishMsg;
-                JConcreteMessage *message = [self messageWithDownMsg:downMsg];
-                obj.rcvMessage = message;
+                JPublishMsgBody *publishMsgBody = [[JPublishMsgBody alloc]init];
+                publishMsgBody.rcvMessage = [self messageWithDownMsg:downMsg];
+                publishMsgBody.index = msg.publishMsgBody.index;
+                publishMsgBody.qos = msg.qos;
+                obj.publishMsgBody = publishMsgBody;
             }
         }
             break;

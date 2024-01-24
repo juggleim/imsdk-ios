@@ -220,6 +220,17 @@
     });
 }
 
+- (void)sendPublishAck:(int)index {
+    dispatch_async(self.sendQueue, ^{
+        NSData *d = [self.pbData publishAckData:index];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket send publishAck error, msg is %@", err.description);
+        }
+    });
+}
+
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
@@ -259,7 +270,7 @@
             [self handleSyncConvsAck:obj.syncConvsAck];
             break;
         case JPBRcvTypePublishMsg:
-            [self handleReceiveMessage:obj.rcvMessage];
+            [self handleReceiveMessage:obj.publishMsgBody];
             break;
         case JPBRcvTypePublishMsgNtf:
             [self handlePublishMsgNtf:obj.publishMsgNtf];
@@ -353,10 +364,13 @@
     }
 }
 
-- (void)handleReceiveMessage:(JConcreteMessage *)message {
+- (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
     NSLog(@"handleReceiveMessage");
     if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
-        [self.messageDelegate messagesDidReceive:@[message] isFinished:YES];
+        [self.messageDelegate messagesDidReceive:@[publishMsgBody.rcvMessage] isFinished:YES];
+    }
+    if (publishMsgBody.qos == 1) {
+        [self sendPublishAck:publishMsgBody.index];
     }
 }
 
