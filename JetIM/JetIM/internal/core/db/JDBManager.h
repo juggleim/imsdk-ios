@@ -42,6 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
                                direction:(JPullDirection)direction;
 - (void)deleteMessageByClientId:(long long)clientMsgNo;
 - (void)deleteMessageByMessageId:(NSString *)messageId;
+- (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
+- (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -25,6 +25,8 @@ withArgumentsInArray:(nullable NSArray *)arguments
           syncResult:(void (^)(JFMResultSet *resultSet))syncResultBlock;
 
 - (void)executeTransaction:(void (^)(JFMDatabase *db, BOOL *rollback))transactionBlock;
+
+- (NSString *)getQuestionMarkPlaceholder:(NSUInteger)count;
 @end
 
 NS_ASSUME_NONNULL_END

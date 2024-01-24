@@ -96,6 +96,14 @@
     return message;
 }
 
+- (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
+    return [self.core.dbManager getMessagesByMessageIds:messageIds];
+}
+
+- (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
+    return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
+}
+
 - (void)registerContentType:(Class)messageClass {
     [[JContentTypeCenter shared] registerContentType:messageClass];
 }

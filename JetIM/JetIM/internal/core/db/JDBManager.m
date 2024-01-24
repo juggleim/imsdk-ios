@@ -104,6 +104,14 @@
     [self.messageDb deleteMessageByMessageId:messageId];
 }
 
+- (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
+    return [self.messageDb getMessagesByMessageIds:messageIds];
+}
+
+- (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
+    return [self.messageDb getMessagesByClientMsgNos:clientMsgNos];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {

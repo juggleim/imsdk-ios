@@ -48,6 +48,15 @@
 - (void)deleteMessageByMessageId:(NSString *)messageId;
 
 
+/// 根据 messageId 数组获取对应的本地消息
+/// - Parameter messageIds: messageId 数组
+- (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
+
+
+/// 根据 clientMsgNo 数组获取对应的本地消息
+/// - Parameter clientMsgNos: clientMsgNo 数组
+- (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
+
 /*!
  注册自定义的消息类型
 

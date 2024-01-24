@@ -26,7 +26,7 @@
     // Override point for customization after application launch.
     [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken4];
+    [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     
@@ -46,7 +46,7 @@
 //        NSLog(@"conversation count is %d", array.count);
         
         //getConversation
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
@@ -57,7 +57,14 @@
                                                                   direction:JPullDirectionOlder];
         NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
         
-        
+        NSArray *messageIds = @[@"npgkkc69gaegv6fp", @"npgkkcpmaacgv6fp", @"npg3n8gb26lgrenb"];
+        NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];
+        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages1.count);
+
+        NSArray *clientMsgNos = @[@(3), @(6), @(2)];
+        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
+        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
+
 //        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         

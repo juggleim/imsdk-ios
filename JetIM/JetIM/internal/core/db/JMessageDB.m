@@ -40,6 +40,8 @@ NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, 
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
+NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
+NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -147,6 +149,40 @@ NSString *const jIsDeleted = @"is_deleted";
     sql = [sql stringByAppendingString:jMessageIdIs];
     [self.dbHelper executeUpdate:sql
             withArgumentsInArray:@[messageId]];
+}
+
+- (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
+    NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
+    if (messageIds.count == 0) {
+        return result;
+    }
+    NSString *sql = [jGetMessagesByMessageIds stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageIds.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:messageIds
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteMessage *m = [self messageWith:resultSet];
+            [result addObject:m];
+        }
+    }];
+    return [result copy];
+}
+
+- (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
+    NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
+    if (clientMsgNos.count == 0) {
+        return result;
+    }
+    NSString *sql = [jGetMessagesByClientMsgNos stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:clientMsgNos.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:clientMsgNos
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteMessage *m = [self messageWith:resultSet];
+            [result addObject:m];
+        }
+    }];
+    return [result copy];
 }
 
 - (void)createTables {

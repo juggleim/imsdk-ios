@@ -60,6 +60,16 @@ withArgumentsInArray:(NSArray *)arguments
     }];
 }
 
-
+- (NSString *)getQuestionMarkPlaceholder:(NSUInteger)count {
+    NSString *sql = @"(";
+    for (int i = 0; i < count; i++) {
+        if (i > 0) {
+            sql = [sql stringByAppendingString:@", "];
+        }
+        sql = [sql stringByAppendingString:@"?"];
+    }
+    sql = [sql stringByAppendingString:@")"];
+    return sql;
+}
 
 @end
