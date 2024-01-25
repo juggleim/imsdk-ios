@@ -59,6 +59,9 @@
 /// - Parameter messageId: 消息 id
 - (void)deleteMessageByMessageId:(NSString *)messageId;
 
+/// 清除会话内所有消息
+/// - Parameter conversation: 会话标识
+- (void)clearMessagesIn:(JConversation *)conversation;
 
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组

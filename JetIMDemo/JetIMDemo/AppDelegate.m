@@ -41,9 +41,9 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-        sleep(10);
-        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-        NSLog(@"conversation count is %d", array.count);
+//        sleep(10);
+//        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+//        NSLog(@"conversation count is %d", array.count);
         
         
         //getConversation
@@ -51,7 +51,7 @@
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
-        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
+//        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
         NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
@@ -59,6 +59,8 @@
                                                                        time:0
                                                                   direction:JPullDirectionOlder];
         NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
+        
+        [JIM.shared.messageManager clearMessagesIn:conversation];
         
 //        NSArray *messageIds = @[@"npgkkc69gaegv6fp", @"npgkkcpmaacgv6fp", @"npg3n8gb26lgrenb"];
 //        NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];

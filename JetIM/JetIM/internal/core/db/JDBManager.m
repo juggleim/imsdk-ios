@@ -114,6 +114,10 @@
     [self.messageDb deleteMessageByMessageId:messageId];
 }
 
+- (void)clearMessagesIn:(JConversation *)conversation {
+    [self.messageDb clearMessagesIn:conversation];
+}
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     return [self.messageDb getMessagesByMessageIds:messageIds];
 }

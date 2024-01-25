@@ -50,6 +50,10 @@
     [self.core.dbManager deleteMessageByMessageId:messageId];
 }
 
+- (void)clearMessagesIn:(JConversation *)conversation {
+    [self.core.dbManager clearMessagesIn:conversation];
+}
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
