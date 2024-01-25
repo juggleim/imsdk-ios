@@ -28,6 +28,17 @@
 /// - Parameter conversation: 会话标识
 - (void)deleteConversationInfoBy:(JConversation *)conversation;
 
+/// 设置草稿内容
+/// - Parameters:
+///   - draft: 草稿内容
+///   - conversation: 会话标识
+- (void)setDraft:(NSString *)draft
+  inConversation:(JConversation *)conversation;
+
+/// 清除草稿
+/// - Parameter conversation: 会话标识
+- (void)clearDraftInConversation:(JConversation *)conversation;
+
 /// 获取消息未读的总数
 //- (int)getTotalUnreadCount;
 

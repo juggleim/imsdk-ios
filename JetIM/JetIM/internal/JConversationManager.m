@@ -72,6 +72,14 @@
 //    <#code#>
 //}
 
+- (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
+    [self.core.dbManager setDraft:draft inConversation:conversation];
+}
+
+- (void)clearDraftInConversation:(JConversation *)conversation {
+    [self.core.dbManager clearDraftInConversation:conversation];
+}
+
 #pragma mark - internal
 
 

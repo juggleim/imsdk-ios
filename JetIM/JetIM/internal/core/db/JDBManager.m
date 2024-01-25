@@ -79,6 +79,15 @@
     return [self.conversationDb getConversationInfoList];
 }
 
+- (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
+    [self.conversationDb setDraft:draft inConversation:conversation];
+}
+
+- (void)clearDraftInConversation:(JConversation *)conversation {
+    [self.conversationDb clearDraftInConversation:conversation];
+}
+
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];

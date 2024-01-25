@@ -28,6 +28,7 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -98,6 +99,15 @@ NSString *const jLastMentionMessageId = @"last_mention_message_id";
     }];
     return array;
 }
+
+- (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
+    [self.dbHelper executeUpdate:jSetDraft withArgumentsInArray:@[draft, @(conversation.conversationType), conversation.conversationId]];
+}
+
+- (void)clearDraftInConversation:(JConversation *)conversation {
+    [self setDraft:@"" inConversation:conversation];
+}
+
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     JConversationDB *db = [[JConversationDB alloc] init];
