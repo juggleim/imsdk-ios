@@ -70,6 +70,7 @@
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
+    [self.core.dbManager closeIMDB];
     [self.core.webSocket disconnect:receivePush];
 }
 

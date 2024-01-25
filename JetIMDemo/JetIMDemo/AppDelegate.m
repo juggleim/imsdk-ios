@@ -45,6 +45,8 @@
 //        NSArray *array = [JetIM.shared.conversationManager getConversationInfoList];
 //        NSLog(@"conversation count is %d", array.count);
         
+        [JIM.shared.connectionManager disconnect:YES];
+        
         //getConversation
         JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];

@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)openIMDB:(NSString *)appKey
           userId:(NSString *)userId;
+- (void)closeIMDB;
 
 #pragma mark - sync table
 - (long long)getConversationSyncTime;

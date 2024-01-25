@@ -33,6 +33,10 @@
     }
 }
 
+- (void)closeIMDB {
+    [self.dbHelper closeDB];
+}
+
 #pragma mark - sync table
 - (long long)getConversationSyncTime {
     return [self.profileDb getConversationSyncTime];
