@@ -63,8 +63,8 @@
 
 - (JMessage *)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation
-            success:(void (^)(long long))successBlock
-              error:(void (^)(JErrorCode, long long))errorBlock{
+            success:(void (^)(JMessage *))successBlock
+              error:(void (^)(JErrorCode, JMessage *))errorBlock{
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
@@ -85,12 +85,16 @@
                                           messageId:msgId
                                           timestamp:timestamp
                                        messageIndex:msgIndex];
+        message.messageId = msgId;
+        message.timestamp = timestamp;
+        message.msgIndex = msgIndex;
+        message.messageState = JMessageStateSent;
         if (successBlock) {
-            successBlock(clientMsgNo);
+            successBlock(message);
         }
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
         if (errorBlock) {
-            errorBlock((JErrorCode)errorCode, clientMsgNo);
+            errorBlock((JErrorCode)errorCode, message);
         }
     }];
     return message;

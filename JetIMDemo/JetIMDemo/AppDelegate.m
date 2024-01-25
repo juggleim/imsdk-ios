@@ -70,7 +70,7 @@
         
         //send message
         sleep(2);
-//        [self sendMessage];
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
@@ -112,34 +112,34 @@
 
     JMessage *m = [JIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
-                                        success:^(long long clientMsgNo) {
+                                        success:^(JMessage *message) {
         NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+    } error:^(JErrorCode errorCode, JMessage *message) {
         NSLog(@"lifei, sendMessage error");
     }];
-//    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
+    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
 //    sleep(2);
 //    [JIM.shared.messageManager sendMessage:image
 //                                 inConversation:conversation
-//                                        success:^(long long clientMsgNo) {
+//                                        success:^(JMessage *message) {
 //        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//    } error:^(JErrorCode errorCode, JMessage *message) {
 //        NSLog(@"lifei, sendMessage error");
 //    }];
 //    sleep(2);
 //    [JIM.shared.messageManager sendMessage:file
 //                                 inConversation:conversation
-//                                        success:^(long long clientMsgNo) {
+//                                        success:^(JMessage *message) {
 //        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//    } error:^(JErrorCode errorCode, JMessage *message) {
 //        NSLog(@"lifei, sendMessage error");
 //    }];
 //    sleep(2);
 //    [JIM.shared.messageManager sendMessage:voice
 //                                 inConversation:conversation
-//                                        success:^(long long clientMsgNo) {
+//                                        success:^(JMessage *message) {
 //        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//    } error:^(JErrorCode errorCode, JMessage *message) {
 //        NSLog(@"lifei, sendMessage error");
 //    }];
 }
