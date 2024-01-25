@@ -16,6 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSString *content;
 
+/*!
+ 扩展字段
+ */
+@property (nonatomic, copy) NSString *extra;
+
 - (instancetype)initWithContent:(NSString *)content;
 
 @end

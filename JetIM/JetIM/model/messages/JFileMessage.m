@@ -13,6 +13,7 @@
 #define kURL @"url"
 #define kSize @"size"
 #define kType @"type"
+#define kFileExtra @"extra"
 
 @implementation JFileMessage
 
@@ -24,7 +25,8 @@
     return @{kURL:self.url?:@"",
              kName:self.name?:@"",
              kSize:@(self.size),
-             kType:self.type?:@""
+             kType:self.type?:@"",
+             kFileExtra:self.extra?:@""
     };
 }
 
@@ -36,6 +38,7 @@
         self.size = [(NSNumber *)obj longLongValue];
     }
     self.type = json[kType]?:@"";
+    self.extra = json[kFileExtra]?:@"";
 }
 
 - (NSString *)conversationDigest {

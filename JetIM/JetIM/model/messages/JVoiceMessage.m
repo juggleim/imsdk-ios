@@ -11,6 +11,7 @@
 #define kDigest @"[voice]"
 #define kURL @"url"
 #define kDuration @"duration"
+#define kVoiceExtra @"extra"
 
 @implementation JVoiceMessage
 
@@ -20,7 +21,8 @@
 
 - (NSDictionary *)encodeToJson {
     return @{kURL:self.url?:@"",
-             kDuration:@(self.duration)
+             kDuration:@(self.duration),
+             kVoiceExtra:self.extra?:@""
     };
 }
 
@@ -30,6 +32,7 @@
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.duration = [(NSNumber *)obj longValue];
     }
+    self.extra = json[kVoiceExtra]?:@"";
 }
 
 - (NSString *)conversationDigest {

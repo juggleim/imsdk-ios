@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long size;
 /// 文件类型
 @property (nonatomic, copy) NSString *type;
+/// 扩展字段
+@property (nonatomic, copy) NSString *extra;
 @end
 
 NS_ASSUME_NONNULL_END

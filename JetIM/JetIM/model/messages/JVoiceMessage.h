@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *url;
 /// 语音消息音频时长，单位: 秒
 @property (nonatomic, assign) long duration;
+/// 扩展字段
+@property (nonatomic, copy) NSString *extra;
 @end
 
 NS_ASSUME_NONNULL_END

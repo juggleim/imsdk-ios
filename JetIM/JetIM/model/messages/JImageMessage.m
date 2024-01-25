@@ -13,6 +13,7 @@
 #define jThumbnail @"thumbnail"
 #define jImageHeight @"height"
 #define jImageWidth @"width"
+#define jImageExtra @"extra"
 
 @implementation JImageMessage
 
@@ -24,7 +25,8 @@
     return @{jURL:self.url?:@"",
              jThumbnail:self.thumbnailUrl?:@"",
              jImageWidth:@(self.width),
-             jImageHeight:@(self.height)
+             jImageHeight:@(self.height),
+             jImageExtra:self.extra?:@""
     };
 }
 
@@ -39,6 +41,7 @@
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.height = [(NSNumber *)obj intValue];
     }
+    self.extra = json[jImageExtra]?:@"";
 }
 
 - (NSString *)conversationDigest {
