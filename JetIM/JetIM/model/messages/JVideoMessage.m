@@ -13,7 +13,7 @@
 #define jVideoHeight @"height"
 #define jVideoWidth @"width"
 #define jVideoExtra @"extra"
-#define jVideoDigest @"[video]"
+#define jVideoDigest @"[Video]"
 
 @implementation JVideoMessage
 

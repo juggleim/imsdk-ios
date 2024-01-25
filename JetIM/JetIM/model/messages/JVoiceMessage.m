@@ -8,7 +8,7 @@
 #import "JVoiceMessage.h"
 
 #define kVoiceType @"jg:voice"
-#define kDigest @"[voice]"
+#define kDigest @"[Voice]"
 #define kURL @"url"
 #define kDuration @"duration"
 #define kVoiceExtra @"extra"

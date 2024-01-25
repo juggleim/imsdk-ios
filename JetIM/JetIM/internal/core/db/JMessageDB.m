@@ -165,6 +165,7 @@ NSString *const jIsDeleted = @"is_deleted";
             withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
 }
 
+//被删除的消息也能查出来
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (messageIds.count == 0) {
@@ -191,6 +192,7 @@ NSString *const jIsDeleted = @"is_deleted";
     return [messages copy];
 }
 
+//被删除的消息也能查出来
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (clientMsgNos.count == 0) {
