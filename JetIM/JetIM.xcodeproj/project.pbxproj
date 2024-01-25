@@ -198,7 +198,7 @@
 		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
 		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
-		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; };
+		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376132B3571CE0076CB84 /* JProfileDB.h */; };
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
@@ -859,6 +859,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
 				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
 				A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */,
 				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
@@ -942,7 +943,6 @@
 				A08AA2702B162A11008B114C /* JFMResultSet.h in Headers */,
 				A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */,
 				A08AA4332B1B78FE008B114C /* Usermessages.pbobjc.h in Headers */,
-				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
 				A08AA39A2B19CB78008B114C /* GPBCodedInputStream.h in Headers */,
 				A05EED5E2B207D5200809F13 /* JUtility.h in Headers */,
 				A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */,

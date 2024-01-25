@@ -103,7 +103,7 @@ NSString *const jIsDeleted = @"is_deleted";
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
+                            contentTypes:(NSArray<NSString *> *)contentTypes {
     if (time == 0) {
         time = INT64_MAX;
     }

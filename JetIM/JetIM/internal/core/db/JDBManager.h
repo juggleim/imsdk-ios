@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSNumber *> *)contentTypes;
+                            contentTypes:(NSArray<NSString *> *)contentTypes;
 - (void)deleteMessageByClientId:(long long)clientMsgNo;
 - (void)deleteMessageByMessageId:(NSString *)messageId;
 - (void)clearMessagesIn:(JConversation *)conversation;

@@ -34,6 +34,7 @@
     [m registerContentType:[JImageMessage class]];
     [m registerContentType:[JFileMessage class]];
     [m registerContentType:[JVoiceMessage class]];
+    [m registerContentType:[JVideoMessage class]];
     return m;
 }
 
@@ -70,7 +71,7 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
+                            contentTypes:(NSArray<NSString *> *)contentTypes {
     return [self.core.dbManager getMessagesFrom:conversation
                                           count:count
                                            time:time

@@ -7,7 +7,6 @@
 
 #import "AppDelegate.h"
 #import <JetIM/JetIM.h>
-#import <JetIM/JTextMessage.h>
 
 #define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
 #define kToken2 @"CgZhcHBrZXkaINodQgLnbhTbt0SzC8b/JFwjgUAdIfUZTEFK8DvDLgM1"
@@ -26,7 +25,7 @@
     // Override point for customization after application launch.
     [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken3];
+    [JIM.shared.connectionManager connectWithToken:kToken2];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     
@@ -47,7 +46,7 @@
         
         
         //getConversation
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
@@ -76,13 +75,13 @@
 //        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
 //        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
         
-//        NSArray *contentTypes = @[[JTextMessage contentType], [JImageMessage contentType]];
-//        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
-//                                                                  count:100
-//                                                                   time:0
-//                                                              direction:JPullDirectionOlder
-//                                                           contentTypes:contentTypes];
-//        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
+        NSArray *contentTypes = @[[JImageMessage contentType]];
+        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
+                                                                  count:100
+                                                                   time:0
+                                                              direction:JPullDirectionOlder
+                                                           contentTypes:contentTypes];
+        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
 
 //        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
@@ -128,15 +127,22 @@
     voice.url = @"voiceURL";
     voice.duration = 60;
     voice.extra = @"extra";
+    
+    JVideoMessage *video = [[JVideoMessage alloc] init];
+    video.url = @"http://video.com";
+    video.snapshotUrl = @"http://snapshot.url";
+    video.height = 480;
+    video.width = 640;
+    video.extra = @"extra";
 
-    JMessage *m = [JIM.shared.messageManager sendMessage:text
+    JMessage *m = [JIM.shared.messageManager sendMessage:video
                                  inConversation:conversation
                                         success:^(JMessage *message) {
         NSLog(@"lifei, sendMessage success, ");
     } error:^(JErrorCode errorCode, JMessage *message) {
         NSLog(@"lifei, sendMessage error");
     }];
-    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
+    NSLog(@"after send video, msgNo is %lld", m.clientMsgNo);
 //    sleep(2);
 //    [JIM.shared.messageManager sendMessage:image
 //                                 inConversation:conversation

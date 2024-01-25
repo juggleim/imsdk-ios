@@ -107,12 +107,12 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
+                            contentTypes:(NSArray<NSString *> *)contentTypes {
     return [self.messageDb getMessagesFrom:conversation
                                      count:count
                                       time:time
                                  direction:direction
-                              contentTypes:(NSArray<NSNumber *> *)contentTypes];
+                              contentTypes:(NSArray<NSString *> *)contentTypes];
 }
 
 - (void)deleteMessageByClientId:(long long)clientMsgNo {
