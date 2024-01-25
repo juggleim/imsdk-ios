@@ -46,7 +46,7 @@
 //        NSLog(@"conversation count is %d", array.count);
         
         //getConversation
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
@@ -57,20 +57,28 @@
                                                                   direction:JPullDirectionOlder];
         NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
         
-        NSArray *messageIds = @[@"npgkkc69gaegv6fp", @"npgkkcpmaacgv6fp", @"npg3n8gb26lgrenb"];
-        NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];
-        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages1.count);
-
-        NSArray *clientMsgNos = @[@(3), @(2), @(6)];
-        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
-        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
+//        NSArray *messageIds = @[@"npgkkc69gaegv6fp", @"npgkkcpmaacgv6fp", @"npg3n8gb26lgrenb"];
+//        NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];
+//        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages1.count);
+//
+//        NSArray *clientMsgNos = @[@(3), @(2), @(6)];
+//        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
+//        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
+        
+        NSArray *contentTypes = @[[JTextMessage contentType], [JImageMessage contentType]];
+        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
+                                                                  count:100
+                                                                   time:0
+                                                              direction:JPullDirectionOlder
+                                                           contentTypes:contentTypes];
+        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
 
 //        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
         sleep(2);
-        [self sendMessage];
+//        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];

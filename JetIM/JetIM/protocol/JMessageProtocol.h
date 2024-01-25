@@ -26,8 +26,7 @@
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-//从本地获取消息，结果按时间顺序从旧到新排列。如果本地消息存在缺失，会尝试从远端把缺失的消息拉取回来。
-//TODO: 走的回调待补充，回调中需要标识是否还存在没拉完的消息
+/// 从本地获取消息
 /// 获取消息列表
 /// - Parameters:
 ///   - conversation: 会话对象
@@ -38,6 +37,19 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction;
+
+/// 从本地获取消息
+/// - Parameters:
+///   - conversation: 会话对象
+///   - count: 拉取消息条数
+///   - time: 消息时间戳，如果传 0 表示当前时间
+///   - direction: 拉取方向
+///   - contentTypes: 拉取的消息类型列表，消息类型获取举例 " [JTextMessage contentType] "
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction
+                            contentTypes:(NSArray <NSNumber *> *)contentTypes;
 
 /// 根据 clientMsgNo 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter clientMsgNo: 本端消息唯一编号

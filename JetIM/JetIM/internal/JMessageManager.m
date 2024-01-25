@@ -54,10 +54,24 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction {
+    NSArray *arr = [[NSArray alloc] init];
+    return [self getMessagesFrom:conversation
+                           count:count
+                            time:time
+                       direction:direction
+                    contentTypes:arr];
+}
+
+- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+                                   count:(int)count
+                                    time:(long long)time
+                               direction:(JPullDirection)direction
+                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
     return [self.core.dbManager getMessagesFrom:conversation
                                           count:count
                                            time:time
-                                      direction:direction];
+                                      direction:direction
+                                   contentTypes:contentTypes];
 }
 
 

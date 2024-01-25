@@ -89,11 +89,13 @@
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
-                               direction:(JPullDirection)direction {
+                               direction:(JPullDirection)direction
+                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
     return [self.messageDb getMessagesFrom:conversation
                                      count:count
                                       time:time
-                                 direction:direction];
+                                 direction:direction
+                              contentTypes:(NSArray<NSNumber *> *)contentTypes];
 }
 
 - (void)deleteMessageByClientId:(long long)clientMsgNo {

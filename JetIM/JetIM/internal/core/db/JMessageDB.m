@@ -31,6 +31,7 @@ NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = false";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
+NSString *const jAndTypeIn = @" AND type in ";
 NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
@@ -100,7 +101,8 @@ NSString *const jIsDeleted = @"is_deleted";
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
-                               direction:(JPullDirection)direction {
+                               direction:(JPullDirection)direction
+                            contentTypes:(NSArray<NSNumber *> *)contentTypes {
     if (time == 0) {
         time = INT64_MAX;
     }
@@ -109,6 +111,10 @@ NSString *const jIsDeleted = @"is_deleted";
         sql = [sql stringByAppendingString:jAndGreaterThan];
     } else {
         sql = [sql stringByAppendingString:jAndLessThan];
+    }
+    if (contentTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
     }
     sql = [sql stringByAppendingString:jOrderByTimestamp];
     if (direction == JPullDirectionNewer) {
@@ -119,7 +125,9 @@ NSString *const jIsDeleted = @"is_deleted";
     sql = [sql stringByAppendingString:jLimit];
     
     NSMutableArray *messages = [[NSMutableArray alloc] init];
-    NSArray *args = @[@(conversation.conversationType), conversation.conversationId, @(time), @(count)];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(time)]];
+    [args addObjectsFromArray:contentTypes];
+    [args addObject:@(count)];
     [self.dbHelper executeQuery:sql
            withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
