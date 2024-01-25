@@ -56,6 +56,10 @@
     return [self.core.dbManager getConversationInfo:conversation];
 }
 
+- (void)deleteConversationInfoBy:(JConversation *)conversation {
+    [self.core.dbManager deleteConversationInfoBy:conversation];
+}
+
 - (NSArray<JConversationInfo *> *)getConversationInfoList {
     return [self.core.dbManager getConversationInfoList];
 }

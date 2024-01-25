@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - conversation table
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations;
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
+- (void)deleteConversationInfoBy:(JConversation *)conversation;
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
 
 #pragma mark - message table

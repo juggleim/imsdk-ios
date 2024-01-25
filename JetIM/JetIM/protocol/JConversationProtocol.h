@@ -23,6 +23,11 @@
 /// - Parameter conversation: 会话标识
 - (JConversationInfo *)getConversationInfo:(JConversation *)conversation;
 
+
+/// 删除特定会话
+/// - Parameter conversation: 会话标识
+- (void)deleteConversationInfoBy:(JConversation *)conversation;
+
 /// 获取消息未读的总数
 //- (int)getTotalUnreadCount;
 

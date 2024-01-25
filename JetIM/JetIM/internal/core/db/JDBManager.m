@@ -71,6 +71,10 @@
     return [self.conversationDb getConversationInfo:conversation];
 }
 
+- (void)deleteConversationInfoBy:(JConversation *)conversation {
+    [self.conversationDb deleteConversationInfoBy:conversation];
+}
+
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
     return [self.conversationDb getConversationInfoList];
 }

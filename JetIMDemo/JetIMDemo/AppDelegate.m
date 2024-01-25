@@ -41,16 +41,17 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-//        sleep(10);
-//        NSArray *array = [JetIM.shared.conversationManager getConversationInfoList];
-//        NSLog(@"conversation count is %d", array.count);
+        sleep(10);
+        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+        NSLog(@"conversation count is %d", array.count);
         
-        [JIM.shared.connectionManager disconnect:YES];
         
         //getConversation
         JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
+        
+        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
         NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation

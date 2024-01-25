@@ -27,6 +27,7 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
+NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -72,6 +73,11 @@ NSString *const jLastMentionMessageId = @"last_mention_message_id";
     }];
     info.lastMessage = [self.messageDB getMessageWithMessageId:lastMessageId];
     return info;
+}
+
+- (void)deleteConversationInfoBy:(JConversation *)conversation {
+    [self.dbHelper executeUpdate:jDeleteConversation
+            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
 }
 
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
