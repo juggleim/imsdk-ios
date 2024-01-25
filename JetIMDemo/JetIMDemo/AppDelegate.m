@@ -46,7 +46,7 @@
 //        NSLog(@"conversation count is %d", array.count);
         
         //getConversation
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
         JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         NSLog(@"lifei, getConversationInfo");
         
@@ -88,7 +88,7 @@
 }
 
 - (void)sendMessage {
-    JTextMessage *text = [[JTextMessage alloc] initWithContent:@"tttt"];
+    JTextMessage *text = [[JTextMessage alloc] initWithContent:@"testSendMessage"];
     text.extra = @"extra";
     JImageMessage *image = [[JImageMessage alloc] init];
     image.thumbnailUrl = @"http://sadfasdf.com";
@@ -117,31 +117,31 @@
     } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
-    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
-    sleep(2);
-    [JIM.shared.messageManager sendMessage:image
-                                 inConversation:conversation
-                                        success:^(long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage error");
-    }];
-    sleep(2);
-    [JIM.shared.messageManager sendMessage:file
-                                 inConversation:conversation
-                                        success:^(long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage error");
-    }];
-    sleep(2);
-    [JIM.shared.messageManager sendMessage:voice
-                                 inConversation:conversation
-                                        success:^(long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage success, ");
-    } error:^(JErrorCode errorCode, long long clientMsgNo) {
-        NSLog(@"lifei, sendMessage error");
-    }];
+//    NSLog(@"after send text, msgNo is %lld", m.clientMsgNo);
+//    sleep(2);
+//    [JIM.shared.messageManager sendMessage:image
+//                                 inConversation:conversation
+//                                        success:^(long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage success, ");
+//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage error");
+//    }];
+//    sleep(2);
+//    [JIM.shared.messageManager sendMessage:file
+//                                 inConversation:conversation
+//                                        success:^(long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage success, ");
+//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage error");
+//    }];
+//    sleep(2);
+//    [JIM.shared.messageManager sendMessage:voice
+//                                 inConversation:conversation
+//                                        success:^(long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage success, ");
+//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+//        NSLog(@"lifei, sendMessage error");
+//    }];
 }
 
 - (void)messageDidReceive:(JMessage *)message {
