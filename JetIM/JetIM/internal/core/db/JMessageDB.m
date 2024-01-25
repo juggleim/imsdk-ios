@@ -165,7 +165,16 @@ NSString *const jIsDeleted = @"is_deleted";
             [result addObject:m];
         }
     }];
-    return [result copy];
+    NSMutableArray *messages = [[NSMutableArray alloc] init];
+    for (NSString *messageId in messageIds) {
+        for (JMessage *message in result) {
+            if ([messageId isEqualToString:message.messageId]) {
+                [messages addObject:message];
+                break;
+            }
+        }
+    }
+    return [messages copy];
 }
 
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
@@ -182,7 +191,16 @@ NSString *const jIsDeleted = @"is_deleted";
             [result addObject:m];
         }
     }];
-    return [result copy];
+    NSMutableArray *messages = [[NSMutableArray alloc] init];
+    for (NSNumber *clientMsgNo in clientMsgNos) {
+        for (JMessage *message in result) {
+            if (message.clientMsgNo == clientMsgNo.longLongValue) {
+                [messages addObject:message];
+                break;
+            }
+        }
+    }
+    return [messages copy];
 }
 
 - (void)createTables {

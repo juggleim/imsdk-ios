@@ -26,7 +26,7 @@
     // Override point for customization after application launch.
     [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken2];
+    [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     
@@ -61,7 +61,7 @@
         NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];
         NSLog(@"lifei, getMessagesByMessageIds count is %d", messages1.count);
 
-        NSArray *clientMsgNos = @[@(3), @(6), @(2)];
+        NSArray *clientMsgNos = @[@(3), @(2), @(6)];
         NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
         NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
 
@@ -89,11 +89,13 @@
 
 - (void)sendMessage {
     JTextMessage *text = [[JTextMessage alloc] initWithContent:@"tttt"];
+    text.extra = @"extra";
     JImageMessage *image = [[JImageMessage alloc] init];
     image.thumbnailUrl = @"http://sadfasdf.com";
     image.url = @"http://fsadfasdf.dd";
     image.width = 640;
     image.height = 480;
+    image.extra = @"extra";
     JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
@@ -101,10 +103,12 @@
     file.url = @"fsafasdf";
     file.size = 1000;
     file.type = @"exe";
+    file.extra = @"extra";
 
     JVoiceMessage *voice = [[JVoiceMessage alloc] init];
     voice.url = @"voiceURL";
     voice.duration = 60;
+    voice.extra = @"extra";
 
     JMessage *m = [JIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
@@ -122,35 +126,35 @@
     } error:^(JErrorCode errorCode, long long clientMsgNo) {
         NSLog(@"lifei, sendMessage error");
     }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:file
-//                                 inConversation:conversation
-//                                        success:^(long long clientMsgNo) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:voice
-//                                 inConversation:conversation
-//                                        success:^(long long clientMsgNo) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, long long clientMsgNo) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:file
+                                 inConversation:conversation
+                                        success:^(long long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:voice
+                                 inConversation:conversation
+                                        success:^(long long clientMsgNo) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, long long clientMsgNo) {
+        NSLog(@"lifei, sendMessage error");
+    }];
 }
 
 - (void)messageDidReceive:(JMessage *)message {
     NSLog(@"lifei, messageDidReceive conversationType is %d, conversationId is %@", message.conversation.conversationType, message.conversation.conversationId);
     JMessageContent *content = message.content;
     if ([content isKindOfClass:[JTextMessage class]]) {
-        NSLog(@"lifei, text messageDidReceive, content is %@", ((JTextMessage *)content).content);
+        NSLog(@"lifei, text messageDidReceive, content is %@, extra is %@", ((JTextMessage *)content).content, ((JTextMessage *)content).extra);
     } else if ([content isKindOfClass:[JImageMessage class]]) {
-        NSLog(@"lifei, image messageDidReceive, thumb is %@, url is %@, width is %d, height is %d", ((JImageMessage *)content).thumbnailUrl, ((JImageMessage *)content).url, ((JImageMessage *)content).width, ((JImageMessage *)content).height);
+        NSLog(@"lifei, image messageDidReceive, thumb is %@, url is %@, width is %d, height is %d, extra is %@", ((JImageMessage *)content).thumbnailUrl, ((JImageMessage *)content).url, ((JImageMessage *)content).width, ((JImageMessage *)content).height, ((JImageMessage *)content).extra);
     } else if ([content isKindOfClass:[JFileMessage class]]) {
-        NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %d, type is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type);
+        NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %d, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
-        NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %d", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration);
+        NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %d, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
     }
 }
 
