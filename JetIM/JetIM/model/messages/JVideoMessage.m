@@ -12,6 +12,8 @@
 #define jSnapshotUrl @"poster"
 #define jVideoHeight @"height"
 #define jVideoWidth @"width"
+#define jVideoSize @"size"
+#define jVideoDuration @"duration"
 #define jVideoExtra @"extra"
 #define jVideoDigest @"[Video]"
 
@@ -26,6 +28,8 @@
              jSnapshotUrl:self.snapshotUrl?:@"",
              jVideoHeight:@(self.height),
              jVideoWidth:@(self.width),
+             jVideoSize:@(self.size),
+             jVideoDuration:@(self.duration),
              jVideoExtra:self.extra?:@""
     };
 }
@@ -40,6 +44,14 @@
     obj = json[jVideoWidth];
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.width = [(NSNumber *)obj intValue];
+    }
+    obj = json[jVideoSize];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        self.size = [(NSNumber *)obj longLongValue];
+    }
+    obj = json[jVideoDuration];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        self.duration = [(NSNumber *)obj intValue];
     }
     self.extra = json[jVideoExtra]?:@"";
 }

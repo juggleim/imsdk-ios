@@ -13,6 +13,7 @@
 #define jThumbnail @"thumbnail"
 #define jImageHeight @"height"
 #define jImageWidth @"width"
+#define jImageSize @"size"
 #define jImageExtra @"extra"
 
 @implementation JImageMessage
@@ -26,6 +27,7 @@
              jThumbnail:self.thumbnailUrl?:@"",
              jImageWidth:@(self.width),
              jImageHeight:@(self.height),
+             jImageSize:@(self.size),
              jImageExtra:self.extra?:@""
     };
 }
@@ -40,6 +42,10 @@
     obj = json[jImageHeight];
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.height = [(NSNumber *)obj intValue];
+    }
+    obj = json[jImageSize];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        self.size = [(NSNumber *)obj longLongValue];
     }
     self.extra = json[jImageExtra]?:@"";
 }
