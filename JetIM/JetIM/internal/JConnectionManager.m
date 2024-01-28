@@ -45,9 +45,11 @@
         self.core.userId = @"";
     }
     //TODO: DB 已经是打开状态就不开了
-    if (self.core.userId.length > 0) {
-        if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
-            [self dbOpenNotice:JDBStatusOpen];
+    if (![self.core.dbManager isOpen]) {
+        if (self.core.userId.length > 0) {
+            if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
+                [self dbOpenNotice:JDBStatusOpen];
+            }
         }
     }
     [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone];

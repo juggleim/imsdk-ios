@@ -37,6 +37,10 @@
     [self.dbHelper closeDB];
 }
 
+- (BOOL)isOpen {
+    return [self.dbHelper isDBOpened];
+}
+
 #pragma mark - sync table
 - (long long)getConversationSyncTime {
     return [self.profileDb getConversationSyncTime];
