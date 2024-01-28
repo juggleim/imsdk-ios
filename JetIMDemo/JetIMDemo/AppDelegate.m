@@ -23,7 +23,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@"https://nav.gxjipei.com"];
+//    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
     [JIM.shared.connectionManager connectWithToken:kToken2];
     [JIM.shared.connectionManager setDelegate:self];
@@ -40,10 +40,15 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-//        sleep(10);
-//        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-//        NSLog(@"conversation count is %d", array.count);
+        sleep(2);
+        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+        NSLog(@"conversation count is %d", array.count);
         
+        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];
+        
+        array = [JIM.shared.conversationManager getConversationInfoListByCount:100
+                                                                     timestamp:0
+                                                                     direction:JPullDirectionOlder];
         
         //getConversation
         JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
@@ -114,7 +119,7 @@
     image.width = 640;
     image.height = 480;
     image.extra = @"extra";
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
     file.name = @"fileName";

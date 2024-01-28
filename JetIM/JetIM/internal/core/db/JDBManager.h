@@ -32,6 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
 - (void)deleteConversationInfoBy:(JConversation *)conversation;
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
+- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                             count:(int)count
+                                                         timestamp:(long long)ts
+                                                         direction:(JPullDirection)direction;
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 - (void)clearDraftInConversation:(JConversation *)conversation;

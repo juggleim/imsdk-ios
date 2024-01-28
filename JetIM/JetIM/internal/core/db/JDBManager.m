@@ -83,6 +83,16 @@
     return [self.conversationDb getConversationInfoList];
 }
 
+- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                             count:(int)count
+                                                         timestamp:(long long)ts
+                                                         direction:(JPullDirection)direction {
+    return [self.conversationDb getConversationInfoListWithTypes:conversationTypes
+                                                           count:count
+                                                       timestamp:ts
+                                                       direction:direction];
+}
+
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.conversationDb setDraft:draft inConversation:conversation];
 }

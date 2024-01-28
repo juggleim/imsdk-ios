@@ -56,6 +56,26 @@
     return [self.core.dbManager getConversationInfo:conversation];
 }
 
+- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                             count:(int)count
+                                                         timestamp:(long long)ts
+                                                         direction:(JPullDirection)direction {
+    return [self.core.dbManager getConversationInfoListWithTypes:conversationTypes
+                                                           count:count
+                                                       timestamp:ts
+                                                       direction:direction];
+}
+
+- (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
+                                                       timestamp:(long long)ts
+                                                       direction:(JPullDirection)direction {
+    NSArray *array = [[NSArray alloc] init];
+    return [self getConversationInfoListWithTypes:array
+                                            count:count
+                                        timestamp:ts
+                                        direction:direction];
+}
+
 - (void)deleteConversationInfoBy:(JConversation *)conversation {
     [self.core.dbManager deleteConversationInfoBy:conversation];
 }

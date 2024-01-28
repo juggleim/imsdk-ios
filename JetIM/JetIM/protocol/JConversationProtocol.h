@@ -7,17 +7,23 @@
 
 #import <JetIM/JConversation.h>
 #import <JetIM/JConversationInfo.h>
+#import <JetIM/JetIMConst.h>
 
 @protocol JConversationProtocol <NSObject>
 
 /// 获取全部会话信息列表，按照从新到旧的顺序排列
 - (NSArray<JConversationInfo *> *)getConversationInfoList;
 
-/////TODO:
-//- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
-//                                                             count:(int)count
-//                                                         timestamp:(long long)ts
-//                                                         direction:(JPullDirection)direction;
+/// 分页获取会话信息列表
+- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                             count:(int)count
+                                                         timestamp:(long long)ts
+                                                         direction:(JPullDirection)direction;
+
+/// 分页获取会话信息列表
+- (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
+                                                       timestamp:(long long)ts
+                                                       direction:(JPullDirection)direction;
 
 /// 获取某个特定会话信息
 /// - Parameter conversation: 会话标识

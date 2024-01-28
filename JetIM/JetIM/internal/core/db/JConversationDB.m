@@ -27,6 +27,13 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
+NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
+NSString *const jTimestampGreaterThan = @" timestamp > ?";
+NSString *const jTimestampLessThan = @" timestamp < ?";
+NSString *const jConversationAnd = @" AND ";
+NSString *const jConversationTypeIn = @" conversation_type in ";
+NSString *const jConversationOrderByTimestamp = @" ORDER BY timestamp DESC";
+NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
 
@@ -85,6 +92,49 @@ NSString *const jLastMentionMessageId = @"last_mention_message_id";
     NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
     [self.dbHelper executeQuery:jGetConversations
            withArgumentsInArray:nil
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
+            JConcreteMessage *message = [[JConcreteMessage alloc] init];
+            message.messageId = [resultSet stringForColumn:jLastMessageId];
+            info.lastMessage = message;
+            [array addObject:info];
+        }
+    }];
+    [array enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.lastMessage = [self.messageDB getMessageWithMessageId:obj.lastMessage.messageId];
+    }];
+    return array;
+}
+
+- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                             count:(int)count
+                                                         timestamp:(long long)ts
+                                                         direction:(JPullDirection)direction {
+    if (ts == 0) {
+        ts = INT64_MAX;
+    }
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    NSString *sql = jGetConversationsBy;
+    if (direction == JPullDirectionOlder) {
+        sql = [sql stringByAppendingString:jTimestampLessThan];
+    } else {
+        sql = [sql stringByAppendingString:jTimestampGreaterThan];
+    }
+    [args addObject:@(ts)];
+    if (conversationTypes.count > 0) {
+        sql = [sql stringByAppendingString:jConversationAnd];
+        sql = [sql stringByAppendingString:jConversationTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+        [args addObjectsFromArray:conversationTypes];
+    }
+    sql = [sql stringByAppendingString:jConversationOrderByTimestamp];
+    sql = [sql stringByAppendingString:jConversationLimit];
+    [args addObject:@(count)];
+    
+    NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         while ([resultSet next]) {
             JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
