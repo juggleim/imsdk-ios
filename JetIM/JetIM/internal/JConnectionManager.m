@@ -124,6 +124,9 @@
 - (void)changeStatus:(JConnectionStatusInternal)status
            errorCode:(JErrorCodeInternal)errorCode {
     dispatch_async(self.core.sendQueue, ^{
+        if (status == self.core.connectionStatus) {
+            return;
+        }
         if (status == JConnectionStatusInternalIdle) {
             self.core.connectionStatus = status;
             return;
@@ -143,13 +146,11 @@
             case JConnectionStatusInternalDisconnected:
                 outStatus = JConnectionStatusDisconnected;
                 break;
-                
-            case JConnectionStatusInternalConnecting:
-                outStatus = JConnectionStatusConnecting;
-                break;
 
             case JConnectionStatusInternalWaitingForConnecting:
                 [self reconnect];
+                //无需 break，跟 CONNECTING 一起处理
+            case JConnectionStatusInternalConnecting:
                 //已经在连接中，不需要再对外抛回调
                 if (self.core.connectionStatus == JConnectionStatusInternalConnecting ||
                     self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
