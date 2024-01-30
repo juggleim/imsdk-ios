@@ -6,7 +6,7 @@
 //
 
 #import "JPBData.h"
-#import "ImWebSocket.pbobjc.h"
+#import "Connect.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "JetIMPBConst.h"
 #import "JConcreteMessage.h"

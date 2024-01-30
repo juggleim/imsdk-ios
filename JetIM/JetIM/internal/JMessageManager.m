@@ -18,12 +18,17 @@
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
 @property (nonatomic, weak) id<JMessageSyncDelegate> syncDelegate;
 @property (nonatomic, assign) int increaseId;
+//在 receiveQueue 里处理
+@property (nonatomic, assign) BOOL syncProcessing;
+@property (nonatomic, assign) long long cachedReceiveTime;
+@property (nonatomic, assign) long long cachedSendTime;
 //TODO: 消息拉取回来在 messageManager 里做排重
 @end
 
 @implementation JMessageManager
 
 - (void)syncMessages {
+    self.syncProcessing = YES;
     [self sync];
 }
 
@@ -36,6 +41,8 @@
     [m registerContentType:[JFileMessage class]];
     [m registerContentType:[JVoiceMessage class]];
     [m registerContentType:[JVideoMessage class]];
+    m.cachedSendTime = -1;
+    m.cachedReceiveTime = -1;
     return m;
 }
 
@@ -103,7 +110,11 @@
                            clientMsgNo:message.clientMsgNo
                              clientUid:message.clientUid
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex) {
-        self.core.messageSendSyncTime = timestamp;
+        if (self.syncProcessing) {
+            self.cachedSendTime = timestamp;
+        } else {
+            self.core.messageSendSyncTime = timestamp;
+        }
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
@@ -147,6 +158,15 @@
     if (!isFinished) {
         [self sync];
     } else {
+        self.syncProcessing = NO;
+        if (self.cachedSendTime > 0) {
+            self.core.messageSendSyncTime = self.cachedSendTime;
+            self.cachedSendTime = -1;
+        }
+        if (self.cachedReceiveTime > 0) {
+            self.core.messageReceiveSyncTime = self.cachedReceiveTime;
+            self.cachedReceiveTime = -1;
+        }
         if ([self.syncDelegate respondsToSelector:@selector(messageSyncDidComplete)]) {
             [self.syncDelegate messageSyncDidComplete];
         }
@@ -156,6 +176,7 @@
 - (void)syncNotify:(long long)syncTime {
     NSLog(@"[JetIM] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.core.messageReceiveSyncTime);
     if (syncTime > self.core.messageReceiveSyncTime) {
+        self.syncProcessing = YES;
         [self sync];
     }
 }
@@ -181,11 +202,20 @@
             }
         });
     }];
-    if (sendTime > 0) {
-        self.core.messageSendSyncTime = sendTime;
-    }
-    if (receiveTime > 0) {
-        self.core.messageReceiveSyncTime = receiveTime;
+    if (self.syncProcessing) {
+        if (sendTime > 0) {
+            self.cachedSendTime = sendTime;
+        }
+        if (receiveTime > 0) {
+            self.cachedReceiveTime = receiveTime;
+        }
+    } else {
+        if (sendTime > 0) {
+            self.core.messageSendSyncTime = sendTime;
+        }
+        if (receiveTime > 0) {
+            self.core.messageReceiveSyncTime = receiveTime;
+        }
     }
 }
 
