@@ -53,6 +53,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JPublishMsgNtf
 @end
 
+@implementation JDisconnectMsg
+@end
+
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
     self.index = body.index;
@@ -371,6 +374,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 publishMsgBody.qos = msg.qos;
                 obj.publishMsgBody = publishMsgBody;
             }
+        }
+            break;
+            
+        case ImWebsocketMsg_Testof_OneOfCase_DisconnectMsgBody:
+        {
+            obj.rcvType = JPBRcvTypeDisconnectMsg;
+            JDisconnectMsg *m = [[JDisconnectMsg alloc] init];
+            m.code = msg.disconnectMsgBody.code;
+            m.timestamp = msg.disconnectMsgBody.timestamp;
+            obj.disconnectMsg = m;
         }
             break;
             

@@ -280,6 +280,10 @@
             break;
         case JPBRcvTypePong:
             [self handlePong];
+            break;
+        case JPBRcvTypeDisconnectMsg:
+            [self handleDisconnectMsg:obj.disconnectMsg];
+            break;
         default:
             break;
     }
@@ -383,6 +387,13 @@
 
 - (void)handlePong {
     NSLog(@"handlePong");
+}
+
+- (void)handleDisconnectMsg:(JDisconnectMsg *)msg {
+    NSLog(@"handleDisconnectMsg");
+    if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:)]) {
+        [self.connectDelegate disconnectWithCode:msg.code];
+    }
 }
 
 - (void)setBlockObject:(JBlockObj *)obj
