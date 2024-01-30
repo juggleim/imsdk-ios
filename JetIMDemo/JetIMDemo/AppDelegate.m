@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate>
 
 @end
 
@@ -29,8 +29,13 @@
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
+    [JIM.shared.conversationManager setSyncDelegate:self];
     
     return YES;
+}
+
+- (void)conversationSyncDidComplete {
+    NSLog(@"lifei, conversationSyncDidComplete");
 }
 
 - (void)messageSyncDidComplete {
@@ -97,8 +102,8 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-        sleep(2);
-        [self sendMessage];
+//        sleep(2);
+//        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];

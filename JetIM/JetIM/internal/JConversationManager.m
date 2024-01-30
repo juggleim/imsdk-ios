@@ -11,6 +11,7 @@
 
 @interface JConversationManager ()
 @property (nonatomic, strong) JetIMCore *core;
+@property (nonatomic, weak) id<JConversationSyncDelegate> syncDelegate;
 @end
 
 @implementation JConversationManager
@@ -36,6 +37,9 @@
         if (!isFinished) {
             [self syncConversations:completeBlock];
         } else {
+            if ([self.syncDelegate respondsToSelector:@selector(conversationSyncDidComplete)]) {
+                [self.syncDelegate conversationSyncDidComplete];
+            }
             if (completeBlock) {
                 completeBlock();
             }
@@ -98,6 +102,10 @@
 
 - (void)clearDraftInConversation:(JConversation *)conversation {
     [self.core.dbManager clearDraftInConversation:conversation];
+}
+
+- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
+    _syncDelegate = delegate;
 }
 
 #pragma mark - internal

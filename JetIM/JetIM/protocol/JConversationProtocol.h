@@ -9,6 +9,12 @@
 #import <JetIM/JConversationInfo.h>
 #import <JetIM/JetIMConst.h>
 
+@protocol JConversationSyncDelegate <NSObject>
+
+- (void)conversationSyncDidComplete;
+
+@end
+
 @protocol JConversationProtocol <NSObject>
 
 /// 获取全部会话信息列表，按照从新到旧的顺序排列
@@ -60,5 +66,8 @@
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象
 //- (void)clearUnreadCountByConversation:(JConversation *)conversation;
+
+
+- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 
 @end
