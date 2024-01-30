@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate>
 
 @end
 
@@ -23,13 +23,18 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@"https://nav.gxjipei.com"];
+    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken2];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
+    [JIM.shared.messageManager setSyncDelegate:self];
     
     return YES;
+}
+
+- (void)messageSyncDidComplete {
+    NSLog(@"lifei, messageSyncDidComplete");
 }
 
 - (void)dbDidOpen {
@@ -92,8 +97,8 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-//        sleep(2);
-//        [self sendMessage];
+        sleep(2);
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
@@ -119,7 +124,7 @@
     image.width = 640;
     image.height = 480;
     image.extra = @"extra";
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
     file.name = @"fileName";

@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>
+- (void)messageDidReceive:(JConcreteMessage *)message;
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished;
 - (void)syncNotify:(long long)syncTime;

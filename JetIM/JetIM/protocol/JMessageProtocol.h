@@ -15,6 +15,13 @@
 
 @end
 
+@protocol JMessageSyncDelegate <NSObject>
+
+/// 消息同步完成的回调
+- (void)messageSyncDidComplete;
+
+@end
+
 @protocol JMessageProtocol <NSObject>
 
 /// 发送消息
@@ -93,8 +100,7 @@
 
 - (void)setDelegate:(id<JMessageDelegate>)delegate;
 
-
-
+- (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
 
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
                     startTime:(long long)startTime

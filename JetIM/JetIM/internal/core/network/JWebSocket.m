@@ -366,8 +366,8 @@
 
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
     NSLog(@"handleReceiveMessage");
-    if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
-        [self.messageDelegate messagesDidReceive:@[publishMsgBody.rcvMessage] isFinished:YES];
+    if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
+        [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
     }
     if (publishMsgBody.qos == 1) {
         [self sendPublishAck:publishMsgBody.index];

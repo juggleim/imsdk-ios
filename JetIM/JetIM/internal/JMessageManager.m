@@ -16,6 +16,7 @@
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
+@property (nonatomic, weak) id<JMessageSyncDelegate> syncDelegate;
 @property (nonatomic, assign) int increaseId;
 //TODO: 消息拉取回来在 messageManager 里做排重
 @end
@@ -42,6 +43,9 @@
     _delegate = delegate;
 }
 
+- (void)setSyncDelegate:(id<JMessageSyncDelegate>)syncDelegate {
+    _syncDelegate = syncDelegate;
+}
 
 - (void)deleteMessageByClientMsgNo:(long long)clientMsgNo {
     [self.core.dbManager deleteMessageByClientId:clientMsgNo];
@@ -132,8 +136,32 @@
 }
 
 #pragma mark - JWebSocketMessageDelegate
+- (void)messageDidReceive:(JConcreteMessage *)message {
+    [self handleReceiveMessages:@[message]];
+}
+
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished {
+    [self handleReceiveMessages:messages];
+    
+    if (!isFinished) {
+        [self sync];
+    } else {
+        if ([self.syncDelegate respondsToSelector:@selector(messageSyncDidComplete)]) {
+            [self.syncDelegate messageSyncDidComplete];
+        }
+    }
+}
+
+- (void)syncNotify:(long long)syncTime {
+    NSLog(@"[JetIM] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.core.messageReceiveSyncTime);
+    if (syncTime > self.core.messageReceiveSyncTime) {
+        [self sync];
+    }
+}
+
+#pragma mark - internal
+- (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages {
     //TODO: 排重
     //TODO: cmd message 吞掉
     
@@ -159,21 +187,8 @@
     if (receiveTime > 0) {
         self.core.messageReceiveSyncTime = receiveTime;
     }
-    
-    if (!isFinished) {
-        [self sync];
-    }
-    
 }
 
-- (void)syncNotify:(long long)syncTime {
-    NSLog(@"[JetIM] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.core.messageReceiveSyncTime);
-    if (syncTime > self.core.messageReceiveSyncTime) {
-        [self sync];
-    }
-}
-
-#pragma mark - internal
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
                     startTime:(long long)startTime
                         count:(int)count
