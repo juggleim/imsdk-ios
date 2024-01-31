@@ -37,9 +37,11 @@
         if (!isFinished) {
             [self syncConversations:completeBlock];
         } else {
-            if ([self.syncDelegate respondsToSelector:@selector(conversationSyncDidComplete)]) {
-                [self.syncDelegate conversationSyncDidComplete];
-            }
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([self.syncDelegate respondsToSelector:@selector(conversationSyncDidComplete)]) {
+                    [self.syncDelegate conversationSyncDidComplete];
+                }
+            });
             if (completeBlock) {
                 completeBlock();
             }

@@ -167,9 +167,12 @@
             self.core.messageReceiveSyncTime = self.cachedReceiveTime;
             self.cachedReceiveTime = -1;
         }
-        if ([self.syncDelegate respondsToSelector:@selector(messageSyncDidComplete)]) {
-            [self.syncDelegate messageSyncDidComplete];
-        }
+        
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.syncDelegate respondsToSelector:@selector(messageSyncDidComplete)]) {
+                [self.syncDelegate messageSyncDidComplete];
+            }
+        });
     }
 }
 
