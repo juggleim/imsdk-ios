@@ -107,7 +107,7 @@
 }
 
 - (void)disconnectWithCode:(JErrorCodeInternal)error {
-    [self changeStatus:JConnectionStatusInternalFailure errorCode:error];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:error];
 }
 
 - (void)webSocketDidFail {
