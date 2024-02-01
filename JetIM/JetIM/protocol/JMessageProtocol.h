@@ -112,10 +112,18 @@
 
 - (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
 
+/// 从远端拉取历史消息
+/// - Parameters:
+///   - conversation: 会话对象
+///   - startTime: 消息时间戳，如果传 0 为当前时间
+///   - count: 拉取数量，超过 100 条按 100 返回
+///   - direction: 拉取方向
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                      success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 @end

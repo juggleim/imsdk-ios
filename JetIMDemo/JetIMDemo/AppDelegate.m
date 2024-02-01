@@ -50,26 +50,26 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-        sleep(2);
-        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-        NSLog(@"conversation count is %d", array.count);
-        
-        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];
-        
-        array = [JIM.shared.conversationManager getConversationInfoListByCount:100
-                                                                     timestamp:0
-                                                                     direction:JPullDirectionOlder];
+//        sleep(2);
+//        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+//        NSLog(@"conversation count is %d", array.count);
+//
+//        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];
+//
+//        array = [JIM.shared.conversationManager getConversationInfoListByCount:100
+//                                                                     timestamp:0
+//                                                                     direction:JPullDirectionOlder];
         
         //getConversation
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
-        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
-        NSLog(@"lifei, getConversationInfo");
-        
-        [JIM.shared.conversationManager setDraft:@"draft" inConversation:conversation];
-        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
-        
-        [JIM.shared.conversationManager clearDraftInConversation:conversation];
-        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
+//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
+//        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
+//        NSLog(@"lifei, getConversationInfo");
+//
+//        [JIM.shared.conversationManager setDraft:@"draft" inConversation:conversation];
+//        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
+//
+//        [JIM.shared.conversationManager clearDraftInConversation:conversation];
+//        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
         
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
@@ -90,20 +90,35 @@
 //        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
 //        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
         
-        NSArray *contentTypes = @[[JImageMessage contentType]];
-        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
-                                                                  count:100
-                                                                   time:0
-                                                              direction:JPullDirectionOlder
-                                                           contentTypes:contentTypes];
-        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
+//        NSArray *contentTypes = @[[JImageMessage contentType]];
+//        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
+//                                                                  count:100
+//                                                                   time:0
+//                                                              direction:JPullDirectionOlder
+//                                                           contentTypes:contentTypes];
+//        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
+        
+        //get remote message
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate
+                                                            conversationId:@"userid5"];
+        [JIM.shared.messageManager getRemoteMessagesFrom:c
+                                               startTime:1706610326711
+                                                   count:100
+                                               direction:JPullDirectionOlder
+                                                 success:^(NSArray *messages) {
+            NSLog(@"lifei, getRemoteMessagesFrom count is %d", messages.count);
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei, getRemoteMessagesFrom error, code is ", code);
+
+        }];
+        
 
 //        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-        sleep(2);
-        [self sendMessage];
+//        sleep(2);
+//        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];

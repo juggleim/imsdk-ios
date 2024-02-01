@@ -252,17 +252,32 @@
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                      success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock {
+    if (count > 100) {
+        count = 100;
+    }
     [self.core.webSocket queryHisMsgsFrom:conversation
                                 startTime:startTime
                                     count:count
                                 direction:direction
-                                  success:successBlock
-                                    error:^(JErrorCodeInternal code) {
-        if (errorBlock) {
-            errorBlock((JErrorCode)code);
-        }
+                                  success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        //TODO: 排重
+        //TODO: cmd message 吞掉
+        //当拉回来的消息本地数据库存在时，需要把本地数据库的 clientMsgNo 赋值回 message 里
+        
+        [self.core.dbManager insertMessages:messages];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messages);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
     }];
 }
 

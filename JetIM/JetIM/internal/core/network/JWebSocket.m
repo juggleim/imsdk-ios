@@ -344,6 +344,16 @@
 
 - (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
     NSLog(@"handleQryMsg");
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
+        JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
+        if (ack.code != 0) {
+            qryHisMsgsObj.errorBlock(ack.code);
+        } else {
+            qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
