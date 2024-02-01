@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
     [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:@"CgZhcHBrZXkaIIVPMcNbO8kmKTnyaqLevfKvQvtfKhrO0R5H//8SfduP"];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -102,23 +102,23 @@
 //        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate
 //                                                            conversationId:@"userid5"];
 //        [JIM.shared.messageManager getRemoteMessagesFrom:c
-//                                               startTime:1706610326711
+//                                               startTime:0
 //                                                   count:100
-//                                               direction:JPullDirectionOlder
+//                                               direction:JPullDirectionNewer
 //                                                 success:^(NSArray *messages) {
 //            NSLog(@"lifei, getRemoteMessagesFrom count is %d", messages.count);
 //        } error:^(JErrorCode code) {
 //            NSLog(@"lifei, getRemoteMessagesFrom error, code is ", code);
 //
 //        }];
-        
+//        
 
 //        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-//        sleep(2);
-//        [self sendMessage];
+        sleep(2);
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];

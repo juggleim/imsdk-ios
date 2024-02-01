@@ -103,6 +103,7 @@
     message.messageState = JMessageStateSending;
     message.senderUserId = self.core.userId;
     message.clientUid = [self createClientUid];
+    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
     
     [self.core.dbManager insertMessages:@[message]];
     [self.core.webSocket sendIMMessage:content
