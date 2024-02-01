@@ -127,6 +127,8 @@
             successBlock(message);
         }
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+        message.messageState = JMessageStateFail;
+        [self.core.dbManager messageSendFail:clientMsgNo];
         if (errorBlock) {
             errorBlock((JErrorCode)errorCode, message);
         }

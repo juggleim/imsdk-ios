@@ -117,6 +117,10 @@
                               messageIndex:messageIndex];
 }
 
+- (void)messageSendFail:(long long)clientMsgNo {
+    [self.messageDb messageSendFail:clientMsgNo];
+}
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

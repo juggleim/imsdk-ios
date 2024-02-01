@@ -102,8 +102,8 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-//        sleep(2);
-//        [self sendMessage];
+        sleep(2);
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
