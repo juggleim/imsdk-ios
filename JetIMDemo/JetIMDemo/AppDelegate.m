@@ -156,6 +156,13 @@
         NSLog(@"lifei, sendMessage success, ");
     } error:^(JErrorCode errorCode, JMessage *message) {
         NSLog(@"lifei, sendMessage error");
+        JMessage *msg = [JIM.shared.messageManager resend:message
+                                  success:^(JMessage *message) {
+            NSLog(@"lifei, resend success, ");
+        } error:^(JErrorCode errorCode, JMessage *message) {
+            NSLog(@"lifei, resend error");
+        }];
+        NSLog(@"after resend, msgNo is %lld", msg.clientMsgNo);
     }];
     NSLog(@"after send video, msgNo is %lld", m.clientMsgNo);
 //    sleep(2);

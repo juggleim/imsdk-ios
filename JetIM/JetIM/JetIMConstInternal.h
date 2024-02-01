@@ -34,5 +34,6 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalUserLogOut = 11012,
     
     JErrorCodeInternalWebSocketFailure = 21001,
-    JErrorCodeInternalNaviFailure = 21002
+    JErrorCodeInternalNaviFailure = 21002,
+    JErrorCodeInternalInvalidParam = 21003
 };

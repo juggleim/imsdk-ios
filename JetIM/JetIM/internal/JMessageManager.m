@@ -123,17 +123,41 @@
         message.timestamp = timestamp;
         message.msgIndex = msgIndex;
         message.messageState = JMessageStateSent;
-        if (successBlock) {
-            successBlock(message);
-        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(message);
+            }
+        });
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
         message.messageState = JMessageStateFail;
         [self.core.dbManager messageSendFail:clientMsgNo];
-        if (errorBlock) {
-            errorBlock((JErrorCode)errorCode, message);
-        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)errorCode, message);
+            }
+        });
     }];
     return message;
+}
+
+- (JMessage *)resend:(JMessage *)messsage
+             success:(void (^)(JMessage *))successBlock
+               error:(void (^)(JErrorCode, JMessage *))errorBlock {
+    if (messsage.clientMsgNo <= 0
+        || !messsage.content
+        || messsage.conversation.conversationId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam, messsage);
+            }
+        });
+        return messsage;
+    }
+    [self deleteMessageByClientMsgNo:messsage.clientMsgNo];
+    return [self sendMessage:messsage.content
+              inConversation:messsage.conversation
+                     success:successBlock
+                       error:errorBlock];
 }
 
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {

@@ -33,6 +33,16 @@
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
+
+/// 重发消息，用于发送失败后进行重发
+/// - Parameters:
+///   - messsage: 消息对象
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (JMessage *)resend:(JMessage *)messsage
+             success:(void (^)(JMessage *message))successBlock
+               error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
+
 /// 从本地获取消息
 /// 获取消息列表
 /// - Parameters:
