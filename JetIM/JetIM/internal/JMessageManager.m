@@ -174,12 +174,14 @@
 
 #pragma mark - JWebSocketMessageDelegate
 - (void)messageDidReceive:(JConcreteMessage *)message {
-    [self handleReceiveMessages:@[message]];
+    [self handleReceiveMessages:@[message]
+                         isSync:NO];
 }
 
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished {
-    [self handleReceiveMessages:messages];
+    [self handleReceiveMessages:messages
+                         isSync:YES];
     
     if (!isFinished) {
         [self sync];
@@ -211,7 +213,8 @@
 }
 
 #pragma mark - internal
-- (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages {
+- (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
+                       isSync:(BOOL)isSync {
     //TODO: 排重
     //TODO: cmd message 吞掉
     
@@ -231,7 +234,8 @@
             }
         });
     }];
-    if (self.syncProcessing) {
+    //直发的消息，而且正在同步中，不直接更新 sync time
+    if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {
             self.cachedSendTime = sendTime;
         }
