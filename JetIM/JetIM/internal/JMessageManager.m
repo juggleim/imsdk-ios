@@ -12,6 +12,8 @@
 #import "JFileMessage.h"
 #import "JVoiceMessage.h"
 #import "JContentTypeCenter.h"
+#import "JRecallInfoMessage.h"
+#import "JRecallCmdMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -41,6 +43,8 @@
     [m registerContentType:[JFileMessage class]];
     [m registerContentType:[JVoiceMessage class]];
     [m registerContentType:[JVideoMessage class]];
+    [m registerContentType:[JRecallCmdMessage class]];
+    [m registerContentType:[JRecallInfoMessage class]];
     m.cachedSendTime = -1;
     m.cachedReceiveTime = -1;
     return m;
@@ -60,6 +64,56 @@
 
 - (void)deleteMessageByMessageId:(NSString *)messageId {
     [self.core.dbManager deleteMessageByMessageId:messageId];
+}
+
+- (void)recallMessage:(NSString *)messageId
+              success:(void (^)(JMessage *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    NSArray *arr = [self getMessagesByMessageIds:@[messageId]];
+    if (arr.count > 0) {
+        JMessage *m = arr[0];
+        if ([m.contentType isEqualToString:[JRecallInfoMessage contentType]]) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeMessageAlreadyRecalled);
+                }
+            });
+            return;
+        }
+        [self.core.webSocket recallMessage:messageId
+                              conversation:m.conversation
+                                 timestamp:m.timestamp
+                                   success:^(long long timestamp) {
+            if (self.syncProcessing) {
+                self.cachedSendTime = timestamp;
+            } else {
+                self.core.messageSendSyncTime = timestamp;
+            }
+            m.contentType = [JRecallInfoMessage contentType];
+            JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
+            m.content = recallInfoMsg;
+            [self.core.dbManager updateMessageContent:recallInfoMsg
+                                          contentType:m.contentType
+                                        withMessageId:messageId];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (successBlock) {
+                    successBlock(m);
+                }
+            });
+        } error:^(JErrorCodeInternal errorCode) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock((JErrorCode)errorCode);
+                }
+            });
+        }];
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeMessageNotExist);
+            }
+        });
+    }
 }
 
 - (void)clearMessagesIn:(JConversation *)conversation {
@@ -161,6 +215,37 @@
                        error:errorBlock];
 }
 
+- (void)getRemoteMessagesFrom:(JConversation *)conversation
+                    startTime:(long long)startTime
+                        count:(int)count
+                    direction:(JPullDirection)direction
+                      success:(void (^)(NSArray *messages))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock {
+    if (count > 100) {
+        count = 100;
+    }
+    [self.core.webSocket queryHisMsgsFrom:conversation
+                                startTime:startTime
+                                    count:count
+                                direction:direction
+                                  success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        //TODO: 排重
+        //当拉回来的消息本地数据库存在时，需要把本地数据库的 clientMsgNo 赋值回 message 里
+        [self.core.dbManager insertMessages:messages];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messages);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     return [self.core.dbManager getMessagesByMessageIds:messageIds];
 }
@@ -214,12 +299,33 @@
 }
 
 #pragma mark - internal
+- (NSArray <JConcreteMessage *> *)messagesToSave:(NSArray <JConcreteMessage *> *)messages {
+    NSMutableArray <JConcreteMessage *> *arr = [[NSMutableArray alloc] init];
+    for (JConcreteMessage *message in messages) {
+        if (message.flags & JMessageFlagIsSave) {
+            [arr addObject:message];
+        }
+    }
+    return arr;
+}
+
+- (JMessage *)handleRecallCmdMessage:(NSString *)messageId {
+    JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
+    [self.core.dbManager updateMessageContent:recallInfoMsg
+                                  contentType:[JRecallInfoMessage contentType]
+                                withMessageId:messageId];
+    NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
+    if (messages.count > 0) {
+        return messages[0];
+    }
+    return nil;
+}
+
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
     //TODO: 排重
-    //TODO: cmd message 吞掉
-    
-    [self.core.dbManager insertMessages:messages];
+    NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
+    [self.core.dbManager insertMessages:messagesToSave];
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -228,6 +334,21 @@
             sendTime = obj.timestamp;
         } else if (obj.direction == JMessageDirectionReceive) {
             receiveTime = obj.timestamp;
+        }
+        
+        //recall message
+        if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
+            JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
+            JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId];
+            //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
+            if (recallMessage) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    if ([self.delegate respondsToSelector:@selector(messageDidRecall:)]) {
+                        [self.delegate messageDidRecall:recallMessage];
+                    }
+                });
+            }
+            return;
         }
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
@@ -251,39 +372,6 @@
             self.core.messageReceiveSyncTime = receiveTime;
         }
     }
-}
-
-- (void)getRemoteMessagesFrom:(JConversation *)conversation
-                    startTime:(long long)startTime
-                        count:(int)count
-                    direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages))successBlock
-                        error:(void (^)(JErrorCode code))errorBlock {
-    if (count > 100) {
-        count = 100;
-    }
-    [self.core.webSocket queryHisMsgsFrom:conversation
-                                startTime:startTime
-                                    count:count
-                                direction:direction
-                                  success:^(NSArray * _Nonnull messages, BOOL isFinished) {
-        //TODO: 排重
-        //TODO: cmd message 吞掉
-        //当拉回来的消息本地数据库存在时，需要把本地数据库的 clientMsgNo 赋值回 message 里
-        
-        [self.core.dbManager insertMessages:messages];
-        dispatch_async(self.core.delegateQueue, ^{
-            if (successBlock) {
-                successBlock(messages);
-            }
-        });
-    } error:^(JErrorCodeInternal code) {
-        dispatch_async(self.core.delegateQueue, ^{
-            if (errorBlock) {
-                errorBlock((JErrorCode)code);
-            }
-        });
-    }];
 }
 
 - (void)sync {

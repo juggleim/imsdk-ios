@@ -46,6 +46,15 @@
 @implementation JSyncConvsObj
 @end
 
+@interface JRecallMsgObj : JBlockObj
+@property (nonatomic, copy) NSString *messageId;
+@property (nonatomic, copy) void (^successBlock)(long long timestamp);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@implementation JRecallMsgObj
+@end
+
 @interface JWebSocket () <SRWebSocketDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
@@ -130,6 +139,34 @@
         } else {
             JSendMessageObj *obj = [[JSendMessageObj alloc] init];
             obj.clientMsgNo = clientMsgNo;
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
+    });
+}
+
+- (void)recallMessage:(NSString *)messageId
+         conversation:(JConversation *)conversation
+            timestamp:(long long)timestamp
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock{
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData recallMessageData:messageId
+                                      conversation:conversation
+                                         timestamp:timestamp
+                                             index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket recall message error, description is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JRecallMsgObj *obj = [[JRecallMsgObj alloc] init];
+            obj.messageId = messageId;
             obj.successBlock = successBlock;
             obj.errorBlock = errorBlock;
             [self setBlockObject:obj forKey:key];
@@ -284,6 +321,8 @@
         case JPBRcvTypeDisconnectMsg:
             [self handleDisconnectMsg:obj.disconnectMsg];
             break;
+        case JPBRcvTypeRecall:
+            [self handleRecallMessage:obj.publishMsgAck];
         default:
             break;
     }
@@ -406,12 +445,28 @@
     }
 }
 
+- (void)handleRecallMessage:(JPublishMsgAck *)ack {
+    NSLog(@"handleRecallMessage, code is %d", ack.code);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JRecallMsgObj class]]) {
+        JRecallMsgObj *recallObj = (JRecallMsgObj *)obj;
+        if (ack.code != 0) {
+            recallObj.errorBlock(ack.code);
+        } else {
+            recallObj.successBlock(ack.timestamp);
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
+}
+
 - (void)setBlockObject:(JBlockObj *)obj
                forKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{
         [self.msgBlockDic setObject:obj forKey:index];
     });
 }
+
+
 
 - (void)removeBlockObjectForKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{

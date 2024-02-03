@@ -43,7 +43,20 @@ static JContentTypeCenter *_instance;
         Class cls = self.contentTypeDic[type];
         content = [[cls alloc] init];
     }
-    [content decode:data];
+    if ([content respondsToSelector:@selector(decode:)]) {
+        [content decode:data];
+    }
     return content;
+}
+
+- (int)flagsWithType:(NSString *)type {
+    Class cls = nil;
+    @synchronized (self) {
+        cls = self.contentTypeDic[type];
+    }
+    if (cls != nil && [cls respondsToSelector:@selector(flags)]) {
+        return [cls flags];
+    }
+    return -1;
 }
 @end

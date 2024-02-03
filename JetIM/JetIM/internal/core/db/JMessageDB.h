@@ -25,6 +25,11 @@ NS_ASSUME_NONNULL_BEGIN
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
                   messageIndex:(long long)messageIndex;
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(nonnull NSString *)type
+               withMessageId:(NSString *)messageId;
+
 - (void)messageSendFail:(long long)clientMsgNo;
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count

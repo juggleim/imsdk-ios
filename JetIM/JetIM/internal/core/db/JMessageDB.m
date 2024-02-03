@@ -38,6 +38,7 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, message_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, message_index = ? WHERE id = ?";
+NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
@@ -98,6 +99,15 @@ NSString *const jIsDeleted = @"is_deleted";
                   messageIndex:(long long)messageIndex {
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
             withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(messageIndex), @(clientMsgNo)]];
+}
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(nonnull NSString *)type
+               withMessageId:(NSString *)messageId {
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [self.dbHelper executeUpdate:jUpdateMessageContent
+            withArgumentsInArray:@[s, type, messageId]];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {

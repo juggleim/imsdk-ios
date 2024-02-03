@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (JMessageContent *)contentWithData:(NSData *)data
                          contentType:(NSString *)type;
+
+- (int)flagsWithType:(NSString *)type;
 @end
 
 NS_ASSUME_NONNULL_END

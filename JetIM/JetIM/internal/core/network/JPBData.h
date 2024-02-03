@@ -25,7 +25,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePublishMsg,
     JPBRcvTypePublishMsgNtf,
     JPBRcvTypePong,
-    JPBRcvTypeDisconnectMsg
+    JPBRcvTypeDisconnectMsg,
+    JPBRcvTypeRecall
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -108,6 +109,11 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                               index:(int)index
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
+
+- (NSData *)recallMessageData:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                    timestamp:(long long)msgTime
+                        index:(int)index;
 
 - (NSData *)syncMessagesDataWithReceiveTime:(long long)receiveTime
                                    sendTime:(long long)sendTime

@@ -117,6 +117,14 @@
                               messageIndex:messageIndex];
 }
 
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(nonnull NSString *)type
+               withMessageId:(NSString *)messageId {
+    [self.messageDb updateMessageContent:content
+                             contentType:type
+                           withMessageId:messageId];
+}
+
 - (void)messageSendFail:(long long)clientMsgNo {
     [self.messageDb messageSendFail:clientMsgNo];
 }

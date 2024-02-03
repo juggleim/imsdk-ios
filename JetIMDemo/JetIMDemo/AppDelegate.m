@@ -23,9 +23,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@"https://nav.gxjipei.com"];
+//    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken1];
+    [JIM.shared.connectionManager connectWithToken:kToken4];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -60,6 +60,15 @@
 //                                                                     timestamp:0
 //                                                                     direction:JPullDirectionOlder];
         
+        //recall message
+//        sleep(2);
+//        [JIM.shared.messageManager recallMessage:@"nppzxwy2sl6k5g4v"
+//                                         success:^(JMessage *message) {
+//            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
+//        } error:^(JErrorCode errorCode) {
+//            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
+//        }];
+//
         //getConversation
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
 //        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
@@ -117,8 +126,8 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-        sleep(2);
-        [self sendMessage];
+//        sleep(2);
+//        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
@@ -180,30 +189,30 @@
         NSLog(@"after resend, msgNo is %lld", msg.clientMsgNo);
     }];
     NSLog(@"after send video, msgNo is %lld", m.clientMsgNo);
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:image
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:file
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:voice
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:image
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:file
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:voice
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
 }
 
 - (void)messageDidReceive:(JMessage *)message {
@@ -218,6 +227,10 @@
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
         NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %d, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
     }
+}
+
+- (void)messageDidRecall:(JMessage *)message {
+    NSLog(@"lifei, messageDidRecall");
 }
 
 

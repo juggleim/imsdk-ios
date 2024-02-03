@@ -47,6 +47,12 @@ NS_ASSUME_NONNULL_BEGIN
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
+- (void)recallMessage:(NSString *)messageId
+         conversation:(JConversation *)conversation
+            timestamp:(long long)timestamp
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
+
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
                              userId:(NSString *)userId;

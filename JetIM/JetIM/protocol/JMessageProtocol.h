@@ -13,6 +13,8 @@
 
 - (void)messageDidReceive:(JMessage *)message;
 
+- (void)messageDidRecall:(JMessage *)message;
+
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -75,6 +77,11 @@
 /// 根据 messageId 删除本地消息（只删除本端消息，服务端消息不受影响）
 /// - Parameter messageId: 消息 id
 - (void)deleteMessageByMessageId:(NSString *)messageId;
+
+/// 撤回消息（撤回后会话中的所有人都看不到原消息）
+- (void)recallMessage:(NSString *)messageId
+              success:(void (^)(JMessage *message))successBlock
+                error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 清除会话内所有消息
 /// - Parameter conversation: 会话标识

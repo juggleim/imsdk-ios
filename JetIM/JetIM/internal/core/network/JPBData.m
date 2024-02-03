@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kPMsg @"p_msg"
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
+#define kRecallMsg @"recall_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
@@ -175,11 +176,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
     publishMsg.targetId = conversationId;
     publishMsg.data_p = [upMsg data];
 
-    ImWebsocketMsg *sm = [self createImWebsocketMsg];
-    sm.cmd = JCmdTypePublish;
-    sm.qos = JQosYes;
-    sm.publishMsgBody = publishMsg;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:publishMsg.topic forKey:@(publishMsg.index)];
+    }
+    ImWebsocketMsg *sm = [self createImWebSocketMsgWithPublishMsg:publishMsg];
     return sm.data;
+}
+
+- (NSData *)recallMessageData:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                    timestamp:(long long)msgTime
+                        index:(int)index {
+    RecallMsgReq *req = [[RecallMsgReq alloc] init];
+    req.msgId = messageId;
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgTime = msgTime;
+    
+    PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
+    publishMsg.index = index;
+    publishMsg.topic = kRecallMsg;
+    publishMsg.targetId = conversation.conversationId;
+    publishMsg.data_p = [req data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:publishMsg.topic forKey:@(publishMsg.index)];
+    }
+    ImWebsocketMsg *sm = [self createImWebSocketMsgWithPublishMsg:publishMsg];
+    return sm.data;
+    
 }
 
 - (NSData *)syncMessagesDataWithReceiveTime:(long long)receiveTime
@@ -300,7 +325,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case ImWebsocketMsg_Testof_OneOfCase_PubAckMsgBody:
         {
-            obj.rcvType = JPBRcvTypePublishMsgAck;
+            NSString *cachedCmd;
+            @synchronized (self) {
+                cachedCmd = self.msgCmdDic[@(msg.pubAckMsgBody.index)];
+                [self.msgCmdDic removeObjectForKey:@(msg.pubAckMsgBody.index)];
+            }
+            if (cachedCmd.length == 0) {
+                NSLog(@"[JetIM]ack can't match a cachedCmd");
+                obj.rcvType = JPBRcvTypeCmdMatchError;
+                return obj;
+            }
+            obj.rcvType = [self ackTypeWithCmd:cachedCmd];
             JPublishMsgAck *a = [[JPublishMsgAck alloc] init];
             a.index = msg.pubAckMsgBody.index;
             a.code = msg.pubAckMsgBody.code;
@@ -395,6 +430,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 #pragma mark - internal
+- (ImWebsocketMsg *)createImWebSocketMsgWithPublishMsg:(PublishMsgBody *)body {
+    ImWebsocketMsg *sm = [self createImWebsocketMsg];
+    sm.cmd = JCmdTypePublish;
+    sm.qos = JQosYes;
+    sm.publishMsgBody = body;
+    return sm;
+}
+
 - (ImWebsocketMsg *)createImWebSocketMsgWithQueryMsg:(QueryMsgBody *)body {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypeQuery;
@@ -425,6 +468,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.msgIndex = downMsg.msgIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
+    int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
+    if (flags < 0) {
+        msg.flags = downMsg.flags;
+    } else {
+        msg.flags = flags;
+    }
     return msg;
 }
 
@@ -578,7 +627,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSDictionary *)cmdAckPair {
     return @{kQryHisMsgs:@(JPBRcvTypeQryHisMsgsAck),
              kSyncConvers:@(JPBRcvTypeSyncConvsAck),
-             kSyncMsgs:@(JPBRcvTypeSyncMsgsAck)
+             kSyncMsgs:@(JPBRcvTypeSyncMsgsAck),
+             kPMsg:@(JPBRcvTypePublishMsgAck),
+             kGMsg:@(JPBRcvTypePublishMsgAck),
+             kCMsg:@(JPBRcvTypePublishMsgAck),
+             kRecallMsg:@(JPBRcvTypeRecall)
     };
 }
 @end

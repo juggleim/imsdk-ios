@@ -188,6 +188,10 @@
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0D3AD292B6973D600D170D7 /* Connect.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */; };
 		A0D3AD2A2B6973D600D170D7 /* Connect.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0D3AD282B6973D600D170D7 /* Connect.pbobjc.m */; };
+		A0D3AD2D2B6D1B9C00D170D7 /* JRecallCmdMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD2B2B6D1B9C00D170D7 /* JRecallCmdMessage.h */; };
+		A0D3AD2E2B6D1B9C00D170D7 /* JRecallCmdMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0D3AD2C2B6D1B9C00D170D7 /* JRecallCmdMessage.m */; };
+		A0D3AD322B6DFD4300D170D7 /* JRecallInfoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD302B6DFD4300D170D7 /* JRecallInfoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0D3AD332B6DFD4300D170D7 /* JRecallInfoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0D3AD312B6DFD4300D170D7 /* JRecallInfoMessage.m */; };
 		A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376132B3571CE0076CB84 /* JProfileDB.h */; };
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
 		A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */; };
@@ -385,6 +389,10 @@
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
 		A0D3AD282B6973D600D170D7 /* Connect.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Connect.pbobjc.m; sourceTree = "<group>"; };
+		A0D3AD2B2B6D1B9C00D170D7 /* JRecallCmdMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRecallCmdMessage.h; sourceTree = "<group>"; };
+		A0D3AD2C2B6D1B9C00D170D7 /* JRecallCmdMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRecallCmdMessage.m; sourceTree = "<group>"; };
+		A0D3AD302B6DFD4300D170D7 /* JRecallInfoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRecallInfoMessage.h; sourceTree = "<group>"; };
+		A0D3AD312B6DFD4300D170D7 /* JRecallInfoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRecallInfoMessage.m; sourceTree = "<group>"; };
 		A0F376132B3571CE0076CB84 /* JProfileDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JProfileDB.h; sourceTree = "<group>"; };
 		A0F376142B3571CE0076CB84 /* JProfileDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JProfileDB.m; sourceTree = "<group>"; };
 		A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteConversationInfo.h; sourceTree = "<group>"; };
@@ -422,6 +430,7 @@
 		A06A2F102B221222009B9588 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				A0D3AD2F2B6D1BAE00D170D7 /* messages */,
 				A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */,
 				A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */,
 				A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */,
@@ -789,6 +798,8 @@
 				A0F376262B3A89780076CB84 /* JVoiceMessage.m */,
 				A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */,
 				A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */,
+				A0D3AD302B6DFD4300D170D7 /* JRecallInfoMessage.h */,
+				A0D3AD312B6DFD4300D170D7 /* JRecallInfoMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -816,6 +827,15 @@
 			path = oc;
 			sourceTree = "<group>";
 		};
+		A0D3AD2F2B6D1BAE00D170D7 /* messages */ = {
+			isa = PBXGroup;
+			children = (
+				A0D3AD2B2B6D1B9C00D170D7 /* JRecallCmdMessage.h */,
+				A0D3AD2C2B6D1B9C00D170D7 /* JRecallCmdMessage.m */,
+			);
+			path = messages;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -823,6 +843,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0D3AD322B6DFD4300D170D7 /* JRecallInfoMessage.h in Headers */,
 				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
 				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
 				A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */,
@@ -841,6 +862,7 @@
 				A08AA1E72B148B68008B114C /* JetIM.h in Headers */,
 				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
+				A0D3AD2D2B6D1B9C00D170D7 /* JRecallCmdMessage.h in Headers */,
 				A08AA2772B162A12008B114C /* JFMDatabaseAdditions.h in Headers */,
 				A08AA3772B19CB77008B114C /* Wrappers.pbobjc.h in Headers */,
 				A08AA3F82B19EEDB008B114C /* SRDelegateController.h in Headers */,
@@ -1047,6 +1069,7 @@
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
 				A08AA21E2B148BFF008B114C /* JIM.m in Sources */,
+				A0D3AD332B6DFD4300D170D7 /* JRecallInfoMessage.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
@@ -1074,6 +1097,7 @@
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,
 				A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */,
+				A0D3AD2E2B6D1B9C00D170D7 /* JRecallCmdMessage.m in Sources */,
 				A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */,
 				A06A2F142B233351009B9588 /* JDBHelper.m in Sources */,
 				A05EED5F2B207D5200809F13 /* JUtility.m in Sources */,

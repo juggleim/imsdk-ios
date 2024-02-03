@@ -48,7 +48,12 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeUserLogOut = 11012,
     
     //非法参数
-    JErrorCodeInvalidParam = 21003
+    JErrorCodeInvalidParam = 21003,
+    
+    //消息不存在
+    JErrorCodeMessageNotExist = 22001,
+    //消息已被撤回
+    JErrorCodeMessageAlreadyRecalled = 22002
 };
 
 /*!
