@@ -62,12 +62,12 @@
         
         //recall message
 //        sleep(2);
-//        [JIM.shared.messageManager recallMessage:@"nppzxwy2sl6k5g4v"
-//                                         success:^(JMessage *message) {
-//            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
-//        } error:^(JErrorCode errorCode) {
-//            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
-//        }];
+        [JIM.shared.messageManager recallMessage:@"npqarw3waq8e43gq"
+                                         success:^(JMessage *message) {
+            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
+        } error:^(JErrorCode errorCode) {
+            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
+        }];
 //
         //getConversation
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
