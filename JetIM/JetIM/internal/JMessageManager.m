@@ -347,13 +347,17 @@
             }
             return;
         }
-        if (!obj.existed) {
-            dispatch_async(self.core.delegateQueue, ^{
-                if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
-                    [self.delegate messageDidReceive:obj];
-                }
-            });
+        if (obj.flags & JMessageFlagIsCmd) {
+            return;
         }
+        if (obj.existed) {
+            return;
+        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
+                [self.delegate messageDidReceive:obj];
+            }
+        });
     }];
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
