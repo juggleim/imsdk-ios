@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long msgIndex;
 @property (nonatomic, copy) NSString *clientUid;
 @property (nonatomic, assign) int flags;
+@property (nonatomic, assign) BOOL existed;
 @end
 
 NS_ASSUME_NONNULL_END

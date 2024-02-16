@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken4];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -62,12 +62,12 @@
         
         //recall message
 //        sleep(2);
-        [JIM.shared.messageManager recallMessage:@"npqarw3waq8e43gq"
-                                         success:^(JMessage *message) {
-            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
-        } error:^(JErrorCode errorCode) {
-            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
-        }];
+//        [JIM.shared.messageManager recallMessage:@"npqarw3waq8e43gq"
+//                                         success:^(JMessage *message) {
+//            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
+//        } error:^(JErrorCode errorCode) {
+//            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
+//        }];
 //
         //getConversation
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
@@ -83,6 +83,13 @@
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+//        sleep(5);
+//        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
+//                                                                 count:100
+//                                                                  time:0
+//                                                             direction:JPullDirectionOlder];
+//        NSLog(@"lifei");
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
 //                                                                      count:100
 //                                                                       time:0

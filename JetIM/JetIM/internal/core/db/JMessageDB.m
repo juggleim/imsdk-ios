@@ -87,8 +87,17 @@ NSString *const jIsDeleted = @"is_deleted";
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [self insertMessage:obj inDb:db];
-            obj.clientMsgNo = db.lastInsertRowId;
+            JConcreteMessage *m = nil;
+            if (obj.messageId.length > 0) {
+                m = [self getMessageWithMessageId:obj.messageId inDb:db];
+            }
+            if (m) {
+                obj.clientMsgNo = m.clientMsgNo;
+                obj.existed = YES;
+            } else {
+                [self insertMessage:obj inDb:db];
+                obj.clientMsgNo = db.lastInsertRowId;
+            }
         }];
     }];
 }
@@ -256,6 +265,19 @@ NSString *const jIsDeleted = @"is_deleted";
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex)];
+}
+
+- (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                         inDb:(JFMDatabase *)db {
+    if (messageId.length == 0) {
+        return nil;
+    }
+    JConcreteMessage *message = nil;
+    JFMResultSet *resultSet = [db executeQuery:kGetMessageWithMessageId, messageId];
+    if ([resultSet next]) {
+        message = [self messageWith:resultSet];
+    }
+    return message;
 }
 
 #pragma mark - internal

@@ -229,8 +229,6 @@
                                     count:count
                                 direction:direction
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
-        //TODO: 排重
-        //当拉回来的消息本地数据库存在时，需要把本地数据库的 clientMsgNo 赋值回 message 里
         [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -323,7 +321,6 @@
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
-    //TODO: 排重
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
     
@@ -350,11 +347,13 @@
             }
             return;
         }
-        dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
-                [self.delegate messageDidReceive:obj];
-            }
-        });
+        if (!obj.existed) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
+                    [self.delegate messageDidReceive:obj];
+                }
+            });
+        }
     }];
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
