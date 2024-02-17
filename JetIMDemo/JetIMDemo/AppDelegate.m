@@ -51,8 +51,8 @@
     if (JConnectionStatusConnected == status) {
         //getConversationList
 //        sleep(2);
-//        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-//        NSLog(@"conversation count is %d", array.count);
+        NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+        NSLog(@"conversation count is %d", array.count);
 //
 //        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];
 //
