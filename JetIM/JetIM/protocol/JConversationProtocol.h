@@ -9,6 +9,18 @@
 #import <JetIM/JConversationInfo.h>
 #import <JetIM/JetIMConst.h>
 
+@protocol JConversationDelegate <NSObject>
+
+- (void)conversationsDidAdd:(NSArray<JConversationInfo *> *)conversationInfoList;
+
+- (void)conversationsDidUpdate:(NSArray<JConversationInfo *> *)conversationInfoList;
+
+- (void)conversationsDidDelete:(NSArray<JConversationInfo *> *)conversationInfoList;
+
+- (void)totalUnreadMessageCountDidUpdate:(int)count;
+
+@end
+
 @protocol JConversationSyncDelegate <NSObject>
 
 - (void)conversationSyncDidComplete;
