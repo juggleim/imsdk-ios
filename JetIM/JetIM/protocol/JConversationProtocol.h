@@ -11,11 +11,11 @@
 
 @protocol JConversationDelegate <NSObject>
 
-- (void)conversationsDidAdd:(NSArray<JConversationInfo *> *)conversationInfoList;
+- (void)conversationInfoDidAdd:(NSArray<JConversationInfo *> *)conversationInfoList;
 
-- (void)conversationsDidUpdate:(NSArray<JConversationInfo *> *)conversationInfoList;
+- (void)conversationInfoDidUpdate:(NSArray<JConversationInfo *> *)conversationInfoList;
 
-- (void)conversationsDidDelete:(NSArray<JConversationInfo *> *)conversationInfoList;
+- (void)conversationInfoDidDelete:(NSArray<JConversationInfo *> *)conversationInfoList;
 
 - (void)totalUnreadMessageCountDidUpdate:(int)count;
 
