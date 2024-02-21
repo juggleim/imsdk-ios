@@ -221,6 +221,10 @@
         [self.reconnectTimer invalidate];
     }
     self.reconnectTimer = nil;
+    if (self.core.connectionStatus == JConnectionStatusInternalConnected
+        || self.core.connectionStatus == JConnectionStatusInternalConnecting) {
+        return;
+    }
     [self connectWithToken:self.core.token];
 }
 
