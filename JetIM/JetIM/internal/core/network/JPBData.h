@@ -26,7 +26,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePublishMsgNtf,
     JPBRcvTypePong,
     JPBRcvTypeDisconnectMsg,
-    JPBRcvTypeRecall
+    JPBRcvTypeRecall,
+    JPBRcvTypeDelConvsAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -67,6 +68,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JSyncConvsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
 @property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *convs;
+@property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *deletedConvs;
+@end
+
+@interface JSimpleQryAck : JQryAck
 @end
 
 @interface JPublishMsgNtf : NSObject
@@ -87,6 +92,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JPublishMsgBody *publishMsgBody;
 @property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @property (nonatomic, strong) JDisconnectMsg *disconnectMsg;
+@property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @end
 
 @interface JPBData : NSObject
@@ -132,6 +138,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                             count:(int)count
                            userId:(NSString *)userId
                             index:(int)index;
+
+- (NSData *)deleteConversationData:(JConversation *)conversation
+                            userId:(NSString *)userId
+                             index:(int)index;
 
 - (NSData *)pingData;
 

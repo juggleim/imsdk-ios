@@ -39,7 +39,7 @@
 @end
 
 @interface JSyncConvsObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, BOOL isFinished);
+@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, NSArray * _Nonnull deletedConvs, BOOL isFinished);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
@@ -53,6 +53,14 @@
 @end
 
 @implementation JRecallMsgObj
+@end
+
+@interface JSimpleBlockObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(void);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@implementation JSimpleBlockObj
 @end
 
 @interface JWebSocket () <SRWebSocketDelegate>
@@ -222,7 +230,7 @@
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId
-                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
+                  success:(void (^)(NSArray * _Nonnull, NSArray * _Nonnull, BOOL))successBlock
                     error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
@@ -239,6 +247,31 @@
             }
         } else {
             JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
+    });
+}
+
+- (void)deleteConversationInfo:(JConversation *)conversation
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData deleteConversationData:conversation
+                                                 userId:userId
+                                                  index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket delete conversation error, msg is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
             obj.successBlock = successBlock;
             obj.errorBlock = errorBlock;
             [self setBlockObject:obj forKey:key];
@@ -323,6 +356,10 @@
             break;
         case JPBRcvTypeRecall:
             [self handleRecallMessage:obj.publishMsgAck];
+            break;
+        case JPBRcvTypeDelConvsAck:
+            [self handleDelConvs:obj.simpleQryAck];
+            break;
         default:
             break;
     }
@@ -403,7 +440,7 @@
         if (ack.code != 0) {
             syncConvsObj.errorBlock(ack.code);
         } else {
-            syncConvsObj.successBlock(ack.convs, ack.isFinished);
+            syncConvsObj.successBlock(ack.convs, ack.deletedConvs, ack.isFinished);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
@@ -457,6 +494,19 @@
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)handleDelConvs:(JSimpleQryAck *)ack {
+    NSLog(@"handleDelConvs, code is %d", ack.code);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
+        JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
+        if (ack.code != 0) {
+            simpleObj.errorBlock(ack.code);
+        } else {
+            simpleObj.successBlock();
+        }
+    }
 }
 
 - (void)setBlockObject:(JBlockObj *)obj

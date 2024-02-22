@@ -26,13 +26,26 @@
     [self.core.webSocket syncConversations:self.core.conversationSyncTime
                                      count:kConversationSyncCount
                                     userId:self.core.userId
-                                   success:^(NSArray * _Nonnull conversations, BOOL isFinished) {
+                                   success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
+        long long updateTime = 0;
         if (conversations.lastObject) {
             JConcreteConversationInfo *last = conversations.lastObject;
             if (last.updateTime > 0) {
-                self.core.conversationSyncTime = last.updateTime;
+                updateTime = last.updateTime;
             }
             [self.core.dbManager insertConversations:conversations];
+        }
+        if (deletedConversations.lastObject) {
+            JConcreteConversationInfo *last = deletedConversations.lastObject;
+            if (last.updateTime > updateTime) {
+                updateTime = last.updateTime;
+            }
+            [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [self.core.dbManager deleteConversationInfoBy:obj.conversation];
+            }];
+        }
+        if (updateTime > 0) {
+            self.core.conversationSyncTime = updateTime;
         }
         if (!isFinished) {
             [self syncConversations:completeBlock];
@@ -84,6 +97,13 @@
 
 - (void)deleteConversationInfoBy:(JConversation *)conversation {
     [self.core.dbManager deleteConversationInfoBy:conversation];
+    [self.core.webSocket deleteConversationInfo:conversation
+                                         userId:self.core.userId
+                                        success:^{
+        NSLog(@"[JetIM] delete conversation success");
+    } error:^(JErrorCodeInternal code) {
+        NSLog(@"[JetIM] delete conversation error, code is %lu", code);
+    }];
 }
 
 - (NSArray<JConversationInfo *> *)getConversationInfoList {

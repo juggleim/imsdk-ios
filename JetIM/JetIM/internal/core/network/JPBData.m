@@ -39,6 +39,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
+#define jDelConvers @"del_convers"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 
@@ -55,6 +56,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JDisconnectMsg
+@end
+
+@implementation JSimpleQryAck
 @end
 
 @implementation JQryAck
@@ -279,6 +283,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)deleteConversationData:(JConversation *)conversation
+                            userId:(NSString *)userId
+                             index:(int)index {
+    ConversationsReq *req = [[ConversationsReq alloc] init];
+    Conversation *c = [[Conversation alloc] init];
+    c.targetId = conversation.conversationId;
+    c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
+    req.conversationsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jDelConvers;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -371,6 +398,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeSyncMsgsAck:
                     obj = [self syncMsgsAckWithImWebsocketMsg:msg];
                     break;
+                    
+                case JPBRcvTypeDelConvsAck:
+                    obj = [self delConvAckWithImWebsocketMsg:msg];
+                    break;
+                    
                 default:
                     break;
             }
@@ -461,7 +493,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.messageId = downMsg.msgId;
     msg.clientUid = downMsg.clientUid;
     msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
-    msg.hasRead = downMsg.isReaded;
+    msg.hasRead = downMsg.isRead;
     msg.timestamp = downMsg.msgTime;
     msg.messageState = JMessageStateSent;
     msg.senderUserId = downMsg.senderId;
@@ -485,7 +517,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.unreadCount = (int)conversation.unreadCount;
     info.updateTime = conversation.updateTime;
     info.lastMessage = [self messageWithDownMsg:conversation.msg];
-    info.lastReadMessageIndex = conversation.latestReadedMsgIndex;
+    info.lastReadMessageIndex = conversation.latestReadMsgIndex;
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;
@@ -530,13 +562,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
     [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     a.isFinished = resp.isFinished;
     NSMutableArray *arr = [[NSMutableArray alloc] init];
+    NSMutableArray *deletedArr = [[NSMutableArray alloc] init];
     if (resp.conversationsArray_Count > 0) {
         [resp.conversationsArray enumerateObjectsUsingBlock:^(Conversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteConversationInfo *info = [self conversationWithPBConversation:obj];
-            [arr addObject:info];
+            if (obj.isDelete) {
+                [deletedArr addObject:info];
+            } else {
+                [arr addObject:info];
+            }
         }];
     }
     a.convs = arr;
+    a.deletedConvs = deletedArr;
     obj.syncConvsAck = a;
     return obj;
 }
@@ -564,6 +602,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     a.msgs = arr;
     obj.qryHisMsgsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)delConvAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeDelConvsAck;
+    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    obj.simpleQryAck = a;
     return obj;
 }
 
@@ -631,7 +678,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kPMsg:@(JPBRcvTypePublishMsgAck),
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
-             kRecallMsg:@(JPBRcvTypeRecall)
+             kRecallMsg:@(JPBRcvTypeRecall),
+             jDelConvers:@(JPBRcvTypeDelConvsAck)
     };
 }
 @end

@@ -66,8 +66,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId
-                  success:(void (^)(NSArray *conversations, BOOL isFinished))successBlock
+                  success:(void (^)(NSArray *conversations, NSArray *deletedConversations, BOOL isFinished))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)deleteConversationInfo:(JConversation *)conversation
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 @end
