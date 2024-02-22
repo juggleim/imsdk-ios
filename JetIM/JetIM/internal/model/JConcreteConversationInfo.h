@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JConcreteConversationInfo : JConversationInfo
 @property (nonatomic, assign) long long lastReadMessageIndex;
+@property (nonatomic, assign) long long syncTime;
 @end
 
 NS_ASSUME_NONNULL_END

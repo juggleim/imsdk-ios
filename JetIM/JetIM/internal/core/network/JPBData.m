@@ -518,6 +518,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.updateTime = conversation.updateTime;
     info.lastMessage = [self messageWithDownMsg:conversation.msg];
     info.lastReadMessageIndex = conversation.latestReadMsgIndex;
+    info.syncTime = conversation.syncTime;
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;

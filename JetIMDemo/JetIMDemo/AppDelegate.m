@@ -55,8 +55,11 @@
 //        NSLog(@"conversation count is %d", array.count);
         
         //delete conversation
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
-//        [JIM.shared.conversationManager deleteConversationInfoBy:c];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            [JIM.shared.conversationManager deleteConversationInfoBy:c];
+        });
+        
         
 //
 //        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];

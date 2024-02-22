@@ -27,25 +27,25 @@
                                      count:kConversationSyncCount
                                     userId:self.core.userId
                                    success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
-        long long updateTime = 0;
+        long long syncTime = 0;
         if (conversations.lastObject) {
             JConcreteConversationInfo *last = conversations.lastObject;
-            if (last.updateTime > 0) {
-                updateTime = last.updateTime;
+            if (last.syncTime > 0) {
+                syncTime = last.syncTime;
             }
             [self.core.dbManager insertConversations:conversations];
         }
         if (deletedConversations.lastObject) {
             JConcreteConversationInfo *last = deletedConversations.lastObject;
-            if (last.updateTime > updateTime) {
-                updateTime = last.updateTime;
+            if (last.syncTime > syncTime) {
+                syncTime = last.syncTime;
             }
             [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [self.core.dbManager deleteConversationInfoBy:obj.conversation];
             }];
         }
-        if (updateTime > 0) {
-            self.core.conversationSyncTime = updateTime;
+        if (syncTime > 0) {
+            self.core.conversationSyncTime = syncTime;
         }
         if (!isFinished) {
             [self syncConversations:completeBlock];
