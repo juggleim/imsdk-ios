@@ -12,6 +12,9 @@
 @interface JConversationManager ()
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, weak) id<JConversationSyncDelegate> syncDelegate;
+//在 receiveQueue 里处理
+@property (nonatomic, assign) BOOL syncProcessing;
+@property (nonatomic, assign) long long cachedSyncTime;
 @end
 
 @implementation JConversationManager
@@ -19,10 +22,12 @@
 - (instancetype)initWithCore:(JetIMCore *)core {
     JConversationManager *m = [[JConversationManager alloc] init];
     m.core = core;
+    m.cachedSyncTime = -1;
     return m;
 }
 
 - (void)syncConversations:(void (^)(void))completeBlock {
+    self.syncProcessing = YES;
     [self.core.webSocket syncConversations:self.core.conversationSyncTime
                                      count:kConversationSyncCount
                                     userId:self.core.userId
@@ -50,6 +55,11 @@
         if (!isFinished) {
             [self syncConversations:completeBlock];
         } else {
+            self.syncProcessing = NO;
+            if (self.cachedSyncTime > 0) {
+                self.core.conversationSyncTime = self.cachedSyncTime;
+                self.cachedSyncTime = -1;
+            }
             dispatch_async(self.core.delegateQueue, ^{
                 if ([self.syncDelegate respondsToSelector:@selector(conversationSyncDidComplete)]) {
                     [self.syncDelegate conversationSyncDidComplete];
@@ -99,7 +109,12 @@
     [self.core.dbManager deleteConversationInfoBy:conversation];
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
-                                        success:^{
+                                        success:^(long long timestamp) {
+        if (self.syncProcessing) {
+            self.cachedSyncTime = timestamp;
+        } else {
+            self.core.conversationSyncTime = timestamp;
+        }
         NSLog(@"[JetIM] delete conversation success");
     } error:^(JErrorCodeInternal code) {
         NSLog(@"[JetIM] delete conversation error, code is %lu", code);

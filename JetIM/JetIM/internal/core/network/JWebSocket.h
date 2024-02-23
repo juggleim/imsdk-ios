@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;

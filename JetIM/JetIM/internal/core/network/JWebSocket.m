@@ -56,7 +56,7 @@
 @end
 
 @interface JSimpleBlockObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(void);
+@property (nonatomic, copy) void (^successBlock)(long long timestamp);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
@@ -256,7 +256,7 @@
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
@@ -504,7 +504,7 @@
         if (ack.code != 0) {
             simpleObj.errorBlock(ack.code);
         } else {
-            simpleObj.successBlock();
+            simpleObj.successBlock(ack.timestamp);
         }
     }
 }
