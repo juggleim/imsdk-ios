@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
 #define jDelConvers @"del_convers"
+#define jClearUnread @"clear_unread"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 
@@ -306,6 +307,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)clearUnreadCountData:(JConversation *)conversation
+                          userId:(NSString *)userId
+                           index:(int)index {
+    ClearUnreadReq *req = [[ClearUnreadReq alloc] init];
+    Conversation *c = [[Conversation alloc] init];
+    c.targetId = conversation.conversationId;
+    c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
+    req.conversationsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jClearUnread;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -403,6 +427,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self delConvAckWithImWebsocketMsg:msg];
                     break;
                     
+                case JPBRcvTypeClearUnreadAck:
+                    obj = [self clearUnreadAckWithImWebsocketMsg:msg];
+                    break;
                 default:
                     break;
             }
@@ -617,6 +644,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)clearUnreadAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeClearUnreadAck;
+    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    obj.simpleQryAck = a;
+    return obj;
+}
+
 #pragma mark - helper
 - (int32_t)channelTypeFromConversationType:(JConversationType)type {
     int32_t result = ChannelType_Unknown;
@@ -682,7 +718,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
              kRecallMsg:@(JPBRcvTypeRecall),
-             jDelConvers:@(JPBRcvTypeDelConvsAck)
+             jDelConvers:@(JPBRcvTypeDelConvsAck),
+             jClearUnread:@(JPBRcvTypeClearUnreadAck)
     };
 }
 @end

@@ -279,6 +279,31 @@
     });
 }
 
+- (void)clearUnreadCount:(JConversation *)conversation
+                  userId:(NSString *)userId
+                 success:(void (^)(long long timestamp))successBlock
+                   error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData clearUnreadCountData:conversation
+                                               userId:userId
+                                                index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket clear unread count error, msg is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -359,6 +384,9 @@
             break;
         case JPBRcvTypeDelConvsAck:
             [self handleDelConvs:obj.simpleQryAck];
+            break;
+        case JPBRcvTypeClearUnreadAck:
+            [self handleClearUnread:obj.simpleQryAck];
             break;
         default:
             break;
@@ -498,6 +526,19 @@
 
 - (void)handleDelConvs:(JSimpleQryAck *)ack {
     NSLog(@"handleDelConvs, code is %d", ack.code);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
+        JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
+        if (ack.code != 0) {
+            simpleObj.errorBlock(ack.code);
+        } else {
+            simpleObj.successBlock(ack.timestamp);
+        }
+    }
+}
+
+- (void)handleClearUnread:(JSimpleQryAck *)ack {
+    NSLog(@"handleClearUnread, code is %d", ack.code);
     JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;

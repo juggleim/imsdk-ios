@@ -74,6 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
                        success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)clearUnreadCount:(JConversation *)conversation
+                  userId:(NSString *)userId
+                 success:(void (^)(long long timestamp))successBlock
+                   error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

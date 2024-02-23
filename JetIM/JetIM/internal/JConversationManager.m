@@ -111,7 +111,9 @@
                                          userId:self.core.userId
                                         success:^(long long timestamp) {
         if (self.syncProcessing) {
-            self.cachedSyncTime = timestamp;
+            if (timestamp > self.cachedSyncTime) {
+                self.cachedSyncTime = timestamp;
+            }
         } else {
             self.core.conversationSyncTime = timestamp;
         }
@@ -123,6 +125,20 @@
 
 - (void)clearUnreadCountByConversation:(JConversation *)conversation {
     [self.core.dbManager clearUnreadCountBy:conversation];
+    [self.core.webSocket clearUnreadCount:conversation
+                                   userId:self.core.userId
+                                  success:^(long long timestamp) {
+        if (self.syncProcessing) {
+            if (timestamp > self.cachedSyncTime) {
+                self.cachedSyncTime = timestamp;
+            }
+        } else {
+            self.core.conversationSyncTime = timestamp;
+        }
+        NSLog(@"[JetIM] clear unread success");
+    } error:^(JErrorCodeInternal code) {
+        NSLog(@"[JetIM] clear unread error, code is %lu", code);
+    }];
 }
 
 - (NSArray<JConversationInfo *> *)getConversationInfoList {
