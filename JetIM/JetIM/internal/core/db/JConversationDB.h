@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 - (void)clearDraftInConversation:(JConversation *)conversation;
+- (void)clearUnreadCountBy:(JConversation *)conversation;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -77,8 +77,7 @@
 
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象
-//- (void)clearUnreadCountByConversation:(JConversation *)conversation;
-
+- (void)clearUnreadCountByConversation:(JConversation *)conversation;
 
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 

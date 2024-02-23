@@ -514,10 +514,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConversation *c = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:conversation.channelType]
                                                                    conversationId:conversation.targetId];
     info.conversation = c;
-    info.unreadCount = (int)conversation.unreadCount;
     info.updateTime = conversation.updateTime;
-    info.lastMessage = [self messageWithDownMsg:conversation.msg];
+    JConcreteMessage *lastMessage = [self messageWithDownMsg:conversation.msg];
+    info.lastMessage = lastMessage;
     info.lastReadMessageIndex = conversation.latestReadMsgIndex;
+//    info.unreadCount = (int)conversation.unreadCount;
+    info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
     info.syncTime = conversation.syncTime;
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];

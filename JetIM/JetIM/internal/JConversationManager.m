@@ -121,6 +121,10 @@
     }];
 }
 
+- (void)clearUnreadCountByConversation:(JConversation *)conversation {
+    [self.core.dbManager clearUnreadCountBy:conversation];
+}
+
 - (NSArray<JConversationInfo *> *)getConversationInfoList {
     return [self.core.dbManager getConversationInfoList];
 }
