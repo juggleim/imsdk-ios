@@ -14,6 +14,7 @@
 #import "JContentTypeCenter.h"
 #import "JRecallInfoMessage.h"
 #import "JRecallCmdMessage.h"
+#import "JDeleteConvMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -45,6 +46,7 @@
     [m registerContentType:[JVideoMessage class]];
     [m registerContentType:[JRecallCmdMessage class]];
     [m registerContentType:[JRecallInfoMessage class]];
+    [m registerContentType:[JDeleteConvMessage class]];
     m.cachedSendTime = -1;
     m.cachedReceiveTime = -1;
     return m;
@@ -345,6 +347,15 @@
                     }
                 });
             }
+            return;
+        }
+        //delete conversation
+        if ([obj.contentType isEqualToString:[JDeleteConvMessage contentType]]) {
+            JDeleteConvMessage *deleteConvMsg = (JDeleteConvMessage *)obj.content;
+            for (JConversation *deleteConversation in deleteConvMsg.conversations) {
+                [self.core.dbManager deleteConversationInfoBy:deleteConversation];
+            }
+            //TODO: callback
             return;
         }
         if (obj.flags & JMessageFlagIsCmd) {
