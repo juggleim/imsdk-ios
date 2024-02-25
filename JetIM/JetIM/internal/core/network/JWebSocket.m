@@ -281,12 +281,14 @@
 
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
+                msgIndex:(long long)msgIndex
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData clearUnreadCountData:conversation
                                                userId:userId
+                                             msgIndex:msgIndex
                                                 index:self.msgIndex++];
         NSError *err = nil;
         [self.sws sendData:d error:&err];

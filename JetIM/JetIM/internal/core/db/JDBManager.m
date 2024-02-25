@@ -75,8 +75,9 @@
     return [self.conversationDb getConversationInfo:conversation];
 }
 
-- (void)clearUnreadCountBy:(JConversation *)conversation {
-    [self.conversationDb clearUnreadCountBy:conversation];
+- (void)clearUnreadCountBy:(JConversation *)conversation
+                  msgIndex:(long long)msgIndex {
+    [self.conversationDb clearUnreadCountBy:conversation msgIndex:msgIndex];
 }
 
 - (void)deleteConversationInfoBy:(JConversation *)conversation {

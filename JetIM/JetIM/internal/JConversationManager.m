@@ -124,9 +124,14 @@
 }
 
 - (void)clearUnreadCountByConversation:(JConversation *)conversation {
-    [self.core.dbManager clearUnreadCountBy:conversation];
+    JConversationInfo *info = [self getConversationInfo:conversation];
+    JConcreteMessage *lastMessage = (JConcreteMessage *)info.lastMessage;
+    long long lastMessageIndex = lastMessage.msgIndex;
+    [self.core.dbManager clearUnreadCountBy:conversation
+                                   msgIndex:lastMessageIndex];
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
+                                 msgIndex:lastMessageIndex
                                   success:^(long long timestamp) {
         if (self.syncProcessing) {
             if (timestamp > self.cachedSyncTime) {

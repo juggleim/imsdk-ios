@@ -146,6 +146,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 
 - (NSData *)clearUnreadCountData:(JConversation *)conversation
                           userId:(NSString *)userId
+                        msgIndex:(long long)msgIndex
                            index:(int)index;
 
 - (NSData *)pingData;

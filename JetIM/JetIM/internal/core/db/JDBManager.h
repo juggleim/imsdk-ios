@@ -39,7 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 - (void)clearDraftInConversation:(JConversation *)conversation;
-- (void)clearUnreadCountBy:(JConversation *)conversation;
+- (void)clearUnreadCountBy:(JConversation *)conversation
+                  msgIndex:(long long)msgIndex;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;

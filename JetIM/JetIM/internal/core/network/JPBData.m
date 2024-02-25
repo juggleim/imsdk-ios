@@ -309,11 +309,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)clearUnreadCountData:(JConversation *)conversation
                           userId:(NSString *)userId
+                        msgIndex:(long long)msgIndex
                            index:(int)index {
     ClearUnreadReq *req = [[ClearUnreadReq alloc] init];
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    c.latestReadMsgIndex = msgIndex;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
     req.conversationsArray = arr;
     

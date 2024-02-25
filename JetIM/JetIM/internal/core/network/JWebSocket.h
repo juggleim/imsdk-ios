@@ -76,6 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
+                msgIndex:(long long)msgIndex
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 

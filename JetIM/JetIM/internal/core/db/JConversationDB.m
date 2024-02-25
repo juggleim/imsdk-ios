@@ -50,7 +50,7 @@ NSString *const jConversationOrderByTimestamp = @" ORDER BY timestamp DESC";
 NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_message_index WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -169,8 +169,9 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     [self setDraft:@"" inConversation:conversation];
 }
 
-- (void)clearUnreadCountBy:(JConversation *)conversation {
-    [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+- (void)clearUnreadCountBy:(JConversation *)conversation
+                  msgIndex:(long long)msgIndex {
+    [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
