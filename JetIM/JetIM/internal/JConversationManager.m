@@ -155,13 +155,14 @@
                                    userId:self.core.userId
                                  msgIndex:lastMessageIndex
                                   success:^(long long timestamp) {
-        if (self.syncProcessing) {
-            if (timestamp > self.cachedSyncTime) {
-                self.cachedSyncTime = timestamp;
-            }
-        } else {
-            self.core.conversationSyncTime = timestamp;
-        }
+        //清除未读数暂时不用更新 syncTime
+//        if (self.syncProcessing) {
+//            if (timestamp > self.cachedSyncTime) {
+//                self.cachedSyncTime = timestamp;
+//            }
+//        } else {
+//            self.core.conversationSyncTime = timestamp;
+//        }
         NSLog(@"[JetIM] clear unread success");
     } error:^(JErrorCodeInternal code) {
         NSLog(@"[JetIM] clear unread error, code is %lu", code);
