@@ -57,6 +57,10 @@ NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET last_message_id=?, last_message_type=?, last_message_client_uid=?, "
+                                    "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
+                                    "last_message_sender=?, last_message_content=?, last_message_message_index=? WHERE "
+                                    "conversation_type = ? AND conversation_id = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -196,6 +200,13 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
 - (void)clearUnreadCountBy:(JConversation *)conversation
                   msgIndex:(long long)msgIndex {
     [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId]];
+}
+
+- (void)updateLastMessage:(JConcreteMessage *)message
+           inConversation:(JConversation *)conversation {
+    NSData *data = [message.content encode];
+    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.msgIndex), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

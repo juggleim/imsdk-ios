@@ -24,6 +24,11 @@
     JConversationManager *m = [[JConversationManager alloc] init];
     m.core = core;
     m.cachedSyncTime = -1;
+    //TODO: change implement
+    [[NSNotificationCenter defaultCenter] addObserver:m
+                                             selector:@selector(noticeConversationUpdate:)
+                                                 name:@"updateLastMessage"
+                                               object:nil];
     return m;
 }
 
@@ -65,6 +70,7 @@
             [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [self.core.dbManager deleteConversationInfoBy:obj.conversation];
             }];
+            //TODO: 本地没有的不做回调？给回调也没事
             dispatch_async(self.core.delegateQueue, ^{
                 if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
                     [self.delegate conversationInfoDidDelete:deletedConversations];
@@ -129,6 +135,7 @@
 
 - (void)deleteConversationInfoBy:(JConversation *)conversation {
     [self.core.dbManager deleteConversationInfoBy:conversation];
+    //手动删除不给回调
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
                                         success:^(long long timestamp) {
@@ -198,6 +205,27 @@
 }
 
 #pragma mark - internal
-
+- (void)noticeConversationUpdate:(NSNotification *)notification {
+    //TODO: 只有send成功的回调里才更新 syncTime，插入消息时不更新
+    JConversation *conversation = notification.object;
+    JConversationInfo *info = [self getConversationInfo:conversation];
+    //TODO: info 为空时表示是新的会话发送消息，此时要生成会话并给一个 conversationAdd 回调
+    if (!info) {
+        return;
+    }
+    if (self.syncProcessing) {
+        if (info.lastMessage.timestamp > self.cachedSyncTime) {
+            self.cachedSyncTime = info.lastMessage.timestamp;
+        }
+    } else {
+        self.core.conversationSyncTime = info.lastMessage.timestamp;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+            [self.delegate conversationInfoDidUpdate:@[info]];
+        }
+    });
+    
+}
 
 @end

@@ -162,6 +162,9 @@
     message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
     
     [self.core.dbManager insertMessages:@[message]];
+    [self.core.dbManager updateLastMessage:message inConversation:conversation];
+    //TODO: change implement
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:conversation];
     [self.core.webSocket sendIMMessage:content
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
@@ -180,6 +183,9 @@
         message.timestamp = timestamp;
         message.msgIndex = msgIndex;
         message.messageState = JMessageStateSent;
+        [self.core.dbManager updateLastMessage:message inConversation:conversation];
+        //TODO: change implement
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:conversation];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(message);
@@ -325,6 +331,7 @@
                        isSync:(BOOL)isSync {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
+    //TODO: 遍历 messagesToSave，同一个会话的最后一个 message 更新会话的 lastMessage
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -364,6 +371,9 @@
         if (obj.existed) {
             return;
         }
+        [self.core.dbManager updateLastMessage:obj inConversation:obj.conversation];
+        //TODO: change implement
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:obj.conversation];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
                 [self.delegate messageDidReceive:obj];

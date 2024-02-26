@@ -108,6 +108,9 @@
     [self.conversationDb clearDraftInConversation:conversation];
 }
 
+- (void)updateLastMessage:(JConcreteMessage *)message inConversation:(JConversation *)conversation {
+    [self.conversationDb updateLastMessage:message inConversation:conversation];
+}
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {

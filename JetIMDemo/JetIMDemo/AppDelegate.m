@@ -51,12 +51,12 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //getConversationList
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
-            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
-            NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-            NSLog(@"conversation count is %d", array.count);
-        });
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+//            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
+//            NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+//            NSLog(@"conversation count is %d", array.count);
+//        });
         
         
         //delete conversation
@@ -146,7 +146,7 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-//        [self sendMessage];
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
@@ -193,7 +193,7 @@
     video.width = 640;
     video.extra = @"extra";
 
-    JMessage *m = [JIM.shared.messageManager sendMessage:video
+    JMessage *m = [JIM.shared.messageManager sendMessage:text
                                  inConversation:conversation
                                         success:^(JMessage *message) {
         NSLog(@"lifei, sendMessage success, ");
