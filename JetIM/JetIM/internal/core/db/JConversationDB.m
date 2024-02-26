@@ -39,6 +39,12 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content,"
                                         "last_message_message_index)"
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
+                                        "is_top=?, top_time=?, mute=?, last_mention_message_id=?, last_message_type=?,  "
+                                        "last_message_client_uid=?, last_message_direction=?, last_message_state=?, "
+                                        "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
+                                        "last_message_content=?, last_message_message_index=? WHERE conversation_type = ? "
+                                        "AND conversation_id = ?";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
 NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
@@ -83,19 +89,37 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     [self.dbHelper executeUpdate:kCreateConversationIndex withArgumentsInArray:nil];
 }
 
-- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations {
+- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
+                 completion:(nonnull void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
+    NSMutableArray *insertConversations = [[NSMutableArray alloc] init];
+    NSMutableArray *updateConversations = [[NSMutableArray alloc] init];
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteMessage *lastMessage = (JConcreteMessage *)obj.lastMessage;
             NSData *data = [lastMessage.content encode];
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.msgIndex)];//TODO: mention
+            
+            JConcreteConversationInfo *info = nil;
+            JFMResultSet *resultSet = [db executeQuery:kGetConversation, @(obj.conversation.conversationType), obj.conversation.conversationId];
+            if ([resultSet next]) {
+                info = [self conversationInfoWith:resultSet];
+            }
+            if (info) {
+                [updateConversations addObject:obj];
+                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.msgIndex), @(obj.conversation.conversationType), obj.conversation.conversationId];
+            } else {
+                [insertConversations addObject:obj];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.msgIndex)];
+            }
         }];
     }];
+    if (completeBlock) {
+        completeBlock(insertConversations, updateConversations);
+    }
 }
 
 - (JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation {
-    __block JConcreteConversationInfo *info;
+    __block JConcreteConversationInfo *info = nil;
     [self.dbHelper executeQuery:kGetConversation
            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {

@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate>
 
 @end
 
@@ -30,6 +30,7 @@
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
     [JIM.shared.conversationManager setSyncDelegate:self];
+    [JIM.shared.conversationManager setDelegate:self];
     
     return YES;
 }
@@ -249,6 +250,22 @@
 
 - (void)messageDidRecall:(JMessage *)message {
     NSLog(@"lifei, messageDidRecall");
+}
+
+- (void)conversationInfoDidAdd:(NSArray<JConversationInfo *> *)conversationInfoList {
+    NSLog(@"lifei, conversationInfoDidAdd, count is %d", conversationInfoList.count);
+}
+
+- (void)conversationInfoDidUpdate:(NSArray<JConversationInfo *> *)conversationInfoList {
+    NSLog(@"lifei, conversationInfoDidUpdate, count is %d", conversationInfoList.count);
+}
+
+- (void)conversationInfoDidDelete:(NSArray<JConversationInfo *> *)conversationInfoList {
+    NSLog(@"lifei, conversationInfoDidDelete, count is %d", conversationInfoList.count);
+}
+
+- (void)totalUnreadMessageCountDidUpdate:(int)count {
+    NSLog(@"lifei, totalUnreadMessageCountDidUpdate, count is %d", count);
 }
 
 

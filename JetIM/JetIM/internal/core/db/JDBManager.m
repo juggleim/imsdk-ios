@@ -67,8 +67,10 @@
 }
 
 #pragma mark - conversation table
-- (void)insertConversations:(NSArray *)conversations {
-    [self.conversationDb insertConversations:conversations];
+- (void)insertConversations:(NSArray *)conversations
+                 completion:(nonnull void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
+    [self.conversationDb insertConversations:conversations
+                                  completion:completeBlock];
 }
 
 - (JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation {

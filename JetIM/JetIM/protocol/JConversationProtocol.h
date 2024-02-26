@@ -79,6 +79,8 @@
 /// - Parameter conversation: 会话对象
 - (void)clearUnreadCountByConversation:(JConversation *)conversation;
 
+- (void)setDelegate:(id<JConversationProtocol>)delegate;
+
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 
 @end

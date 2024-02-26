@@ -11,6 +11,7 @@
 
 @interface JConversationManager ()
 @property (nonatomic, strong) JetIMCore *core;
+@property (nonatomic, weak) id<JConversationDelegate> delegate;
 @property (nonatomic, weak) id<JConversationSyncDelegate> syncDelegate;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -38,7 +39,23 @@
             if (last.syncTime > 0) {
                 syncTime = last.syncTime;
             }
-            [self.core.dbManager insertConversations:conversations];
+            [self.core.dbManager insertConversations:conversations
+                                          completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
+                if (insertConversations.count > 0) {
+                    dispatch_async(self.core.delegateQueue, ^{
+                        if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                            [self.delegate conversationInfoDidAdd:insertConversations];
+                        }
+                    });
+                }
+                if (updateConversations.count > 0) {
+                    dispatch_async(self.core.delegateQueue, ^{
+                        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                            [self.delegate conversationInfoDidUpdate:updateConversations];
+                        }
+                    });
+                }
+            }];
         }
         if (deletedConversations.lastObject) {
             JConcreteConversationInfo *last = deletedConversations.lastObject;
@@ -48,6 +65,11 @@
             [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [self.core.dbManager deleteConversationInfoBy:obj.conversation];
             }];
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                    [self.delegate conversationInfoDidDelete:deletedConversations];
+                }
+            });
         }
         if (syncTime > 0) {
             self.core.conversationSyncTime = syncTime;
@@ -164,6 +186,10 @@
 
 - (void)clearDraftInConversation:(JConversation *)conversation {
     [self.core.dbManager clearDraftInConversation:conversation];
+}
+
+- (void)setDelegate:(id<JConversationDelegate>)delegate {
+    _delegate = delegate;
 }
 
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {

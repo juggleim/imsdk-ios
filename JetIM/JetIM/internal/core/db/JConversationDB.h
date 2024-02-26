@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)createTables;
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
-- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations;
+- (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
+                 completion:(void (^)(NSArray<JConcreteConversationInfo *> *insertConversations, NSArray<JConcreteConversationInfo *> *updateConversations))completeBlock;
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
 - (void)deleteConversationInfoBy:(JConversation *)conversation;
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
