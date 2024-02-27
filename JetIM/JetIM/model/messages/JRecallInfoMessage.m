@@ -5,7 +5,7 @@
 //  Created by Nathan on 2024/2/3.
 //
 
-#define jRecallInfoType @"jg:recallInfo"
+#define jRecallInfoType @"jg:recallinfo"
 #define jRecallExtra @"extra"
 
 #import "JRecallInfoMessage.h"
