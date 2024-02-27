@@ -364,7 +364,9 @@
             for (JConversation *deleteConversation in deleteConvMsg.conversations) {
                 [self.core.dbManager deleteConversationInfoBy:deleteConversation];
             }
-            //TODO: callback
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidDelete:)]) {
+                [self.sendReceiveDelegate conversationsDidDelete:deleteConvMsg.conversations];
+            }
             return;
         }
         if (obj.flags & JMessageFlagIsCmd) {

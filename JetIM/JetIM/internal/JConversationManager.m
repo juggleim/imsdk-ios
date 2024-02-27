@@ -219,6 +219,20 @@
     [self noticeConversationAddOrUpdate:message];
 }
 
+- (void)conversationsDidDelete:(NSArray<JConversation *> *)conversations {
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    [conversations enumerateObjectsUsingBlock:^(JConversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JConversationInfo *info = [[JConversationInfo alloc] init];
+        info.conversation = obj;
+        [results addObject:info];
+    }];
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+            [self.delegate conversationInfoDidDelete:results];
+        }
+    });
+}
+
 #pragma mark - internal
 - (void)noticeConversationAddOrUpdate:(JConcreteMessage *)message {
     JConversationInfo *info = [self getConversationInfo:message.conversation];
