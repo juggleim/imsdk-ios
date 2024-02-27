@@ -146,7 +146,7 @@
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message
-//        [self sendMessage];
+        [self sendMessage];
         
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
@@ -172,7 +172,7 @@
     image.width = 640;
     image.height = 480;
     image.extra = @"extra";
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid7"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
     file.name = @"fileName";

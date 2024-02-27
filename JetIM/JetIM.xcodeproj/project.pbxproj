@@ -186,6 +186,7 @@
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
 		A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798A2B885222004E3D60 /* JDeleteConvMessage.h */; };
 		A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A095798B2B885222004E3D60 /* JDeleteConvMessage.m */; };
+		A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */; };
 		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0D3AD292B6973D600D170D7 /* Connect.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */; };
@@ -389,6 +390,7 @@
 		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
 		A095798A2B885222004E3D60 /* JDeleteConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDeleteConvMessage.h; sourceTree = "<group>"; };
 		A095798B2B885222004E3D60 /* JDeleteConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteConvMessage.m; sourceTree = "<group>"; };
+		A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageSendReceiveDelegate.h; sourceTree = "<group>"; };
 		A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVideoMessage.h; sourceTree = "<group>"; };
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
@@ -578,6 +580,7 @@
 				A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */,
 				A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */,
 				A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */,
+				A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -879,6 +882,7 @@
 				A08AA37D2B19CB78008B114C /* GPBUtilities_PackagePrivate.h in Headers */,
 				A08AA36C2B19CB77008B114C /* GPBDuration.pbobjc.h in Headers */,
 				A08AA36A2B19CB77008B114C /* GPBFieldMask.pbobjc.h in Headers */,
+				A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */,
 				A08AA3762B19CB77008B114C /* Empty.pbobjc.h in Headers */,
 				A08AA3622B19CB77008B114C /* GPBAny.pbobjc.h in Headers */,
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,

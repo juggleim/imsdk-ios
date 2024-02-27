@@ -6,6 +6,7 @@
 //
 
 #import "JConversationManager.h"
+#import "JMessageSendReceiveDelegate.h"
 
 #define kConversationSyncCount 100
 
@@ -24,11 +25,6 @@
     JConversationManager *m = [[JConversationManager alloc] init];
     m.core = core;
     m.cachedSyncTime = -1;
-    //TODO: change implement
-    [[NSNotificationCenter defaultCenter] addObserver:m
-                                             selector:@selector(noticeConversationUpdate:)
-                                                 name:@"updateLastMessage"
-                                               object:nil];
     return m;
 }
 
@@ -205,28 +201,55 @@
     _syncDelegate = delegate;
 }
 
+#pragma mark - JMessageSendReceiveDelegate
+- (void)messageDidSave:(JConcreteMessage *)message {
+    [self.core.dbManager updateLastMessage:message];
+    [self noticeConversationAddOrUpdate:message];
+}
+
+- (void)messageDidSend:(JConcreteMessage *)message {
+    [self.core.dbManager updateLastMessage:message];
+    [self updateSyncTime:message.timestamp];
+    [self noticeConversationAddOrUpdate:message];
+}
+
+- (void)messageDidReceive:(JConcreteMessage *)message {
+    [self.core.dbManager updateLastMessage:message];
+    [self updateSyncTime:message.timestamp];
+    [self noticeConversationAddOrUpdate:message];
+}
+
 #pragma mark - internal
-- (void)noticeConversationUpdate:(NSNotification *)notification {
-    //TODO: 只有send成功的回调里才更新 syncTime，插入消息时不更新
-    JConversation *conversation = notification.object;
-    JConversationInfo *info = [self getConversationInfo:conversation];
-    //TODO: info 为空时表示是新的会话发送消息，此时要生成会话并给一个 conversationAdd 回调
+- (void)noticeConversationAddOrUpdate:(JConcreteMessage *)message {
+    JConversationInfo *info = [self getConversationInfo:message.conversation];
     if (!info) {
-        return;
+        JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
+        addInfo.conversation = message.conversation;
+        addInfo.updateTime = message.timestamp;
+        addInfo.lastMessage = message;
+        [self.core.dbManager insertConversations:@[addInfo] completion:nil];
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                [self.delegate conversationInfoDidAdd:@[addInfo]];
+            }
+        });
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [self.delegate conversationInfoDidUpdate:@[info]];
+            }
+        });
     }
+}
+
+- (void)updateSyncTime:(long long)timestamp {
     if (self.syncProcessing) {
-        if (info.lastMessage.timestamp > self.cachedSyncTime) {
-            self.cachedSyncTime = info.lastMessage.timestamp;
+        if (timestamp > self.cachedSyncTime) {
+            self.cachedSyncTime = timestamp;
         }
     } else {
-        self.core.conversationSyncTime = info.lastMessage.timestamp;
+        self.core.conversationSyncTime = timestamp;
     }
-    dispatch_async(self.core.delegateQueue, ^{
-        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-            [self.delegate conversationInfoDidUpdate:@[info]];
-        }
-    });
-    
 }
 
 @end

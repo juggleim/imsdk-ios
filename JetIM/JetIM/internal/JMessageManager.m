@@ -159,11 +159,12 @@
     message.senderUserId = self.core.userId;
     message.clientUid = [self createClientUid];
     message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
-    
     [self.core.dbManager insertMessages:@[message]];
-    [self.core.dbManager updateLastMessage:message inConversation:conversation];
-    //TODO: change implement
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:conversation];
+    
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+        [self.sendReceiveDelegate messageDidSave:message];
+    }
+    
     [self.core.webSocket sendIMMessage:content
                         inConversation:conversation
                            clientMsgNo:message.clientMsgNo
@@ -182,9 +183,11 @@
         message.timestamp = timestamp;
         message.msgIndex = msgIndex;
         message.messageState = JMessageStateSent;
-        [self.core.dbManager updateLastMessage:message inConversation:conversation];
-        //TODO: change implement
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:conversation];
+        
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+            [self.sendReceiveDelegate messageDidSend:message];
+        }
+        
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(message);
@@ -370,9 +373,11 @@
         if (obj.existed) {
             return;
         }
-        [self.core.dbManager updateLastMessage:obj inConversation:obj.conversation];
-        //TODO: change implement
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"updateLastMessage" object:obj.conversation];
+        
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidReceive:)]) {
+            [self.sendReceiveDelegate messageDidReceive:obj];
+        }
+        
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
                 [self.delegate messageDidReceive:obj];

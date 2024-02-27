@@ -68,7 +68,7 @@
 
 #pragma mark - conversation table
 - (void)insertConversations:(NSArray *)conversations
-                 completion:(nonnull void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
+                 completion:(nullable void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
     [self.conversationDb insertConversations:conversations
                                   completion:completeBlock];
 }
@@ -108,8 +108,8 @@
     [self.conversationDb clearDraftInConversation:conversation];
 }
 
-- (void)updateLastMessage:(JConcreteMessage *)message inConversation:(JConversation *)conversation {
-    [self.conversationDb updateLastMessage:message inConversation:conversation];
+- (void)updateLastMessage:(JConcreteMessage *)message {
+    [self.conversationDb updateLastMessage:message];
 }
 
 #pragma mark - message table

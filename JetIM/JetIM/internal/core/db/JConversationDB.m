@@ -95,7 +95,7 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
 }
 
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
-                 completion:(nonnull void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
+                 completion:(nullable void (^)(NSArray<JConcreteConversationInfo *> * _Nonnull, NSArray<JConcreteConversationInfo *> * _Nonnull))completeBlock {
     NSMutableArray *insertConversations = [[NSMutableArray alloc] init];
     NSMutableArray *updateConversations = [[NSMutableArray alloc] init];
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
@@ -203,11 +203,10 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId]];
 }
 
-- (void)updateLastMessage:(JConcreteMessage *)message
-           inConversation:(JConversation *)conversation {
+- (void)updateLastMessage:(JConcreteMessage *)message {
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.msgIndex), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.msgIndex), @(message.conversation.conversationType), message.conversation.conversationId]];
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

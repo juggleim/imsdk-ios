@@ -25,11 +25,14 @@ static JIM *_instance;
         _instance = [[self alloc] init];
         JetIMCore *core = [[JetIMCore alloc] init];
         _instance.core = core;
-        _instance.messageManager = [[JMessageManager alloc] initWithCore:core];
-        _instance.conversationManager = [[JConversationManager alloc] initWithCore:core];
+        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core];
+        JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core];
+        messageManager.sendReceiveDelegate = conversationManager;
+        _instance.conversationManager = conversationManager;
+        _instance.messageManager = messageManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
-                                                           conversationManager:_instance.conversationManager
-                                                                messageManager:_instance.messageManager];
+                                                           conversationManager:conversationManager
+                                                                messageManager:messageManager];
     });
     return _instance;
 }
