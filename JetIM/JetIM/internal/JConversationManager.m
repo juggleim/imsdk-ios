@@ -139,13 +139,14 @@
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
                                         success:^(long long timestamp) {
-        if (self.syncProcessing) {
-            if (timestamp > self.cachedSyncTime) {
-                self.cachedSyncTime = timestamp;
-            }
-        } else {
-            self.core.conversationSyncTime = timestamp;
-        }
+        //删除会话不更新时间戳，只通过命令消息来更新
+//        if (self.syncProcessing) {
+//            if (timestamp > self.cachedSyncTime) {
+//                self.cachedSyncTime = timestamp;
+//            }
+//        } else {
+//            self.core.conversationSyncTime = timestamp;
+//        }
         NSLog(@"[JetIM] delete conversation success");
     } error:^(JErrorCodeInternal code) {
         NSLog(@"[JetIM] delete conversation error, code is %lu", code);
