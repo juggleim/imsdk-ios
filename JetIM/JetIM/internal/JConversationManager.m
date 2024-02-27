@@ -70,7 +70,7 @@
             [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [self.core.dbManager deleteConversationInfoBy:obj.conversation];
             }];
-            //TODO: 本地没有的不做回调？给回调也没事
+            //本地没有的给 delete 回调也没事
             dispatch_async(self.core.delegateQueue, ^{
                 if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
                     [self.delegate conversationInfoDidDelete:deletedConversations];

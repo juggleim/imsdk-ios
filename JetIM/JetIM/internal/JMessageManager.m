@@ -25,7 +25,6 @@
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
-//TODO: 消息拉取回来在 messageManager 里做排重
 @end
 
 @implementation JMessageManager

@@ -483,7 +483,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
             break;
             
-            //TODO: 
         default:
             break;
     }
