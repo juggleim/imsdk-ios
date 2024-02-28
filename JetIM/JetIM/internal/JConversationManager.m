@@ -37,7 +37,7 @@
         long long syncTime = 0;
         if (conversations.lastObject) {
             JConcreteConversationInfo *last = conversations.lastObject;
-            if (last.syncTime > 0) {
+            if (last.syncTime > syncTime) {
                 syncTime = last.syncTime;
             }
             [self.core.dbManager insertConversations:conversations
@@ -100,10 +100,6 @@
         }
     }];
 }
-
-//- (void)clearUnreadCountByConversation:(JConversation *)conversation { 
-//    <#code#>
-//}
 
 - (JConversationInfo *)getConversationInfo:(JConversation *)conversation {
     return [self.core.dbManager getConversationInfo:conversation];

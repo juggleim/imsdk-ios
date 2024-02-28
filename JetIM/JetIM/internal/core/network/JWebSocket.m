@@ -537,6 +537,7 @@
             simpleObj.successBlock(ack.timestamp);
         }
     }
+    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleClearUnread:(JSimpleQryAck *)ack {
@@ -550,6 +551,7 @@
             simpleObj.successBlock(ack.timestamp);
         }
     }
+    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)setBlockObject:(JBlockObj *)obj
