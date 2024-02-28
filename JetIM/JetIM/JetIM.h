@@ -22,4 +22,5 @@ FOUNDATION_EXPORT const unsigned char JetIMVersionString[];
 #import <JetIM/JFileMessage.h>
 #import <JetIM/JVoiceMessage.h>
 #import <JetIM/JVideoMessage.h>
+#import <JetIM/JRecallInfoMessage.h>
 
