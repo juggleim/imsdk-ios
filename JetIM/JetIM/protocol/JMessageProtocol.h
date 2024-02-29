@@ -45,6 +45,14 @@
              success:(void (^)(JMessage *message))successBlock
                error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
+
+/// 保存消息
+/// - Parameters:
+///   - content: 消息实体
+///   - conversation: 会话
+- (JMessage *)saveMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation;
+
 /// 从本地获取消息
 /// 获取消息列表
 /// - Parameters:

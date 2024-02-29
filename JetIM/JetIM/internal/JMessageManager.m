@@ -145,6 +145,23 @@
                                    contentTypes:contentTypes];
 }
 
+- (JMessage *)saveMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation {
+    JConcreteMessage *message = [[JConcreteMessage alloc] init];
+    message.content = content;
+    message.conversation = conversation;
+    message.contentType = [[content class] contentType];
+    message.direction = JMessageDirectionSend;
+    message.messageState = JMessageStateUnknown;
+    message.senderUserId = self.core.userId;
+    message.clientUid = [self createClientUid];
+    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
+    [self.core.dbManager insertMessages:@[message]];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+        [self.sendReceiveDelegate messageDidSave:message];
+    }
+    return message;
+}
 
 - (JMessage *)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation

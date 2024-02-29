@@ -148,6 +148,16 @@
         //send message
 //        [self sendMessage];
         
+        //save message
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"save_message"];
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid11"];
+            JMessage *m = [JIM.shared.messageManager saveMessage:text inConversation:c];
+            NSLog(@"lifei");
+        });
+        
+        
+        
         //disconnect
 //        [JetIM.shared.connectionManager disconnect:NO];
         
