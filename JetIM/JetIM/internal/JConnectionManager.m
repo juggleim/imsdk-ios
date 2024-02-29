@@ -63,7 +63,7 @@
         if (errorCode == JErrorCodeInternalTokenIllegal) {
             [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal];
         } else {
-            [self reconnect];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode];
         }
     }];
 }
@@ -157,7 +157,7 @@
                 //已经在连接中，不需要再对外抛回调
                 if (self.core.connectionStatus == JConnectionStatusInternalConnecting ||
                     self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
-                    self.core.connectionStatus = JConnectionStatusInternalWaitingForConnecting;
+                    self.core.connectionStatus = status;
                     return;
                 }
                 outStatus = JConnectionStatusConnecting;
