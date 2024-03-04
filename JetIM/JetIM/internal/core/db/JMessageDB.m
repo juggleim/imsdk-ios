@@ -42,6 +42,7 @@ NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type =
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
@@ -241,6 +242,12 @@ NSString *const jIsDeleted = @"is_deleted";
         }
     }
     return [messages copy];
+}
+
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo {
+    [self.dbHelper executeUpdate:jUpdateMessageState
+            withArgumentsInArray:@[@(state), @(clientMsgNo)]];
 }
 
 - (void)createTables {

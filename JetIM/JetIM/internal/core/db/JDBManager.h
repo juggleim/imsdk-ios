@@ -64,6 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearMessagesIn:(JConversation *)conversation;
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -23,7 +23,8 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
     JMessageStateUnknown = 0,
     JMessageStateSending,
     JMessageStateSent,
-    JMessageStateFail
+    JMessageStateFail,
+    JMessageStateUploading
 };
 
 @interface JMessage : NSObject

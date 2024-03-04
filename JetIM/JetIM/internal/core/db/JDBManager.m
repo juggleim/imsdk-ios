@@ -171,6 +171,12 @@
     return [self.messageDb getMessagesByClientMsgNos:clientMsgNos];
 }
 
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo {
+    [self.messageDb setMessageState:state
+                    withClientMsgNo:clientMsgNo];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {

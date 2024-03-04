@@ -154,6 +154,12 @@
             JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid11"];
             JMessage *m = [JIM.shared.messageManager saveMessage:text inConversation:c];
             NSLog(@"lifei");
+            [JIM.shared.messageManager setMessageState:JMessageStateUploading withClientMsgNo:m.clientMsgNo];
+            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
+            NSLog(@"lifei");
+            [JIM.shared.messageManager setMessageState:JMessageStateFail withClientMsgNo:m.clientMsgNo];
+            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
+            NSLog(@"lifei");
         });
         
         

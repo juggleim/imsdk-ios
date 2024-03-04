@@ -163,6 +163,12 @@
     return message;
 }
 
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo {
+    [self.core.dbManager setMessageState:state
+                         withClientMsgNo:clientMsgNo];
+}
+
 - (JMessage *)sendMessage:(JMessageContent *)content
      inConversation:(JConversation *)conversation
             success:(void (^)(JMessage *))successBlock

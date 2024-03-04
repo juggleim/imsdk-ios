@@ -141,4 +141,8 @@
                     direction:(JPullDirection)direction
                       success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
+
+// TODO: 上传做完后删除
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo;
 @end
