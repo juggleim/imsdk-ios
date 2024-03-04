@@ -24,6 +24,12 @@
 
 @end
 
+@protocol JMessageReadReceiptDelegate <NSObject>
+
+- (void)messagesDidRead:(NSArray <NSString *> *)messageIds;
+
+@end
+
 @protocol JMessageProtocol <NSObject>
 
 /// 发送消息
@@ -126,6 +132,8 @@
 - (void)setDelegate:(id<JMessageDelegate>)delegate;
 
 - (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+
+- (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 /// 从远端拉取历史消息
 /// - Parameters:

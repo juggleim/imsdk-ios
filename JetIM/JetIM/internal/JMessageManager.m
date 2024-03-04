@@ -15,11 +15,13 @@
 #import "JRecallInfoMessage.h"
 #import "JRecallCmdMessage.h"
 #import "JDeleteConvMessage.h"
+#import "JReadNtfMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
 @property (nonatomic, weak) id<JMessageSyncDelegate> syncDelegate;
+@property (nonatomic, weak) id<JMessageReadReceiptDelegate> readReceiptDelegate;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -46,6 +48,7 @@
     [m registerContentType:[JRecallCmdMessage class]];
     [m registerContentType:[JRecallInfoMessage class]];
     [m registerContentType:[JDeleteConvMessage class]];
+    [m registerContentType:[JReadNtfMessage class]];
     m.cachedSendTime = -1;
     m.cachedReceiveTime = -1;
     return m;
@@ -57,6 +60,10 @@
 
 - (void)setSyncDelegate:(id<JMessageSyncDelegate>)syncDelegate {
     _syncDelegate = syncDelegate;
+}
+
+- (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
+    _readReceiptDelegate = delegate;
 }
 
 - (void)deleteMessageByClientMsgNo:(long long)clientMsgNo {
@@ -414,6 +421,19 @@
             }
             return;
         }
+        
+        //read ntf
+        if ([obj.contentType isEqualToString:[JReadNtfMessage contentType]]) {
+            JReadNtfMessage *readNtfMsg = (JReadNtfMessage *)obj.content;
+            [self.core.dbManager setMessagesRead:readNtfMsg.messageIds];
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([self.readReceiptDelegate respondsToSelector:@selector(messagesDidRead:)]) {
+                    [self.readReceiptDelegate messagesDidRead:readNtfMsg.messageIds];
+                }
+            });
+            return;
+        }
+        
         if (obj.flags & JMessageFlagIsCmd) {
             return;
         }
