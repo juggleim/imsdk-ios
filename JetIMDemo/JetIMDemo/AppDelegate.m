@@ -96,13 +96,23 @@
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
-//        sleep(5);
-//        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
-//                                                                 count:100
-//                                                                  time:0
-//                                                             direction:JPullDirectionOlder];
-//        NSLog(@"lifei");
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
+                                                                 count:100
+                                                                  time:0
+                                                             direction:JPullDirectionOlder];
+        NSLog(@"lifei");
+        
+        //read receipt
+        NSArray *messageIds = @[@"nqbddlstac8g7sb5", @"nqbdmkaeadlg7sb5"];
+        [JIM.shared.messageManager sendReadReceipt:messageIds
+                                    inConversation:c
+                                           success:^{
+            NSLog(@"lifei, sendReadReceipt success");
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
+        }];
+        
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
 //                                                                      count:100
 //                                                                       time:0
@@ -149,18 +159,18 @@
 //        [self sendMessage];
         
         //save message
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"save_message"];
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid11"];
-            JMessage *m = [JIM.shared.messageManager saveMessage:text inConversation:c];
-            NSLog(@"lifei");
-            [JIM.shared.messageManager setMessageState:JMessageStateUploading withClientMsgNo:m.clientMsgNo];
-            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
-            NSLog(@"lifei");
-            [JIM.shared.messageManager setMessageState:JMessageStateFail withClientMsgNo:m.clientMsgNo];
-            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
-            NSLog(@"lifei");
-        });
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"save_message"];
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid11"];
+//            JMessage *m = [JIM.shared.messageManager saveMessage:text inConversation:c];
+//            NSLog(@"lifei");
+//            [JIM.shared.messageManager setMessageState:JMessageStateUploading withClientMsgNo:m.clientMsgNo];
+//            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
+//            NSLog(@"lifei");
+//            [JIM.shared.messageManager setMessageState:JMessageStateFail withClientMsgNo:m.clientMsgNo];
+//            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
+//            NSLog(@"lifei");
+//        });
         
         
         

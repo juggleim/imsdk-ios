@@ -56,7 +56,7 @@
 @end
 
 @interface JSimpleBlockObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(long long timestamp);
+@property (nonatomic, copy) void (^successBlock)(void);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
@@ -182,6 +182,32 @@
     });
 }
 
+- (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
+         inConversation:(JConversation *)conversation
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCodeInternal code))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData sendReadReceiptData:messageIds
+                                      inConversation:conversation
+                                               index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket sendReadReceipt error, description is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
+
+    });
+}
+
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
                              userId:(NSString *)userId {
@@ -256,7 +282,7 @@
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(long long timestamp))successBlock
+                       success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
@@ -282,7 +308,7 @@
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
-                 success:(void (^)(long long timestamp))successBlock
+                 success:(void (^)(void))successBlock
                    error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
@@ -389,6 +415,9 @@
             break;
         case JPBRcvTypeClearUnreadAck:
             [self handleClearUnread:obj.simpleQryAck];
+            break;
+        case JPBRcvTypeMarkReadAck:
+            [self handleMarkRead:obj.simpleQryAck];
             break;
         default:
             break;
@@ -534,7 +563,7 @@
         if (ack.code != 0) {
             simpleObj.errorBlock(ack.code);
         } else {
-            simpleObj.successBlock(ack.timestamp);
+            simpleObj.successBlock();
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
@@ -548,7 +577,21 @@
         if (ack.code != 0) {
             simpleObj.errorBlock(ack.code);
         } else {
-            simpleObj.successBlock(ack.timestamp);
+            simpleObj.successBlock();
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)handleMarkRead:(JSimpleQryAck *)ack {
+    NSLog(@"handleMarkRead, code is %d", ack.code);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
+        JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
+        if (ack.code != 0) {
+            simpleObj.errorBlock(ack.code);
+        } else {
+            simpleObj.successBlock();
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];

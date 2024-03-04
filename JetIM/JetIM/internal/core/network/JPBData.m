@@ -39,6 +39,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kQryHisMsgs @"qry_hismsgs"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
+#define jMarkRead @"mark_read"
 #define jDelConvers @"del_convers"
 #define jClearUnread @"clear_unread"
 #define jNtf @"ntf"
@@ -209,7 +210,34 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     ImWebsocketMsg *sm = [self createImWebSocketMsgWithPublishMsg:publishMsg];
     return sm.data;
+}
+
+- (NSData *)sendReadReceiptData:(NSArray<NSString *> *)messageIds
+                 inConversation:(JConversation *)conversation
+                          index:(int)index {
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    [messageIds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
+        simpleMsg.msgId = obj;
+        [arr addObject:simpleMsg];
+    }];
     
+    MarkReadReq *req = [[MarkReadReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jMarkRead;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
 }
 
 - (NSData *)syncMessagesDataWithReceiveTime:(long long)receiveTime
@@ -432,6 +460,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeClearUnreadAck:
                     obj = [self clearUnreadAckWithImWebsocketMsg:msg];
                     break;
+                    
+                case JPBRcvTypeMarkReadAck:
+                    obj = [self markReadAckWithImWebsocketMsg:msg];
+                    break;
+                    
                 default:
                     break;
             }
@@ -654,6 +687,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)markReadAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeMarkReadAck;
+    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    obj.simpleQryAck = a;
+    return obj;
+}
+
 #pragma mark - helper
 - (int32_t)channelTypeFromConversationType:(JConversationType)type {
     int32_t result = ChannelType_Unknown;
@@ -720,7 +762,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kCMsg:@(JPBRcvTypePublishMsgAck),
              kRecallMsg:@(JPBRcvTypeRecall),
              jDelConvers:@(JPBRcvTypeDelConvsAck),
-             jClearUnread:@(JPBRcvTypeClearUnreadAck)
+             jClearUnread:@(JPBRcvTypeClearUnreadAck),
+             jMarkRead:@(JPBRcvTypeMarkReadAck)
     };
 }
 @end

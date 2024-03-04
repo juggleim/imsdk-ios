@@ -142,6 +142,17 @@
                       success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
+/// 发送阅读回执
+/// - Parameters:
+///   - messageIds: 需要发送阅读回执的消息 id 列表
+///   - conversation: 消息所在会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
+         inConversation:(JConversation *)conversation
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode code))errorBlock;
+
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;

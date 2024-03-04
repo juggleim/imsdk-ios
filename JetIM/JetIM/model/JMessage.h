@@ -40,6 +40,8 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 /// 消息状态
 @property (nonatomic, assign) JMessageState messageState;
 /// 是否已读
+/// 对接收方而言，用来标识自己是否已经读过该消息
+/// 对发送方而言，用来标识对方是否读过该消息（仅对单聊生效）
 @property (nonatomic, assign) BOOL hasRead;
 /// 消息发送的时间戳（服务端时间）
 @property (nonatomic, assign) long long timestamp;

@@ -139,6 +139,10 @@
     [self.messageDb messageSendFail:clientMsgNo];
 }
 
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
+    [self.messageDb setMessagesRead:messageIds];
+}
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

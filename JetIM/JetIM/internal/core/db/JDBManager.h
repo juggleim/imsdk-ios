@@ -54,6 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
                  contentType:(NSString *)type
                withMessageId:(NSString *)messageId;
 - (void)messageSendFail:(long long)clientMsgNo;
+- (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

@@ -228,6 +228,28 @@
     return message;
 }
 
+- (void)sendReadReceipt:(NSArray<NSString *> *)messageIds
+         inConversation:(JConversation *)conversation
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket sendReadReceipt:messageIds
+                          inConversation:conversation
+                                 success:^{
+        [self.core.dbManager setMessagesRead:messageIds];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (JMessage *)resend:(JMessage *)messsage
              success:(void (^)(JMessage *))successBlock
                error:(void (^)(JErrorCode, JMessage *))errorBlock {

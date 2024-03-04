@@ -53,6 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
 
+- (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
+         inConversation:(JConversation *)conversation
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
                              userId:(NSString *)userId;
@@ -71,13 +76,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(long long timestamp))successBlock
+                       success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
-                 success:(void (^)(long long timestamp))successBlock
+                 success:(void (^)(void))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;

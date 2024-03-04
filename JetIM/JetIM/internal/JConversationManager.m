@@ -130,15 +130,8 @@
     //手动删除不给回调
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
-                                        success:^(long long timestamp) {
+                                        success:^(void) {
         //删除会话不更新时间戳，只通过命令消息来更新
-//        if (self.syncProcessing) {
-//            if (timestamp > self.cachedSyncTime) {
-//                self.cachedSyncTime = timestamp;
-//            }
-//        } else {
-//            self.core.conversationSyncTime = timestamp;
-//        }
         NSLog(@"[JetIM] delete conversation success");
     } error:^(JErrorCodeInternal code) {
         NSLog(@"[JetIM] delete conversation error, code is %lu", code);
@@ -154,15 +147,8 @@
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:lastMessageIndex
-                                  success:^(long long timestamp) {
+                                  success:^(void) {
         //清除未读数暂时不用更新 syncTime
-//        if (self.syncProcessing) {
-//            if (timestamp > self.cachedSyncTime) {
-//                self.cachedSyncTime = timestamp;
-//            }
-//        } else {
-//            self.core.conversationSyncTime = timestamp;
-//        }
         NSLog(@"[JetIM] clear unread success");
     } error:^(JErrorCodeInternal code) {
         NSLog(@"[JetIM] clear unread error, code is %lu", code);

@@ -43,6 +43,7 @@ NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
+NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
@@ -248,6 +249,12 @@ NSString *const jIsDeleted = @"is_deleted";
         withClientMsgNo:(long long)clientMsgNo {
     [self.dbHelper executeUpdate:jUpdateMessageState
             withArgumentsInArray:@[@(state), @(clientMsgNo)]];
+}
+
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
+    NSString *sql = [jSetMessagesRead stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageIds.count]];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:messageIds];
 }
 
 - (void)createTables {
