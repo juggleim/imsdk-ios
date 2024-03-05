@@ -26,7 +26,8 @@
 
 @protocol JMessageReadReceiptDelegate <NSObject>
 
-- (void)messagesDidRead:(NSArray <NSString *> *)messageIds;
+- (void)messagesDidRead:(NSArray <NSString *> *)messageIds
+         inConversation:(JConversation *)conversation;
 
 @end
 

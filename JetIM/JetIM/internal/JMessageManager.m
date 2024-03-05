@@ -427,8 +427,9 @@
             JReadNtfMessage *readNtfMsg = (JReadNtfMessage *)obj.content;
             [self.core.dbManager setMessagesRead:readNtfMsg.messageIds];
             dispatch_async(self.core.delegateQueue, ^{
-                if ([self.readReceiptDelegate respondsToSelector:@selector(messagesDidRead:)]) {
-                    [self.readReceiptDelegate messagesDidRead:readNtfMsg.messageIds];
+                if ([self.readReceiptDelegate respondsToSelector:@selector(messagesDidRead:inConversation:)]) {
+                    [self.readReceiptDelegate messagesDidRead:readNtfMsg.messageIds
+                                               inConversation:obj.conversation];
                 }
             });
             return;

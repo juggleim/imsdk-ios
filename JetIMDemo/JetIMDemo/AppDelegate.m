@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate>
 
 @end
 
@@ -31,6 +31,7 @@
     [JIM.shared.messageManager setSyncDelegate:self];
     [JIM.shared.conversationManager setSyncDelegate:self];
     [JIM.shared.conversationManager setDelegate:self];
+    [JIM.shared.messageManager setReadReceiptDelegate:self];
     
     return YES;
 }
@@ -41,6 +42,10 @@
 
 - (void)messageSyncDidComplete {
     NSLog(@"lifei, messageSyncDidComplete");
+}
+
+- (void)messagesDidRead:(NSArray<NSString *> *)messageIds inConversation:(JConversation *)conversation {
+    NSLog(@"lifei, messagesDidRead, count is %d, conversationType is %d, conversationId is %@", messageIds.count, conversation.conversationType, conversation.conversationId);
 }
 
 - (void)dbDidOpen {
