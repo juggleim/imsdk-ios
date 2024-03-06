@@ -109,14 +109,14 @@
         NSLog(@"lifei");
         
         //read receipt
-        NSArray *messageIds = @[@"nqbddlstac8g7sb5", @"nqbdmkaeadlg7sb5"];
-        [JIM.shared.messageManager sendReadReceipt:messageIds
-                                    inConversation:c
-                                           success:^{
-            NSLog(@"lifei, sendReadReceipt success");
-        } error:^(JErrorCode code) {
-            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
-        }];
+//        NSArray *messageIds = @[@"nqbddlstac8g7sb5", @"nqbdmkaeadlg7sb5"];
+//        [JIM.shared.messageManager sendReadReceipt:messageIds
+//                                    inConversation:c
+//                                           success:^{
+//            NSLog(@"lifei, sendReadReceipt success");
+//        } error:^(JErrorCode code) {
+//            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
+//        }];
         
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
 //                                                                      count:100
@@ -157,7 +157,7 @@
 //        }];
 //        
 
-//        [JetIM.shared.messageManager deleteMessageByMessageId:@"nnx9lhzgaqeg7sb5"];
+//        [JIM.shared.messageManager deleteMessageByMessageId:nil];
 //        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
         
         //send message

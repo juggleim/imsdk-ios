@@ -108,6 +108,9 @@ NSString *const jIsDeleted = @"is_deleted";
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
                   messageIndex:(long long)messageIndex {
+    if (messageId.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
             withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(messageIndex), @(clientMsgNo)]];
 }
@@ -117,6 +120,9 @@ NSString *const jIsDeleted = @"is_deleted";
                withMessageId:(NSString *)messageId {
     NSData *data = [content encode];
     NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0 || messageId.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jUpdateMessageContent
             withArgumentsInArray:@[s, type, messageId]];
 }
@@ -180,6 +186,9 @@ NSString *const jIsDeleted = @"is_deleted";
 }
 
 - (void)deleteMessageByMessageId:(NSString *)messageId {
+    if (messageId.length == 0) {
+        return;
+    }
     NSString *sql = jDeleteMessage;
     sql = [sql stringByAppendingString:jMessageIdIs];
     [self.dbHelper executeUpdate:sql
