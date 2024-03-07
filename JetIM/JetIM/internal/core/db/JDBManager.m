@@ -143,6 +143,10 @@
     [self.messageDb setMessagesRead:messageIds];
 }
 
+- (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs {
+    [self.messageDb setGroupMessageReadInfo:msgs];
+}
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

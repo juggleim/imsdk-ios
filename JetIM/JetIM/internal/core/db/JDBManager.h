@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JConcreteConversationInfo.h"
 #import "JConcreteMessage.h"
+#import "JGroupMessageReadInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
                withMessageId:(NSString *)messageId;
 - (void)messageSendFail:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
+- (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

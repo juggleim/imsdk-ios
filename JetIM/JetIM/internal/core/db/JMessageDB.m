@@ -24,6 +24,8 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "content TEXT,"
                                         "extra TEXT,"
                                         "message_index INTEGER,"
+                                        "read_count INTEGER,"
+                                        "member_count INTEGER DEFAULT -1,"
                                         "is_deleted BOOLEAN DEFAULT 0"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
@@ -36,7 +38,7 @@ NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, message_index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, message_index, read_count, member_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, message_index = ? WHERE id = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
@@ -44,6 +46,7 @@ NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
+NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
@@ -63,6 +66,8 @@ NSString *const jSender = @"sender";
 NSString *const jContent = @"content";
 NSString *const jExtra = @"extra";
 NSString *const jMessageIndex = @"message_index";
+NSString *const jReadCount = @"read_count";
+NSString *const jMemberCount = @"member_count";
 NSString *const jIsDeleted = @"is_deleted";
 
 @interface JMessageDB ()
@@ -266,6 +271,15 @@ NSString *const jIsDeleted = @"is_deleted";
             withArgumentsInArray:messageIds];
 }
 
+- (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs {
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        [msgs enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, JGroupMessageReadInfo * _Nonnull obj, BOOL * _Nonnull stop) {
+            [db executeUpdate:jSetGroupReadInfo
+         withArgumentsInArray:@[@(obj.readCount), @(obj.memberCount), key]];
+        }];
+    }];
+}
+
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
@@ -287,7 +301,8 @@ NSString *const jIsDeleted = @"is_deleted";
     }
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex)];
+    int memberCount = message.groupReadInfo.memberCount?:-1;
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount)];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
@@ -324,6 +339,10 @@ NSString *const jIsDeleted = @"is_deleted";
     message.content = [[JContentTypeCenter shared] contentWithData:data
                                                        contentType:message.contentType];
     message.msgIndex = [rs longLongIntForColumn:jMessageIndex];
+    JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
+    info.readCount = [rs intForColumn:jReadCount];
+    info.memberCount = [rs intForColumn:jMemberCount];
+    message.groupReadInfo = info;
     return message;
 }
 

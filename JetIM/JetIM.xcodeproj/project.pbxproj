@@ -23,6 +23,10 @@
 		A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F202B233A6C009B9588 /* JDBManager.m */; };
 		A06CF0F62B96080B00B5CD89 /* JReadNtfMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06CF0F42B96080B00B5CD89 /* JReadNtfMessage.h */; };
 		A06CF0F72B96080B00B5CD89 /* JReadNtfMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0F52B96080B00B5CD89 /* JReadNtfMessage.m */; };
+		A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06CF0F82B988FC200B5CD89 /* JGroupReadNtfMessage.h */; };
+		A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0F92B988FC200B5CD89 /* JGroupReadNtfMessage.m */; };
+		A06CF0FE2B989C7400B5CD89 /* JGroupMessageReadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A06CF0FC2B989C7400B5CD89 /* JGroupMessageReadInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */; };
 		A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */; };
 		A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */; };
 		A07CE41C2B3AF131006E3F4D /* JContentTypeCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */; };
@@ -227,6 +231,10 @@
 		A06A2F202B233A6C009B9588 /* JDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDBManager.m; sourceTree = "<group>"; };
 		A06CF0F42B96080B00B5CD89 /* JReadNtfMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JReadNtfMessage.h; sourceTree = "<group>"; };
 		A06CF0F52B96080B00B5CD89 /* JReadNtfMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JReadNtfMessage.m; sourceTree = "<group>"; };
+		A06CF0F82B988FC200B5CD89 /* JGroupReadNtfMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupReadNtfMessage.h; sourceTree = "<group>"; };
+		A06CF0F92B988FC200B5CD89 /* JGroupReadNtfMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupReadNtfMessage.m; sourceTree = "<group>"; };
+		A06CF0FC2B989C7400B5CD89 /* JGroupMessageReadInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupMessageReadInfo.h; sourceTree = "<group>"; };
+		A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMessageReadInfo.m; sourceTree = "<group>"; };
 		A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteMessage.h; sourceTree = "<group>"; };
 		A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteMessage.m; sourceTree = "<group>"; };
 		A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JContentTypeCenter.h; sourceTree = "<group>"; };
@@ -533,6 +541,8 @@
 				A08AA2572B14B153008B114C /* JConversationInfo.m */,
 				A08AA25C2B1619FB008B114C /* JMessageContent.h */,
 				A08AA4192B1B4F79008B114C /* JMessageContent.m */,
+				A06CF0FC2B989C7400B5CD89 /* JGroupMessageReadInfo.h */,
+				A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -847,6 +857,8 @@
 				A095798B2B885222004E3D60 /* JDeleteConvMessage.m */,
 				A06CF0F42B96080B00B5CD89 /* JReadNtfMessage.h */,
 				A06CF0F52B96080B00B5CD89 /* JReadNtfMessage.m */,
+				A06CF0F82B988FC200B5CD89 /* JGroupReadNtfMessage.h */,
+				A06CF0F92B988FC200B5CD89 /* JGroupReadNtfMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -858,6 +870,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A06CF0FE2B989C7400B5CD89 /* JGroupMessageReadInfo.h in Headers */,
 				A0D3AD322B6DFD4300D170D7 /* JRecallInfoMessage.h in Headers */,
 				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
 				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
@@ -936,6 +949,7 @@
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
 				A08AA2712B162A11008B114C /* JFMDatabaseQueue.h in Headers */,
+				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
 				A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
@@ -1088,6 +1102,7 @@
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
 				A08AA21E2B148BFF008B114C /* JIM.m in Sources */,
 				A0D3AD332B6DFD4300D170D7 /* JRecallInfoMessage.m in Sources */,
+				A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
@@ -1103,6 +1118,7 @@
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
+				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
 				A08AA39E2B19CB78008B114C /* GPBCodedOutputStream.m in Sources */,
 				A08AA3B72B19DF75008B114C /* JetIMCore.m in Sources */,
 				A08AA26F2B162A11008B114C /* JFMDatabaseAdditions.m in Sources */,

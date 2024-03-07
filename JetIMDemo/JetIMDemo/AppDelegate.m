@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken1];
+    [JIM.shared.connectionManager connectWithToken:kToken2];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -46,6 +46,13 @@
 
 - (void)messagesDidRead:(NSArray<NSString *> *)messageIds inConversation:(JConversation *)conversation {
     NSLog(@"lifei, messagesDidRead, count is %d, conversationType is %d, conversationId is %@", messageIds.count, conversation.conversationType, conversation.conversationId);
+}
+
+- (void)groupMessagesDidRead:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs inConversation:(JConversation *)conversation {
+    NSLog(@"groupMessagesDidRead, groupId is %@", conversation.conversationId);
+    [msgs enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, JGroupMessageReadInfo * _Nonnull obj, BOOL * _Nonnull stop) {
+        NSLog(@"messageId is %@, readCount is %d, memberCount is %d", key, obj.readCount, obj.memberCount);
+    }];
 }
 
 - (void)dbDidOpen {
@@ -109,7 +116,7 @@
         NSLog(@"lifei");
         
         //read receipt
-//        NSArray *messageIds = @[@"nqbddlstac8g7sb5", @"nqbdmkaeadlg7sb5"];
+//        NSArray *messageIds = @[@"nqdcp8yvaank5g4v"];
 //        [JIM.shared.messageManager sendReadReceipt:messageIds
 //                                    inConversation:c
 //                                           success:^{
@@ -203,7 +210,7 @@
     image.width = 640;
     image.height = 480;
     image.extra = @"extra";
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid7"];
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
     file.name = @"fileName";

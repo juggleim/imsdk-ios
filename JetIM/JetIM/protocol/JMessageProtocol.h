@@ -26,8 +26,19 @@
 
 @protocol JMessageReadReceiptDelegate <NSObject>
 
+/// 单聊消息阅读回调
+/// - Parameters:
+///   - messageIds: 消息 id 数组
+///   - conversation: 所在会话
 - (void)messagesDidRead:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation;
+
+/// 群消息阅读回调
+/// - Parameters:
+///   - msgs: key 为 messageId
+///   - conversation: 所在会话
+- (void)groupMessagesDidRead:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs
+              inConversation:(JConversation *)conversation;
 
 @end
 

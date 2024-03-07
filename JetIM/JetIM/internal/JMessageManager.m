@@ -16,6 +16,7 @@
 #import "JRecallCmdMessage.h"
 #import "JDeleteConvMessage.h"
 #import "JReadNtfMessage.h"
+#import "JGroupReadNtfMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -49,6 +50,7 @@
     [m registerContentType:[JRecallInfoMessage class]];
     [m registerContentType:[JDeleteConvMessage class]];
     [m registerContentType:[JReadNtfMessage class]];
+    [m registerContentType:[JGroupReadNtfMessage class]];
     m.cachedSendTime = -1;
     m.cachedReceiveTime = -1;
     return m;
@@ -430,6 +432,19 @@
                 if ([self.readReceiptDelegate respondsToSelector:@selector(messagesDidRead:inConversation:)]) {
                     [self.readReceiptDelegate messagesDidRead:readNtfMsg.messageIds
                                                inConversation:obj.conversation];
+                }
+            });
+            return;
+        }
+        
+        //group read ntf
+        if ([obj.contentType isEqualToString:[JGroupReadNtfMessage contentType]]) {
+            JGroupReadNtfMessage *groupReadNtfMsg = (JGroupReadNtfMessage *)obj.content;
+            [self.core.dbManager setGroupMessageReadInfo:groupReadNtfMsg.msgs];
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([self.readReceiptDelegate respondsToSelector:@selector(groupMessagesDidRead:inConversation:)]) {
+                    [self.readReceiptDelegate groupMessagesDidRead:groupReadNtfMsg.msgs
+                                                    inConversation:obj.conversation];
                 }
             });
             return;
