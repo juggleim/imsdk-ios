@@ -7,7 +7,7 @@
 
 #import "JGroupReadNtfMessage.h"
 
-#define jGroupReadNtfType @"jg:grpreadedntf"
+#define jGroupReadNtfType @"jg:grpreadntf"
 #define jGroupReadNtfMsgs @"msgs"
 #define jGroupReadNtfMsgId @"msg_id"
 #define jGroupReadNtfReadCount @"read_count"
@@ -20,8 +20,8 @@
 }
 
 - (void)decodeWithJson:(NSDictionary *)json {
-    NSArray *jsonMsgs = json[jGroupReadNtfType];
-    NSMutableDictionary *msgDic = [[NSMutableDictionary alloc] init];
+    NSArray *jsonMsgs = json[jGroupReadNtfMsgs];
+    NSMutableDictionary *msgs = [[NSMutableDictionary alloc] init];
     if ([jsonMsgs isKindOfClass:[NSArray class]]) {
         for (NSDictionary *msgDic in jsonMsgs) {
             NSString *messageId = msgDic[jGroupReadNtfMsgId];
@@ -37,10 +37,10 @@
                 int memberCount = [(NSNumber *)memberCountId intValue];
                 readInfo.memberCount = memberCount;
             }
-            [msgDic setValue:readInfo forKey:messageId];
+            [msgs setValue:readInfo forKey:messageId];
         }
     }
-    self.msgs = msgDic;
+    self.msgs = msgs;
 }
 
 + (JMessageFlag)flags {

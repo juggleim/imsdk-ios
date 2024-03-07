@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken2];
+    [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -108,7 +108,7 @@
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
         NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
                                                                  count:100
                                                                   time:0
@@ -116,14 +116,14 @@
         NSLog(@"lifei");
         
         //read receipt
-//        NSArray *messageIds = @[@"nqdcp8yvaank5g4v"];
-//        [JIM.shared.messageManager sendReadReceipt:messageIds
-//                                    inConversation:c
-//                                           success:^{
-//            NSLog(@"lifei, sendReadReceipt success");
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
-//        }];
+        NSArray *messageIds = @[@"nqde4ryegdlk5g4v"];
+        [JIM.shared.messageManager sendReadReceipt:messageIds
+                                    inConversation:c
+                                           success:^{
+            NSLog(@"lifei, sendReadReceipt success");
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
+        }];
         
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
 //                                                                      count:100
@@ -202,7 +202,7 @@
 }
 
 - (void)sendMessage {
-    JTextMessage *text = [[JTextMessage alloc] initWithContent:@"testSendMessage"];
+    JTextMessage *text = [[JTextMessage alloc] initWithContent:@"user5 testSendMessage"];
     text.extra = @"extra";
     JImageMessage *image = [[JImageMessage alloc] init];
     image.thumbnailUrl = @"http://sadfasdf.com";
