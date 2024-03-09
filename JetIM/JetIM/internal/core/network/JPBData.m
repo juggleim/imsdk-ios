@@ -567,6 +567,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
     } else {
         msg.flags = flags;
     }
+    JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
+    info.readCount = downMsg.readCount;
+    info.memberCount = downMsg.memberCount;
+    msg.groupReadInfo = info;
     return msg;
 }
 

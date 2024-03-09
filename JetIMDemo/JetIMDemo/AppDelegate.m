@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken3];
+    [JIM.shared.connectionManager connectWithToken:kToken5];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -108,15 +108,16 @@
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
-                                                                 count:100
-                                                                  time:0
-                                                             direction:JPullDirectionOlder];
-        NSLog(@"lifei");
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
+//                                                                 count:100
+//                                                                  time:0
+//                                                             direction:JPullDirectionOlder];
+//        NSLog(@"lifei");
         
         //read receipt
-        NSArray *messageIds = @[@"nqde4ryegdlk5g4v"];
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        NSArray *messageIds = @[@"nqel4yrhaa4k5g4v", @"nqel6ahx2a6k5g4v"];
         [JIM.shared.messageManager sendReadReceipt:messageIds
                                     inConversation:c
                                            success:^{
