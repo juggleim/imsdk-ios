@@ -190,6 +190,8 @@
 		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
 		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
+		A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A094F0042B9C9C200000E97F /* JUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A094F0052B9C9C200000E97F /* JUserInfo.m */; };
 		A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798A2B885222004E3D60 /* JDeleteConvMessage.h */; };
 		A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A095798B2B885222004E3D60 /* JDeleteConvMessage.m */; };
 		A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */; };
@@ -400,6 +402,8 @@
 		A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JMessageContent+internal.m"; sourceTree = "<group>"; };
 		A08AA4412B1C3B33008B114C /* JImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageMessage.h; sourceTree = "<group>"; };
 		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
+		A094F0042B9C9C200000E97F /* JUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfo.h; sourceTree = "<group>"; };
+		A094F0052B9C9C200000E97F /* JUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfo.m; sourceTree = "<group>"; };
 		A095798A2B885222004E3D60 /* JDeleteConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDeleteConvMessage.h; sourceTree = "<group>"; };
 		A095798B2B885222004E3D60 /* JDeleteConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteConvMessage.m; sourceTree = "<group>"; };
 		A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageSendReceiveDelegate.h; sourceTree = "<group>"; };
@@ -543,6 +547,8 @@
 				A08AA4192B1B4F79008B114C /* JMessageContent.m */,
 				A06CF0FC2B989C7400B5CD89 /* JGroupMessageReadInfo.h */,
 				A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */,
+				A094F0042B9C9C200000E97F /* JUserInfo.h */,
+				A094F0052B9C9C200000E97F /* JUserInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -870,6 +876,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */,
 				A06CF0FE2B989C7400B5CD89 /* JGroupMessageReadInfo.h in Headers */,
 				A0D3AD322B6DFD4300D170D7 /* JRecallInfoMessage.h in Headers */,
 				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
@@ -1065,6 +1072,7 @@
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
+				A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */,
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
 				A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */,
 				A08AA28A2B175726008B114C /* JConversationManager.m in Sources */,

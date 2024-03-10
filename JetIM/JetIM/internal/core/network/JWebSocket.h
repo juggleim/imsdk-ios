@@ -85,6 +85,11 @@ NS_ASSUME_NONNULL_BEGIN
                  success:(void (^)(void))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)getGroupMessageReadDetail:(NSString *)messageId
+                   inConversation:(JConversation *)conversation
+                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
+                            error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

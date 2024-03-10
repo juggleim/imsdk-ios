@@ -29,7 +29,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRecall,
     JPBRcvTypeDelConvsAck,
     JPBRcvTypeClearUnreadAck,
-    JPBRcvTypeMarkReadAck
+    JPBRcvTypeMarkReadAck,
+    JPBRcvTypeQryReadDetailAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -73,6 +74,11 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *deletedConvs;
 @end
 
+@interface JQryReadDetailAck: JQryAck
+@property (nonatomic, strong) NSArray<JUserInfo *> *readMembers;
+@property (nonatomic, strong) NSArray<JUserInfo *> *unreadMembers;
+@end
+
 @interface JSimpleQryAck : JQryAck
 @end
 
@@ -94,6 +100,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JPublishMsgBody *publishMsgBody;
 @property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @property (nonatomic, strong) JDisconnectMsg *disconnectMsg;
+@property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @end
 
@@ -126,6 +133,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)sendReadReceiptData:(NSArray <NSString *> *)messageIds
                  inConversation:(JConversation *)conversation
                           index:(int)index;
+
+- (NSData *)getGroupMessageReadDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                                index:(int)index;
 
 - (NSData *)syncMessagesDataWithReceiveTime:(long long)receiveTime
                                    sendTime:(long long)sendTime

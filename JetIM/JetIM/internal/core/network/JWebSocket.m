@@ -55,6 +55,14 @@
 @implementation JRecallMsgObj
 @end
 
+@interface JQryReadDetailObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@implementation JQryReadDetailObj
+@end
+
 @interface JSimpleBlockObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(void);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
@@ -205,6 +213,31 @@
             [self setBlockObject:obj forKey:key];
         }
 
+    });
+}
+
+- (void)getGroupMessageReadDetail:(NSString *)messageId
+                   inConversation:(JConversation *)conversation
+                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
+                            error:(void (^)(JErrorCodeInternal code))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData getGroupMessageReadDetail:messageId
+                                            inConversation:conversation
+                                                     index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket getGroupMessageReadDetail error, description is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
     });
 }
 
@@ -419,6 +452,9 @@
         case JPBRcvTypeMarkReadAck:
             [self handleMarkRead:obj.simpleQryAck];
             break;
+        case JPBRcvTypeQryReadDetailAck:
+            [self handleQryReadDetailAck:obj.qryReadDetailAck];
+            break;
         default:
             break;
     }
@@ -592,6 +628,20 @@
             simpleObj.errorBlock(ack.code);
         } else {
             simpleObj.successBlock();
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)handleQryReadDetailAck:(JQryReadDetailAck *)ack {
+    NSLog(@"handleQryReadDetailAck, code is %d", ack.code);
+    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
+        JQryReadDetailObj *qryReadDetailObj = (JQryReadDetailObj *)obj;
+        if (ack.code != 0) {
+            qryReadDetailObj.errorBlock(ack.code);
+        } else {
+            qryReadDetailObj.successBlock(ack.readMembers, ack.unreadMembers);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];

@@ -173,6 +173,17 @@
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode code))errorBlock;
 
+/// 获取群消息阅读状态
+/// - Parameters:
+///   - messageId: 需要查询的群消息 id
+///   - conversation: 消息所在会话
+///   - successBlock: 成功回调，readMemberIds 存放已读用户 id 列表，unreadMemberIds 存放未读用户 id 列表
+///   - errorBlock: 失败回调
+- (void)getGroupMessageReadDetail:(NSString *)messageId
+                   inConversation:(JConversation *)conversation
+                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
+                            error:(void (^)(JErrorCode code))errorBlock;
+
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;

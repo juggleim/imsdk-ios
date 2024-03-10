@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
 #define jMarkRead @"mark_read"
+#define jQryReadDetail @"qry_read_detail"
 #define jDelConvers @"del_convers"
 #define jClearUnread @"clear_unread"
 #define jNtf @"ntf"
@@ -58,6 +59,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JDisconnectMsg
+@end
+
+@implementation JQryReadDetailAck
 @end
 
 @implementation JSimpleQryAck
@@ -230,6 +234,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jMarkRead;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getGroupMessageReadDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                                index:(int)index {
+    QryReadDetailReq *req = [[QryReadDetailReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgId = messageId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryReadDetail;
     body.targetId = conversation.conversationId;
     body.data_p = req.data;
     
@@ -465,6 +490,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self markReadAckWithImWebsocketMsg:msg];
                     break;
                     
+                case JPBRcvTypeQryReadDetailAck:
+                    obj = [self qryReadDetailAckWithImWebsocketMsg:msg];
+                    break;
+                    
                 default:
                     break;
             }
@@ -572,6 +601,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.memberCount = downMsg.memberCount;
     msg.groupReadInfo = info;
     return msg;
+}
+
+- (JUserInfo *)userInfoWithMemberReadDetailItem:(MemberReadDetailItem *)item {
+    JUserInfo *userInfo = [[JUserInfo alloc] init];
+    userInfo.userId = item.member.userId;
+    userInfo.userName = item.member.nickname;
+    userInfo.portrait = item.member.userPortrait;
+    return userInfo;
 }
 
 - (JConcreteConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
@@ -700,6 +737,34 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)qryReadDetailAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    QryReadDetailResp *resp = [[QryReadDetailResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if (e != nil) {
+        NSLog(@"[JetIM]Websocket qry read detai ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryReadDetailAck;
+    JQryReadDetailAck *a = [[JQryReadDetailAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    NSMutableArray *readMembers = [[NSMutableArray alloc] init];
+    NSMutableArray *unreadMembers = [[NSMutableArray alloc] init];
+    [resp.readMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
+        [readMembers addObject:userInfo];
+    }];
+    [resp.unreadMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
+        [unreadMembers addObject:userInfo];
+    }];
+    a.readMembers = readMembers;
+    a.unreadMembers = unreadMembers;
+    obj.qryReadDetailAck = a;
+    return obj;
+}
+
 #pragma mark - helper
 - (int32_t)channelTypeFromConversationType:(JConversationType)type {
     int32_t result = ChannelType_Unknown;
@@ -767,7 +832,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kRecallMsg:@(JPBRcvTypeRecall),
              jDelConvers:@(JPBRcvTypeDelConvsAck),
              jClearUnread:@(JPBRcvTypeClearUnreadAck),
-             jMarkRead:@(JPBRcvTypeMarkReadAck)
+             jMarkRead:@(JPBRcvTypeMarkReadAck),
+             jQryReadDetail:@(JPBRcvTypeQryReadDetailAck)
     };
 }
 @end

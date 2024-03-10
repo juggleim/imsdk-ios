@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken5];
+    [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -62,6 +62,15 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //get group read detail
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        [JIM.shared.messageManager getGroupMessageReadDetail:@"nqel4yrhaa4k5g4v"
+                                              inConversation:conversation success:^(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers) {
+            NSLog(@"lifei, getGroupMessageReadDetail success");
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei, getGroupMessageReadDetail error");
+        }];
+        
         //getConversationList
 //        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
@@ -116,16 +125,16 @@
 //        NSLog(@"lifei");
         
         //read receipt
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        NSArray *messageIds = @[@"nqel4yrhaa4k5g4v", @"nqel6ahx2a6k5g4v"];
-        [JIM.shared.messageManager sendReadReceipt:messageIds
-                                    inConversation:c
-                                           success:^{
-            NSLog(@"lifei, sendReadReceipt success");
-        } error:^(JErrorCode code) {
-            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
-        }];
-        
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//        NSArray *messageIds = @[@"nqe4ddt6abgk5g4v", @"nqe4dfu5sbgk5g4v"];
+//        [JIM.shared.messageManager sendReadReceipt:messageIds
+//                                    inConversation:c
+//                                           success:^{
+//            NSLog(@"lifei, sendReadReceipt success");
+//        } error:^(JErrorCode code) {
+//            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
+//        }];
+////
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
 //                                                                      count:100
 //                                                                       time:0

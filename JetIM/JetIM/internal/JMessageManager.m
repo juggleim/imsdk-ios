@@ -259,6 +259,31 @@
     }];
 }
 
+- (void)getGroupMessageReadDetail:(NSString *)messageId
+                   inConversation:(JConversation *)conversation
+                          success:(void (^)(NSArray<JUserInfo *> *, NSArray<JUserInfo *> *))successBlock
+                            error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getGroupMessageReadDetail:messageId
+                                    inConversation:conversation
+                                           success:^(NSArray<JUserInfo *> * _Nonnull readMembers, NSArray<JUserInfo *> * _Nonnull unreadMembers) {
+        JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
+        info.readCount = (int)readMembers.count;
+        info.memberCount = (int)readMembers.count + (int)unreadMembers.count;
+        [self.core.dbManager setGroupMessageReadInfo:@{messageId:info}];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(readMembers, unreadMembers);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (JMessage *)resend:(JMessage *)messsage
              success:(void (^)(JMessage *))successBlock
                error:(void (^)(JErrorCode, JMessage *))errorBlock {
