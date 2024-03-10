@@ -118,6 +118,16 @@
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 
 
+/// 根据 messageId 数组获取对应的消息，如果本地有则优先取本地消息，否则去服务端获取
+/// - Parameters:
+///   - messageIds: messageId 数组
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                 inConversation:(JConversation *)conversation
+                        success:(void (^)(NSArray <JMessage *> *messages))successBlock
+                          error:(void (^)(JErrorCode errorCode))errorBlock;
+
 /// 根据 clientMsgNo 数组获取对应的本地消息
 /// - Parameter clientMsgNos: clientMsgNo 数组
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;

@@ -149,6 +149,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                        direction:(JPullDirection)direction
                            index:(int)index;
 
+- (NSData *)queryHisMsgsDataByIds:(NSArray <NSString *> *)messageIds
+                   inConversation:(JConversation *)conversation
+                            index:(int)index;
+
 - (NSData *)disconnectData:(BOOL)needPush;
 
 - (NSData *)syncConversationsData:(long long)startTime

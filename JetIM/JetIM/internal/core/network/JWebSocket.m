@@ -286,6 +286,31 @@
     });
 }
 
+- (void)queryHisMsgsByIds:(NSArray<NSString *> *)messageIds
+           inConversation:(JConversation *)conversation
+                  success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
+                    error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData queryHisMsgsDataByIds:messageIds
+                                        inConversation:conversation
+                                                 index:self.msgIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            NSLog(@"WebSocket query history message by ids error, msg is %@", err.description);
+            if (errorBlock) {
+                errorBlock(JErrorCodeInternalWebSocketFailure);
+            }
+        } else {
+            JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+            obj.successBlock = successBlock;
+            obj.errorBlock = errorBlock;
+            [self setBlockObject:obj forKey:key];
+        }
+    });
+}
+
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId

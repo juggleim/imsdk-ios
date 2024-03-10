@@ -337,6 +337,77 @@
     return [self.core.dbManager getMessagesByMessageIds:messageIds];
 }
 
+- (void)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                 inConversation:(JConversation *)conversation
+                        success:(void (^)(NSArray<JMessage *> *))successBlock
+                          error:(void (^)(JErrorCode))errorBlock {
+    if (messageIds.count == 0) {
+        if (errorBlock) {
+            errorBlock(JErrorCodeInvalidParam);
+        }
+        return;
+    }
+    NSArray <JMessage *> *localMessages = [self.core.dbManager getMessagesByMessageIds:messageIds];
+    NSMutableArray *notExistArray = [[NSMutableArray alloc] init];
+    if (localMessages.count == 0) {
+        notExistArray = [messageIds mutableCopy];
+    } else if (localMessages.count < messageIds.count) {
+        int localMessageIndex = 0;
+        for (int i = 0; i < messageIds.count; i++) {
+            if (localMessageIndex == localMessages.count) {
+                [notExistArray addObject:messageIds[i]];
+                continue;
+            }
+            if ([messageIds[i] isEqualToString:localMessages[localMessageIndex].messageId]) {
+                localMessageIndex++;
+            } else {
+                [notExistArray addObject:messageIds[i]];
+            }
+        }
+    }
+    if (notExistArray.count > 0) {
+        [self.core.webSocket queryHisMsgsByIds:notExistArray
+                                inConversation:conversation
+                                       success:^(NSArray<JConcreteMessage *> * _Nonnull remoteMessages, BOOL isFinished) {
+            NSMutableArray <JMessage *> *result = [[NSMutableArray alloc] init];
+            for (NSString *messageId in messageIds) {
+                BOOL isMatch = NO;
+                for (JMessage *localMessage in localMessages) {
+                    if ([messageId isEqualToString:localMessage.messageId]) {
+                        [result addObject:localMessage];
+                        isMatch = YES;
+                        break;
+                    }
+                }
+                if (isMatch) {
+                    continue;
+                }
+                for (JMessage *remoteMessage in remoteMessages) {
+                    if ([messageId isEqualToString:remoteMessage.messageId]) {
+                        [result addObject:remoteMessage];
+                        break;
+                    }
+                }
+            }
+            if (successBlock) {
+                successBlock(result);
+            }
+        } error:^(JErrorCodeInternal code) {
+            if (localMessages.count > 0) {
+                if (successBlock) {
+                    successBlock(localMessages);
+                }
+            } else if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        }];
+    } else {
+        if (successBlock) {
+            successBlock(localMessages);
+        }
+    }
+}
+
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
 }

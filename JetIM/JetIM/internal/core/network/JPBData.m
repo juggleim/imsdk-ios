@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kCMsg @"c_msg"
 #define kRecallMsg @"recall_msg"
 #define kQryHisMsgs @"qry_hismsgs"
+#define jQryHisMsgsByIds @"qry_hismsg_by_ids"
 #define kSyncConvers @"sync_convers"
 #define kSyncMsgs @"sync_msgs"
 #define jMarkRead @"mark_read"
@@ -309,6 +310,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.targetId = conversation.conversationId;
     body.data_p = r.data;
 
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)queryHisMsgsDataByIds:(NSArray<NSString *> *)messageIds
+                   inConversation:(JConversation *)conversation
+                            index:(int)index {
+    QryHisMsgByIdsReq *r = [[QryHisMsgByIdsReq alloc] init];
+    r.targetId = conversation.conversationId;
+    r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    r.msgIdsArray = [messageIds mutableCopy];
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryHisMsgsByIds;
+    body.targetId = conversation.conversationId;
+    body.data_p = r.data;
+    
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -833,7 +855,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jDelConvers:@(JPBRcvTypeDelConvsAck),
              jClearUnread:@(JPBRcvTypeClearUnreadAck),
              jMarkRead:@(JPBRcvTypeMarkReadAck),
-             jQryReadDetail:@(JPBRcvTypeQryReadDetailAck)
+             jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
+             jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck)
     };
 }
 @end

@@ -68,6 +68,12 @@ NS_ASSUME_NONNULL_BEGIN
                direction:(JPullDirection)direction
                  success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)queryHisMsgsByIds:(NSArray <NSString *> *)messageIds
+           inConversation:(JConversation *)conversation
+                  success:(void (^)(NSArray <JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                    error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)syncConversations:(long long)startTime
                     count:(int)count
                    userId:(NSString *)userId
