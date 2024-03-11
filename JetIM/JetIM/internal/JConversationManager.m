@@ -175,6 +175,30 @@
     [self.core.dbManager clearDraftInConversation:conversation];
 }
 
+- (void)setMute:(BOOL)isMute
+   conversation:(JConversation *)conversation
+        success:(void (^)(void))successBlock
+          error:(void (^)(JErrorCode))errorBlock {
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket setMute:isMute
+                  inConversation:conversation
+                          userId:self.core.userId
+                         success:^{
+        [weakSelf.core.dbManager setMute:isMute conversation:conversation];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (void)setDelegate:(id<JConversationDelegate>)delegate {
     _delegate = delegate;
 }

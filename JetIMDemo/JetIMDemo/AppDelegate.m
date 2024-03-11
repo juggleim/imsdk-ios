@@ -62,6 +62,17 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //conversation mute
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        [JIM.shared.conversationManager setMute:NO
+                                   conversation:conversation
+                                        success:^{
+            NSLog(@"lifei, conversation mute set success");
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei, conversation mute set error, code is %d", code);
+        }];
+        
+        
         //get group read detail
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
 //        [JIM.shared.messageManager getGroupMessageReadDetail:@"nqel4yrhaa4k5g4v"
@@ -175,22 +186,22 @@
 //        
 
         //delete messages
-        [JIM.shared.messageManager deleteMessageByMessageId:@"nqel4yrhaa4k5g4v"];
-        [JIM.shared.messageManager deleteMessageByMessageId:@"nqe4ddt6abgk5g4v"];
-//        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
-        NSArray *ids = @[@"nqel6ahx2a6k5g4v", @"nqel4yrhaa4k5g4v", @"nqe4dfu5sbgk5g4v", @"nqe4ddt6abgk5g4v"];
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup
-                                                            conversationId:@"groupid1"];
-        [JIM.shared.messageManager getMessagesByMessageIds:ids
-                                            inConversation:c
-                                                   success:^(NSArray<JMessage *> *messages) {
-            NSLog(@"lifei, getMessagesByMessageIds count is %d", messages.count);
-        } error:^(JErrorCode errorCode) {
-            NSLog(@"lifei, getMessagesByMessageIds error code is %d", errorCode);
-        }];
+//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqel4yrhaa4k5g4v"];
+//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqe4ddt6abgk5g4v"];
+////        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
+//        NSArray *ids = @[@"nqel6ahx2a6k5g4v", @"nqel4yrhaa4k5g4v", @"nqe4dfu5sbgk5g4v", @"nqe4ddt6abgk5g4v"];
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup
+//                                                            conversationId:@"groupid1"];
+//        [JIM.shared.messageManager getMessagesByMessageIds:ids
+//                                            inConversation:c
+//                                                   success:^(NSArray<JMessage *> *messages) {
+//            NSLog(@"lifei, getMessagesByMessageIds count is %d", messages.count);
+//        } error:^(JErrorCode errorCode) {
+//            NSLog(@"lifei, getMessagesByMessageIds error code is %d", errorCode);
+//        }];
         
         //send message
-        [self sendMessage];
+//        [self sendMessage];
         
         //save message
 //        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

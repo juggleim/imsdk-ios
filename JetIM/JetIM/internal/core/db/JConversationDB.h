@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearUnreadCountBy:(JConversation *)conversation
                   msgIndex:(long long)msgIndex;
 - (void)updateLastMessage:(JConcreteMessage *)message;
+- (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation;
 @end
 
 NS_ASSUME_NONNULL_END

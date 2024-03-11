@@ -27,10 +27,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePong,
     JPBRcvTypeDisconnectMsg,
     JPBRcvTypeRecall,
-    JPBRcvTypeDelConvsAck,
-    JPBRcvTypeClearUnreadAck,
-    JPBRcvTypeMarkReadAck,
-    JPBRcvTypeQryReadDetailAck
+    JPBRcvTypeQryReadDetailAck,
+    JPBRcvTypeSimpleQryAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -168,6 +166,11 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                           userId:(NSString *)userId
                         msgIndex:(long long)msgIndex
                            index:(int)index;
+
+- (NSData *)undisturbData:(JConversation *)conversation
+                   userId:(NSString *)userId
+                   isMute:(BOOL)isMute
+                    index:(int)index;
 
 - (NSData *)pingData;
 

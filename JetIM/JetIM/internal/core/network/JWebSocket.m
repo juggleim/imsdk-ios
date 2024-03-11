@@ -166,27 +166,21 @@
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
               success:(void (^)(long long timestamp))successBlock
-                error:(void (^)(JErrorCodeInternal))errorBlock{
+                error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData recallMessageData:messageId
                                       conversation:conversation
                                          timestamp:timestamp
                                              index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket recall message error, description is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JRecallMsgObj *obj = [[JRecallMsgObj alloc] init];
-            obj.messageId = messageId;
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        JRecallMsgObj *obj = [[JRecallMsgObj alloc] init];
+        obj.messageId = messageId;
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -199,20 +193,10 @@
         NSData *d = [self.pbData sendReadReceiptData:messageIds
                                       inConversation:conversation
                                                index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket sendReadReceipt error, description is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
-
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
 }
 
@@ -225,19 +209,13 @@
         NSData *d = [self.pbData getGroupMessageReadDetail:messageId
                                             inConversation:conversation
                                                      index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket getGroupMessageReadDetail error, description is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -270,19 +248,13 @@
                                                 count:count
                                             direction:direction
                                                 index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket query history message error, msg is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -295,19 +267,13 @@
         NSData *d = [self.pbData queryHisMsgsDataByIds:messageIds
                                         inConversation:conversation
                                                  index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket query history message by ids error, msg is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -322,19 +288,13 @@
                                              count:count
                                             userId:userId
                                              index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket sync conversations error, msg is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -347,19 +307,10 @@
         NSData *d = [self.pbData deleteConversationData:conversation
                                                  userId:userId
                                                   index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket delete conversation error, msg is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
 }
 
@@ -374,19 +325,28 @@
                                                userId:userId
                                              msgIndex:msgIndex
                                                 index:self.msgIndex++];
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            NSLog(@"WebSocket clear unread count error, msg is %@", err.description);
-            if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure);
-            }
-        } else {
-            JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
-            obj.successBlock = successBlock;
-            obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
-        }
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)setMute:(BOOL)isMute
+ inConversation:(JConversation *)conversation
+         userId:(NSString *)userId
+        success:(void (^)(void))successBlock
+          error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData undisturbData:conversation
+                                        userId:userId
+                                        isMute:isMute
+                                         index:self.msgIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
 }
 
@@ -468,14 +428,8 @@
         case JPBRcvTypeRecall:
             [self handleRecallMessage:obj.publishMsgAck];
             break;
-        case JPBRcvTypeDelConvsAck:
-            [self handleDelConvs:obj.simpleQryAck];
-            break;
-        case JPBRcvTypeClearUnreadAck:
-            [self handleClearUnread:obj.simpleQryAck];
-            break;
-        case JPBRcvTypeMarkReadAck:
-            [self handleMarkRead:obj.simpleQryAck];
+        case JPBRcvTypeSimpleQryAck:
+            [self handleSimpleAck:obj.simpleQryAck];
             break;
         case JPBRcvTypeQryReadDetailAck:
             [self handleQryReadDetailAck:obj.qryReadDetailAck];
@@ -616,36 +570,8 @@
     [self removeBlockObjectForKey:@(ack.index)];
 }
 
-- (void)handleDelConvs:(JSimpleQryAck *)ack {
-    NSLog(@"handleDelConvs, code is %d", ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
-        JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
-        if (ack.code != 0) {
-            simpleObj.errorBlock(ack.code);
-        } else {
-            simpleObj.successBlock();
-        }
-    }
-    [self removeBlockObjectForKey:@(ack.index)];
-}
-
-- (void)handleClearUnread:(JSimpleQryAck *)ack {
-    NSLog(@"handleClearUnread, code is %d", ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
-        JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
-        if (ack.code != 0) {
-            simpleObj.errorBlock(ack.code);
-        } else {
-            simpleObj.successBlock();
-        }
-    }
-    [self removeBlockObjectForKey:@(ack.index)];
-}
-
-- (void)handleMarkRead:(JSimpleQryAck *)ack {
-    NSLog(@"handleMarkRead, code is %d", ack.code);
+- (void)handleSimpleAck:(JSimpleQryAck *)ack {
+    NSLog(@"handleSimpleAck, code is %d", ack.code);
     JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
@@ -670,6 +596,35 @@
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)simpleSendData:(NSData *)data
+                   key:(NSNumber *)key
+               success:(void (^)(void))successBlock
+                 error:(void (^)(JErrorCodeInternal))errorBlock {
+    JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
+    obj.successBlock = successBlock;
+    obj.errorBlock = errorBlock;
+    [self sendData:data
+               key:key
+               obj:obj
+             error:errorBlock];
+}
+
+- (void)sendData:(NSData *)data
+             key:(NSNumber *)key
+             obj:(JBlockObj *)obj
+           error:(void (^)(JErrorCodeInternal))errorBlock {
+    NSError *err = nil;
+    [self.sws sendData:data error:&err];
+    if (err != nil) {
+        NSLog(@"WebSocket send data error, description is %@", err.description);
+        if (errorBlock) {
+            errorBlock(JErrorCodeInternalWebSocketFailure);
+        }
+    } else {
+        [self setBlockObject:obj forKey:key];
+    }
 }
 
 - (void)setBlockObject:(JBlockObj *)obj

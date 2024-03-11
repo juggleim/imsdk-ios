@@ -112,6 +112,10 @@
     [self.conversationDb updateLastMessage:message];
 }
 
+- (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
+    [self.conversationDb setMute:isMute conversation:conversation];
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];

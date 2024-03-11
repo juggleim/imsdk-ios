@@ -342,9 +342,11 @@
                         success:(void (^)(NSArray<JMessage *> *))successBlock
                           error:(void (^)(JErrorCode))errorBlock {
     if (messageIds.count == 0) {
-        if (errorBlock) {
-            errorBlock(JErrorCodeInvalidParam);
-        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
         return;
     }
     NSArray <JMessage *> *localMessages = [self.core.dbManager getMessagesByMessageIds:messageIds];
@@ -389,22 +391,30 @@
                     }
                 }
             }
-            if (successBlock) {
-                successBlock(result);
-            }
+            dispatch_async(self.core.delegateQueue, ^{
+                if (successBlock) {
+                    successBlock(result);
+                }
+            });
         } error:^(JErrorCodeInternal code) {
             if (localMessages.count > 0) {
-                if (successBlock) {
-                    successBlock(localMessages);
-                }
+                dispatch_async(self.core.delegateQueue, ^{
+                    if (successBlock) {
+                        successBlock(localMessages);
+                    }
+                });
             } else if (errorBlock) {
-                errorBlock((JErrorCode)code);
+                dispatch_async(self.core.delegateQueue, ^{
+                    errorBlock((JErrorCode)code);
+                });
             }
         }];
     } else {
-        if (successBlock) {
-            successBlock(localMessages);
-        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(localMessages);
+            }
+        });
     }
 }
 

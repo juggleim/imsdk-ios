@@ -62,7 +62,7 @@ NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?,
                                     "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
                                     "last_message_sender=?, last_message_content=?, last_message_message_index=? WHERE "
                                     "conversation_type = ? AND conversation_id = ?";
-
+NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
 NSString *const jDraft = @"draft";
@@ -207,6 +207,10 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.msgIndex), @(message.conversation.conversationType), message.conversation.conversationId]];
+}
+
+- (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
+    [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

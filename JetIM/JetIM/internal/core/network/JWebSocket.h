@@ -96,6 +96,12 @@ NS_ASSUME_NONNULL_BEGIN
                           success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
                             error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)setMute:(BOOL)isMute
+ inConversation:(JConversation *)conversation
+         userId:(NSString *)userId
+        success:(void (^)(void))successBlock
+          error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

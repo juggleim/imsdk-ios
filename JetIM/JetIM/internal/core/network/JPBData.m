@@ -44,6 +44,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryReadDetail @"qry_read_detail"
 #define jDelConvers @"del_convers"
 #define jClearUnread @"clear_unread"
+#define jUndisturb @"undisturb_convers"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 
@@ -407,6 +408,33 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)undisturbData:(JConversation *)conversation
+                   userId:(NSString *)userId
+                   isMute:(BOOL)isMute
+                    index:(int)index {
+    UndisturbConverItem *item = [[UndisturbConverItem alloc] init];
+    item.targetId = conversation.conversationId;
+    item.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    item.undisturbType = isMute?1:0;
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:item];
+    
+    UndisturbConversReq *req = [[UndisturbConversReq alloc] init];
+    req.userId = userId;
+    req.itemsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jUndisturb;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -500,20 +528,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self syncMsgsAckWithImWebsocketMsg:msg];
                     break;
                     
-                case JPBRcvTypeDelConvsAck:
-                    obj = [self delConvAckWithImWebsocketMsg:msg];
-                    break;
-                    
-                case JPBRcvTypeClearUnreadAck:
-                    obj = [self clearUnreadAckWithImWebsocketMsg:msg];
-                    break;
-                    
-                case JPBRcvTypeMarkReadAck:
-                    obj = [self markReadAckWithImWebsocketMsg:msg];
-                    break;
-                    
                 case JPBRcvTypeQryReadDetailAck:
                     obj = [self qryReadDetailAckWithImWebsocketMsg:msg];
+                    break;
+                    
+                case JPBRcvTypeSimpleQryAck:
+                    obj = [self simpleQryAckWithImWebsocketMsg:msg];
                     break;
                     
                 default:
@@ -645,6 +665,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 //    info.unreadCount = (int)conversation.unreadCount;
     info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
     info.syncTime = conversation.syncTime;
+    info.mute = (conversation.undisturbType==1)?YES:NO;
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;
@@ -732,27 +753,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
-- (JPBRcvObj *)delConvAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+- (JPBRcvObj *)simpleQryAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
-    obj.rcvType = JPBRcvTypeDelConvsAck;
-    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
-    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
-    obj.simpleQryAck = a;
-    return obj;
-}
-
-- (JPBRcvObj *)clearUnreadAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
-    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
-    obj.rcvType = JPBRcvTypeClearUnreadAck;
-    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
-    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
-    obj.simpleQryAck = a;
-    return obj;
-}
-
-- (JPBRcvObj *)markReadAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
-    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
-    obj.rcvType = JPBRcvTypeMarkReadAck;
+    obj.rcvType = JPBRcvTypeSimpleQryAck;
     JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
     [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     obj.simpleQryAck = a;
@@ -852,11 +855,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
              kRecallMsg:@(JPBRcvTypeRecall),
-             jDelConvers:@(JPBRcvTypeDelConvsAck),
-             jClearUnread:@(JPBRcvTypeClearUnreadAck),
-             jMarkRead:@(JPBRcvTypeMarkReadAck),
+             jDelConvers:@(JPBRcvTypeSimpleQryAck),
+             jClearUnread:@(JPBRcvTypeSimpleQryAck),
+             jMarkRead:@(JPBRcvTypeSimpleQryAck),
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
-             jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck)
+             jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
+             jUndisturb:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end
