@@ -642,7 +642,31 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
     msg.groupReadInfo = info;
+    msg.groupInfo = [self groupInfoWithPBGroupInfo:downMsg.groupInfo];
+    msg.targetUserInfo = [self userInfoWithPBUserInfo:downMsg.targetUserInfo];
     return msg;
+}
+
+- (JGroupInfo *)groupInfoWithPBGroupInfo:(GroupInfo *)pbGroupInfo {
+    if (pbGroupInfo == nil) {
+        return nil;
+    }
+    JGroupInfo *result = [[JGroupInfo alloc] init];
+    result.groupId = pbGroupInfo.groupId;
+    result.groupName = pbGroupInfo.groupName;
+    result.portrait = pbGroupInfo.groupPortrait;
+    return result;
+}
+
+- (JUserInfo *)userInfoWithPBUserInfo:(UserInfo *)pbUserInfo {
+    if (pbUserInfo == nil) {
+        return nil;
+    }
+    JUserInfo *result = [[JUserInfo alloc] init];
+    result.userId = pbUserInfo.userId;
+    result.userName = pbUserInfo.nickname;
+    result.portrait = pbUserInfo.userPortrait;
+    return result;
 }
 
 - (JUserInfo *)userInfoWithMemberReadDetailItem:(MemberReadDetailItem *)item {
@@ -666,6 +690,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
     info.syncTime = conversation.syncTime;
     info.mute = (conversation.undisturbType==1)?YES:NO;
+    info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
+    info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
     //TODO: mention
 //    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
     return info;

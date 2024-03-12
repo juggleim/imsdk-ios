@@ -9,6 +9,7 @@
 #import "JConnectionManager.h"
 #import "JMessageManager.h"
 #import "JConversationManager.h"
+#import "JUserInfoManager.h"
 #import "JetIMCore.h"
 
 @interface JIM ()
@@ -27,9 +28,11 @@ static JIM *_instance;
         _instance.core = core;
         JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core];
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core];
+        JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
         messageManager.sendReceiveDelegate = conversationManager;
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
+        _instance.userInfoManager = userInfoManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager];

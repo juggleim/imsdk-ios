@@ -36,6 +36,7 @@
                                    success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
         long long syncTime = 0;
         if (conversations.lastObject) {
+            [self updateUserInfos:conversations];
             JConcreteConversationInfo *last = conversations.lastObject;
             if (last.syncTime > syncTime) {
                 syncTime = last.syncTime;
@@ -59,6 +60,7 @@
             }];
         }
         if (deletedConversations.lastObject) {
+            [self updateUserInfos:deletedConversations];
             JConcreteConversationInfo *last = deletedConversations.lastObject;
             if (last.syncTime > syncTime) {
                 syncTime = last.syncTime;
@@ -240,6 +242,21 @@
 }
 
 #pragma mark - internal
+- (void)updateUserInfos:(NSArray <JConcreteConversationInfo *> *)conversations {
+    NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
+    [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.groupInfo.groupId.length > 0) {
+            [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
+        }
+        if (obj.targetUserInfo.userId.length > 0) {
+            [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
+        }
+    }];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
 - (void)noticeConversationAddOrUpdate:(JConcreteMessage *)message {
     JConversationInfo *info = [self getConversationInfo:message.conversation];
     if (!info) {

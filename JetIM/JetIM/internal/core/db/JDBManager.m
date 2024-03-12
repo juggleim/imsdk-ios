@@ -10,6 +10,7 @@
 #import "JMessageDB.h"
 #import "JConversationDB.h"
 #import "JProfileDB.h"
+#import "JUserInfoDB.h"
 
 #define kJetIM @"jetim"
 #define kJetIMDBName @"jetimdb"
@@ -19,6 +20,7 @@
 @property (nonatomic, strong) JMessageDB *messageDb;
 @property (nonatomic, strong) JConversationDB *conversationDb;
 @property (nonatomic, strong) JProfileDB *profileDb;
+@property (nonatomic, strong) JUserInfoDB *userInfoDB;
 @end
 
 @implementation JDBManager
@@ -189,6 +191,23 @@
                     withClientMsgNo:clientMsgNo];
 }
 
+#pragma mark - user table
+- (JUserInfo *)getUserInfo:(NSString *)userId {
+    return [self.userInfoDB getUserInfo:userId];
+}
+
+- (JGroupInfo *)getGroupInfo:(NSString *)groupId {
+    return [self.userInfoDB getGroupInfo:groupId];
+}
+
+- (void)insertUserInfos:(NSArray<JUserInfo *> *)userInfos {
+    [self.userInfoDB insertUserInfos:userInfos];
+}
+
+- (void)insertGroupInfos:(NSArray<JGroupInfo *> *)groupInfos {
+    [self.userInfoDB insertGroupInfos:groupInfos];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {
@@ -210,6 +229,7 @@
     [self.messageDb createTables];
     [self.conversationDb createTables];
     [self.profileDb createTables];
+    [self.userInfoDB createTables];
 }
 
 //DB 目录
@@ -243,6 +263,7 @@
         self.profileDb = [[JProfileDB alloc] initWithDBHelper:self.dbHelper];
         self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
         self.conversationDb.messageDB = self.messageDb;
+        self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;
 }

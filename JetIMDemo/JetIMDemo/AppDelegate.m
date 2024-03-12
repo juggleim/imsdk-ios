@@ -62,15 +62,23 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //userInfo
+        JUserInfo *user2 = [JIM.shared.userInfoManager getUserInfo:@"userid2"];
+        JGroupInfo *group = [JIM.shared.userInfoManager getGroupInfo:@"groupid1"];
+        JUserInfo *user10 = [JIM.shared.userInfoManager getUserInfo:@"userid10"];
+        JGroupInfo *group11 = [JIM.shared.userInfoManager getGroupInfo:@"groupid11"];
+
+        NSLog(@"lifei");
+        
         //conversation mute
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        [JIM.shared.conversationManager setMute:NO
-                                   conversation:conversation
-                                        success:^{
-            NSLog(@"lifei, conversation mute set success");
-        } error:^(JErrorCode code) {
-            NSLog(@"lifei, conversation mute set error, code is %d", code);
-        }];
+//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//        [JIM.shared.conversationManager setMute:NO
+//                                   conversation:conversation
+//                                        success:^{
+//            NSLog(@"lifei, conversation mute set success");
+//        } error:^(JErrorCode code) {
+//            NSLog(@"lifei, conversation mute set error, code is %d", code);
+//        }];
         
         
         //get group read detail

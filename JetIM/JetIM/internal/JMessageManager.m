@@ -493,6 +493,7 @@
                        isSync:(BOOL)isSync {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
+    [self updateUserInfos:messagesToSave];
     //TODO: 遍历 messagesToSave，同一个会话的最后一个 message 更新会话的 lastMessage
     
     __block long long sendTime = 0;
@@ -601,6 +602,21 @@
     long long ts = [[NSDate date] timeIntervalSince1970];
     ts = ts % 1000000;
     return [NSString stringWithFormat:@"%06lld%03d", ts, self.increaseId++];
+}
+
+- (void)updateUserInfos:(NSArray <JConcreteMessage *> *)messages {
+    NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
+    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.groupInfo.groupId.length > 0) {
+            [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
+        }
+        if (obj.targetUserInfo.userId.length > 0) {
+            [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
+        }
+    }];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.core.dbManager insertGroupInfos:groupDic.allValues];
 }
 
 @end

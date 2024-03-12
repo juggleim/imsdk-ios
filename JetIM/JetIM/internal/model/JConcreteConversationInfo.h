@@ -6,12 +6,16 @@
 //
 
 #import <JetIM/JetIM.h>
+#import "JGroupInfo.h"
+#import "JUserInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConcreteConversationInfo : JConversationInfo
 @property (nonatomic, assign) long long lastReadMessageIndex;
 @property (nonatomic, assign) long long syncTime;
+@property (nonatomic, strong) JGroupInfo *groupInfo;
+@property (nonatomic, strong) JUserInfo *targetUserInfo;
 @end
 
 NS_ASSUME_NONNULL_END

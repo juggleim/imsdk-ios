@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *clientUid;
 @property (nonatomic, assign) int flags;
 @property (nonatomic, assign) BOOL existed;
+@property (nonatomic, strong) JGroupInfo *groupInfo;
+@property (nonatomic, strong) JUserInfo *targetUserInfo;
 @end
 
 NS_ASSUME_NONNULL_END
