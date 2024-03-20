@@ -63,18 +63,18 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 
 @interface JQryHisMsgsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
-@property (nonatomic, strong) NSArray<JConcreteMessage *> *msgs;
+@property (nonatomic, copy) NSArray<JConcreteMessage *> *msgs;
 @end
 
 @interface JSyncConvsAck : JQryAck
 @property (nonatomic, assign) BOOL isFinished;
-@property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *convs;
-@property (nonatomic, strong) NSArray<JConcreteConversationInfo *> *deletedConvs;
+@property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *convs;
+@property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *deletedConvs;
 @end
 
 @interface JQryReadDetailAck: JQryAck
-@property (nonatomic, strong) NSArray<JUserInfo *> *readMembers;
-@property (nonatomic, strong) NSArray<JUserInfo *> *unreadMembers;
+@property (nonatomic, copy) NSArray<JUserInfo *> *readMembers;
+@property (nonatomic, copy) NSArray<JUserInfo *> *unreadMembers;
 @end
 
 @interface JSimpleQryAck : JQryAck

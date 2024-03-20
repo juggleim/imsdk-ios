@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JDeleteConvMessage : JMessageContent
-@property (nonatomic, strong) NSArray <JConversation *> *conversations;
+@property (nonatomic, copy) NSArray <JConversation *> *conversations;
 @end
 
 NS_ASSUME_NONNULL_END

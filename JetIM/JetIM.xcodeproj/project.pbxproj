@@ -33,6 +33,8 @@
 		A07CE41D2B3AF131006E3F4D /* JContentTypeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */; };
 		A07CE4202B3ECBDD006E3F4D /* JNaviManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */; };
 		A07CE4212B3ECBDD006E3F4D /* JNaviManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */; };
+		A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
 		A08AA1E72B148B68008B114C /* JetIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JetIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JIM.m */; };
@@ -250,6 +252,8 @@
 		A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JContentTypeCenter.m; sourceTree = "<group>"; };
 		A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JNaviManager.h; sourceTree = "<group>"; };
 		A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JNaviManager.m; sourceTree = "<group>"; };
+		A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeMessage.h; sourceTree = "<group>"; };
+		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* JetIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JetIM.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIM.h; sourceTree = "<group>"; };
@@ -848,6 +852,8 @@
 				A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */,
 				A0D3AD302B6DFD4300D170D7 /* JRecallInfoMessage.h */,
 				A0D3AD312B6DFD4300D170D7 /* JRecallInfoMessage.m */,
+				A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */,
+				A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -897,6 +903,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */,
 				A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */,
 				A09716BD2B9FFE3C00D1DB24 /* JGroupInfo.h in Headers */,
 				A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */,
@@ -1181,6 +1188,7 @@
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,
 				A08AA3902B19CB78008B114C /* GPBDuration.pbobjc.m in Sources */,
+				A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

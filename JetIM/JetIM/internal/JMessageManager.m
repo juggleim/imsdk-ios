@@ -51,6 +51,7 @@
     [m registerContentType:[JDeleteConvMessage class]];
     [m registerContentType:[JReadNtfMessage class]];
     [m registerContentType:[JGroupReadNtfMessage class]];
+    [m registerContentType:[JMergeMessage class]];
     m.cachedSendTime = -1;
     m.cachedReceiveTime = -1;
     return m;
@@ -235,6 +236,13 @@
         });
     }];
     return message;
+}
+
+- (JMessage *)sendMergeMessage:(JMergeMessage *)mergeMessage
+                inConversation:(JConversation *)conversation
+                       success:(void (^)(JMessage *))successBlock
+                         error:(void (^)(JErrorCode, JMessage *))errorBlock {
+    
 }
 
 - (void)sendReadReceipt:(NSArray<NSString *> *)messageIds

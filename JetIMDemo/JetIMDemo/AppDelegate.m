@@ -62,13 +62,24 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //get message by id
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"196691553488470016"];
+//        [JIM.shared.messageManager getMessagesByMessageIds:@[@"nqfszuuysfce4xum", @"nqfszu682fee4xum", @"nqfszzcksfgfg38b", @"nqfsz8hngfnfg38b"]
+//                                            inConversation:c
+//                                                   success:^(NSArray<JMessage *> *messages) {
+//            NSLog(@"lifei");
+//        } error:^(JErrorCode errorCode) {
+//            NSLog(@"lifei");
+//        }];
+        
+        
         //userInfo
-        JUserInfo *user2 = [JIM.shared.userInfoManager getUserInfo:@"userid2"];
-        JGroupInfo *group = [JIM.shared.userInfoManager getGroupInfo:@"groupid1"];
-        JUserInfo *user10 = [JIM.shared.userInfoManager getUserInfo:@"userid10"];
-        JGroupInfo *group11 = [JIM.shared.userInfoManager getGroupInfo:@"groupid11"];
-
-        NSLog(@"lifei");
+//        JUserInfo *user2 = [JIM.shared.userInfoManager getUserInfo:@"userid2"];
+//        JGroupInfo *group = [JIM.shared.userInfoManager getGroupInfo:@"groupid1"];
+//        JUserInfo *user10 = [JIM.shared.userInfoManager getUserInfo:@"userid10"];
+//        JGroupInfo *group11 = [JIM.shared.userInfoManager getGroupInfo:@"groupid11"];
+//
+//        NSLog(@"lifei");
         
         //conversation mute
 //        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];

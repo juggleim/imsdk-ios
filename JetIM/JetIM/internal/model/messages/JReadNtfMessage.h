@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JReadNtfMessage : JMessageContent
-@property (nonatomic, strong) NSArray <NSString *> *messageIds;
+@property (nonatomic, copy) NSArray <NSString *> *messageIds;
 @end
 
 NS_ASSUME_NONNULL_END
