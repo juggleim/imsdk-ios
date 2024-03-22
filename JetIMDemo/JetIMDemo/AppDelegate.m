@@ -62,6 +62,53 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //send merge message
+//        NSArray *messageIdList = @[@"nqnr535hgl4k5g4v", @"nqnr54kb2l6k5g4v", @"nqnr557lsl8k5g4v", @"nqnr56sc2mak5g4v"];
+//        NSMutableArray *previewList = [NSMutableArray array];
+//
+//        for (int i = 0; i < 4; i++) {
+//            JMergeMessagePreviewUnit *unit = [[JMergeMessagePreviewUnit alloc] init];
+//            unit.previewContent = [NSString stringWithFormat:@"previewContent%d", i];
+//            JUserInfo *userInfo = [[JUserInfo alloc] init];
+//            userInfo.userId = [NSString stringWithFormat:@"userId%d", i];
+//            userInfo.userName = [NSString stringWithFormat:@"name%d", i];
+//            userInfo.portrait = @"portait";
+//            unit.sender = userInfo;
+//            [previewList addObject:unit];
+//        }
+//        JMergeMessage *merge = [[JMergeMessage alloc] initWithTitle:@"title"
+//                                                      MessageIdList:messageIdList
+//                                                        previewList:previewList];
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//        JMessage *m = [JIM.shared.messageManager sendMergeMessage:merge
+//                                                   inConversation:c
+//                                                          success:^(JMessage *message) {
+//            NSLog(@"lifei");
+//        } error:^(JErrorCode errorCode, JMessage *message) {
+//            NSLog(@"lifei");
+//        }];
+//        NSLog(@"lifei");
+
+        //query merge message
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        [JIM.shared.messageManager getRemoteMessagesFrom:c
+                                               startTime:0
+                                                   count:100
+                                               direction:JPullDirectionOlder
+                                                 success:^(NSArray *messages) {
+            NSLog(@"lifei");
+        } error:^(JErrorCode code) {
+            
+        }];
+        
+//        [JIM.shared.messageManager getMergedMessageList:@"nqnsank42mck5g4v"
+//                                                success:^(NSArray<JMessage *> *mergedMessages) {
+//            NSLog(@"lifei");
+//        } error:^(JErrorCode code) {
+//            NSLog(@"lifei");
+//        }];
+        
+        
         //get message by id
 //        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"196691553488470016"];
 //        [JIM.shared.messageManager getMessagesByMessageIds:@[@"nqfszuuysfce4xum", @"nqfszu682fee4xum", @"nqfszzcksfgfg38b", @"nqfsz8hngfnfg38b"]
@@ -298,30 +345,30 @@
         NSLog(@"after resend, msgNo is %lld", msg.clientMsgNo);
     }];
     NSLog(@"after send video, msgNo is %lld", m.clientMsgNo);
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:image
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:file
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
-//    sleep(2);
-//    [JIM.shared.messageManager sendMessage:voice
-//                                 inConversation:conversation
-//                                        success:^(JMessage *message) {
-//        NSLog(@"lifei, sendMessage success, ");
-//    } error:^(JErrorCode errorCode, JMessage *message) {
-//        NSLog(@"lifei, sendMessage error");
-//    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:image
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:file
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
+    sleep(2);
+    [JIM.shared.messageManager sendMessage:voice
+                                 inConversation:conversation
+                                        success:^(JMessage *message) {
+        NSLog(@"lifei, sendMessage success, ");
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        NSLog(@"lifei, sendMessage error");
+    }];
 }
 
 - (void)messageDidReceive:(JMessage *)message {

@@ -45,6 +45,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jDelConvers @"del_convers"
 #define jClearUnread @"clear_unread"
 #define jUndisturb @"undisturb_convers"
+#define jQryMergedMsgs @"qry_merged_msgs"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 
@@ -154,6 +155,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
+                         mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                             userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId {
@@ -162,6 +165,23 @@ typedef NS_ENUM(NSUInteger, JQos) {
     upMsg.msgContent = msgData;
     upMsg.flags = flags;
     upMsg.clientUid = clientUid;
+    if (mergedMsgs.count > 0) {
+        upMsg.flags |= JMessageFlagIsMerged;
+        MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
+        pbMsgs.channelType = (int32_t)conversationType;
+        pbMsgs.userId = userId;
+        pbMsgs.targetId = conversationId;
+        NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
+        for (JConcreteMessage *msg in mergedMsgs) {
+            SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
+            simpleMsg.msgId = msg.messageId;
+            simpleMsg.msgTime = msg.timestamp;
+            simpleMsg.msgIndex = msg.msgIndex;
+            [pbMsgArr addObject:simpleMsg];
+        }
+        pbMsgs.msgsArray = pbMsgArr;
+        upMsg.mergedMsgs = pbMsgs;
+    }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
@@ -426,6 +446,33 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.index = index;
     body.topic = jUndisturb;
     body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getMergedMessageList:(NSString *)messageId
+                            time:(long long)timestamp
+                           count:(int)count
+                       direction:(JPullDirection)direction
+                           index:(int)index {
+    QryMergedMsgsReq *req = [[QryMergedMsgsReq alloc] init];
+    req.startTime = timestamp;
+    req.count = count;
+    if (direction == JPullDirectionOlder) {
+        req.order = 0;
+    } else {
+        req.order = 1;
+    }
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryMergedMsgs;
+    body.targetId = messageId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -886,7 +933,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jMarkRead:@(JPBRcvTypeSimpleQryAck),
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
-             jUndisturb:@(JPBRcvTypeSimpleQryAck)
+             jUndisturb:@(JPBRcvTypeSimpleQryAck),
+             jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck)
     };
 }
 @end

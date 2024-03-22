@@ -180,69 +180,26 @@
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content
-     inConversation:(JConversation *)conversation
-            success:(void (^)(JMessage *))successBlock
-              error:(void (^)(JErrorCode, JMessage *))errorBlock{
-    JConcreteMessage *message = [[JConcreteMessage alloc] init];
-    message.content = content;
-    message.conversation = conversation;
-    message.contentType = [[content class] contentType];
-    message.direction = JMessageDirectionSend;
-    message.messageState = JMessageStateSending;
-    message.senderUserId = self.core.userId;
-    message.clientUid = [self createClientUid];
-    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
-    [self.core.dbManager insertMessages:@[message]];
-    
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
-        [self.sendReceiveDelegate messageDidSave:message];
-    }
-    
-    [self.core.webSocket sendIMMessage:content
-                        inConversation:conversation
-                           clientMsgNo:message.clientMsgNo
-                             clientUid:message.clientUid
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex) {
-        if (self.syncProcessing) {
-            self.cachedSendTime = timestamp;
-        } else {
-            self.core.messageSendSyncTime = timestamp;
-        }
-        [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
-                                          messageId:msgId
-                                          timestamp:timestamp
-                                       messageIndex:msgIndex];
-        message.messageId = msgId;
-        message.timestamp = timestamp;
-        message.msgIndex = msgIndex;
-        message.messageState = JMessageStateSent;
-        
-        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-            [self.sendReceiveDelegate messageDidSend:message];
-        }
-        
-        dispatch_async(self.core.delegateQueue, ^{
-            if (successBlock) {
-                successBlock(message);
-            }
-        });
-    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
-        message.messageState = JMessageStateFail;
-        [self.core.dbManager messageSendFail:clientMsgNo];
-        dispatch_async(self.core.delegateQueue, ^{
-            if (errorBlock) {
-                errorBlock((JErrorCode)errorCode, message);
-            }
-        });
-    }];
-    return message;
+           inConversation:(JConversation *)conversation
+                  success:(void (^)(JMessage *))successBlock
+                    error:(void (^)(JErrorCode, JMessage *))errorBlock{
+    return [self sendMessage:content
+              inConversation:conversation
+                  mergedMsgs:[NSArray array]//空数组表示没有合并消息
+                     success:successBlock
+                       error:errorBlock];
 }
 
 - (JMessage *)sendMergeMessage:(JMergeMessage *)mergeMessage
                 inConversation:(JConversation *)conversation
                        success:(void (^)(JMessage *))successBlock
                          error:(void (^)(JErrorCode, JMessage *))errorBlock {
-    
+    NSArray *mergedMessages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
+    return [self sendMessage:mergeMessage
+              inConversation:conversation
+                  mergedMsgs:mergedMessages
+                     success:successBlock
+                       error:errorBlock];
 }
 
 - (void)sendReadReceipt:(NSArray<NSString *> *)messageIds
@@ -426,6 +383,28 @@
     }
 }
 
+- (void)getMergedMessageList:(NSString *)messageId
+                     success:(void (^)(NSArray<JMessage *> *))successBlock
+                       error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getMergedMessageList:messageId
+                                         time:0
+                                        count:100
+                                    direction:JPullDirectionOlder
+                                      success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messages);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
 }
@@ -475,6 +454,69 @@
 }
 
 #pragma mark - internal
+- (JMessage *)sendMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation
+               mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                  success:(void (^)(JMessage *))successBlock
+                    error:(void (^)(JErrorCode, JMessage *))errorBlock{
+   JConcreteMessage *message = [[JConcreteMessage alloc] init];
+   message.content = content;
+   message.conversation = conversation;
+   message.contentType = [[content class] contentType];
+   message.direction = JMessageDirectionSend;
+   message.messageState = JMessageStateSending;
+   message.senderUserId = self.core.userId;
+   message.clientUid = [self createClientUid];
+   message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
+   [self.core.dbManager insertMessages:@[message]];
+   
+   if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+       [self.sendReceiveDelegate messageDidSave:message];
+   }
+   
+   [self.core.webSocket sendIMMessage:content
+                       inConversation:conversation
+                          clientMsgNo:message.clientMsgNo
+                            clientUid:message.clientUid
+                           mergedMsgs:mergedMsgs
+                               userId:self.core.userId
+                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex) {
+       if (self.syncProcessing) {
+           self.cachedSendTime = timestamp;
+       } else {
+           self.core.messageSendSyncTime = timestamp;
+       }
+       [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
+                                         messageId:msgId
+                                         timestamp:timestamp
+                                      messageIndex:msgIndex];
+       message.messageId = msgId;
+       message.timestamp = timestamp;
+       message.msgIndex = msgIndex;
+       message.messageState = JMessageStateSent;
+       
+       if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+           [self.sendReceiveDelegate messageDidSend:message];
+       }
+       
+       dispatch_async(self.core.delegateQueue, ^{
+           if (successBlock) {
+               successBlock(message);
+           }
+       });
+   } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+       message.messageState = JMessageStateFail;
+       [self.core.dbManager messageSendFail:clientMsgNo];
+       dispatch_async(self.core.delegateQueue, ^{
+           if (errorBlock) {
+               errorBlock((JErrorCode)errorCode, message);
+           }
+       });
+   }];
+   return message;
+}
+
+
 - (NSArray <JConcreteMessage *> *)messagesToSave:(NSArray <JConcreteMessage *> *)messages {
     NSMutableArray <JConcreteMessage *> *arr = [[NSMutableArray alloc] init];
     for (JConcreteMessage *message in messages) {

@@ -133,17 +133,21 @@
        inConversation:(nonnull JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
+           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+               userId:(NSString *)userId
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.msgIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                             msgData:[content encode]
-                                               flags:[[content class] flags]
-                                           clientUid:clientUid
-                                               index:self.msgIndex++
-                                    conversationType:conversation.conversationType
-                                      conversationId:conversation.conversationId];
+                                                 msgData:[content encode]
+                                                   flags:[[content class] flags]
+                                               clientUid:clientUid
+                                              mergedMsgs:mergedMsgs
+                                                  userId:userId
+                                                   index:self.msgIndex++
+                                        conversationType:conversation.conversationType
+                                          conversationId:conversation.conversationId];
 
         NSError *err = nil;
         [self.sws sendData:d error:&err];
@@ -347,6 +351,29 @@
                          key:key
                      success:successBlock
                        error:errorBlock];
+    });
+}
+
+- (void)getMergedMessageList:(NSString *)messageId
+                        time:(long long)timestamp
+                       count:(int)count
+                   direction:(JPullDirection)direction
+                     success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
+                       error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData getMergedMessageList:messageId
+                                                 time:timestamp
+                                                count:count
+                                            direction:direction
+                                                index:self.msgIndex++];
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 

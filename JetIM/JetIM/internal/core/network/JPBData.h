@@ -119,6 +119,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
+                         mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                             userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId;
@@ -171,6 +173,12 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                    userId:(NSString *)userId
                    isMute:(BOOL)isMute
                     index:(int)index;
+
+- (NSData *)getMergedMessageList:(NSString *)messageId
+                            time:(long long)timestamp
+                           count:(int)count
+                       direction:(JPullDirection)direction
+                           index:(int)index;
 
 - (NSData *)pingData;
 

@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
+           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+               userId:(NSString *)userId
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
@@ -101,6 +103,13 @@ NS_ASSUME_NONNULL_BEGIN
          userId:(NSString *)userId
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getMergedMessageList:(NSString *)messageId
+                        time:(long long)timestamp
+                       count:(int)count
+                   direction:(JPullDirection)direction
+                     success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                       error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 @end

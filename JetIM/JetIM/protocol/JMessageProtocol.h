@@ -8,7 +8,8 @@
 #import <JetIM/JMessage.h>
 #import <JetIM/JConversation.h>
 #import <JetIM/JetIMConst.h>
-#import <JetIM/JMergeMessage.h>
+
+@class JMergeMessage;
 
 @protocol JMessageDelegate <NSObject>
 
@@ -206,6 +207,15 @@
                    inConversation:(JConversation *)conversation
                           success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
                             error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取被合并的消息列表
+/// - Parameters:
+///   - messageId: 合并消息 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getMergedMessageList:(NSString *)messageId
+                     success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
+                       error:(void (^)(JErrorCode code))errorBlock;
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state

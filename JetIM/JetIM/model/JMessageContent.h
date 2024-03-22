@@ -15,7 +15,13 @@ typedef NS_OPTIONS(int32_t, JMessageFlag) {
     //是否状态消息
     JMessageFlagIsStatus = 1 << 2,
     //是否存入历史消息
-    JMessageFlagIsSave = 1 << 3
+    JMessageFlagIsSave = 1 << 3,
+    //是否被修改过
+    JMessageFlagIsModified = 1 << 4,
+    //是否是合并转发消息
+    JMessageFlagIsMerged = 1 << 5,
+    //是否是免打扰消息
+    JMessageFlagIsMute = 1 << 6
 };
 
 NS_ASSUME_NONNULL_BEGIN
