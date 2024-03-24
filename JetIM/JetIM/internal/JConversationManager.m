@@ -171,10 +171,22 @@
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.core.dbManager setDraft:draft inConversation:conversation];
+    JConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+            [self.delegate conversationInfoDidUpdate:@[info]];
+        }
+    });
 }
 
 - (void)clearDraftInConversation:(JConversation *)conversation {
     [self.core.dbManager clearDraftInConversation:conversation];
+    JConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+            [self.delegate conversationInfoDidUpdate:@[info]];
+        }
+    });
 }
 
 - (void)setMute:(BOOL)isMute

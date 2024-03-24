@@ -182,20 +182,13 @@
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *))successBlock
-                    error:(void (^)(JErrorCode, JMessage *))errorBlock{
+                    error:(void (^)(JErrorCode, JMessage *))errorBlock {
+    NSArray *mergedMessages = nil;
+    if ([content isKindOfClass:[JMergeMessage class]]) {
+        JMergeMessage *merge = (JMergeMessage *)content;
+        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+    }
     return [self sendMessage:content
-              inConversation:conversation
-                  mergedMsgs:[NSArray array]//空数组表示没有合并消息
-                     success:successBlock
-                       error:errorBlock];
-}
-
-- (JMessage *)sendMergeMessage:(JMergeMessage *)mergeMessage
-                inConversation:(JConversation *)conversation
-                       success:(void (^)(JMessage *))successBlock
-                         error:(void (^)(JErrorCode, JMessage *))errorBlock {
-    NSArray *mergedMessages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
-    return [self sendMessage:mergeMessage
               inConversation:conversation
                   mergedMsgs:mergedMessages
                      success:successBlock

@@ -57,17 +57,6 @@
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-/// 发送合并消息
-/// - Parameters:
-///   - mergeMessage: 合并消息实体
-///   - conversation: 会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
-- (JMessage *)sendMergeMessage:(JMergeMessage *)mergeMessage
-                inConversation:(JConversation *)conversation
-                       success:(void (^)(JMessage *message))successBlock
-                         error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
-
 /// 重发消息，用于发送失败后进行重发
 /// - Parameters:
 ///   - messsage: 消息对象

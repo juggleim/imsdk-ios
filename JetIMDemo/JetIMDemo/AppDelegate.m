@@ -23,7 +23,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@"https://nav.gxjipei.com"];
+    [JIM.shared setServer:@"https://nav.gxjipei.com"];
     [JIM.shared initWithAppKey:@"appkey"];
     [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
@@ -63,10 +63,10 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         //send merge message
-//        NSArray *messageIdList = @[@"nqnr535hgl4k5g4v", @"nqnr54kb2l6k5g4v", @"nqnr557lsl8k5g4v", @"nqnr56sc2mak5g4v"];
+//        NSArray *messageIdList = @[@"nqn2yfusgb8grenb", @"nqn2ygcngcagrenb", @"nqn2yguggccgrenb"];
 //        NSMutableArray *previewList = [NSMutableArray array];
 //
-//        for (int i = 0; i < 4; i++) {
+//        for (int i = 0; i < 3; i++) {
 //            JMergeMessagePreviewUnit *unit = [[JMergeMessagePreviewUnit alloc] init];
 //            unit.previewContent = [NSString stringWithFormat:@"previewContent%d", i];
 //            JUserInfo *userInfo = [[JUserInfo alloc] init];
@@ -79,8 +79,8 @@
 //        JMergeMessage *merge = [[JMergeMessage alloc] initWithTitle:@"title"
 //                                                      MessageIdList:messageIdList
 //                                                        previewList:previewList];
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//        JMessage *m = [JIM.shared.messageManager sendMergeMessage:merge
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+//        JMessage *m = [JIM.shared.messageManager sendMessage:merge
 //                                                   inConversation:c
 //                                                          success:^(JMessage *message) {
 //            NSLog(@"lifei");
@@ -90,18 +90,9 @@
 //        NSLog(@"lifei");
 
         //query merge message
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        [JIM.shared.messageManager getRemoteMessagesFrom:c
-                                               startTime:0
-                                                   count:100
-                                               direction:JPullDirectionOlder
-                                                 success:^(NSArray *messages) {
-            NSLog(@"lifei");
-        } error:^(JErrorCode code) {
-            
-        }];
-        
-//        [JIM.shared.messageManager getMergedMessageList:@"nqnsank42mck5g4v"
+
+//
+//        [JIM.shared.messageManager getMergedMessageList:@"nqn2zvdescggrenb"
 //                                                success:^(NSArray<JMessage *> *mergedMessages) {
 //            NSLog(@"lifei");
 //        } error:^(JErrorCode code) {
@@ -185,11 +176,11 @@
 //        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
 //        NSLog(@"lifei, getConversationInfo");
 //
-//        [JIM.shared.conversationManager setDraft:@"draft" inConversation:conversation];
-//        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
-//
-//        [JIM.shared.conversationManager clearDraftInConversation:conversation];
-//        conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
+        //draft
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        [JIM.shared.conversationManager setDraft:@"draft" inConversation:c];
+
+        [JIM.shared.conversationManager clearDraftInConversation:c];
         
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
@@ -309,7 +300,7 @@
     image.width = 640;
     image.height = 480;
     image.extra = @"extra";
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
 
     JFileMessage *file = [[JFileMessage alloc] init];
     file.name = @"fileName";

@@ -47,6 +47,11 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //用户注销下线
     JErrorCodeUserLogOut = 11012,
     
+    //群组不存在
+    JErrorCodeGroupNotExist = 13001,
+    //不是群成员
+    JErrorCodeNotGroupMember = 13002,
+    
     //非法参数
     JErrorCodeInvalidParam = 21003,
     

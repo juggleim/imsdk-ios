@@ -33,6 +33,11 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //用户注销下线
     JErrorCodeInternalUserLogOut = 11012,
     
+    //群组不存在
+    JErrorCodeInternalGroupNotExist = 13001,
+    //不是群成员
+    JErrorCodeInternalNotGroupMember = 13002,
+    
     JErrorCodeInternalWebSocketFailure = 21001,
     JErrorCodeInternalNaviFailure = 21002,
     JErrorCodeInternalInvalidParam = 21003,
