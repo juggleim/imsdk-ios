@@ -18,6 +18,7 @@
 @property (nonatomic, strong) JHeartBeatManager *heartBeatManager;
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
+@property (nonatomic, copy) NSString *pushToken;
 @end
 
 @implementation JConnectionManager
@@ -58,7 +59,10 @@
                         token:token
                       success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
         self.core.servers = servers;
-        [self.core.webSocket connect:self.core.appKey token:token servers:self.core.servers];
+        [self.core.webSocket connect:self.core.appKey
+                               token:token
+                           pushToken:self.pushToken
+                             servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
         if (errorCode == JErrorCodeInternalTokenIllegal) {
             [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal];
@@ -73,6 +77,28 @@
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
     [self.core.dbManager closeIMDB];
     [self.core.webSocket disconnect:receivePush];
+}
+
+- (void)registerDeviceToken:(NSData *)tokenData {
+    if (![tokenData isKindOfClass:[NSData class]]) {
+        NSLog(@"[JetIM] tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
+               @"deviceToken 传入");
+        return;
+    }
+    NSUInteger len = [tokenData length];
+    char *chars = (char *)[tokenData bytes];
+    NSMutableString *hexString = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < len; i++) {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    self.pushToken = hexString;
+    [self.core.webSocket registerPushToken:hexString
+                                    userId:self.core.userId
+                                   success:^{
+        NSLog(@"[JetIM] register push token success");
+    } error:^(JErrorCodeInternal code) {
+        NSLog(@"[JetIM] register push token fail, code is %lu", code);
+    }];
 }
 
 - (void)setDelegate:(id<JConnectionDelegate>)delegate {

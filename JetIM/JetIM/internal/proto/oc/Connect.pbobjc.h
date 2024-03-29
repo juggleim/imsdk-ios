@@ -71,6 +71,7 @@ typedef GPB_ENUM(ConnectMsgBody_FieldNumber) {
   ConnectMsgBody_FieldNumber_IspNum = 12,
   ConnectMsgBody_FieldNumber_ClientIp = 13,
   ConnectMsgBody_FieldNumber_PackageName = 14,
+  ConnectMsgBody_FieldNumber_PushChannel = 15,
 };
 
 GPB_FINAL @interface ConnectMsgBody : GPBMessage
@@ -111,6 +112,8 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *clientIp;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *packageName;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *pushChannel;
 
 @end
 

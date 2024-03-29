@@ -59,14 +59,22 @@
     NSLog(@"lifei, dbDidOpen");
 }
 
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    [JIM.shared.connectionManager registerDeviceToken:deviceToken];
+}
+
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
+        //register push token
+//        [JIM.shared.connectionManager registerToken:@"ppppushtoken"];
+        
+        
         //send merge message
-//        NSArray *messageIdList = @[@"nqn2yfusgb8grenb", @"nqn2ygcngcagrenb", @"nqn2yguggccgrenb"];
+//        NSArray *messageIdList = @[@"nqsu7glz26cgrenb", @"nqsu7g4t26egrenb", @"nqsu7klq26ggrenb", @"nqsu7k4lg6ggrenb"];
 //        NSMutableArray *previewList = [NSMutableArray array];
 //
-//        for (int i = 0; i < 3; i++) {
+//        for (int i = 0; i < 4; i++) {
 //            JMergeMessagePreviewUnit *unit = [[JMergeMessagePreviewUnit alloc] init];
 //            unit.previewContent = [NSString stringWithFormat:@"previewContent%d", i];
 //            JUserInfo *userInfo = [[JUserInfo alloc] init];
@@ -92,7 +100,7 @@
         //query merge message
 
 //
-//        [JIM.shared.messageManager getMergedMessageList:@"nqn2zvdescggrenb"
+//        [JIM.shared.messageManager getMergedMessageList:@"nqsu8pvcg6lgrenb"
 //                                                success:^(NSArray<JMessage *> *mergedMessages) {
 //            NSLog(@"lifei");
 //        } error:^(JErrorCode code) {
@@ -125,6 +133,9 @@
 //                                   conversation:conversation
 //                                        success:^{
 //            NSLog(@"lifei, conversation mute set success");
+//            [JIM.shared.conversationManager setDraft:@"draft1" inConversation:conversation];
+//            JConversationInfo *c = [JIM.shared.conversationManager getConversationInfo:conversation];
+//            NSLog(@"lifei");
 //        } error:^(JErrorCode code) {
 //            NSLog(@"lifei, conversation mute set error, code is %d", code);
 //        }];
@@ -177,10 +188,10 @@
 //        NSLog(@"lifei, getConversationInfo");
 //
         //draft
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        [JIM.shared.conversationManager setDraft:@"draft" inConversation:c];
-
-        [JIM.shared.conversationManager clearDraftInConversation:c];
+//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//        [JIM.shared.conversationManager setDraft:@"draft" inConversation:c];
+//
+//        [JIM.shared.conversationManager clearDraftInConversation:c];
         
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         

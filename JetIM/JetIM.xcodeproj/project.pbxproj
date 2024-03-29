@@ -35,6 +35,8 @@
 		A07CE4212B3ECBDD006E3F4D /* JNaviManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */; };
 		A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
+		A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */; };
+		A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A08AA1E72B148B68008B114C /* JetIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JetIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JIM.m */; };
@@ -254,6 +256,8 @@
 		A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JNaviManager.m; sourceTree = "<group>"; };
 		A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeMessage.h; sourceTree = "<group>"; };
 		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
+		A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushtoken.pbobjc.h; sourceTree = "<group>"; };
+		A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pushtoken.pbobjc.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* JetIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JetIM.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIM.h; sourceTree = "<group>"; };
@@ -873,6 +877,8 @@
 		A08AA4202B1B78FE008B114C /* oc */ = {
 			isa = PBXGroup;
 			children = (
+				A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */,
+				A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */,
 				A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */,
 				A0D3AD282B6973D600D170D7 /* Connect.pbobjc.m */,
 				A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */,
@@ -1006,6 +1012,7 @@
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
 				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
 				A08AA25B2B14C4C0008B114C /* JetIMConst.h in Headers */,
+				A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */,
 				A08AA3972B19CB78008B114C /* GPBProtocolBuffers_RuntimeSupport.h in Headers */,
 				A08AA3742B19CB77008B114C /* SourceContext.pbobjc.h in Headers */,
 				A08AA3EF2B19EEDA008B114C /* SRConstants.h in Headers */,
@@ -1163,6 +1170,7 @@
 				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
 				A08AA39E2B19CB78008B114C /* GPBCodedOutputStream.m in Sources */,
 				A08AA3B72B19DF75008B114C /* JetIMCore.m in Sources */,
+				A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */,
 				A08AA26F2B162A11008B114C /* JFMDatabaseAdditions.m in Sources */,
 				A08AA3812B19CB78008B114C /* GPBApi.pbobjc.m in Sources */,
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,

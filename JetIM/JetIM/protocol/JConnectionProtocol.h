@@ -23,6 +23,8 @@
 
 - (void)disconnect:(BOOL)receivePush;
 
+- (void)registerDeviceToken:(NSData *)tokenData;
+
 - (void)setDelegate:(id<JConnectionDelegate>) delegate;
 
 @end

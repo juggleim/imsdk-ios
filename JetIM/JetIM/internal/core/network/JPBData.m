@@ -8,6 +8,7 @@
 #import "JPBData.h"
 #import "Connect.pbobjc.h"
 #import "Appmessages.pbobjc.h"
+#import "Pushtoken.pbobjc.h"
 #import "JetIMPBConst.h"
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
@@ -46,6 +47,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jClearUnread @"clear_unread"
 #define jUndisturb @"undisturb_convers"
 #define jQryMergedMsgs @"qry_merged_msgs"
+#define jRegPushToken @"reg_push_token"
+#define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 
@@ -108,6 +111,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     deviceCompany:(NSString *)deviceCompany
                       deviceModel:(NSString *)deviceModel
                   deviceOsVersion:(NSString *)osVersion
+                      packageName:(NSString *)packageName
                         pushToken:(NSString *)pushToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
@@ -117,7 +121,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.sdkVersion = JSDKVersion;
     connectMsg.appkey = appKey;
     connectMsg.token = token;
-    
     connectMsg.deviceId = deviceId;
     connectMsg.platform = platform;
     connectMsg.deviceCompany = deviceCompany;
@@ -127,6 +130,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.networkId = networkId;
     connectMsg.ispNum = ispNum;
     connectMsg.clientIp = clientIp;
+    connectMsg.packageName = packageName;
+    connectMsg.pushChannel = jApns;
     
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypeConnect;
@@ -176,7 +181,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
             simpleMsg.msgId = msg.messageId;
             simpleMsg.msgTime = msg.timestamp;
-            simpleMsg.msgIndex = msg.msgIndex;
+            simpleMsg.msgReadIndex = msg.msgIndex;
             [pbMsgArr addObject:simpleMsg];
         }
         pbMsgs.msgsArray = pbMsgArr;
@@ -411,7 +416,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
-    c.latestReadMsgIndex = msgIndex;
+    c.latestUnreadIndex = msgIndex;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
     req.conversationsArray = arr;
     
@@ -473,6 +478,31 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.index = index;
     body.topic = jQryMergedMsgs;
     body.targetId = messageId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)registerPushToken:(NSString *)token
+                     deviceId:(NSString *)deviceId
+                  packageName:(NSString *)packageName
+                       userId:(NSString *)userId
+                        index:(int)index {
+    RegPushTokenReq *req = [[RegPushTokenReq alloc] init];
+    req.deviceId = deviceId;
+    req.platform = Platform_IOs;
+    req.pushChannel = PushChannel_Apple;
+    req.pushToken = token;
+    req.packageName = packageName;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRegPushToken;
+    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -732,7 +762,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.updateTime = conversation.updateTime;
     JConcreteMessage *lastMessage = [self messageWithDownMsg:conversation.msg];
     info.lastMessage = lastMessage;
-    info.lastReadMessageIndex = conversation.latestReadMsgIndex;
+    info.lastReadMessageIndex = conversation.latestReadIndex;
 //    info.unreadCount = (int)conversation.unreadCount;
     info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
     info.syncTime = conversation.syncTime;
@@ -934,7 +964,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
              jUndisturb:@(JPBRcvTypeSimpleQryAck),
-             jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck)
+             jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
+             jRegPushToken:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

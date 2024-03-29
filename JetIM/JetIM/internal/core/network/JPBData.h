@@ -110,6 +110,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                     deviceCompany:(NSString *)deviceCompany
                       deviceModel:(NSString *)deviceModel
                   deviceOsVersion:(NSString *)osVersion
+                      packageName:(NSString *)packageName
                         pushToken:(NSString *)pushToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
@@ -179,6 +180,12 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                            count:(int)count
                        direction:(JPullDirection)direction
                            index:(int)index;
+
+- (NSData *)registerPushToken:(NSString *)token
+                     deviceId:(NSString *)deviceId
+                  packageName:(NSString *)packageName
+                       userId:(NSString *)userId
+                        index:(int)index;
 
 - (NSData *)pingData;
 

@@ -76,6 +76,7 @@
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, copy) NSArray *servers;
 @property (nonatomic, strong) SRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
@@ -99,10 +100,12 @@
 
 - (void)connect:(NSString *)appKey
           token:(NSString *)token
+      pushToken:(NSString *)pushToken
         servers:(nonnull NSArray *)servers {
     dispatch_async(self.sendQueue, ^{
         self.appKey = appKey;
         self.token = token;
+        self.pushToken = pushToken;
         self.servers = servers;
         if (servers.count > 0) {
             NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, self.servers[0], jWebSocketSuffix];
@@ -377,6 +380,24 @@
     });
 }
 
+- (void)registerPushToken:(NSString *)token
+                   userId:(NSString *)userId
+                  success:(void (^)(void))successBlock
+                    error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.msgIndex);
+        NSData *d = [self.pbData registerPushToken:token
+                                          deviceId:[JUtility getDeviceId]
+                                       packageName:[[NSBundle mainBundle] bundleIdentifier]
+                                            userId:userId
+                                             index:self.msgIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -471,16 +492,17 @@
 #pragma mark - inner
 - (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
     NSData *d = [self.pbData connectDataWithAppKey:self.appKey
-                                         token:self.token
-                                      deviceId:[JUtility getDeviceId]
-                                      platform:JPlatform
-                                 deviceCompany:JDeviceCompany
-                                   deviceModel:[JUtility currentDeviceModel]
-                               deviceOsVersion:[JUtility currentSystemVersion]
-                                     pushToken:@"pushToken"//TODO:
-                                     networkId:[JUtility currentNetWork]
-                                        ispNum:[JUtility currentCarrier]
-                                      clientIp:@""];
+                                             token:self.token
+                                          deviceId:[JUtility getDeviceId]
+                                          platform:JPlatform
+                                     deviceCompany:JDeviceCompany
+                                       deviceModel:[JUtility currentDeviceModel]
+                                   deviceOsVersion:[JUtility currentSystemVersion]
+                                       packageName:[[NSBundle mainBundle] bundleIdentifier]
+                                         pushToken:self.pushToken
+                                         networkId:[JUtility currentNetWork]
+                                            ispNum:[JUtility currentCarrier]
+                                          clientIp:@""];
     NSError *err = nil;
     [sws sendData:d error:&err];
     if (err != nil) {

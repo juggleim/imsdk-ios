@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
                       receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(NSString *)appKey
           token:(NSString *)token
+      pushToken:(NSString *)pushToken
         servers:(NSArray *)servers;
 - (void)disconnect:(BOOL)needPush;
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
@@ -110,6 +111,11 @@ NS_ASSUME_NONNULL_BEGIN
                    direction:(JPullDirection)direction
                      success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                        error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)registerPushToken:(NSString *)token
+                   userId:(NSString *)userId
+                  success:(void (^)(void))successBlock
+                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 @end

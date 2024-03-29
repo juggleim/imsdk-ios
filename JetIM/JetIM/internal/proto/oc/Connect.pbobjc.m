@@ -76,6 +76,7 @@ static GPBFileDescription ConnectRoot_FileDescription = {
 @dynamic ispNum;
 @dynamic clientIp;
 @dynamic packageName;
+@dynamic pushChannel;
 
 typedef struct ConnectMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -93,6 +94,7 @@ typedef struct ConnectMsgBody__storage_ {
   NSString *ispNum;
   NSString *clientIp;
   NSString *packageName;
+  NSString *pushChannel;
 } ConnectMsgBody__storage_;
 
 // This method is threadsafe because it is initially called
@@ -228,6 +230,15 @@ typedef struct ConnectMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "pushChannel",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_PushChannel,
+        .hasIndex = 14,
+        .offset = (uint32_t)offsetof(ConnectMsgBody__storage_, pushChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ConnectMsgBody)
@@ -239,7 +250,7 @@ typedef struct ConnectMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\n\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000";
+        "\013\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000\017\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
