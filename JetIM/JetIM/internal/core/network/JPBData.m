@@ -181,7 +181,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
             simpleMsg.msgId = msg.messageId;
             simpleMsg.msgTime = msg.timestamp;
-            simpleMsg.msgReadIndex = msg.msgIndex;
+            simpleMsg.msgReadIndex = msg.seqNo;
             [pbMsgArr addObject:simpleMsg];
         }
         pbMsgs.msgsArray = pbMsgArr;
@@ -574,7 +574,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.code = msg.pubAckMsgBody.code;
             a.msgId = msg.pubAckMsgBody.msgId;
             a.timestamp = msg.pubAckMsgBody.timestamp;
-            a.msgIndex = msg.pubAckMsgBody.msgIndex;
+            a.seqNo = msg.pubAckMsgBody.msgIndex;
             obj.publishMsgAck = a;
         }
             break;
@@ -706,7 +706,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.timestamp = downMsg.msgTime;
     msg.messageState = JMessageStateSent;
     msg.senderUserId = downMsg.senderId;
-    msg.msgIndex = downMsg.msgIndex;
+    msg.seqNo = downMsg.msgIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
     int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];

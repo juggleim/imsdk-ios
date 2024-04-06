@@ -23,7 +23,7 @@
 
 @interface JSendMessageObj : JBlockObj
 @property (nonatomic, assign) long long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex);
+@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode, long long clientMsgNo);
 @end
 
@@ -82,8 +82,8 @@
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
-@property (nonatomic, assign) int32_t msgIndex;
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockObj *> *msgBlockDic;
+@property (nonatomic, assign) int32_t cmdIndex;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockObj *> *cmdBlockDic;
 @property (nonatomic, strong) JPBData *pbData;
 @end
 
@@ -94,7 +94,7 @@
     ws.sendQueue = sendQueue;
     ws.receiveQueue = receiveQueue;
     ws.pbData = [[JPBData alloc] init];
-    ws.msgBlockDic = [[NSMutableDictionary alloc] init];
+    ws.cmdBlockDic = [[NSMutableDictionary alloc] init];
     return ws;
 }
 
@@ -138,17 +138,17 @@
             clientUid:(NSString *)clientUid
            mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
                userId:(NSString *)userId
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                                  msgData:[content encode]
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                               mergedMsgs:mergedMsgs
                                                   userId:userId
-                                                   index:self.msgIndex++
+                                                   index:self.cmdIndex++
                                         conversationType:conversation.conversationType
                                           conversationId:conversation.conversationId];
 
@@ -175,11 +175,11 @@
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData recallMessageData:messageId
                                       conversation:conversation
                                          timestamp:timestamp
-                                             index:self.msgIndex++];
+                                             index:self.cmdIndex++];
         JRecallMsgObj *obj = [[JRecallMsgObj alloc] init];
         obj.messageId = messageId;
         obj.successBlock = successBlock;
@@ -196,10 +196,10 @@
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendReadReceiptData:messageIds
                                       inConversation:conversation
-                                               index:self.msgIndex++];
+                                               index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -212,10 +212,10 @@
                           success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
                             error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getGroupMessageReadDetail:messageId
                                             inConversation:conversation
-                                                     index:self.msgIndex++];
+                                                     index:self.cmdIndex++];
         JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -233,7 +233,7 @@
         NSData *d = [self.pbData syncMessagesDataWithReceiveTime:receiveTime
                                                         sendTime:sendTime
                                                           userId:userId
-                                                           index:self.msgIndex++];
+                                                           index:self.cmdIndex++];
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {
@@ -249,12 +249,12 @@
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
                                             startTime:startTime
                                                 count:count
                                             direction:direction
-                                                index:self.msgIndex++];
+                                                index:self.cmdIndex++];
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -270,10 +270,10 @@
                   success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
                     error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData queryHisMsgsDataByIds:messageIds
                                         inConversation:conversation
-                                                 index:self.msgIndex++];
+                                                 index:self.cmdIndex++];
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -290,11 +290,11 @@
                   success:(void (^)(NSArray * _Nonnull, NSArray * _Nonnull, BOOL))successBlock
                     error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncConversationsData:startTime
                                              count:count
                                             userId:userId
-                                             index:self.msgIndex++];
+                                             index:self.cmdIndex++];
         JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -310,10 +310,10 @@
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData deleteConversationData:conversation
                                                  userId:userId
-                                                  index:self.msgIndex++];
+                                                  index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -327,11 +327,11 @@
                  success:(void (^)(void))successBlock
                    error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData clearUnreadCountData:conversation
                                                userId:userId
                                              msgIndex:msgIndex
-                                                index:self.msgIndex++];
+                                                index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -345,11 +345,11 @@
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData undisturbData:conversation
                                         userId:userId
                                         isMute:isMute
-                                         index:self.msgIndex++];
+                                         index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -364,12 +364,12 @@
                      success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
                        error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getMergedMessageList:messageId
                                                  time:timestamp
                                                 count:count
                                             direction:direction
-                                                index:self.msgIndex++];
+                                                index:self.cmdIndex++];
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -385,12 +385,12 @@
                   success:(void (^)(void))successBlock
                     error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.msgIndex);
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData registerPushToken:token
                                           deviceId:[JUtility getDeviceId]
                                        packageName:[[NSBundle mainBundle] bundleIdentifier]
                                             userId:userId
-                                             index:self.msgIndex++];
+                                             index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -529,13 +529,13 @@
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
     NSLog(@"handlePublishAckMsg, msgId is %@, code is %d", ack.msgId, ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
         JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;
         if (ack.code != 0) {
             sendMessageObj.errorBlock(ack.code, sendMessageObj.clientMsgNo);
         } else {
-            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.msgIndex);
+            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
@@ -543,7 +543,7 @@
 
 - (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
     NSLog(@"handleQryMsg");
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
         JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
         if (ack.code != 0) {
@@ -557,7 +557,7 @@
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
     NSLog(@"handleSyncConvsAck");
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSyncConvsObj class]]) {
         JSyncConvsObj *syncConvsObj = (JSyncConvsObj *)obj;
         if (ack.code != 0) {
@@ -607,7 +607,7 @@
 
 - (void)handleRecallMessage:(JPublishMsgAck *)ack {
     NSLog(@"handleRecallMessage, code is %d", ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JRecallMsgObj class]]) {
         JRecallMsgObj *recallObj = (JRecallMsgObj *)obj;
         if (ack.code != 0) {
@@ -621,7 +621,7 @@
 
 - (void)handleSimpleAck:(JSimpleQryAck *)ack {
     NSLog(@"handleSimpleAck, code is %d", ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
         if (ack.code != 0) {
@@ -635,7 +635,7 @@
 
 - (void)handleQryReadDetailAck:(JQryReadDetailAck *)ack {
     NSLog(@"handleQryReadDetailAck, code is %d", ack.code);
-    JBlockObj *obj = [self.msgBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
         JQryReadDetailObj *qryReadDetailObj = (JQryReadDetailObj *)obj;
         if (ack.code != 0) {
@@ -679,7 +679,7 @@
 - (void)setBlockObject:(JBlockObj *)obj
                forKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{
-        [self.msgBlockDic setObject:obj forKey:index];
+        [self.cmdBlockDic setObject:obj forKey:index];
     });
 }
 
@@ -687,7 +687,7 @@
 
 - (void)removeBlockObjectForKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{
-        [self.msgBlockDic removeObjectForKey:index];
+        [self.cmdBlockDic removeObjectForKey:index];
     });
 }
 @end

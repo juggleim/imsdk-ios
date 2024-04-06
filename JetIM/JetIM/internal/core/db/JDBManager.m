@@ -126,11 +126,11 @@
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
-                  messageIndex:(long long)messageIndex {
+                         seqNo:(long long)seqNo {
     [self.messageDb updateMessageAfterSend:clientMsgNo
                                  messageId:messageId
                                  timestamp:timestamp
-                              messageIndex:messageIndex];
+                                     seqNo:seqNo];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content

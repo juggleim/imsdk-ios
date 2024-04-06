@@ -17,6 +17,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "timestamp INTEGER,"
                                         "last_message_id VARCHAR (64),"
                                         "last_read_message_index INTEGER,"//最后一条读过的消息的未读数 index
+//                                        "last_message_index INTEGER,"//最后一条消息的未读数 index
                                         "is_top BOOLEAN,"
                                         "top_time INTEGER,"
                                         "mute BOOLEAN,"
@@ -29,7 +30,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_timestamp INTEGER,"
                                         "last_message_sender VARCHAR (64),"
                                         "last_message_content TEXT,"
-                                        "last_message_message_index INTEGER"//最后一条消息的排序 index
+                                        "last_message_seq_no INTEGER"//最后一条消息的排序号
                                         ")";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
@@ -37,13 +38,13 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "last_read_message_index, is_top, top_time, mute, last_mention_message_id,"
                                         "last_message_type, last_message_client_uid, last_message_direction, last_message_state,"
                                         "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content,"
-                                        "last_message_message_index)"
+                                        "last_message_seq_no)"
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
                                         "is_top=?, top_time=?, mute=?, last_mention_message_id=?, last_message_type=?,  "
                                         "last_message_client_uid=?, last_message_direction=?, last_message_state=?, "
                                         "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
-                                        "last_message_content=?, last_message_message_index=? WHERE conversation_type = ? "
+                                        "last_message_content=?, last_message_seq_no=? WHERE conversation_type = ? "
                                         "AND conversation_id = ?";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
@@ -60,7 +61,7 @@ NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_mes
 NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_message_type=?,"
                                     "last_message_client_uid=?, "
                                     "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
-                                    "last_message_sender=?, last_message_content=?, last_message_message_index=? WHERE "
+                                    "last_message_sender=?, last_message_content=?, last_message_seq_no=? WHERE "
                                     "conversation_type = ? AND conversation_id = ?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jConversationType = @"conversation_type";
@@ -81,7 +82,7 @@ NSString *const jLastMessageHasRead = @"last_message_has_read";
 NSString *const jLastMessageTimestamp = @"last_message_timestamp";
 NSString *const jLastMessageSender = @"last_message_sender";
 NSString *const jLastMessageContent = @"last_message_content";
-NSString *const jLastMessageIndex = @"last_message_message_index";
+NSString *const jLastMessageSeqNo = @"last_message_seq_no";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -111,10 +112,10 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
             }
             if (info) {
                 [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.msgIndex), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
             } else {
                 [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.msgIndex)];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
             }
         }];
     }];
@@ -206,7 +207,7 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
 - (void)updateLastMessage:(JConcreteMessage *)message {
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.msgIndex), @(message.conversation.conversationType), message.conversation.conversationId]];
+    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
 }
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
@@ -232,7 +233,7 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     info.isTop = [rs boolForColumn:jIsTop];
     info.topTime = [rs longLongIntForColumn:jTopTime];
     info.mute = [rs boolForColumn:jMute];
-    info.unreadCount = (int)([rs longLongIntForColumn:jLastMessageIndex] - info.lastReadMessageIndex);
+    info.unreadCount = (int)([rs longLongIntForColumn:jLastMessageSeqNo] - info.lastReadMessageIndex);
     JConcreteMessage *lastMessage = [[JConcreteMessage alloc] init];
     lastMessage.conversation = c;
     lastMessage.contentType = [rs stringForColumn:jLastMessageType];
@@ -247,7 +248,7 @@ NSString *const jLastMessageIndex = @"last_message_message_index";
     NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
     lastMessage.content = [[JContentTypeCenter shared] contentWithData:data
                                                            contentType:lastMessage.contentType];
-    lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];
+    lastMessage.seqNo = [rs longLongIntForColumn:jLastMessageSeqNo];
     info.lastMessage = lastMessage;
     return info;
 }

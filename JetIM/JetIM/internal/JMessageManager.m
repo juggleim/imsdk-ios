@@ -473,7 +473,7 @@
                             clientUid:message.clientUid
                            mergedMsgs:mergedMsgs
                                userId:self.core.userId
-                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long msgIndex) {
+                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
        if (self.syncProcessing) {
            self.cachedSendTime = timestamp;
        } else {
@@ -482,10 +482,10 @@
        [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                          messageId:msgId
                                          timestamp:timestamp
-                                      messageIndex:msgIndex];
+                                             seqNo:seqNo];
        message.messageId = msgId;
        message.timestamp = timestamp;
-       message.msgIndex = msgIndex;
+       message.seqNo = seqNo;
        message.messageState = JMessageStateSent;
        
        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
