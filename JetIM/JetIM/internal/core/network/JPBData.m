@@ -763,8 +763,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConcreteMessage *lastMessage = [self messageWithDownMsg:conversation.msg];
     info.lastMessage = lastMessage;
     info.lastReadMessageIndex = conversation.latestReadIndex;
-//    info.unreadCount = (int)conversation.unreadCount;
-    info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
+    info.lastMessageIndex = conversation.latestUnreadIndex;
+    info.unreadCount = (int)conversation.unreadCount;
+//    info.unreadCount = (int)(lastMessage.msgIndex - info.lastReadMessageIndex);
     info.syncTime = conversation.syncTime;
     info.mute = (conversation.undisturbType==1)?YES:NO;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];

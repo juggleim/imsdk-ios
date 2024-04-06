@@ -141,14 +141,12 @@
 }
 
 - (void)clearUnreadCountByConversation:(JConversation *)conversation {
-    JConversationInfo *info = [self getConversationInfo:conversation];
-    JConcreteMessage *lastMessage = (JConcreteMessage *)info.lastMessage;
-    long long lastMessageIndex = lastMessage.msgIndex;
+    JConcreteConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
     [self.core.dbManager clearUnreadCountBy:conversation
-                                   msgIndex:lastMessageIndex];
+                                   msgIndex:info.lastMessageIndex];
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
-                                 msgIndex:lastMessageIndex
+                                 msgIndex:info.lastMessageIndex
                                   success:^(void) {
         //清除未读数暂时不用更新 syncTime
         NSLog(@"[JetIM] clear unread success");

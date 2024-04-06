@@ -16,7 +16,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "draft TEXT,"
                                         "timestamp INTEGER,"
                                         "last_message_id VARCHAR (64),"
-                                        "last_read_message_index INTEGER,"
+                                        "last_read_message_index INTEGER,"//最后一条读过的消息的未读数 index
                                         "is_top BOOLEAN,"
                                         "top_time INTEGER,"
                                         "mute BOOLEAN,"
@@ -29,7 +29,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_timestamp INTEGER,"
                                         "last_message_sender VARCHAR (64),"
                                         "last_message_content TEXT,"
-                                        "last_message_message_index INTEGER"
+                                        "last_message_message_index INTEGER"//最后一条消息的排序 index
                                         ")";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
