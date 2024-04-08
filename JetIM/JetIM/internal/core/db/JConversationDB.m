@@ -39,9 +39,9 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                         "last_message_type, last_message_client_uid, last_message_direction, last_message_state,"
                                         "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content,"
                                         "last_message_seq_no)"
-                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
-                                        "last_message_index, is_top=?, top_time=?, mute=?, last_mention_message_id=?, last_message_type=?,  "
+                                        "last_message_index=?, is_top=?, top_time=?, mute=?, last_mention_message_id=?, last_message_type=?,  "
                                         "last_message_client_uid=?, last_message_direction=?, last_message_state=?, "
                                         "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
                                         "last_message_content=?, last_message_seq_no=? WHERE conversation_type = ? "

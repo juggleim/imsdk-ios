@@ -24,6 +24,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "content TEXT,"
                                         "extra TEXT,"
                                         "seq_no INTEGER,"
+                                        "message_index INTEGER,"
                                         "read_count INTEGER,"
                                         "member_count INTEGER DEFAULT -1,"
                                         "is_deleted BOOLEAN DEFAULT 0"
@@ -38,7 +39,7 @@ NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, read_count, member_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
@@ -66,6 +67,7 @@ NSString *const jSender = @"sender";
 NSString *const jContent = @"content";
 NSString *const jExtra = @"extra";
 NSString *const jSeqNo = @"seq_no";
+NSString *const jMessageIndex = @"message_index";
 NSString *const jReadCount = @"read_count";
 NSString *const jMemberCount = @"member_count";
 NSString *const jIsDeleted = @"is_deleted";
@@ -294,15 +296,17 @@ NSString *const jIsDeleted = @"is_deleted";
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message inDb:(JFMDatabase *)db {
     long long seqNo = 0;
+    long long msgIndex = 0;
     NSString *clientUid = @"";
     if ([message isKindOfClass:[JConcreteMessage class]]) {
         seqNo = ((JConcreteMessage *)message).seqNo;
+        msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
     }
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     int memberCount = message.groupReadInfo.memberCount?:-1;
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(message.groupReadInfo.readCount), @(memberCount)];
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount)];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
@@ -339,6 +343,7 @@ NSString *const jIsDeleted = @"is_deleted";
     message.content = [[JContentTypeCenter shared] contentWithData:data
                                                        contentType:message.contentType];
     message.seqNo = [rs longLongIntForColumn:jSeqNo];
+    message.msgIndex = [rs longLongIntForColumn:jMessageIndex];
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = [rs intForColumn:jReadCount];
     info.memberCount = [rs intForColumn:jMemberCount];

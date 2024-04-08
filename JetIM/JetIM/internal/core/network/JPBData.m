@@ -707,6 +707,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.messageState = JMessageStateSent;
     msg.senderUserId = downMsg.senderId;
     msg.seqNo = downMsg.msgIndex;
+    msg.msgIndex = downMsg.unreadIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
     int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
