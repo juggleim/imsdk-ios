@@ -152,8 +152,8 @@
         
         //getConversationList
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
-//            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
             NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
             NSLog(@"conversation count is %d", array.count);
         });

@@ -416,7 +416,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
-    c.latestUnreadIndex = msgIndex;
+    c.latestReadIndex = msgIndex;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
     req.conversationsArray = arr;
     
