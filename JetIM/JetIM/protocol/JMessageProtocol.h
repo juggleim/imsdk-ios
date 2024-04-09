@@ -74,7 +74,7 @@
 - (JMessage *)saveMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation;
 
-/// 从本地获取消息
+/// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
 /// 获取消息列表
 /// - Parameters:
 ///   - conversation: 会话对象
@@ -86,7 +86,7 @@
                                     time:(long long)time
                                direction:(JPullDirection)direction;
 
-/// 从本地获取消息
+/// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
 /// - Parameters:
 ///   - conversation: 会话对象
 ///   - count: 拉取消息条数
@@ -174,6 +174,22 @@
                     direction:(JPullDirection)direction
                       success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
+
+
+/// 先从本地获取消息，如果中间存在缺失，则从远端补齐
+/// - Parameters:
+///   - conversation: 会话对象
+///   - startTime: 消息时间戳，如果传 0 为当前时间
+///   - count: 拉取数量，超过 100 条按 100 返回
+///   - direction: 拉取方向
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
+                            startTime:(long long)startTime
+                                count:(int)count
+                            direction:(JPullDirection)direction
+                              success:(void (^)(NSArray *messages))successBlock
+                                error:(void (^)(JErrorCode code))errorBlock;
 
 /// 发送阅读回执
 /// - Parameters:

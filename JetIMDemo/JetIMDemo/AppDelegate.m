@@ -151,12 +151,12 @@
 //        }];
         
         //getConversationList
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
-            NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-            NSLog(@"conversation count is %d", array.count);
-        });
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
+//            NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
+//            NSLog(@"conversation count is %d", array.count);
+//        });
         
         
         //delete conversation
@@ -196,12 +196,25 @@
 //        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
         
         //getMessages
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
 //        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
 //                                                                 count:100
-//                                                                  time:0
-//                                                             direction:JPullDirectionOlder];
-//        NSLog(@"lifei");
+//                                                                  time:1712600893903
+//                                                             direction:JPullDirectionNewer];
+        
+//        [JIM.shared.messageManager deleteMessageByMessageId:@"nq2crdhwaagk5g4v"];
+        [JIM.shared.messageManager getLocalAndRemoteMessagesFrom:c
+                                                       startTime:0
+                                                           count:100
+                                                       direction:JPullDirectionOlder success:^(NSArray *messages) {
+            NSLog(@"lifei");
+
+        } error:^(JErrorCode code) {
+            NSLog(@"lifei");
+
+        }];
+        
+        NSLog(@"lifei");
         
         //read receipt
 //        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];

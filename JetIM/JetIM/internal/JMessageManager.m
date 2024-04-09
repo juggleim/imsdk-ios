@@ -291,6 +291,60 @@
     }];
 }
 
+- (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
+                            startTime:(long long)startTime
+                                count:(int)count
+                            direction:(JPullDirection)direction
+                              success:(void (^)(NSArray *))successBlock
+                                error:(void (^)(JErrorCode))errorBlock {
+    if (count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                NSArray *arr = [NSArray array];
+                successBlock(arr);
+            }
+        });
+        return;
+    }
+    if (count > 100) {
+        count = 100;
+    }
+    NSArray *localMessages = [self getMessagesFrom:conversation
+                                             count:count
+                                              time:startTime
+                                         direction:direction];
+    __block BOOL needRemote = NO;
+    if (localMessages.count > 0) {
+        JConcreteMessage *message = localMessages[0];
+        __block long long seqNo = message.seqNo;
+        [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (idx > 0) {
+                if (obj.seqNo > ++seqNo) {
+                    needRemote = YES;
+                    *stop = YES;
+                    return;
+                }
+            }
+        }];
+    } else {
+        needRemote = YES;
+    }
+    if (needRemote) {
+        [self getRemoteMessagesFrom:conversation
+                          startTime:startTime
+                              count:count
+                          direction:direction
+                            success:successBlock
+                              error:errorBlock];
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(localMessages);
+            }
+        });
+    }
+}
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     return [self.core.dbManager getMessagesByMessageIds:messageIds];
 }

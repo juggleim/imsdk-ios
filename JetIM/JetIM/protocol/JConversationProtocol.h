@@ -64,16 +64,12 @@
 - (void)clearDraftInConversation:(JConversation *)conversation;
 
 /// 获取消息未读的总数
-//- (int)getTotalUnreadCount;
+- (int)getTotalUnreadCount;
 
 /// TODO:
 /// 根据类型获取会话信息列表
 /// - Parameter conversationTypes: 会话类型的数组，需要将 JConversationType 转为 NSNumber 并构建 NSArray
 //- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
-
-/// 获取某一个会话的未读数
-/// - Parameter conversation: 会话对象
-//- (int)getUnreadCountByConversation:(JConversation *)conversation;
 
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象

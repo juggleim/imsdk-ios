@@ -160,14 +160,10 @@
 - (NSArray<JConversationInfo *> *)getConversationInfoList {
     return [self.core.dbManager getConversationInfoList];
 }
-//
-//- (int)getTotalUnreadCount { 
-//    <#code#>
-//}
-//
-//- (int)getUnreadCountByConversation:(JConversation *)conversation { 
-//    <#code#>
-//}
+
+- (int)getTotalUnreadCount {
+    return [self.core.dbManager getTotalUnreadCount];
+}
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.core.dbManager setDraft:draft inConversation:conversation];
