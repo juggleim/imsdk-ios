@@ -58,6 +58,7 @@
                     });
                 }
             }];
+            [self noticeTotalUnreadCountChange];
         }
         if (deletedConversations.lastObject) {
             [self updateUserInfos:deletedConversations];
@@ -144,6 +145,7 @@
     JConcreteConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
     [self.core.dbManager clearUnreadCountBy:conversation
                                    msgIndex:info.lastMessageIndex];
+    [self noticeTotalUnreadCountChange];
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:info.lastMessageIndex
@@ -239,6 +241,7 @@
     [self.core.dbManager updateLastMessage:message];
     [self updateSyncTime:message.timestamp];
     [self noticeConversationAddOrUpdate:message];
+    [self noticeTotalUnreadCountChange];
 }
 
 - (void)conversationsDidDelete:(NSArray<JConversation *> *)conversations {
@@ -291,6 +294,18 @@
             }
         });
     }
+}
+
+- (void)noticeTotalUnreadCountChange {
+    int count = [self.core.dbManager getTotalUnreadCount];
+    if (count < 0) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(totalUnreadMessageCountDidUpdate:)]) {
+            [self.delegate totalUnreadMessageCountDidUpdate:count];
+        }
+    });
 }
 
 - (void)updateSyncTime:(long long)timestamp {

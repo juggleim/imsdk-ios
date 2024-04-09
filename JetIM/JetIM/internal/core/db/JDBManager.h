@@ -46,6 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateLastMessage:(JConcreteMessage *)message;
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation;
+- (int)getTotalUnreadCount;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;

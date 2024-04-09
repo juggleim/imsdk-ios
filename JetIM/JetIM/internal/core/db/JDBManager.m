@@ -118,6 +118,10 @@
     [self.conversationDb setMute:isMute conversation:conversation];
 }
 
+- (int)getTotalUnreadCount {
+    return [self.conversationDb getTotalUnreadCount];
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
