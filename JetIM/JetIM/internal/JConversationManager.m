@@ -143,6 +143,9 @@
 
 - (void)clearUnreadCountByConversation:(JConversation *)conversation {
     JConcreteConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
+    if (!info) {
+        return;
+    }
     [self.core.dbManager clearUnreadCountBy:conversation
                                    msgIndex:info.lastMessageIndex];
     [self noticeTotalUnreadCountChange];
