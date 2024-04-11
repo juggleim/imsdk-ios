@@ -283,6 +283,7 @@
         addInfo.lastMessage = message;
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;
+        addInfo.unreadCount = 1;
         [self.core.dbManager insertConversations:@[addInfo] completion:nil];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {

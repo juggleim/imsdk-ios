@@ -266,6 +266,7 @@ NSString *const jTotalCount = @"total_count";
     lastMessage.content = [[JContentTypeCenter shared] contentWithData:data
                                                            contentType:lastMessage.contentType];
     lastMessage.seqNo = [rs longLongIntForColumn:jLastMessageSeqNo];
+    lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];
     info.lastMessage = lastMessage;
     return info;
 }
