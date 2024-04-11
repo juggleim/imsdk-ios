@@ -15,9 +15,10 @@
 @implementation JTextMessage
 
 - (instancetype)initWithContent:(NSString *)content {
-    JTextMessage *text = [[JTextMessage alloc] init];
-    text.content = content;
-    return text;
+    if (self = [super init]) {
+        self.content = content;
+    }
+    return self;
 }
 
 + (NSString *)contentType {

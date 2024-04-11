@@ -14,9 +14,10 @@
 @implementation JUserInfoManager
 
 - (instancetype)initWithCore:(JetIMCore *)core {
-    JUserInfoManager *m = [[JUserInfoManager alloc] init];
-    m.core = core;
-    return m;
+    if (self = [super init]) {
+        self.core = core;
+    }
+    return self;
 }
 
 - (JUserInfo *)getUserInfo:(NSString *)userId {

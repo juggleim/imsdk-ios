@@ -22,10 +22,11 @@
 @implementation JConversationManager
 
 - (instancetype)initWithCore:(JetIMCore *)core {
-    JConversationManager *m = [[JConversationManager alloc] init];
-    m.core = core;
-    m.cachedSyncTime = -1;
-    return m;
+    if (self = [super init]) {
+        self.core = core;
+        self.cachedSyncTime = -1;
+    }
+    return self;
 }
 
 - (void)syncConversations:(void (^)(void))completeBlock {

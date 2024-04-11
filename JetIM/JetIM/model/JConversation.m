@@ -10,9 +10,10 @@
 @implementation JConversation
 
 - (instancetype)initWithConversationType:(JConversationType)type conversationId:(NSString *)conversationId {
-    JConversation *c = [[JConversation alloc] init];
-    c.conversationType = type;
-    c.conversationId = conversationId;
-    return c;
+    if (self = [super init]) {
+        self.conversationType = type;
+        self.conversationId = conversationId;
+    }
+    return self;
 }
 @end

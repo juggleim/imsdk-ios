@@ -288,9 +288,10 @@ NSString *const jIsDeleted = @"is_deleted";
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
-    JMessageDB *db = [[JMessageDB alloc] init];
-    db.dbHelper = dbHelper;
-    return db;
+    if (self = [super init]){
+        self.dbHelper = dbHelper;
+    }
+    return self;
 }
 
 #pragma mark - operation with db

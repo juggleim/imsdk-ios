@@ -23,9 +23,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@"https://nav.gxjipei.com"];
+    [JIM.shared setServer:@"https://nav.wahu.cn"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken3];
+    [JIM.shared.connectionManager connectWithToken:@"CgZhcHBrZXkaII9ootAN2D9BkrDsRQpTjUDButR6jl7w9a/O1p87I1Oq"];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -201,7 +201,7 @@
 ////                                                                 count:100
 ////                                                                  time:1712600893903
 ////                                                             direction:JPullDirectionNewer];
-//        
+//
 ////        [JIM.shared.messageManager deleteMessageByMessageId:@"nq2crdhwaagk5g4v"];
 //        [JIM.shared.messageManager getLocalAndRemoteMessagesFrom:c
 //                                                       startTime:0
@@ -213,7 +213,7 @@
 //            NSLog(@"lifei");
 //
 //        }];
-//        
+//
 //        NSLog(@"lifei");
         
         //read receipt

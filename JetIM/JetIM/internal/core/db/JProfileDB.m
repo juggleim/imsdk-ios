@@ -83,9 +83,10 @@ NSString *const kValue = @"value";
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
-    JProfileDB *db = [[JProfileDB alloc] init];
-    db.dbHelper = dbHelper;
-    return db;
+    if (self = [super init]) {
+        self.dbHelper = dbHelper;
+    }
+    return self;
 }
 
 @end

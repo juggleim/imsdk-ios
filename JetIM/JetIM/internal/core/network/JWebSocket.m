@@ -90,12 +90,14 @@
 @implementation JWebSocket
 
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue receiveQueue:(dispatch_queue_t)receiveQueue {
-    JWebSocket *ws = [[JWebSocket alloc] init];
-    ws.sendQueue = sendQueue;
-    ws.receiveQueue = receiveQueue;
-    ws.pbData = [[JPBData alloc] init];
-    ws.cmdBlockDic = [[NSMutableDictionary alloc] init];
-    return ws;
+    if (self = [super init]) {
+        self.sendQueue = sendQueue;
+        self.receiveQueue = receiveQueue;
+        self.pbData = [[JPBData alloc] init];
+        self.cmdBlockDic = [[NSMutableDictionary alloc] init];
+        
+    }
+    return self;
 }
 
 - (void)connect:(NSString *)appKey

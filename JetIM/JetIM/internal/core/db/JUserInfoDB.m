@@ -47,9 +47,10 @@ NSString *const jColUserInfoExtension = @"extension";
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
-    JUserInfoDB *db = [[JUserInfoDB alloc] init];
-    db.dbHelper = dbHelper;
-    return db;
+    if (self = [super init]) {
+        self.dbHelper = dbHelper;
+    }
+    return self;
 }
 
 - (JUserInfo *)getUserInfo:(NSString *)userId {

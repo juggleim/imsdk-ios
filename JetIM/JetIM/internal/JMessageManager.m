@@ -38,23 +38,24 @@
 }
 
 - (instancetype)initWithCore:(JetIMCore *)core {
-    JMessageManager *m = [[JMessageManager alloc] init];
-    m.core = core;
-    [m.core.webSocket setMessageDelegate:m];
-    [m registerContentType:[JTextMessage class]];
-    [m registerContentType:[JImageMessage class]];
-    [m registerContentType:[JFileMessage class]];
-    [m registerContentType:[JVoiceMessage class]];
-    [m registerContentType:[JVideoMessage class]];
-    [m registerContentType:[JRecallCmdMessage class]];
-    [m registerContentType:[JRecallInfoMessage class]];
-    [m registerContentType:[JDeleteConvMessage class]];
-    [m registerContentType:[JReadNtfMessage class]];
-    [m registerContentType:[JGroupReadNtfMessage class]];
-    [m registerContentType:[JMergeMessage class]];
-    m.cachedSendTime = -1;
-    m.cachedReceiveTime = -1;
-    return m;
+    if (self = [super init]) {
+        self.core = core;
+        [self.core.webSocket setMessageDelegate:self];
+        [self registerContentType:[JTextMessage class]];
+        [self registerContentType:[JImageMessage class]];
+        [self registerContentType:[JFileMessage class]];
+        [self registerContentType:[JVoiceMessage class]];
+        [self registerContentType:[JVideoMessage class]];
+        [self registerContentType:[JRecallCmdMessage class]];
+        [self registerContentType:[JRecallInfoMessage class]];
+        [self registerContentType:[JDeleteConvMessage class]];
+        [self registerContentType:[JReadNtfMessage class]];
+        [self registerContentType:[JGroupReadNtfMessage class]];
+        [self registerContentType:[JMergeMessage class]];
+        self.cachedSendTime = -1;
+        self.cachedReceiveTime = -1;
+    }
+    return self;
 }
 
 - (void)setDelegate:(id<JMessageDelegate>)delegate {
@@ -297,7 +298,7 @@
                             direction:(JPullDirection)direction
                               success:(void (^)(NSArray *))successBlock
                                 error:(void (^)(JErrorCode))errorBlock {
-    if (count == 0) {
+    if (count <= 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 NSArray *arr = [NSArray array];

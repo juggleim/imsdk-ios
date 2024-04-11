@@ -230,9 +230,10 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
-    JConversationDB *db = [[JConversationDB alloc] init];
-    db.dbHelper = dbHelper;
-    return db;
+    if (self = [super init]) {
+        self.dbHelper = dbHelper;
+    }
+    return self;
 }
 
 #pragma mark - internal

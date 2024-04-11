@@ -39,9 +39,10 @@
 }
 
 - (instancetype)initWithCore:(JetIMCore *)core {
-    JHeartBeatManager *m = [[JHeartBeatManager alloc] init];
-    m.core = core;
-    return m;
+    if (self = [super init]) {
+        self.core = core;
+    }
+    return self;
 }
 
 #pragma mark - internal

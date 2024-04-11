@@ -32,17 +32,18 @@
 - (instancetype)initWithTitle:(NSString *)title
                 MessageIdList:(NSArray<NSString *> *)messageIdList
                   previewList:(NSArray<JMergeMessagePreviewUnit *> *)previewList {
-    JMergeMessage *message = [[JMergeMessage alloc] init];
-    message.title = title;
-    if (messageIdList.count > 100) {
-        messageIdList = [messageIdList subarrayWithRange:NSMakeRange(0, 99)];
+    if (self = [super init]) {
+        self.title = title;
+        if (messageIdList.count > 100) {
+            messageIdList = [messageIdList subarrayWithRange:NSMakeRange(0, 99)];
+        }
+        self.messageIdList = messageIdList;
+        if (previewList.count > 10) {
+            previewList = [previewList subarrayWithRange:NSMakeRange(0, 9)];
+        }
+        self.previewList = previewList;
     }
-    message.messageIdList = messageIdList;
-    if (previewList.count > 10) {
-        previewList = [previewList subarrayWithRange:NSMakeRange(0, 9)];
-    }
-    message.previewList = previewList;
-    return message;
+    return self;
 }
 
 + (NSString *)contentType {

@@ -10,6 +10,7 @@
 #import "JHeartBeatManager.h"
 #import "JNaviManager.h"
 #import "JetIMConstInternal.h"
+#import <UIKit/UIKit.h>
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -19,6 +20,8 @@
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
+@property (nonatomic, assign) BOOL isBackground;
+@property (nonatomic, assign) UIBackgroundTaskIdentifier bgTask;
 @end
 
 @implementation JConnectionManager
@@ -26,15 +29,18 @@
 - (instancetype)initWithCore:(JetIMCore *)core
          conversationManager:(nonnull JConversationManager *)conversationManager
               messageManager:(nonnull JMessageManager *)messageManager {
-    JConnectionManager *m = [[JConnectionManager alloc] init];
-    [core.webSocket setConnectDelegate:m];
-    core.connectionStatus = JConnectionStatusInternalIdle;
-    m.core = core;
-    m.conversationManager = conversationManager;
-    m.messageManager = messageManager;
-    JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
-    m.heartBeatManager = heartBeatManager;
-    return m;
+    self = [super init];
+    if (self) {
+        [core.webSocket setConnectDelegate:self];
+        core.connectionStatus = JConnectionStatusInternalIdle;
+        self.core = core;
+        self.conversationManager = conversationManager;
+        self.messageManager = messageManager;
+        JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
+        self.heartBeatManager = heartBeatManager;
+        [self addObserver];
+    }
+    return self;
 }
 
 - (void)connectWithToken:(NSString *)token {
@@ -268,6 +274,38 @@
         return YES;
     }
     return NO;
+}
+
+- (void)addObserver {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(enterBackground)
+                                                 name:UIApplicationDidEnterBackgroundNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(enterForeground)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(appTerminate)
+                                                 name:UIApplicationWillTerminateNotification
+                                               object:nil];
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        self.isBackground = YES;
+    } else {
+        self.isBackground = NO;
+    }
+}
+
+- (void)enterBackground {
+    self.isBackground = YES;
+}
+
+- (void)enterForeground {
+    self.isBackground = NO;
+}
+
+- (void)appTerminate {
+    
 }
 
 @end
