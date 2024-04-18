@@ -40,4 +40,7 @@
     return self.content?:@"";
 }
 
+- (NSString *)searchContent{
+    return self.content?:@"";
+}
 @end
