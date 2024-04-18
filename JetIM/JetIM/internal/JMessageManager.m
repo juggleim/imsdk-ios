@@ -180,6 +180,13 @@
                          withClientMsgNo:clientMsgNo];
 }
 
+/// 搜素本地消息 SearchContent内容包含 指定内容
+/// - Parameter searchContent: 需要包含的字符串
+- (NSArray <JMessage *> *)searchMessageWithContent:(NSString *)searchContent{
+    
+    return [self.core.dbManager searchMessagesWithContent:searchContent];
+}
+
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *))successBlock

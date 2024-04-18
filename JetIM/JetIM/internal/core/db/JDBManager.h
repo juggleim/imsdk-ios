@@ -72,6 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent;
+
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;

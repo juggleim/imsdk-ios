@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// 会话列表中显示的消息摘要
 - (NSString *)conversationDigest;
 
+/// 本地模糊搜索内容
+- (NSString *)searchContent;
+
 @end
 
 NS_ASSUME_NONNULL_END

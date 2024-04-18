@@ -27,7 +27,8 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "message_index INTEGER,"
                                         "read_count INTEGER,"
                                         "member_count INTEGER DEFAULT -1,"
-                                        "is_deleted BOOLEAN DEFAULT 0"
+                                        "is_deleted BOOLEAN DEFAULT 0,"
+                                        "search_content TEXT"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
@@ -39,7 +40,7 @@ NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
@@ -52,6 +53,7 @@ NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
+NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ?";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -261,6 +263,29 @@ NSString *const jIsDeleted = @"is_deleted";
     return [messages copy];
 }
 
+
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent{
+    
+    NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
+    if (searchContent.length == 0 || searchContent == nil) {
+        return result;
+    }
+    NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
+    NSArray *arguments = @[searchString];
+
+    [self.dbHelper executeQuery:jGetMessagesBySearchContent
+           withArgumentsInArray:arguments
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteMessage *m = [self messageWith:resultSet];
+            [result addObject:m];
+        }
+    }];
+    
+    return [result copy];
+}
+
+
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo {
     [self.dbHelper executeUpdate:jUpdateMessageState
@@ -307,7 +332,7 @@ NSString *const jIsDeleted = @"is_deleted";
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     int memberCount = message.groupReadInfo.memberCount?:-1;
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount)];
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId

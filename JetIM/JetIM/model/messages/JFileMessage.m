@@ -45,4 +45,7 @@
     return kDigest;
 }
 
+- (NSString *)searchContent{
+    return self.name?:@"";
+}
 @end

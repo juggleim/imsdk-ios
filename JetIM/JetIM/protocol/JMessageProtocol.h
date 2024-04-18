@@ -225,4 +225,10 @@
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
+
+
+/// 搜素本地消息 SearchContent 内容包含 指定内容
+/// - Parameter searchContent: 需要包含的字符串
+- (NSArray <JMessage *> *)searchMessageWithContent:(NSString *)searchContent;
+
 @end
