@@ -32,4 +32,8 @@
     return @"";
 }
 
+/// 本地模糊搜索内容
+- (NSString *)searchContent{
+    return @"";
+}
 @end

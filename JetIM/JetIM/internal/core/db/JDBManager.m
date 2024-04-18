@@ -195,6 +195,10 @@
                     withClientMsgNo:clientMsgNo];
 }
 
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent{
+    return [self.messageDb searchMessagesWithContent:searchContent];
+}
+
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {
     return [self.userInfoDB getUserInfo:userId];
