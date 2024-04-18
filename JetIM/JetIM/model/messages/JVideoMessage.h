@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JVideoMessage : JMessageContent
-/// 视频消息视频的远端地址
+/// 视频的远端地址
 @property (nonatomic, copy) NSString *url;
 /// 视频封面图远端地址
 @property (nonatomic, copy) NSString *snapshotUrl;

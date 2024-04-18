@@ -38,6 +38,7 @@
         self.messageManager = messageManager;
         JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
         self.heartBeatManager = heartBeatManager;
+        self.bgTask = UIBackgroundTaskInvalid;
         [self addObserver];
     }
     return self;
