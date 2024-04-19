@@ -42,7 +42,7 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
-NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ? WHERE message_uid = ?";
+NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
@@ -53,7 +53,8 @@ NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
-NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ?";
+NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
+
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -133,7 +134,7 @@ NSString *const jIsDeleted = @"is_deleted";
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageContent
-            withArgumentsInArray:@[s, type, messageId]];
+            withArgumentsInArray:@[s, type, content.searchContent, messageId]];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -264,25 +265,52 @@ NSString *const jIsDeleted = @"is_deleted";
 }
 
 
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent{
-    
-    NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes{
     if (searchContent.length == 0 || searchContent == nil) {
-        return result;
+        return nil;
     }
     NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
-    NSArray *arguments = @[searchString];
-
-    [self.dbHelper executeQuery:jGetMessagesBySearchContent
-           withArgumentsInArray:arguments
+    NSString *sql = jGetMessagesBySearchContent;
+    if (direction == JPullDirectionNewer) {
+        sql = [sql stringByAppendingString:jAndGreaterThan];
+    } else {
+        sql = [sql stringByAppendingString:jAndLessThan];
+    }
+    if (contentTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
+    }
+    sql = [sql stringByAppendingString:jOrderByTimestamp];
+    if (direction == JPullDirectionNewer) {
+        sql = [sql stringByAppendingString:jASC];
+    } else {
+        sql = [sql stringByAppendingString:jDESC];
+    }
+    sql = [sql stringByAppendingString:jLimit];
+    
+    NSMutableArray *messages = [[NSMutableArray alloc] init];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[searchString, @(time)]];
+    [args addObjectsFromArray:contentTypes];
+    [args addObject:@(count)];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         while ([resultSet next]) {
             JConcreteMessage *m = [self messageWith:resultSet];
-            [result addObject:m];
+            [messages addObject:m];
         }
     }];
-    
-    return [result copy];
+    NSArray *result;
+    if (direction == JPullDirectionOlder) {
+        result = [[messages reverseObjectEnumerator] allObjects];
+    } else {
+        result = [messages copy];
+    }
+    return result;
 }
 
 

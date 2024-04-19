@@ -46,7 +46,11 @@ NS_ASSUME_NONNULL_BEGIN
         withClientMsgNo:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray<NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs;
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent;
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes;
 
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message

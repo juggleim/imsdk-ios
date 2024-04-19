@@ -877,12 +877,12 @@
 		A08AA4202B1B78FE008B114C /* oc */ = {
 			isa = PBXGroup;
 			children = (
-				A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */,
-				A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */,
+				A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */,
+				A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */,
 				A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */,
 				A0D3AD282B6973D600D170D7 /* Connect.pbobjc.m */,
-				A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */,
-				A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */,
+				A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */,
+				A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */,
 			);
 			path = oc;
 			sourceTree = "<group>";

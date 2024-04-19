@@ -195,8 +195,12 @@
                     withClientMsgNo:clientMsgNo];
 }
 
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent{
-    return [self.messageDb searchMessagesWithContent:searchContent];
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes{
+    return [self.messageDb searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
 
 #pragma mark - user table
