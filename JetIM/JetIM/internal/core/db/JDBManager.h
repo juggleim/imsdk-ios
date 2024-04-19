@@ -72,7 +72,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent;
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes;
 
 
 #pragma mark - user table

@@ -182,9 +182,13 @@
 
 /// 搜素本地消息 SearchContent内容包含 指定内容
 /// - Parameter searchContent: 需要包含的字符串
-- (NSArray <JMessage *> *)searchMessageWithContent:(NSString *)searchContent{
-    
-    return [self.core.dbManager searchMessagesWithContent:searchContent];
+- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes{
+ 
+    return [self.core.dbManager searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content

@@ -227,8 +227,17 @@
         withClientMsgNo:(long long)clientMsgNo;
 
 
-/// 搜素本地消息 SearchContent 内容包含 指定内容
-/// - Parameter searchContent: 需要包含的字符串
-- (NSArray <JMessage *> *)searchMessageWithContent:(NSString *)searchContent;
 
+/// 消息本地检索
+/// - Parameters:
+///   - searchContent: 查询内容
+///   - count:拉取数量，超过 100 条按 100 返回
+///   - time: 消息时间戳，如果传 0 为当前时间
+///   - direction: 查询方向
+///   - contentTypes: 内容类型 ，传空 返回所有类型
+- (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                             count:(int)count
+                                              time:(long long)time
+                                         direction:(JPullDirection)direction
+                                      contentTypes:(NSArray<NSString *> *)contentTypes;
 @end
