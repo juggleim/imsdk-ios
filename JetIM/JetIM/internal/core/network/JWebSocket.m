@@ -152,7 +152,8 @@
                                                   userId:userId
                                                    index:self.cmdIndex++
                                         conversationType:conversation.conversationType
-                                          conversationId:conversation.conversationId];
+                                          conversationId:conversation.conversationId
+                                             mentionInfo:content.mentionInfo];
 
         NSError *err = nil;
         [self.sws sendData:d error:&err];
@@ -381,6 +382,23 @@
                  error:errorBlock];
     });
 }
+
+//- (void)getMentionMessages:(JConversation *)conversation
+//                startIndex:(long long)startIndex
+//                     count:(int)count
+//                 direction:(JPullDirection)direction
+//                   success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
+//                     error:(void (^)(JErrorCode code))errorBlock {
+//    dispatch_async(self.sendQueue, ^{
+//        NSNumber *key = @(self.cmdIndex);
+//        NSData *d = [self.pbData getMentionMessages:conversation
+//                                         startIndex:startIndex
+//                                              count:count
+//                                          direction:direction
+//                                              index:self.cmdIndex++];
+//        
+//    });
+//}
 
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId

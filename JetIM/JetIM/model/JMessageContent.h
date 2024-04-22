@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JMessageMentionInfo.h"
 
 typedef NS_OPTIONS(int32_t, JMessageFlag) {
     //是否命令消息
@@ -47,6 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 本地模糊搜索内容
 - (NSString *)searchContent;
+
+/// @ 信息（非 @ 消息本字段为 nil）
+@property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
 
 @end
 

@@ -75,6 +75,12 @@
 /// - Parameter conversation: 会话对象
 - (void)clearUnreadCountByConversation:(JConversation *)conversation;
 
+/// 设置静音
+/// - Parameters:
+///   - isMute: YES 表示静音，NO 表示解除静音
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation
         success:(void (^)(void))successBlock

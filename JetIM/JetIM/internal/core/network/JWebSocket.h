@@ -112,6 +112,13 @@ NS_ASSUME_NONNULL_BEGIN
                      success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                        error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+//- (void)getMentionMessages:(JConversation *)conversation
+//                startIndex:(long long)startIndex
+//                     count:(int)count
+//                 direction:(JPullDirection)direction
+//                   success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
+//                     error:(void (^)(JErrorCode code))errorBlock;
+
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId
                   success:(void (^)(void))successBlock

@@ -12,6 +12,7 @@
 #import "JetIMPBConst.h"
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
+#import "JMessageMentionInfo.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -48,6 +49,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jUndisturb @"undisturb_convers"
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
+#define jQryMentionMsgs @"qry_mention_msgs"
 #define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
@@ -164,7 +166,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
                              userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
-                     conversationId:(NSString *)conversationId {
+                     conversationId:(NSString *)conversationId
+                        mentionInfo:(nullable JMessageMentionInfo *)mentionInfo {
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -186,6 +189,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         pbMsgs.msgsArray = pbMsgArr;
         upMsg.mergedMsgs = pbMsgs;
+    }
+    if (mentionInfo) {
+        MentionInfo *pbMentionInfo = [[MentionInfo alloc] init];
+        pbMentionInfo.mentionType = (int32_t)mentionInfo.type;
+        NSMutableArray <UserInfo *> *pbUsers = [NSMutableArray array];
+        for (JUserInfo *userInfo in mentionInfo.targetUsers) {
+            UserInfo *pbUser = [[UserInfo alloc] init];
+            pbUser.userId = userInfo.userId;
+            [pbUsers addObject:pbUser];
+        }
+        pbMentionInfo.targetUsersArray = pbUsers;
+        upMsg.mentionInfo = pbMentionInfo;
     }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
@@ -512,6 +527,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getMentionMessages:(JConversation *)conversation
+                    startIndex:(long long)startIndex
+                         count:(int)count
+                     direction:(JPullDirection)direction
+                         index:(int)index {
+    QryMentionMsgsReq *req = [[QryMentionMsgsReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.startIndex = startIndex;
+    req.count = count;
+    if (direction == JPullDirectionOlder) {
+        req.order = 0;
+    } else {
+        req.order = 1;
+    }
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryMentionMsgs;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -722,6 +766,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.groupReadInfo = info;
     msg.groupInfo = [self groupInfoWithPBGroupInfo:downMsg.groupInfo];
     msg.targetUserInfo = [self userInfoWithPBUserInfo:downMsg.targetUserInfo];
+    if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
+        JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
+        mentionInfo.type = downMsg.mentionInfo.mentionType;
+        NSMutableArray <JUserInfo *> *mentionUserList = [NSMutableArray array];
+        for (UserInfo *u in downMsg.mentionInfo.targetUsersArray) {
+            JUserInfo *userInfo = [self userInfoWithPBUserInfo:u];
+            [mentionUserList addObject:userInfo];
+        }
+        mentionInfo.targetUsers = mentionUserList;
+        msg.content.mentionInfo = mentionInfo;
+    }
     return msg;
 }
 
@@ -770,8 +825,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.mute = (conversation.undisturbType==1)?YES:NO;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
-    //TODO: mention
-//    info.lastMentionMessage = [self messageWithDownMsg:conversation.latestMentionMsg];
+    if (conversation.hasLatestMentionMsg) {
+        info.hasMentioned = YES;
+    }
     return info;
 }
 

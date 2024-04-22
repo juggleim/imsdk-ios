@@ -118,6 +118,10 @@
     [self.conversationDb setMute:isMute conversation:conversation];
 }
 
+- (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {
+    [self.conversationDb setMention:isMention conversation:conversation];
+}
+
 - (int)getTotalUnreadCount {
     return [self.conversationDb getTotalUnreadCount];
 }
@@ -202,6 +206,16 @@
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
     return [self.messageDb searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
+
+//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
+//                                       count:(int)count
+//                                        time:(long long)time
+//                                   direction:(JPullDirection)direction {
+//    return [self.messageDb getMentionMessages:conversation
+//                                        count:count
+//                                         time:time
+//                                    direction:direction];
+//}
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {

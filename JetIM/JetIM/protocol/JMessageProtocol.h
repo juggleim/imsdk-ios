@@ -222,22 +222,32 @@
                      success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
                        error:(void (^)(JErrorCode code))errorBlock;
 
-// TODO: 上传做完后删除
-- (void)setMessageState:(JMessageState)state
-        withClientMsgNo:(long long)clientMsgNo;
-
-
-
 /// 消息本地检索
 /// - Parameters:
 ///   - searchContent: 查询内容
 ///   - count:拉取数量，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 为当前时间
 ///   - direction: 查询方向
-///   - contentTypes: 内容类型 ，传空 返回所有类型
+///   - contentTypes: 内容类型 ，传空返回所有类型
 - (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
+
+///// 获取指定会话中的 @ 消息
+///// - Parameters:
+/////   - conversation: 会话标识
+/////   - count: 获取数量，超过 100 条按 100 返回
+/////   - time: 消息时间戳，传 0 为当前时间
+/////   - direction: 查询方向
+//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
+//                                       count:(int)count
+//                                        time:(long long)time
+//                                   direction:(JPullDirection)direction;
+
+// TODO: 上传做完后删除
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo;
+
 @end

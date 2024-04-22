@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation;
 - (int)getTotalUnreadCount;
+- (void)setMention:(BOOL)isMention
+      conversation:(JConversation *)conversation;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
@@ -77,7 +79,10 @@ NS_ASSUME_NONNULL_BEGIN
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
-
+//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
+//                                       count:(int)count
+//                                        time:(long long)time
+//                                   direction:(JPullDirection)direction;
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;

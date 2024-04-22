@@ -187,7 +187,6 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
- 
     return [self.core.dbManager searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
 
@@ -468,6 +467,23 @@
     return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
 }
 
+//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
+//                                       count:(int)count
+//                                        time:(long long)time
+//                                   direction:(JPullDirection)direction {
+//    return [self.core.dbManager getMentionMessages:conversation
+//                                             count:count
+//                                              time:time
+//                                         direction:direction];
+//}
+
+//- (void)getMentionMessages:(JConversation *)conversation
+//                   success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
+//                     error:(void (^)(JErrorCode code))errorBlock {
+//    [self.core.webSocket getMentionMessages:conversation
+//                                 startIndex:<#(long long)#> count:<#(int)#> direction:<#(JPullDirection)#> success:<#^(NSArray<JMessage *> * _Nonnull mergedMessages)successBlock#> error:<#^(JErrorCode code)errorBlock#>]
+//}
+
 - (void)registerContentType:(Class)messageClass {
     [[JContentTypeCenter shared] registerContentType:messageClass];
 }
@@ -607,6 +623,7 @@
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.direction == JMessageDirectionSend) {
             sendTime = obj.timestamp;
@@ -673,6 +690,12 @@
             return;
         }
         
+        if (obj.content.mentionInfo) {
+            for (JUserInfo *userInfo in obj.content.mentionInfo.targetUsers) {
+                [userDic setObject:userInfo forKey:userInfo.userId];
+            }
+        }
+        
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidReceive:)]) {
             [self.sendReceiveDelegate messageDidReceive:obj];
         }
@@ -683,6 +706,7 @@
             }
         });
     }];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {
