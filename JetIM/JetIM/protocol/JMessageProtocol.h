@@ -120,7 +120,6 @@
 /// - Parameter messageIds: messageId 数组
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 
-
 /// 根据 messageId 数组获取对应的消息，如果本地有则优先取本地消息，否则去服务端获取
 /// - Parameters:
 ///   - messageIds: messageId 数组
@@ -245,6 +244,16 @@
 //                                       count:(int)count
 //                                        time:(long long)time
 //                                   direction:(JPullDirection)direction;
+
+/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// - Parameter attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
+/// - Parameter messageId: 消息 id
+- (void)setLocalAttribute:(NSString *)attribute
+               forMessage:(NSString *)messageId;
+
+/// 获取消息本地属性
+/// - Parameter messageId: 消息 id
+- (NSString *)getLocalAttribute:(NSString *)messageId;
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
