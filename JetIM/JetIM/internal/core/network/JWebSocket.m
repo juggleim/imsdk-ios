@@ -295,9 +295,9 @@
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncConversationsData:startTime
-                                             count:count
-                                            userId:userId
-                                             index:self.cmdIndex++];
+                                                 count:count
+                                                userId:userId
+                                                 index:self.cmdIndex++];
         JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -383,22 +383,22 @@
     });
 }
 
-//- (void)getMentionMessages:(JConversation *)conversation
-//                startIndex:(long long)startIndex
-//                     count:(int)count
-//                 direction:(JPullDirection)direction
-//                   success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
-//                     error:(void (^)(JErrorCode code))errorBlock {
-//    dispatch_async(self.sendQueue, ^{
-//        NSNumber *key = @(self.cmdIndex);
-//        NSData *d = [self.pbData getMentionMessages:conversation
-//                                         startIndex:startIndex
-//                                              count:count
-//                                          direction:direction
-//                                              index:self.cmdIndex++];
-//        
-//    });
-//}
+- (void)getMentionMessages:(JConversation *)conversation
+                startIndex:(long long)startIndex
+                     count:(int)count
+                 direction:(JPullDirection)direction
+                   success:(void (^)(NSArray<JMessage *> *messages))successBlock
+                     error:(void (^)(JErrorCode code))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getMentionMessages:conversation
+                                         startIndex:startIndex
+                                              count:count
+                                          direction:direction
+                                              index:self.cmdIndex++];
+
+    });
+}
 
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId

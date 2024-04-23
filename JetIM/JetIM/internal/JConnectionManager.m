@@ -46,6 +46,7 @@
 
 - (void)connectWithToken:(NSString *)token {
     //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
+    //TODO: 连接状态判断，如果连接中或已连接，而且 token 跟之前不一样的话，先 disconnect
     
     if (![self.core.token isEqualToString:token]) {
         //token 更新了，则原来缓存的 userId 不再适用
@@ -55,7 +56,7 @@
     if (![self.core.dbManager isOpen]) {
         if (self.core.userId.length > 0) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
-                [self dbOpenNotice:JDBStatusOpen];
+                [self dbOpenNotice:YES];
             }
         }
     }
@@ -81,8 +82,8 @@
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
+    [self closeDB];
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
-    [self.core.dbManager closeIMDB];
     [self.core.webSocket disconnect:receivePush];
 }
 
@@ -117,9 +118,9 @@
                          userId:(NSString *)userId {
     if (error == JErrorCodeInternalNone) {
         self.core.userId = userId;
-        if (self.core.dbStatus != JDBStatusOpen) {
+        if (!self.core.dbManager.isOpen) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
-                [self dbOpenNotice:JDBStatusOpen];
+                [self dbOpenNotice:YES];
             } else {
                 NSLog(@"[JetIM] db open fail");
             }
@@ -139,6 +140,7 @@
 }
 
 - (void)disconnectWithCode:(JErrorCodeInternal)error {
+    [self closeDB];
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:error];
 }
 
@@ -212,14 +214,18 @@
     });
 }
 
-- (void)dbOpenNotice:(JDBStatus)status {
+- (void)closeDB {
+    [self.core.dbManager closeIMDB];
+    [self dbOpenNotice:NO];
+}
+
+- (void)dbOpenNotice:(BOOL)isOpen {
     dispatch_async(self.core.sendQueue, ^{
-        self.core.dbStatus = status;
-        if (status == JDBStatusOpen) {
+        if (isOpen) {
             [self.core getSyncTimeFromDB];
         }
         dispatch_async(self.core.delegateQueue, ^{
-            if (status == JDBStatusOpen) {
+            if (isOpen) {
                 if ([self.delegate respondsToSelector:@selector(dbDidOpen)]) {
                     [self.delegate dbDidOpen];
                 }

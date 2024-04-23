@@ -66,9 +66,12 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-        NSArray *a = [JIM.shared.messageManager getMessagesFrom:c count:100 time:0 direction:JPullDirectionOlder];
-        NSLog(@"111");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [JIM.shared.connectionManager disconnect:NO];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [JIM.shared.connectionManager connectWithToken:kToken2];
+            });
+        });
         
         //register push token
 //        [JIM.shared.connectionManager registerToken:@"ppppushtoken"];

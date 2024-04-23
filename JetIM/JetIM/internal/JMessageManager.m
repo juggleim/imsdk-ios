@@ -467,22 +467,22 @@
     return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
 }
 
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction {
-//    return [self.core.dbManager getMentionMessages:conversation
-//                                             count:count
-//                                              time:time
-//                                         direction:direction];
-//}
-
-//- (void)getMentionMessages:(JConversation *)conversation
-//                   success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
-//                     error:(void (^)(JErrorCode code))errorBlock {
-//    [self.core.webSocket getMentionMessages:conversation
-//                                 startIndex:<#(long long)#> count:<#(int)#> direction:<#(JPullDirection)#> success:<#^(NSArray<JMessage *> * _Nonnull mergedMessages)successBlock#> error:<#^(JErrorCode code)errorBlock#>]
-//}
+- (void)getMentionMessages:(JConversation *)conversation
+                     count:(int)count
+                      time:(long long)time
+                 direction:(JPullDirection)direction
+                   success:(void (^)(NSArray<JMessage *> *))successBlock
+                     error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getMentionMessages:conversation
+                                 startIndex:0
+                                      count:count
+                                  direction:direction
+                                    success:^(NSArray<JMessage *> * _Nonnull mergedMessages) {
+        
+    } error:^(JErrorCode code) {
+        
+    }];
+}
 
 - (void)registerContentType:(Class)messageClass {
     [[JContentTypeCenter shared] registerContentType:messageClass];

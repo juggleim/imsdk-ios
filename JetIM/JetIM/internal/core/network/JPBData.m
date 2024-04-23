@@ -750,7 +750,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.timestamp = downMsg.msgTime;
     msg.messageState = JMessageStateSent;
     msg.senderUserId = downMsg.senderId;
-    msg.seqNo = downMsg.msgIndex;
+    msg.seqNo = downMsg.msgSeqNo;
     msg.msgIndex = downMsg.unreadIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];

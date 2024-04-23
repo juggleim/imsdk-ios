@@ -24,11 +24,6 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     JConnectionStatusInternalWaitingForConnecting
 };
 
-typedef NS_ENUM(NSUInteger, JDBStatus) {
-    JDBStatusClosed,
-    JDBStatusOpen
-};
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JetIMCore : NSObject
@@ -44,7 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JDBManager *dbManager;
 //send queue
 @property (nonatomic, assign) JConnectionStatusInternal connectionStatus;
-@property (nonatomic, assign) JDBStatus dbStatus;
 //receive queue
 @property (nonatomic, assign) long long conversationSyncTime;
 @property (nonatomic, assign) long long messageSendSyncTime;
