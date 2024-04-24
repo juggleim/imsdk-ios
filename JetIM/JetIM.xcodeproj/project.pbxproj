@@ -657,8 +657,8 @@
 				A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */,
 				A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */,
 				A07CE41E2B3ECBDD006E3F4D /* JNaviManager.h */,
-				A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */,
 				A07CE41F2B3ECBDD006E3F4D /* JNaviManager.m */,
+				A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */,
 			);
 			path = internal;
 			sourceTree = "<group>";

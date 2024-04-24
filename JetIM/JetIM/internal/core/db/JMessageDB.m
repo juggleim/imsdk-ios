@@ -277,7 +277,7 @@ NSString *const jIsDeleted = @"is_deleted";
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
     if (searchContent.length == 0 || searchContent == nil) {
-        return nil;
+        return [NSArray array];
     }
     NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
     NSString *sql = jGetMessagesBySearchContent;
