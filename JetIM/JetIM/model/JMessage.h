@@ -51,8 +51,8 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, copy) NSString *senderUserId;
 /// 消息内容
 @property (nonatomic, strong) JMessageContent *content;
+/// 群消息阅读信息（只对群消息生效）
 @property (nonatomic, strong) JGroupMessageReadInfo *groupReadInfo;
-//@property (nonatomic, strong) JUserInfo *userInfo;
 @end
 
 NS_ASSUME_NONNULL_END

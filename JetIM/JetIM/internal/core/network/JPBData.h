@@ -124,7 +124,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                              userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
-                     conversationId:(NSString *)conversationId;
+                     conversationId:(NSString *)conversationId
+                        mentionInfo:(nullable JMessageMentionInfo *)mentionInfo;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                  conversation:(JConversation *)conversation
@@ -186,6 +187,12 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                   packageName:(NSString *)packageName
                        userId:(NSString *)userId
                         index:(int)index;
+
+- (NSData *)getMentionMessages:(JConversation *)conversation
+                          time:(long long)timestamp
+                         count:(int)count
+                     direction:(JPullDirection)direction
+                         index:(int)index;
 
 - (NSData *)pingData;
 

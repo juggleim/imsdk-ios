@@ -51,6 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
+//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
+//                                       count:(int)count
+//                                        time:(long long)time
+//                                   direction:(JPullDirection)direction;
 
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message

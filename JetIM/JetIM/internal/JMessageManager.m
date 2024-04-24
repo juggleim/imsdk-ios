@@ -187,7 +187,6 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
-    
     return [self.core.dbManager searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
 
@@ -497,6 +496,7 @@
                                         count:100
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages);
@@ -513,6 +513,32 @@
 
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     return [self.core.dbManager getMessagesByClientMsgNos:clientMsgNos];
+}
+
+- (void)getMentionMessages:(JConversation *)conversation
+                     count:(int)count
+                      time:(long long)time
+                 direction:(JPullDirection)direction
+                   success:(void (^)(NSArray<JMessage *> *))successBlock
+                     error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getMentionMessages:conversation
+                                       time:time
+                                      count:count
+                                  direction:direction
+                                    success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        [self.core.dbManager insertMessages:messages];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messages);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
 }
 
 - (void)registerContentType:(Class)messageClass {
@@ -657,6 +683,7 @@
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.direction == JMessageDirectionSend) {
             sendTime = obj.timestamp;
@@ -723,6 +750,12 @@
             return;
         }
         
+        if (obj.content.mentionInfo) {
+            for (JUserInfo *userInfo in obj.content.mentionInfo.targetUsers) {
+                [userDic setObject:userInfo forKey:userInfo.userId];
+            }
+        }
+        
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidReceive:)]) {
             [self.sendReceiveDelegate messageDidReceive:obj];
         }
@@ -733,6 +766,7 @@
             }
         });
     }];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {

@@ -20,14 +20,11 @@
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
-
 /// 消息同步完成的回调
 - (void)messageSyncDidComplete;
-
 @end
 
 @protocol JMessageReadReceiptDelegate <NSObject>
-
 /// 单聊消息阅读回调
 /// - Parameters:
 ///   - messageIds: 消息 id 数组
@@ -41,7 +38,6 @@
 ///   - conversation: 所在会话
 - (void)groupMessagesDidRead:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs
               inConversation:(JConversation *)conversation;
-
 @end
 
 @protocol JMessageProtocol <NSObject>
@@ -65,7 +61,6 @@
 - (JMessage *)resend:(JMessage *)messsage
              success:(void (^)(JMessage *message))successBlock
                error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
-
 
 /// 保存消息
 /// - Parameters:
@@ -119,7 +114,6 @@
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
-
 
 /// 根据 messageId 数组获取对应的消息，如果本地有则优先取本地消息，否则去服务端获取
 /// - Parameters:
@@ -223,22 +217,46 @@
                      success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
                        error:(void (^)(JErrorCode code))errorBlock;
 
-// TODO: 上传做完后删除
-- (void)setMessageState:(JMessageState)state
-        withClientMsgNo:(long long)clientMsgNo;
-
-
-
 /// 消息本地检索
 /// - Parameters:
 ///   - searchContent: 查询内容
 ///   - count:拉取数量，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 为当前时间
 ///   - direction: 查询方向
-///   - contentTypes: 内容类型 ，传空 返回所有类型
+///   - contentTypes: 内容类型 ，传空返回所有类型
 - (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
+
+/// 获取指定会话中未读的 @ 消息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - count: 获取数量，超过 100 条按 100 返回
+///   - time: 消息时间戳，传 0 为当前时间
+///   - direction: 查询方向
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getMentionMessages:(JConversation *)conversation
+                     count:(int)count
+                      time:(long long)time
+                 direction:(JPullDirection)direction
+                   success:(void (^)(NSArray<JMessage *> *messages))successBlock
+                     error:(void (^)(JErrorCode code))errorBlock;
+
+/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// - Parameter attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
+/// - Parameter messageId: 消息 id
+- (void)setLocalAttribute:(NSString *)attribute
+               forMessage:(NSString *)messageId;
+
+/// 获取消息本地属性
+/// - Parameter messageId: 消息 id
+- (NSString *)getLocalAttribute:(NSString *)messageId;
+
+// TODO: 上传做完后删除
+- (void)setMessageState:(JMessageState)state
+        withClientMsgNo:(long long)clientMsgNo;
+
 @end

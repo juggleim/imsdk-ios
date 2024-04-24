@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
                   msgIndex:(long long)msgIndex;
 - (void)updateLastMessage:(JConcreteMessage *)message;
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation;
+- (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation;
 - (int)getTotalUnreadCount;
 @end
 

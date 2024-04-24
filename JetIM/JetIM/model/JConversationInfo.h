@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL mute;
 /// 会话草稿
 @property (nonatomic, copy) NSString *draft;
-//TODO: mention
-//@property (nonatomic, strong) JMessage *lastMentionMessage;
+/// 会话中是否存在被 @ 的消息（清除会话未读数时会将此状态置为 NO）
+@property (nonatomic, assign) BOOL hasMentioned;
 
 @end
 
