@@ -189,7 +189,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                         index:(int)index;
 
 - (NSData *)getMentionMessages:(JConversation *)conversation
-                    startIndex:(long long)startIndex
+                          time:(long long)timestamp
                          count:(int)count
                      direction:(JPullDirection)direction
                          index:(int)index;

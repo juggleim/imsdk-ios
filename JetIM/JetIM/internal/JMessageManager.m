@@ -449,6 +449,7 @@
                                         count:100
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages);
@@ -474,13 +475,22 @@
                    success:(void (^)(NSArray<JMessage *> *))successBlock
                      error:(void (^)(JErrorCode))errorBlock {
     [self.core.webSocket getMentionMessages:conversation
-                                 startIndex:0
+                                       time:time
                                       count:count
                                   direction:direction
-                                    success:^(NSArray<JMessage *> * _Nonnull mergedMessages) {
-        
-    } error:^(JErrorCode code) {
-        
+                                    success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        [self.core.dbManager insertMessages:messages];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messages);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
     }];
 }
 

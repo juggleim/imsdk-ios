@@ -24,7 +24,6 @@
     return [self.core.dbManager getUserInfo:userId];
 }
 
-
 - (JGroupInfo *)getGroupInfo:(NSString *)groupId {
     return [self.core.dbManager getGroupInfo:groupId];
 }

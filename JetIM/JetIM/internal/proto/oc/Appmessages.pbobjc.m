@@ -124,7 +124,6 @@ GPBObjCClassDeclaration(UserInfosResp);
 GPBObjCClassDeclaration(UserOnlineItem);
 GPBObjCClassDeclaration(UserOnlineStatusReq);
 GPBObjCClassDeclaration(UserOnlineStatusResp);
-GPBObjCClassDeclaration(UserRegReq);
 GPBObjCClassDeclaration(UserRegResp);
 
 #pragma mark - AppmessagesRoot
@@ -3786,7 +3785,7 @@ void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value) {
 
 @dynamic targetId;
 @dynamic channelType;
-@dynamic startIndex;
+@dynamic startTime;
 @dynamic count;
 @dynamic order;
 
@@ -3796,7 +3795,7 @@ typedef struct QryMentionMsgsReq__storage_ {
   int32_t count;
   int32_t order;
   NSString *targetId;
-  int64_t startIndex;
+  int64_t startTime;
 } QryMentionMsgsReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -3825,11 +3824,11 @@ typedef struct QryMentionMsgsReq__storage_ {
         .dataType = GPBDataTypeEnum,
       },
       {
-        .name = "startIndex",
+        .name = "startTime",
         .dataTypeSpecific.clazz = Nil,
-        .number = QryMentionMsgsReq_FieldNumber_StartIndex,
+        .number = QryMentionMsgsReq_FieldNumber_StartTime,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, startIndex),
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, startTime),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },
@@ -3862,7 +3861,7 @@ typedef struct QryMentionMsgsReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\013\000\003\n\000";
+        "\003\001\010\000\002\013\000\003\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -3908,7 +3907,7 @@ typedef struct QryMentionMsgsResp__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "mentionMsgsArray",
-        .dataTypeSpecific.clazz = GPBObjCClass(MentionMsg),
+        .dataTypeSpecific.clazz = GPBObjCClass(DownMsg),
         .number = QryMentionMsgsResp_FieldNumber_MentionMsgsArray,
         .hasIndex = GPBNoHasBit,
         .offset = (uint32_t)offsetof(QryMentionMsgsResp__storage_, mentionMsgsArray),
@@ -5230,79 +5229,6 @@ typedef struct UserInfosResp__storage_ {
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\001\001\013\000";
-      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - UserRegReq
-
-@implementation UserRegReq
-
-@dynamic userId;
-@dynamic nickname;
-@dynamic userPortrait;
-
-typedef struct UserRegReq__storage_ {
-  uint32_t _has_storage_[1];
-  NSString *userId;
-  NSString *nickname;
-  NSString *userPortrait;
-} UserRegReq__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "userId",
-        .dataTypeSpecific.clazz = Nil,
-        .number = UserRegReq_FieldNumber_UserId,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(UserRegReq__storage_, userId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "nickname",
-        .dataTypeSpecific.clazz = Nil,
-        .number = UserRegReq_FieldNumber_Nickname,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(UserRegReq__storage_, nickname),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "userPortrait",
-        .dataTypeSpecific.clazz = Nil,
-        .number = UserRegReq_FieldNumber_UserPortrait,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(UserRegReq__storage_, userPortrait),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(UserRegReq)
-                                   messageName:@"UserRegReq"
-                               fileDescription:&AppmessagesRoot_FileDescription
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(UserRegReq__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-      static const char *extraTextFormatInfo =
-        "\002\001\006\000\003\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

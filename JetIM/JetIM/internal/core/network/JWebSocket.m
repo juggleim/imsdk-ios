@@ -384,19 +384,25 @@
 }
 
 - (void)getMentionMessages:(JConversation *)conversation
-                startIndex:(long long)startIndex
+                      time:(long long)time
                      count:(int)count
                  direction:(JPullDirection)direction
-                   success:(void (^)(NSArray<JMessage *> *messages))successBlock
-                     error:(void (^)(JErrorCode code))errorBlock {
+                   success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                     error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getMentionMessages:conversation
-                                         startIndex:startIndex
+                                               time:time
                                               count:count
                                           direction:direction
                                               index:self.cmdIndex++];
-
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 

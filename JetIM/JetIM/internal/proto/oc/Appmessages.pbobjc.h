@@ -1367,7 +1367,7 @@ void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value);
 typedef GPB_ENUM(QryMentionMsgsReq_FieldNumber) {
   QryMentionMsgsReq_FieldNumber_TargetId = 1,
   QryMentionMsgsReq_FieldNumber_ChannelType = 2,
-  QryMentionMsgsReq_FieldNumber_StartIndex = 3,
+  QryMentionMsgsReq_FieldNumber_StartTime = 3,
   QryMentionMsgsReq_FieldNumber_Count = 4,
   QryMentionMsgsReq_FieldNumber_Order = 5,
 };
@@ -1378,7 +1378,7 @@ GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
 
 @property(nonatomic, readwrite) ChannelType channelType;
 
-@property(nonatomic, readwrite) int64_t startIndex;
+@property(nonatomic, readwrite) int64_t startTime;
 
 @property(nonatomic, readwrite) int32_t count;
 
@@ -1407,7 +1407,7 @@ typedef GPB_ENUM(QryMentionMsgsResp_FieldNumber) {
 
 GPB_FINAL @interface QryMentionMsgsResp : GPBMessage
 
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MentionMsg*> *mentionMsgsArray;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<DownMsg*> *mentionMsgsArray;
 /** The number of items in @c mentionMsgsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger mentionMsgsArray_Count;
 
@@ -1800,24 +1800,6 @@ GPB_FINAL @interface UserInfosResp : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableDictionary<NSString*, UserInfo*> *userInfoMap;
 /** The number of items in @c userInfoMap without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger userInfoMap_Count;
-
-@end
-
-#pragma mark - UserRegReq
-
-typedef GPB_ENUM(UserRegReq_FieldNumber) {
-  UserRegReq_FieldNumber_UserId = 1,
-  UserRegReq_FieldNumber_Nickname = 2,
-  UserRegReq_FieldNumber_UserPortrait = 3,
-};
-
-GPB_FINAL @interface UserRegReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *nickname;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userPortrait;
 
 @end
 

@@ -285,13 +285,13 @@ message MentionMsg{
 message QryMentionMsgsReq{
     string targetId = 1;
     ChannelType channelType = 2;
-    int64 startIndex = 3;
+    int64 startTime = 3;
     int32 count = 4;
     int32 order = 5;
 }
 
 message QryMentionMsgsResp{
-    repeated MentionMsg mentionMsgs = 1;
+    repeated DownMsg mentionMsgs = 1;
     bool isFinished = 2;
 }
 
@@ -384,12 +384,6 @@ message UserIdReq{
 
 message UserInfosResp{
     map<string,UserInfo> userInfoMap = 1;
-}
-
-message UserRegReq{
-    string userId = 1;
-    string nickname = 2;
-    string userPortrait = 3;
 }
 
 message UserRegResp{

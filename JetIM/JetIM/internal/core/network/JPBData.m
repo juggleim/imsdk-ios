@@ -528,14 +528,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (NSData *)getMentionMessages:(JConversation *)conversation
-                    startIndex:(long long)startIndex
+                          time:(long long)time
                          count:(int)count
                      direction:(JPullDirection)direction
                          index:(int)index {
     QryMentionMsgsReq *req = [[QryMentionMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
-    req.startIndex = startIndex;
+    req.startTime = time;
     req.count = count;
     if (direction == JPullDirectionOlder) {
         req.order = 0;
@@ -1022,7 +1022,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
              jUndisturb:@(JPBRcvTypeSimpleQryAck),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
-             jRegPushToken:@(JPBRcvTypeSimpleQryAck)
+             jRegPushToken:@(JPBRcvTypeSimpleQryAck),
+             jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck)
     };
 }
 @end
