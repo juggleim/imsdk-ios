@@ -634,13 +634,16 @@
 }
 
 - (JMessage *)handleRecallCmdMessage:(NSString *)messageId {
-    JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
-    [self.core.dbManager updateMessageContent:recallInfoMsg
-                                  contentType:[JRecallInfoMessage contentType]
-                                withMessageId:messageId];
-    NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
-    if (messages.count > 0) {
-        return messages[0];
+    
+    if(messageId){
+        JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
+        [self.core.dbManager updateMessageContent:recallInfoMsg
+                                      contentType:[JRecallInfoMessage contentType]
+                                    withMessageId:messageId];
+        NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
+        if (messages.count > 0) {
+            return messages[0];
+        }
     }
     return nil;
 }

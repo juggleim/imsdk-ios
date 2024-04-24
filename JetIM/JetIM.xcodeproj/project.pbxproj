@@ -6,22 +6,7 @@
 	objectVersion = 56;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		5B63FA962BD8B75100211AF2 /* JetIMFramework */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 5B63FA972BD8B75100211AF2 /* Build configuration list for PBXAggregateTarget "JetIMFramework" */;
-			buildPhases = (
-				5B63FA9A2BD8B75900211AF2 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = JetIMFramework;
-			productName = JetIMFramework;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
-		645A86DF6B8B40730E2DB95A /* Pods_JetIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC71E64181BE0E683AB0648E /* Pods_JetIM.framework */; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
 		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
 		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
@@ -242,8 +227,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4C578A50D98F3B8399FB9E8B /* Pods-JetIM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JetIM.release.xcconfig"; path = "Target Support Files/Pods-JetIM/Pods-JetIM.release.xcconfig"; sourceTree = "<group>"; };
-		7AA8F721629BC63E4113A832 /* Pods-JetIM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JetIM.debug.xcconfig"; path = "Target Support Files/Pods-JetIM/Pods-JetIM.debug.xcconfig"; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
 		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
 		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
@@ -464,7 +447,6 @@
 		A0F376222B3A83B20076CB84 /* JFileMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JFileMessage.m; sourceTree = "<group>"; };
 		A0F376252B3A89780076CB84 /* JVoiceMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVoiceMessage.h; sourceTree = "<group>"; };
 		A0F376262B3A89780076CB84 /* JVoiceMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVoiceMessage.m; sourceTree = "<group>"; };
-		DC71E64181BE0E683AB0648E /* Pods_JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -472,7 +454,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				645A86DF6B8B40730E2DB95A /* Pods_JetIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,7 +463,6 @@
 		5B63FA892BD8B2BD00211AF2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DC71E64181BE0E683AB0648E /* Pods_JetIM.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -548,7 +528,6 @@
 				A08AA1E52B148B68008B114C /* JetIM */,
 				A08AA1E42B148B68008B114C /* Products */,
 				5B63FA892BD8B2BD00211AF2 /* Frameworks */,
-				E238C94EBCE4961717A88424 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -769,16 +748,16 @@
 		A08AA3BA2B19EEDA008B114C /* SocketRocket */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3BB2B19EEDA008B114C /* SRWebSocket.m */,
-				A08AA3BC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m */,
-				A08AA3BD2B19EEDA008B114C /* SRSecurityPolicy.m */,
-				A08AA3BE2B19EEDA008B114C /* SocketRocket.h */,
 				A08AA3BF2B19EEDA008B114C /* Internal */,
-				A08AA3E62B19EEDA008B114C /* NSURLRequest+SRWebSocket.h */,
-				A08AA3E72B19EEDA008B114C /* SRWebSocket.h */,
 				A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */,
-				A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */,
+				A08AA3BC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m */,
+				A08AA3E62B19EEDA008B114C /* NSURLRequest+SRWebSocket.h */,
 				A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */,
+				A08AA3BE2B19EEDA008B114C /* SocketRocket.h */,
+				A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */,
+				A08AA3BD2B19EEDA008B114C /* SRSecurityPolicy.m */,
+				A08AA3E72B19EEDA008B114C /* SRWebSocket.h */,
+				A08AA3BB2B19EEDA008B114C /* SRWebSocket.m */,
 			);
 			path = SocketRocket;
 			sourceTree = "<group>";
@@ -786,16 +765,16 @@
 		A08AA3BF2B19EEDA008B114C /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3C02B19EEDA008B114C /* SRConstants.h */,
+				A08AA3CB2B19EEDA008B114C /* Delegate */,
+				A08AA3E02B19EEDA008B114C /* IOConsumer */,
+				A08AA3CA2B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h */,
+				A08AA3CE2B19EEDA008B114C /* NSURLRequest+SRWebSocketPrivate.h */,
 				A08AA3C12B19EEDA008B114C /* Proxy */,
 				A08AA3C42B19EEDA008B114C /* RunLoop */,
 				A08AA3C72B19EEDA008B114C /* Security */,
-				A08AA3CA2B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h */,
-				A08AA3CB2B19EEDA008B114C /* Delegate */,
-				A08AA3CE2B19EEDA008B114C /* NSURLRequest+SRWebSocketPrivate.h */,
-				A08AA3CF2B19EEDA008B114C /* Utilities */,
-				A08AA3E02B19EEDA008B114C /* IOConsumer */,
+				A08AA3C02B19EEDA008B114C /* SRConstants.h */,
 				A08AA3E52B19EEDA008B114C /* SRConstants.m */,
+				A08AA3CF2B19EEDA008B114C /* Utilities */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -929,16 +908,6 @@
 				A06CF0F92B988FC200B5CD89 /* JGroupReadNtfMessage.m */,
 			);
 			path = messages;
-			sourceTree = "<group>";
-		};
-		E238C94EBCE4961717A88424 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				7AA8F721629BC63E4113A832 /* Pods-JetIM.debug.xcconfig */,
-				4C578A50D98F3B8399FB9E8B /* Pods-JetIM.release.xcconfig */,
-			);
-			name = Pods;
-			path = ../../MUIKit/Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1084,7 +1053,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A08AA1EA2B148B68008B114C /* Build configuration list for PBXNativeTarget "JetIM" */;
 			buildPhases = (
-				D4D662AF85449DB9F10936C8 /* [CP] Check Pods Manifest.lock */,
 				A08AA1DE2B148B68008B114C /* Headers */,
 				A08AA1DF2B148B68008B114C /* Sources */,
 				A08AA1E02B148B68008B114C /* Frameworks */,
@@ -1108,9 +1076,6 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
-					5B63FA962BD8B75100211AF2 = {
-						CreatedOnToolsVersion = 15.3;
-					};
 					A08AA1E22B148B68008B114C = {
 						CreatedOnToolsVersion = 14.2;
 					};
@@ -1130,7 +1095,6 @@
 			projectRoot = "";
 			targets = (
 				A08AA1E22B148B68008B114C /* JetIM */,
-				5B63FA962BD8B75100211AF2 /* JetIMFramework */,
 			);
 		};
 /* End PBXProject section */
@@ -1144,48 +1108,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5B63FA9A2BD8B75900211AF2 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Sets the target folders and the final framework product.\n\n# 如果工程名称和Framework的Target名称不一样的话，要自定义FMKNAME\n\n# 例如: FMK_NAME = \"JetIMFramework\"\n\n#FMK_NAME=${PROJECT_NAME}\n\nFMK_NAME = \"JetIMFramework\"\n\n# Install dir will be the final output to the framework.\n\n# The following line create it in the root\n\nfolder of the current project.\n\nINSTALL_DIR=${SRCROOT}/Products/${FMK_NAME}.framework\n\n# Working dir will be deleted after the framework creation.\n\nWRK_DIR=build\n\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/${FMK_NAME}.framework\n\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/${FMK_NAME}.framework\n\n# -configuration ${CONFIGURATION}\n\n# Clean and Building both architectures.\n\nxcodebuild -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos clean build\n\nxcodebuild -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator clean build\n\n# Cleaning the oldest.\n\nif [ -d \"${INSTALL_DIR}\" ]\n\nthen\n\nrm -rf \"${INSTALL_DIR}\"\n\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\n\nlipo -create \"${DEVICE_DIR}/${FMK_NAME}\" \"${SIMULATOR_DIR}/${FMK_NAME}\" -output \"${INSTALL_DIR}/${FMK_NAME}\"\n\nrm -r \"${WRK_DIR}\"\n\nopen \"${INSTALL_DIR}\"\n";
-		};
-		D4D662AF85449DB9F10936C8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-JetIM-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A08AA1DF2B148B68008B114C /* Sources */ = {
@@ -1289,24 +1211,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		5B63FA982BD8B75100211AF2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LR2J9D7859;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		5B63FA992BD8B75100211AF2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LR2J9D7859;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		A08AA1E82B148B68008B114C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1425,7 +1329,6 @@
 		};
 		A08AA1EB2B148B68008B114C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AA8F721629BC63E4113A832 /* Pods-JetIM.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1460,7 +1363,6 @@
 		};
 		A08AA1EC2B148B68008B114C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C578A50D98F3B8399FB9E8B /* Pods-JetIM.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1495,15 +1397,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5B63FA972BD8B75100211AF2 /* Build configuration list for PBXAggregateTarget "JetIMFramework" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				5B63FA982BD8B75100211AF2 /* Debug */,
-				5B63FA992BD8B75100211AF2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		A08AA1DD2B148B68008B114C /* Build configuration list for PBXProject "JetIM" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

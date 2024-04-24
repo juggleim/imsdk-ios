@@ -129,18 +129,13 @@ NSString *const jIsDeleted = @"is_deleted";
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId {
-    
-    if([content respondsToSelector:@selector(encode)]){
-        NSData *data = [content encode];
-        NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        if (s.length == 0 || messageId.length == 0) {
-            return;
-        }
-        [self.dbHelper executeUpdate:jUpdateMessageContent
-                withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0 || messageId.length == 0) {
+        return;
     }
-    
-
+    [self.dbHelper executeUpdate:jUpdateMessageContent
+            withArgumentsInArray:@[s, type, content.searchContent, messageId]];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -363,12 +358,10 @@ NSString *const jIsDeleted = @"is_deleted";
         msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
     }
-    if([message.content respondsToSelector:@selector(encode)]){
-        NSData *data = [message.content encode];
-        NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        int memberCount = message.groupReadInfo.memberCount?:-1;
-        [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent];
-    }
+    NSData *data = [message.content encode];
+    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    int memberCount = message.groupReadInfo.memberCount?:-1;
+    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent];
 
 }
 
