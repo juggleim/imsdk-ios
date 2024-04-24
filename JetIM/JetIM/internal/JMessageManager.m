@@ -187,7 +187,7 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
- 
+    
     return [self.core.dbManager searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
 }
 
@@ -307,13 +307,18 @@
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                              success:(void (^)(NSArray *))successBlock
-                                error:(void (^)(JErrorCode))errorBlock {
+                         localMessage:(void (^)(NSArray *messages,BOOL needRemote))localMessage
+                        remoteMessage:(void (^)(NSArray *messages))remoteMessage
+                                error:(void (^)(JErrorCode code))errorBlock{
     if (count <= 0) {
         dispatch_async(self.core.delegateQueue, ^{
-            if (successBlock) {
+            if (localMessage) {
                 NSArray *arr = [NSArray array];
-                successBlock(arr);
+                localMessage(arr,NO);
+            }
+            if (remoteMessage) {
+                NSArray *arr = [NSArray array];
+                localMessage(arr,NO);
             }
         });
         return;
@@ -325,35 +330,77 @@
                                              count:count
                                               time:startTime
                                          direction:direction];
+    
+    
+    
     __block BOOL needRemote = NO;
-    if (localMessages.count > 0) {
+    //本地数据为空
+    if (localMessages.count == 0) {
+        needRemote = YES;
+    }else{
         JConcreteMessage *message = localMessages[0];
         __block long long seqNo = message.seqNo;
-        [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if (idx > 0) {
-                if (obj.seqNo > ++seqNo) {
-                    needRemote = YES;
-                    *stop = YES;
-                    return;
+        if(localMessages.count < count && seqNo != 1){
+            //本地数据小于 需要拉取的数量 并且 本地数据第一条 seqNo 不是第一个
+            needRemote = YES;
+        }else{
+            //本地数据等于需要拉取的数据 或 本地数据第一条 seqNo 是第一个
+            //判断是否连续
+            [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (idx > 0 && obj.messageState == JMessageStateSent) {
+                    if (obj.seqNo > ++seqNo) {
+                        needRemote = YES;
+                        *stop = YES;
+                        return;
+                    }
                 }
-            }
-        }];
-    } else {
-        needRemote = YES;
+            }];
+        }
     }
+    
+    dispatch_async(self.core.delegateQueue, ^{
+        if (localMessage) {
+            localMessage(localMessages,needRemote);
+        }
+        
+        NSLog(@"【getRemoteMessagesFrom】本地消息");
+        for (JConcreteMessage * message in localMessages) {
+            NSLog(@"【getRemoteMessagesFrom】messageId -- %@, clientMsgNo -- %lld",message.messageId,message.clientMsgNo);
+        }
+        
+    });
+    
     if (needRemote) {
         [self getRemoteMessagesFrom:conversation
                           startTime:startTime
                               count:count
                           direction:direction
-                            success:successBlock
-                              error:errorBlock];
-    } else {
-        dispatch_async(self.core.delegateQueue, ^{
-            if (successBlock) {
-                successBlock(localMessages);
+                            success:^(NSArray *messages) {
+            //合并
+            NSMutableArray * messagesArray = [NSMutableArray array];
+            [messagesArray addObjectsFromArray:localMessages];
+            for (JConversation * message in messages) {
+                if(![messagesArray containsObject:message]){
+                    [messagesArray addObject:message];
+                }
             }
-        });
+            //正序排序
+            NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
+                if(msg1.timestamp < msg2.timestamp){
+                    return NSOrderedAscending;
+                }else if(msg1.timestamp > msg2.timestamp){
+                    return NSOrderedDescending;
+                }else{
+                    return NSOrderedSame;
+                }
+            }];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (remoteMessage) {
+                    remoteMessage(ascArray);
+                }
+            });
+            
+        } error:errorBlock];
     }
 }
 
@@ -518,61 +565,61 @@
                mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
                   success:(void (^)(JMessage *))successBlock
                     error:(void (^)(JErrorCode, JMessage *))errorBlock{
-   JConcreteMessage *message = [[JConcreteMessage alloc] init];
-   message.content = content;
-   message.conversation = conversation;
-   message.contentType = [[content class] contentType];
-   message.direction = JMessageDirectionSend;
-   message.messageState = JMessageStateSending;
-   message.senderUserId = self.core.userId;
-   message.clientUid = [self createClientUid];
-   message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
-   [self.core.dbManager insertMessages:@[message]];
-   
-   if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
-       [self.sendReceiveDelegate messageDidSave:message];
-   }
-   
-   [self.core.webSocket sendIMMessage:content
-                       inConversation:conversation
-                          clientMsgNo:message.clientMsgNo
-                            clientUid:message.clientUid
-                           mergedMsgs:mergedMsgs
-                               userId:self.core.userId
-                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
-       if (self.syncProcessing) {
-           self.cachedSendTime = timestamp;
-       } else {
-           self.core.messageSendSyncTime = timestamp;
-       }
-       [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
-                                         messageId:msgId
-                                         timestamp:timestamp
-                                             seqNo:seqNo];
-       message.messageId = msgId;
-       message.timestamp = timestamp;
-       message.seqNo = seqNo;
-       message.messageState = JMessageStateSent;
-       
-       if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-           [self.sendReceiveDelegate messageDidSend:message];
-       }
-       
-       dispatch_async(self.core.delegateQueue, ^{
-           if (successBlock) {
-               successBlock(message);
-           }
-       });
-   } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
-       message.messageState = JMessageStateFail;
-       [self.core.dbManager messageSendFail:clientMsgNo];
-       dispatch_async(self.core.delegateQueue, ^{
-           if (errorBlock) {
-               errorBlock((JErrorCode)errorCode, message);
-           }
-       });
-   }];
-   return message;
+    JConcreteMessage *message = [[JConcreteMessage alloc] init];
+    message.content = content;
+    message.conversation = conversation;
+    message.contentType = [[content class] contentType];
+    message.direction = JMessageDirectionSend;
+    message.messageState = JMessageStateSending;
+    message.senderUserId = self.core.userId;
+    message.clientUid = [self createClientUid];
+    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
+    [self.core.dbManager insertMessages:@[message]];
+    
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+        [self.sendReceiveDelegate messageDidSave:message];
+    }
+    
+    [self.core.webSocket sendIMMessage:content
+                        inConversation:conversation
+                           clientMsgNo:message.clientMsgNo
+                             clientUid:message.clientUid
+                            mergedMsgs:mergedMsgs
+                                userId:self.core.userId
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
+        if (self.syncProcessing) {
+            self.cachedSendTime = timestamp;
+        } else {
+            self.core.messageSendSyncTime = timestamp;
+        }
+        [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
+                                          messageId:msgId
+                                          timestamp:timestamp
+                                              seqNo:seqNo];
+        message.messageId = msgId;
+        message.timestamp = timestamp;
+        message.seqNo = seqNo;
+        message.messageState = JMessageStateSent;
+        
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+            [self.sendReceiveDelegate messageDidSend:message];
+        }
+        
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(message);
+            }
+        });
+    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+        message.messageState = JMessageStateFail;
+        [self.core.dbManager messageSendFail:clientMsgNo];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)errorCode, message);
+            }
+        });
+    }];
+    return message;
 }
 
 

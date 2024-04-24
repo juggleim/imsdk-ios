@@ -105,21 +105,25 @@ NSString *const jTotalCount = @"total_count";
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteMessage *lastMessage = (JConcreteMessage *)obj.lastMessage;
-            NSData *data = [lastMessage.content encode];
-            NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
-            JConcreteConversationInfo *info = nil;
-            JFMResultSet *resultSet = [db executeQuery:kGetConversation, @(obj.conversation.conversationType), obj.conversation.conversationId];
-            if ([resultSet next]) {
-                info = [self conversationInfoWith:resultSet];
+            if([lastMessage.content respondsToSelector:@selector(encode)]){
+                NSData *data = [lastMessage.content encode];
+                NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                
+                JConcreteConversationInfo *info = nil;
+                JFMResultSet *resultSet = [db executeQuery:kGetConversation, @(obj.conversation.conversationType), obj.conversation.conversationId];
+                if ([resultSet next]) {
+                    info = [self conversationInfoWith:resultSet];
+                }
+                if (info) {
+                    [updateConversations addObject:obj];
+                    [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                } else {
+                    [insertConversations addObject:obj];
+                    [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
+                }
             }
-            if (info) {
-                [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
-            } else {
-                [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
-            }
+            
         }];
     }];
     if (completeBlock) {
@@ -208,9 +212,11 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)updateLastMessage:(JConcreteMessage *)message {
-    NSData *data = [message.content encode];
-    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", @(message.msgIndex), message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
+    if([message.content respondsToSelector:@selector(endDate)]){
+        NSData *data = [message.content encode];
+        NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", @(message.msgIndex), message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
+    }
 }
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {

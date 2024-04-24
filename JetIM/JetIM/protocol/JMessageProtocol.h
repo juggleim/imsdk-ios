@@ -188,7 +188,8 @@
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                              success:(void (^)(NSArray *messages))successBlock
+                         localMessage:(void (^)(NSArray *messages,BOOL needRemote))localMessage
+                        remoteMessage:(void (^)(NSArray *messages))remoteMessage
                                 error:(void (^)(JErrorCode code))errorBlock;
 
 /// 发送阅读回执

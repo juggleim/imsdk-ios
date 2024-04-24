@@ -10,26 +10,26 @@
 #import "JContentTypeCenter.h"
 
 NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
-                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                                        "conversation_type SMALLINT,"
-                                        "conversation_id VARCHAR (64),"
-                                        "type VARCHAR (64),"
-                                        "message_uid VARCHAR (64),"
-                                        "client_uid VARCHAR (64),"
-                                        "direction BOOLEAN,"
-                                        "state SMALLINT,"
-                                        "has_read BOOLEAN,"
-                                        "timestamp INTEGER,"
-                                        "sender VARCHAR (64),"
-                                        "content TEXT,"
-                                        "extra TEXT,"
-                                        "seq_no INTEGER,"
-                                        "message_index INTEGER,"
-                                        "read_count INTEGER,"
-                                        "member_count INTEGER DEFAULT -1,"
-                                        "is_deleted BOOLEAN DEFAULT 0,"
-                                        "search_content TEXT"
-                                        ")";
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"conversation_type SMALLINT,"
+"conversation_id VARCHAR (64),"
+"type VARCHAR (64),"
+"message_uid VARCHAR (64),"
+"client_uid VARCHAR (64),"
+"direction BOOLEAN,"
+"state SMALLINT,"
+"has_read BOOLEAN,"
+"timestamp INTEGER,"
+"sender VARCHAR (64),"
+"content TEXT,"
+"extra TEXT,"
+"seq_no INTEGER,"
+"message_index INTEGER,"
+"read_count INTEGER,"
+"member_count INTEGER DEFAULT -1,"
+"is_deleted BOOLEAN DEFAULT 0,"
+"search_content TEXT"
+")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
@@ -109,6 +109,7 @@ NSString *const jIsDeleted = @"is_deleted";
             } else {
                 [self insertMessage:obj inDb:db];
                 obj.clientMsgNo = db.lastInsertRowId;
+                NSLog(@"obj.messageId = %@,obj.clientMsgNo = %lli",obj.messageId,obj.clientMsgNo);
             }
         }];
     }];
@@ -128,13 +129,18 @@ NSString *const jIsDeleted = @"is_deleted";
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId {
-    NSData *data = [content encode];
-    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    if (s.length == 0 || messageId.length == 0) {
-        return;
+    
+    if([content respondsToSelector:@selector(encode)]){
+        NSData *data = [content encode];
+        NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        if (s.length == 0 || messageId.length == 0) {
+            return;
+        }
+        [self.dbHelper executeUpdate:jUpdateMessageContent
+                withArgumentsInArray:@[s, type, content.searchContent, messageId]];
     }
-    [self.dbHelper executeUpdate:jUpdateMessageContent
-            withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+    
+
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -357,10 +363,13 @@ NSString *const jIsDeleted = @"is_deleted";
         msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
     }
-    NSData *data = [message.content encode];
-    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    int memberCount = message.groupReadInfo.memberCount?:-1;
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent];
+    if([message.content respondsToSelector:@selector(encode)]){
+        NSData *data = [message.content encode];
+        NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        int memberCount = message.groupReadInfo.memberCount?:-1;
+        [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent];
+    }
+
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
