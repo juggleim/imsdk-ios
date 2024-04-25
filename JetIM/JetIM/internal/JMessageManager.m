@@ -306,18 +306,14 @@
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                         localMessage:(void (^)(NSArray *messages,BOOL needRemote))localMessage
-                        remoteMessage:(void (^)(NSArray *messages))remoteMessage
+                    localMessageBlock:(void (^)(NSArray *messages,BOOL needRemote))localMessageBlock
+                   remoteMessageBlock:(void (^)(NSArray *messages))remoteMessageBlock
                                 error:(void (^)(JErrorCode code))errorBlock{
     if (count <= 0) {
         dispatch_async(self.core.delegateQueue, ^{
-            if (localMessage) {
+            if (localMessageBlock) {
                 NSArray *arr = [NSArray array];
-                localMessage(arr,NO);
-            }
-            if (remoteMessage) {
-                NSArray *arr = [NSArray array];
-                localMessage(arr,NO);
+                localMessageBlock(arr, NO);
             }
         });
         return;
@@ -329,24 +325,21 @@
                                              count:count
                                               time:startTime
                                          direction:direction];
-    
-    
-    
     __block BOOL needRemote = NO;
     //本地数据为空
     if (localMessages.count == 0) {
         needRemote = YES;
-    }else{
+    } else {
         JConcreteMessage *message = localMessages[0];
         __block long long seqNo = message.seqNo;
         if(localMessages.count < count && seqNo != 1){
-            //本地数据小于 需要拉取的数量 并且 本地数据第一条 seqNo 不是第一个
+            //本地数据小于需要拉取的数量，并且本地数据第一条 seqNo 不是第一个
             needRemote = YES;
-        }else{
+        } else {
             //本地数据等于需要拉取的数据 或 本地数据第一条 seqNo 是第一个
             //判断是否连续
             [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if (idx > 0 && obj.messageState == JMessageStateSent) {
+                if (idx > 0 && obj.messageState == JMessageStateSent && obj.seqNo > 0) {
                     if (obj.seqNo > ++seqNo) {
                         needRemote = YES;
                         *stop = YES;
@@ -358,15 +351,9 @@
     }
     
     dispatch_async(self.core.delegateQueue, ^{
-        if (localMessage) {
-            localMessage(localMessages,needRemote);
+        if (localMessageBlock) {
+            localMessageBlock(localMessages, needRemote);
         }
-        
-        NSLog(@"【getRemoteMessagesFrom】本地消息");
-        for (JConcreteMessage * message in localMessages) {
-            NSLog(@"【getRemoteMessagesFrom】messageId -- %@, clientMsgNo -- %lld",message.messageId,message.clientMsgNo);
-        }
-        
     });
     
     if (needRemote) {
@@ -394,8 +381,8 @@
                 }
             }];
             dispatch_async(self.core.delegateQueue, ^{
-                if (remoteMessage) {
-                    remoteMessage(ascArray);
+                if (remoteMessageBlock) {
+                    remoteMessageBlock(ascArray);
                 }
             });
             
