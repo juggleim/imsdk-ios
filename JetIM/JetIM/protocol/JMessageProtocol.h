@@ -170,19 +170,21 @@
                         error:(void (^)(JErrorCode code))errorBlock;
 
 
-/// 先从本地获取消息，如果中间存在缺失，则从远端补齐
+/// 先从本地获取消息，如果中间存在缺失，则从远端补齐。如果本地消息已经是完备的，将不会再走 remoteMessageBlock 回调。
 /// - Parameters:
 ///   - conversation: 会话对象
 ///   - startTime: 消息时间戳，如果传 0 为当前时间
 ///   - count: 拉取数量，超过 100 条按 100 返回
 ///   - direction: 拉取方向
-///   - successBlock: 成功回调
+///   - localMessageBlock: 本地消息回调
+///   - remoteMessageBlock: 远端消息回调（可能包含已返回的本地消息）
 ///   - errorBlock: 失败回调
 - (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                              success:(void (^)(NSArray *messages))successBlock
+                    localMessageBlock:(void (^)(NSArray *messages,BOOL needRemote))localMessageBlock
+                   remoteMessageBlock:(void (^)(NSArray *messages))remoteMessageBlock
                                 error:(void (^)(JErrorCode code))errorBlock;
 
 /// 发送阅读回执
