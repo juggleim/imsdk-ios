@@ -111,6 +111,7 @@ NSString *const jMentionInfo = @"mention_info";
             } else {
                 [self insertMessage:obj inDb:db];
                 obj.clientMsgNo = db.lastInsertRowId;
+                NSLog(@"obj.messageId = %@,obj.clientMsgNo = %lli",obj.messageId,obj.clientMsgNo);
             }
         }];
     }];

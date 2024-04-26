@@ -209,9 +209,11 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)updateLastMessage:(JConcreteMessage *)message {
-    NSData *data = [message.content encode];
-    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", @(message.msgIndex), message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
+    if([message.content respondsToSelector:@selector(endDate)]){
+        NSData *data = [message.content encode];
+        NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", @(message.msgIndex), message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
+    }
 }
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
