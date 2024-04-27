@@ -231,39 +231,17 @@
 
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
-    [self.core.dbManager updateLastMessage:message];
-    [self noticeConversationAddOrUpdate:message];
+    [self addOrUpdateConversationIfNeed:message];
 }
 
 - (void)messageDidSend:(JConcreteMessage *)message {
-    [self.core.dbManager updateLastMessage:message];
+    [self addOrUpdateConversationIfNeed:message];
     [self updateSyncTime:message.timestamp];
-    [self noticeConversationAddOrUpdate:message];
 }
 
 - (void)messageDidReceive:(JConcreteMessage *)message {
-    [self.core.dbManager updateLastMessage:message];
+    [self addOrUpdateConversationIfNeed:message];
     [self updateSyncTime:message.timestamp];
-    //接收的消息才处理 mention
-    if (message.direction == JMessageDirectionReceive
-        && message.content.mentionInfo) {
-        BOOL hasMention = NO;
-        if (message.content.mentionInfo.type == JMentionTypeAll
-            || message.content.mentionInfo.type == JMentionTypeAllAndSomeOne) {
-            hasMention = YES;
-        } else if (message.content.mentionInfo.type == JMentionTypeSomeOne) {
-            for (JUserInfo *userInfo in message.content.mentionInfo.targetUsers) {
-                if ([userInfo.userId isEqualToString:self.core.userId]) {
-                    hasMention = YES;
-                    break;
-                }
-            }
-        }
-        if (hasMention) {
-            [self.core.dbManager setMention:YES conversation:message.conversation];
-        }
-    }
-    [self noticeConversationAddOrUpdate:message];
     [self noticeTotalUnreadCountChange];
 }
 
@@ -297,7 +275,23 @@
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
 }
 
-- (void)noticeConversationAddOrUpdate:(JConcreteMessage *)message {
+- (void)addOrUpdateConversationIfNeed:(JConcreteMessage *)message {
+    BOOL hasMention = NO;
+    //接收的消息才处理 mention
+    if (message.direction == JMessageDirectionReceive
+        && message.content.mentionInfo) {
+        if (message.content.mentionInfo.type == JMentionTypeAll
+            || message.content.mentionInfo.type == JMentionTypeAllAndSomeOne) {
+            hasMention = YES;
+        } else if (message.content.mentionInfo.type == JMentionTypeSomeOne) {
+            for (JUserInfo *userInfo in message.content.mentionInfo.targetUsers) {
+                if ([userInfo.userId isEqualToString:self.core.userId]) {
+                    hasMention = YES;
+                    break;
+                }
+            }
+        }
+    }
     JConversationInfo *info = [self getConversationInfo:message.conversation];
     if (!info) {
         JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
@@ -307,7 +301,7 @@
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;
         addInfo.unreadCount = 1;
-        if (message.content.mentionInfo) {
+        if (hasMention) {
             addInfo.hasMentioned = YES;
         }
         [self.core.dbManager insertConversations:@[addInfo] completion:nil];
@@ -317,6 +311,11 @@
             }
         });
     } else {
+        if (hasMention) {
+            [self.core.dbManager setMention:YES conversation:message.conversation];
+            info.hasMentioned = YES;
+        }
+        [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
                 [self.delegate conversationInfoDidUpdate:@[info]];
