@@ -772,7 +772,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         NSMutableArray <JUserInfo *> *mentionUserList = [NSMutableArray array];
         for (UserInfo *u in downMsg.mentionInfo.targetUsersArray) {
             JUserInfo *userInfo = [self userInfoWithPBUserInfo:u];
-            [mentionUserList addObject:userInfo];
+            if (userInfo) {
+                [mentionUserList addObject:userInfo];
+            }
         }
         mentionInfo.targetUsers = mentionUserList;
         msg.content.mentionInfo = mentionInfo;

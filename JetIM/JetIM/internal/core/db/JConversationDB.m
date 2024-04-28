@@ -22,7 +22,6 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "top_time INTEGER,"
                                         "mute BOOLEAN,"
                                         "has_mentioned BOOLEAN,"
-                                        "last_mention_message_id VARCHAR (64),"
                                         "last_message_type VARCHAR (64),"
                                         "last_message_client_uid VARCHAR (64),"
                                         "last_message_direction BOOLEAN,"
@@ -36,13 +35,13 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
                                         "(conversation_type, conversation_id, timestamp, last_message_id,"
-                                        "last_read_message_index, last_message_index, is_top, top_time, mute, has_mentioned, last_mention_message_id,"
+                                        "last_read_message_index, last_message_index, is_top, top_time, mute, has_mentioned,"
                                         "last_message_type, last_message_client_uid, last_message_direction, last_message_state,"
                                         "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content,"
                                         "last_message_seq_no)"
-                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
-                                        "last_message_index=?, is_top=?, top_time=?, mute=?, has_mentioned=?, last_mention_message_id=?, last_message_type=?,  "
+                                        "last_message_index=?, is_top=?, top_time=?, mute=?, has_mentioned=?, last_message_type=?,  "
                                         "last_message_client_uid=?, last_message_direction=?, last_message_state=?, "
                                         "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
                                         "last_message_content=?, last_message_seq_no=? WHERE conversation_type = ? "
@@ -78,7 +77,6 @@ NSString *const jIsTop = @"is_top";
 NSString *const jTopTime = @"top_time";
 NSString *const jMute = @"mute";
 NSString *const jHasMentioned = @"has_mentioned";
-NSString *const jLastMentionMessageId = @"last_mention_message_id";
 NSString *const jLastMessageType = @"last_message_type";
 NSString *const jLastMessageClientUid = @"last_message_client_uid";
 NSString *const jLastMessageDirection = @"last_message_direction";
@@ -118,10 +116,10 @@ NSString *const jTotalCount = @"total_count";
             }
             if (info) {
                 [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
             } else {
                 [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), @(0), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
             }
         }];
     }];

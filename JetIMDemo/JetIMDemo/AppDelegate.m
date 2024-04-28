@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
 //    [JIM.shared setServer:@"https://nav.wahu.cn"];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken1];
+    [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
     [JIM.shared.messageManager setDelegate:self];
     [JIM.shared.messageManager setSyncDelegate:self];
@@ -66,18 +66,18 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-            [JIM.shared.messageManager getMentionMessages:c
-                                                    count:100
-                                                     time:0
-                                                direction:JPullDirectionOlder
-                                                  success:^(NSArray<JMessage *> *messages) {
-                
-            } error:^(JErrorCode code) {
-                
-            }];
-        });
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            [JIM.shared.messageManager getMentionMessages:c
+//                                                    count:100
+//                                                     time:0
+//                                                direction:JPullDirectionOlder
+//                                                  success:^(NSArray<JMessage *> *messages) {
+//
+//            } error:^(JErrorCode code) {
+//
+//            }];
+//        });
         
         
         //register push token
@@ -299,27 +299,27 @@
 //        [self sendMessage];
         
         //send mention message
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"testMention"];
-//            JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
-//            mentionInfo.type = JMentionTypeSomeOne;
-//            JUserInfo *user1 = [[JUserInfo alloc] init];
-//            user1.userId = @"userid1";
-//            JUserInfo *user2 = [[JUserInfo alloc] init];
-//            user2.userId = @"userid2";
-//            mentionInfo.targetUsers = @[user1, user2];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"testMention"];
+            JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
+            mentionInfo.type = JMentionTypeSomeOne;
+            JUserInfo *user1 = [[JUserInfo alloc] init];
+            user1.userId = @"userid1";
+            JUserInfo *user2 = [[JUserInfo alloc] init];
+            user2.userId = @"userid2";
+            mentionInfo.targetUsers = @[user1, user2];
 //            text.mentionInfo = mentionInfo;
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.messageManager sendMessage:text inConversation:c
-//                                           success:^(JMessage *message) {
-//                NSLog(@"1111");
-//                JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:c];
-//                JMessage *m = [JIM.shared.messageManager getMessagesByMessageIds:@[message.messageId]];
-//                NSLog(@"1111");
-//            } error:^(JErrorCode errorCode, JMessage *message) {
-//                NSLog(@"222");
-//            }];
-//        });
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            [JIM.shared.messageManager sendMessage:text inConversation:c
+                                           success:^(JMessage *message) {
+                NSLog(@"1111");
+                JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:c];
+                JMessage *m = [JIM.shared.messageManager getMessagesByMessageIds:@[message.messageId]];
+                NSLog(@"1111");
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                NSLog(@"222");
+            }];
+        });
         
         
         //save message
