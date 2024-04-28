@@ -66,6 +66,7 @@ NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?,
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetMention = @"UPDATE conversation_info SET has_mentioned = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(last_message_index - last_read_message_index) AS total_count FROM conversation_info";
+NSString *const jClearTotalUnreadCount = @"UPDTAE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
 NSString *const jDraft = @"draft";
@@ -233,6 +234,11 @@ NSString *const jTotalCount = @"total_count";
     }];
     return count;
 }
+
+- (void)clearTotalUnreadCount{
+    [self.dbHelper executeUpdate:jClearTotalUnreadCount withArgumentsInArray:nil];
+}
+
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {

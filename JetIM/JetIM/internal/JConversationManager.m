@@ -229,6 +229,14 @@
     _syncDelegate = delegate;
 }
 
+- (void)clearTotalUnreadCount {
+    [self.core.dbManager clearTotalUnreadCount];
+    [self noticeTotalUnreadCountChange];
+    long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
+    
+    
+}
+
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
     [self addOrUpdateConversationIfNeed:message];

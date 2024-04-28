@@ -86,6 +86,9 @@
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCode code))errorBlock;
 
+/// 清除总未读数
+- (void)clearTotalUnreadCount;
+
 - (void)setDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;

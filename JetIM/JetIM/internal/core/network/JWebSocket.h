@@ -124,6 +124,11 @@ NS_ASSUME_NONNULL_BEGIN
                   success:(void (^)(void))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)clearTotalUnreadCount:(NSString *)userId
+                         time:(long long)time
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

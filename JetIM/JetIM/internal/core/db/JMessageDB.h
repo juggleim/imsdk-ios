@@ -57,7 +57,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 
-
 //- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
 //                                       count:(int)count
 //                                        time:(long long)time
