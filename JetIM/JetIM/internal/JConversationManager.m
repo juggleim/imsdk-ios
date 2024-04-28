@@ -234,6 +234,13 @@
     [self noticeTotalUnreadCountChange];
     long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
     
+    [self.core.webSocket clearTotalUnreadCount:self.core.userId
+                                          time:time
+                                       success:^{
+        
+    } error:^(JErrorCodeInternal code) {
+        
+    }];
     
 }
 
@@ -304,7 +311,7 @@
     if (!info) {
         JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
         addInfo.conversation = message.conversation;
-        addInfo.updateTime = message.timestamp;
+        addInfo.sortTime = message.timestamp;
         addInfo.lastMessage = message;
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;

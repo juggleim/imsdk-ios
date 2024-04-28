@@ -430,7 +430,13 @@
                         error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(time);
-        
+        NSData *d = [self.pbData clearTotalUnreadCountMessages:userId 
+                                                          time:time
+                                                         index:self.cmdIndex ++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
     
 }

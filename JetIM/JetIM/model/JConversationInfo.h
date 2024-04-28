@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 当前会话的消息未读数
 @property (nonatomic, assign) int unreadCount;
 /// 会话更新时间（服务端时间）
-@property (nonatomic, assign) long long updateTime;
+@property (nonatomic, assign) long long sortTime;
 /// 会话中的最后一条消息
 @property (nonatomic, strong) JMessage *lastMessage;
 /// 是否置顶
