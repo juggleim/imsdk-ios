@@ -208,6 +208,22 @@
     return [self.messageDb searchMessagesWithContent:searchContent inConversation:conversation count:count time:time direction:direction contentTypes:contentTypes];
 }
 
+
+
+- (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
+    return [self.messageDb getLocalAttributeByMessageId:messageId];
+}
+- (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
+    [self.messageDb setLocalAttribute:attribute forMessage:messageId];
+}
+- (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo{
+    return [self.messageDb getLocalAttributeByClientMsgNo:clientMsgNo];
+}
+- (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
+    [self.messageDb setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
+}
+
+
 //- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
 //                                       count:(int)count
 //                                        time:(long long)time

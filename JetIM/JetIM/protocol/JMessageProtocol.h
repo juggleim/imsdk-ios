@@ -248,15 +248,28 @@
                    success:(void (^)(NSArray<JMessage *> *messages))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置消息本地属性（只在本地生效，不会同步到远端）
-/// - Parameter attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
-/// - Parameter messageId: 消息 id
-- (void)setLocalAttribute:(NSString *)attribute
-               forMessage:(NSString *)messageId;
-
 /// 获取消息本地属性
 /// - Parameter messageId: 消息 id
-- (NSString *)getLocalAttribute:(NSString *)messageId;
+- (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
+
+
+/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// - Parameters:
+///   - attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
+///   - messageId: 消息 id
+- (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
+
+
+/// 获取消息本地属性
+/// - Parameter clientMsgNo: 本端消息唯一编号
+- (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
+
+/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// - Parameters:
+///   - attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
+///   - clientMsgNo: 本端消息唯一编号
+- (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
+
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
