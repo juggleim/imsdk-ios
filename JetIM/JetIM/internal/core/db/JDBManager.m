@@ -200,11 +200,12 @@
 }
 
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
-    return [self.messageDb searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
+    return [self.messageDb searchMessagesWithContent:searchContent inConversation:conversation count:count time:time direction:direction contentTypes:contentTypes];
 }
 
 //- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation

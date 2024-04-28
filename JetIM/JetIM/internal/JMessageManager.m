@@ -183,6 +183,7 @@
 /// 搜素本地消息 SearchContent内容包含 指定内容
 /// - Parameter searchContent: 需要包含的字符串
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction

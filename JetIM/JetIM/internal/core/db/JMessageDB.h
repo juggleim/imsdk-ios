@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMessagesRead:(NSArray<NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs;
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction

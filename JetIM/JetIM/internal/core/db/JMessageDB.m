@@ -55,6 +55,8 @@ NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
+NSString *const jAndInConversation = @"AND conversation_id = ?";
+
 //NSString *const jGetMentionMessages = @"SELECT * FROM message WHERE LENGTH(mention_info) > 0 AND conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
 
 NSString *const jMessageConversationType = @"conversation_type";
@@ -267,6 +269,7 @@ NSString *const jMentionInfo = @"mention_info";
 }
 
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction
@@ -282,14 +285,26 @@ NSString *const jMentionInfo = @"mention_info";
     }
     NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
     NSString *sql = jGetMessagesBySearchContent;
+    NSMutableArray *args = [NSMutableArray array];
+    [args addObject:searchString];
+    
+    if(conversation){
+        sql = [sql stringByAppendingString:jAndInConversation];
+        [args addObject:conversation.conversationId];
+    }
+    
     if (direction == JPullDirectionNewer) {
         sql = [sql stringByAppendingString:jAndGreaterThan];
     } else {
         sql = [sql stringByAppendingString:jAndLessThan];
     }
+    [args addObject:@(time)];
+    
+    
     if (contentTypes.count > 0) {
         sql = [sql stringByAppendingString:jAndTypeIn];
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
+        [args addObjectsFromArray:contentTypes];
     }
     sql = [sql stringByAppendingString:jOrderByTimestamp];
     if (direction == JPullDirectionNewer) {
@@ -298,11 +313,8 @@ NSString *const jMentionInfo = @"mention_info";
         sql = [sql stringByAppendingString:jDESC];
     }
     sql = [sql stringByAppendingString:jLimit];
-    
-    NSMutableArray *messages = [[NSMutableArray alloc] init];
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[searchString, @(time)]];
-    [args addObjectsFromArray:contentTypes];
     [args addObject:@(count)];
+    NSMutableArray *messages = [[NSMutableArray alloc] init];
     [self.dbHelper executeQuery:sql
            withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
