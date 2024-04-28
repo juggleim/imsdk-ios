@@ -35,6 +35,7 @@ CF_EXTERN_C_BEGIN
 @class Conversation;
 @class DownMsg;
 @class DownMsgSet;
+@class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
 @class IndexScope;
@@ -46,6 +47,7 @@ CF_EXTERN_C_BEGIN
 @class PushData;
 @class QiniuCredResp;
 @class ReadInfoItem;
+@class SimpleConversation;
 @class SimpleMsg;
 @class UndisturbConverItem;
 @class UserInfo;
@@ -116,6 +118,7 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_Group = 2,
   ChannelType_Chatroom = 3,
   ChannelType_System = 4,
+  ChannelType_Assistant = 5,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
@@ -723,6 +726,82 @@ GPB_FINAL @interface KvItem : GPBMessage
 
 @end
 
+#pragma mark - AddGrpAssistantReq
+
+typedef GPB_ENUM(AddGrpAssistantReq_FieldNumber) {
+  AddGrpAssistantReq_FieldNumber_AssistantId = 1,
+  AddGrpAssistantReq_FieldNumber_TargetsArray = 2,
+};
+
+/**
+ * group assistant
+ **/
+GPB_FINAL @interface AddGrpAssistantReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *assistantId;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleConversation*> *targetsArray;
+/** The number of items in @c targetsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger targetsArray_Count;
+
+@end
+
+#pragma mark - SimpleConversation
+
+typedef GPB_ENUM(SimpleConversation_FieldNumber) {
+  SimpleConversation_FieldNumber_TargetId = 1,
+  SimpleConversation_FieldNumber_ChannelType = 2,
+  SimpleConversation_FieldNumber_MsgTime = 3,
+  SimpleConversation_FieldNumber_MsgSeq = 4,
+};
+
+GPB_FINAL @interface SimpleConversation : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@property(nonatomic, readwrite) int64_t msgSeq;
+
+@end
+
+/**
+ * Fetches the raw value of a @c SimpleConversation's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t SimpleConversation_ChannelType_RawValue(SimpleConversation *message);
+/**
+ * Sets the raw value of an @c SimpleConversation's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetSimpleConversation_ChannelType_RawValue(SimpleConversation *message, int32_t value);
+
+#pragma mark - AssistantMsgResp
+
+typedef GPB_ENUM(AssistantMsgResp_FieldNumber) {
+  AssistantMsgResp_FieldNumber_MsgId = 1,
+  AssistantMsgResp_FieldNumber_MsgTime = 2,
+  AssistantMsgResp_FieldNumber_MsgSeq = 3,
+  AssistantMsgResp_FieldNumber_ConversArray = 4,
+};
+
+GPB_FINAL @interface AssistantMsgResp : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@property(nonatomic, readwrite) int64_t msgSeq;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleConversation*> *conversArray;
+/** The number of items in @c conversArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger conversArray_Count;
+
+@end
+
 #pragma mark - AddHisMsgReq
 
 typedef GPB_ENUM(AddHisMsgReq_FieldNumber) {
@@ -1213,17 +1292,109 @@ int32_t MsgExtItem_ChannelType_RawValue(MsgExtItem *message);
  **/
 void SetMsgExtItem_ChannelType_RawValue(MsgExtItem *message, int32_t value);
 
+#pragma mark - QryGlobalConversReq
+
+typedef GPB_ENUM(QryGlobalConversReq_FieldNumber) {
+  QryGlobalConversReq_FieldNumber_StartTime = 1,
+  QryGlobalConversReq_FieldNumber_Count = 2,
+  QryGlobalConversReq_FieldNumber_Order = 3,
+  QryGlobalConversReq_FieldNumber_TargetId = 4,
+  QryGlobalConversReq_FieldNumber_ChannelType = 5,
+};
+
+/**
+ * conversation
+ **/
+GPB_FINAL @interface QryGlobalConversReq : GPBMessage
+
+@property(nonatomic, readwrite) int64_t startTime;
+
+@property(nonatomic, readwrite) int32_t count;
+
+@property(nonatomic, readwrite) int32_t order;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryGlobalConversReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryGlobalConversReq_ChannelType_RawValue(QryGlobalConversReq *message);
+/**
+ * Sets the raw value of an @c QryGlobalConversReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryGlobalConversReq_ChannelType_RawValue(QryGlobalConversReq *message, int32_t value);
+
+#pragma mark - QryGlobalConversResp
+
+typedef GPB_ENUM(QryGlobalConversResp_FieldNumber) {
+  QryGlobalConversResp_FieldNumber_ConversArray = 1,
+  QryGlobalConversResp_FieldNumber_IsFinished = 2,
+};
+
+GPB_FINAL @interface QryGlobalConversResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<GlobalConver*> *conversArray;
+/** The number of items in @c conversArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger conversArray_Count;
+
+@property(nonatomic, readwrite) BOOL isFinished;
+
+@end
+
+#pragma mark - GlobalConver
+
+typedef GPB_ENUM(GlobalConver_FieldNumber) {
+  GlobalConver_FieldNumber_ConverId = 1,
+  GlobalConver_FieldNumber_SenderId = 2,
+  GlobalConver_FieldNumber_TargetId = 3,
+  GlobalConver_FieldNumber_ChannelType = 4,
+  GlobalConver_FieldNumber_UpdatedTime = 5,
+};
+
+GPB_FINAL @interface GlobalConver : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *converId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite) int64_t updatedTime;
+
+@end
+
+/**
+ * Fetches the raw value of a @c GlobalConver's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t GlobalConver_ChannelType_RawValue(GlobalConver *message);
+/**
+ * Sets the raw value of an @c GlobalConver's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetGlobalConver_ChannelType_RawValue(GlobalConver *message, int32_t value);
+
 #pragma mark - QryConversationsReq
 
 typedef GPB_ENUM(QryConversationsReq_FieldNumber) {
   QryConversationsReq_FieldNumber_StartTime = 1,
   QryConversationsReq_FieldNumber_Count = 2,
   QryConversationsReq_FieldNumber_Order = 3,
+  QryConversationsReq_FieldNumber_UserId = 4,
+  QryConversationsReq_FieldNumber_TargetId = 5,
+  QryConversationsReq_FieldNumber_ChannelType = 6,
 };
 
-/**
- * conversation
- **/
 GPB_FINAL @interface QryConversationsReq : GPBMessage
 
 @property(nonatomic, readwrite) int64_t startTime;
@@ -1232,7 +1403,25 @@ GPB_FINAL @interface QryConversationsReq : GPBMessage
 
 @property(nonatomic, readwrite) int32_t order;
 
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
 @end
+
+/**
+ * Fetches the raw value of a @c QryConversationsReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryConversationsReq_ChannelType_RawValue(QryConversationsReq *message);
+/**
+ * Sets the raw value of an @c QryConversationsReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryConversationsReq_ChannelType_RawValue(QryConversationsReq *message, int32_t value);
 
 #pragma mark - QryConversationsResp
 
@@ -1257,7 +1446,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_UserId = 1,
   Conversation_FieldNumber_TargetId = 2,
   Conversation_FieldNumber_ChannelType = 3,
-  Conversation_FieldNumber_UpdateTime = 4,
+  Conversation_FieldNumber_SortTime = 4,
   Conversation_FieldNumber_UnreadCount = 5,
   Conversation_FieldNumber_Msg = 6,
   Conversation_FieldNumber_LatestReadIndex = 7,
@@ -1280,7 +1469,7 @@ GPB_FINAL @interface Conversation : GPBMessage
 
 @property(nonatomic, readwrite) ChannelType channelType;
 
-@property(nonatomic, readwrite) int64_t updateTime;
+@property(nonatomic, readwrite) int64_t sortTime;
 
 @property(nonatomic, readwrite) int64_t unreadCount;
 
@@ -1327,6 +1516,12 @@ int32_t Conversation_ChannelType_RawValue(Conversation *message);
  * was generated.
  **/
 void SetConversation_ChannelType_RawValue(Conversation *message, int32_t value);
+
+#pragma mark - MentionInfos
+
+GPB_FINAL @interface MentionInfos : GPBMessage
+
+@end
 
 #pragma mark - MentionMsg
 
@@ -1432,7 +1627,13 @@ GPB_FINAL @interface SyncConversationsReq : GPBMessage
 
 #pragma mark - QryTotalUnreadCountReq
 
+typedef GPB_ENUM(QryTotalUnreadCountReq_FieldNumber) {
+  QryTotalUnreadCountReq_FieldNumber_Time = 1,
+};
+
 GPB_FINAL @interface QryTotalUnreadCountReq : GPBMessage
+
+@property(nonatomic, readwrite) int64_t time;
 
 @end
 

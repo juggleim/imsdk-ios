@@ -817,7 +817,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConversation *c = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:conversation.channelType]
                                                                    conversationId:conversation.targetId];
     info.conversation = c;
-    info.updateTime = conversation.updateTime;
+    info.sortTime = conversation.sortTime;
     JConcreteMessage *lastMessage = [self messageWithDownMsg:conversation.msg];
     info.lastMessage = lastMessage;
     info.lastReadMessageIndex = conversation.latestReadIndex;

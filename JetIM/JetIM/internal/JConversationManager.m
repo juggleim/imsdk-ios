@@ -296,7 +296,7 @@
     if (!info) {
         JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
         addInfo.conversation = message.conversation;
-        addInfo.updateTime = message.timestamp;
+        addInfo.sortTime = message.timestamp;
         addInfo.lastMessage = message;
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;
