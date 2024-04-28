@@ -188,7 +188,7 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes{
-    return [self.core.dbManager searchMessagesWithContent:searchContent count:count time:time direction:direction contentTypes:contentTypes];
+    return [self.core.dbManager searchMessagesWithContent:searchContent inConversation:conversation count:count time:time direction:direction contentTypes:contentTypes];
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content
@@ -532,6 +532,22 @@
 - (void)registerContentType:(Class)messageClass {
     [[JContentTypeCenter shared] registerContentType:messageClass];
 }
+
+- (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
+    return [self.core.dbManager getLocalAttributeByMessageId:messageId];
+}
+- (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
+    [self.core.dbManager setLocalAttribute:attribute forMessage:messageId];
+}
+- (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo{
+    return [self.core.dbManager getLocalAttributeByClientMsgNo:clientMsgNo];
+}
+- (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
+    [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
+}
+
+
+
 
 #pragma mark - JWebSocketMessageDelegate
 - (void)messageDidReceive:(JConcreteMessage *)message {

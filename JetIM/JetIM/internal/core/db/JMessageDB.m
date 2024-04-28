@@ -29,7 +29,8 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "member_count INTEGER DEFAULT -1,"
                                         "is_deleted BOOLEAN DEFAULT 0,"
                                         "search_content TEXT,"
-                                        "mention_info TEXT"
+                                        "mention_info TEXT,"
+                                        "local_attribute TEXT"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
@@ -56,6 +57,9 @@ NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
 NSString *const jAndInConversation = @"AND conversation_id = ?";
+NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
+NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
+
 
 //NSString *const jGetMentionMessages = @"SELECT * FROM message WHERE LENGTH(mention_info) > 0 AND conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
 
@@ -78,6 +82,7 @@ NSString *const jReadCount = @"read_count";
 NSString *const jMemberCount = @"member_count";
 NSString *const jIsDeleted = @"is_deleted";
 NSString *const jMentionInfo = @"mention_info";
+NSString *const jLocalAttribute = @"local_attribute";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -330,6 +335,50 @@ NSString *const jMentionInfo = @"mention_info";
         result = [messages copy];
     }
     return result;
+}
+
+
+- (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
+    NSString *sql = jGetMessageLocalAttribute;
+    sql = [sql stringByAppendingString:jMessageIdIs];
+    __block NSString * localAttribute;
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:@[messageId]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            localAttribute = [resultSet stringForColumn:jLocalAttribute];
+        }
+    }];
+    return localAttribute;
+    
+}
+- (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
+    NSString *sql = jUpdateMessageLocalAttribute;
+    sql = [sql stringByAppendingString:jMessageIdIs];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:@[attribute, messageId]];
+    
+}
+- (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo{
+    NSString *sql = jGetMessageLocalAttribute;
+    sql = [sql stringByAppendingString:jClientMsgNoIs];
+    __block NSString * localAttribute;
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:@[@(clientMsgNo)]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            localAttribute = [resultSet stringForColumn:jLocalAttribute];
+        }
+    }];
+    return localAttribute;
+    
+}
+- (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
+    NSString *sql = jUpdateMessageLocalAttribute;
+    sql = [sql stringByAppendingString:jClientMsgNoIs];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:@[attribute, @(clientMsgNo)]];
+    
 }
 
 //- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
