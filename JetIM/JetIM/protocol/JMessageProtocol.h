@@ -221,11 +221,11 @@
 /// 消息本地检索
 /// - Parameters:
 ///   - searchContent: 查询内容
-///   - conversation: 要查询的会话 传空 从所有会话中查询
+///   - conversation: 要查询的会话，传空从所有会话中查询
 ///   - count:拉取数量，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 为当前时间
 ///   - direction: 查询方向
-///   - contentTypes: 内容类型 ，传空返回所有类型
+///   - contentTypes: 内容类型，传空返回所有类型
 - (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                      inConversation:(JConversation *)conversation
                                              count:(int)count
