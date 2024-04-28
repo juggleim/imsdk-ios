@@ -429,8 +429,14 @@
                       success:(void (^)(void))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(time);
-        
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData clearTotalUnreadCountMessages:userId
+                                                          time:time
+                                                         index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
     
 }

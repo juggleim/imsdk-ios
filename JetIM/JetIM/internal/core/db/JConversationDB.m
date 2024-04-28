@@ -117,10 +117,10 @@ NSString *const jTotalCount = @"total_count";
             }
             if (info) {
                 [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                [db executeUpdate:jUpdateConversation, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
             } else {
                 [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.updateTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), @(obj.hasMentioned), lastMessage.contentType, lastMessage.clientUid, @(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, @(lastMessage.seqNo)];
             }
         }];
     }];
@@ -228,7 +228,7 @@ NSString *const jTotalCount = @"total_count";
     [self.dbHelper executeQuery:jGetTotalUnreadCount
            withArgumentsInArray:nil
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
-        while ([resultSet next]) {
+        if ([resultSet next]) {
             count = [resultSet intForColumn:jTotalCount];
         }
     }];
@@ -255,7 +255,7 @@ NSString *const jTotalCount = @"total_count";
     c.conversationId = [rs stringForColumn:jConversationId];
     info.conversation = c;
     info.draft = [rs stringForColumn:jDraft];
-    info.updateTime = [rs longLongIntForColumn:jConversationTimestamp];
+    info.sortTime = [rs longLongIntForColumn:jConversationTimestamp];
     info.lastReadMessageIndex = [rs longLongIntForColumn:jLastReadMessageIndex];
     info.lastMessageIndex = [rs longLongIntForColumn:jLastMessageIndex];
     info.isTop = [rs boolForColumn:jIsTop];
