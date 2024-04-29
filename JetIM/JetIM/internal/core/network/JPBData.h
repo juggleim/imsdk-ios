@@ -28,7 +28,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeDisconnectMsg,
     JPBRcvTypeRecall,
     JPBRcvTypeQryReadDetailAck,
-    JPBRcvTypeSimpleQryAck
+    JPBRcvTypeSimpleQryAck,
+    JPBRcvTypeTimestampQryAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -80,6 +81,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JSimpleQryAck : JQryAck
 @end
 
+@interface JTimestampQryAck : JQryAck
+@property (nonatomic, assign) long long operationTime;
+@end
+
 @interface JPublishMsgNtf : NSObject
 @property (nonatomic, assign) long long syncTime;
 @end
@@ -100,6 +105,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JDisconnectMsg *disconnectMsg;
 @property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
+@property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
 @end
 
 @interface JPBData : NSObject
@@ -175,6 +181,11 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                    userId:(NSString *)userId
                    isMute:(BOOL)isMute
                     index:(int)index;
+
+- (NSData *)topConversationData:(JConversation *)conversation
+                         userId:(NSString *)userId
+                          isTop:(BOOL)isTop
+                          index:(int)index;
 
 - (NSData *)getMergedMessageList:(NSString *)messageId
                             time:(long long)timestamp

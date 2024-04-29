@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
                                                              count:(int)count
                                                          timestamp:(long long)ts
                                                          direction:(JPullDirection)direction;
+- (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                                count:(int)count
+                                                            timestamp:(long long)ts
+                                                            direction:(JPullDirection)direction;
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 - (void)clearDraftInConversation:(JConversation *)conversation;
@@ -46,6 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateLastMessage:(JConcreteMessage *)message;
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation;
+- (void)setTop:(BOOL)isTop
+  conversation:(JConversation *)conversation;
+- (void)setTopTime:(long long)time
+      conversation:(JConversation *)conversation;
 - (int)getTotalUnreadCount;
 - (void)setMention:(BOOL)isMention
       conversation:(JConversation *)conversation;

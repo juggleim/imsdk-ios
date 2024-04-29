@@ -47,6 +47,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jDelConvers @"del_convers"
 #define jClearUnread @"clear_unread"
 #define jUndisturb @"undisturb_convers"
+#define jTopConvers @"top_convers"
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
@@ -73,6 +74,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JSimpleQryAck
+@end
+
+@implementation JTimestampQryAck
 @end
 
 @implementation JQryAck
@@ -475,6 +479,32 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)topConversationData:(JConversation *)conversation
+                         userId:(NSString *)userId
+                          isTop:(BOOL)isTop
+                          index:(int)index {
+    Conversation *pbConversation = [[Conversation alloc] init];
+    pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    pbConversation.targetId = conversation.conversationId;
+    pbConversation.isTop = isTop?1:0;
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:pbConversation];
+    
+    ConversationsReq *req = [[ConversationsReq alloc] init];
+    req.conversationsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jTopConvers;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)getMergedMessageList:(NSString *)messageId
                             time:(long long)timestamp
                            count:(int)count
@@ -657,6 +687,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self simpleQryAckWithImWebsocketMsg:msg];
                     break;
                     
+                case JPBRcvTypeTimestampQryAck:
+                    obj = [self timestampQryAckWithImWebsocketMsg:msg];
+                    break;
+                    
                 default:
                     break;
             }
@@ -825,6 +859,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.unreadCount = (int)conversation.unreadCount;
     info.syncTime = conversation.syncTime;
     info.mute = (conversation.undisturbType==1)?YES:NO;
+    info.isTop = (conversation.isTop==1)?YES:NO;
+    info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
     if (conversation.hasLatestMentionMsg) {
@@ -924,12 +960,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)timestampQryAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    TopConversResp *resp = [[TopConversResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if (e != nil) {
+        NSLog(@"[JetIM]Websocket timestamp qry ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeTimestampQryAck;
+    JTimestampQryAck *a = [[JTimestampQryAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.operationTime = resp.optTime;
+    obj.timestampQryAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryReadDetailAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     QryReadDetailResp *resp = [[QryReadDetailResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket qry read detai ack parse error, msg is %@", e.description);
+        NSLog(@"[JetIM]Websocket qry read detail ack parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -1023,6 +1076,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
              jUndisturb:@(JPBRcvTypeSimpleQryAck),
+             jTopConvers:@(JPBRcvTypeTimestampQryAck),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck)

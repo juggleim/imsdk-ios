@@ -405,30 +405,38 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
 };
 
 /**
- * message
+ * 上行消息
  **/
 GPB_FINAL @interface UpMsg : GPBMessage
 
+/** 消息类型定义 */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
 
+/** 消息实体数据 */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
 
+/** 标识 */
 @property(nonatomic, readwrite) int32_t flags;
 
+/** 客户端指定的消息唯一ID */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *clientUid;
 
+/** 推送设置 */
 @property(nonatomic, readwrite, strong, null_resettable) PushData *pushData;
 /** Test to see if @c pushData has been set. */
 @property(nonatomic, readwrite) BOOL hasPushData;
 
+/** \@设置 */
 @property(nonatomic, readwrite, strong, null_resettable) MentionInfo *mentionInfo;
 /** Test to see if @c mentionInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasMentionInfo;
 
+/** 被引用的消息 */
 @property(nonatomic, readwrite, strong, null_resettable) DownMsg *referMsg;
 /** Test to see if @c referMsg has been set. */
 @property(nonatomic, readwrite) BOOL hasReferMsg;
 
+/** 群定向消息，指定接收消息的部分群成员 */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
 /** The number of items in @c toUserIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
@@ -849,7 +857,7 @@ void SetAddHisMsgReq_ChannelType_RawValue(AddHisMsgReq *message, int32_t value);
 #pragma mark - DelHisMsgsReq
 
 typedef GPB_ENUM(DelHisMsgsReq_FieldNumber) {
-  DelHisMsgsReq_FieldNumber_SenderId = 1,
+  DelHisMsgsReq_FieldNumber_FromId = 1,
   DelHisMsgsReq_FieldNumber_TargetId = 2,
   DelHisMsgsReq_FieldNumber_ChannelType = 3,
   DelHisMsgsReq_FieldNumber_MsgsArray = 4,
@@ -857,7 +865,7 @@ typedef GPB_ENUM(DelHisMsgsReq_FieldNumber) {
 
 GPB_FINAL @interface DelHisMsgsReq : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *fromId;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
@@ -1018,8 +1026,7 @@ typedef GPB_ENUM(RecallMsgReq_FieldNumber) {
   RecallMsgReq_FieldNumber_ChannelType = 2,
   RecallMsgReq_FieldNumber_MsgId = 3,
   RecallMsgReq_FieldNumber_MsgTime = 4,
-  RecallMsgReq_FieldNumber_MsgType = 5,
-  RecallMsgReq_FieldNumber_MsgContent = 6,
+  RecallMsgReq_FieldNumber_ExtsArray = 5,
 };
 
 GPB_FINAL @interface RecallMsgReq : GPBMessage
@@ -1032,9 +1039,9 @@ GPB_FINAL @interface RecallMsgReq : GPBMessage
 
 @property(nonatomic, readwrite) int64_t msgTime;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<KvItem*> *extsArray;
+/** The number of items in @c extsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger extsArray_Count;
 
 @end
 
@@ -1125,6 +1132,7 @@ typedef GPB_ENUM(CleanHisMsgReq_FieldNumber) {
   CleanHisMsgReq_FieldNumber_TargetId = 1,
   CleanHisMsgReq_FieldNumber_ChannelType = 2,
   CleanHisMsgReq_FieldNumber_CleanMsgTime = 3,
+  CleanHisMsgReq_FieldNumber_CleanScope = 4,
 };
 
 GPB_FINAL @interface CleanHisMsgReq : GPBMessage
@@ -1134,6 +1142,8 @@ GPB_FINAL @interface CleanHisMsgReq : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite) int64_t cleanMsgTime;
+
+@property(nonatomic, readwrite) int32_t cleanScope;
 
 @end
 
@@ -1148,6 +1158,39 @@ int32_t CleanHisMsgReq_ChannelType_RawValue(CleanHisMsgReq *message);
  * was generated.
  **/
 void SetCleanHisMsgReq_ChannelType_RawValue(CleanHisMsgReq *message, int32_t value);
+
+#pragma mark - DestroyHisMsgReq
+
+typedef GPB_ENUM(DestroyHisMsgReq_FieldNumber) {
+  DestroyHisMsgReq_FieldNumber_FromId = 1,
+  DestroyHisMsgReq_FieldNumber_TargetId = 2,
+  DestroyHisMsgReq_FieldNumber_ChannelType = 3,
+  DestroyHisMsgReq_FieldNumber_DestroyTime = 4,
+};
+
+GPB_FINAL @interface DestroyHisMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *fromId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite) int64_t destroyTime;
+
+@end
+
+/**
+ * Fetches the raw value of a @c DestroyHisMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t DestroyHisMsgReq_ChannelType_RawValue(DestroyHisMsgReq *message);
+/**
+ * Sets the raw value of an @c DestroyHisMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetDestroyHisMsgReq_ChannelType_RawValue(DestroyHisMsgReq *message, int32_t value);
 
 #pragma mark - SimpleMsg
 
@@ -1733,6 +1776,18 @@ typedef GPB_ENUM(QryTopConversReq_FieldNumber) {
 GPB_FINAL @interface QryTopConversReq : GPBMessage
 
 @property(nonatomic, readwrite) int64_t startTime;
+
+@end
+
+#pragma mark - TopConversResp
+
+typedef GPB_ENUM(TopConversResp_FieldNumber) {
+  TopConversResp_FieldNumber_OptTime = 1,
+};
+
+GPB_FINAL @interface TopConversResp : GPBMessage
+
+@property(nonatomic, readwrite) int64_t optTime;
 
 @end
 
@@ -2778,6 +2833,48 @@ GPB_FINAL @interface QiniuCredResp : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *token;
 
 @end
+
+#pragma mark - OnlineOfflineMsg
+
+typedef GPB_ENUM(OnlineOfflineMsg_FieldNumber) {
+  OnlineOfflineMsg_FieldNumber_Type = 1,
+  OnlineOfflineMsg_FieldNumber_UserId = 2,
+  OnlineOfflineMsg_FieldNumber_DeviceId = 3,
+  OnlineOfflineMsg_FieldNumber_Platform = 4,
+  OnlineOfflineMsg_FieldNumber_ClientIp = 5,
+  OnlineOfflineMsg_FieldNumber_SessionId = 6,
+  OnlineOfflineMsg_FieldNumber_Timestamp = 7,
+};
+
+GPB_FINAL @interface OnlineOfflineMsg : GPBMessage
+
+@property(nonatomic, readwrite) OnlineType type;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *platform;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *clientIp;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *sessionId;
+
+@property(nonatomic, readwrite) int64_t timestamp;
+
+@end
+
+/**
+ * Fetches the raw value of a @c OnlineOfflineMsg's @c type property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t OnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message);
+/**
+ * Sets the raw value of an @c OnlineOfflineMsg's @c type property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetOnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

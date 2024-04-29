@@ -49,6 +49,7 @@ NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
 NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
+NSString *const jIsTopEqualsTrue = @" is_top = 1";
 NSString *const jTimestampGreaterThan = @" timestamp > ?";
 NSString *const jTimestampLessThan = @" timestamp < ?";
 NSString *const jConversationAnd = @" AND ";
@@ -64,6 +65,8 @@ NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?,
                                     "last_message_sender=?, last_message_content=?, last_message_seq_no=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?";
+NSString *const jSetTopTime = @"UPDATE conversation_info SET top_time = ?";
 NSString *const jSetMention = @"UPDATE conversation_info SET has_mentioned = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(last_message_index - last_read_message_index) AS total_count FROM conversation_info";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
@@ -196,6 +199,45 @@ NSString *const jTotalCount = @"total_count";
     return array;
 }
 
+- (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                                count:(int)count
+                                                            timestamp:(long long)ts
+                                                            direction:(JPullDirection)direction {
+    if (ts == 0) {
+        ts = INT64_MAX;
+    }
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    NSString *sql = jGetConversationsBy;
+    sql = [sql stringByAppendingString:jIsTopEqualsTrue];
+    sql = [sql stringByAppendingString:jConversationAnd];
+    if (direction == JPullDirectionOlder) {
+        sql = [sql stringByAppendingString:jTimestampLessThan];
+    } else {
+        sql = [sql stringByAppendingString:jTimestampGreaterThan];
+    }
+    [args addObject:@(ts)];
+    if (conversationTypes.count > 0) {
+        sql = [sql stringByAppendingString:jConversationAnd];
+        sql = [sql stringByAppendingString:jConversationTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+        [args addObjectsFromArray:conversationTypes];
+    }
+    sql = [sql stringByAppendingString:jConversationOrderByTimestamp];
+    sql = [sql stringByAppendingString:jConversationLimit];
+    [args addObject:@(count)];
+    
+    NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
+            [array addObject:info];
+        }
+    }];
+    return array;
+}
+
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.dbHelper executeUpdate:jSetDraft withArgumentsInArray:@[draft, @(conversation.conversationType), conversation.conversationId]];
 }
@@ -229,6 +271,18 @@ NSString *const jTotalCount = @"total_count";
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
     [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId]];
+}
+
+- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
+    NSString *sql = jSetTop;
+    sql = [sql stringByAppendingString:jWhereConversationIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(conversation.conversationType), conversation.conversationId]];
+}
+
+- (void)setTopTime:(long long)time conversation:(JConversation *)conversation {
+    NSString *sql = jSetTopTime;
+    sql = [sql stringByAppendingString:jWhereConversationIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {

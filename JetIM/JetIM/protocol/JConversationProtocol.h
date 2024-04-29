@@ -86,6 +86,18 @@
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCode code))errorBlock;
 
+/// 设置置顶
+/// - Parameters:
+///   - isTop: YES 表示置顶，NO 表示不置顶
+///   - conversation: 会话标识
+- (void)setTop:(BOOL)isTop
+  conversation:(JConversation *)conversation;
+
+/// 分页获取置顶会话信息列表
+- (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count
+                                                          timestamp:(long long)ts
+                                                          direction:(JPullDirection)direction;
+
 - (void)setDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;

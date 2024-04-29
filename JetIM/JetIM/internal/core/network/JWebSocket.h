@@ -105,6 +105,12 @@ NS_ASSUME_NONNULL_BEGIN
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)setTop:(BOOL)isTop
+inConversation:(JConversation *)conversation
+        userId:(NSString *)userId
+       success:(void (^)(long long timestamp))successBlock
+         error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
                        count:(int)count

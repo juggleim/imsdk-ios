@@ -121,6 +121,16 @@
                                                        direction:direction];
 }
 
+- (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count
+                                                          timestamp:(long long)ts
+                                                          direction:(JPullDirection)direction {
+    NSArray *array = [[NSArray alloc] init];
+    return [self.core.dbManager getTopConversationInfoListWithTypes:array
+                                                              count:count
+                                                          timestamp:ts
+                                                          direction:direction];
+}
+
 - (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
                                                        timestamp:(long long)ts
                                                        direction:(JPullDirection)direction {
@@ -218,6 +228,18 @@
                 errorBlock((JErrorCode)code);
             }
         });
+    }];
+}
+
+- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
+    __weak typeof(self) weakSelf = self;
+    [self.core.dbManager setTop:isTop conversation:conversation];
+    [self.core.webSocket setTop:isTop
+                 inConversation:conversation
+                         userId:self.core.userId
+                        success:^(long long timestamp) {
+        [weakSelf.core.dbManager setTopTime:timestamp conversation:conversation];
+    } error:^(JErrorCodeInternal code) {
     }];
 }
 

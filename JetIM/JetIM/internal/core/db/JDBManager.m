@@ -102,6 +102,16 @@
                                                        direction:direction];
 }
 
+- (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
+                                                                count:(int)count
+                                                            timestamp:(long long)ts
+                                                            direction:(JPullDirection)direction {
+    return [self.conversationDb getTopConversationInfoListWithTypes:conversationTypes
+                                                              count:count
+                                                          timestamp:ts
+                                                          direction:direction];
+}
+
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.conversationDb setDraft:draft inConversation:conversation];
 }
@@ -116,6 +126,14 @@
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
     [self.conversationDb setMute:isMute conversation:conversation];
+}
+
+- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
+    [self.conversationDb setTop:isTop conversation:conversation];
+}
+
+- (void)setTopTime:(long long)time conversation:(JConversation *)conversation {
+    [self.conversationDb setTopTime:time conversation:conversation];
 }
 
 - (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {

@@ -46,13 +46,12 @@
 @implementation JSyncConvsObj
 @end
 
-@interface JRecallMsgObj : JBlockObj
-@property (nonatomic, copy) NSString *messageId;
+@interface JTimestampBlockObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(long long timestamp);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
-@implementation JRecallMsgObj
+@implementation JTimestampBlockObj
 @end
 
 @interface JQryReadDetailObj : JBlockObj
@@ -183,14 +182,10 @@
                                       conversation:conversation
                                          timestamp:timestamp
                                              index:self.cmdIndex++];
-        JRecallMsgObj *obj = [[JRecallMsgObj alloc] init];
-        obj.messageId = messageId;
-        obj.successBlock = successBlock;
-        obj.errorBlock = errorBlock;
-        [self sendData:d
-                   key:key
-                   obj:obj
-                 error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
@@ -360,6 +355,24 @@
     });
 }
 
+- (void)setTop:(BOOL)isTop
+inConversation:(JConversation *)conversation
+        userId:(NSString *)userId
+       success:(void (^)(long long timestamp))successBlock
+         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData topConversationData:conversation
+                                              userId:userId
+                                               isTop:isTop
+                                               index:self.cmdIndex++];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
                        count:(int)count
@@ -508,6 +521,9 @@
         case JPBRcvTypeQryReadDetailAck:
             [self handleQryReadDetailAck:obj.qryReadDetailAck];
             break;
+        case JPBRcvTypeTimestampQryAck:
+            [self handleTimestampAck:obj.timestampQryAck];
+            break;
         default:
             break;
     }
@@ -634,8 +650,8 @@
 - (void)handleRecallMessage:(JPublishMsgAck *)ack {
     NSLog(@"handleRecallMessage, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JRecallMsgObj class]]) {
-        JRecallMsgObj *recallObj = (JRecallMsgObj *)obj;
+    if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
+        JTimestampBlockObj *recallObj = (JTimestampBlockObj *)obj;
         if (ack.code != 0) {
             recallObj.errorBlock(ack.code);
         } else {
@@ -654,6 +670,20 @@
             simpleObj.errorBlock(ack.code);
         } else {
             simpleObj.successBlock();
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)handleTimestampAck:(JTimestampQryAck *)ack {
+    NSLog(@"handleTimestampAck, code is %d", ack.code);
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
+        JTimestampBlockObj *timestampObj = (JTimestampBlockObj *)obj;
+        if (ack.code != 0) {
+            timestampObj.errorBlock(ack.code);
+        } else {
+            timestampObj.successBlock(ack.operationTime);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
@@ -685,6 +715,19 @@
                obj:obj
              error:errorBlock];
 }
+
+- (void)timestampSendData:(NSData *)data
+                      key:(NSNumber *)key
+                  success:(void (^)(long long timestamp))successBlock
+                    error:(void (^)(JErrorCodeInternal))errorBlock {
+    JTimestampBlockObj *obj = [[JTimestampBlockObj alloc] init];
+    obj.successBlock = successBlock;
+    obj.errorBlock = errorBlock;
+    [self sendData:data
+               key:key
+               obj:obj
+             error:errorBlock];
+   }
 
 - (void)sendData:(NSData *)data
              key:(NSNumber *)key
