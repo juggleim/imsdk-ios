@@ -14,7 +14,7 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     JConnectionStatusInternalIdle = 0,
     //已连接
     JConnectionStatusInternalConnected = 1,
-    //连接断开（用户主动断开）
+    //连接断开（用户主动断开或者被服务端踢掉，SDK 不会进行重连）
     JConnectionStatusInternalDisconnected = 2,
     //连接中
     JConnectionStatusInternalConnecting = 3,

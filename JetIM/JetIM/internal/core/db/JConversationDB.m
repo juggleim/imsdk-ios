@@ -58,14 +58,15 @@ NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_message_index=?,  last_message_type=?,"
+NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_message_type=?,"
                                     "last_message_client_uid=?, "
                                     "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
-                                    "last_message_sender=?, last_message_content=?, last_message_seq_no=? WHERE "
-                                    "conversation_type = ? AND conversation_id = ?";
+                                    "last_message_sender=?, last_message_content=?, last_message_seq_no=?";
+NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetMention = @"UPDATE conversation_info SET has_mentioned = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(last_message_index - last_read_message_index) AS total_count FROM conversation_info";
+NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
 NSString *const jDraft = @"draft";
@@ -211,7 +212,19 @@ NSString *const jTotalCount = @"total_count";
 - (void)updateLastMessage:(JConcreteMessage *)message {
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    [self.dbHelper executeUpdate:jUpdateLastMessage withArgumentsInArray:@[@(message.timestamp), message.messageId?:@"", @(message.msgIndex), message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo), @(message.conversation.conversationType), message.conversation.conversationId]];
+    NSString *sql = jUpdateLastMessage;
+    if (message.direction == JMessageDirectionReceive) {
+        sql = [sql stringByAppendingString:jLastMessageIndexEqualsQuestion];
+    }
+    sql = [sql stringByAppendingString:jWhereConversationIs];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo)]];
+    if (message.direction == JMessageDirectionReceive) {
+        [args addObject:@(message.msgIndex)];
+    }
+    [args addObject:@(message.conversation.conversationType)];
+    [args addObject:message.conversation.conversationId];
+    
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 }
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
