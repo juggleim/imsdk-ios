@@ -54,7 +54,8 @@ NSString *const jTimestampGreaterThan = @" timestamp > ?";
 NSString *const jTimestampLessThan = @" timestamp < ?";
 NSString *const jConversationAnd = @" AND ";
 NSString *const jConversationTypeIn = @" conversation_type in ";
-NSString *const jConversationOrderByTimestamp = @" ORDER BY timestamp DESC";
+NSString *const jConversationOrderByTopAndTimestamp = @" ORDER BY is_top DESC, timestamp DESC";
+NSString *const jConversationOrderByTopTime = @" ORDER BY top_time DESC";
 NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
@@ -183,7 +184,7 @@ NSString *const jTotalCount = @"total_count";
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
         [args addObjectsFromArray:conversationTypes];
     }
-    sql = [sql stringByAppendingString:jConversationOrderByTimestamp];
+    sql = [sql stringByAppendingString:jConversationOrderByTopAndTimestamp];
     sql = [sql stringByAppendingString:jConversationLimit];
     [args addObject:@(count)];
     
@@ -222,7 +223,7 @@ NSString *const jTotalCount = @"total_count";
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
         [args addObjectsFromArray:conversationTypes];
     }
-    sql = [sql stringByAppendingString:jConversationOrderByTimestamp];
+    sql = [sql stringByAppendingString:jConversationOrderByTopTime];
     sql = [sql stringByAppendingString:jConversationLimit];
     [args addObject:@(count)];
     
