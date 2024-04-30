@@ -239,6 +239,14 @@
                          userId:self.core.userId
                         success:^(long long timestamp) {
         [weakSelf.core.dbManager setTopTime:timestamp conversation:conversation];
+        JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
+        if(conversationInfo){
+            dispatch_async(weakSelf.core.delegateQueue, ^{
+                if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [weakSelf.delegate conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            });
+        }
     } error:^(JErrorCodeInternal code) {
     }];
 }
