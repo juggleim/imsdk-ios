@@ -251,6 +251,21 @@
     _syncDelegate = delegate;
 }
 
+- (void)clearTotalUnreadCount {
+    [self.core.dbManager clearTotalUnreadCount];
+    [self noticeTotalUnreadCountChange];
+    long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
+    
+    [self.core.webSocket clearTotalUnreadCount:self.core.userId
+                                          time:time
+                                       success:^{
+        
+    } error:^(JErrorCodeInternal code) {
+        
+    }];
+    
+}
+
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
     [self addOrUpdateConversationIfNeed:message];

@@ -98,6 +98,9 @@
                                                           timestamp:(long long)ts
                                                           direction:(JPullDirection)direction;
 
+/// 清除总未读数
+- (void)clearTotalUnreadCount;
+
 - (void)setDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;

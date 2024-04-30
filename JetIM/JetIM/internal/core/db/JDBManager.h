@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (int)getTotalUnreadCount;
 - (void)setMention:(BOOL)isMention
       conversation:(JConversation *)conversation;
+- (void)clearTotalUnreadCount;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;

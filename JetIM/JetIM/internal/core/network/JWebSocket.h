@@ -130,6 +130,11 @@ inConversation:(JConversation *)conversation
                   success:(void (^)(void))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)clearTotalUnreadCount:(NSString *)userId
+                         time:(long long)time
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

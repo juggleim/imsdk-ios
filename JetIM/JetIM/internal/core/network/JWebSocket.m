@@ -437,6 +437,23 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)clearTotalUnreadCount:(NSString *)userId
+                         time:(long long)time
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock{
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData clearTotalUnreadCountMessages:userId
+                                                          time:time
+                                                         index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+    
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];

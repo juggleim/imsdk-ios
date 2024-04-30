@@ -51,6 +51,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
+#define jClearTotalUnread @"clear_total_unread"
+
 #define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
@@ -586,6 +588,26 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)clearTotalUnreadCountMessages:(NSString *)userId
+                                     time:(long long)time
+                                    index:(int)index{
+    
+    QryTotalUnreadCountReq * req = [[QryTotalUnreadCountReq alloc] init];
+    req.time = time;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jClearTotalUnread;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -1079,7 +1101,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jTopConvers:@(JPBRcvTypeTimestampQryAck),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
-             jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck)
+             jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),
+             jClearTotalUnread:@(JPBRcvTypeSimpleQryAck)
+
     };
 }
 @end

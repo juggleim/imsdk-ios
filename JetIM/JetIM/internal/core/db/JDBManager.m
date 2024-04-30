@@ -144,6 +144,11 @@
     return [self.conversationDb getTotalUnreadCount];
 }
 
+- (void)clearTotalUnreadCount{
+    [self.conversationDb clearTotalUnreadCount];
+}
+
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
