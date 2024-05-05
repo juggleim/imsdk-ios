@@ -47,7 +47,7 @@ NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?
                                         "last_message_content=?, last_message_seq_no=? WHERE conversation_type = ? "
                                         "AND conversation_id = ?";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY timestamp DESC";
+NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY is_top DESC, timestamp DESC";
 NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
 NSString *const jIsTopEqualsTrue = @" is_top = 1";
 NSString *const jTimestampGreaterThan = @" timestamp > ?";
