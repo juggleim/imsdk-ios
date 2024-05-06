@@ -169,6 +169,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
                          mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                        isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
@@ -195,6 +196,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         pbMsgs.msgsArray = pbMsgArr;
         upMsg.mergedMsgs = pbMsgs;
+    }
+    if (isBroadcast) {
+        upMsg.flags |= JMessageFlagIsBroadcast;
     }
     if (mentionInfo) {
         MentionInfo *pbMentionInfo = [[MentionInfo alloc] init];

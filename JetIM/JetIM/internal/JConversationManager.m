@@ -337,11 +337,19 @@
             }
         }
     }
+    BOOL isBroadcast = NO;
+    if (message.flags & JMessageFlagIsBroadcast) {
+        isBroadcast = YES;
+    }
     JConversationInfo *info = [self getConversationInfo:message.conversation];
     if (!info) {
         JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
         addInfo.conversation = message.conversation;
-        addInfo.sortTime = message.timestamp;
+        if (isBroadcast && message.direction == JMessageDirectionSend) {
+            addInfo.sortTime = 0;
+        } else {
+            addInfo.sortTime = message.timestamp;
+        }
         addInfo.lastMessage = message;
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;

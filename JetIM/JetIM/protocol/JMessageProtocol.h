@@ -270,7 +270,7 @@
 ///   - clientMsgNo: 本端消息唯一编号
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 
-/// 消息广播。同时向批量会话中发送消息，该消息不影响会话的排序
+/// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
 /// - Parameters:
 ///   - content: 消息实体
 ///   - conversations: 目标会话列表
@@ -278,7 +278,7 @@
 ///   - completeBlock: 完成回调
 - (void)broadcastMessage:(JMessageContent *)content
          inConversations:(NSArray <JConversation *> *)conversations
-                progress:(void (^)(JMessage *sentMessage, JErrorCode code, int sentCount, int totalCount))progressBlock
+                progress:(void (^)(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount))progressBlock
                 complete:(void (^)(void))completeBlock;
 
 

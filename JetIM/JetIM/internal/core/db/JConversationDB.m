@@ -60,10 +60,11 @@ NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_message_type=?,"
+NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET last_message_id=?, last_message_type=?,"
                                     "last_message_client_uid=?, "
                                     "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
                                     "last_message_sender=?, last_message_content=?, last_message_seq_no=?";
+NSString *const jTimestampEqualsQustion = @", timestamp=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetTopTrue = @"UPDATE conversation_info SET is_top = 1";
@@ -258,11 +259,21 @@ NSString *const jTotalCount = @"total_count";
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSString *sql = jUpdateLastMessage;
+    BOOL isUpdateSortTime = YES;
+    if (message.direction == JMessageDirectionSend && (message.flags & JMessageFlagIsBroadcast)) {
+        isUpdateSortTime = NO;
+    }
+    if (isUpdateSortTime) {
+        sql = [sql stringByAppendingString:jTimestampEqualsQustion];
+    }
     if (message.direction == JMessageDirectionReceive) {
         sql = [sql stringByAppendingString:jLastMessageIndexEqualsQuestion];
     }
     sql = [sql stringByAppendingString:jWhereConversationIs];
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(message.timestamp), message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo)]];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[message.messageId?:@"", message.contentType, message.clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(message.seqNo)]];
+    if (isUpdateSortTime) {
+        [args addObject:@(message.timestamp)];
+    }
     if (message.direction == JMessageDirectionReceive) {
         [args addObject:@(message.msgIndex)];
     }

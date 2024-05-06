@@ -138,6 +138,7 @@
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
            mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+          isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
@@ -148,6 +149,7 @@
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                               mergedMsgs:mergedMsgs
+                                             isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++
                                         conversationType:conversation.conversationType

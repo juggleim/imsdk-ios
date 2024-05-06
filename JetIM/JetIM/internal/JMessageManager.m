@@ -203,8 +203,35 @@
     return [self sendMessage:content
               inConversation:conversation
                   mergedMsgs:mergedMessages
+                 isBroadcast:NO
                      success:successBlock
                        error:errorBlock];
+}
+
+- (void)broadcastMessage:(JMessageContent *)content
+         inConversations:(NSArray<JConversation *> *)conversations
+                progress:(void (^)(JMessage *, JErrorCode, int, int))progressBlock
+                complete:(void (^)(void))completeBlock {
+    if (conversations.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock();
+            }
+        });
+        return;
+    }
+    NSArray *mergedMessages = nil;
+    if ([content isKindOfClass:[JMergeMessage class]]) {
+        JMergeMessage *merge = (JMergeMessage *)content;
+        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+    }
+    [self loopBroadcastMessage:content
+               inConversations:conversations
+                    mergedMsgs:mergedMessages
+                  processCount:0
+                    totalCount:(int)conversations.count
+                      progress:progressBlock
+                      complete:completeBlock];
 }
 
 - (void)sendReadReceipt:(NSArray<NSString *> *)messageIds
@@ -590,31 +617,100 @@
 }
 
 #pragma mark - internal
+- (void)loopBroadcastMessage:(JMessageContent *)content
+             inConversations:(NSArray<JConversation *> *)conversations
+                  mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                processCount:(int)processCount
+                  totalCount:(int)totalCount
+                    progress:(void (^)(JMessage *message, JErrorCode errorCode, int processCount, int totalCount))progressBlock
+                    complete:(void (^)(void))completeBlock {
+    if (conversations.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock();
+            }
+        });
+        return;
+    }
+    [self sendMessage:content
+       inConversation:conversations[0]
+           mergedMsgs:mergedMsgs
+          isBroadcast:YES
+              success:^(JMessage *message) {
+        [self broadcastCallbackAndLoopNext:message
+                                 errorCode:JErrorCodeNone
+                             conversations:conversations
+                                mergedMsgs:mergedMsgs
+                              processCount:processCount
+                                totalCount:totalCount
+                                  progress:progressBlock
+                                  complete:completeBlock];
+    } error:^(JErrorCode errorCode, JMessage *message) {
+        [self broadcastCallbackAndLoopNext:message
+                                 errorCode:errorCode
+                             conversations:conversations
+                                mergedMsgs:mergedMsgs
+                              processCount:processCount
+                                totalCount:totalCount
+                                  progress:progressBlock
+                                  complete:completeBlock];
+    }];
+}
+
+- (void)broadcastCallbackAndLoopNext:(JMessage *)message
+                           errorCode:(JErrorCode)errorCode
+                       conversations:(NSArray<JConversation *> *)conversations
+                          mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                        processCount:(int)processCount
+                          totalCount:(int)totalCount
+                            progress:(void (^)(JMessage *message, JErrorCode errorCode, int processCount, int totalCount))progressBlock
+                            complete:(void (^)(void))completeBlock {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (progressBlock) {
+            progressBlock(message, errorCode, processCount, totalCount);
+        }
+    });
+    if (conversations.count <= 1) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock();
+            }
+        });
+    } else {
+        NSArray <JConversation *> *subConversations = [conversations subarrayWithRange:NSMakeRange(1, conversations.count - 1)];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 50 * NSEC_PER_MSEC), self.core.sendQueue, ^{
+            [self loopBroadcastMessage:message.content
+                       inConversations:subConversations
+                            mergedMsgs:mergedMsgs
+                          processCount:processCount+1
+                            totalCount:totalCount
+                              progress:progressBlock
+                              complete:completeBlock];
+        });
+    }
+}
+
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
-                  success:(void (^)(JMessage *))successBlock
-                    error:(void (^)(JErrorCode, JMessage *))errorBlock{
-   JConcreteMessage *message = [[JConcreteMessage alloc] init];
-   message.content = content;
-   message.conversation = conversation;
-   message.contentType = [[content class] contentType];
-   message.direction = JMessageDirectionSend;
-   message.messageState = JMessageStateSending;
-   message.senderUserId = self.core.userId;
-   message.clientUid = [self createClientUid];
-   message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
-   [self.core.dbManager insertMessages:@[message]];
+              isBroadcast:(BOOL)isBroadcast
+                  success:(void (^)(JMessage *message))successBlock
+                    error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+    JConcreteMessage *message = [self createSendMessageWithContent:content
+                                                    inConversation:conversation
+                                                       isBroadcast:isBroadcast];
+    [self.core.dbManager insertMessages:@[message]];
    
-   if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
        [self.sendReceiveDelegate messageDidSave:message];
-   }
-   
-   [self.core.webSocket sendIMMessage:content
+    }
+
+    [self.core.webSocket sendIMMessage:content
                        inConversation:conversation
                           clientMsgNo:message.clientMsgNo
                             clientUid:message.clientUid
                            mergedMsgs:mergedMsgs
+                           isBroadcast:isBroadcast
                                userId:self.core.userId
                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
        if (self.syncProcessing) {
@@ -640,7 +736,7 @@
                successBlock(message);
            }
        });
-   } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
        message.messageState = JMessageStateFail;
        [self.core.dbManager messageSendFail:clientMsgNo];
        dispatch_async(self.core.delegateQueue, ^{
@@ -648,8 +744,27 @@
                errorBlock((JErrorCode)errorCode, message);
            }
        });
-   }];
-   return message;
+    }];
+    return message;
+}
+
+- (JConcreteMessage *)createSendMessageWithContent:(JMessageContent *)content
+                                    inConversation:(JConversation *)conversation
+                                       isBroadcast:(BOOL)isBroadcast {
+    JConcreteMessage *message = [[JConcreteMessage alloc] init];
+    message.content = content;
+    message.conversation = conversation;
+    message.contentType = [[content class] contentType];
+    message.direction = JMessageDirectionSend;
+    message.messageState = JMessageStateSending;
+    message.senderUserId = self.core.userId;
+    message.clientUid = [self createClientUid];
+    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
+    message.flags = [[content class] flags];
+    if (isBroadcast) {
+        message.flags |= JMessageFlagIsBroadcast;
+    }
+    return message;
 }
 
 

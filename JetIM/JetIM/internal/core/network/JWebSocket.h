@@ -46,6 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
            mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+          isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;

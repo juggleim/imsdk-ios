@@ -127,6 +127,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
                          mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                        isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType

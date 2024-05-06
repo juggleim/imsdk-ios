@@ -22,7 +22,9 @@ typedef NS_OPTIONS(int32_t, JMessageFlag) {
     //是否是合并转发消息
     JMessageFlagIsMerged = 1 << 5,
     //是否是免打扰消息
-    JMessageFlagIsMute = 1 << 6
+    JMessageFlagIsMute = 1 << 6,
+    //是否广播消息（这类消息在发送方更新会话列表，但不更新会话的排序；接收方与普通消息一样）
+    JMessageFlagIsBroadcast = 1 << 7
 };
 
 NS_ASSUME_NONNULL_BEGIN

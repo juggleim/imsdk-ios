@@ -67,12 +67,19 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.conversationManager setTop:YES conversation:c];
-            NSArray *conversations = [JIM.shared.conversationManager getTopConversationInfoListByCount:100
-                                                                                             timestamp:0
-                                                                                             direction:JPullDirectionOlder];
-            NSLog(@"11");
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"broadcast"];
+            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
+            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            NSArray *arr = [NSArray arrayWithObjects:c1, c2, c3, c4, nil];
+            [JIM.shared.messageManager broadcastMessage:text
+                                        inConversations:arr
+                                               progress:^(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount) {
+                NSLog(@"1112");
+            } complete:^{
+                NSLog(@"3423");
+            }];
         });
         
         
