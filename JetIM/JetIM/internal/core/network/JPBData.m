@@ -183,9 +183,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (mergedMsgs.count > 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
-        pbMsgs.channelType = (int32_t)conversationType;
+        pbMsgs.channelType = (int32_t)mergedMsgs.firstObject.conversation.conversationType;
         pbMsgs.userId = userId;
-        pbMsgs.targetId = conversationId;
+        pbMsgs.targetId = mergedMsgs.firstObject.conversation.conversationId;
         NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
         for (JConcreteMessage *msg in mergedMsgs) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
