@@ -8,9 +8,6 @@
 #define jRecallCmdType @"jg:recall"
 #define jRecallMsgTime @"msg_time"
 #define jRecallMsgId @"msg_id"
-#define jRecallSenderId @"sender_id"
-#define jRecallReceiverId @"receiver_id"
-#define jRecallChannelType @"channel_type"
 
 #import "JRecallCmdMessage.h"
 
@@ -25,12 +22,6 @@
     id time = json[jRecallMsgTime];
     if ([time isKindOfClass:[NSNumber class]]) {
         self.originalMessageTime = [(NSNumber *)time longLongValue];
-    }
-    self.senderId = json[jRecallSenderId]?:@"";
-    self.receiverId = json[jRecallReceiverId]?:@"";
-    id type = json[jRecallChannelType];
-    if ([type isKindOfClass:[NSNumber class]]) {
-        self.conversationType = [(NSNumber *)type intValue];
     }
 }
 

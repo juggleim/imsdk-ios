@@ -26,10 +26,10 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePublishMsgNtf,
     JPBRcvTypePong,
     JPBRcvTypeDisconnectMsg,
-    JPBRcvTypeRecall,
     JPBRcvTypeQryReadDetailAck,
     JPBRcvTypeSimpleQryAck,
-    JPBRcvTypeTimestampQryAck
+    JPBRcvTypeSimpleQryAckCallbackTimestamp,
+    JPBRcvTypeConversationSetTopAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {

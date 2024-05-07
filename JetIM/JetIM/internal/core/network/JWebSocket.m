@@ -531,17 +531,17 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeDisconnectMsg:
             [self handleDisconnectMsg:obj.disconnectMsg];
             break;
-        case JPBRcvTypeRecall:
-            [self handleRecallMessage:obj.publishMsgAck];
-            break;
         case JPBRcvTypeSimpleQryAck:
             [self handleSimpleAck:obj.simpleQryAck];
             break;
         case JPBRcvTypeQryReadDetailAck:
             [self handleQryReadDetailAck:obj.qryReadDetailAck];
             break;
-        case JPBRcvTypeTimestampQryAck:
-            [self handleTimestampAck:obj.timestampQryAck];
+        case JPBRcvTypeSimpleQryAckCallbackTimestamp:
+            [self handleSimpleQryAckWithTimeCallback:obj.simpleQryAck];
+            break;
+        case JPBRcvTypeConversationSetTopAck:
+            [self handleTimestampCallback:obj.timestampQryAck];
             break;
         default:
             break;
@@ -694,8 +694,22 @@ inConversation:(JConversation *)conversation
     [self removeBlockObjectForKey:@(ack.index)];
 }
 
-- (void)handleTimestampAck:(JTimestampQryAck *)ack {
-    NSLog(@"handleTimestampAck, code is %d", ack.code);
+- (void)handleSimpleQryAckWithTimeCallback:(JSimpleQryAck *)ack {
+    NSLog(@"handleSimpleQryAckWithtimeCallback, code is %d", ack.code);
+    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
+        JTimestampBlockObj *simpleObj = (JTimestampBlockObj *)obj;
+        if (ack.code != 0) {
+            simpleObj.errorBlock(ack.code);
+        } else {
+            simpleObj.successBlock(ack.timestamp);
+        }
+    }
+    [self removeBlockObjectForKey:@(ack.index)];
+}
+
+- (void)handleTimestampCallback:(JTimestampQryAck *)ack {
+    NSLog(@"handleTimestampCallback, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
         JTimestampBlockObj *timestampObj = (JTimestampBlockObj *)obj;

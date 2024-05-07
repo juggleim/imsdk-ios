@@ -68,18 +68,12 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             JTextMessage *text = [[JTextMessage alloc] initWithContent:@"broadcast"];
-            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
-            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
-            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-            NSArray *arr = [NSArray arrayWithObjects:c1, c2, c3, c4, nil];
-            [JIM.shared.messageManager broadcastMessage:text
-                                        inConversations:arr
-                                               progress:^(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount) {
-                NSLog(@"1112");
-            } complete:^{
-                NSLog(@"3423");
-            }];
+            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+//            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
+//            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
+//            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            NSArray *arr = [NSArray arrayWithObjects:c1, c2, c3, c4, nil];
+            [JIM.shared.conversationManager setTop:YES conversation:c1];
         });
         
         

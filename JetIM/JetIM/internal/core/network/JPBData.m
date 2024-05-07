@@ -255,16 +255,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.channelType = (int32_t)conversation.conversationType;
     req.msgTime = msgTime;
     
-    PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
-    publishMsg.index = index;
-    publishMsg.topic = kRecallMsg;
-    publishMsg.targetId = conversation.conversationId;
-    publishMsg.data_p = [req data];
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = kRecallMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = [req data];
     
     @synchronized (self) {
-        [self.msgCmdDic setObject:publishMsg.topic forKey:@(publishMsg.index)];
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
-    ImWebsocketMsg *sm = [self createImWebSocketMsgWithPublishMsg:publishMsg];
+    ImWebsocketMsg *sm = [self createImWebSocketMsgWithQueryMsg:body];
     return sm.data;
 }
 
@@ -713,8 +713,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj = [self simpleQryAckWithImWebsocketMsg:msg];
                     break;
                     
-                case JPBRcvTypeTimestampQryAck:
-                    obj = [self timestampQryAckWithImWebsocketMsg:msg];
+                case JPBRcvTypeSimpleQryAckCallbackTimestamp:
+                    obj = [self simpleQryAckCallbackTimestampWithImWebsocketMsg:msg];
+                    break;
+                    
+                case JPBRcvTypeConversationSetTopAck:
+                    obj = [self conversationSetTopAckWithImWebsocketMsg:msg];
                     break;
                     
                 default:
@@ -986,7 +990,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
-- (JPBRcvObj *)timestampQryAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+- (JPBRcvObj *)simpleQryAckCallbackTimestampWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeSimpleQryAckCallbackTimestamp;
+    JSimpleQryAck *a = [[JSimpleQryAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    obj.simpleQryAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)conversationSetTopAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     TopConversResp *resp = [[TopConversResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
@@ -995,7 +1008,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
-    obj.rcvType = JPBRcvTypeTimestampQryAck;
+    obj.rcvType = JPBRcvTypeConversationSetTopAck;
     JTimestampQryAck *a = [[JTimestampQryAck alloc] init];
     [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
     a.operationTime = resp.optTime;
@@ -1095,14 +1108,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kPMsg:@(JPBRcvTypePublishMsgAck),
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
-             kRecallMsg:@(JPBRcvTypeRecall),
+             kRecallMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelConvers:@(JPBRcvTypeSimpleQryAck),
              jClearUnread:@(JPBRcvTypeSimpleQryAck),
              jMarkRead:@(JPBRcvTypeSimpleQryAck),
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
              jUndisturb:@(JPBRcvTypeSimpleQryAck),
-             jTopConvers:@(JPBRcvTypeTimestampQryAck),
+             jTopConvers:@(JPBRcvTypeConversationSetTopAck),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),
