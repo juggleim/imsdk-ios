@@ -8,5 +8,4 @@
 #import "JMediaMessageContent.h"
 
 @implementation JMediaMessageContent
-
 @end

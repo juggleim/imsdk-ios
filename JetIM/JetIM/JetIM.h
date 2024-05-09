@@ -17,6 +17,7 @@ FOUNDATION_EXPORT const unsigned char JetIMVersionString[];
 
 
 #import <JetIM/JIM.h>
+#import <JetIM/JMediaMessageContent.h>
 #import <JetIM/JTextMessage.h>
 #import <JetIM/JImageMessage.h>
 #import <JetIM/JFileMessage.h>

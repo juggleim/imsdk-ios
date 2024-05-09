@@ -6,7 +6,6 @@
 //
 
 #import <JetIM/JetIM.h>
-#import "JMediaMessageContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

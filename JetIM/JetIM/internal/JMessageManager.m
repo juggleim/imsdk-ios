@@ -17,6 +17,7 @@
 #import "JDeleteConvMessage.h"
 #import "JReadNtfMessage.h"
 #import "JGroupReadNtfMessage.h"
+#import "JMediaMessageContent.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -223,7 +224,7 @@
         });
         return nil;
     }
-    
+    return nil;
 }
 
 - (void)broadcastMessage:(JMessageContent *)content
