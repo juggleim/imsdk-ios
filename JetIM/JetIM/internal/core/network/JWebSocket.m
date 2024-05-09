@@ -666,20 +666,6 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleRecallMessage:(JPublishMsgAck *)ack {
-    NSLog(@"handleRecallMessage, code is %d", ack.code);
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
-        JTimestampBlockObj *recallObj = (JTimestampBlockObj *)obj;
-        if (ack.code != 0) {
-            recallObj.errorBlock(ack.code);
-        } else {
-            recallObj.successBlock(ack.timestamp);
-        }
-    }
-    [self removeBlockObjectForKey:@(ack.index)];
-}
-
 - (void)handleSimpleAck:(JSimpleQryAck *)ack {
     NSLog(@"handleSimpleAck, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];

@@ -59,4 +59,8 @@ static JIM *_instance;
     [self.core setNaviUrl:serverUrl];
 }
 
+- (NSString *)currentUserId {
+    return self.core.userId;
+}
+
 @end

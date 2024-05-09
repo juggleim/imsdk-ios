@@ -41,6 +41,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalWebSocketFailure = 21001,
     JErrorCodeInternalNaviFailure = 21002,
     JErrorCodeInternalInvalidParam = 21003,
+    //操作超时
+    JErrorCodeInternalOperationTimeOut = 21004,
+    //连接不可用
+    JErrorCodeInternalConnectionUnavailable = 21005,
     
     //消息不存在
     JErrorCodeInternalMessageNotExist = 22001,

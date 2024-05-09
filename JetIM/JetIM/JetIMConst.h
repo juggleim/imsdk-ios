@@ -54,6 +54,10 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     
     //非法参数
     JErrorCodeInvalidParam = 21003,
+    //操作超时
+    JErrorCodeOperationTimeOut = 21004,
+    //连接不可用
+    JErrorCodeConnectionUnavailable = 21005,
     
     //消息不存在
     JErrorCodeMessageNotExist = 22001,
