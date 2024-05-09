@@ -208,6 +208,24 @@
                        error:errorBlock];
 }
 
+- (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
+                inConversation:(JConversation *)conversation
+                uploadProvider:(JUploadProvider *)uploadProvider
+                      progress:(void (^)(int, JMessage *))progressBlock
+                       success:(void (^)(JMessage *))successBlock
+                         error:(void (^)(JErrorCode, JMessage *))errorBlock
+                        cancel:(void (^)(JMessage *))cancelBlock {
+    if (![content isKindOfClass:[JMediaMessageContent class]]) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam, nil);
+            }
+        });
+        return nil;
+    }
+    
+}
+
 - (void)broadcastMessage:(JMessageContent *)content
          inConversations:(NSArray<JConversation *> *)conversations
                 progress:(void (^)(JMessage *, JErrorCode, int, int))progressBlock

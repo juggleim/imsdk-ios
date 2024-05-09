@@ -6,14 +6,13 @@
 //
 
 #import <JetIM/JetIM.h>
+#import "JMediaMessageContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JFileMessage : JMessageContent
+@interface JFileMessage : JMediaMessageContent
 /// 文件名称
 @property (nonatomic, copy) NSString *name;
-/// 文件的远端地址
-@property (nonatomic, copy) NSString *url;
 /// 文件大小，单位：KB
 @property (nonatomic, assign) long long size;
 /// 文件类型

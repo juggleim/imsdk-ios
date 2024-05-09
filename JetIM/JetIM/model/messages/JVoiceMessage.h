@@ -6,12 +6,11 @@
 //
 
 #import <JetIM/JetIM.h>
+#import "JMediaMessageContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JVoiceMessage : JMessageContent
-/// 语音消息音频的远端地址
-@property (nonatomic, copy) NSString *url;
+@interface JVoiceMessage : JMediaMessageContent
 /// 语音消息音频时长，单位: 秒
 @property (nonatomic, assign) long duration;
 /// 扩展字段

@@ -8,6 +8,8 @@
 #import <JetIM/JMessage.h>
 #import <JetIM/JConversation.h>
 #import <JetIM/JetIMConst.h>
+#import <JetIM/JUploadProvider.h>
+#import <JetIM/JMediaMessageContent.h>
 
 @class JMergeMessage;
 
@@ -52,6 +54,23 @@
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
+
+/// 发送媒体消息（使用自定义的 JUploadProvider 上传）
+/// - Parameters:
+///   - content: 媒体消息实体
+///   - conversation: 会话
+///   - uploadProvider: 自定义的 JUploadProvider
+///   - progressBlock: 上传进度回调
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+///   - cancelBlock: 用户取消上传回调
+- (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
+                inConversation:(JConversation *)conversation
+                uploadProvider:(JUploadProvider *)uploadProvider
+                      progress:(void (^)(int progress, JMessage *message))progressBlock
+                       success:(void (^)(JMessage *message))successBlock
+                         error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                        cancel:(void (^)(JMessage *message))cancelBlock;
 
 /// 重发消息，用于发送失败后进行重发
 /// - Parameters:
@@ -128,21 +147,6 @@
 /// 根据 clientMsgNo 数组获取对应的本地消息
 /// - Parameter clientMsgNos: clientMsgNo 数组
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
-
-/*!
- 注册自定义的消息类型
-
- @param messageClass    自定义消息的类，该自定义消息需要继承于 RCMessageContent
-
- @discussion
- 如果您需要自定义消息，必须调用此方法注册该自定义消息的消息类型，否则 SDK 将无法识别和解析该类型消息。
- @discussion 请在初始化 appkey 之后，token 连接之前调用该方法注册自定义消息
-
- @warning 如果您使用 IMLib，请使用此方法注册自定义的消息类型；
- 如果您使用 IMKit，请使用 RCIM 中的同名方法注册自定义的消息类型，而不要使用此方法。
- 
- @remarks 消息操作
- */
 
 /// 注册自定义消息，没有注册的自定义消息 SDK 无法正常进行解析
 /// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent

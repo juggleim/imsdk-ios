@@ -6,12 +6,11 @@
 //
 
 #import <JetIM/JetIM.h>
+#import "JMediaMessageContent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JVideoMessage : JMessageContent
-/// 视频的远端地址
-@property (nonatomic, copy) NSString *url;
+@interface JVideoMessage : JMediaMessageContent
 /// 视频封面图远端地址
 @property (nonatomic, copy) NSString *snapshotUrl;
 /// 视频高度
