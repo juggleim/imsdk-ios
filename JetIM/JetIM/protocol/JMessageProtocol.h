@@ -59,14 +59,12 @@
 /// - Parameters:
 ///   - content: 媒体消息实体
 ///   - conversation: 会话
-///   - uploadProviderBlock: 自定义的 JUploadProvider
 ///   - progressBlock: 上传进度回调
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
 ///   - cancelBlock: 用户取消上传回调
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
                 inConversation:(JConversation *)conversation
-                uploadProvider:(void (^)(JMessageUploadProvider *uploadProvider))uploadProviderBlock
                       progress:(void (^)(int progress, JMessage *message))progressBlock
                        success:(void (^)(JMessage *message))successBlock
                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
@@ -159,6 +157,8 @@
 - (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
 
 - (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+
+- (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
 /// 从远端拉取历史消息
 /// - Parameters:

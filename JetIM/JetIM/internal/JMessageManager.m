@@ -24,6 +24,7 @@
 @property (nonatomic, weak) id<JMessageDelegate> delegate;
 @property (nonatomic, weak) id<JMessageSyncDelegate> syncDelegate;
 @property (nonatomic, weak) id<JMessageReadReceiptDelegate> readReceiptDelegate;
+@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -69,6 +70,10 @@
 
 - (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
     _readReceiptDelegate = delegate;
+}
+
+- (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider {
+    _uploadProvider = uploadProvider;
 }
 
 - (void)deleteMessageByClientMsgNo:(long long)clientMsgNo {
@@ -197,7 +202,6 @@
 
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
                 inConversation:(JConversation *)conversation
-                uploadProvider:(void (^)(JMessageUploadProvider *uploadProvider))uploadProviderBlock
                       progress:(void (^)(int, JMessage *))progressBlock
                        success:(void (^)(JMessage *))successBlock
                          error:(void (^)(JErrorCode, JMessage *))errorBlock
@@ -215,62 +219,61 @@
                                                        state:JMessageStateUploading
                                                    direction:JMessageDirectionSend
                                                  isBroadcast:NO];
-    
-    
-    
-    
-    
-    
-    
-    NSArray *mergedMessages = nil;
-    if ([content isKindOfClass:[JMergeMessage class]]) {
-        JMergeMessage *merge = (JMergeMessage *)content;
-        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+    if ([self.uploadProvider respondsToSelector:@selector(uploadMessage:progress:success:error:cancel:)]) {
+        [self.uploadProvider uploadMessage:message
+                                  progress:^(int progress) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (progressBlock) {
+                    progressBlock(progress, message);
+                }
+            });
+        } success:^(JMessage * _Nonnull uploadMessage) {
+            if (![uploadMessage isKindOfClass:[JConcreteMessage class]]) {
+                uploadMessage.messageState = JMessageStateFail;
+                [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:uploadMessage.clientMsgNo];
+                dispatch_async(self.core.delegateQueue, ^{
+                    if (errorBlock) {
+                        errorBlock(JErrorCodeMessageUploadError, uploadMessage);
+                    }
+                });
+                return;
+            }
+            JConcreteMessage *cm = (JConcreteMessage *)uploadMessage;
+            [self.core.dbManager updateMessageContent:cm.content
+                                          contentType:cm.contentType
+                                        withMessageId:cm.messageId];
+            cm.messageState = JMessageStateSending;
+            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
+            [self sendWebSocketMessage:cm
+                           isBroadcast:NO
+                               success:successBlock
+                                 error:errorBlock];
+            
+        } error:^{
+            message.messageState = JMessageStateFail;
+            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeMessageUploadError, message);
+                }
+            });
+        } cancel:^{
+            message.messageState = JMessageStateFail;
+            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (cancelBlock) {
+                    cancelBlock(message);
+                }
+            });
+        }];
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeMessageUploadError, message);
+            }
+        });
     }
-
-    [self.core.webSocket sendIMMessage:content
-                       inConversation:conversation
-                          clientMsgNo:message.clientMsgNo
-                            clientUid:message.clientUid
-                           mergedMsgs:mergedMessages
-                           isBroadcast:isBroadcast
-                               userId:self.core.userId
-                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
-       if (self.syncProcessing) {
-           self.cachedSendTime = timestamp;
-       } else {
-           self.core.messageSendSyncTime = timestamp;
-       }
-       [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
-                                         messageId:msgId
-                                         timestamp:timestamp
-                                             seqNo:seqNo];
-       message.messageId = msgId;
-       message.timestamp = timestamp;
-       message.seqNo = seqNo;
-       message.messageState = JMessageStateSent;
-       
-       if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-           [self.sendReceiveDelegate messageDidSend:message];
-       }
-       
-       dispatch_async(self.core.delegateQueue, ^{
-           if (successBlock) {
-               successBlock(message);
-           }
-       });
-    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
-       message.messageState = JMessageStateFail;
-       [self.core.dbManager messageSendFail:clientMsgNo];
-       dispatch_async(self.core.delegateQueue, ^{
-           if (errorBlock) {
-               errorBlock((JErrorCode)errorCode, message);
-           }
-       });
-    }];
     return message;
-    
-    return nil;
 }
 
 - (void)broadcastMessage:(JMessageContent *)content
@@ -743,6 +746,58 @@
     }
 }
 
+- (void)sendWebSocketMessage:(JConcreteMessage *)message
+                 isBroadcast:(BOOL)isBroadcast
+                     success:(void (^)(JMessage *message))successBlock
+                       error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+    NSArray *mergedMessages = nil;
+    if ([message.content isKindOfClass:[JMergeMessage class]]) {
+        JMergeMessage *merge = (JMergeMessage *)message.content;
+        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+    }
+
+    [self.core.webSocket sendIMMessage:message.content
+                        inConversation:message.conversation
+                           clientMsgNo:message.clientMsgNo
+                             clientUid:message.clientUid
+                            mergedMsgs:mergedMessages
+                           isBroadcast:isBroadcast
+                                userId:self.core.userId
+                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
+        if (self.syncProcessing) {
+           self.cachedSendTime = timestamp;
+        } else {
+           self.core.messageSendSyncTime = timestamp;
+        }
+        [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
+                                         messageId:msgId
+                                         timestamp:timestamp
+                                             seqNo:seqNo];
+        message.messageId = msgId;
+        message.timestamp = timestamp;
+        message.seqNo = seqNo;
+        message.messageState = JMessageStateSent;
+
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+           [self.sendReceiveDelegate messageDidSend:message];
+        }
+       
+        dispatch_async(self.core.delegateQueue, ^{
+           if (successBlock) {
+               successBlock(message);
+           }
+        });
+    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+       message.messageState = JMessageStateFail;
+       [self.core.dbManager messageSendFail:clientMsgNo];
+       dispatch_async(self.core.delegateQueue, ^{
+           if (errorBlock) {
+               errorBlock((JErrorCode)errorCode, message);
+           }
+       });
+    }];
+}
+
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
               isBroadcast:(BOOL)isBroadcast
@@ -753,52 +808,10 @@
                                                        state:JMessageStateSending
                                                    direction:JMessageDirectionSend
                                                  isBroadcast:isBroadcast];
-    NSArray *mergedMessages = nil;
-    if ([content isKindOfClass:[JMergeMessage class]]) {
-        JMergeMessage *merge = (JMergeMessage *)content;
-        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
-    }
-
-    [self.core.webSocket sendIMMessage:content
-                       inConversation:conversation
-                          clientMsgNo:message.clientMsgNo
-                            clientUid:message.clientUid
-                           mergedMsgs:mergedMessages
-                           isBroadcast:isBroadcast
-                               userId:self.core.userId
-                              success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
-       if (self.syncProcessing) {
-           self.cachedSendTime = timestamp;
-       } else {
-           self.core.messageSendSyncTime = timestamp;
-       }
-       [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
-                                         messageId:msgId
-                                         timestamp:timestamp
-                                             seqNo:seqNo];
-       message.messageId = msgId;
-       message.timestamp = timestamp;
-       message.seqNo = seqNo;
-       message.messageState = JMessageStateSent;
-       
-       if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-           [self.sendReceiveDelegate messageDidSend:message];
-       }
-       
-       dispatch_async(self.core.delegateQueue, ^{
-           if (successBlock) {
-               successBlock(message);
-           }
-       });
-    } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
-       message.messageState = JMessageStateFail;
-       [self.core.dbManager messageSendFail:clientMsgNo];
-       dispatch_async(self.core.delegateQueue, ^{
-           if (errorBlock) {
-               errorBlock((JErrorCode)errorCode, message);
-           }
-       });
-    }];
+    [self sendWebSocketMessage:message
+                   isBroadcast:isBroadcast
+                       success:successBlock
+                         error:errorBlock];
     return message;
 }
 
