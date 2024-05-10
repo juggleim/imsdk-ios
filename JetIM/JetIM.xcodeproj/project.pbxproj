@@ -202,8 +202,7 @@
 		A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A095798B2B885222004E3D60 /* JDeleteConvMessage.m */; };
 		A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */; };
 		A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */ = {isa = PBXBuildFile; fileRef = A09645752BECCDF800290775 /* JMediaMessageContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A096457B2BECCFE800290775 /* JUploadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A09645792BECCFE800290775 /* JUploadProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A096457C2BECCFE800290775 /* JUploadProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = A096457A2BECCFE800290775 /* JUploadProvider.m */; };
+		A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A09645792BECCFE800290775 /* JMessageUploadProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A096457E2BECE42200290775 /* JMediaMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A096457D2BECE42200290775 /* JMediaMessageContent.m */; };
 		A09716BD2B9FFE3C00D1DB24 /* JGroupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */; };
@@ -431,8 +430,7 @@
 		A095798B2B885222004E3D60 /* JDeleteConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteConvMessage.m; sourceTree = "<group>"; };
 		A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageSendReceiveDelegate.h; sourceTree = "<group>"; };
 		A09645752BECCDF800290775 /* JMediaMessageContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMediaMessageContent.h; sourceTree = "<group>"; };
-		A09645792BECCFE800290775 /* JUploadProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploadProvider.h; sourceTree = "<group>"; };
-		A096457A2BECCFE800290775 /* JUploadProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUploadProvider.m; sourceTree = "<group>"; };
+		A09645792BECCFE800290775 /* JMessageUploadProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageUploadProvider.h; sourceTree = "<group>"; };
 		A096457D2BECE42200290775 /* JMediaMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMediaMessageContent.m; sourceTree = "<group>"; };
 		A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoProtocol.h; sourceTree = "<group>"; };
 		A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupInfo.h; sourceTree = "<group>"; };
@@ -565,8 +563,7 @@
 				A08AA2222B149419008B114C /* JMessageProtocol.h */,
 				A08AA24A2B14A525008B114C /* JConversationProtocol.h */,
 				A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */,
-				A09645792BECCFE800290775 /* JUploadProvider.h */,
-				A096457A2BECCFE800290775 /* JUploadProvider.m */,
+				A09645792BECCFE800290775 /* JMessageUploadProvider.h */,
 			);
 			path = protocol;
 			sourceTree = "<group>";
@@ -927,7 +924,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A096457B2BECCFE800290775 /* JUploadProvider.h in Headers */,
+				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
 				A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */,
 				A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */,
@@ -1141,7 +1138,6 @@
 				A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
-				A096457C2BECCFE800290775 /* JUploadProvider.m in Sources */,
 				A05EED622B20826B00809F13 /* JReachability.m in Sources */,
 				A08AA36D2B19CB77008B114C /* GPBExtensionInternals.m in Sources */,
 				A08AA40D2B19EEDB008B114C /* SRIOConsumerPool.m in Sources */,

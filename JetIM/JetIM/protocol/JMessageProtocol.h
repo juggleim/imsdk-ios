@@ -8,7 +8,7 @@
 #import <JetIM/JMessage.h>
 #import <JetIM/JConversation.h>
 #import <JetIM/JetIMConst.h>
-#import <JetIM/JUploadProvider.h>
+#import <JetIM/JMessageUploadProvider.h>
 #import <JetIM/JMediaMessageContent.h>
 
 @class JMergeMessage;
@@ -55,18 +55,18 @@
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-/// 发送媒体消息（使用自定义的 JUploadProvider 上传）
+/// 发送媒体消息（先上传媒体，再发送消息）
 /// - Parameters:
 ///   - content: 媒体消息实体
 ///   - conversation: 会话
-///   - uploadProvider: 自定义的 JUploadProvider
+///   - uploadProviderBlock: 自定义的 JUploadProvider
 ///   - progressBlock: 上传进度回调
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
 ///   - cancelBlock: 用户取消上传回调
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
                 inConversation:(JConversation *)conversation
-                uploadProvider:(JUploadProvider *)uploadProvider
+                uploadProvider:(void (^)(JMessageUploadProvider *uploadProvider))uploadProviderBlock
                       progress:(void (^)(int progress, JMessage *message))progressBlock
                        success:(void (^)(JMessage *message))successBlock
                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
@@ -85,8 +85,10 @@
 /// - Parameters:
 ///   - content: 消息实体
 ///   - conversation: 会话
+///   - direction: 消息方向
 - (JMessage *)saveMessage:(JMessageContent *)content
-           inConversation:(JConversation *)conversation;
+           inConversation:(JConversation *)conversation
+                direction:(JMessageDirection)direction;
 
 /// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
 /// 获取消息列表

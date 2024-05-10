@@ -62,7 +62,9 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //消息不存在
     JErrorCodeMessageNotExist = 22001,
     //消息已被撤回
-    JErrorCodeMessageAlreadyRecalled = 22002
+    JErrorCodeMessageAlreadyRecalled = 22002,
+    //消息上传失败
+    JErrorCodeMessageUploadError = 22003
 };
 
 /*!
