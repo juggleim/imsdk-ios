@@ -144,7 +144,7 @@
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                                 msgData:[content jmessageContentEncode]
+                                                 msgData:[content encode]
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                               mergedMsgs:mergedMsgs

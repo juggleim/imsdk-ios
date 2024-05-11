@@ -50,7 +50,7 @@
     return jMergeType;
 }
 
--(NSData *)jmessageContentEncode{
+-(NSData *)encode{
     NSMutableDictionary *mergeDic = [NSMutableDictionary dictionary];
     [mergeDic setObject:self.title?:@"" forKey:jMergeTitle];
     if (self.messageIdList.count > 0) {
@@ -70,7 +70,7 @@
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.title = json[jMergeTitle];
     self.messageIdList = json[jMessageIdList];

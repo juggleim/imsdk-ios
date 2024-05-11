@@ -136,7 +136,7 @@ NSString *const jLocalAttribute = @"local_attribute";
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId {
-    NSData *data = [content jmessageContentEncode];
+    NSData *data = [content encode];
     NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     if (s.length == 0 || messageId.length == 0) {
         return;
@@ -465,7 +465,7 @@ NSString *const jLocalAttribute = @"local_attribute";
         msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
     }
-    NSData *data = [message.content jmessageContentEncode];
+    NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     int memberCount = message.groupReadInfo.memberCount?:-1;
     [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent, [message.content.mentionInfo encodeToJson]];

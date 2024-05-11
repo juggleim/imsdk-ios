@@ -42,7 +42,7 @@ static JContentTypeCenter *_instance;
         Class cls = self.contentTypeDic[type];
         content = [[cls alloc] init];
     }
-    [content jmessageContentDecode:data];
+    [content decode:data];
 
     return content;
 }

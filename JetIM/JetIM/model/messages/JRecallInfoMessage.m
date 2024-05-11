@@ -16,13 +16,13 @@
     return jRecallInfoType;
 }
 
--(NSData *)jmessageContentEncode{
+-(NSData *)encode{
     NSDictionary * dic = @{jRecallExtra:self.extra?:@""};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.extra = json[jRecallExtra]?:@"";
 }
