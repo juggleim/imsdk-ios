@@ -17,7 +17,8 @@
     return jReadNtfType;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)decode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     NSArray *msgs = json[jReadNtfMsgs];
     NSMutableArray *messageIds = [[NSMutableArray alloc] init];
     if ([msgs isKindOfClass:[NSArray class]]) {
