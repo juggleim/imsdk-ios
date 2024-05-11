@@ -140,6 +140,10 @@
     [self.conversationDb setMention:isMention conversation:conversation];
 }
 
+- (void)clearMentionstatus {
+    [self.conversationDb clearMentionstatus];
+}
+
 - (int)getTotalUnreadCount {
     return [self.conversationDb getTotalUnreadCount];
 }

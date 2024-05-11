@@ -261,6 +261,7 @@
 
 - (void)clearTotalUnreadCount {
     [self.core.dbManager clearTotalUnreadCount];
+    [self.core.dbManager clearMentionstatus];
     [self noticeTotalUnreadCountChange];
     long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
     
