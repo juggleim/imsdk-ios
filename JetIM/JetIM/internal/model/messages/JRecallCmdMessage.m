@@ -17,7 +17,8 @@
     return jRecallCmdType;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)decode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.originalMessageId = json[jRecallMsgId]?:@"";
     id time = json[jRecallMsgTime];
     if ([time isKindOfClass:[NSNumber class]]) {

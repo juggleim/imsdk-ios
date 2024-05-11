@@ -18,7 +18,8 @@
     return jDelConvType;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)decode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     NSArray *convsJson = json[jDelConvConversations];
     NSMutableArray *conversations = [[NSMutableArray alloc] init];
     if ([convsJson isKindOfClass:[NSArray class]]) {
