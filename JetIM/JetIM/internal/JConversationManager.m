@@ -368,6 +368,7 @@
             [self.core.dbManager setMention:YES conversation:message.conversation];
             info.hasMentioned = YES;
         }
+        info.lastMessage = message;
         [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
