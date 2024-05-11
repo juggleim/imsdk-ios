@@ -36,14 +36,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 消息属性，如果不设置则默认为 JMessageFlagIsCountable & JMessageFlagIsSave
 + (JMessageFlag)flags;
 
-/// 将 json 数据反序列化，生成可用的消息内容
-/// - Parameter json: 消息中的原始 json 数据
-- (void)decodeWithJson:(NSDictionary *)json;
+/// 数据序列化方法
+-(NSData *)jmessageContentEncode;
 
-
-/// 将消息内容序列化，编码成 json 数据
-- (NSDictionary *)encodeToJson;
-
+/// 数据反序列化方法
+/// - Parameter date: 数据内容
+-(void)jmessageContentDecode:(NSData *)data;
 
 /// 会话列表中显示的消息摘要
 - (NSString *)conversationDigest;

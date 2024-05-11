@@ -25,13 +25,15 @@
     return kTextType;
 }
 
-- (NSDictionary *)encodeToJson {
-    return @{jContent:self.content?:@"",
-             jTextExtra:self.extra?:@""
-    };
+-(NSData *)jmessageContentEncode{
+    NSDictionary * dic = @{jContent:self.content?:@"",
+                           jTextExtra:self.extra?:@""};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    return data;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)jmessageContentDecode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.content = json[jContent]?:@"";
     self.extra = json[jTextExtra]?:@"";
 }

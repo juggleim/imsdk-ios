@@ -19,14 +19,16 @@
     return kVoiceType;
 }
 
-- (NSDictionary *)encodeToJson {
-    return @{kURL:self.url?:@"",
-             kDuration:@(self.duration),
-             kVoiceExtra:self.extra?:@""
-    };
+-(NSData *)jmessageContentEncode{
+    NSDictionary * dic = @{kURL:self.url?:@"",
+                           kDuration:@(self.duration),
+                           kVoiceExtra:self.extra?:@""};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    return data;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)jmessageContentDecode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[kURL]?:@"";
     id obj = json[kDuration];
     if ([obj isKindOfClass:[NSNumber class]]) {

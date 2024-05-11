@@ -7,7 +7,6 @@
 
 #import "JWebSocket.h"
 #import "SRWebSocket.h"
-#import "JMessageContent+internal.h"
 #import "JUtility.h"
 #import "JetIMConstInternal.h"
 #import "JPBData.h"
@@ -145,7 +144,7 @@
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                                 msgData:[content encode]
+                                                 msgData:[content jmessageContentEncode]
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                               mergedMsgs:mergedMsgs

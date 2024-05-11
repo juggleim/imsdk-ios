@@ -19,12 +19,14 @@
     return JMessageFlagIsCountable|JMessageFlagIsSave;
 }
 
-- (NSDictionary *)encodeToJson {
-    NSDictionary *dic = [[NSDictionary alloc] init];
-    return dic;
+/// 数据序列化方法
+-(NSData *)jmessageContentEncode{
+    return nil;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+/// 数据反序列话方法
+/// - Parameter date: 数据内容
+-(void)jmessageContentDecode:(NSData *)data{
     
 }
 
