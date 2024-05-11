@@ -82,7 +82,6 @@
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self closeDB];
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
     [self.core.webSocket disconnect:receivePush];
 }
@@ -140,7 +139,6 @@
 }
 
 - (void)disconnectWithCode:(JErrorCodeInternal)error {
-    [self closeDB];
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:error];
 }
 
@@ -182,6 +180,8 @@
                 break;
                 
             case JConnectionStatusInternalDisconnected:
+                [self closeDB];
+                [self stopReconnectTimer];
                 outStatus = JConnectionStatusDisconnected;
                 break;
 
@@ -238,6 +238,13 @@
     });
 }
 
+- (void)stopReconnectTimer {
+    if (self.reconnectTimer) {
+        [self.reconnectTimer invalidate];
+        self.reconnectTimer = nil;
+    }
+}
+
 - (void)reconnect {
     //需要在 sendQueue 里
     NSLog(@"[JetIM] reconnect");
@@ -255,15 +262,10 @@
 }
 
 - (void)reconnectTimerFired {
-    if (self.reconnectTimer) {
-        [self.reconnectTimer invalidate];
+    [self stopReconnectTimer];
+    if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
+        [self connectWithToken:self.core.token];
     }
-    self.reconnectTimer = nil;
-    if (self.core.connectionStatus == JConnectionStatusInternalConnected
-        || self.core.connectionStatus == JConnectionStatusInternalConnecting) {
-        return;
-    }
-    [self connectWithToken:self.core.token];
 }
 
 - (BOOL)checkConnectionFailure:(JErrorCodeInternal)code {
