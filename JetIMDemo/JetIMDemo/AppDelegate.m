@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider>
 
 @end
 
@@ -32,8 +32,24 @@
     [JIM.shared.conversationManager setSyncDelegate:self];
     [JIM.shared.conversationManager setDelegate:self];
     [JIM.shared.messageManager setReadReceiptDelegate:self];
+    [JIM.shared.messageManager setMessageUploadProvider:self];
     
     return YES;
+}
+
+- (void)uploadMessage:(JMessage *)message
+             progress:(void (^)(int))progressBlock
+              success:(void (^)(JMessage * _Nonnull))successBlock
+                error:(void (^)(void))errorBlock cancel:(void (^)(void))cancelBlock {
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        progressBlock(50);
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
+//        JMediaMessageContent *content = (JMediaMessageContent *)message.content;
+//        content.url = @"www.baidu.com";
+//        successBlock(message);
+        errorBlock();
+    });
 }
 
 - (void)conversationSyncDidComplete {
@@ -67,13 +83,20 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"broadcast"];
+            JImageMessage *image = [[JImageMessage alloc] init];
+            image.localPath = @"local";
             JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
-//            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid2"];
-//            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
-//            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            NSArray *arr = [NSArray arrayWithObjects:c1, c2, c3, c4, nil];
-            [JIM.shared.conversationManager setTop:YES conversation:c1];
+            [JIM.shared.messageManager sendMediaMessage:image
+                                         inConversation:c1
+                                               progress:^(int progress, JMessage *message) {
+                NSLog(@"11");
+            } success:^(JMessage *message) {
+                NSLog(@"11");
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                NSLog(@"11");
+            } cancel:^(JMessage *message) {
+                NSLog(@"11");
+            }];
         });
         
         
