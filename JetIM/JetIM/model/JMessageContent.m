@@ -20,13 +20,13 @@
 }
 
 /// 数据序列化方法
--(NSData *)jmessageContentEncode{
+-(NSData *)encode{
     return nil;
 }
 
 /// 数据反序列话方法
 /// - Parameter date: 数据内容
--(void)jmessageContentDecode:(NSData *)data{
+-(void)decode:(NSData *)data{
     
 }
 

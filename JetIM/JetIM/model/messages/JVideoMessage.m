@@ -24,7 +24,7 @@
 }
 
 
--(NSData *)jmessageContentEncode{
+-(NSData *)encode{
     NSDictionary * dic = @{jVideoUrl:self.url?:@"",
                            jSnapshotUrl:self.snapshotUrl?:@"",
                            jVideoHeight:@(self.height),
@@ -37,7 +37,7 @@
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jVideoUrl]?:@"";
     self.snapshotUrl = json[jSnapshotUrl]?:@"";

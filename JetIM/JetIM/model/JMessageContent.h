@@ -37,11 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (JMessageFlag)flags;
 
 /// 数据序列化方法
--(NSData *)jmessageContentEncode;
+-(NSData *)encode;
 
-/// 数据反序列化方法
+/// 数据反序列化方法，生成可用的消息内容
 /// - Parameter date: 数据内容
--(void)jmessageContentDecode:(NSData *)data;
+-(void)decode:(NSData *)data;
 
 /// 会话列表中显示的消息摘要
 - (NSString *)conversationDigest;

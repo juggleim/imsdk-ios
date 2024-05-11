@@ -19,7 +19,7 @@
     return kVoiceType;
 }
 
--(NSData *)jmessageContentEncode{
+-(NSData *)encode{
     NSDictionary * dic = @{kURL:self.url?:@"",
                            kDuration:@(self.duration),
                            kVoiceExtra:self.extra?:@""};
@@ -27,7 +27,7 @@
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[kURL]?:@"";
     id obj = json[kDuration];

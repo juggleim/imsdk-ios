@@ -21,7 +21,7 @@
     return kFileType;
 }
 
-- (NSData *)jmessageContentEncode{
+- (NSData *)encode{
     NSDictionary * dic = @{kURL:self.url?:@"",
                            kName:self.name?:@"",
                            kSize:@(self.size),
@@ -31,7 +31,7 @@
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[kURL]?:@"";
     self.name = json[kName]?:@"";

@@ -23,7 +23,7 @@
 }
 
 
-- (NSData *)jmessageContentEncode{
+- (NSData *)encode{
     NSDictionary * dic = @{jURL:self.url?:@"",
                            jThumbnail:self.thumbnailUrl?:@"",
                            jImageWidth:@(self.width),
@@ -34,7 +34,7 @@
     return data;
 }
 
-- (void)jmessageContentDecode:(NSData *)data{
+- (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jURL]?:@"";
     self.thumbnailUrl = json[jThumbnail]?:@"";
