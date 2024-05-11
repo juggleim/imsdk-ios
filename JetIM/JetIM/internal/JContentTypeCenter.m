@@ -7,7 +7,6 @@
 
 #import "JContentTypeCenter.h"
 #import <objc/runtime.h>
-#import "JMessageContent+internal.h"
 
 @interface JContentTypeCenter ()
 @property (nonatomic, strong) NSMutableDictionary *contentTypeDic;
@@ -43,9 +42,8 @@ static JContentTypeCenter *_instance;
         Class cls = self.contentTypeDic[type];
         content = [[cls alloc] init];
     }
-    if ([content respondsToSelector:@selector(decode:)]) {
-        [content decode:data];
-    }
+    [content jmessageContentDecode:data];
+
     return content;
 }
 

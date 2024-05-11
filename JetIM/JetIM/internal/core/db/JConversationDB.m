@@ -6,7 +6,6 @@
 //
 
 #import "JConversationDB.h"
-#import "JMessageContent+internal.h"
 #import "JContentTypeCenter.h"
 
 NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversation_info ("
@@ -115,7 +114,7 @@ NSString *const jTotalCount = @"total_count";
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteMessage *lastMessage = (JConcreteMessage *)obj.lastMessage;
-            NSData *data = [lastMessage.content encode];
+            NSData *data = [lastMessage.content jmessageContentEncode];
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
             JConcreteConversationInfo *info = nil;
@@ -257,7 +256,7 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)updateLastMessage:(JConcreteMessage *)message {
-    NSData *data = [message.content encode];
+    NSData *data = [message.content jmessageContentEncode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSString *sql = jUpdateLastMessage;
     BOOL isUpdateSortTime = YES;

@@ -192,8 +192,6 @@
 		A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4192B1B4F79008B114C /* JMessageContent.m */; };
 		A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */; };
-		A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */; };
-		A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */; };
 		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
 		A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A094F0042B9C9C200000E97F /* JUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -420,8 +418,6 @@
 		A08AA4192B1B4F79008B114C /* JMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMessageContent.m; sourceTree = "<group>"; };
 		A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appmessages.pbobjc.m; sourceTree = "<group>"; };
 		A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appmessages.pbobjc.h; sourceTree = "<group>"; };
-		A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JMessageContent+internal.h"; sourceTree = "<group>"; };
-		A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "JMessageContent+internal.m"; sourceTree = "<group>"; };
 		A08AA4412B1C3B33008B114C /* JImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageMessage.h; sourceTree = "<group>"; };
 		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
 		A094F0042B9C9C200000E97F /* JUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfo.h; sourceTree = "<group>"; };
@@ -485,8 +481,6 @@
 			isa = PBXGroup;
 			children = (
 				A0D3AD2F2B6D1BAE00D170D7 /* messages */,
-				A08AA43D2B1B8045008B114C /* JMessageContent+internal.h */,
-				A08AA43E2B1B8045008B114C /* JMessageContent+internal.m */,
 				A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */,
 				A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */,
 				A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */,
@@ -1012,7 +1006,6 @@
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
 				A08AA2712B162A11008B114C /* JFMDatabaseQueue.h in Headers */,
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
-				A08AA43F2B1B8045008B114C /* JMessageContent+internal.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
@@ -1181,7 +1174,6 @@
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
 				A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
-				A08AA4402B1B8045008B114C /* JMessageContent+internal.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,

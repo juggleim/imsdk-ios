@@ -23,18 +23,22 @@
     return jVideoType;
 }
 
-- (NSDictionary *)encodeToJson {
-    return @{jVideoUrl:self.url?:@"",
-             jSnapshotUrl:self.snapshotUrl?:@"",
-             jVideoHeight:@(self.height),
-             jVideoWidth:@(self.width),
-             jVideoSize:@(self.size),
-             jVideoDuration:@(self.duration),
-             jVideoExtra:self.extra?:@""
-    };
+
+-(NSData *)jmessageContentEncode{
+    NSDictionary * dic = @{jVideoUrl:self.url?:@"",
+                           jSnapshotUrl:self.snapshotUrl?:@"",
+                           jVideoHeight:@(self.height),
+                           jVideoWidth:@(self.width),
+                           jVideoSize:@(self.size),
+                           jVideoDuration:@(self.duration),
+                           jVideoExtra:self.extra?:@""
+                  };
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    return data;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)jmessageContentDecode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jVideoUrl]?:@"";
     self.snapshotUrl = json[jSnapshotUrl]?:@"";
     id obj = json[jVideoHeight];

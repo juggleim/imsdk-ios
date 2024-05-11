@@ -50,7 +50,7 @@
     return jMergeType;
 }
 
-- (NSDictionary *)encodeToJson {
+-(NSData *)jmessageContentEncode{
     NSMutableDictionary *mergeDic = [NSMutableDictionary dictionary];
     [mergeDic setObject:self.title?:@"" forKey:jMergeTitle];
     if (self.messageIdList.count > 0) {
@@ -66,10 +66,12 @@
         [previewListJson addObject:unitJson];
     }
     [mergeDic setObject:previewListJson forKey:jPreviewList];
-    return mergeDic;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:mergeDic options:kNilOptions error:nil];
+    return data;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)jmessageContentDecode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.title = json[jMergeTitle];
     self.messageIdList = json[jMessageIdList];
     NSArray *previewListJson = json[jPreviewList];

@@ -855,6 +855,9 @@
 }
 
 - (JMessage *)handleRecallCmdMessage:(NSString *)messageId {
+    if(messageId == nil){
+        return nil;
+    }
     JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
     [self.core.dbManager updateMessageContent:recallInfoMsg
                                   contentType:[JRecallInfoMessage contentType]

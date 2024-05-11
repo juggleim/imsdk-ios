@@ -22,17 +22,20 @@
     return kImageType;
 }
 
-- (NSDictionary *)encodeToJson {
-    return @{jURL:self.url?:@"",
-             jThumbnail:self.thumbnailUrl?:@"",
-             jImageWidth:@(self.width),
-             jImageHeight:@(self.height),
-             jImageSize:@(self.size),
-             jImageExtra:self.extra?:@""
-    };
+
+- (NSData *)jmessageContentEncode{
+    NSDictionary * dic = @{jURL:self.url?:@"",
+                           jThumbnail:self.thumbnailUrl?:@"",
+                           jImageWidth:@(self.width),
+                           jImageHeight:@(self.height),
+                           jImageSize:@(self.size),
+                           jImageExtra:self.extra?:@""};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    return data;
 }
 
-- (void)decodeWithJson:(NSDictionary *)json {
+- (void)jmessageContentDecode:(NSData *)data{
+    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jURL]?:@"";
     self.thumbnailUrl = json[jThumbnail]?:@"";
     id obj = json[jImageWidth];
