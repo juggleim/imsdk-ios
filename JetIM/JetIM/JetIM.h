@@ -26,4 +26,5 @@ FOUNDATION_EXPORT const unsigned char JetIMVersionString[];
 #import <JetIM/JRecallInfoMessage.h>
 #import <JetIM/JMergeMessage.h>
 #import <JetIM/JThumbnailPackedImageMessage.h>
+#import <JetIM/JSnapshotPackedVideoMessage.h>
 

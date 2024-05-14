@@ -33,7 +33,6 @@
     [JIM.shared.conversationManager setDelegate:self];
     [JIM.shared.messageManager setReadReceiptDelegate:self];
     [JIM.shared.messageManager setMessageUploadProvider:self];
-    [JIM.shared.messageManager registerContentType:[JATestMessage class]];
     
     return YES;
 }

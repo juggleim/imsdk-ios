@@ -204,6 +204,8 @@
 		A096457E2BECE42200290775 /* JMediaMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A096457D2BECE42200290775 /* JMediaMessageContent.m */; };
 		A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A096458D2BF252DC00290775 /* JThumbnailPackedImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */; };
+		A09645902BF339EA00290775 /* JSnapshotPackedVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A096458E2BF339EA00290775 /* JSnapshotPackedVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09645912BF339EA00290775 /* JSnapshotPackedVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A096458F2BF339EA00290775 /* JSnapshotPackedVideoMessage.m */; };
 		A09716BD2B9FFE3C00D1DB24 /* JGroupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */; };
 		A09716C22B9FFF1F00D1DB24 /* JUserInfoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716C02B9FFF1F00D1DB24 /* JUserInfoManager.h */; };
@@ -432,6 +434,8 @@
 		A096457D2BECE42200290775 /* JMediaMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMediaMessageContent.m; sourceTree = "<group>"; };
 		A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JThumbnailPackedImageMessage.h; sourceTree = "<group>"; };
 		A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JThumbnailPackedImageMessage.m; sourceTree = "<group>"; };
+		A096458E2BF339EA00290775 /* JSnapshotPackedVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSnapshotPackedVideoMessage.h; sourceTree = "<group>"; };
+		A096458F2BF339EA00290775 /* JSnapshotPackedVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSnapshotPackedVideoMessage.m; sourceTree = "<group>"; };
 		A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoProtocol.h; sourceTree = "<group>"; };
 		A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupInfo.h; sourceTree = "<group>"; };
 		A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupInfo.m; sourceTree = "<group>"; };
@@ -873,6 +877,8 @@
 				A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */,
 				A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */,
 				A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */,
+				A096458E2BF339EA00290775 /* JSnapshotPackedVideoMessage.h */,
+				A096458F2BF339EA00290775 /* JSnapshotPackedVideoMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -924,6 +930,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A09645902BF339EA00290775 /* JSnapshotPackedVideoMessage.h in Headers */,
 				A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */,
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
@@ -1187,6 +1194,7 @@
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
 				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
+				A09645912BF339EA00290775 /* JSnapshotPackedVideoMessage.m in Sources */,
 				A08AA39E2B19CB78008B114C /* GPBCodedOutputStream.m in Sources */,
 				A08AA3B72B19DF75008B114C /* JetIMCore.m in Sources */,
 				A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */,
