@@ -11,8 +11,8 @@
 #import "objc/runtime.h"
 
 #define jSPVideoType @"jg:spvideo"
-#define jSPVideoUrl @"url"
-#define jSPSnapshotImage @"snapshot"
+#define jSPVideoUrl @"sightUrl"
+#define jSPSnapshotImage @"thumbnailImage"
 #define jSPVideoHeight @"height"
 #define jSPVideoWidth @"width"
 #define jSPVideoSize @"size"

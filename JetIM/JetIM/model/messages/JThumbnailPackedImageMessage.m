@@ -12,8 +12,8 @@
 
 #define jTPImageType @"jg:tpimg"
 #define jTPDigest @"[Image]"
-#define jTPURL @"url"
-#define jTPThumbnail @"thumbnail"
+#define jTPURL @"imageUri"
+#define jTPThumbnailContent @"content"
 #define jTPImageHeight @"height"
 #define jTPImageWidth @"width"
 #define jTPImageSize @"size"
@@ -52,7 +52,7 @@
         thumbnailString = [JUtility base64EncodedStringFrom:thumbnailData];
     }
     NSDictionary * dic = @{jTPURL:self.url?:@"",
-                           jTPThumbnail:thumbnailString?:@"",
+                           jTPThumbnailContent:thumbnailString?:@"",
                            jTPImageWidth:@(self.width),
                            jTPImageHeight:@(self.height),
                            jTPImageSize:@(self.size),
@@ -64,7 +64,7 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jTPURL]?:@"";
-    NSString *thumbnailString = json[jTPThumbnail]?:@"";
+    NSString *thumbnailString = json[jTPThumbnailContent]?:@"";
     NSData *thumbnailData = nil;
     if (class_getInstanceMethod([NSData class], @selector(initWithBase64EncodedString:options:))) {
         thumbnailData = [[NSData alloc] initWithBase64EncodedString:thumbnailString
