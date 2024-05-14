@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)currentSystemVersion;
 + (NSString *)currentNetWork;
 + (NSString *)currentCarrier;
++ (UIImage *)generateThumbnail:(UIImage *)image targetSize:(CGSize)targetSize;
++ (NSString *)base64EncodedStringFrom:(NSData *)data;
++ (NSData *)dataWithBase64EncodedString:(NSString *)string;
 @end
 
 NS_ASSUME_NONNULL_END

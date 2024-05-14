@@ -10,6 +10,10 @@
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
 
+#define JThumbnailWidth 240
+#define JThumbnailHeight 240
+#define jThumbnailQuality 0.3
+
 typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalNone = 0,
     //未传 AppKey

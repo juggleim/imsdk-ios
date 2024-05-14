@@ -202,6 +202,8 @@
 		A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */ = {isa = PBXBuildFile; fileRef = A09645752BECCDF800290775 /* JMediaMessageContent.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A09645792BECCFE800290775 /* JMessageUploadProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A096457E2BECE42200290775 /* JMediaMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A096457D2BECE42200290775 /* JMediaMessageContent.m */; };
+		A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A096458D2BF252DC00290775 /* JThumbnailPackedImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */; };
 		A09716BD2B9FFE3C00D1DB24 /* JGroupInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */; };
 		A09716C22B9FFF1F00D1DB24 /* JUserInfoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716C02B9FFF1F00D1DB24 /* JUserInfoManager.h */; };
@@ -428,6 +430,8 @@
 		A09645752BECCDF800290775 /* JMediaMessageContent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMediaMessageContent.h; sourceTree = "<group>"; };
 		A09645792BECCFE800290775 /* JMessageUploadProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageUploadProvider.h; sourceTree = "<group>"; };
 		A096457D2BECE42200290775 /* JMediaMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMediaMessageContent.m; sourceTree = "<group>"; };
+		A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JThumbnailPackedImageMessage.h; sourceTree = "<group>"; };
+		A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JThumbnailPackedImageMessage.m; sourceTree = "<group>"; };
 		A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoProtocol.h; sourceTree = "<group>"; };
 		A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupInfo.h; sourceTree = "<group>"; };
 		A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupInfo.m; sourceTree = "<group>"; };
@@ -867,6 +871,8 @@
 				A0D3AD312B6DFD4300D170D7 /* JRecallInfoMessage.m */,
 				A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */,
 				A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */,
+				A096458A2BF252DB00290775 /* JThumbnailPackedImageMessage.h */,
+				A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -918,6 +924,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */,
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
 				A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */,
@@ -1152,6 +1159,7 @@
 				A08AA38E2B19CB78008B114C /* GPBFieldMask.pbobjc.m in Sources */,
 				A08AA2552B14AF2E008B114C /* JConversation.m in Sources */,
 				A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */,
+				A096458D2BF252DC00290775 /* JThumbnailPackedImageMessage.m in Sources */,
 				A08AA2512B14AF1F008B114C /* JMessage.m in Sources */,
 				A0F376282B3A89780076CB84 /* JVoiceMessage.m in Sources */,
 				A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */,
