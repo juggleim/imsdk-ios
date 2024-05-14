@@ -54,6 +54,8 @@
         [self registerContentType:[JReadNtfMessage class]];
         [self registerContentType:[JGroupReadNtfMessage class]];
         [self registerContentType:[JMergeMessage class]];
+        [self registerContentType:[JThumbnailPackedImageMessage class]];
+        [self registerContentType:[JSnapshotPackedVideoMessage class]];
         self.cachedSendTime = -1;
         self.cachedReceiveTime = -1;
     }
