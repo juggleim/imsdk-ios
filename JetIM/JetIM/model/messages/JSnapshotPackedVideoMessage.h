@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long size;
 /// 视频时长，单位：秒
 @property (nonatomic, assign) int duration;
+/// 视频文件名
+@property (nonatomic, copy) NSString *name;
 /// 扩展字段
 @property (nonatomic, copy) NSString *extra;
 @end
