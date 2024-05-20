@@ -79,7 +79,9 @@
     [JIM.shared.connectionManager registerDeviceToken:deviceToken];
 }
 
-- (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
+- (void)connectionStatusDidChange:(JConnectionStatus)status
+                        errorCode:(JErrorCode)code
+                            extra:(NSString *)extra {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -490,10 +492,6 @@
     // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 }
 
-
-- (void)connectionStatusDidChange:(JConnectionStatus)status {
-    NSLog(@"connectionStatusDidChange status is %d", status);
-}
 
 @end
 

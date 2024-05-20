@@ -92,6 +92,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JDisconnectMsg : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, assign) long long timestamp;
+@property (nonatomic, copy) NSString *extra;
 @end
 
 @interface JPBRcvObj : NSObject

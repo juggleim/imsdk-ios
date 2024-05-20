@@ -353,10 +353,12 @@ typedef struct ConnectAckMsgBody__storage_ {
 
 @dynamic code;
 @dynamic timestamp;
+@dynamic ext;
 
 typedef struct DisconnectMsgBody__storage_ {
   uint32_t _has_storage_[1];
   int32_t code;
+  NSString *ext;
   int64_t timestamp;
 } DisconnectMsgBody__storage_;
 
@@ -384,6 +386,15 @@ typedef struct DisconnectMsgBody__storage_ {
         .offset = (uint32_t)offsetof(DisconnectMsgBody__storage_, timestamp),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "ext",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DisconnectMsgBody_FieldNumber_Ext,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(DisconnectMsgBody__storage_, ext),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
@@ -507,7 +518,7 @@ typedef struct PublishMsgBody__storage_ {
 @dynamic code;
 @dynamic msgId;
 @dynamic timestamp;
-@dynamic msgIndex;
+@dynamic msgSeqNo;
 
 typedef struct PublishAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -515,7 +526,7 @@ typedef struct PublishAckMsgBody__storage_ {
   int32_t code;
   NSString *msgId;
   int64_t timestamp;
-  int64_t msgIndex;
+  int64_t msgSeqNo;
 } PublishAckMsgBody__storage_;
 
 // This method is threadsafe because it is initially called
@@ -562,11 +573,11 @@ typedef struct PublishAckMsgBody__storage_ {
         .dataType = GPBDataTypeInt64,
       },
       {
-        .name = "msgIndex",
+        .name = "msgSeqNo",
         .dataTypeSpecific.clazz = Nil,
-        .number = PublishAckMsgBody_FieldNumber_MsgIndex,
+        .number = PublishAckMsgBody_FieldNumber_MsgSeqNo,
         .hasIndex = 4,
-        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, msgIndex),
+        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, msgSeqNo),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },

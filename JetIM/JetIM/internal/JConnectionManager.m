@@ -60,7 +60,7 @@
             }
         }
     }
-    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone];
+    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:nil];
     
     [JNaviManager requestNavi:self.core.naviUrl
                        appKey:self.core.appKey
@@ -73,16 +73,16 @@
                              servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
         if (errorCode == JErrorCodeInternalTokenIllegal) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:nil];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:nil];
         }
     }];
 }
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:nil];
     [self.core.webSocket disconnect:receivePush];
 }
 
@@ -124,26 +124,29 @@
                 NSLog(@"[JetIM] db open fail");
             }
         }
-        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone];
+        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:nil];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{
             [self.messageManager syncMessages];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:error];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:nil];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
         }
     }
 }
 
-- (void)disconnectWithCode:(JErrorCodeInternal)error {
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:error];
+- (void)disconnectWithCode:(JErrorCodeInternal)error
+                     extra:(NSString *)extra {
+    [self changeStatus:JConnectionStatusInternalDisconnected
+             errorCode:error
+                 extra:extra];
 }
 
 - (void)webSocketDidFail {
-    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
+    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
 }
 
 - (void)webSocketDidClose {
@@ -152,13 +155,14 @@
             || self.core.connectionStatus == JConnectionStatusInternalFailure) {
             return;
         }
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
     });
 }
 
 #pragma mark -- internal
 - (void)changeStatus:(JConnectionStatusInternal)status
-           errorCode:(JErrorCodeInternal)errorCode {
+           errorCode:(JErrorCodeInternal)errorCode
+               extra:(NSString *)extra {
     dispatch_async(self.core.sendQueue, ^{
         if (status == self.core.connectionStatus) {
             return;
@@ -207,8 +211,8 @@
         }
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:)]) {
-                [self.delegate connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode];
+            if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
+                [self.delegate connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode extra:extra];
             }
         });
     });

@@ -660,8 +660,8 @@ inConversation:(JConversation *)conversation
 
 - (void)handleDisconnectMsg:(JDisconnectMsg *)msg {
     NSLog(@"handleDisconnectMsg");
-    if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:)]) {
-        [self.connectDelegate disconnectWithCode:msg.code];
+    if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:extra:)]) {
+        [self.connectDelegate disconnectWithCode:msg.code extra:msg.extra];
     }
 }
 

@@ -674,7 +674,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.code = msg.pubAckMsgBody.code;
             a.msgId = msg.pubAckMsgBody.msgId;
             a.timestamp = msg.pubAckMsgBody.timestamp;
-            a.seqNo = msg.pubAckMsgBody.msgIndex;
+            a.seqNo = msg.pubAckMsgBody.msgSeqNo;
             obj.publishMsgAck = a;
         }
             break;
@@ -768,6 +768,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             JDisconnectMsg *m = [[JDisconnectMsg alloc] init];
             m.code = msg.disconnectMsgBody.code;
             m.timestamp = msg.disconnectMsgBody.timestamp;
+            m.extra = msg.disconnectMsgBody.ext;
             obj.disconnectMsg = m;
         }
             break;
