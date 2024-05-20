@@ -51,6 +51,10 @@ static JIM *_instance;
     NSLog(@"init appkey is %@", appKey);
 }
 
+- (NSString *)getSDKVersion {
+    return JIMVersion;
+}
+
 - (void)setDelegateQueue:(dispatch_queue_t)delegateQueue {
     self.core.delegateQueue = delegateQueue;
 }

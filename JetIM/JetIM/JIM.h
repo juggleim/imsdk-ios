@@ -38,6 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setServer:(NSString *)serverUrl;
 
+/*!
+ 获取 SDK 版本
+ */
+- (NSString *)getSDKVersion;
+
 /// 连接管理类
 @property(nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类

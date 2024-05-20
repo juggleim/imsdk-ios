@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import JetIM
 
 enum ButtonType: Int {
     case signIn
@@ -98,27 +99,16 @@ class ViewController: UIViewController {
  
         UserDefaults.saveIsLightTheme(true)
         
-        let coreVersion: String = SendbirdChat.getSDKVersion()
-        var uikitVersion: String {
-            if SendbirdUI.shortVersion == "[NEXT_VERSION]" {
-                let bundle = Bundle(identifier: "com.sendbird.uikit.sample")
-                return "\(bundle?.infoDictionary?["CFBundleShortVersionString"] ?? "")"
-            } else if SendbirdUI.shortVersion == "0.0.0" {
-                guard let dictionary = Bundle.main.infoDictionary,
-                      let appVersion = dictionary["CFBundleShortVersionString"] as? String,
-                      let build = dictionary["CFBundleVersion"] as? String else {return ""}
-                return "\(appVersion)(\(build))"
-            } else {
-                return SendbirdUI.shortVersion
-            }
-        }
+        let coreVersion: String = JIM.shared().getSDKVersion()
+        var uikitVersion: String = JuggleUI.version
         versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
          
         userIdTextField.text = UserDefaults.loadUserID()
         nicknameTextField.text = UserDefaults.loadNickname()
         
-        SendbirdChat.addUserEventDelegate(self, identifier: self.description)
-        SendbirdChat.addConnectionDelegate(self, identifier: self.description)
+        //TODO:
+//        SendbirdChat.addUserEventDelegate(self, identifier: self.description)
+//        SendbirdChat.addConnectionDelegate(self, identifier: self.description)
         
         guard userIdTextField.text != nil,
               nicknameTextField.text != nil else { return }
@@ -126,8 +116,9 @@ class ViewController: UIViewController {
     }
     
     deinit {
-        SendbirdChat.removeUserEventDelegate(forIdentifier: self.description)
-        SendbirdChat.removeConnectionDelegate(forIdentifier: self.description)
+        //TODO:
+//        SendbirdChat.removeUserEventDelegate(forIdentifier: self.description)
+//        SendbirdChat.removeConnectionDelegate(forIdentifier: self.description)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -139,10 +130,8 @@ class ViewController: UIViewController {
     }
     
     func updateUnreadCount() {
-        SendbirdChat.getTotalUnreadMessageCount { [weak self] totalCount, error in
-            guard let self = self else { return }
-            self.setUnreadMessageCount(unreadCount: Int32(totalCount))
-        }
+        let unreadCount = JIM.shared().conversationManager.getTotalUnreadCount()
+        self.setUnreadMessageCount(unreadCount: unreadCount)
     }
     
     func setUnreadMessageCount(unreadCount: Int32) {
