@@ -60,7 +60,7 @@
             }
         }
     }
-    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:nil];
+    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
     
     [JNaviManager requestNavi:self.core.naviUrl
                        appKey:self.core.appKey
@@ -73,16 +73,16 @@
                              servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
         if (errorCode == JErrorCodeInternalTokenIllegal) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:nil];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:@""];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:nil];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
         }
     }];
 }
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:nil];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
     [self.core.webSocket disconnect:receivePush];
 }
 
@@ -124,16 +124,16 @@
                 NSLog(@"[JetIM] db open fail");
             }
         }
-        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:nil];
+        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:@""];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{
             [self.messageManager syncMessages];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:nil];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:@""];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
         }
     }
 }
@@ -146,7 +146,7 @@
 }
 
 - (void)webSocketDidFail {
-    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
+    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
 }
 
 - (void)webSocketDidClose {
@@ -155,7 +155,7 @@
             || self.core.connectionStatus == JConnectionStatusInternalFailure) {
             return;
         }
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:nil];
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
     });
 }
 
