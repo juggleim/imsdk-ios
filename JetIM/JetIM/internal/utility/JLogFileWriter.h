@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)write:(NSString *)log
          date:(NSDate *)date;
 - (void)removeExpiredLogs;
+- (NSString *)generateZipFile:(long long)startTime
+                      endTime:(long long)endTime;
 @end
 
 NS_ASSUME_NONNULL_END

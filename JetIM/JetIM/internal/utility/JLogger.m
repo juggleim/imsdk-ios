@@ -39,12 +39,17 @@ static JLogger *_instance;
 
 - (void)uploadLog:(long long)startTime
           endTime:(long long)endTime
-       completion:(void (^)(JErrorCode))completeBlock {
-    
+       completion:(void (^)(JErrorCodeInternal))completeBlock {
+    NSString *fileName = [self.fileWriter generateZipFile:startTime endTime:endTime];
+    if (fileName.length == 0) {
+        completeBlock(JErrorCodeInternalLogNotExist);
+    }
 }
 
 - (void)removeExpiredLogs {
-    [self.fileWriter removeExpiredLogs];
+    dispatch_async(self.logQueue, ^{
+        [self.fileWriter removeExpiredLogs];
+    });
 }
 
 - (void)write:(JLogLevel)level tag:(NSString *)tag keys:(NSString *)keys, ... NS_FORMAT_FUNCTION(3, 4) {

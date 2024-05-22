@@ -55,5 +55,7 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //消息已被撤回
     JErrorCodeInternalMessageAlreadyRecalled = 22002,
     //消息上传失败
-    JErrorCodeInternalMessageUploadError = 22003
+    JErrorCodeInternalMessageUploadError = 22003,
+    //日志不存在
+    JErrorCodeInternalLogNotExist = 22004
 };
