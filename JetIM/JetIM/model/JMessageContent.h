@@ -9,6 +9,7 @@
 #import "JMessageMentionInfo.h"
 
 typedef NS_OPTIONS(int32_t, JMessageFlag) {
+    JMessageFlagNone = 0,
     //是否命令消息
     JMessageFlagIsCmd = 1 << 0,
     //是否计未读数
