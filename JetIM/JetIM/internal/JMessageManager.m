@@ -99,7 +99,18 @@
         return;
     }
     NSArray * messages = [self getMessagesByClientMsgNos:clientMsgNos];
-    if(messages == nil || messages.count == 0){
+    NSMutableArray * deleteClientMsgNoList = [NSMutableArray array];
+    NSMutableArray * deleteRemoteList = [NSMutableArray array];
+    for (JMessage * message in messages) {
+        if([message.conversation.conversationId isEqualToString:conversation.conversationId]){
+            if(message.messageId.length > 0){
+                [deleteRemoteList addObject:message];
+            }
+            [deleteClientMsgNoList addObject:@(message.clientMsgNo)];
+        }
+    }
+    
+    if(deleteClientMsgNoList.count == 0){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeMessageNotExist);
@@ -107,41 +118,42 @@
         });
         return;
     }
-    NSMutableArray * msgList = [NSMutableArray array];
-    for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]){
-            [msgList addObject:message];
+    //如果没有远端消息 只删除本地后直接回调
+    if(deleteRemoteList.count == 0){
+        for (NSNumber * clientMsgNo in deleteClientMsgNoList) {
+            [self.core.dbManager deleteMessageByClientId:clientMsgNo.longLongValue];
         }
-    }
-    if(msgList.count != 0){
-        __weak typeof(self) weakSelf = self;
-        [self.core.webSocket deleteMessage:conversation
-                                   msgList:msgList
-                                   success:^{
-            for (JMessage * message in msgList) {
-                [weakSelf.core.dbManager deleteMessageByClientId:message.clientMsgNo];
-            }
 #warning TODO 通知会话更新
-            dispatch_async(self.core.delegateQueue, ^{
-                if(successBlock){
-                    successBlock();
-                }
-            });
-        } error:^(JErrorCodeInternal code) {
-            dispatch_async(self.core.delegateQueue, ^{
-                if (errorBlock) {
-                    errorBlock((JErrorCode)code);
-                }
-            });
-        }];
-        
-    }else{
         dispatch_async(self.core.delegateQueue, ^{
-            if (errorBlock) {
-                errorBlock(JErrorCodeMessageNotExist);
+            if(successBlock){
+                successBlock();
             }
         });
+        return;
     }
+    
+    //如果有远端消息则删除远端消息，操作本地数据 回调
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket deleteMessage:conversation
+                               msgList:deleteRemoteList
+                               success:^{
+        for (NSNumber * clientMsgNo in deleteClientMsgNoList) {
+            [self.core.dbManager deleteMessageByClientId:clientMsgNo.longLongValue];
+        }
+#warning TODO 通知会话更新
+        dispatch_async(self.core.delegateQueue, ^{
+            if(successBlock){
+                successBlock();
+            }
+        });
+        
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
 }
 
 - (void)deleteMessageByMessageIds:(NSArray<NSString *> *)messageIds
@@ -251,9 +263,9 @@
 }
 
 - (void)clearMessagesIn:(JConversation *)conversation
-            startTime:(long long)startTime
-              success:(void (^)(void))successBlock
-                error:(void (^)(JErrorCode errorCode))errorBlock{
+              startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock{
     if(startTime == 0){
         startTime =  [[NSDate date] timeIntervalSince1970] * 1000;
     }
@@ -1041,7 +1053,7 @@
     if(starTime == 0){
         starTime = [[NSDate date] timeIntervalSince1970] * 1000;
     }
-
+    
     [self.core.dbManager clearMessagesIn:message.conversation startTime:starTime senderId:content.senderId];
     dispatch_async(self.core.delegateQueue, ^{
         if(self.delegate && [self.delegate respondsToSelector:@selector(onMessageClear:senderId:)]){
@@ -1145,10 +1157,6 @@
             [self handleClearHistoryMessageCmdMessage:obj];
             return;
         }
-        
-        
-        
-        
         
         if (obj.flags & JMessageFlagIsCmd) {
             return;
