@@ -11,8 +11,8 @@
 #import "JConversationDB.h"
 #import "JProfileDB.h"
 #import "JUserInfoDB.h"
+#import "JUtility.h"
 
-#define kJetIM @"jetim"
 #define kJetIMDBName @"jetimdb"
 
 @interface JDBManager ()
@@ -305,9 +305,7 @@
 //DB 目录
 - (NSString *)dbDirectoryWith:(NSString *)appKey
                        userId:(NSString *)userId {
-    NSString *path =
-            NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
-    path = [path stringByAppendingPathComponent:kJetIM];
+    NSString *path = [JUtility rootPath];
     path = [path stringByAppendingPathComponent:appKey];
     path = [path stringByAppendingPathComponent:userId];
     return path;

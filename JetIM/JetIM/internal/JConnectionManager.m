@@ -11,6 +11,7 @@
 #import "JNaviManager.h"
 #import "JetIMConstInternal.h"
 #import <UIKit/UIKit.h>
+#import "JLogger.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -45,6 +46,7 @@
 }
 
 - (void)connectWithToken:(NSString *)token {
+    JLogI(@"A-connect-T", @"token is %@", token);
     //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
     //TODO: 连接状态判断，如果连接中或已连接，而且 token 跟之前不一样的话，先 disconnect
     

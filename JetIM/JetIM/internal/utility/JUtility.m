@@ -13,6 +13,7 @@
 @import CoreTelephony;
 
 #define jUUID @"JUUID"
+#define jJetIM @"jetim"
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -292,5 +293,12 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     bytes = realloc(bytes, length);
     return [NSData dataWithBytesNoCopy:bytes length:length];
+}
+
++ (NSString *)rootPath {
+    NSString *path =
+            NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
+    path = [path stringByAppendingPathComponent:jJetIM];
+    return path;
 }
 @end
