@@ -174,6 +174,7 @@
             return;
         }
         if (status == JConnectionStatusInternalConnected && self.core.connectionStatus != JConnectionStatusInternalConnected) {
+            [[JLogger shared] removeExpiredLogs];
             [self.heartBeatManager start];
         }
         if (self.core.connectionStatus == JConnectionStatusInternalConnected && status != JConnectionStatusInternalConnected) {
