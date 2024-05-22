@@ -19,6 +19,10 @@
 
 - (void)messageDidRecall:(JMessage *)message;
 
+- (void)onMessageDelete:(JConversation *)conversation clientMsgNos:(NSArray *)clientMsgNos;
+
+- (void)onMessageClear:(JConversation *)conversation senderId:(NSString *)senderId;
+
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -113,22 +117,46 @@
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray <NSString *> *)contentTypes;
 
-/// 根据 clientMsgNo 删除本地消息（只删除本端消息，服务端消息不受影响）
-/// - Parameter clientMsgNo: 本端消息唯一编号
-- (void)deleteMessageByClientMsgNo:(long long)clientMsgNo;
 
-/// 根据 messageId 删除本地消息（只删除本端消息，服务端消息不受影响）
-/// - Parameter messageId: 消息 id
-- (void)deleteMessageByMessageId:(NSString *)messageId;
+/// 根据本地消息id删除消息
+/// - Parameters:
+///   - clientMsgNos: 本地消息ID列表
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessageByClientMsgNo:(NSArray<NSNumber *> *)clientMsgNos
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode errorCode))errorBlock;
+
+/// 根据消息id删除消息
+/// - Parameters:
+///   - messageIds: 消息ID列表
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessageByMessageIds:(NSArray<NSString *> *)messageIds
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode errorCode))errorBlock;
+
+
 
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
 - (void)recallMessage:(NSString *)messageId
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 清除会话内所有消息
-/// - Parameter conversation: 会话标识
-- (void)clearMessagesIn:(JConversation *)conversation;
+/// 清空会话消息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - startTime: 开始时间
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)clearMessagesIn:(JConversation *)conversation
+            startTime:(long long)startTime
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组

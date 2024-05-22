@@ -137,6 +137,18 @@ inConversation:(JConversation *)conversation
                       success:(void (^)(void))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)deleteMessage:(JConversation *)conversation
+              msgList:(NSArray <JConcreteMessage *> *)msgList
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+
+- (void)clearHistoryMessage:(JConversation *)conversation
+                       time:(long long)time
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+
 - (void)sendPing;
 @end
 

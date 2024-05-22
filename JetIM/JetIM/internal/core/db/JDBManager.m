@@ -208,8 +208,8 @@
     [self.messageDb deleteMessageByMessageId:messageId];
 }
 
-- (void)clearMessagesIn:(JConversation *)conversation {
-    [self.messageDb clearMessagesIn:conversation];
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
+    [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {

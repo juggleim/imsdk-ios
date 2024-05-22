@@ -211,6 +211,15 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                                      time:(long long)time
                                     index:(int)index;
 
+- (NSData *)deleteMessage:(JConversation *)conversation
+                  msgList:(NSArray <JConcreteMessage *> *)msgList
+                    index:(int)index;
+
+- (NSData *)clearHistoryMessage:(JConversation *)conversation
+                           time:(long long)time
+                          scope:(int)scope
+                          index:(int)index;
+
 - (NSData *)pingData;
 
 - (NSData *)publishAckData:(int)index;

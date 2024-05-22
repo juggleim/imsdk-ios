@@ -46,7 +46,9 @@ NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, 
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
-NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= %s";
+NSString *const jAndSenderIs = @" AND sender = ?";
+
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
 NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
@@ -213,9 +215,15 @@ NSString *const jLocalAttribute = @"local_attribute";
             withArgumentsInArray:@[messageId]];
 }
 
-- (void)clearMessagesIn:(JConversation *)conversation {
-    [self.dbHelper executeUpdate:jClearMessages
-            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
+    NSString *sql = jClearMessages;
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(startTime)]];
+    if(senderId.length > 0){
+        sql = [sql stringByAppendingString:jAndSenderIs];
+        [args addObject:senderId];
+    }
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:args];
 }
 
 //被删除的消息也能查出来

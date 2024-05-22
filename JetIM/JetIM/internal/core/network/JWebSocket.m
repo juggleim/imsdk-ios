@@ -176,7 +176,7 @@
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
               success:(void (^)(long long timestamp))successBlock
-                error:(void (^)(JErrorCodeInternal))errorBlock {
+                error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData recallMessageData:messageId
@@ -246,7 +246,7 @@
                    count:(int)count
                direction:(JPullDirection)direction
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
-                   error:(void (^)(JErrorCodeInternal))errorBlock {
+                   error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData queryHisMsgsDataFrom:conversation
@@ -267,7 +267,7 @@
 - (void)queryHisMsgsByIds:(NSArray<NSString *> *)messageIds
            inConversation:(JConversation *)conversation
                   success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
-                    error:(void (^)(JErrorCodeInternal))errorBlock {
+                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData queryHisMsgsDataByIds:messageIds
@@ -287,7 +287,7 @@
                     count:(int)count
                    userId:(NSString *)userId
                   success:(void (^)(NSArray * _Nonnull, NSArray * _Nonnull, BOOL))successBlock
-                    error:(void (^)(JErrorCodeInternal))errorBlock {
+                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncConversationsData:startTime
@@ -307,7 +307,7 @@
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
                        success:(void (^)(void))successBlock
-                         error:(void (^)(JErrorCodeInternal))errorBlock {
+                         error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData deleteConversationData:conversation
@@ -324,7 +324,7 @@
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
                  success:(void (^)(void))successBlock
-                   error:(void (^)(JErrorCodeInternal))errorBlock {
+                   error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData clearUnreadCountData:conversation
@@ -342,7 +342,7 @@
  inConversation:(JConversation *)conversation
          userId:(NSString *)userId
         success:(void (^)(void))successBlock
-          error:(void (^)(JErrorCodeInternal))errorBlock {
+          error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData undisturbData:conversation
@@ -360,7 +360,7 @@
 inConversation:(JConversation *)conversation
         userId:(NSString *)userId
        success:(void (^)(long long timestamp))successBlock
-         error:(void (^)(JErrorCodeInternal))errorBlock {
+         error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData topConversationData:conversation
@@ -379,7 +379,7 @@ inConversation:(JConversation *)conversation
                        count:(int)count
                    direction:(JPullDirection)direction
                      success:(void (^)(NSArray<JConcreteMessage *> * _Nonnull, BOOL isFinished))successBlock
-                       error:(void (^)(JErrorCodeInternal))errorBlock {
+                       error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getMergedMessageList:messageId
@@ -402,7 +402,7 @@ inConversation:(JConversation *)conversation
                      count:(int)count
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
-                     error:(void (^)(JErrorCodeInternal))errorBlock {
+                     error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getMentionMessages:conversation
@@ -423,7 +423,7 @@ inConversation:(JConversation *)conversation
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId
                   success:(void (^)(void))successBlock
-                    error:(void (^)(JErrorCodeInternal))errorBlock {
+                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData registerPushToken:token
@@ -453,6 +453,40 @@ inConversation:(JConversation *)conversation
                        error:errorBlock];
     });
     
+}
+
+- (void)deleteMessage:(JConversation *)conversation
+              msgList:(NSArray <JConcreteMessage *> *)msgList
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData deleteMessage:conversation 
+                                       msgList:msgList
+                                         index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+
+- (void)clearHistoryMessage:(JConversation *)conversation
+                       time:(long long)time
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock{
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData clearHistoryMessage:conversation
+                                                time:time
+                                               scope:0
+                                               index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
 }
 
 - (void)sendPing {
@@ -724,7 +758,7 @@ inConversation:(JConversation *)conversation
 - (void)simpleSendData:(NSData *)data
                    key:(NSNumber *)key
                success:(void (^)(void))successBlock
-                 error:(void (^)(JErrorCodeInternal))errorBlock {
+                 error:(void (^)(JErrorCodeInternal code))errorBlock {
     JSimpleBlockObj *obj = [[JSimpleBlockObj alloc] init];
     obj.successBlock = successBlock;
     obj.errorBlock = errorBlock;
@@ -737,7 +771,7 @@ inConversation:(JConversation *)conversation
 - (void)timestampSendData:(NSData *)data
                       key:(NSNumber *)key
                   success:(void (^)(long long timestamp))successBlock
-                    error:(void (^)(JErrorCodeInternal))errorBlock {
+                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     JTimestampBlockObj *obj = [[JTimestampBlockObj alloc] init];
     obj.successBlock = successBlock;
     obj.errorBlock = errorBlock;
@@ -750,7 +784,7 @@ inConversation:(JConversation *)conversation
 - (void)sendData:(NSData *)data
              key:(NSNumber *)key
              obj:(JBlockObj *)obj
-           error:(void (^)(JErrorCodeInternal))errorBlock {
+           error:(void (^)(JErrorCodeInternal code))errorBlock {
     NSError *err = nil;
     [self.sws sendData:data error:&err];
     if (err != nil) {

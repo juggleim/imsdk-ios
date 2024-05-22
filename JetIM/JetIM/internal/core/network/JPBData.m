@@ -52,6 +52,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
 #define jClearTotalUnread @"clear_total_unread"
+#define jDelMsg @"del_msg"
+#define jCleanHismsg @"clean_hismsg"
+
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -631,6 +634,63 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)deleteMessage:(JConversation *)conversation
+                  msgList:(NSArray <JConcreteMessage *> *)msgList
+                    index:(int)index{
+    DelHisMsgsReq * req = [[DelHisMsgsReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
+    for (JConcreteMessage *msg in msgList) {
+        SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
+        simpleMsg.msgId = msg.messageId;
+        simpleMsg.msgTime = msg.timestamp;
+        simpleMsg.msgReadIndex = msg.seqNo;
+        [pbMsgArr addObject:simpleMsg];
+    }
+    req.msgsArray = pbMsgArr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jDelMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = [req data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    
+    return m.data;
+}
+
+- (NSData *)clearHistoryMessage:(JConversation *)conversation
+                           time:(long long)time
+                          scope:(int)scope
+                          index:(int)index{
+    
+    CleanHisMsgReq * req = [[CleanHisMsgReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.cleanMsgTime = time;
+    req.cleanScope = scope;
+    
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jCleanHismsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = [req data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    
+    return m.data;
+}
+
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1120,8 +1180,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),
-             jClearTotalUnread:@(JPBRcvTypeSimpleQryAck)
-
+             jClearTotalUnread:@(JPBRcvTypeSimpleQryAck),
+             jDelMsg:@(JPBRcvTypeSimpleQryAck),
+             jCleanHismsg:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

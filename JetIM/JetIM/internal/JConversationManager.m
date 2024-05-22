@@ -7,7 +7,11 @@
 
 #import "JConversationManager.h"
 #import "JMessageSendReceiveDelegate.h"
-
+#import "JUnDisturbConvMessage.h"
+#import "JTopConvMessage.h"
+#import "JClearUnreadMessage.h"
+#import "JDeleteMsgMessage.h"
+#import "JCleanMsgMessage.h"
 #define kConversationSyncCount 100
 
 @interface JConversationManager ()
@@ -304,6 +308,90 @@
         }
     });
 }
+- (void)onConversationsUpdate:(JConcreteMessage *)message{
+    
+    if([message.contentType isEqualToString:[JUnDisturbConvMessage contentType]]){
+        
+        JUnDisturbConvMessage * content = (JUnDisturbConvMessage *)message.content;
+        
+        NSMutableArray * convs = [NSMutableArray array];
+        
+        for (JConcreteConversationInfo * conv in content.conversations) {
+            
+            //更新数据库
+            [self.core.dbManager setMute:conv.mute conversation:conv.conversation];
+            
+            //获取会话对象
+            JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
+            if(convationInfo){
+                [convs addObject:convationInfo];
+            }
+        }
+        //回调
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [self.delegate conversationInfoDidUpdate:convs];
+            }
+        });
+        
+        
+        
+    }else if([message.contentType isEqualToString:[JTopConvMessage contentType]]){
+
+        JTopConvMessage * content = (JTopConvMessage *)message.content;
+        
+        NSMutableArray * convs = [NSMutableArray array];
+        
+        for (JConcreteConversationInfo * conv in content.conversations) {
+            
+            //更新数据库
+            [self.core.dbManager setTop:conv.isTop conversation:conv.conversation];
+            [self.core.dbManager setTopTime:conv.topTime conversation:conv.conversation];
+
+            //获取会话对象
+            JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
+            if(convationInfo){
+                [convs addObject:convationInfo];
+            }
+        }
+        //回调
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [self.delegate conversationInfoDidUpdate:convs];
+            }
+        });
+        
+        
+        
+    }else if([message.contentType isEqualToString:[JClearUnreadMessage contentType]]){
+        JClearUnreadMessage * content = (JClearUnreadMessage *)message.content;
+        
+        NSMutableArray * convs = [NSMutableArray array];
+        
+        for (JConcreteConversationInfo * conv in content.conversations) {
+            
+            //更新数据库
+            [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
+            [self.core.dbManager setMention:NO conversation:conv.conversation];
+
+            //获取会话对象
+            JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
+            if(convationInfo){
+                [convs addObject:convationInfo];
+            }
+        }
+        //回调
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [self.delegate conversationInfoDidUpdate:convs];
+            }
+        });
+        
+    }
+    
+    
+}
+
 
 #pragma mark - internal
 - (void)updateUserInfos:(NSArray <JConcreteConversationInfo *> *)conversations {
