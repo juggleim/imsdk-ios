@@ -37,6 +37,16 @@ static JLogger *_instance;
     return _instance;
 }
 
+- (void)uploadLog:(long long)startTime
+          endTime:(long long)endTime
+       completion:(void (^)(JErrorCode))completeBlock {
+    
+}
+
+- (void)removeExpiredLogs {
+    [self.fileWriter removeExpiredLogs];
+}
+
 - (void)write:(JLogLevel)level tag:(NSString *)tag keys:(NSString *)keys, ... NS_FORMAT_FUNCTION(3, 4) {
     if (level > self.logLevel) {
         return;

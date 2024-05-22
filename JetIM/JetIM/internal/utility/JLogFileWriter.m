@@ -9,6 +9,8 @@
 #import "JUtility.h"
 
 #define jLogFolder @"jlog"
+#define jLogFileFormate @"yyyyMMddHH"
+#define jLogExpireInterval 7 * 24 * 60 *60
 
 @interface JLogFileWriter ()
 @property (nonatomic, copy) NSString *logFolder;
@@ -19,6 +21,19 @@
 
 //本身不控制线程，但是 write 方法是在单独的线程中运行
 @implementation JLogFileWriter
+
+- (void)removeExpiredLogs {
+    NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self logFolder] error:nil];
+    NSDate *currentDate = [NSDate date];
+    for (NSString *fileName in files) {
+        NSString *timeString = [fileName substringToIndex:jLogFileFormate.length];
+        NSDate *date = [self.dateFormatter dateFromString:timeString];
+        NSTimeInterval interval = [currentDate timeIntervalSinceDate:date];
+        if (interval > jLogExpireInterval) {
+            [[NSFileManager defaultManager] removeItemAtPath:fileName error:nil];
+        }
+    }
+}
 
 - (void)write:(NSString *)log
          date:(nonnull NSDate *)date {
@@ -68,7 +83,7 @@
 - (NSDateFormatter *)dateFormatter {
     if (!_dateFormatter) {
         _dateFormatter = [[NSDateFormatter alloc] init];
-        [_dateFormatter setDateFormat:@"yyyyMMddHH"];
+        [_dateFormatter setDateFormat:jLogFileFormate];
     }
     return _dateFormatter;
 }

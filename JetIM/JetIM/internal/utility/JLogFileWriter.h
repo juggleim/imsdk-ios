@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JLogFileWriter : NSObject
 - (void)write:(NSString *)log
          date:(NSDate *)date;
+- (void)removeExpiredLogs;
 @end
 
 NS_ASSUME_NONNULL_END
