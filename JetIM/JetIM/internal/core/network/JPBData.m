@@ -709,6 +709,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
             JConnectAck *a = [[JConnectAck alloc] init];
             a.userId = msg.connectAckMsgBody.userId;
             a.code = msg.connectAckMsgBody.code;
+            a.session = msg.connectAckMsgBody.session;
+            a.extra = msg.connectAckMsgBody.ext;
             obj.connectAck = a;
         }
             break;

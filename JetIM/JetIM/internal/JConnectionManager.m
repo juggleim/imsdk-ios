@@ -116,7 +116,9 @@
 
 #pragma mark - JWebSocketConnectDelegate
 - (void)connectCompleteWithCode:(JErrorCodeInternal)error
-                         userId:(NSString *)userId {
+                         userId:(NSString *)userId
+                        session:(NSString *)session
+                          extra:(NSString *)extra {
     if (error == JErrorCodeInternalNone) {
         self.core.userId = userId;
         if (!self.core.dbManager.isOpen) {
@@ -126,16 +128,16 @@
                 NSLog(@"[JetIM] db open fail");
             }
         }
-        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:@""];
+        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{
             [self.messageManager syncMessages];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:@""];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:extra];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:extra];
         }
     }
 }

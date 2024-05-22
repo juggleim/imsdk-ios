@@ -124,6 +124,7 @@ typedef GPB_ENUM(ConnectAckMsgBody_FieldNumber) {
   ConnectAckMsgBody_FieldNumber_UserId = 2,
   ConnectAckMsgBody_FieldNumber_Session = 3,
   ConnectAckMsgBody_FieldNumber_Timestamp = 4,
+  ConnectAckMsgBody_FieldNumber_Ext = 5,
 };
 
 GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
@@ -135,6 +136,8 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *session;
 
 @property(nonatomic, readwrite) int64_t timestamp;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @end
 

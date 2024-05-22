@@ -271,12 +271,14 @@ typedef struct ConnectMsgBody__storage_ {
 @dynamic userId;
 @dynamic session;
 @dynamic timestamp;
+@dynamic ext;
 
 typedef struct ConnectAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
   int32_t code;
   NSString *userId;
   NSString *session;
+  NSString *ext;
   int64_t timestamp;
 } ConnectAckMsgBody__storage_;
 
@@ -322,6 +324,15 @@ typedef struct ConnectAckMsgBody__storage_ {
         .offset = (uint32_t)offsetof(ConnectAckMsgBody__storage_, timestamp),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "ext",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectAckMsgBody_FieldNumber_Ext,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(ConnectAckMsgBody__storage_, ext),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
