@@ -581,9 +581,11 @@ inConversation:(JConversation *)conversation
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
     NSLog(@"connect userId is %@", connectAck.userId);
-    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:)]) {
+    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
         [self.connectDelegate connectCompleteWithCode:connectAck.code
-                                               userId:connectAck.userId];
+                                               userId:connectAck.userId
+                                              session:connectAck.session
+                                                extra:connectAck.extra];
     }
 }
 

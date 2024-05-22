@@ -40,6 +40,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JConnectAck : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy) NSString *session;
+@property (nonatomic, copy) NSString *extra;
 @end
 
 @interface JPublishMsgAck : NSObject
