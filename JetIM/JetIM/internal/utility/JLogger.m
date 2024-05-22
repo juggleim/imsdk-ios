@@ -44,6 +44,7 @@ static JLogger *_instance;
     if (fileName.length == 0) {
         completeBlock(JErrorCodeInternalLogNotExist);
     }
+    //TODO: uploader
 }
 
 - (void)removeExpiredLogs {
