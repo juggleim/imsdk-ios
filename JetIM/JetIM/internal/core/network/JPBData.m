@@ -645,7 +645,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
         SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
         simpleMsg.msgId = msg.messageId;
         simpleMsg.msgTime = msg.timestamp;
-        simpleMsg.msgReadIndex = msg.seqNo;
         [pbMsgArr addObject:simpleMsg];
     }
     req.msgsArray = pbMsgArr;
@@ -668,13 +667,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
                            time:(long long)time
                           scope:(int)scope
                           index:(int)index{
-    
     CleanHisMsgReq * req = [[CleanHisMsgReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     req.cleanMsgTime = time;
     req.cleanScope = scope;
-    
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;

@@ -308,23 +308,17 @@
         }
     });
 }
-- (void)onConversationsUpdate:(JConcreteMessage *)message{
-    
+- (void)conversationsDidUpdate:(JConcreteMessage *)message{
     if([message.contentType isEqualToString:[JUnDisturbConvMessage contentType]]){
-        
         JUnDisturbConvMessage * content = (JUnDisturbConvMessage *)message.content;
-        
         NSMutableArray * convs = [NSMutableArray array];
-        
         for (JConcreteConversationInfo * conv in content.conversations) {
-            
             //更新数据库
             [self.core.dbManager setMute:conv.mute conversation:conv.conversation];
-            
             //获取会话对象
-            JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
-            if(convationInfo){
-                [convs addObject:convationInfo];
+            JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
+            if(conversationInfo){
+                [convs addObject:conversationInfo];
             }
         }
         //回调
@@ -333,25 +327,17 @@
                 [self.delegate conversationInfoDidUpdate:convs];
             }
         });
-        
-        
-        
     }else if([message.contentType isEqualToString:[JTopConvMessage contentType]]){
-
         JTopConvMessage * content = (JTopConvMessage *)message.content;
-        
         NSMutableArray * convs = [NSMutableArray array];
-        
         for (JConcreteConversationInfo * conv in content.conversations) {
-            
             //更新数据库
             [self.core.dbManager setTop:conv.isTop conversation:conv.conversation];
             [self.core.dbManager setTopTime:conv.topTime conversation:conv.conversation];
-
             //获取会话对象
-            JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
-            if(convationInfo){
-                [convs addObject:convationInfo];
+            JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
+            if(conversationInfo){
+                [convs addObject:conversationInfo];
             }
         }
         //回调
@@ -360,16 +346,10 @@
                 [self.delegate conversationInfoDidUpdate:convs];
             }
         });
-        
-        
-        
     }else if([message.contentType isEqualToString:[JClearUnreadMessage contentType]]){
         JClearUnreadMessage * content = (JClearUnreadMessage *)message.content;
-        
         NSMutableArray * convs = [NSMutableArray array];
-        
         for (JConcreteConversationInfo * conv in content.conversations) {
-            
             //更新数据库
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
             [self.core.dbManager setMention:NO conversation:conv.conversation];
@@ -386,10 +366,8 @@
                 [self.delegate conversationInfoDidUpdate:convs];
             }
         });
-        
+        [self noticeTotalUnreadCountChange];
     }
-    
-    
 }
 
 
@@ -430,7 +408,7 @@
     if (message.flags & JMessageFlagIsBroadcast) {
         isBroadcast = YES;
     }
-    JConversationInfo *info = [self getConversationInfo:message.conversation];
+    JConcreteConversationInfo *info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
     if (!info) {
         JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
         addInfo.conversation = message.conversation;
@@ -457,11 +435,13 @@
             [self.core.dbManager setMention:YES conversation:message.conversation];
             info.hasMentioned = YES;
         }
-        info.lastMessage = message;
-        if([info isKindOfClass:[JConcreteConversationInfo class]]){
-            JConcreteConversationInfo * convInfo = (JConcreteConversationInfo *)info;
-            info.unreadCount = (int)(convInfo.lastMessageIndex - convInfo.lastReadMessageIndex);
+        //更新未读数
+        if (message.msgIndex > 0) {
+            info.lastMessageIndex = message.msgIndex;
+            info.unreadCount = (int)(info.lastMessageIndex - info.lastReadMessageIndex);
         }
+        info.sortTime = message.timestamp;
+        info.lastMessage = message;
         [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {

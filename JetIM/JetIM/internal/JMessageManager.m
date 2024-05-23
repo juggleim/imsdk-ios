@@ -96,13 +96,19 @@
                              error:(void (^)(JErrorCode))errorBlock{
     
     if(clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil){
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
         return;
     }
     NSArray * messages = [self getMessagesByClientMsgNos:clientMsgNos];
     NSMutableArray * deleteClientMsgNoList = [NSMutableArray array];
     NSMutableArray * deleteRemoteList = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]){
+        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
+           && message.conversation.conversationType == conversation.conversationType){
             if(message.messageId.length > 0){
                 [deleteRemoteList addObject:message];
             }
@@ -162,21 +168,19 @@
                             error:(void (^)(JErrorCode))errorBlock{
     
     if(messageIds == nil || messageIds.count == 0 || conversation == nil){
-        return;
-    }
-    
-    NSArray * messages = [self getMessagesByMessageIds:messageIds];
-    if(messages == nil || messages.count == 0){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
-                errorBlock(JErrorCodeMessageNotExist);
+                errorBlock(JErrorCodeInvalidParam);
             }
         });
         return;
     }
+    
+    NSArray * messages = [self getMessagesByMessageIds:messageIds];
     NSMutableArray * msgList = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]){
+        if( [message.conversation.conversationId isEqualToString:conversation.conversationId]
+           && message.conversation.conversationType == conversation.conversationType ){
             [msgList addObject:message];
         }
     }
@@ -273,7 +277,7 @@
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
                                      success:^{
-        [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:nil];
+        [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:@""];
 #warning  TODO 通知会话更新
         
         dispatch_async(self.core.delegateQueue, ^{
@@ -1021,8 +1025,6 @@
     return nil;
 }
 
-
-
 - (void)handleDeleteMsgMessageCmdMessage:(JConcreteMessage *)message{
     JDeleteMsgMessage * content = (JDeleteMsgMessage *)message.content;
     
@@ -1062,7 +1064,6 @@
     });
 #warning TODO 通知会话更新
 }
-
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
@@ -1132,7 +1133,6 @@
             });
             return;
         }
-        
         
         //UnDisturb Top Clear unread
         if ([obj.contentType isEqualToString:[JUnDisturbConvMessage contentType]]||
