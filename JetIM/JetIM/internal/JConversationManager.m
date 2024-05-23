@@ -458,6 +458,10 @@
             info.hasMentioned = YES;
         }
         info.lastMessage = message;
+        if([info isKindOfClass:[JConcreteConversationInfo class]]){
+            JConcreteConversationInfo * convInfo = (JConcreteConversationInfo *)info;
+            info.unreadCount = (int)(convInfo.lastMessageIndex - convInfo.lastReadMessageIndex);
+        }
         [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
             if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {

@@ -46,7 +46,7 @@ NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, 
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
-NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= %s";
+NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
 NSString *const jAndSenderIs = @" AND sender = ?";
 
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";

@@ -22,7 +22,7 @@
 
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    NSArray *convsJson = json[jUnDisturbConvType];
+    NSArray *convsJson = json[jUnDisturbConvs];
     NSMutableArray *conversations = [[NSMutableArray alloc] init];
     if ([convsJson isKindOfClass:[NSArray class]]) {
         for (NSDictionary *itemDic in convsJson) {
