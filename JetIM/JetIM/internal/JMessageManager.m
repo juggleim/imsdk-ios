@@ -1037,14 +1037,12 @@
         [clientMsgNos addObject:@(message.clientMsgNo)];
     }
     dispatch_async(self.core.delegateQueue, ^{
-        if(self.delegate && [self.delegate respondsToSelector:@selector(onMessageDelete:clientMsgNos:)]){
-            [self.delegate onMessageDelete:message.conversation clientMsgNos:clientMsgNos];
+        if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
+            [self.delegate messageDidDelete:message.conversation clientMsgNos:clientMsgNos];
         }
     });
 #warning TODO 通知会话更新
-    
 }
-
 
 - (void)handleClearHistoryMessageCmdMessage:(JConcreteMessage *)message{
     JCleanMsgMessage * content = (JCleanMsgMessage *)message.content;
@@ -1056,12 +1054,13 @@
     
     [self.core.dbManager clearMessagesIn:message.conversation startTime:starTime senderId:content.senderId];
     dispatch_async(self.core.delegateQueue, ^{
-        if(self.delegate && [self.delegate respondsToSelector:@selector(onMessageClear:senderId:)]){
-            [self.delegate onMessageClear:message.conversation senderId:content.senderId];
+        if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]){
+            [self.delegate messageDidClear:message.conversation
+                                 timestamp:starTime
+                                  senderId:content.senderId];
         }
     });
 #warning TODO 通知会话更新
-    
 }
 
 

@@ -19,9 +19,12 @@
 
 - (void)messageDidRecall:(JMessage *)message;
 
-- (void)onMessageDelete:(JConversation *)conversation clientMsgNos:(NSArray *)clientMsgNos;
+- (void)messageDidDelete:(JConversation *)conversation
+            clientMsgNos:(NSArray <NSNumber *> *)clientMsgNos;
 
-- (void)onMessageClear:(JConversation *)conversation senderId:(NSString *)senderId;
+- (void)messageDidClear:(JConversation *)conversation
+              timestamp:(long long)timestamp
+               senderId:(NSString *)senderId;
 
 @end
 
