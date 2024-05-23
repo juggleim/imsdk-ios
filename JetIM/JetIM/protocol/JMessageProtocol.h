@@ -120,46 +120,43 @@
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray <NSString *> *)contentTypes;
 
-
-/// 根据本地消息id删除消息
+/// 在同一个会话里，根据本端消息唯一编号批量删除消息
 /// - Parameters:
-///   - clientMsgNos: 本地消息ID列表
+///   - clientMsgNos: 本端消息唯一编号列表
 ///   - conversation: 会话标识
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
-- (void)deleteMessageByClientMsgNo:(NSArray<NSNumber *> *)clientMsgNos
-                      conversation:(JConversation *)conversation
-                           success:(void (^)(void))successBlock
-                             error:(void (^)(JErrorCode errorCode))errorBlock;
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
+                           conversation:(JConversation *)conversation
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 根据消息id删除消息
+/// 在同一个会话里，根据消息 id 批量删除消息
 /// - Parameters:
-///   - messageIds: 消息ID列表
+///   - messageIds: 消息 id 列表
 ///   - conversation: 会话标识
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
-- (void)deleteMessageByMessageIds:(NSArray<NSString *> *)messageIds
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                       conversation:(JConversation *)conversation
                            success:(void (^)(void))successBlock
                              error:(void (^)(JErrorCode errorCode))errorBlock;
-
-
 
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
 - (void)recallMessage:(NSString *)messageId
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 清空会话消息
+/// 清空会话中指定时间之前的所有消息，startTime 传 0 表示当前时间
 /// - Parameters:
 ///   - conversation: 会话标识
-///   - startTime: 开始时间
+///   - startTime: 开始时间，传 0 表示当前时间
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
 - (void)clearMessagesIn:(JConversation *)conversation
-            startTime:(long long)startTime
-              success:(void (^)(void))successBlock
-                error:(void (^)(JErrorCode errorCode))errorBlock;
+              startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组

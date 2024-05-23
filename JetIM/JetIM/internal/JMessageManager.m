@@ -90,7 +90,7 @@
     _uploadProvider = uploadProvider;
 }
 
-- (void)deleteMessageByClientMsgNo:(NSArray<NSNumber *> *)clientMsgNos
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
                       conversation:(JConversation *)conversation
                            success:(void (^)(void))successBlock
                              error:(void (^)(JErrorCode))errorBlock{
@@ -156,7 +156,7 @@
     }];
 }
 
-- (void)deleteMessageByMessageIds:(NSArray<NSString *> *)messageIds
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                      conversation:(JConversation *)conversation
                           success:(void (^)(void))successBlock
                             error:(void (^)(JErrorCode))errorBlock{
@@ -1138,8 +1138,8 @@
         if ([obj.contentType isEqualToString:[JUnDisturbConvMessage contentType]]||
             [obj.contentType isEqualToString:[JTopConvMessage contentType]]||
             [obj.contentType isEqualToString:[JClearUnreadMessage contentType]]) {
-            if ([self.sendReceiveDelegate respondsToSelector:@selector(onConversationsUpdate:)]) {
-                [self.sendReceiveDelegate onConversationsUpdate:obj];
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidUpdate:)]) {
+                [self.sendReceiveDelegate conversationsDidUpdate:obj];
             }
             return;
         }
