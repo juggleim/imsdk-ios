@@ -13,6 +13,7 @@
 
 #define jWebSocketPrefix @"ws://"
 #define jWebSocketSuffix @"/im"
+#define jMaxConcurrentCount 5
 
 @interface JBlockObj : NSObject
 @end
@@ -75,7 +76,6 @@
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
-@property (nonatomic, copy) NSArray *servers;
 @property (nonatomic, strong) SRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
@@ -83,6 +83,9 @@
 @property (nonatomic, assign) int32_t cmdIndex;
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockObj *> *cmdBlockDic;
 @property (nonatomic, strong) JPBData *pbData;
+@property (nonatomic, strong) NSOperationQueue *competeQueue;
+@property (nonatomic, assign) BOOL isCompeteFinish;
+@property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
 @end
 
 @implementation JWebSocket
@@ -93,7 +96,9 @@
         self.receiveQueue = receiveQueue;
         self.pbData = [[JPBData alloc] init];
         self.cmdBlockDic = [[NSMutableDictionary alloc] init];
-        
+        NSOperationQueue *competeQueue = [[NSOperationQueue alloc] init];
+        competeQueue.maxConcurrentOperationCount = jMaxConcurrentCount;
+        self.competeQueue = competeQueue;
     }
     return self;
 }
@@ -106,13 +111,15 @@
         self.appKey = appKey;
         self.token = token;
         self.pushToken = pushToken;
-        self.servers = servers;
-        if (servers.count > 0) {
-            NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, self.servers[0], jWebSocketSuffix];
-            self.sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
-            self.sws.delegateDispatchQueue = self.receiveQueue;
-            self.sws.delegate = self;
-            [self.sws open];
+        
+        [self resetSws];
+        for (NSString *url in servers) {
+            SRWebSocket *sws = [self createWebSocket:url];
+            [self.competeSwsList addObject:sws];
+            NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+                [sws open];
+            }];
+            [self.competeQueue addOperation:operation];
         }
     });
 }
@@ -480,11 +487,25 @@ inConversation:(JConversation *)conversation
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
-        [self sendConnectMsgByWebSocket:webSocket];
+        if (self.isCompeteFinish) {
+            return;
+        }
+        //防止上一批竞速的 webSocket 被选中
+        for (SRWebSocket *sws in self.competeSwsList) {
+            if (webSocket == sws) {
+                self.isCompeteFinish = YES;
+                self.sws = webSocket;
+                [self sendConnectMsgByWebSocket:webSocket];
+                break;
+            }
+        }
     });
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
+    if (webSocket != self.sws) {
+        return;
+    }
     NSLog(@"[JetIM] websocket did fail with error, %@", error.description);
     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
         [self.connectDelegate webSocketDidFail];
@@ -492,6 +513,9 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
+    if (webSocket != self.sws) {
+        return;
+    }
     NSLog(@"[JetIM] websocket did close with code(%ld), reason(%@)", (long)code, reason);
     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
         [self.connectDelegate webSocketDidClose];
@@ -499,6 +523,9 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
+    if (webSocket != self.sws) {
+        return;
+    }
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
     switch (obj.rcvType) {
         case JPBRcvTypeParseError:
@@ -545,8 +572,6 @@ inConversation:(JConversation *)conversation
         default:
             break;
     }
-    
-    
 }
 
 #pragma mark - inner
@@ -662,9 +687,13 @@ inConversation:(JConversation *)conversation
 
 - (void)handleDisconnectMsg:(JDisconnectMsg *)msg {
     NSLog(@"handleDisconnectMsg");
-    if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:extra:)]) {
-        [self.connectDelegate disconnectWithCode:msg.code extra:msg.extra];
-    }
+    dispatch_async(self.sendQueue, ^{
+        [self resetSws];
+        //TODO: 处理 cmdBlockDic
+        if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:extra:)]) {
+            [self.connectDelegate disconnectWithCode:msg.code extra:msg.extra];
+        }
+    });
 }
 
 - (void)handleSimpleAck:(JSimpleQryAck *)ack {
@@ -772,11 +801,31 @@ inConversation:(JConversation *)conversation
     });
 }
 
-
-
 - (void)removeBlockObjectForKey:(NSNumber *)index {
     dispatch_async(self.receiveQueue, ^{
         [self.cmdBlockDic removeObjectForKey:index];
     });
+}
+
+- (SRWebSocket *)createWebSocket:(NSString *)url {
+    NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, url, jWebSocketSuffix];
+    SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
+    sws.delegateDispatchQueue = self.receiveQueue;
+    sws.delegate = self;
+    return sws;
+}
+
+- (void)resetSws {
+    self.sws = nil;
+    [self.competeSwsList removeAllObjects];
+    self.isCompeteFinish = NO;
+}
+
+#pragma mark - getter
+- (NSMutableArray<SRWebSocket *> *)competeSwsList {
+    if (!_competeSwsList) {
+        _competeSwsList = [NSMutableArray array];
+    }
+    return _competeSwsList;
 }
 @end
