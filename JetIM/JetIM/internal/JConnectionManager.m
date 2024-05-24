@@ -8,7 +8,7 @@
 #import "JConnectionManager.h"
 #import "JWebSocket.h"
 #import "JHeartBeatManager.h"
-#import "JNaviManager.h"
+#import "JNaviTask.h"
 #import "JetIMConstInternal.h"
 #import <UIKit/UIKit.h>
 #import "JLogger.h"
@@ -64,10 +64,10 @@
     }
     [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
     
-    [JNaviManager requestNavi:self.core.naviUrls[0]
-                       appKey:self.core.appKey
-                        token:token
-                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
+                                       appKey:self.core.appKey
+                                        token:token
+                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
         self.core.servers = servers;
         [self.core.webSocket connect:self.core.appKey
                                token:token
@@ -80,6 +80,7 @@
             [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
         }
     }];
+    [task start];
 }
 
 - (void)disconnect:(BOOL)receivePush {
