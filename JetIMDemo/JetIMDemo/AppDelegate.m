@@ -23,7 +23,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@"https://nav.wahu.cn"];
+//    [JIM.shared setServer:@[@"https://nav.wahu.cn"]];
     [JIM.shared initWithAppKey:@"appkey"];
     [JIM.shared.connectionManager connectWithToken:kToken3];
     [JIM.shared.connectionManager setDelegate:self];
