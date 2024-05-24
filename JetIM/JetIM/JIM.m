@@ -55,8 +55,8 @@ static JIM *_instance;
     self.core.delegateQueue = delegateQueue;
 }
 
-- (void)setServer:(NSString *)serverUrl {
-    [self.core setNaviUrl:serverUrl];
+- (void)setServer:(NSArray<NSString *> *)serverUrls {
+    [self.core setNaviUrls:serverUrls];
 }
 
 - (NSString *)currentUserId {

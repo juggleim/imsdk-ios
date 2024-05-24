@@ -34,9 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  设置服务器地址
 
- @param serverUrl  服务器地址
+ @param serverUrls  服务器地址
  */
-- (void)setServer:(NSString *)serverUrl;
+- (void)setServer:(NSArray <NSString *> *)serverUrls;
 
 /// 连接管理类
 @property(nonatomic, strong) id<JConnectionProtocol> connectionManager;
