@@ -233,7 +233,7 @@
 ////                                                                  time:1712600893903
 ////                                                             direction:JPullDirectionNewer];
 //
-////        [JIM.shared.messageManager deleteMessageByMessageId:@"nq2crdhwaagk5g4v"];
+////        [JIM.shared.messageManager deleteMessageByMessageIds:@"nq2crdhwaagk5g4v"];
 //        [JIM.shared.messageManager getLocalAndRemoteMessagesFrom:c
 //                                                       startTime:0
 //                                                           count:100
@@ -298,8 +298,8 @@
 //        
 
         //delete messages
-//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqel4yrhaa4k5g4v"];
-//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqe4ddt6abgk5g4v"];
+//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqel4yrhaa4k5g4v"];
+//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqe4ddt6abgk5g4v"];
 ////        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
 //        NSArray *ids = @[@"nqel6ahx2a6k5g4v", @"nqel4yrhaa4k5g4v", @"nqe4dfu5sbgk5g4v", @"nqe4ddt6abgk5g4v"];
 //        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup

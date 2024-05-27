@@ -53,7 +53,9 @@ NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = 
 NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
 NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
+NSString *const jClientMsgNoIn = @" id in ";
 NSString *const jMessageIdIs = @" message_uid = ?";
+NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
@@ -198,21 +200,27 @@ NSString *const jLocalAttribute = @"local_attribute";
     return result;
 }
 
-- (void)deleteMessageByClientId:(long long)clientMsgNo {
-    NSString *sql = jDeleteMessage;
-    sql = [sql stringByAppendingString:jClientMsgNoIs];
-    [self.dbHelper executeUpdate:sql
-            withArgumentsInArray:@[@(clientMsgNo)]];
-}
-
-- (void)deleteMessageByMessageId:(NSString *)messageId {
-    if (messageId.length == 0) {
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
+    if (clientMsgNos == nil || clientMsgNos.count == 0) {
         return;
     }
     NSString *sql = jDeleteMessage;
-    sql = [sql stringByAppendingString:jMessageIdIs];
+    sql = [sql stringByAppendingString:jClientMsgNoIn];
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:clientMsgNos.count]];
+
     [self.dbHelper executeUpdate:sql
-            withArgumentsInArray:@[messageId]];
+            withArgumentsInArray:clientMsgNos];
+}
+
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds{
+    if (messageIds == nil || messageIds.count == 0) {
+        return;
+    }
+    NSString *sql = jDeleteMessage;
+    sql = [sql stringByAppendingString:jMessageIdIn];
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageIds.count]];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:messageIds];
 }
 
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{

@@ -126,9 +126,7 @@
     }
     //如果没有远端消息 只删除本地后直接回调
     if(deleteRemoteList.count == 0){
-        for (NSNumber * clientMsgNo in deleteClientMsgNoList) {
-            [self.core.dbManager deleteMessageByClientId:clientMsgNo.longLongValue];
-        }
+        [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
 #warning TODO 通知会话更新
         dispatch_async(self.core.delegateQueue, ^{
             if(successBlock){
@@ -143,9 +141,8 @@
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
                                success:^{
-        for (NSNumber * clientMsgNo in deleteClientMsgNoList) {
-            [self.core.dbManager deleteMessageByClientId:clientMsgNo.longLongValue];
-        }
+        [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
+
 #warning TODO 通知会话更新
         dispatch_async(self.core.delegateQueue, ^{
             if(successBlock){
@@ -189,9 +186,11 @@
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
                                    success:^{
+            NSMutableArray * ids = [NSMutableArray array];
             for (JMessage * message in msgList) {
-                [weakSelf.core.dbManager deleteMessageByMessageId:message.messageId];
+                [ids addObject:message.messageId];
             }
+            [weakSelf.core.dbManager deleteMessageByMessageIds:ids];
 #warning TODO 通知会话更新
             dispatch_async(self.core.delegateQueue, ^{
                 if(successBlock){
@@ -512,7 +511,7 @@
         });
         return messsage;
     }
-    [self.core.dbManager deleteMessageByClientId:messsage.clientMsgNo];
+    [self.core.dbManager deleteMessageByClientIds:@[@(messsage.clientMsgNo)]];
     return [self sendMessage:messsage.content
               inConversation:messsage.conversation
                      success:successBlock
@@ -1034,10 +1033,13 @@
     }
     
     NSMutableArray * clientMsgNos = [NSMutableArray array];
+    NSMutableArray * messageIds = [NSMutableArray array];
     for (JMessage * message in messageList) {
-        [self.core.dbManager deleteMessageByMessageId:message.messageId];
         [clientMsgNos addObject:@(message.clientMsgNo)];
+        [messageIds addObject:message.messageId];
     }
+    [self.core.dbManager deleteMessageByMessageIds:messageIds];
+
     dispatch_async(self.core.delegateQueue, ^{
         if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
             [self.delegate messageDidDelete:message.conversation clientMsgNos:clientMsgNos];

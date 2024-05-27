@@ -200,12 +200,12 @@
                               contentTypes:(NSArray<NSString *> *)contentTypes];
 }
 
-- (void)deleteMessageByClientId:(long long)clientMsgNo {
-    [self.messageDb deleteMessageByClientId:clientMsgNo];
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
+    [self.messageDb deleteMessageByClientIds:clientMsgNos];
 }
 
-- (void)deleteMessageByMessageId:(NSString *)messageId {
-    [self.messageDb deleteMessageByMessageId:messageId];
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds{
+    [self.messageDb deleteMessageByMessageIds:messageIds];
 }
 
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
