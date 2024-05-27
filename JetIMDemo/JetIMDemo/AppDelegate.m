@@ -85,16 +85,19 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
-            message.url = @"http://www.baidu.com";
-            message.width = 1000;
-            message.height = 2000;
-            message.size = 3434342;
-            message.extra = @"extra";
-            NSData *data = [message encode];
-            JThumbnailPackedImageMessage *m2 = [[JThumbnailPackedImageMessage alloc] init];
-            [m2 decode:data];
-            NSLog(@"asdfsadf");
+            
+            [JIM.shared.connectionManager disconnect:NO];
+            
+//            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
+//            message.url = @"http://www.baidu.com";
+//            message.width = 1000;
+//            message.height = 2000;
+//            message.size = 3434342;
+//            message.extra = @"extra";
+//            NSData *data = [message encode];
+//            JThumbnailPackedImageMessage *m2 = [[JThumbnailPackedImageMessage alloc] init];
+//            [m2 decode:data];
+//            NSLog(@"asdfsadf");
         });
         
         //register push token

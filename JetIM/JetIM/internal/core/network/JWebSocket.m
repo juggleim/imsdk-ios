@@ -541,6 +541,9 @@ inConversation:(JConversation *)conversation
         return;
     }
     NSLog(@"[JetIM] websocket did fail with error, %@", error.description);
+    dispatch_async(self.sendQueue, ^{
+        [self resetSws];
+    });
     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
         [self.connectDelegate webSocketDidFail];
     }
@@ -551,6 +554,9 @@ inConversation:(JConversation *)conversation
         return;
     }
     NSLog(@"[JetIM] websocket did close with code(%ld), reason(%@)", (long)code, reason);
+    dispatch_async(self.sendQueue, ^{
+        [self resetSws];
+    });
     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
         [self.connectDelegate webSocketDidClose];
     }
@@ -636,6 +642,7 @@ inConversation:(JConversation *)conversation
     if (err != nil) {
         NSLog(@"WebSocket send disconnect error, msg is %@", err.description);
     }
+    [self resetSws];
 }
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
