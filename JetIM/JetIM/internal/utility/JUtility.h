@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIImage *)generateThumbnail:(UIImage *)image targetSize:(CGSize)targetSize;
 + (NSString *)base64EncodedStringFrom:(NSData *)data;
 + (NSData *)dataWithBase64EncodedString:(NSString *)string;
++ (NSString *)rootPath;
 @end
 
 NS_ASSUME_NONNULL_END
