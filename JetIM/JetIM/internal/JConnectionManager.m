@@ -85,8 +85,8 @@
 
 - (void)disconnect:(BOOL)receivePush {
     NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
     [self.core.webSocket disconnect:receivePush];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
 }
 
 - (void)registerDeviceToken:(NSData *)tokenData {
