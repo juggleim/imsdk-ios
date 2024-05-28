@@ -522,6 +522,7 @@ inConversation:(JConversation *)conversation
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
         if (self.isCompeteFinish) {
+            [webSocket close];
             return;
         }
         //防止上一批竞速的 webSocket 被选中
@@ -531,6 +532,8 @@ inConversation:(JConversation *)conversation
                 self.sws = webSocket;
                 [self sendConnectMsgByWebSocket:webSocket];
                 break;
+            } else {
+                [webSocket close];
             }
         }
     });
