@@ -45,10 +45,10 @@
         progressBlock(50);
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
-//        JMediaMessageContent *content = (JMediaMessageContent *)message.content;
-//        content.url = @"www.baidu.com";
-//        successBlock(message);
-        errorBlock();
+        JMediaMessageContent *content = (JMediaMessageContent *)message.content;
+        content.url = @"www.baidu.com";
+        successBlock(message);
+//        errorBlock();
     });
 }
 
@@ -86,7 +86,23 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            [JIM.shared.connectionManager disconnect:NO];
+//            [JIM.shared.connectionManager disconnect:NO];
+            
+            JImageMessage *image = [[JImageMessage alloc] init];
+            image.localPath = @"asdfasdf";
+            image.size = 1000;
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            [JIM.shared.messageManager sendMediaMessage:image
+                                         inConversation:c
+                                               progress:^(int progress, JMessage *message) {
+                NSLog(@"asdf");
+            } success:^(JMessage *message) {
+                NSLog(@"sadfasdf");
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                NSLog(@"fasdf");
+            } cancel:^(JMessage *message) {
+                NSLog(@"fasdf");
+            }];
             
 //            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
 //            message.url = @"http://www.baidu.com";

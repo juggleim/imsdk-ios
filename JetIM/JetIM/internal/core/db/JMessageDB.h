@@ -30,7 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId;
 
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo;
+
 - (void)messageSendFail:(long long)clientMsgNo;
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

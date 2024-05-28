@@ -396,7 +396,7 @@
             JConcreteMessage *cm = (JConcreteMessage *)uploadMessage;
             [self.core.dbManager updateMessageContent:cm.content
                                           contentType:cm.contentType
-                                        withMessageId:cm.messageId];
+                                      withClientMsgNo:cm.clientMsgNo];
             cm.messageState = JMessageStateSending;
             [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
             [self sendWebSocketMessage:cm

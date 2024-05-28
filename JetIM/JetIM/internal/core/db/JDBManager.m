@@ -176,6 +176,14 @@
                            withMessageId:messageId];
 }
 
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo {
+    [self.messageDb updateMessageContent:content
+                             contentType:type
+                         withClientMsgNo:clientMsgNo];
+}
+
 - (void)messageSendFail:(long long)clientMsgNo {
     [self.messageDb messageSendFail:clientMsgNo];
 }

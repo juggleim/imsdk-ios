@@ -43,7 +43,7 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
-NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE message_uid = ?";
+NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE ";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
@@ -145,8 +145,21 @@ NSString *const jLocalAttribute = @"local_attribute";
     if (s.length == 0 || messageId.length == 0) {
         return;
     }
-    [self.dbHelper executeUpdate:jUpdateMessageContent
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jMessageIdIs];
+    [self.dbHelper executeUpdate:sql
             withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+}
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo {
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0) {
+        return;
+    }
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jClientMsgNoIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[s, type, content.searchContent, @(clientMsgNo)]];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {

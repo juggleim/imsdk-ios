@@ -69,6 +69,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
                withMessageId:(NSString *)messageId;
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo;
 - (void)messageSendFail:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
