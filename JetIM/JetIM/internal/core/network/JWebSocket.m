@@ -532,8 +532,6 @@ inConversation:(JConversation *)conversation
                 self.sws = webSocket;
                 [self sendConnectMsgByWebSocket:webSocket];
                 break;
-            } else {
-                [webSocket close];
             }
         }
     });
