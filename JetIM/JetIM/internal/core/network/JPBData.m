@@ -13,6 +13,7 @@
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
 #import "JMessageMentionInfo.h"
+#import "JLogger.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -694,7 +695,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *err = nil;
     ImWebsocketMsg *msg = [[ImWebsocketMsg alloc] initWithData:data error:&err];
     if (err != nil) {
-        NSLog(@"[JetIM]Websocket receive message parse error, msg is %@", err.description);
+        JLogE(@"PB-Parse", @"receive message parse error, msg is %@", err.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -723,7 +724,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 [self.msgCmdDic removeObjectForKey:@(msg.pubAckMsgBody.index)];
             }
             if (cachedCmd.length == 0) {
-                NSLog(@"[JetIM]ack can't match a cachedCmd");
+                JLogW(@"PB-Match", @"pub ack can't match a cached command");
                 obj.rcvType = JPBRcvTypeCmdMatchError;
                 return obj;
             }
@@ -746,7 +747,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 [self.msgCmdDic removeObjectForKey:@(msg.qryAckMsgBody.index)];
             }
             if (cachedCmd.length == 0) {
-                NSLog(@"[JetIM]ack can't match a cachedCmd");
+                JLogW(@"PB-Match", @"qry ack can't match a cached command");
                 obj.rcvType = JPBRcvTypeCmdMatchError;
                 return obj;
             }
@@ -790,10 +791,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         {
             NSError *err = nil;
             if ([msg.publishMsgBody.topic isEqualToString:jNtf]) {
-                NSLog(@"[JetIM] publish msg notify");
                 Notify *ntf = [[Notify alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
-                    NSLog(@"[JetIM]Websocket receive publish message notify parse error, msg is %@", err.description);
+                    JLogE(@"PB-Parse", @"publish msg notify parse error, msg is %@", err.description);
                     obj.rcvType = JPBRcvTypeParseError;
                     return obj;
                 }
@@ -804,10 +804,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     obj.publishMsgNtf = n;
                 }
             } else if ([msg.publishMsgBody.topic isEqualToString:jMsg]) {
-                NSLog(@"[JetIM] publish msg directly");
                 DownMsg *downMsg = [[DownMsg alloc] initWithData:msg.publishMsgBody.data_p error:&err];
                 if (err != nil) {
-                    NSLog(@"[JetIM]Websocket receive publish message parse error, msg is %@", err.description);
+                    JLogE(@"PB-Parse", @"publish msg parse error, msg is %@", err.description);
                     obj.rcvType = JPBRcvTypeParseError;
                     return obj;
                 }
@@ -964,7 +963,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *e = nil;
     DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket query history messages parse error, msg is %@", e.description);
+        JLogE(@"PB-Parse", @"query history messages parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -989,7 +988,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *e = nil;
     QryConversationsResp *resp = [[QryConversationsResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket sync conversations parse error, msg is %@", e.description);
+        JLogE(@"PB-Parse", @"sync conversations parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -1020,7 +1019,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *e = nil;
     DownMsgSet *set = [[DownMsgSet alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket sync messages parse error, msg is %@", e.description);
+        JLogE(@"PB-Parse", @"sync messages parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -1064,7 +1063,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *e = nil;
     TopConversResp *resp = [[TopConversResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket timestamp qry ack parse error, msg is %@", e.description);
+        JLogE(@"PB-Parse", @"set top ack parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
@@ -1081,7 +1080,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSError *e = nil;
     QryReadDetailResp *resp = [[QryReadDetailResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
     if (e != nil) {
-        NSLog(@"[JetIM]Websocket qry read detail ack parse error, msg is %@", e.description);
+        JLogE(@"PB-Parse", @"qry read detail ack parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }

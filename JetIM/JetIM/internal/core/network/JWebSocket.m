@@ -10,6 +10,7 @@
 #import "JUtility.h"
 #import "JetIMConstInternal.h"
 #import "JPBData.h"
+#import "JLogger.h"
 
 #define jWebSocketPrefix @"ws://"
 #define jWebSocketSuffix @"/im"
@@ -108,12 +109,14 @@
       pushToken:(NSString *)pushToken
         servers:(nonnull NSArray *)servers {
     dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Connect", @"appkey is %@, token is %@", appKey, token);
         self.appKey = appKey;
         self.token = token;
         self.pushToken = pushToken;
         
         [self resetSws];
         for (NSString *url in servers) {
+            JLogI(@"WS-Connect", @"create web socket url is %@", url);
             SRWebSocket *sws = [self createWebSocket:url];
             [self.competeSwsList addObject:sws];
             NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
@@ -126,6 +129,7 @@
 
 - (void)disconnect:(BOOL)needPush {
     dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Disconnect", @"need push is %d", needPush);
         [self sendDisconnectMsgByWebSocket:needPush];
     });
 }
@@ -161,11 +165,11 @@
                                         conversationType:conversation.conversationType
                                           conversationId:conversation.conversationId
                                              mentionInfo:content.mentionInfo];
-
+        JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {
-            NSLog(@"WebSocket send IM message error, msg is %@", err.description);
+            JLogE(@"WS-Send", @"send message error, msg is %@", err.description);
             if (errorBlock) {
                 errorBlock(JErrorCodeInternalWebSocketFailure, clientMsgNo);
             }
@@ -190,6 +194,7 @@
                                       conversation:conversation
                                          timestamp:timestamp
                                              index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"recall message, id is %@", messageId);
         [self timestampSendData:d
                             key:key
                         success:successBlock
@@ -206,6 +211,7 @@
         NSData *d = [self.pbData sendReadReceiptData:messageIds
                                       inConversation:conversation
                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"send read receipt");
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -222,6 +228,7 @@
         NSData *d = [self.pbData getGroupMessageReadDetail:messageId
                                             inConversation:conversation
                                                      index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get group message read detail, id is %@", messageId);
         JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -240,10 +247,11 @@
                                                         sendTime:sendTime
                                                           userId:userId
                                                            index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"sync messages, receive is %lld, send is %lld", receiveTime, sendTime);
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {
-            NSLog(@"WebSocket sync messages error, msg is %@", err.description);
+            JLogE(@"WS-Send", @"sync message error, msg is %@", err.description);
         }
     });
 }
@@ -261,6 +269,7 @@
                                                 count:count
                                             direction:direction
                                                 index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"query history messages");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -280,6 +289,7 @@
         NSData *d = [self.pbData queryHisMsgsDataByIds:messageIds
                                         inConversation:conversation
                                                  index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"query history message by id");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -301,6 +311,7 @@
                                                  count:count
                                                 userId:userId
                                                  index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"sync conversation, time is %lld", startTime);
         JSyncConvsObj *obj = [[JSyncConvsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -320,6 +331,7 @@
         NSData *d = [self.pbData deleteConversationData:conversation
                                                  userId:userId
                                                   index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"delete conversation, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -338,6 +350,7 @@
                                                userId:userId
                                              msgIndex:msgIndex
                                                 index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"clear unread, type is %lu, id is %@, msgIndex is %lld", (unsigned long)conversation.conversationType, conversation.conversationId, msgIndex);
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -356,6 +369,7 @@
                                         userId:userId
                                         isMute:isMute
                                          index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set mute, mute is %d, type is %lu, id is %@", isMute, (unsigned long)conversation.conversationType, conversation.conversationId);
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -374,6 +388,7 @@ inConversation:(JConversation *)conversation
                                               userId:userId
                                                isTop:isTop
                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set top, top is %d, type is %lu, id is %@", isTop, (unsigned long)conversation.conversationType, conversation.conversationId);
         [self timestampSendData:d
                             key:key
                         success:successBlock
@@ -394,6 +409,7 @@ inConversation:(JConversation *)conversation
                                                 count:count
                                             direction:direction
                                                 index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get merge message, id is %@", messageId);
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -417,6 +433,7 @@ inConversation:(JConversation *)conversation
                                               count:count
                                           direction:direction
                                               index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get mention message");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
@@ -438,6 +455,7 @@ inConversation:(JConversation *)conversation
                                        packageName:[[NSBundle mainBundle] bundleIdentifier]
                                             userId:userId
                                              index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"register push token");
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -454,6 +472,7 @@ inConversation:(JConversation *)conversation
         NSData *d = [self.pbData clearTotalUnreadCountMessages:userId
                                                           time:time
                                                          index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"clear total unread, time is %lld", time);
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -471,6 +490,7 @@ inConversation:(JConversation *)conversation
         NSData *d = [self.pbData deleteMessage:conversation 
                                        msgList:msgList
                                          index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"delete message");
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -489,6 +509,7 @@ inConversation:(JConversation *)conversation
                                                 time:time
                                                scope:0
                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"clear history message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -500,9 +521,10 @@ inConversation:(JConversation *)conversation
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
         NSError *err = nil;
+        JLogV(@"WS-Send", @"ping");
         [self.sws sendData:d error:&err];
         if (err != nil) {
-            NSLog(@"WebSocket ping error, msg is %@", err.description);
+            JLogE(@"WS-Send", @"ping error, msg is %@", err.description);
         }
     });
 }
@@ -511,9 +533,10 @@ inConversation:(JConversation *)conversation
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData publishAckData:index];
         NSError *err = nil;
+        JLogV(@"WS-Send", @"publish ack");
         [self.sws sendData:d error:&err];
         if (err != nil) {
-            NSLog(@"WebSocket send publishAck error, msg is %@", err.description);
+            JLogE(@"WS-Send", @"publish ack error, msg is %@", err.description);
         }
     });
 }
@@ -522,12 +545,14 @@ inConversation:(JConversation *)conversation
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
         if (self.isCompeteFinish) {
+            JLogI(@"WS-Connect", @"compete fail, url is %@", webSocket.url);
             [webSocket close];
             return;
         }
         //防止上一批竞速的 webSocket 被选中
         for (SRWebSocket *sws in self.competeSwsList) {
             if (webSocket == sws) {
+                JLogI(@"WS-Connect", @"compete success, url is %@", webSocket.url);
                 self.isCompeteFinish = YES;
                 self.sws = webSocket;
                 [self sendConnectMsgByWebSocket:webSocket];
@@ -541,7 +566,7 @@ inConversation:(JConversation *)conversation
     if (webSocket != self.sws) {
         return;
     }
-    NSLog(@"[JetIM] websocket did fail with error, %@", error.description);
+    JLogI(@"WS-Connect", @"fail message is %@", error.description);
     dispatch_async(self.sendQueue, ^{
         [self resetSws];
     });
@@ -554,7 +579,7 @@ inConversation:(JConversation *)conversation
     if (webSocket != self.sws) {
         return;
     }
-    NSLog(@"[JetIM] websocket did close with code(%ld), reason(%@)", (long)code, reason);
+    JLogI(@"WS-Connect", @"close code is %ld, reason is %@", (long)code, reason);
     dispatch_async(self.sendQueue, ^{
         [self resetSws];
     });
@@ -570,47 +595,62 @@ inConversation:(JConversation *)conversation
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
     switch (obj.rcvType) {
         case JPBRcvTypeParseError:
+            JLogI(@"WS-Receive", @"JPBRcvTypeParseError");
             break;
         case JPBRcvTypeConnectAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeConnectAck");
             [self handleConnectAckMsg:obj.connectAck];
             break;
         case JPBRcvTypePublishMsgAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypePublishMsgAck");
             [self handlePublishAckMsg:obj.publishMsgAck];
             break;
         case JPBRcvTypeQryHisMsgsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryHisMsgsAck");
             [self handleQryHisMsgs:obj.qryHisMsgsAck];
             break;
         case JPBRcvTypeSyncConvsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSyncConvsAck");
             [self handleSyncConvsAck:obj.syncConvsAck];
             break;
         case JPBRcvTypePublishMsg:
+            JLogI(@"WS-Receive", @"JPBRcvTypePublishMsg");
             [self handleReceiveMessage:obj.publishMsgBody];
             break;
         case JPBRcvTypePublishMsgNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypePublishMsgNtf");
             [self handlePublishMsgNtf:obj.publishMsgNtf];
             break;
         case JPBRcvTypeSyncMsgsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSyncMsgsAck");
             [self handleSyncMsgsAck:obj.qryHisMsgsAck];
             break;
         case JPBRcvTypePong:
+            JLogV(@"WS-Receive", @"JPBRcvTypePong");
             [self handlePong];
             break;
         case JPBRcvTypeDisconnectMsg:
+            JLogI(@"WS-Receive", @"JPBRcvTypeDisconnectMsg");
             [self handleDisconnectMsg:obj.disconnectMsg];
             break;
         case JPBRcvTypeSimpleQryAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSimpleQryAck");
             [self handleSimpleAck:obj.simpleQryAck];
             break;
         case JPBRcvTypeQryReadDetailAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryReadDetailAck");
             [self handleQryReadDetailAck:obj.qryReadDetailAck];
             break;
         case JPBRcvTypeSimpleQryAckCallbackTimestamp:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSimpleQryAckCallbackTimestamp");
             [self handleSimpleQryAckWithTimeCallback:obj.simpleQryAck];
             break;
         case JPBRcvTypeConversationSetTopAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeConversationSetTopAck");
             [self handleTimestampCallback:obj.timestampQryAck];
             break;
         default:
+            JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
     }
 }
@@ -632,7 +672,7 @@ inConversation:(JConversation *)conversation
     NSError *err = nil;
     [sws sendData:d error:&err];
     if (err != nil) {
-        NSLog(@"WebSocket send connect error, msg is %@", err.description);
+        JLogE(@"WS-Connect", @"send connect error, msg is %@", err.description);
     }
 }
 
@@ -641,13 +681,12 @@ inConversation:(JConversation *)conversation
     NSError *err = nil;
     [self.sws sendData:d error:&err];
     if (err != nil) {
-        NSLog(@"WebSocket send disconnect error, msg is %@", err.description);
+        JLogE(@"WS-Send", @"send disconnect error, msg is %@", err.description);
     }
     [self resetSws];
 }
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
-    NSLog(@"connect userId is %@", connectAck.userId);
     if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
         [self.connectDelegate connectCompleteWithCode:connectAck.code
                                                userId:connectAck.userId
@@ -657,7 +696,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
-    NSLog(@"handlePublishAckMsg, msgId is %@, code is %d", ack.msgId, ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
         JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;
@@ -671,7 +709,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
-    NSLog(@"handleQryMsg");
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
         JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
@@ -685,7 +722,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
-    NSLog(@"handleSyncConvsAck");
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSyncConvsObj class]]) {
         JSyncConvsObj *syncConvsObj = (JSyncConvsObj *)obj;
@@ -700,14 +736,12 @@ inConversation:(JConversation *)conversation
 
 //sync 和 queryHisMsgs 共用一个 ack
 - (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
-    NSLog(@"handleSyncMsgsAck");
     if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
         [self.messageDelegate messagesDidReceive:ack.msgs isFinished:ack.isFinished];
     }
 }
 
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
-    NSLog(@"handleReceiveMessage");
     if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
         [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
     }
@@ -717,18 +751,15 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handlePublishMsgNtf:(JPublishMsgNtf *)ntf {
-    NSLog(@"handlePublishMsgNtf");
     if ([self.messageDelegate respondsToSelector:@selector(syncNotify:)]) {
         [self.messageDelegate syncNotify:ntf.syncTime];
     }
 }
 
 - (void)handlePong {
-    NSLog(@"handlePong");
 }
 
 - (void)handleDisconnectMsg:(JDisconnectMsg *)msg {
-    NSLog(@"handleDisconnectMsg");
     dispatch_async(self.sendQueue, ^{
         [self resetSws];
         //TODO: 处理 cmdBlockDic
@@ -739,7 +770,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleSimpleAck:(JSimpleQryAck *)ack {
-    NSLog(@"handleSimpleAck, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
@@ -753,7 +783,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleSimpleQryAckWithTimeCallback:(JSimpleQryAck *)ack {
-    NSLog(@"handleSimpleQryAckWithtimeCallback, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
         JTimestampBlockObj *simpleObj = (JTimestampBlockObj *)obj;
@@ -767,7 +796,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleTimestampCallback:(JTimestampQryAck *)ack {
-    NSLog(@"handleTimestampCallback, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
         JTimestampBlockObj *timestampObj = (JTimestampBlockObj *)obj;
@@ -781,7 +809,6 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleQryReadDetailAck:(JQryReadDetailAck *)ack {
-    NSLog(@"handleQryReadDetailAck, code is %d", ack.code);
     JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
         JQryReadDetailObj *qryReadDetailObj = (JQryReadDetailObj *)obj;
@@ -818,7 +845,7 @@ inConversation:(JConversation *)conversation
                key:key
                obj:obj
              error:errorBlock];
-   }
+}
 
 - (void)sendData:(NSData *)data
              key:(NSNumber *)key
@@ -827,7 +854,7 @@ inConversation:(JConversation *)conversation
     NSError *err = nil;
     [self.sws sendData:data error:&err];
     if (err != nil) {
-        NSLog(@"WebSocket send data error, description is %@", err.description);
+        JLogE(@"WS-Send", @"send data error, description is %@", err.description);
         if (errorBlock) {
             errorBlock(JErrorCodeInternalWebSocketFailure);
         }

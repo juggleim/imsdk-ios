@@ -88,21 +88,21 @@
             
 //            [JIM.shared.connectionManager disconnect:NO];
             
-            JImageMessage *image = [[JImageMessage alloc] init];
-            image.localPath = @"asdfasdf";
-            image.size = 1000;
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-            [JIM.shared.messageManager sendMediaMessage:image
-                                         inConversation:c
-                                               progress:^(int progress, JMessage *message) {
-                NSLog(@"asdf");
-            } success:^(JMessage *message) {
-                NSLog(@"sadfasdf");
-            } error:^(JErrorCode errorCode, JMessage *message) {
-                NSLog(@"fasdf");
-            } cancel:^(JMessage *message) {
-                NSLog(@"fasdf");
-            }];
+//            JImageMessage *image = [[JImageMessage alloc] init];
+//            image.localPath = @"asdfasdf";
+//            image.size = 1000;
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            [JIM.shared.messageManager sendMediaMessage:image
+//                                         inConversation:c
+//                                               progress:^(int progress, JMessage *message) {
+//                NSLog(@"asdf");
+//            } success:^(JMessage *message) {
+//                NSLog(@"sadfasdf");
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                NSLog(@"fasdf");
+//            } cancel:^(JMessage *message) {
+//                NSLog(@"fasdf");
+//            }];
             
 //            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
 //            message.url = @"http://www.baidu.com";

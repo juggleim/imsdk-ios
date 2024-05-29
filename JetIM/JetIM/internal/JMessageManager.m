@@ -214,7 +214,6 @@
     }
 }
 
-
 - (void)recallMessage:(NSString *)messageId
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
@@ -1145,7 +1144,6 @@
             }
             return;
         }
-        
         
         //delete Msg
         if ([obj.contentType isEqualToString:[JDeleteMsgMessage contentType]]) {

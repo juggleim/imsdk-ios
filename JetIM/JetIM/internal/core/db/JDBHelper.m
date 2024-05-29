@@ -6,6 +6,7 @@
 //
 
 #import "JDBHelper.h"
+#import "JLogger.h"
 
 @interface JDBHelper ()
 @property (nonatomic, strong) JFMDatabaseQueue *dbQueue;
@@ -14,16 +15,17 @@
 @implementation JDBHelper
 
 - (BOOL)openDB:(NSString *)path {
-    //TODO: delete
-    NSLog(@"openDB, path is %@", path);
     [self closeDB];
     if (path.length > 0) {
         self.dbQueue = [JFMDatabaseQueue databaseQueueWithPath:path];
     }
+    BOOL result = (self.dbQueue != nil);
+    JLogD(@"DB-Open", @"path is %@, result is %d", path, result);
     return (self.dbQueue != nil);
 }
 
 - (void)closeDB {
+    JLogD(@"DB-Close", @"");
     if (self.dbQueue) {
         [self.dbQueue close];
     }

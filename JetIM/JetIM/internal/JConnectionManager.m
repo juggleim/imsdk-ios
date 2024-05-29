@@ -46,7 +46,7 @@
 }
 
 - (void)connectWithToken:(NSString *)token {
-    JLogI(@"A-connect-T", @"token is %@", token);
+    JLogI(@"CON-Connect", @"token is %@", token);
     //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
     //TODO: 连接状态判断，如果连接中或已连接，而且 token 跟之前不一样的话，先 disconnect
     
@@ -68,12 +68,14 @@
                                        appKey:self.core.appKey
                                         token:token
                                       success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+        JLogI(@"CON-Navi", @"success");
         self.core.servers = servers;
         [self.core.webSocket connect:self.core.appKey
                                token:token
                            pushToken:self.pushToken
                              servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
+        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
         if (errorCode == JErrorCodeInternalTokenIllegal) {
             [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:@""];
         } else {
@@ -84,17 +86,18 @@
 }
 
 - (void)disconnect:(BOOL)receivePush {
-    NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
+    JLogI(@"CON-Disconnect", @"receivePush is %d", receivePush);
     [self.core.webSocket disconnect:receivePush];
     [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
 }
 
 - (void)registerDeviceToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        NSLog(@"[JetIM] tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
-               @"deviceToken 传入");
+        JLogE(@"CON-Token", @"tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
+              @"deviceToken 传入");
         return;
     }
+    JLogI(@"CON-Token", @"");
     NSUInteger len = [tokenData length];
     char *chars = (char *)[tokenData bytes];
     NSMutableString *hexString = [[NSMutableString alloc] init];
@@ -105,9 +108,9 @@
     [self.core.webSocket registerPushToken:hexString
                                     userId:self.core.userId
                                    success:^{
-        NSLog(@"[JetIM] register push token success");
+        JLogI(@"CON-Token", @"success");
     } error:^(JErrorCodeInternal code) {
-        NSLog(@"[JetIM] register push token fail, code is %lu", code);
+        JLogE(@"CON-Token", @"fail, code is %lu", code);
     }];
 }
 
@@ -126,7 +129,7 @@
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
                 [self dbOpenNotice:YES];
             } else {
-                NSLog(@"[JetIM] db open fail");
+                JLogE(@"CON-Db", @"open fail");
             }
         }
         [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
@@ -169,6 +172,7 @@
            errorCode:(JErrorCodeInternal)errorCode
                extra:(NSString *)extra {
     dispatch_async(self.core.sendQueue, ^{
+        JLogI(@"CON-Status", @"status is %lu, code is %lu", (unsigned long)status, (unsigned long)errorCode);
         if (status == self.core.connectionStatus) {
             return;
         }
@@ -234,6 +238,7 @@
         if (isOpen) {
             [self.core getSyncTimeFromDB];
         }
+        JLogI(@"CON-Db", @"db notice isOpen is %d", isOpen);
         dispatch_async(self.core.delegateQueue, ^{
             if (isOpen) {
                 if ([self.delegate respondsToSelector:@selector(dbDidOpen)]) {
@@ -257,7 +262,7 @@
 
 - (void)reconnect {
     //需要在 sendQueue 里
-    NSLog(@"[JetIM] reconnect");
+    JLogI(@"CON-Reconnect", @"");
     //TODO: 线程控制，间隔控制
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.reconnectTimer) {

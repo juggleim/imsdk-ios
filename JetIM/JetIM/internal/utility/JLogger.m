@@ -75,7 +75,4 @@ static JLogger *_instance;
         [self.fileWriter write:logStr date:date];
     });
 }
-
-
-
 @end

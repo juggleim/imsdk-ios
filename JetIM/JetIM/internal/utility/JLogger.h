@@ -27,7 +27,6 @@ typedef NS_ENUM(NSUInteger, JLogLevel) {
     JLogLevelVerbose = 6
 };
 
-
 @interface JLogger : NSObject
 
 @property (nonatomic, assign) JLogLevel logLevel;
