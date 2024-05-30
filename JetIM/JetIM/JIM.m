@@ -11,6 +11,7 @@
 #import "JConversationManager.h"
 #import "JUserInfoManager.h"
 #import "JetIMCore.h"
+#import "JLogger.h"
 
 @interface JIM ()
 @property (nonatomic, strong) JetIMCore *core;
@@ -48,7 +49,7 @@ static JIM *_instance;
     self.core.appKey = appKey;
     self.core.userId = @"";
     self.core.token = @"";
-    NSLog(@"init appkey is %@", appKey);
+    JLogI(@"J-Init", @"appKey is %@", appKey);
 }
 
 - (void)setDelegateQueue:(dispatch_queue_t)delegateQueue {

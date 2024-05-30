@@ -12,6 +12,8 @@
 #import "JClearUnreadMessage.h"
 #import "JDeleteMsgMessage.h"
 #import "JCleanMsgMessage.h"
+#import "JLogger.h"
+
 #define kConversationSyncCount 100
 
 @interface JConversationManager ()
@@ -36,10 +38,12 @@
 - (void)syncConversations:(void (^)(void))completeBlock {
     self.syncProcessing = YES;
     dispatch_async(self.core.sendQueue, ^{
+        JLogI(@"CONV-Sync", @"sync time is %lld", self.core.conversationSyncTime);
         [self.core.webSocket syncConversations:self.core.conversationSyncTime
                                          count:kConversationSyncCount
                                         userId:self.core.userId
                                        success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
+            JLogI(@"CONV-Sync", @"success conversation count is %lu, delete count is %lu", (unsigned long)conversations.count, (unsigned long)deletedConversations.count);
             long long syncTime = 0;
             if (conversations.lastObject) {
                 [self updateUserInfos:conversations];
@@ -103,7 +107,7 @@
                 }
             }
         } error:^(JErrorCodeInternal code) {
-            NSLog(@"[JetIM] sync conversation fail, code is %lu", (unsigned long)code);
+            JLogE(@"CONV-Sync", @"error code is %lu", code);
             if (completeBlock) {
                 completeBlock();
             }
@@ -152,9 +156,9 @@
                                          userId:self.core.userId
                                         success:^(void) {
         //删除会话不更新时间戳，只通过命令消息来更新
-        NSLog(@"[JetIM] delete conversation success");
+        JLogI(@"CONV-Delete", @"success");
     } error:^(JErrorCodeInternal code) {
-        NSLog(@"[JetIM] delete conversation error, code is %lu", code);
+        JLogE(@"CONV-Delete", @"error code is %lu", code);
     }];
 }
 
@@ -173,9 +177,9 @@
                                  msgIndex:info.lastMessageIndex
                                   success:^(void) {
         //清除未读数暂时不用更新 syncTime
-        NSLog(@"[JetIM] clear unread success");
+        JLogI(@"CONV-ClearUnread", @"success");
     } error:^(JErrorCodeInternal code) {
-        NSLog(@"[JetIM] clear unread error, code is %lu", code);
+        JLogE(@"CONV-ClearUnread", @"error code is %lu", code);
     }];
 }
 
@@ -220,6 +224,7 @@
                   inConversation:conversation
                           userId:self.core.userId
                          success:^{
+        JLogI(@"CONV-Mute", @"success");
         [weakSelf.core.dbManager setMute:isMute conversation:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
@@ -227,6 +232,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-Mute", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -242,6 +248,7 @@
                  inConversation:conversation
                          userId:self.core.userId
                         success:^(long long timestamp) {
+        JLogI(@"CONV-Top", @"success");
         [weakSelf.core.dbManager setTopTime:timestamp conversation:conversation];
         JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
         if(conversationInfo){

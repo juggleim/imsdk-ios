@@ -23,6 +23,7 @@
 #import "JClearUnreadMessage.h"
 #import "JDeleteMsgMessage.h"
 #import "JCleanMsgMessage.h"
+#import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
@@ -67,7 +68,6 @@
         [self registerContentType:[JDeleteMsgMessage class]];
         [self registerContentType:[JCleanMsgMessage class]];
         
-        
         self.cachedSendTime = -1;
         self.cachedReceiveTime = -1;
     }
@@ -91,10 +91,9 @@
 }
 
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
-                      conversation:(JConversation *)conversation
-                           success:(void (^)(void))successBlock
-                             error:(void (^)(JErrorCode))errorBlock{
-    
+                           conversation:(JConversation *)conversation
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode))errorBlock{
     if(clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -115,7 +114,7 @@
             [deleteClientMsgNoList addObject:@(message.clientMsgNo)];
         }
     }
-    
+    JLogI(@"MSG-Delete", @"by clientMsgNo, local count is %lu, remote count is %lu", (unsigned long)deleteClientMsgNoList.count, (unsigned long)deleteRemoteList.count);
     if(deleteClientMsgNoList.count == 0){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -141,6 +140,7 @@
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
                                success:^{
+        JLogI(@"MSG-Delete", @"websocket success");
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
 
 #warning TODO 通知会话更新
@@ -151,6 +151,7 @@
         });
         
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Delete", @"websocket error code is %lu", (unsigned long)code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -163,7 +164,6 @@
                      conversation:(JConversation *)conversation
                           success:(void (^)(void))successBlock
                             error:(void (^)(JErrorCode))errorBlock{
-    
     if(messageIds == nil || messageIds.count == 0 || conversation == nil){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -181,11 +181,13 @@
             [msgList addObject:message];
         }
     }
+    JLogI(@"MSG-Delete", @"by messageId, count is %lu", (unsigned long)msgList.count);
     if(msgList.count != 0){
         __weak typeof(self) weakSelf = self;
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
                                    success:^{
+            JLogI(@"MSG-Delete", @"websocket success");
             NSMutableArray * ids = [NSMutableArray array];
             for (JMessage * message in msgList) {
                 [ids addObject:message.messageId];
@@ -198,6 +200,7 @@
                 }
             });
         } error:^(JErrorCodeInternal code) {
+            JLogE(@"MSG-Delete", @"websocket error code is %lu", (unsigned long)code);
             dispatch_async(self.core.delegateQueue, ^{
                 if (errorBlock) {
                     errorBlock((JErrorCode)code);
@@ -232,6 +235,7 @@
                               conversation:m.conversation
                                  timestamp:m.timestamp
                                    success:^(long long timestamp) {
+            JLogI(@"MSG-Recall", @"success");
             if (self.syncProcessing) {
                 self.cachedSendTime = timestamp;
             } else {
@@ -249,6 +253,7 @@
                 }
             });
         } error:^(JErrorCodeInternal errorCode) {
+            JLogE(@"MSG-Recall", @"error code is %lu", (unsigned long)errorCode);
             dispatch_async(self.core.delegateQueue, ^{
                 if (errorBlock) {
                     errorBlock((JErrorCode)errorCode);
@@ -275,6 +280,7 @@
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
                                      success:^{
+        JLogI(@"MSG-Clear", @"success");
         [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:@""];
 #warning  TODO 通知会话更新
         
@@ -284,6 +290,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Clear", @"error code is %lu", (unsigned long)code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -479,6 +486,7 @@
     [self.core.webSocket getGroupMessageReadDetail:messageId
                                     inConversation:conversation
                                            success:^(NSArray<JUserInfo *> * _Nonnull readMembers, NSArray<JUserInfo *> * _Nonnull unreadMembers) {
+        JLogI(@"MSG-GroupReadDetail", @"success");
         JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
         info.readCount = (int)readMembers.count;
         info.memberCount = (int)readMembers.count + (int)unreadMembers.count;
@@ -489,6 +497,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GroupReadDetail", @"error code is %lu", code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -531,6 +540,7 @@
                                     count:count
                                 direction:direction
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-Get", @"success");
         [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -538,6 +548,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Get", @"error code is %lu", code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -672,6 +683,7 @@
         [self.core.webSocket queryHisMsgsByIds:notExistArray
                                 inConversation:conversation
                                        success:^(NSArray<JConcreteMessage *> * _Nonnull remoteMessages, BOOL isFinished) {
+            JLogI(@"MSG-Get", @"by id, success");
             NSMutableArray <JMessage *> *result = [[NSMutableArray alloc] init];
             for (NSString *messageId in messageIds) {
                 BOOL isMatch = NO;
@@ -698,6 +710,7 @@
                 }
             });
         } error:^(JErrorCodeInternal code) {
+            JLogE(@"MSG-Get", @"by id, error code is %lu", code);
             if (localMessages.count > 0) {
                 dispatch_async(self.core.delegateQueue, ^{
                     if (successBlock) {
@@ -727,6 +740,7 @@
                                         count:100
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-GetMerge", @"success");
         [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -734,6 +748,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetMerge", @"error code is %lu", code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -757,6 +772,7 @@
                                       count:count
                                   direction:direction
                                     success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-GetMention", @"success");
         [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -764,6 +780,7 @@
             }
         });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetMention", @"error code is %lu", code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);
@@ -773,6 +790,7 @@
 }
 
 - (void)registerContentType:(Class)messageClass {
+    JLogI(@"MSG-Register", @"class is %@", messageClass);
     [[JContentTypeCenter shared] registerContentType:messageClass];
 }
 
@@ -788,9 +806,6 @@
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
-
-
-
 
 #pragma mark - JWebSocketMessageDelegate
 - (void)messageDidReceive:(JConcreteMessage *)message {
@@ -825,7 +840,6 @@
 }
 
 - (void)syncNotify:(long long)syncTime {
-    NSLog(@"[JetIM] syncNotify syncTime is %lld, receiveSyncTime is %lld", syncTime, self.core.messageReceiveSyncTime);
     if (syncTime > self.core.messageReceiveSyncTime) {
         self.syncProcessing = YES;
         [self sync];
@@ -1200,6 +1214,7 @@
 }
 
 - (void)sync {
+    JLogI(@"MSG-Sync", @"receive time is %lld, send time is %lld", self.core.messageReceiveSyncTime, self.core.messageSendSyncTime);
     [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
                                             sendTime:self.core.messageSendSyncTime
                                               userId:self.core.userId];
