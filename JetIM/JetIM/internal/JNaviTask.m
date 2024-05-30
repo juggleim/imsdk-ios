@@ -6,6 +6,7 @@
 //
 
 #import "JNaviTask.h"
+#import "JLogger.h"
 
 #define jMaxConcurrentCount 5
 #define jNaviServerSuffix @"/navigator/general"
@@ -46,6 +47,7 @@
 }
 
 - (void)start {
+    JLogI(@"NAV-Start", @"");
     for (NSString *url in self.urls) {
         NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self
                                                                                 selector:@selector(requestNavi:)
@@ -55,6 +57,7 @@
 }
 
 - (void)requestNavi:(NSString *)url {
+    JLogI(@"NAV-Request", @"url is %@", url);
     NSURL *u = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", url, jNaviServerSuffix]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:u];
     [request setHTTPMethod:@"GET"];
@@ -64,19 +67,21 @@
                                                                  completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         @synchronized (self) {
             if (self.isFinish) {
+                JLogI(@"NAV-Request", @"compete fail, url is %@", url);
                 return;
             }
             self.isFinish = YES;
             if (error) {
-                NSLog(@"[JetIM] request navi error, description is %@", error.localizedDescription);
+                JLogE(@"NAV-Request", @"error description is %@", error.localizedDescription);
                 if (self.errorBlock) {
                     self.errorBlock(JErrorCodeInternalNaviFailure);
                 }
                 return;
             }
+            JLogI(@"NAV-Request", @"compete success, url is %@", url);
             NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
             if (statusCode != 200) {
-                NSLog(@"[JetIM] request navi error, http code is %ld", (long)statusCode);
+                JLogE(@"NAV-Request", @"error http code is %ld", (long)statusCode);
                 if (self.errorBlock) {
                     if (statusCode == 401) {
                         self.errorBlock(JErrorCodeInternalTokenIllegal);
@@ -89,7 +94,7 @@
             NSError *e = nil;
             NSDictionary *responseDic = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&e];
             if (e) {
-                NSLog(@"[JetIM] request navi json error, description is %@", e.localizedDescription);
+                JLogE(@"NAV-Request", @"json error description is %@", e.localizedDescription);
                 if (self.errorBlock) {
                     self.errorBlock(JErrorCodeInternalNaviFailure);
                 }
@@ -106,7 +111,7 @@
                     }
                 }
             }
-            NSLog(@"[JetIM] request navi unknown error");
+            JLogE(@"NAV-Request", @"unknown error");
             if (self.errorBlock) {
                 self.errorBlock(JErrorCodeInternalNaviFailure);
             }

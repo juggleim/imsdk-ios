@@ -296,9 +296,9 @@
     [self.core.webSocket clearTotalUnreadCount:self.core.userId
                                           time:time
                                        success:^{
-        
+        JLogI(@"CONV-ClearTotal", @"success");
     } error:^(JErrorCodeInternal code) {
-        
+        JLogE(@"CONV-ClearTotal", @"error code is %lu", code);
     }];
     
 }

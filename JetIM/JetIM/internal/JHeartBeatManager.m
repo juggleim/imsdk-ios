@@ -6,6 +6,7 @@
 //
 
 #import "JHeartBeatManager.h"
+#import "JLogger.h"
 
 #define kPingInterval 30
 
@@ -17,7 +18,7 @@
 @implementation JHeartBeatManager
 
 - (void)start {
-    NSLog(@"[JetIM] start ping");
+    JLogI(@"HB-Start", @"");
     [self stop];
     dispatch_async(dispatch_get_main_queue(), ^{
         self.pingTimer = [NSTimer scheduledTimerWithTimeInterval:kPingInterval
@@ -29,7 +30,7 @@
 }
 
 - (void)stop {
-    NSLog(@"[JetIM] stop ping");
+    JLogI(@"HB-Stop", @"");
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.pingTimer) {
             [self.pingTimer invalidate];
@@ -47,7 +48,6 @@
 
 #pragma mark - internal
 - (void)sendPing {
-    NSLog(@"[JetIM] send ping");
     [self.core.webSocket sendPing];
 }
 
