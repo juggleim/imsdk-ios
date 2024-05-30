@@ -946,6 +946,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     userInfo.userId = item.member.userId;
     userInfo.userName = item.member.nickname;
     userInfo.portrait = item.member.userPortrait;
+    if (item.member.extFieldsArray_Count > 0) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        for (KvItem *it in item.member.extFieldsArray) {
+            [dic setObject:it.value forKey:it.key];
+        }
+        userInfo.extraDic = [dic copy];
+    }
     return userInfo;
 }
 
