@@ -128,12 +128,10 @@
     [self.conversationDb setMute:isMute conversation:conversation];
 }
 
-- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
-    [self.conversationDb setTop:isTop conversation:conversation];
-}
-
-- (void)setTopTime:(long long)time conversation:(JConversation *)conversation {
-    [self.conversationDb setTopTime:time conversation:conversation];
+- (void)setTop:(BOOL)isTop
+          time:(long long)time
+  conversation:(JConversation *)conversation {
+    [self.conversationDb setTop:isTop time:time conversation:conversation];
 }
 
 - (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {

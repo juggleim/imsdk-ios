@@ -90,8 +90,12 @@
 /// - Parameters:
 ///   - isTop: YES 表示置顶，NO 表示不置顶
 ///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
 - (void)setTop:(BOOL)isTop
-  conversation:(JConversation *)conversation;
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode code))errorBlock;
 
 /// 分页获取置顶会话信息列表
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count

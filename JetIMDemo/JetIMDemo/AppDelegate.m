@@ -84,7 +84,22 @@
                             extra:(NSString *)extra {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
+            [JIM.shared.conversationManager setTop:YES
+                                      conversation:c
+                                           success:^{
+                [JIM.shared.conversationManager setTop:NO
+                                          conversation:c
+                                               success:^{
+                    NSLog(@"asdf");
+                } error:^(JErrorCode code) {
+                    NSLog(@"dds");
+                }];
+            } error:^(JErrorCode code) {
+                
+            }];
             
 //            [JIM.shared.connectionManager disconnect:NO];
             

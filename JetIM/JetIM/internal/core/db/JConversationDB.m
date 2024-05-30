@@ -66,9 +66,7 @@ NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET last_message
 NSString *const jTimestampEqualsQustion = @", timestamp=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jSetTopTrue = @"UPDATE conversation_info SET is_top = 1";
-NSString *const jSetTopFalse = @"UPDATE conversation_info SET is_top = 0, top_time = 0";
-NSString *const jSetTopTime = @"UPDATE conversation_info SET top_time = ?";
+NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
 NSString *const jSetMention = @"UPDATE conversation_info SET has_mentioned = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearMentionStatus = @"UPDATE conversation_info SET has_mentioned = 0";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info";
@@ -287,21 +285,11 @@ NSString *const jTotalCount = @"total_count";
     [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId]];
 }
 
-- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
+- (void)setTop:(BOOL)isTop time:(long long)time conversation:(JConversation *)conversation {
     NSString *sql;
-    if (isTop) {
-        sql = jSetTopTrue;
-    } else {
-        sql = jSetTopFalse;
-    }
+    sql = jSetTop;
     sql = [sql stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
-}
-
-- (void)setTopTime:(long long)time conversation:(JConversation *)conversation {
-    NSString *sql = jSetTopTime;
-    sql = [sql stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(time), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {

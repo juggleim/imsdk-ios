@@ -230,6 +230,12 @@
             if (successBlock) {
                 successBlock();
             }
+            JConversationInfo *conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
+            if (conversationInfo) {
+                if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [weakSelf.delegate conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }
         });
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-Mute", @"error code is %lu", code);
@@ -241,24 +247,35 @@
     }];
 }
 
-- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
+- (void)setTop:(BOOL)isTop
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode))errorBlock {
     __weak typeof(self) weakSelf = self;
-    [self.core.dbManager setTop:isTop conversation:conversation];
     [self.core.webSocket setTop:isTop
                  inConversation:conversation
                          userId:self.core.userId
                         success:^(long long timestamp) {
         JLogI(@"CONV-Top", @"success");
-        [weakSelf.core.dbManager setTopTime:timestamp conversation:conversation];
-        JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
-        if(conversationInfo){
-            dispatch_async(weakSelf.core.delegateQueue, ^{
+        [weakSelf.core.dbManager setTop:isTop time:timestamp conversation:conversation];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
+            if(conversationInfo){
                 if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
                     [weakSelf.delegate conversationInfoDidUpdate:@[conversationInfo]];
                 }
-            });
-        }
+            }
+        });
     } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-Top", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
     }];
 }
 
@@ -339,8 +356,7 @@
         NSMutableArray * convs = [NSMutableArray array];
         for (JConcreteConversationInfo * conv in content.conversations) {
             //更新数据库
-            [self.core.dbManager setTop:conv.isTop conversation:conv.conversation];
-            [self.core.dbManager setTopTime:conv.topTime conversation:conv.conversation];
+            [self.core.dbManager setTop:conv.isTop time:conv.topTime conversation:conv.conversation];
             //获取会话对象
             JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
             if(conversationInfo){
