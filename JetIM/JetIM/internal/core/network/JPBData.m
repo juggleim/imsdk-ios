@@ -1174,7 +1174,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
              jUndisturb:@(JPBRcvTypeSimpleQryAck),
-             jTopConvers:@(JPBRcvTypeConversationSetTopAck),
+             jTopConvers:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),

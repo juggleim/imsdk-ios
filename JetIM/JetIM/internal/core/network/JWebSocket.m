@@ -645,10 +645,6 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeSimpleQryAckCallbackTimestamp");
             [self handleSimpleQryAckWithTimeCallback:obj.simpleQryAck];
             break;
-        case JPBRcvTypeConversationSetTopAck:
-            JLogI(@"WS-Receive", @"JPBRcvTypeConversationSetTopAck");
-            [self handleTimestampCallback:obj.timestampQryAck];
-            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -790,19 +786,6 @@ inConversation:(JConversation *)conversation
             simpleObj.errorBlock(ack.code);
         } else {
             simpleObj.successBlock(ack.timestamp);
-        }
-    }
-    [self removeBlockObjectForKey:@(ack.index)];
-}
-
-- (void)handleTimestampCallback:(JTimestampQryAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
-        JTimestampBlockObj *timestampObj = (JTimestampBlockObj *)obj;
-        if (ack.code != 0) {
-            timestampObj.errorBlock(ack.code);
-        } else {
-            timestampObj.successBlock(ack.operationTime);
         }
     }
     [self removeBlockObjectForKey:@(ack.index)];
