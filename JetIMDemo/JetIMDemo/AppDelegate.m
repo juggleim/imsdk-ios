@@ -87,19 +87,13 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
             JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid5"];
-            [JIM.shared.conversationManager setTop:YES
-                                      conversation:c
-                                           success:^{
-                [JIM.shared.conversationManager setTop:NO
-                                          conversation:c
-                                               success:^{
-                    NSLog(@"asdf");
-                } error:^(JErrorCode code) {
-                    NSLog(@"dds");
-                }];
-            } error:^(JErrorCode code) {
-                
-            }];
+            JUserInfo *u1 = [JIM.shared.userInfoManager getUserInfo:@"userid1"];
+            JUserInfo *u2 = [JIM.shared.userInfoManager getUserInfo:@"userid2"];
+            JUserInfo *u3 = [JIM.shared.userInfoManager getUserInfo:@"userid3"];
+            JUserInfo *u5 = [JIM.shared.userInfoManager getUserInfo:@"userid5"];
+            JGroupInfo *g = [JIM.shared.userInfoManager getGroupInfo:@"groupid1"];
+            
+            NSLog(@"");
             
 //            [JIM.shared.connectionManager disconnect:NO];
             

@@ -913,6 +913,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.groupId = pbGroupInfo.groupId;
     result.groupName = pbGroupInfo.groupName;
     result.portrait = pbGroupInfo.groupPortrait;
+    if (pbGroupInfo.extFieldsArray_Count > 0) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        for (KvItem *item in pbGroupInfo.extFieldsArray) {
+            [dic setObject:item.value forKey:item.key];
+        }
+        result.extraDic = [dic copy];
+    }
     return result;
 }
 
@@ -924,6 +931,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.userId = pbUserInfo.userId;
     result.userName = pbUserInfo.nickname;
     result.portrait = pbUserInfo.userPortrait;
+    if (pbUserInfo.extFieldsArray_Count > 0) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        for (KvItem *item in pbUserInfo.extFieldsArray) {
+            [dic setObject:item.value forKey:item.key];
+        }
+        result.extraDic = [dic copy];
+    }
     return result;
 }
 

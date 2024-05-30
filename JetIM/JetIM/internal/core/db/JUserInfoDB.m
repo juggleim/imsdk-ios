@@ -29,9 +29,9 @@ NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, 
 NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension) VALUES (?, ?, ?, ?)";
 NSString *const jColUserId = @"user_id";
 NSString *const jColGroupId = @"group_id";
-NSString *const jColUserInfoName = @"name";
-NSString *const jColUserInfoPortrait = @"portrait";
-NSString *const jColUserInfoExtension = @"extension";
+NSString *const jColName = @"name";
+NSString *const jColPortrait = @"portrait";
+NSString *const jColExtension = @"extension";
 
 @interface JUserInfoDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -89,7 +89,7 @@ NSString *const jColUserInfoExtension = @"extension";
             NSString *userId = obj.userId?:@"";
             NSString *name = obj.userName?:@"";
             NSString *portrait = obj.portrait?:@"";
-            NSString *extension = @"";
+            NSString *extension = [self stringFromDic:obj.extraDic];
             [db executeUpdate:jInsertUserInfo withArgumentsInArray:@[userId, name, portrait, extension]];
         }];
     }];
@@ -101,7 +101,7 @@ NSString *const jColUserInfoExtension = @"extension";
             NSString *groupId = obj.groupId?:@"";
             NSString *name = obj.groupName?:@"";
             NSString *portrait = obj.portrait?:@"";
-            NSString *extension = @"";
+            NSString *extension = [self stringFromDic:obj.extraDic];
             [db executeUpdate:jInsertGroupInfo withArgumentsInArray:@[groupId, name, portrait, extension]];
         }];
     }];
@@ -111,17 +111,37 @@ NSString *const jColUserInfoExtension = @"extension";
 - (JUserInfo *)userInfoWith:(JFMResultSet *)rs {
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = [rs stringForColumn:jColUserId];
-    userInfo.userName = [rs stringForColumn:jColUserInfoName];
-    userInfo.portrait = [rs stringForColumn:jColUserInfoPortrait];
+    userInfo.userName = [rs stringForColumn:jColName];
+    userInfo.portrait = [rs stringForColumn:jColPortrait];
+    NSString *extra = [rs stringForColumn:jColExtension];
+    userInfo.extraDic = [self dicFromString:extra];
     return userInfo;
 }
 
 - (JGroupInfo *)groupInfoWith:(JFMResultSet *)rs {
     JGroupInfo *groupInfo = [[JGroupInfo alloc] init];
     groupInfo.groupId = [rs stringForColumn:jColGroupId];
-    groupInfo.groupName = [rs stringForColumn:jColUserInfoName];
-    groupInfo.portrait = [rs stringForColumn:jColUserInfoPortrait];
+    groupInfo.groupName = [rs stringForColumn:jColName];
+    groupInfo.portrait = [rs stringForColumn:jColPortrait];
+    NSString *extra = [rs stringForColumn:jColExtension];
+    groupInfo.extraDic = [self dicFromString:extra];
     return groupInfo;
+}
+
+- (NSString *)stringFromDic:(NSDictionary *)dic {
+    if (dic.count == 0) {
+        return @"";
+    }
+    NSData *d = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
+    return [[NSString alloc] initWithData:d encoding:NSUTF8StringEncoding];
+}
+
+- (NSDictionary *)dicFromString:(NSString *)string {
+    if (string.length == 0) {
+        return nil;
+    }
+    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
 }
 
 @end

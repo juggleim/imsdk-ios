@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *portrait;
+@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
 
 @end
 

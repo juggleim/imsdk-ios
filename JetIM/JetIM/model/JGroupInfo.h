@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *groupId;
 @property (nonatomic, copy) NSString *groupName;
 @property (nonatomic, copy) NSString *portrait;
+@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
 
 @end
 
