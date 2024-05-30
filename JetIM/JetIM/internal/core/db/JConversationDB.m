@@ -53,7 +53,7 @@ NSString *const jTimestampGreaterThan = @" timestamp > ?";
 NSString *const jTimestampLessThan = @" timestamp < ?";
 NSString *const jConversationAnd = @" AND ";
 NSString *const jConversationTypeIn = @" conversation_type in ";
-NSString *const jConversationOrderByTopAndTimestamp = @" ORDER BY is_top DESC, timestamp DESC";
+NSString *const jConversationOrderByTopAndTimestamp = @" ORDER BY is_top DESC, top_time DESC, timestamp DESC";
 NSString *const jConversationOrderByTopTime = @" ORDER BY top_time DESC";
 NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
@@ -288,6 +288,9 @@ NSString *const jTotalCount = @"total_count";
 - (void)setTop:(BOOL)isTop time:(long long)time conversation:(JConversation *)conversation {
     NSString *sql;
     sql = jSetTop;
+    if (!isTop) {
+        time = 0;
+    }
     sql = [sql stringByAppendingString:jWhereConversationIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(time), @(conversation.conversationType), conversation.conversationId]];
 }
