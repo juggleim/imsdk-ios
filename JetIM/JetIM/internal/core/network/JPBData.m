@@ -250,6 +250,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (NSData *)recallMessageData:(NSString *)messageId
+                       extras:(NSDictionary *)extras
                  conversation:(JConversation *)conversation
                     timestamp:(long long)msgTime
                         index:(int)index {
@@ -258,6 +259,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
     req.msgTime = msgTime;
+    NSMutableArray * extsArray = [NSMutableArray array];
+    for (NSString * key in extras) {
+        KvItem * item = [[KvItem alloc] init];
+        item.key = key;
+        item.value = extras[key];
+        [extsArray addObject:item];
+    }
+    req.extsArray = extsArray;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;

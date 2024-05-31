@@ -8,6 +8,7 @@
 #define jRecallCmdType @"jg:recall"
 #define jRecallMsgTime @"msg_time"
 #define jRecallMsgId @"msg_id"
+#define jRecallExts @"exts"
 
 #import "JRecallCmdMessage.h"
 
@@ -24,6 +25,7 @@
     if ([time isKindOfClass:[NSNumber class]]) {
         self.originalMessageTime = [(NSNumber *)time longLongValue];
     }
+    self.extra = json[jRecallExts];
 }
 
 + (JMessageFlag)flags {

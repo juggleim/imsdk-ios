@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JRecallInfoMessage : JMessageContent
-@property (nonatomic, copy) NSString *extra;
+@property (nonatomic, copy) NSDictionary *extra;
 @end
 
 NS_ASSUME_NONNULL_END

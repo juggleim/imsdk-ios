@@ -17,14 +17,14 @@
 }
 
 -(NSData *)encode{
-    NSDictionary * dic = @{jRecallExtra:self.extra?:@""};
+    NSDictionary * dic = @{jRecallExtra:self.extra?:@{}};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
 
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    self.extra = json[jRecallExtra]?:@"";
+    self.extra = json[jRecallExtra]?:@{};
 }
 
 @end

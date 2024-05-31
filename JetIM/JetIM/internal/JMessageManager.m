@@ -218,6 +218,7 @@
 }
 
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
     NSArray *arr = [self getMessagesByMessageIds:@[messageId]];
@@ -232,6 +233,7 @@
             return;
         }
         [self.core.webSocket recallMessage:messageId
+                                    extras:extras
                               conversation:m.conversation
                                  timestamp:m.timestamp
                                    success:^(long long timestamp) {

@@ -144,6 +144,7 @@
 
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
