@@ -8,11 +8,15 @@
 #import "JHeartBeatManager.h"
 #import "JLogger.h"
 
-#define kPingInterval 30
+#define jPingInterval 30
+#define jDetectInterval 10
+#define jTimeOutInterval (jPingInterval*3)
 
 @interface JHeartBeatManager ()
-@property (nonatomic, strong) JetIMCore *core;
+@property (nonatomic, weak) JWebSocket *ws;
 @property (nonatomic, strong) NSTimer *pingTimer;
+@property (nonatomic, strong) NSTimer *detectTimer;
+@property (nonatomic, assign) long long lastMessageReceiveTime;//秒
 @end
 
 @implementation JHeartBeatManager
@@ -21,11 +25,16 @@
     JLogI(@"HB-Start", @"");
     [self stop];
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.pingTimer = [NSTimer scheduledTimerWithTimeInterval:kPingInterval
+        self.pingTimer = [NSTimer scheduledTimerWithTimeInterval:jPingInterval
                                                           target:self
                                                         selector:@selector(sendPing)
                                                         userInfo:nil
                                                          repeats:YES];
+        self.detectTimer = [NSTimer scheduledTimerWithTimeInterval:jDetectInterval
+                                                            target:self
+                                                          selector:@selector(detect)
+                                                          userInfo:nil
+                                                           repeats:YES];
     });
 }
 
@@ -36,19 +45,43 @@
             [self.pingTimer invalidate];
             self.pingTimer = nil;
         }
+        if (self.detectTimer) {
+            [self.detectTimer invalidate];
+            self.detectTimer = nil;
+        }
+        self.lastMessageReceiveTime = 0;
     });
 }
 
-- (instancetype)initWithCore:(JetIMCore *)core {
+- (void)updateLastMessageReceiveTime {
+    self.lastMessageReceiveTime = [[NSDate date] timeIntervalSince1970];
+}
+
+- (instancetype)initWithWebSocket:(JWebSocket *)ws {
     if (self = [super init]) {
-        self.core = core;
+        self.ws = ws;
     }
     return self;
 }
 
 #pragma mark - internal
 - (void)sendPing {
-    [self.core.webSocket sendPing];
+    [self.ws sendPing];
+}
+
+//run in main queue
+- (void)detect {
+    long long now = [[NSDate date] timeIntervalSince1970];
+    if (now - self.lastMessageReceiveTime >= jTimeOutInterval) {
+        JLogE(@"HB-TimeOut", @"");
+        [self notifyTimeOut];
+    }
+}
+
+//run in main queue
+- (void)notifyTimeOut {
+    [self stop];
+    [self.ws heartbeatTimeOut];
 }
 
 @end

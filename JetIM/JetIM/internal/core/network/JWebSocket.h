@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
                      extra:(NSString *)extra;
 - (void)webSocketDidFail;
 - (void)webSocketDidClose;
+- (void)webSocketDidTimeOut;
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>
@@ -39,7 +40,15 @@ NS_ASSUME_NONNULL_BEGIN
           token:(NSString *)token
       pushToken:(NSString *)pushToken
         servers:(NSArray *)servers;
+
 - (void)disconnect:(BOOL)needPush;
+
+- (void)startHeartbeat;
+
+- (void)stopHeartbeat;
+
+- (void)heartbeatTimeOut;
+
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;

@@ -7,7 +7,6 @@
 
 #import "JConnectionManager.h"
 #import "JWebSocket.h"
-#import "JHeartBeatManager.h"
 #import "JNaviTask.h"
 #import "JetIMConstInternal.h"
 #import <UIKit/UIKit.h>
@@ -17,7 +16,6 @@
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, strong) JConversationManager *conversationManager;
 @property (nonatomic, strong) JMessageManager *messageManager;
-@property (nonatomic, strong) JHeartBeatManager *heartBeatManager;
 @property (nonatomic, weak) id<JConnectionDelegate> delegate;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
@@ -37,8 +35,6 @@
         self.core = core;
         self.conversationManager = conversationManager;
         self.messageManager = messageManager;
-        JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
-        self.heartBeatManager = heartBeatManager;
         self.bgTask = UIBackgroundTaskInvalid;
         [self addObserver];
     }
@@ -154,17 +150,15 @@
 }
 
 - (void)webSocketDidFail {
-    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
+    [self handleWebSocketFail];
 }
 
 - (void)webSocketDidClose {
-    dispatch_async(self.core.sendQueue, ^{
-        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected
-            || self.core.connectionStatus == JConnectionStatusInternalFailure) {
-            return;
-        }
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
-    });
+    [self handleWebSocketFail];
+}
+
+- (void)webSocketDidTimeOut {
+    [self handleWebSocketFail];
 }
 
 #pragma mark -- internal
@@ -182,10 +176,10 @@
         }
         if (status == JConnectionStatusInternalConnected && self.core.connectionStatus != JConnectionStatusInternalConnected) {
             [[JLogger shared] removeExpiredLogs];
-            [self.heartBeatManager start];
+            [self.core.webSocket startHeartbeat];
         }
         if (self.core.connectionStatus == JConnectionStatusInternalConnected && status != JConnectionStatusInternalConnected) {
-            [self.heartBeatManager stop];
+            [self.core.webSocket stopHeartbeat];
         }
         JConnectionStatus outStatus = JConnectionStatusIdle;
         switch (status) {
@@ -281,6 +275,16 @@
     if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
         [self connectWithToken:self.core.token];
     }
+}
+
+- (void)handleWebSocketFail {
+    dispatch_async(self.core.sendQueue, ^{
+        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected
+            || self.core.connectionStatus == JConnectionStatusInternalFailure) {
+            return;
+        }
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
+    });
 }
 
 - (BOOL)checkConnectionFailure:(JErrorCodeInternal)code {

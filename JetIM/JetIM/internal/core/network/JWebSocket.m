@@ -11,6 +11,7 @@
 #import "JetIMConstInternal.h"
 #import "JPBData.h"
 #import "JLogger.h"
+#import "JHeartBeatManager.h"
 
 #define jWebSocketPrefix @"ws://"
 #define jWebSocketSuffix @"/im"
@@ -87,12 +88,14 @@
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
 @property (nonatomic, assign) BOOL isCompeteFinish;
 @property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
+@property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @end
 
 @implementation JWebSocket
 
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue receiveQueue:(dispatch_queue_t)receiveQueue {
     if (self = [super init]) {
+        self.heartbeatManager = [[JHeartBeatManager alloc] initWithWebSocket:self];
         self.sendQueue = sendQueue;
         self.receiveQueue = receiveQueue;
         self.pbData = [[JPBData alloc] init];
@@ -132,6 +135,18 @@
         JLogI(@"WS-Disconnect", @"need push is %d", needPush);
         [self sendDisconnectMsgByWebSocket:needPush];
     });
+}
+
+- (void)startHeartbeat {
+    [self.heartbeatManager start];
+}
+
+- (void)stopHeartbeat {
+    [self.heartbeatManager stop];
+}
+
+- (void)heartbeatTimeOut {
+    [self.connectDelegate webSocketDidTimeOut];
 }
 
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate {
@@ -592,6 +607,7 @@ inConversation:(JConversation *)conversation
     if (webSocket != self.sws) {
         return;
     }
+    [self.heartbeatManager updateLastMessageReceiveTime];
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
     switch (obj.rcvType) {
         case JPBRcvTypeParseError:
