@@ -15,7 +15,7 @@
 @implementation JRecallCmdMessage
 
 + (NSString *)contentType {
-    return jRecallCmdType;
+    return jRecallCmdType; 
 }
 
 - (void)decode:(NSData *)data{
