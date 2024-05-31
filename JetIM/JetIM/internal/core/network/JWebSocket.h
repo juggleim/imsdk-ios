@@ -64,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
               success:(void (^)(long long timestamp))successBlock

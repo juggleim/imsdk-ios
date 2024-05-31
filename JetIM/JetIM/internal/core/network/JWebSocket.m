@@ -199,6 +199,7 @@
 }
 
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
               success:(void (^)(long long timestamp))successBlock
@@ -206,6 +207,7 @@
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData recallMessageData:messageId
+                                            extras:extras
                                       conversation:conversation
                                          timestamp:timestamp
                                              index:self.cmdIndex++];

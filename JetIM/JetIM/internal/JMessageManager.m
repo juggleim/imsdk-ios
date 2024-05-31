@@ -218,6 +218,7 @@
 }
 
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
     NSArray *arr = [self getMessagesByMessageIds:@[messageId]];
@@ -232,6 +233,7 @@
             return;
         }
         [self.core.webSocket recallMessage:messageId
+                                    extras:extras
                               conversation:m.conversation
                                  timestamp:m.timestamp
                                    success:^(long long timestamp) {
@@ -243,6 +245,7 @@
             }
             m.contentType = [JRecallInfoMessage contentType];
             JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
+            recallInfoMsg.exts = extras;
             m.content = recallInfoMsg;
             [self.core.dbManager updateMessageContent:recallInfoMsg
                                           contentType:m.contentType
@@ -1022,11 +1025,12 @@
     return arr;
 }
 
-- (JMessage *)handleRecallCmdMessage:(NSString *)messageId {
+- (JMessage *)handleRecallCmdMessage:(NSString *)messageId extra:(NSDictionary *)extra {
     if(messageId == nil){
         return nil;
     }
     JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
+    recallInfoMsg.exts = extra;
     [self.core.dbManager updateMessageContent:recallInfoMsg
                                   contentType:[JRecallInfoMessage contentType]
                                 withMessageId:messageId];
@@ -1100,7 +1104,7 @@
         //recall message
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
-            JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId];
+            JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId extra:cmd.extra];
             //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
             if (recallMessage) {
                 dispatch_async(self.core.delegateQueue, ^{
