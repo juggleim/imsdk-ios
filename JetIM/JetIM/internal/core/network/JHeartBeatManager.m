@@ -49,7 +49,6 @@
             [self.detectTimer invalidate];
             self.detectTimer = nil;
         }
-        self.lastMessageReceiveTime = 0;
     });
 }
 

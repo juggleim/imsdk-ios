@@ -180,6 +180,7 @@
         }
         if (self.core.connectionStatus == JConnectionStatusInternalConnected && status != JConnectionStatusInternalConnected) {
             [self.core.webSocket stopHeartbeat];
+            [self.core.webSocket pushRemainCmdAndCallbackError];
         }
         JConnectionStatus outStatus = JConnectionStatusIdle;
         switch (status) {

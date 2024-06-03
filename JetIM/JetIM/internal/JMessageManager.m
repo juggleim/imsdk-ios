@@ -925,7 +925,7 @@
     if ([message.content isKindOfClass:[JMergeMessage class]]) {
         JMergeMessage *merge = (JMergeMessage *)message.content;
         mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
-    }
+    } 
     
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation

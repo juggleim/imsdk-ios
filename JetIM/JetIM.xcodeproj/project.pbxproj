@@ -229,6 +229,10 @@
 		A09716C62BA0004600D1DB24 /* JUserInfoDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716C42BA0004600D1DB24 /* JUserInfoDB.h */; };
 		A09716C72BA0004600D1DB24 /* JUserInfoDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716C52BA0004600D1DB24 /* JUserInfoDB.m */; };
 		A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */; };
+		A0A702002C09A91B0032D9F1 /* JWebSocketCommandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */; };
+		A0A702042C09AB700032D9F1 /* JBlockObj.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A702022C09AB700032D9F1 /* JBlockObj.h */; };
+		A0A702052C09AB700032D9F1 /* JBlockObj.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A702032C09AB700032D9F1 /* JBlockObj.m */; };
 		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0D3AD292B6973D600D170D7 /* Connect.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */; };
@@ -475,6 +479,10 @@
 		A09716C12B9FFF1F00D1DB24 /* JUserInfoManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfoManager.m; sourceTree = "<group>"; };
 		A09716C42BA0004600D1DB24 /* JUserInfoDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoDB.h; sourceTree = "<group>"; };
 		A09716C52BA0004600D1DB24 /* JUserInfoDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfoDB.m; sourceTree = "<group>"; };
+		A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JWebSocketCommandManager.h; sourceTree = "<group>"; };
+		A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JWebSocketCommandManager.m; sourceTree = "<group>"; };
+		A0A702022C09AB700032D9F1 /* JBlockObj.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JBlockObj.h; sourceTree = "<group>"; };
+		A0A702032C09AB700032D9F1 /* JBlockObj.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JBlockObj.m; sourceTree = "<group>"; };
 		A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVideoMessage.h; sourceTree = "<group>"; };
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
@@ -540,6 +548,12 @@
 				A06A2F082B20B2B6009B9588 /* JPBData.m */,
 				A08AA28C2B1758F1008B114C /* JWebSocket.h */,
 				A08AA28D2B1758F1008B114C /* JWebSocket.m */,
+				A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */,
+				A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */,
+				A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */,
+				A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */,
+				A0A702022C09AB700032D9F1 /* JBlockObj.h */,
+				A0A702032C09AB700032D9F1 /* JBlockObj.m */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -675,8 +689,6 @@
 				A08AA2882B175726008B114C /* JConversationManager.m */,
 				A09716C02B9FFF1F00D1DB24 /* JUserInfoManager.h */,
 				A09716C12B9FFF1F00D1DB24 /* JUserInfoManager.m */,
-				A0F3761D2B3A689E0076CB84 /* JHeartBeatManager.h */,
-				A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */,
 				A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */,
 				A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */,
 				A095798E2B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h */,
@@ -1004,6 +1016,7 @@
 				A08AA4082B19EEDB008B114C /* SRURLUtilities.h in Headers */,
 				A08AA3A22B19CB78008B114C /* GPBSourceContext.pbobjc.h in Headers */,
 				5B4DB6862BFC340700DD18B6 /* JUnDisturbConvMessage.h in Headers */,
+				A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */,
 				A08AA2812B175646008B114C /* JConnectionManager.h in Headers */,
 				A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */,
 				A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */,
@@ -1110,6 +1123,7 @@
 				A08AA3FF2B19EEDB008B114C /* SRRandom.h in Headers */,
 				A08AA38F2B19CB78008B114C /* GPBUtilities.h in Headers */,
 				A05EED632B20826B00809F13 /* JReachability.h in Headers */,
+				A0A702042C09AB700032D9F1 /* JBlockObj.h in Headers */,
 				A09716C22B9FFF1F00D1DB24 /* JUserInfoManager.h in Headers */,
 				A07D0E2E2BFCD0B200B9035B /* JLogFileWriter.h in Headers */,
 				A08AA3722B19CB77008B114C /* GPBRootObject_PackagePrivate.h in Headers */,
@@ -1200,6 +1214,7 @@
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,
 				A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
+				A0A702002C09A91B0032D9F1 /* JWebSocketCommandManager.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
 				5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */,
 				A07F3CB62BFC791E0087920B /* JLogger.m in Sources */,
@@ -1240,6 +1255,7 @@
 				A0D3AD332B6DFD4300D170D7 /* JRecallInfoMessage.m in Sources */,
 				A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,
+				A0A702052C09AB700032D9F1 /* JBlockObj.m in Sources */,
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
 				A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */,

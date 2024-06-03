@@ -12,67 +12,14 @@
 #import "JPBData.h"
 #import "JLogger.h"
 #import "JHeartBeatManager.h"
+#import "JBlockObj.h"
+#import "JWebSocketCommandManager.h"
 
 #define jWebSocketPrefix @"ws://"
 #define jWebSocketSuffix @"/im"
 #define jMaxConcurrentCount 5
 
-@interface JBlockObj : NSObject
-@end
-
-@implementation JBlockObj
-@end
-
-@interface JSendMessageObj : JBlockObj
-@property (nonatomic, assign) long long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode, long long clientMsgNo);
-@end
-
-@implementation JSendMessageObj
-@end
-
-@interface JQryHisMsgsObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull msgs, BOOL isFinished);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@implementation JQryHisMsgsObj
-@end
-
-@interface JSyncConvsObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray * _Nonnull convs, NSArray * _Nonnull deletedConvs, BOOL isFinished);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@implementation JSyncConvsObj
-@end
-
-@interface JTimestampBlockObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(long long timestamp);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@implementation JTimestampBlockObj
-@end
-
-@interface JQryReadDetailObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@implementation JQryReadDetailObj
-@end
-
-@interface JSimpleBlockObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(void);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@implementation JSimpleBlockObj
-@end
-
-@interface JWebSocket () <SRWebSocketDelegate>
+@interface JWebSocket () <SRWebSocketDelegate, JCommandTimeOutDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, copy) NSString *appKey;
@@ -83,12 +30,12 @@
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
 @property (nonatomic, assign) int32_t cmdIndex;
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockObj *> *cmdBlockDic;
 @property (nonatomic, strong) JPBData *pbData;
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
 @property (nonatomic, assign) BOOL isCompeteFinish;
 @property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
+@property (nonatomic, strong) JWebSocketCommandManager *commandManager;
 @end
 
 @implementation JWebSocket
@@ -98,8 +45,9 @@
         self.heartbeatManager = [[JHeartBeatManager alloc] initWithWebSocket:self];
         self.sendQueue = sendQueue;
         self.receiveQueue = receiveQueue;
+        self.commandManager = [[JWebSocketCommandManager alloc] initWithDelegate:self];
+        [self.commandManager start];
         self.pbData = [[JPBData alloc] init];
-        self.cmdBlockDic = [[NSMutableDictionary alloc] init];
         NSOperationQueue *competeQueue = [[NSOperationQueue alloc] init];
         competeQueue.maxConcurrentOperationCount = jMaxConcurrentCount;
         self.competeQueue = competeQueue;
@@ -149,6 +97,13 @@
     [self.connectDelegate webSocketDidTimeOut];
 }
 
+- (void)pushRemainCmdAndCallbackError {
+    NSArray <JBlockObj *> *objs = [self.commandManager clearBlockObject];
+    for (JBlockObj *obj in objs) {
+        [self command:obj error:JErrorCodeInternalConnectionUnavailable];
+    }
+}
+
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate {
     _connectDelegate = delegate;
 }
@@ -193,7 +148,7 @@
             obj.clientMsgNo = clientMsgNo;
             obj.successBlock = successBlock;
             obj.errorBlock = errorBlock;
-            [self setBlockObject:obj forKey:key];
+            [self.commandManager setBlockObject:obj forKey:key];
         }
     });
 }
@@ -669,7 +624,37 @@ inConversation:(JConversation *)conversation
     }
 }
 
+#pragma mark - JCommandTimeOutDelegate
+- (void)commandDidTimeOut:(NSArray<JBlockObj *> *)objs {
+    for (JBlockObj *obj in objs) {
+        [self command:obj error:JErrorCodeInternalOperationTimeOut];
+    }
+}
+
 #pragma mark - inner
+- (void)command:(JBlockObj *)obj
+          error:(JErrorCodeInternal)code {
+    if ([obj isKindOfClass:[JSendMessageObj class]]) {
+        JSendMessageObj *s = (JSendMessageObj *)obj;
+        s.errorBlock(code, s.clientMsgNo);
+    } else if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
+        JQryHisMsgsObj *s = (JQryHisMsgsObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JSyncConvsObj class]]) {
+        JSyncConvsObj *s = (JSyncConvsObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
+        JTimestampBlockObj *s = (JTimestampBlockObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
+        JQryReadDetailObj *s = (JQryReadDetailObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
+        JSimpleBlockObj *s = (JSimpleBlockObj *)obj;
+        s.errorBlock(code);
+    }
+}
+
 - (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
     NSData *d = [self.pbData connectDataWithAppKey:self.appKey
                                              token:self.token
@@ -710,7 +695,7 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
         JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;
         if (ack.code != 0) {
@@ -719,11 +704,10 @@ inConversation:(JConversation *)conversation
             sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo);
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleQryHisMsgs:(JQryHisMsgsAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
         JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
         if (ack.code != 0) {
@@ -732,11 +716,10 @@ inConversation:(JConversation *)conversation
             qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleSyncConvsAck:(JSyncConvsAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSyncConvsObj class]]) {
         JSyncConvsObj *syncConvsObj = (JSyncConvsObj *)obj;
         if (ack.code != 0) {
@@ -745,7 +728,6 @@ inConversation:(JConversation *)conversation
             syncConvsObj.successBlock(ack.convs, ack.deletedConvs, ack.isFinished);
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 //sync 和 queryHisMsgs 共用一个 ack
@@ -776,7 +758,6 @@ inConversation:(JConversation *)conversation
 - (void)handleDisconnectMsg:(JDisconnectMsg *)msg {
     dispatch_async(self.sendQueue, ^{
         [self resetSws];
-        //TODO: 处理 cmdBlockDic
         if ([self.connectDelegate respondsToSelector:@selector(disconnectWithCode:extra:)]) {
             [self.connectDelegate disconnectWithCode:msg.code extra:msg.extra];
         }
@@ -784,7 +765,7 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleSimpleAck:(JSimpleQryAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *simpleObj = (JSimpleBlockObj *)obj;
         if (ack.code != 0) {
@@ -793,11 +774,10 @@ inConversation:(JConversation *)conversation
             simpleObj.successBlock();
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleSimpleQryAckWithTimeCallback:(JSimpleQryAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
         JTimestampBlockObj *simpleObj = (JTimestampBlockObj *)obj;
         if (ack.code != 0) {
@@ -806,11 +786,10 @@ inConversation:(JConversation *)conversation
             simpleObj.successBlock(ack.timestamp);
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)handleQryReadDetailAck:(JQryReadDetailAck *)ack {
-    JBlockObj *obj = [self.cmdBlockDic objectForKey:@(ack.index)];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
         JQryReadDetailObj *qryReadDetailObj = (JQryReadDetailObj *)obj;
         if (ack.code != 0) {
@@ -819,7 +798,6 @@ inConversation:(JConversation *)conversation
             qryReadDetailObj.successBlock(ack.readMembers, ack.unreadMembers);
         }
     }
-    [self removeBlockObjectForKey:@(ack.index)];
 }
 
 - (void)simpleSendData:(NSData *)data
@@ -860,21 +838,8 @@ inConversation:(JConversation *)conversation
             errorBlock(JErrorCodeInternalWebSocketFailure);
         }
     } else {
-        [self setBlockObject:obj forKey:key];
+        [self.commandManager setBlockObject:obj forKey:key];
     }
-}
-
-- (void)setBlockObject:(JBlockObj *)obj
-               forKey:(NSNumber *)index {
-    dispatch_async(self.receiveQueue, ^{
-        [self.cmdBlockDic setObject:obj forKey:index];
-    });
-}
-
-- (void)removeBlockObjectForKey:(NSNumber *)index {
-    dispatch_async(self.receiveQueue, ^{
-        [self.cmdBlockDic removeObjectForKey:index];
-    });
 }
 
 - (SRWebSocket *)createWebSocket:(NSString *)url {

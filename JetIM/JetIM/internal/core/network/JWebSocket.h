@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)heartbeatTimeOut;
 
+- (void)pushRemainCmdAndCallbackError;
+
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
