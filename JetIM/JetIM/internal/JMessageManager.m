@@ -935,6 +935,7 @@
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
+        JLogI(@"MSG-Send", @"success");
         if (self.syncProcessing) {
             self.cachedSendTime = timestamp;
         } else {
@@ -959,6 +960,7 @@
             }
         });
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
+        JLogI(@"MSG-Send", @"error, code is %lu", errorCode);
         message.messageState = JMessageStateFail;
         [self.core.dbManager messageSendFail:clientMsgNo];
         dispatch_async(self.core.delegateQueue, ^{
