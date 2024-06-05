@@ -86,3 +86,13 @@ typedef NS_ENUM(NSUInteger, JNetworkStatus) {
      */
     JNetworkStatusReachableViaWWAN = 2,
 };
+
+typedef NS_ENUM(NSUInteger, JLogLevel) {
+    JLogLevelNone = 0,
+    JLogLevelFatal = 1,
+    JLogLevelError = 2,
+    JLogLevelWarning = 3,
+    JLogLevelInfo = 4,
+    JLogLevelDebug = 5,
+    JLogLevelVerbose = 6
+};

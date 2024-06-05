@@ -26,7 +26,8 @@ static JLogger *_instance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _instance = [[self alloc] init];
-        _instance.logLevel = JLogLevelVerbose;
+        _instance.fileLogLevel = JLogLevelInfo;
+        _instance.consoleLogLevel = JLogLevelNone;
         _instance.logQueue = dispatch_queue_create(jLogQueue, NULL);
         _instance.uploadQueue = dispatch_queue_create(jUploadQueue, NULL);
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -54,25 +55,24 @@ static JLogger *_instance;
 }
 
 - (void)write:(JLogLevel)level tag:(NSString *)tag keys:(NSString *)keys, ... NS_FORMAT_FUNCTION(3, 4) {
-    if (level > self.logLevel) {
-        return;
-    }
-    
     va_list args;
     va_start(args, keys);
     __block NSString *logStr = (keys != nil ? [[NSString alloc] initWithFormat:keys arguments:args] : @"");
     va_end(args);
-#ifdef DEBUG
+
     //控制台
-    NSLog(@"[Juggle:%@]%@", tag, logStr);
-#endif
-    
+    if (level <= self.consoleLogLevel) {
+        NSLog(@"[Juggle:%@]%@", tag, logStr);
+    }
+
     //写文件
-    dispatch_async(self.logQueue, ^{
-        NSDate *date = [NSDate date];
-        NSString *time = [self.dateFormatter stringFromDate:date];
-        logStr = [NSString stringWithFormat:@"%@ [%@] %@\n", time, tag, logStr];
-        [self.fileWriter write:logStr date:date];
-    });
+    if (level <= self.fileLogLevel) {
+        dispatch_async(self.logQueue, ^{
+            NSDate *date = [NSDate date];
+            NSString *time = [self.dateFormatter stringFromDate:date];
+            logStr = [NSString stringWithFormat:@"%@ [%@] %@\n", time, tag, logStr];
+            [self.fileWriter write:logStr date:date];
+        });
+    }
 }
 @end

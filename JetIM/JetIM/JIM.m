@@ -42,6 +42,7 @@ static JIM *_instance;
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
+    JLogI(@"J-Init", @"appKey is %@", appKey);
     if ([self.core.appKey isEqualToString:appKey]) {
         return;
     }
@@ -49,7 +50,6 @@ static JIM *_instance;
     self.core.appKey = appKey;
     self.core.userId = @"";
     self.core.token = @"";
-    JLogI(@"J-Init", @"appKey is %@", appKey);
 }
 
 - (void)setDelegateQueue:(dispatch_queue_t)delegateQueue {
@@ -58,6 +58,10 @@ static JIM *_instance;
 
 - (void)setServer:(NSArray<NSString *> *)serverUrls {
     [self.core setNaviUrls:serverUrls];
+}
+
+- (void)setConsoleLogLevel:(JLogLevel)level {
+    JLogger.shared.consoleLogLevel = level;
 }
 
 - (NSString *)currentUserId {

@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JetIMConst.h"
 #import "JetIMConstInternal.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,19 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 #define JLogD(t, k, ...) [[JLogger shared] write:JLogLevelDebug tag:t keys:k, ##__VA_ARGS__]
 #define JLogV(t, k, ...) [[JLogger shared] write:JLogLevelVerbose tag:t keys:k, ##__VA_ARGS__]
 
-typedef NS_ENUM(NSUInteger, JLogLevel) {
-    JLogLevelNone = 0,
-    JLogLevelFatal = 1,
-    JLogLevelError = 2,
-    JLogLevelWarning = 3,
-    JLogLevelInfo = 4,
-    JLogLevelDebug = 5,
-    JLogLevelVerbose = 6
-};
-
 @interface JLogger : NSObject
 
-@property (nonatomic, assign) JLogLevel logLevel;
+@property (nonatomic, assign) JLogLevel fileLogLevel;
+@property (nonatomic, assign) JLogLevel consoleLogLevel;
 
 + (instancetype)shared;
 

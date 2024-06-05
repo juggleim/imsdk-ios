@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setServer:(NSArray <NSString *> *)serverUrls;
 
+/// 设置控制台日志输出等级
+/// @param level 日志等级
+- (void)setConsoleLogLevel:(JLogLevel)level;
+
 /// 连接管理类
 @property(nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类
