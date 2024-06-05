@@ -9,6 +9,8 @@
 #define JNaviURL @"http://120.48.178.248:8083"
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
+#define jNaviAppKey @"x-appkey"
+#define jNaviToken @"x-token"
 
 #define JThumbnailWidth 240
 #define JThumbnailHeight 240

@@ -7,13 +7,12 @@
 
 #import "JLogger.h"
 #import "JLogFileWriter.h"
+#import "JLogUploader.h"
 
 #define jLogQueue "com.JetIM.im.logqueue"
-#define jUploadQueue "com.JetIM.im.logqueue"
 
 @interface JLogger ()
 @property (nonatomic, strong) dispatch_queue_t logQueue;
-@property (nonatomic, strong) dispatch_queue_t uploadQueue;
 @property (nonatomic, strong) JLogFileWriter *fileWriter;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @end
@@ -29,7 +28,6 @@ static JLogger *_instance;
         _instance.fileLogLevel = JLogLevelInfo;
         _instance.consoleLogLevel = JLogLevelNone;
         _instance.logQueue = dispatch_queue_create(jLogQueue, NULL);
-        _instance.uploadQueue = dispatch_queue_create(jUploadQueue, NULL);
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
         _instance.dateFormatter = formatter;
@@ -40,12 +38,21 @@ static JLogger *_instance;
 
 - (void)uploadLog:(long long)startTime
           endTime:(long long)endTime
-       completion:(void (^)(JErrorCodeInternal))completeBlock {
-    NSString *fileName = [self.fileWriter generateZipFile:startTime endTime:endTime];
-    if (fileName.length == 0) {
-        completeBlock(JErrorCodeInternalLogNotExist);
-    }
-    //TODO: uploader
+           appKey:(nonnull NSString *)appKey
+            token:(nonnull NSString *)token {
+    dispatch_async(self.logQueue, ^{
+        NSString *fileName = [self.fileWriter generateZipFile:startTime endTime:endTime];
+        if (fileName.length == 0) {
+            JLogE(@"J-Logger", @"zip fail");
+            return;
+        }
+        JLogUploader *uploader = [[JLogUploader alloc] init];
+        [uploader upload:fileName appKey:appKey token:token complete:^() {
+            dispatch_async(self.logQueue, ^{
+                [self.fileWriter removeZipFile:fileName];
+            });
+        }];
+    });
 }
 
 - (void)removeExpiredLogs {

@@ -233,6 +233,8 @@
 		A0A702002C09A91B0032D9F1 /* JWebSocketCommandManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */; };
 		A0A702042C09AB700032D9F1 /* JBlockObj.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A702022C09AB700032D9F1 /* JBlockObj.h */; };
 		A0A702052C09AB700032D9F1 /* JBlockObj.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A702032C09AB700032D9F1 /* JBlockObj.m */; };
+		A0AF4A2A2C1065B000D97694 /* JLogUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AF4A282C1065B000D97694 /* JLogUploader.h */; };
+		A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF4A292C1065B000D97694 /* JLogUploader.m */; };
 		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0D3AD292B6973D600D170D7 /* Connect.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */; };
@@ -483,6 +485,8 @@
 		A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JWebSocketCommandManager.m; sourceTree = "<group>"; };
 		A0A702022C09AB700032D9F1 /* JBlockObj.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JBlockObj.h; sourceTree = "<group>"; };
 		A0A702032C09AB700032D9F1 /* JBlockObj.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JBlockObj.m; sourceTree = "<group>"; };
+		A0AF4A282C1065B000D97694 /* JLogUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLogUploader.h; sourceTree = "<group>"; };
+		A0AF4A292C1065B000D97694 /* JLogUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLogUploader.m; sourceTree = "<group>"; };
 		A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVideoMessage.h; sourceTree = "<group>"; };
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
@@ -525,6 +529,8 @@
 				A07F3CB42BFC791E0087920B /* JLogger.m */,
 				A07D0E2C2BFCD0B200B9035B /* JLogFileWriter.h */,
 				A07D0E2D2BFCD0B200B9035B /* JLogFileWriter.m */,
+				A0AF4A282C1065B000D97694 /* JLogUploader.h */,
+				A0AF4A292C1065B000D97694 /* JLogUploader.m */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1103,6 +1109,7 @@
 				A08AA3A62B19CB78008B114C /* GPBUnknownField_PackagePrivate.h in Headers */,
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
 				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
+				A0AF4A2A2C1065B000D97694 /* JLogUploader.h in Headers */,
 				A08AA25B2B14C4C0008B114C /* JetIMConst.h in Headers */,
 				A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */,
 				A08AA3972B19CB78008B114C /* GPBProtocolBuffers_RuntimeSupport.h in Headers */,
@@ -1279,6 +1286,7 @@
 				A08AA3812B19CB78008B114C /* GPBApi.pbobjc.m in Sources */,
 				A07D0E2F2BFCD0B200B9035B /* JLogFileWriter.m in Sources */,
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,
+				A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */,
 				A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */,
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
 				A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */,

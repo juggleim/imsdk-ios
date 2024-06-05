@@ -10,8 +10,6 @@
 
 #define jMaxConcurrentCount 5
 #define jNaviServerSuffix @"/navigator/general"
-#define jNaviAppKey @"x-appkey"
-#define jNaviToken @"x-token"
 #define jNaviData @"data"
 #define jNaviUserId @"user_id"
 #define jNaviServers @"servers"

@@ -7,7 +7,6 @@
 
 #import <Foundation/Foundation.h>
 #import "JetIMConst.h"
-#import "JetIMConstInternal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -25,10 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shared;
 
-//startTime 和 endTime 只接受整点的时间戳，如果 startTime 是 4:01，则只能拉到 5 点之后的日志
 - (void)uploadLog:(long long)startTime
           endTime:(long long)endTime
-       completion:(void (^)(JErrorCodeInternal code))completeBlock;
+           appKey:(NSString *)appKey
+            token:(NSString *)token;
 
 - (void)removeExpiredLogs;
 

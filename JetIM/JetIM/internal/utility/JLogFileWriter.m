@@ -8,6 +8,7 @@
 #import "JLogFileWriter.h"
 #import "JUtility.h"
 #import <zlib.h>
+#import "JLogger.h"
 
 #define jLogFolder @"jlog"
 #define jLogFileFormate @"yyyyMMddHH"
@@ -19,6 +20,7 @@
 @property (nonatomic, copy) NSString *cachedTimeString;
 @property (nonatomic, strong) NSFileHandle *cachedFileHandle;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
+@property (nonatomic, assign) int zipIndex;
 @end
 
 //本身不控制线程，但是 write 方法是在单独的线程中运行
@@ -39,13 +41,16 @@
     }
     NSString *gzipFile = @"";
     if (resultFiles.count > 0) {
-        gzipFile = [NSString stringWithFormat:@"%lld.gzip", startTime];
+        long long now = [[NSDate date] timeIntervalSince1970];
+        gzipFile = [NSString stringWithFormat:@"%lld-%lld-%d.gzip", startTime, now, self.zipIndex++];
         gzipFile = [self.logFolder stringByAppendingPathComponent:gzipFile];
         if ([[NSFileManager defaultManager] fileExistsAtPath:gzipFile]) {
             [[NSFileManager defaultManager] removeItemAtPath:gzipFile error:nil];
         }
         [[NSFileManager defaultManager] createFileAtPath:gzipFile contents:nil attributes:nil];
         [self createGzipArchiveFromFiles:resultFiles outputPath:gzipFile];
+    } else {
+        JLogI(@"J-Logger", @"no log file between %lld and %lld", startTime, endTime);
     }
     return gzipFile;
 }
@@ -63,6 +68,10 @@
             [[NSFileManager defaultManager] removeItemAtPath:fullPath error:&err];
         }
     }
+}
+
+- (void)removeZipFile:(NSString *)fileName {
+    [[NSFileManager defaultManager] removeItemAtPath:fileName error:nil];
 }
 
 - (void)write:(NSString *)log

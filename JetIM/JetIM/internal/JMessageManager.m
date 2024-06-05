@@ -23,6 +23,7 @@
 #import "JClearUnreadMessage.h"
 #import "JDeleteMsgMessage.h"
 #import "JCleanMsgMessage.h"
+#import "JLogCommandMessage.h"
 #import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -49,25 +50,7 @@
     if (self = [super init]) {
         self.core = core;
         [self.core.webSocket setMessageDelegate:self];
-        [self registerContentType:[JTextMessage class]];
-        [self registerContentType:[JImageMessage class]];
-        [self registerContentType:[JFileMessage class]];
-        [self registerContentType:[JVoiceMessage class]];
-        [self registerContentType:[JVideoMessage class]];
-        [self registerContentType:[JRecallCmdMessage class]];
-        [self registerContentType:[JRecallInfoMessage class]];
-        [self registerContentType:[JDeleteConvMessage class]];
-        [self registerContentType:[JReadNtfMessage class]];
-        [self registerContentType:[JGroupReadNtfMessage class]];
-        [self registerContentType:[JMergeMessage class]];
-        [self registerContentType:[JThumbnailPackedImageMessage class]];
-        [self registerContentType:[JSnapshotPackedVideoMessage class]];
-        [self registerContentType:[JUnDisturbConvMessage class]];
-        [self registerContentType:[JTopConvMessage class]];
-        [self registerContentType:[JClearUnreadMessage class]];
-        [self registerContentType:[JDeleteMsgMessage class]];
-        [self registerContentType:[JCleanMsgMessage class]];
-        
+        [self registerMessages];
         self.cachedSendTime = -1;
         self.cachedReceiveTime = -1;
     }
@@ -850,6 +833,28 @@
 }
 
 #pragma mark - internal
+- (void)registerMessages {
+    [self registerContentType:[JTextMessage class]];
+    [self registerContentType:[JImageMessage class]];
+    [self registerContentType:[JFileMessage class]];
+    [self registerContentType:[JVoiceMessage class]];
+    [self registerContentType:[JVideoMessage class]];
+    [self registerContentType:[JRecallCmdMessage class]];
+    [self registerContentType:[JRecallInfoMessage class]];
+    [self registerContentType:[JDeleteConvMessage class]];
+    [self registerContentType:[JReadNtfMessage class]];
+    [self registerContentType:[JGroupReadNtfMessage class]];
+    [self registerContentType:[JMergeMessage class]];
+    [self registerContentType:[JThumbnailPackedImageMessage class]];
+    [self registerContentType:[JSnapshotPackedVideoMessage class]];
+    [self registerContentType:[JUnDisturbConvMessage class]];
+    [self registerContentType:[JTopConvMessage class]];
+    [self registerContentType:[JClearUnreadMessage class]];
+    [self registerContentType:[JDeleteMsgMessage class]];
+    [self registerContentType:[JCleanMsgMessage class]];
+    [self registerContentType:[JLogCommandMessage class]];
+}
+
 - (void)loopBroadcastMessage:(JMessageContent *)content
              inConversations:(NSArray<JConversation *> *)conversations
                 processCount:(int)processCount
@@ -1086,6 +1091,15 @@
 #warning TODO 通知会话更新
 }
 
+- (void)handleLogCommandMessage:(JConcreteMessage *)message {
+    JLogCommandMessage *content = (JLogCommandMessage *)message.content;
+    
+    [JLogger.shared uploadLog:content.startTime
+                      endTime:content.endTime
+                       appKey:self.core.appKey
+                        token:self.core.token];
+}
+
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
@@ -1174,6 +1188,12 @@
         //clear Msg
         if ([obj.contentType isEqualToString:[JCleanMsgMessage contentType]]) {
             [self handleClearHistoryMessageCmdMessage:obj];
+            return;
+        }
+        
+        //log command
+        if ([obj.contentType isEqualToString:[JLogCommandMessage contentType]]) {
+            [self handleLogCommandMessage:obj];
             return;
         }
         
