@@ -482,7 +482,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSMutableArray *arr = [NSMutableArray arrayWithObject:item];
     
     UndisturbConversReq *req = [[UndisturbConversReq alloc] init];
-    req.userId = userId;
     req.itemsArray = arr;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -982,9 +981,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
-    if (conversation.hasLatestMentionMsg) {
-        info.hasMentioned = YES;
-    }
     return info;
 }
 
