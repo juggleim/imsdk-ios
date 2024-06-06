@@ -59,7 +59,7 @@ NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
-NSString *const jAndInConversation = @"AND conversation_id = ?";
+NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 

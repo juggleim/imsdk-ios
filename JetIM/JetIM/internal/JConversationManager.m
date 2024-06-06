@@ -287,18 +287,25 @@
     _syncDelegate = delegate;
 }
 
-- (void)clearTotalUnreadCount {
-    [self.core.dbManager clearTotalUnreadCount];
-    [self.core.dbManager clearMentionstatus];
-    [self noticeTotalUnreadCountChange];
+- (void)clearTotalUnreadCountSuccess:(void (^)(void))successBlock
+                               error:(void (^)(JErrorCode code))errorBlock;{
     long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
-    
+    __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearTotalUnreadCount:self.core.userId
                                           time:time
                                        success:^{
         JLogI(@"CONV-ClearTotal", @"success");
+        [weakSelf.core.dbManager clearTotalUnreadCount];
+        [weakSelf.core.dbManager clearMentionstatus];
+        [weakSelf noticeTotalUnreadCountChange];
+        if(successBlock){
+            successBlock();
+        }
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-ClearTotal", @"error code is %lu", code);
+        if(errorBlock){
+            errorBlock((JErrorCode)code);
+        }
     }];
     
 }

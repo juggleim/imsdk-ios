@@ -71,7 +71,7 @@ NSString *const jSetMention = @"UPDATE conversation_info SET has_mentioned = ? W
 NSString *const jClearMentionStatus = @"UPDATE conversation_info SET has_mentioned = 0";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jClearTotalUnreadCount = @"UPDTAE conversation_info SET last_read_message_index = last_message_index";
+NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
 NSString *const jDraft = @"draft";
