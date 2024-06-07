@@ -14,9 +14,15 @@
 #define jNaviUserId @"user_id"
 #define jNaviServers @"servers"
 
+typedef NS_ENUM(NSUInteger, JTaskStatus) {
+    JTaskStatusIdle,
+    JTaskStatusFailure,
+    JTaskStatusSuccess
+};
+
 @interface JNaviTask ()
 @property (nonatomic, strong) NSOperationQueue *requestQueue;
-@property (nonatomic, strong) NSArray<NSString *> *urls;
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *>*requestDic;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) void (^successBlock)(NSString * _Nonnull, NSArray<NSString *> * _Nonnull);
@@ -25,14 +31,20 @@
 @end
 
 @implementation JNaviTask
-
 + (instancetype)taskWithUrls:(NSArray<NSString *> *)urls
                       appKey:(NSString *)appKey
                        token:(NSString *)token
                      success:(void (^)(NSString * _Nonnull, NSArray<NSString *> * _Nonnull))success
                      failure:(void (^)(JErrorCodeInternal))failure {
     JNaviTask *task = [[JNaviTask alloc] init];
-    task.urls = urls;
+    if (urls.count > jMaxConcurrentCount) {
+        urls = [urls subarrayWithRange:NSMakeRange(0, jMaxConcurrentCount)];
+    }
+    NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+    for (NSString *url in urls) {
+        [dic setObject:@(JTaskStatusIdle) forKey:url];
+    }
+    task.requestDic = dic;
     task.appKey = appKey;
     task.token = token;
     task.successBlock = success;
@@ -45,8 +57,12 @@
 }
 
 - (void)start {
-    JLogI(@"NAV-Start", @"");
-    for (NSString *url in self.urls) {
+    JLogI(@"NAV-Start", @"urls is %@", self.requestDic.allKeys);
+    if (self.requestDic.count == 0 && self.errorBlock) {
+        self.errorBlock(JErrorCodeInternalServerSetError);
+        return;
+    }
+    for (NSString *url in self.requestDic.allKeys) {
         NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self
                                                                                 selector:@selector(requestNavi:)
                                                                                   object:url];
@@ -63,60 +79,79 @@
     [request setValue:self.token forHTTPHeaderField:jNaviToken];
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request
                                                                  completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        @synchronized (self) {
-            if (self.isFinish) {
-                JLogI(@"NAV-Request", @"compete fail, url is %@", url);
+        if (error) {
+            JLogE(@"NAV-Request", @"error description is %@, url is %@", error.localizedDescription, url);
+            [self responseError:JErrorCodeInternalNaviFailure url:url];
+            return;
+        }
+        NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
+        if (statusCode != 200) {
+            JLogE(@"NAV-Request", @"error http code is %ld", (long)statusCode);
+            if (statusCode == 401) {
+                [self responseError:JErrorCodeInternalTokenIllegal url:url];
+            } else {
+                [self responseError:JErrorCodeInternalNaviFailure url:url];
+            }
+            return;
+        }
+        NSError *e = nil;
+        NSDictionary *responseDic = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&e];
+        if (e) {
+            JLogE(@"NAV-Request", @"json error description is %@", e.localizedDescription);
+            [self responseError:JErrorCodeInternalNaviFailure url:url];
+            return;
+        }
+        if (responseDic) {
+            NSDictionary *dataDic = responseDic[jNaviData];
+            if (dataDic) {
+                NSString *userId = dataDic[jNaviUserId]?:@"";
+                NSArray *servers = dataDic[jNaviServers];
+                [self responseSuccess:url userId:userId servers:servers];
                 return;
-            }
-            self.isFinish = YES;
-            if (error) {
-                JLogE(@"NAV-Request", @"error description is %@", error.localizedDescription);
-                if (self.errorBlock) {
-                    self.errorBlock(JErrorCodeInternalNaviFailure);
-                }
-                return;
-            }
-            JLogI(@"NAV-Request", @"compete success, url is %@", url);
-            NSInteger statusCode = ((NSHTTPURLResponse *)response).statusCode;
-            if (statusCode != 200) {
-                JLogE(@"NAV-Request", @"error http code is %ld", (long)statusCode);
-                if (self.errorBlock) {
-                    if (statusCode == 401) {
-                        self.errorBlock(JErrorCodeInternalTokenIllegal);
-                    } else {
-                        self.errorBlock(JErrorCodeInternalNaviFailure);
-                    }
-                }
-                return;
-            }
-            NSError *e = nil;
-            NSDictionary *responseDic = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&e];
-            if (e) {
-                JLogE(@"NAV-Request", @"json error description is %@", e.localizedDescription);
-                if (self.errorBlock) {
-                    self.errorBlock(JErrorCodeInternalNaviFailure);
-                }
-                return;
-            }
-            if (responseDic) {
-                NSDictionary *dataDic = responseDic[jNaviData];
-                if (dataDic) {
-                    NSString *userId = dataDic[jNaviUserId]?:@"";
-                    NSArray *servers = dataDic[jNaviServers];
-                    if (self.successBlock) {
-                        self.successBlock(userId, servers);
-                        return;
-                    }
-                }
-            }
-            JLogE(@"NAV-Request", @"unknown error");
-            if (self.errorBlock) {
-                self.errorBlock(JErrorCodeInternalNaviFailure);
             }
         }
+        JLogE(@"NAV-Request", @"unknown error");
+        [self responseError:JErrorCodeInternalNaviFailure url:url];
     }];
     
     [task resume];
+}
+
+- (void)responseError:(JErrorCodeInternal)code
+                  url:(NSString *)url {
+    BOOL allFailed = YES;
+    @synchronized (self) {
+        if (self.isFinish) {
+            return;
+        }
+        [self.requestDic setObject:@(JTaskStatusFailure) forKey:url];
+        for (NSNumber *status in self.requestDic.allValues) {
+            if (status.intValue != JTaskStatusFailure) {
+                allFailed = NO;
+                break;
+            }
+        }
+    }
+    if (allFailed && self.errorBlock) {
+        self.errorBlock(code);
+    }
+}
+
+- (void)responseSuccess:(NSString *)url
+                 userId:(NSString *)userId
+                servers:(NSArray<NSString *> *)servers {
+    @synchronized (self) {
+        if (self.isFinish) {
+            JLogI(@"NAV-Request", @"compete fail, url is %@", url);
+            return;
+        }
+        self.isFinish = YES;
+        [self.requestDic setObject:@(JTaskStatusSuccess) forKey:url];
+    }
+    JLogI(@"NAV-Request", @"compete success url is %@", url);
+    if (self.successBlock) {
+        self.successBlock(userId, servers);
+    }
 }
 
 @end
