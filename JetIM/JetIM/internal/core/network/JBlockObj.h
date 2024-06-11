@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JetIMConstInternal.h"
 #import "JUserInfo.h"
+#import "JConcreteConversationInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -42,6 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JSimpleBlockObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(void);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JConversationObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(JConcreteConversationInfo *conversationInfo);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

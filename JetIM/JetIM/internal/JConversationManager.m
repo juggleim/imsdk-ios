@@ -279,14 +279,6 @@
     }];
 }
 
-- (void)setDelegate:(id<JConversationDelegate>)delegate {
-    _delegate = delegate;
-}
-
-- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
-    _syncDelegate = delegate;
-}
-
 - (void)clearTotalUnreadCount {
     [self.core.dbManager clearTotalUnreadCount];
     [self.core.dbManager clearMentionstatus];
@@ -301,6 +293,49 @@
         JLogE(@"CONV-ClearTotal", @"error code is %lu", code);
     }];
     
+}
+
+- (void)createConversationInfo:(JConversation *)conversation
+                       success:(void (^)(JConversationInfo *))successBlock
+                         error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket createConversationInfo:conversation
+                                         userId:self.core.userId
+                                        success:^(JConcreteConversationInfo * _Nonnull conversationInfo) {
+        JLogI(@"CONV-Create", @"success");
+        [self updateSyncTime:conversationInfo.syncTime];
+        JConcreteConversationInfo *old = [self.core.dbManager getConversationInfo:conversation];
+        if (old) {
+            if (conversationInfo.sortTime > old.sortTime) {
+                [self.core.dbManager updateTime:conversationInfo.sortTime forConversation:conversation];
+                old.sortTime = conversationInfo.sortTime;
+                old.syncTime = conversationInfo.syncTime;
+            }
+            conversationInfo = old;
+        } else {
+            [self.core.dbManager insertConversations:@[conversationInfo] completion:nil];
+        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(conversationInfo);
+            }
+        });
+        
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-Create", @"error code is %lu", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
+}
+
+- (void)setDelegate:(id<JConversationDelegate>)delegate {
+    _delegate = delegate;
+}
+
+- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
+    _syncDelegate = delegate;
 }
 
 #pragma mark - JMessageSendReceiveDelegate

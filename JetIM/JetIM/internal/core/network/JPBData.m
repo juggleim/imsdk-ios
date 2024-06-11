@@ -55,6 +55,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jClearTotalUnread @"clear_total_unread"
 #define jDelMsg @"del_msg"
 #define jCleanHismsg @"clean_hismsg"
+#define jAddConver @"add_conver"
 
 
 #define jApns @"Apns"
@@ -77,6 +78,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JQryReadDetailAck
+@end
+
+@implementation JConversationInfoAck
 @end
 
 @implementation JSimpleQryAck
@@ -696,6 +700,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)createConversationInfo:(JConversation *)conversation
+                            userId:(NSString *)userId
+                             index:(int)index {
+    Conversation *c = [[Conversation alloc] init];
+    c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    c.targetId = conversation.conversationId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jAddConver;
+    body.targetId = userId;
+    body.data_p = [c data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
@@ -787,6 +810,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     
                 case JPBRcvTypeConversationSetTopAck:
                     obj = [self conversationSetTopAckWithImWebsocketMsg:msg];
+                    break;
+                    
+                case JPBRcvTypeAddConversation:
+                    obj = [self addConversationWithImWebsocketMsg:msg];
                     break;
                     
                 default:
@@ -1101,6 +1128,23 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)addConversationWithImWebsocketMsg:(ImWebsocketMsg *)msg {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    Conversation *pbConv = [[Conversation alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"add conversation error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeAddConversation;
+    JConversationInfoAck *a = [[JConversationInfoAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.conversationInfo = [self conversationWithPBConversation:pbConv];
+    obj.conversationInfoAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryReadDetailAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -1206,7 +1250,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jClearTotalUnread:@(JPBRcvTypeSimpleQryAck),
              jDelMsg:@(JPBRcvTypeSimpleQryAck),
-             jCleanHismsg:@(JPBRcvTypeSimpleQryAck)
+             jCleanHismsg:@(JPBRcvTypeSimpleQryAck),
+             jAddConver:@(JPBRcvTypeAddConversation)
     };
 }
 @end

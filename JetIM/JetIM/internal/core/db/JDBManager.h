@@ -58,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
       conversation:(JConversation *)conversation;
 - (void)clearMentionstatus;
 - (void)clearTotalUnreadCount;
+- (void)updateTime:(long long)time
+   forConversation:(JConversation *)conversation;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;

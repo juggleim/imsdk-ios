@@ -11,6 +11,7 @@
 #import "JMessageContent.h"
 #import "JConversation.h"
 #import "JConcreteMessage.h"
+#import "JConcreteConversationInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -126,6 +127,11 @@ inConversation:(JConversation *)conversation
         userId:(NSString *)userId
        success:(void (^)(long long timestamp))successBlock
          error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)createConversationInfo:(JConversation *)conversation
+                        userId:(NSString *)userId
+                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
