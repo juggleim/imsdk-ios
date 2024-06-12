@@ -51,6 +51,8 @@
 		A07F3CB62BFC791E0087920B /* JLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = A07F3CB42BFC791E0087920B /* JLogger.m */; };
 		A07F3CB92BFC928E0087920B /* JLogCommandMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A07F3CB72BFC928E0087920B /* JLogCommandMessage.h */; };
 		A07F3CBA2BFC928E0087920B /* JLogCommandMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */; };
+		A0834F772C19B67B0074AE93 /* JAddConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0834F752C19B67B0074AE93 /* JAddConvMessage.h */; };
+		A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0834F762C19B67B0074AE93 /* JAddConvMessage.m */; };
 		A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
 		A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */; };
@@ -301,6 +303,8 @@
 		A07F3CB42BFC791E0087920B /* JLogger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLogger.m; sourceTree = "<group>"; };
 		A07F3CB72BFC928E0087920B /* JLogCommandMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLogCommandMessage.h; sourceTree = "<group>"; };
 		A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLogCommandMessage.m; sourceTree = "<group>"; };
+		A0834F752C19B67B0074AE93 /* JAddConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JAddConvMessage.h; sourceTree = "<group>"; };
+		A0834F762C19B67B0074AE93 /* JAddConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JAddConvMessage.m; sourceTree = "<group>"; };
 		A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeMessage.h; sourceTree = "<group>"; };
 		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
 		A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushtoken.pbobjc.h; sourceTree = "<group>"; };
@@ -985,6 +989,8 @@
 				5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */,
 				A07F3CB72BFC928E0087920B /* JLogCommandMessage.h */,
 				A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */,
+				A0834F752C19B67B0074AE93 /* JAddConvMessage.h */,
+				A0834F762C19B67B0074AE93 /* JAddConvMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1067,6 +1073,7 @@
 				A08AA3952B19CB78008B114C /* GPBEmpty.pbobjc.h in Headers */,
 				A08AA2892B175726008B114C /* JConversationManager.h in Headers */,
 				A08AA2502B14AF1F008B114C /* JMessage.h in Headers */,
+				A0834F772C19B67B0074AE93 /* JAddConvMessage.h in Headers */,
 				A06CF0F62B96080B00B5CD89 /* JReadNtfMessage.h in Headers */,
 				A08AA38D2B19CB78008B114C /* GPBRuntimeTypes.h in Headers */,
 				A08AA4042B19EEDB008B114C /* SRMutex.h in Headers */,
@@ -1208,6 +1215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,
 				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,

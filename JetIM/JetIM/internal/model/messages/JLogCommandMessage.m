@@ -17,7 +17,7 @@
     return jLogCommandType;
 }
 
-- (void)decode:(NSData *)data{
+- (void)decode:(NSData *)data {
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     
     id startTime = json[jLogStartTime];
