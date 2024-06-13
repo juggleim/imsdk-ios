@@ -20,7 +20,6 @@ public protocol SBUBaseChannelViewModelDataSource: AnyObject {
     /// - Returns:
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        isScrollNearBottomInChannel channel: BaseChannel?
     ) -> Bool
 }
 
@@ -29,15 +28,13 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     /// Called when the the channel has been changed.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didChangeChannel channel: BaseChannel?,
-        withContext context: MessageContext
     )
     
     /// Called when the channel has received a new message.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didReceiveNewMessage message: BaseMessage,
-        forChannel channel: BaseChannel
+        didReceiveNewMessage message: JMessage,
+        forChannel channel: JConversationInfo
     )
     
     /// Called when the channel should finish editing mode

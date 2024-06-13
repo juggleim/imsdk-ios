@@ -7,9 +7,10 @@
 //
 
 import UIKit
+import JetIM
 
 @objcMembers
-open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, SBUGroupChannelListModuleHeaderDelegate, SBUGroupChannelListModuleListDelegate, SBUGroupChannelListModuleListDataSource, SBUCreateChannelTypeSelectorDelegate, SBUCommonViewModelDelegate, SBUGroupChannelListViewModelDelegate {
+open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, SBUGroupChannelListModuleHeaderDelegate, SBUGroupChannelListModuleListDelegate, SBUGroupChannelListModuleListDataSource, SBUCommonViewModelDelegate, SBUGroupChannelListViewModelDelegate {
     
     // MARK: - UI Properties (Public)
     public var headerComponent: SBUGroupChannelListModule.Header? {
@@ -27,13 +28,6 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     /// The default view type is ``SBUCreateChannelTypeSelector``.
     public lazy var createChannelTypeSelector: UIView? = nil
     
-    // MARK: - UI properties (Private)
-    private lazy var defaultCreateChannelTypeSelector: SBUCreateChannelTypeSelector = {
-        let view = SBUCreateChannelTypeSelector(delegate: self)
-        view.isHidden = true
-        return view
-    }()
-    
     // MARK: - Logic properties (Public)
     public var viewModel: SBUGroupChannelListViewModel? {
         get { self.baseViewModel as? SBUGroupChannelListViewModel }
@@ -41,7 +35,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     }
     
     /// This object has a list of all channels.
-    public var channelList: [GroupChannel] { self.viewModel?.channelList ?? [] }
+    public var channelList: [JConversationInfo] { self.viewModel?.channelList ?? [] }
     
     /// This is a property that allows you to show the channel type selector when creating a channel. (default: `true`)
     /// - Since: 3.0.0
@@ -346,38 +340,6 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         channelsInTableView tableView: UITableView
     ) -> [BaseChannel]? {
         return self.channelList
-    }
-    
-    // MARK: - SBUCreateChannelTypeSelectorDelegate
-    open func didSelectCloseSelector() {
-        if let typeSelector = self.createChannelTypeSelector
-            as? SBUCreateChannelTypeSelectorProtocol {
-            typeSelector.dismiss()
-        }
-    }
-    
-    open func didSelectCreateGroupChannel() {
-        if let typeSelector = self.createChannelTypeSelector
-            as? SBUCreateChannelTypeSelectorProtocol {
-            typeSelector.dismiss()
-        }
-        self.showCreateChannel(type: .group)
-    }
-    
-    open func didSelectCreateSuperGroupChannel() {
-        if let typeSelector = self.createChannelTypeSelector
-            as? SBUCreateChannelTypeSelectorProtocol {
-            typeSelector.dismiss()
-        }
-        self.showCreateChannel(type: .supergroup)
-    }
-    
-    open func didSelectCreateBroadcastChannel() {
-        if let typeSelector = self.createChannelTypeSelector
-            as? SBUCreateChannelTypeSelectorProtocol {
-            typeSelector.dismiss()
-        }
-        self.showCreateChannel(type: .broadcast)
     }
     
     // MARK: - SBUCommonViewModelDelegate

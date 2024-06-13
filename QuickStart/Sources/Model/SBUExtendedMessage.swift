@@ -38,7 +38,6 @@ struct SBUExtendedMessagePayload {
     /// - Since: 3.16.0
     public func getDisabledChatInputState(hasNext: Bool?) -> Bool {
         if hasNext == true { return false }
-        if SendbirdUI.config.groupChannel.channel.isSuggestedRepliesEnabled == false { return false }
         if (self.suggestedReplies ?? []).isEmpty == true { return false }
         return self.disableChatInput ?? false
     }

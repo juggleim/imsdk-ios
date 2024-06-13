@@ -41,11 +41,6 @@ public class SBUScrollPostionConfiguration {
 
 extension SBUScrollPostionConfiguration {
     static func getConfiguration(with channel: JConversationInfo?) -> SBUScrollPostionConfiguration.BaseChannel {
-        switch channel {
-        case is SendbirdChatSDK.GroupChannel: return SBUGlobals.scrollPostionConfiguration.groupChannel
-        case is SendbirdChatSDK.OpenChannel: return SBUGlobals.scrollPostionConfiguration.openChannel
-        case is SendbirdChatSDK.FeedChannel: return SBUGlobals.scrollPostionConfiguration.feedChannel
-        default: return SBUGlobals.scrollPostionConfiguration.groupChannel
-        }
+        return SBUGlobals.scrollPostionConfiguration.groupChannel
     }
 }

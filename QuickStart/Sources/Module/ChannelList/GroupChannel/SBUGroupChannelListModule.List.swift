@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 /// Event methods for the views updates and performing actions from the list component in the group channel list.
 public protocol SBUGroupChannelListModuleListDelegate: SBUBaseChannelListModuleListDelegate {
@@ -14,13 +15,7 @@ public protocol SBUGroupChannelListModuleListDelegate: SBUBaseChannelListModuleL
     /// - Parameters:
     ///    - listComponent: `SBUGroupChannelListModule.List` object.
     ///    - channel: The channel that was selected.
-    func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didSelectLeave channel: GroupChannel)
-    
-    /// Called when selected alarm button in the swipped cell.
-    /// - Parameters:
-    ///    - listComponent: `SBUGroupChannelListModule.List` object.
-    ///    - channel: The channel that was selected.
-    func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didChangePushTriggerOption option: GroupChannelPushTriggerOption, channel: GroupChannel)
+    func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didSelectLeave channel: JConversationInfo)
 }
 
 /// Methods to get data source for the list component in the group channel list.
@@ -50,8 +45,8 @@ extension SBUGroupChannelListModule {
         }
         
         /// The current channel list object from `baseChannelListModule(_:channelsInTableView:)` data source method.
-        public var channelList: [GroupChannel]? {
-            self.baseChannelList as? [GroupChannel]
+        public var channelList: [JConversationInfo]? {
+            self.baseChannelList as? [JConversationInfo]
         }
 
         // MARK: - LifeCycle
@@ -145,60 +140,60 @@ extension SBUGroupChannelListModule {
             return leaveAction
         }
         
-        /// Creates alarm contextual action for a particular swipped cell.
-        /// - Parameter indexPath: An index path representing the `channelCell`
-        /// - Returns: `UIContextualAction` object.
-        public func alarmContextualAction(with indexPath: IndexPath) -> UIContextualAction? {
-            guard let channel = self.channelList?[indexPath.row] else { return nil }
-            
-            let size = tableView.visibleCells[0].frame.height
-            let itemSize: CGFloat = 40.0
-            
-            let pushOption = channel.myPushTriggerOption
-            let alarmAction = UIContextualAction(
-                style: .normal,
-                title: ""
-            ) { [weak self] _, _, actionHandler in
-                guard let self = self else { return }
-                self.delegate?.groupChannelListModule(
-                    self,
-                    didChangePushTriggerOption: (pushOption == .off ? .all : .off),
-                    channel: channel
-                )
-                actionHandler(true)
-            }
-            
-            let alarmTypeView = UIImageView(
-                frame: CGRect(
-                    x: (size-itemSize)/2,
-                    y: (size-itemSize)/2,
-                    width: itemSize,
-                    height: itemSize
-                ))
-            let alarmIcon: UIImage
-            
-            if pushOption == .off {
-                alarmTypeView.backgroundColor = self.theme?.notificationOnBackgroundColor
-                alarmIcon = SBUIconSetType.iconNotificationFilled.image(
-                    with: self.theme?.notificationOnTintColor,
-                    to: SBUIconSetType.Metric.defaultIconSize
-                )
-            } else {
-                alarmTypeView.backgroundColor = self.theme?.notificationOffBackgroundColor
-                alarmIcon = SBUIconSetType.iconNotificationOffFilled.image(
-                    with: self.theme?.notificationOffTintColor,
-                    to: SBUIconSetType.Metric.defaultIconSize
-                )
-            }
-            alarmTypeView.image = alarmIcon
-            alarmTypeView.contentMode = .center
-            alarmTypeView.layer.cornerRadius = itemSize/2
-            
-            alarmAction.image = alarmTypeView.asImage()
-            alarmAction.backgroundColor = self.theme?.alertBackgroundColor
-            
-            return alarmAction
-        }
+//        /// Creates alarm contextual action for a particular swipped cell.
+//        /// - Parameter indexPath: An index path representing the `channelCell`
+//        /// - Returns: `UIContextualAction` object.
+//        public func alarmContextualAction(with indexPath: IndexPath) -> UIContextualAction? {
+//            guard let channel = self.channelList?[indexPath.row] else { return nil }
+//
+//            let size = tableView.visibleCells[0].frame.height
+//            let itemSize: CGFloat = 40.0
+//
+//            let pushOption = channel.myPushTriggerOption
+//            let alarmAction = UIContextualAction(
+//                style: .normal,
+//                title: ""
+//            ) { [weak self] _, _, actionHandler in
+//                guard let self = self else { return }
+//                self.delegate?.groupChannelListModule(
+//                    self,
+//                    didChangePushTriggerOption: (pushOption == .off ? .all : .off),
+//                    channel: channel
+//                )
+//                actionHandler(true)
+//            }
+//
+//            let alarmTypeView = UIImageView(
+//                frame: CGRect(
+//                    x: (size-itemSize)/2,
+//                    y: (size-itemSize)/2,
+//                    width: itemSize,
+//                    height: itemSize
+//                ))
+//            let alarmIcon: UIImage
+//
+//            if pushOption == .off {
+//                alarmTypeView.backgroundColor = self.theme?.notificationOnBackgroundColor
+//                alarmIcon = SBUIconSetType.iconNotificationFilled.image(
+//                    with: self.theme?.notificationOnTintColor,
+//                    to: SBUIconSetType.Metric.defaultIconSize
+//                )
+//            } else {
+//                alarmTypeView.backgroundColor = self.theme?.notificationOffBackgroundColor
+//                alarmIcon = SBUIconSetType.iconNotificationOffFilled.image(
+//                    with: self.theme?.notificationOffTintColor,
+//                    to: SBUIconSetType.Metric.defaultIconSize
+//                )
+//            }
+//            alarmTypeView.image = alarmIcon
+//            alarmTypeView.contentMode = .center
+//            alarmTypeView.layer.cornerRadius = itemSize/2
+//
+//            alarmAction.image = alarmTypeView.asImage()
+//            alarmAction.backgroundColor = self.theme?.alertBackgroundColor
+//
+//            return alarmAction
+//        }
     }
 }
 
@@ -216,11 +211,11 @@ extension SBUGroupChannelListModule.List {
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-        guard indexPath.row < self.channelList?.count ?? 0 else {
-            let error = SBError(domain: "The index is out of range.", code: -1, userInfo: nil)
-            self.delegate?.didReceiveError(error, isBlocker: false)
-            return UITableViewCell()
-        }
+//        guard indexPath.row < self.channelList?.count ?? 0 else {
+//            let error = SBError(domain: "The index is out of range.", code: -1, userInfo: nil)
+//            self.delegate?.didReceiveError(error, isBlocker: false)
+//            return UITableViewCell()
+//        }
         
         var cell: SBUBaseChannelCell?
         if let channelCell = self.channelCell {
@@ -269,18 +264,18 @@ extension SBUGroupChannelListModule.List {
         if self.channelList?.count ?? 0 > indexPath.row,
            let channelList = channelList {
             let channel = channelList[indexPath.row]
-            if channel.isChatNotification {
-                return nil
-            }
+//            if channel.isChatNotification {
+//                return nil
+//            }
         }
         
         var actions: [UIContextualAction] = []
         if let leaveAction = leaveContextualAction(with: indexPath) {
             actions.append(leaveAction)
         }
-        if let alarmAction = alarmContextualAction(with: indexPath) {
-            actions.append(alarmAction)
-        }
+//        if let alarmAction = alarmContextualAction(with: indexPath) {
+//            actions.append(alarmAction)
+//        }
         
         return UISwipeActionsConfiguration(actions: actions)
     }

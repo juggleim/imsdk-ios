@@ -7,17 +7,18 @@
 //
 
 import UIKit
+import JetIM
 
 open class SBUBaseChannelCell: SBUTableViewCell {
 
     // MARK: - Public property
-    public private(set) var channel: BaseChannel?
+    public private(set) var channel: JConversationInfo?
 
     // MARK: - View Lifecycle
  
     /// This function configure a cell using channel information.
     /// - Parameter channel: cell object
-    open func configure(channel: BaseChannel) {
+    open func configure(channel: JConversationInfo) {
         self.channel = channel
     }
     

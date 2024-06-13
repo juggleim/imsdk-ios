@@ -16,7 +16,7 @@ public class SBUCommonViewControllerSet {
     /// SBUCommonViewControllerSet.FileViewController = MyAppFileViewController.self
     /// ```
     /// - Since: 3.5.2
-    public static var FileViewController: SBUFileViewController.Type = SBUFileViewController.self
+//    public static var FileViewController: SBUFileViewController.Type = SBUFileViewController.self
     
     // TODO:
     static var MenuSheetViewController: SBUMenuSheetViewController.Type = SBUMenuSheetViewController.self

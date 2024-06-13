@@ -216,9 +216,5 @@ extension GlobalSetCustomManager {
     static func setDefaultModuleSet() {
         SBUModuleSet.GroupChannelListModule.HeaderComponent = SBUGroupChannelListModule.Header.self
         SBUModuleSet.GroupChannelListModule.ListComponent = SBUGroupChannelListModule.List.self
-        
-        SBUModuleSet.GroupChannelModule.HeaderComponent = SBUGroupChannelModule.Header.self
-        SBUModuleSet.GroupChannelModule.ListComponent = SBUGroupChannelModule.List.self
-        SBUModuleSet.GroupChannelModule.InputComponent = SBUGroupChannelModule.Input.self
     }
 }

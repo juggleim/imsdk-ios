@@ -198,13 +198,11 @@ open class SBUChannelInfoHeaderView: SBUView {
         guard let channel = self.channel else { return }
         
         if channel.conversation.conversationType == .private {
-            if let portrait = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId) {
-                self.coverImage.setImage(withCoverURL: portrait)
-            }
+            let portrait = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId).portrait
+            self.coverImage.setImage(withCoverURL: portrait)
         } else if channel.conversation.conversationType == .group {
-            if let portrait = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId) {
-                self.coverImage.setImage(withCoverURL: portrait)
-            }
+            let portrait = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId).portrait
+            self.coverImage.setImage(withCoverURL: portrait)
         }
     }
     

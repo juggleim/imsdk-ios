@@ -286,7 +286,7 @@ extension UIImageView {
     ///   - user: The user for whom the profile image view is being set.
     ///   - defaultImage: The default image to be used if the user does not have a profile image.
     public func sbu_setProfileImageView(for user: JUserInfo, defaultImage: UIImage) {
-        guard URL(string: ImageUtil.transformUserProfileImage(user: JUserInfo)) != nil else {
+        guard URL(string: ImageUtil.transformUserProfileImage(user: user)) != nil else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.image = defaultImage
@@ -304,7 +304,7 @@ extension UIImageView {
 
 class ImageUtil {
     static func transformUserProfileImage(user: JUserInfo) -> String {
-        guard let profileURL = user.portrait else { return "" }
+        let profileURL = user.portrait
 
         if profileURL.hasPrefix("https://sendbird.com/main/img/profiles") {
             return ""

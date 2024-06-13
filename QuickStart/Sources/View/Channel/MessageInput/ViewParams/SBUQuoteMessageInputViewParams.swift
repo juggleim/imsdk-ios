@@ -65,24 +65,24 @@ public class SBUQuoteMessageInputViewParams {
         }
         
         let type = SBUUtils.getFileType(by: fileMessage.type)
-        if type == .audio,
-           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
-           let internalType = metaArray.first?.value.first {
-            return SBUUtils.getFileType(by: internalType)
-        }
+//        if type == .audio,
+//           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
+//           let internalType = metaArray.first?.value.first {
+//            return SBUUtils.getFileType(by: internalType)
+//        }
 
         return type
     }
     
     /// The original file name of `message`.
     /// - Since: 2.2.0
-    public var originalFileNAme: String? { (message as? JFileMessage)?.name }
+    public var originalFileNAme: String? { (message.content as? JFileMessage)?.name }
     
     /// Initializes a new instance of the class with the provided message.
     /// 
     /// - Parameter message: The `BaseMessage` instance that the new instance is based on.
     public init(message: JMessage) {
         self.message = message
-        self.quotedMessageNickname = SBUUser(user: message.sender!).refinedNickname()
+        self.quotedMessageNickname = JIM.shared().userInfoManager.getUserInfo(message.senderUserId).userName
     }
 }
