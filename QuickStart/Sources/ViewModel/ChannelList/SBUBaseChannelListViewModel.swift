@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import JetIM
 
 public protocol SBUBaseChannelListViewModelDelegate: SBUCommonViewModelDelegate {}
 
@@ -29,18 +29,10 @@ open class SBUBaseChannelListViewModel: NSObject {
         self.baseDelegate = delegate
         
         super.init()
-        
-        SendbirdChat.addConnectionDelegate(
-            self,
-            identifier: "\(SBUConstant.connectionDelegateIdentifier).\(self.description)"
-        )
     }
     
     deinit {
         self.reset()
-        SendbirdChat.removeConnectionDelegate(
-            forIdentifier: "\(SBUConstant.connectionDelegateIdentifier).\(self.description)"
-        )
     }
     
     // MARK: - List handling
@@ -48,16 +40,7 @@ open class SBUBaseChannelListViewModel: NSObject {
     /// This function initialize the channel list. the channel list will reset.
     public func initChannelList() {
         SBULog.info("[Request] Next channel List")
-        SendbirdUI.connectIfNeeded { [weak self] _, error in
-            if let error = error {
-                self?.baseDelegate?.didReceiveError(error, isBlocker: true)
-                return
-            }
-            
-            self?.baseDelegate?.connectionStateDidChange(true)
-            
-            self?.loadNextChannelList(reset: true)
-        }
+        loadNextChannelList(reset: true)
     }
     
     /// This function loads the channel list. If the reset value is `true`, the channel list will reset.
@@ -81,20 +64,5 @@ open class SBUBaseChannelListViewModel: NSObject {
         self.isLoading = loadingState
         
         self.baseDelegate?.shouldUpdateLoadingState(showIndicator)
-    }
-}
-
-// MARK: ConnectionDelegate
-extension SBUBaseChannelListViewModel: ConnectionDelegate {
-    open func didSucceedReconnection() {
-        SBULog.info("Did succeed reconnection")
-        
-        SendbirdUI.updateUserInfo { error in
-            if let error = error {
-                SBULog.error("[Failed] Update user info: \(error.localizedDescription)")
-            }
-        }
-        
-        self.baseDelegate?.connectionStateDidChange(true)
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 /**
  - Note: When you create channel list for open channels, please inherit `SBUBaseChannelListViewController`
@@ -62,6 +63,6 @@ open class SBUBaseChannelListViewController: SBUBaseViewController {
     /// - Parameters:
     ///   - channelURL: channel url for use in channelViewController.
     ///   - messageListParams: If there is a messageListParams set directly for use in Channel, set it up here
-    open func showChannel(channelURL: String) {
+    open func showChannel(channelURL: JConversation) {
     }
 }

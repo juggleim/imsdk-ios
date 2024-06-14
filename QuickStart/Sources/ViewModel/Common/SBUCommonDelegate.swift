@@ -10,5 +10,5 @@ import JetIM
 
 public protocol SBUCommonDelegate: AnyObject {
     // Error
-    func didReceiveError(_ error: JErrorCode?, isBlocker: Bool)
+    func didReceiveError(_ error: JErrorCode, isBlocker: Bool)
 }

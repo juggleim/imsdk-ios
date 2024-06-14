@@ -124,8 +124,8 @@ open class SBUBaseViewController: UIViewController, UINavigationControllerDelega
     /// - Parameters:
     ///   - message: error message
     ///   - code: error code
-    open func errorHandler(_ message: String?, _ code: NSInteger? = nil) {
-        SBULog.error("Did receive error: \(message ?? "")")
+    open func errorHandler(_ code: NSInteger? = nil) {
+        SBULog.error("Did receive error: \(String(describing: code))")
     }
     
     // MARK: - UINavigationControllerDelegate

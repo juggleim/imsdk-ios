@@ -73,10 +73,3 @@ extension SBUConfig.GroupChannel.Setting {
         case isMessageSearchEnabled = "enableMessageSearch"
     }
 }
-
-extension SBUConfig.OpenChannel.Channel {
-    enum CodingKeys: String, CodingKey {
-        case isOGTagEnabled = "enableOgtag"
-        case input
-    }
-}
