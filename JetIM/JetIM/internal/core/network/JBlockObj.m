@@ -27,3 +27,6 @@
 
 @implementation JSimpleBlockObj
 @end
+
+@implementation JConversationObj
+@end

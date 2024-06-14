@@ -63,6 +63,16 @@
 /// - Parameter conversation: 会话标识
 - (void)clearDraftInConversation:(JConversation *)conversation;
 
+
+/// 创建会话信息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)createConversationInfo:(JConversation *)conversation
+                       success:(void (^)(JConversationInfo *))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
 /// 获取消息未读的总数
 - (int)getTotalUnreadCount;
 

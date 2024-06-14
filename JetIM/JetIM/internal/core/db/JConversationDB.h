@@ -44,6 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearMentionstatus;
 - (int)getTotalUnreadCount;
 - (void)clearTotalUnreadCount;
+- (void)updateTime:(long long)time
+   forConversation:(JConversation *)conversation;
 @end
 
 NS_ASSUME_NONNULL_END

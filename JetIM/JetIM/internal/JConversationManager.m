@@ -279,14 +279,6 @@
     }];
 }
 
-- (void)setDelegate:(id<JConversationDelegate>)delegate {
-    _delegate = delegate;
-}
-
-- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
-    _syncDelegate = delegate;
-}
-
 - (void)clearTotalUnreadCountSuccess:(void (^)(void))successBlock
                                error:(void (^)(JErrorCode code))errorBlock;{
     long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
@@ -310,6 +302,37 @@
     
 }
 
+- (void)createConversationInfo:(JConversation *)conversation
+                       success:(void (^)(JConversationInfo *))successBlock
+                         error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket createConversationInfo:conversation
+                                         userId:self.core.userId
+                                        success:^(JConcreteConversationInfo * _Nonnull conversationInfo) {
+        JLogI(@"CONV-Create", @"success");
+        JConcreteConversationInfo *info = [self handleConversationAdd:conversationInfo];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(info);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-Create", @"error code is %lu", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
+}
+
+- (void)setDelegate:(id<JConversationDelegate>)delegate {
+    _delegate = delegate;
+}
+
+- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
+    _syncDelegate = delegate;
+}
+
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
     [self addOrUpdateConversationIfNeed:message];
@@ -324,6 +347,10 @@
     [self addOrUpdateConversationIfNeed:message];
     [self updateSyncTime:message.timestamp];
     [self noticeTotalUnreadCountChange];
+}
+
+- (void)conversationsDidAdd:(JConcreteConversationInfo *)conversationInfo {
+    [self handleConversationAdd:conversationInfo];
 }
 
 - (void)conversationsDidDelete:(NSArray<JConversation *> *)conversations {
@@ -402,6 +429,33 @@
 
 
 #pragma mark - internal
+- (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
+    [self updateSyncTime:conversationInfo.syncTime];
+    [self updateUserInfos:@[conversationInfo]];
+    JConcreteConversationInfo *old = [self.core.dbManager getConversationInfo:conversationInfo.conversation];
+    if (old) {
+        if (conversationInfo.sortTime > old.sortTime) {
+            [self.core.dbManager updateTime:conversationInfo.sortTime forConversation:conversationInfo.conversation];
+            old.sortTime = conversationInfo.sortTime;
+            old.syncTime = conversationInfo.syncTime;
+        }
+        conversationInfo = old;
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [self.delegate conversationInfoDidUpdate:@[conversationInfo]];
+            }
+        });
+    } else {
+        [self.core.dbManager insertConversations:@[conversationInfo] completion:nil];
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                [self.delegate conversationInfoDidAdd:@[conversationInfo]];
+            }
+        });
+    }
+    return conversationInfo;
+}
+
 - (void)updateUserInfos:(NSArray <JConcreteConversationInfo *> *)conversations {
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];

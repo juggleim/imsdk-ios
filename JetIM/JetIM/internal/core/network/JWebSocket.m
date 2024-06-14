@@ -489,6 +489,24 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)createConversationInfo:(JConversation *)conversation
+                        userId:(NSString *)userId
+                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData createConversationInfo:conversation userId:userId index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"create conversation, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
+        JConversationObj *obj = [[JConversationObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -618,6 +636,9 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeSimpleQryAckCallbackTimestamp");
             [self handleSimpleQryAckWithTimeCallback:obj.simpleQryAck];
             break;
+        case JPBRcvTypeAddConversation:
+            JLogI(@"WS-Receive", @"JPBRcvTypeAddConversation");
+            [self handleConversationAck:obj.conversationInfoAck];
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -784,6 +805,18 @@ inConversation:(JConversation *)conversation
             simpleObj.errorBlock(ack.code);
         } else {
             simpleObj.successBlock(ack.timestamp);
+        }
+    }
+}
+
+- (void)handleConversationAck:(JConversationInfoAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JConversationObj class]]) {
+        JConversationObj *conversationObj = (JConversationObj *)obj;
+        if (ack.code != 0) {
+            conversationObj.errorBlock(ack.code);
+        } else {
+            conversationObj.successBlock(ack.conversationInfo);
         }
     }
 }

@@ -24,6 +24,7 @@
 #import "JDeleteMsgMessage.h"
 #import "JCleanMsgMessage.h"
 #import "JLogCommandMessage.h"
+#import "JAddConvMessage.h"
 #import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -853,6 +854,7 @@
     [self registerContentType:[JDeleteMsgMessage class]];
     [self registerContentType:[JCleanMsgMessage class]];
     [self registerContentType:[JLogCommandMessage class]];
+    [self registerContentType:[JAddConvMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -930,7 +932,7 @@
     if ([message.content isKindOfClass:[JMergeMessage class]]) {
         JMergeMessage *merge = (JMergeMessage *)message.content;
         mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
-    } 
+    }
     
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation
@@ -1100,6 +1102,13 @@
                         token:self.core.token];
 }
 
+- (void)handleAddConversationMessage:(JConcreteMessage *)message {
+    JAddConvMessage *content = (JAddConvMessage *)message.content;
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidAdd:)]) {
+        [self.sendReceiveDelegate conversationsDidAdd:content.conversationInfo];
+    }
+}
+
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
@@ -1194,6 +1203,12 @@
         //log command
         if ([obj.contentType isEqualToString:[JLogCommandMessage contentType]]) {
             [self handleLogCommandMessage:obj];
+            return;
+        }
+        
+        //add conversation
+        if ([obj.contentType isEqualToString:[JAddConvMessage contentType]]) {
+            [self handleAddConversationMessage:obj];
             return;
         }
         

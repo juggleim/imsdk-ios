@@ -150,6 +150,9 @@
     [self.conversationDb clearTotalUnreadCount];
 }
 
+- (void)updateTime:(long long)time forConversation:(JConversation *)conversation {
+    [self.conversationDb updateTime:time forConversation:conversation];
+}
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {

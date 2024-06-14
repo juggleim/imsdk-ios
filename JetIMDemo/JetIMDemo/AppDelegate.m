@@ -86,7 +86,15 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+            [JIM.shared.conversationManager createConversationInfo:c success:^(JConversationInfo *c) {
+                NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
+                NSLog(@"1");
+            } error:^(JErrorCode code) {
+                NSLog(@"e");
+            }];
+            NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
+            NSLog(@"1");
             
            
 //            [JIM.shared.connectionManager disconnect:NO];

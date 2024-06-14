@@ -29,7 +29,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeQryReadDetailAck,
     JPBRcvTypeSimpleQryAck,
     JPBRcvTypeSimpleQryAckCallbackTimestamp,
-    JPBRcvTypeConversationSetTopAck
+    JPBRcvTypeConversationSetTopAck,
+    JPBRcvTypeAddConversation
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -75,9 +76,13 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *deletedConvs;
 @end
 
-@interface JQryReadDetailAck: JQryAck
+@interface JQryReadDetailAck : JQryAck
 @property (nonatomic, copy) NSArray<JUserInfo *> *readMembers;
 @property (nonatomic, copy) NSArray<JUserInfo *> *unreadMembers;
+@end
+
+@interface JConversationInfoAck : JQryAck
+@property (nonatomic, strong) JConcreteConversationInfo *conversationInfo;
 @end
 
 @interface JSimpleQryAck : JQryAck
@@ -109,6 +114,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
+@property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
 @end
 
 @interface JPBData : NSObject
@@ -222,6 +228,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                            time:(long long)time
                           scope:(int)scope
                           index:(int)index;
+
+- (NSData *)createConversationInfo:(JConversation *)conversation
+                            userId:(NSString *)userId
+                             index:(int)index;
 
 - (NSData *)pingData;
 
