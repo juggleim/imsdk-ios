@@ -280,7 +280,7 @@
 }
 
 - (void)clearTotalUnreadCount:(void (^)(void))successBlock
-                        error:(void (^)(JErrorCode code))errorBlock;{
+                        error:(void (^)(JErrorCode code))errorBlock{
     long long time = MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearTotalUnreadCount:self.core.userId
