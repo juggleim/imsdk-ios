@@ -113,8 +113,8 @@
                                                           direction:(JPullDirection)direction;
 
 /// 清除总未读数
-- (void)clearTotalUnreadCountSuccess:(void (^)(void))successBlock
-                               error:(void (^)(JErrorCode code))errorBlock;
+- (void)clearTotalUnreadCount:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
 
 - (void)setDelegate:(id<JConversationDelegate>)delegate;
 
