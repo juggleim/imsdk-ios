@@ -493,24 +493,36 @@
     }];
 }
 
-- (JMessage *)resend:(JMessage *)messsage
+- (JMessage *)resend:(JMessage *)message
              success:(void (^)(JMessage *))successBlock
                error:(void (^)(JErrorCode, JMessage *))errorBlock {
-    if (messsage.clientMsgNo <= 0
-        || !messsage.content
-        || messsage.conversation.conversationId.length == 0) {
+    if (message.clientMsgNo <= 0
+        || !message.content
+        || message.conversation.conversationId.length == 0
+        || ![message isKindOfClass:[JConcreteMessage class]]) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
-                errorBlock(JErrorCodeInvalidParam, messsage);
+                errorBlock(JErrorCodeInvalidParam, message);
             }
         });
-        return messsage;
+        return message;
     }
-    [self.core.dbManager deleteMessageByClientIds:@[@(messsage.clientMsgNo)]];
-    return [self sendMessage:messsage.content
-              inConversation:messsage.conversation
-                     success:successBlock
-                       error:errorBlock];
+    if (message.clientMsgNo > 0) {
+        if (message.messageState != JMessageStateSending) {
+            message.messageState = JMessageStateSending;
+            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
+        }
+        [self sendWebSocketMessage:(JConcreteMessage *)message
+                       isBroadcast:NO
+                           success:successBlock
+                             error:errorBlock];
+        return message;
+    } else {
+        return [self sendMessage:message.content
+                  inConversation:message.conversation
+                         success:successBlock
+                           error:errorBlock];
+    }
 }
 
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
