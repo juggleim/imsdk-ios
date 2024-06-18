@@ -522,6 +522,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B46308E2C212BC000D77E87 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A05EED642B20827300809F13 /* utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -592,6 +599,7 @@
 			children = (
 				A08AA1E52B148B68008B114C /* JetIM */,
 				A08AA1E42B148B68008B114C /* Products */,
+				5B46308E2C212BC000D77E87 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
