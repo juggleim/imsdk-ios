@@ -27,12 +27,12 @@
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"appkey"];
     [JIM.shared.connectionManager connectWithToken:kToken4];
-    [JIM.shared.connectionManager setDelegate:self];
-    [JIM.shared.messageManager setDelegate:self];
-    [JIM.shared.messageManager setSyncDelegate:self];
-    [JIM.shared.conversationManager setSyncDelegate:self];
-    [JIM.shared.conversationManager setDelegate:self];
-    [JIM.shared.messageManager setReadReceiptDelegate:self];
+    [JIM.shared.connectionManager addDelegate:self];
+    [JIM.shared.messageManager addDelegate:self];
+    [JIM.shared.messageManager addSyncDelegate:self];
+    [JIM.shared.conversationManager addSyncDelegate:self];
+    [JIM.shared.conversationManager addDelegate:self];
+    [JIM.shared.messageManager addReadReceiptDelegate:self];
     [JIM.shared.messageManager setMessageUploadProvider:self];
     
     return YES;

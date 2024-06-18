@@ -29,9 +29,9 @@
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 @property (nonatomic, strong) JetIMCore *core;
-@property (nonatomic, weak) id<JMessageDelegate> delegate;
-@property (nonatomic, weak) id<JMessageSyncDelegate> syncDelegate;
-@property (nonatomic, weak) id<JMessageReadReceiptDelegate> readReceiptDelegate;
+@property (nonatomic, strong) NSHashTable <id<JMessageDelegate>> *delegates;
+@property (nonatomic, strong) NSHashTable <id<JMessageSyncDelegate>> *syncDelegates;
+@property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
 @property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
@@ -58,16 +58,58 @@
     return self;
 }
 
-- (void)setDelegate:(id<JMessageDelegate>)delegate {
-    _delegate = delegate;
+- (void)addDelegate:(id<JMessageDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates addObject:delegate];
+    });
 }
 
-- (void)setSyncDelegate:(id<JMessageSyncDelegate>)syncDelegate {
-    _syncDelegate = syncDelegate;
+- (void)removeDelegate:(id<JMessageDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates removeObject:delegate];
+    });
 }
 
-- (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
-    _readReceiptDelegate = delegate;
+- (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.syncDelegates addObject:delegate];
+    });
+}
+
+- (void)removeSyncDelegate:(id<JMessageSyncDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.syncDelegates removeObject:delegate];
+    });
+}
+
+- (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.readReceiptDelegates addObject:delegate];
+    });
+}
+
+- (void)removeReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.readReceiptDelegates removeObject:delegate];
+    });
 }
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider {
@@ -831,9 +873,11 @@
         }
         
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.syncDelegate respondsToSelector:@selector(messageSyncDidComplete)]) {
-                [self.syncDelegate messageSyncDidComplete];
-            }
+            [self.syncDelegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageSyncDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageSyncDidComplete)]) {
+                    [obj messageSyncDidComplete];
+                }
+            }];
         });
     }
 }
@@ -1079,9 +1123,11 @@
     [self.core.dbManager deleteMessageByMessageIds:messageIds];
 
     dispatch_async(self.core.delegateQueue, ^{
-        if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
-            [self.delegate messageDidDelete:message.conversation clientMsgNos:clientMsgNos];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if([obj respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
+                [obj messageDidDelete:message.conversation clientMsgNos:clientMsgNos];
+            }
+        }];
     });
 #warning TODO 通知会话更新
 }
@@ -1096,11 +1142,13 @@
     
     [self.core.dbManager clearMessagesIn:message.conversation startTime:starTime senderId:content.senderId];
     dispatch_async(self.core.delegateQueue, ^{
-        if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]){
-            [self.delegate messageDidClear:message.conversation
-                                 timestamp:starTime
-                                  senderId:content.senderId];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if([obj respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]){
+                [obj messageDidClear:message.conversation
+                                     timestamp:starTime
+                                      senderId:content.senderId];
+            }
+        }];
     });
 #warning TODO 通知会话更新
 }
@@ -1145,9 +1193,11 @@
             //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
             if (recallMessage) {
                 dispatch_async(self.core.delegateQueue, ^{
-                    if ([self.delegate respondsToSelector:@selector(messageDidRecall:)]) {
-                        [self.delegate messageDidRecall:recallMessage];
-                    }
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageDidRecall:)]) {
+                            [dlg messageDidRecall:recallMessage];
+                        }
+                    }];
                 });
             }
             return;
@@ -1169,10 +1219,12 @@
             JReadNtfMessage *readNtfMsg = (JReadNtfMessage *)obj.content;
             [self.core.dbManager setMessagesRead:readNtfMsg.messageIds];
             dispatch_async(self.core.delegateQueue, ^{
-                if ([self.readReceiptDelegate respondsToSelector:@selector(messagesDidRead:inConversation:)]) {
-                    [self.readReceiptDelegate messagesDidRead:readNtfMsg.messageIds
-                                               inConversation:obj.conversation];
-                }
+                [self.readReceiptDelegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageReadReceiptDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([dlg respondsToSelector:@selector(messagesDidRead:inConversation:)]) {
+                        [dlg messagesDidRead:readNtfMsg.messageIds
+                                                   inConversation:obj.conversation];
+                    }
+                }];
             });
             return;
         }
@@ -1182,10 +1234,12 @@
             JGroupReadNtfMessage *groupReadNtfMsg = (JGroupReadNtfMessage *)obj.content;
             [self.core.dbManager setGroupMessageReadInfo:groupReadNtfMsg.msgs];
             dispatch_async(self.core.delegateQueue, ^{
-                if ([self.readReceiptDelegate respondsToSelector:@selector(groupMessagesDidRead:inConversation:)]) {
-                    [self.readReceiptDelegate groupMessagesDidRead:groupReadNtfMsg.msgs
-                                                    inConversation:obj.conversation];
-                }
+                [self.readReceiptDelegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageReadReceiptDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([dlg respondsToSelector:@selector(groupMessagesDidRead:inConversation:)]) {
+                        [dlg groupMessagesDidRead:groupReadNtfMsg.msgs
+                                                        inConversation:obj.conversation];
+                    }
+                }];
             });
             return;
         }
@@ -1242,9 +1296,11 @@
         }
         
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(messageDidReceive:)]) {
-                [self.delegate messageDidReceive:obj];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
+                    [dlg messageDidReceive:obj];
+                }
+            }];
         });
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
@@ -1292,6 +1348,28 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
+- (NSHashTable<id<JMessageDelegate>> *)delegates {
+    if (!_delegates) {
+        _delegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _delegates;
+}
+
+- (NSHashTable<id<JMessageSyncDelegate>> *)syncDelegates {
+    if (!_syncDelegates) {
+        _syncDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _syncDelegates;
+
+}
+
+- (NSHashTable<id<JMessageReadReceiptDelegate>> *)readReceiptDelegates {
+    if (!_readReceiptDelegates) {
+        _readReceiptDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _readReceiptDelegates;
 }
 
 @end

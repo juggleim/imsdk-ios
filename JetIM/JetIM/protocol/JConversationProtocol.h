@@ -116,8 +116,12 @@
 - (void)clearTotalUnreadCount:(void (^)(void))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-- (void)setDelegate:(id<JConversationDelegate>)delegate;
+- (void)addDelegate:(id<JConversationDelegate>)delegate;
 
-- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;
+- (void)removeDelegate:(id<JConversationDelegate>)delegate;
+
+- (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;
+
+- (void)removeSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 
 @end
