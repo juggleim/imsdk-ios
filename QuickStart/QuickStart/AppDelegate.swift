@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import JetIM
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -14,6 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let appKey = "appkey"
+        JIM.shared().initWithAppKey(appKey)
         return true
     }
 
