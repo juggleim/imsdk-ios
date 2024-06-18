@@ -43,19 +43,23 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
-NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE message_uid = ?";
+NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE ";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
-NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
+NSString *const jAndSenderIs = @" AND sender = ?";
+
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
 NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
+NSString *const jClientMsgNoIn = @" id in ";
 NSString *const jMessageIdIs = @" message_uid = ?";
+NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
-NSString *const jAndInConversation = @"AND conversation_id = ?";
+NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 
@@ -141,8 +145,21 @@ NSString *const jLocalAttribute = @"local_attribute";
     if (s.length == 0 || messageId.length == 0) {
         return;
     }
-    [self.dbHelper executeUpdate:jUpdateMessageContent
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jMessageIdIs];
+    [self.dbHelper executeUpdate:sql
             withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+}
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo {
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0) {
+        return;
+    }
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jClientMsgNoIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[s, type, content.searchContent, @(clientMsgNo)]];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -196,26 +213,38 @@ NSString *const jLocalAttribute = @"local_attribute";
     return result;
 }
 
-- (void)deleteMessageByClientId:(long long)clientMsgNo {
-    NSString *sql = jDeleteMessage;
-    sql = [sql stringByAppendingString:jClientMsgNoIs];
-    [self.dbHelper executeUpdate:sql
-            withArgumentsInArray:@[@(clientMsgNo)]];
-}
-
-- (void)deleteMessageByMessageId:(NSString *)messageId {
-    if (messageId.length == 0) {
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
+    if (clientMsgNos == nil || clientMsgNos.count == 0) {
         return;
     }
     NSString *sql = jDeleteMessage;
-    sql = [sql stringByAppendingString:jMessageIdIs];
+    sql = [sql stringByAppendingString:jClientMsgNoIn];
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:clientMsgNos.count]];
+
     [self.dbHelper executeUpdate:sql
-            withArgumentsInArray:@[messageId]];
+            withArgumentsInArray:clientMsgNos];
 }
 
-- (void)clearMessagesIn:(JConversation *)conversation {
-    [self.dbHelper executeUpdate:jClearMessages
-            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds{
+    if (messageIds == nil || messageIds.count == 0) {
+        return;
+    }
+    NSString *sql = jDeleteMessage;
+    sql = [sql stringByAppendingString:jMessageIdIn];
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageIds.count]];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:messageIds];
+}
+
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
+    NSString *sql = jClearMessages;
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(startTime)]];
+    if(senderId.length > 0){
+        sql = [sql stringByAppendingString:jAndSenderIs];
+        [args addObject:senderId];
+    }
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:args];
 }
 
 //被删除的消息也能查出来

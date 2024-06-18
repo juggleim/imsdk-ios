@@ -8,6 +8,8 @@
 import UIKit
 import JetIM
 
+let token3 = "CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
+
 enum ButtonType: Int {
     case signIn
     case startChatWithVC
@@ -105,6 +107,8 @@ class ViewController: UIViewController {
          
         userIdTextField.text = UserDefaults.loadUserID()
         nicknameTextField.text = UserDefaults.loadNickname()
+        
+        JIM.shared().connectionManager.add
         
         //TODO:
 //        SendbirdChat.addUserEventDelegate(self, identifier: self.description)
@@ -222,25 +226,18 @@ class ViewController: UIViewController {
     }
     
     func signOutAction() {
-        SendbirdUI.unregisterPushToken { success in
-            SendbirdUI.disconnect { [weak self] in
-                print("SendbirdUIKit.disconnect")
-                self?.isSignedIn = false
-            }
-        }
+        
     }
     
     func startChatAction(type: ButtonType) {
         if type == .startChatWithVC {
+            JIM.shared().connectionManager.connect(withToken: token3)
+            
+            
             let mainVC = SBUGroupChannelListViewController()
             let naviVC = UINavigationController(rootViewController: mainVC)
             naviVC.modalPresentationStyle = .fullScreen
             present(naviVC, animated: true)
-        }
-        else if type == .startChatWithTC {
-            let mainVC = MainChannelTabbarController()
-            mainVC.modalPresentationStyle = .fullScreen
-            present(mainVC, animated: true)
         }
     }
     

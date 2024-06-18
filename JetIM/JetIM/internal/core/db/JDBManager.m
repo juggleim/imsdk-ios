@@ -11,8 +11,8 @@
 #import "JConversationDB.h"
 #import "JProfileDB.h"
 #import "JUserInfoDB.h"
+#import "JUtility.h"
 
-#define kJetIM @"jetim"
 #define kJetIMDBName @"jetimdb"
 
 @interface JDBManager ()
@@ -128,12 +128,10 @@
     [self.conversationDb setMute:isMute conversation:conversation];
 }
 
-- (void)setTop:(BOOL)isTop conversation:(JConversation *)conversation {
-    [self.conversationDb setTop:isTop conversation:conversation];
-}
-
-- (void)setTopTime:(long long)time conversation:(JConversation *)conversation {
-    [self.conversationDb setTopTime:time conversation:conversation];
+- (void)setTop:(BOOL)isTop
+          time:(long long)time
+  conversation:(JConversation *)conversation {
+    [self.conversationDb setTop:isTop time:time conversation:conversation];
 }
 
 - (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {
@@ -152,6 +150,9 @@
     [self.conversationDb clearTotalUnreadCount];
 }
 
+- (void)updateTime:(long long)time forConversation:(JConversation *)conversation {
+    [self.conversationDb updateTime:time forConversation:conversation];
+}
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
@@ -174,6 +175,14 @@
     [self.messageDb updateMessageContent:content
                              contentType:type
                            withMessageId:messageId];
+}
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo {
+    [self.messageDb updateMessageContent:content
+                             contentType:type
+                         withClientMsgNo:clientMsgNo];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -200,16 +209,16 @@
                               contentTypes:(NSArray<NSString *> *)contentTypes];
 }
 
-- (void)deleteMessageByClientId:(long long)clientMsgNo {
-    [self.messageDb deleteMessageByClientId:clientMsgNo];
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
+    [self.messageDb deleteMessageByClientIds:clientMsgNos];
 }
 
-- (void)deleteMessageByMessageId:(NSString *)messageId {
-    [self.messageDb deleteMessageByMessageId:messageId];
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds{
+    [self.messageDb deleteMessageByMessageIds:messageIds];
 }
 
-- (void)clearMessagesIn:(JConversation *)conversation {
-    [self.messageDb clearMessagesIn:conversation];
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
+    [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
@@ -305,9 +314,7 @@
 //DB 目录
 - (NSString *)dbDirectoryWith:(NSString *)appKey
                        userId:(NSString *)userId {
-    NSString *path =
-            NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
-    path = [path stringByAppendingPathComponent:kJetIM];
+    NSString *path = [JUtility rootPath];
     path = [path stringByAppendingPathComponent:appKey];
     path = [path stringByAppendingPathComponent:userId];
     return path;

@@ -10,6 +10,8 @@
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
 #define JIMVersion @"1.0.0"
+#define jNaviAppKey @"x-appkey"
+#define jNaviToken @"x-token"
 
 #define JThumbnailWidth 240
 #define JThumbnailHeight 240
@@ -50,11 +52,15 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalOperationTimeOut = 21004,
     //连接不可用
     JErrorCodeInternalConnectionUnavailable = 21005,
+    //服务器设置错误
+    JErrorCodeInternalServerSetError = 21006,
     
     //消息不存在
     JErrorCodeInternalMessageNotExist = 22001,
     //消息已被撤回
     JErrorCodeInternalMessageAlreadyRecalled = 22002,
     //消息上传失败
-    JErrorCodeInternalMessageUploadError = 22003
+    JErrorCodeInternalMessageUploadError = 22003,
+    //日志不存在
+    JErrorCodeInternalLogNotExist = 22004
 };

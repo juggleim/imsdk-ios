@@ -51,14 +51,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation;
 - (void)setTop:(BOOL)isTop
+          time:(long long)time
   conversation:(JConversation *)conversation;
-- (void)setTopTime:(long long)time
-      conversation:(JConversation *)conversation;
 - (int)getTotalUnreadCount;
 - (void)setMention:(BOOL)isMention
       conversation:(JConversation *)conversation;
 - (void)clearMentionstatus;
 - (void)clearTotalUnreadCount;
+- (void)updateTime:(long long)time
+   forConversation:(JConversation *)conversation;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
@@ -69,6 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
                withMessageId:(NSString *)messageId;
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo;
 - (void)messageSendFail:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
@@ -77,9 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes;
-- (void)deleteMessageByClientId:(long long)clientMsgNo;
-- (void)deleteMessageByMessageId:(NSString *)messageId;
-- (void)clearMessagesIn:(JConversation *)conversation;
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (void)setMessageState:(JMessageState)state

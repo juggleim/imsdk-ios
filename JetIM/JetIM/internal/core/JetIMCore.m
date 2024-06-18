@@ -84,11 +84,11 @@
     }
 }
 
-- (NSString *)naviUrl {
-    if (!_naviUrl) {
-        _naviUrl = JNaviURL;
+- (NSArray<NSString *> *)naviUrls {
+    if (!_naviUrls) {
+        _naviUrls = @[JNaviURL];
     }
-    return _naviUrl;
+    return _naviUrls;
 }
 
 - (NSArray *)servers {

@@ -23,15 +23,16 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@"https://nav.wahu.cn"];
+//    [JIM.shared setServer:@[@"https://nav.gxjipei.com"]];
+    [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken3];
-    [JIM.shared.connectionManager setDelegate:self];
-    [JIM.shared.messageManager setDelegate:self];
-    [JIM.shared.messageManager setSyncDelegate:self];
-    [JIM.shared.conversationManager setSyncDelegate:self];
-    [JIM.shared.conversationManager setDelegate:self];
-    [JIM.shared.messageManager setReadReceiptDelegate:self];
+    [JIM.shared.connectionManager connectWithToken:kToken4];
+    [JIM.shared.connectionManager addDelegate:self];
+    [JIM.shared.messageManager addDelegate:self];
+    [JIM.shared.messageManager addSyncDelegate:self];
+    [JIM.shared.conversationManager addSyncDelegate:self];
+    [JIM.shared.conversationManager addDelegate:self];
+    [JIM.shared.messageManager addReadReceiptDelegate:self];
     [JIM.shared.messageManager setMessageUploadProvider:self];
     
     return YES;
@@ -45,10 +46,10 @@
         progressBlock(50);
     });
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
-//        JMediaMessageContent *content = (JMediaMessageContent *)message.content;
-//        content.url = @"www.baidu.com";
-//        successBlock(message);
-        errorBlock();
+        JMediaMessageContent *content = (JMediaMessageContent *)message.content;
+        content.url = @"www.baidu.com";
+        successBlock(message);
+//        errorBlock();
     });
 }
 
@@ -79,20 +80,51 @@
     [JIM.shared.connectionManager registerDeviceToken:deviceToken];
 }
 
-- (void)connectionStatusDidChange:(JConnectionStatus)status errorCode:(JErrorCode)code {
+- (void)connectionStatusDidChange:(JConnectionStatus)status
+                        errorCode:(JErrorCode)code
+                            extra:(NSString *)extra {
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
-            message.url = @"http://www.baidu.com";
-            message.width = 1000;
-            message.height = 2000;
-            message.size = 3434342;
-            message.extra = @"extra";
-            NSData *data = [message encode];
-            JThumbnailPackedImageMessage *m2 = [[JThumbnailPackedImageMessage alloc] init];
-            [m2 decode:data];
-            NSLog(@"asdfsadf");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+            [JIM.shared.conversationManager createConversationInfo:c success:^(JConversationInfo *c) {
+                NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
+                NSLog(@"1");
+            } error:^(JErrorCode code) {
+                NSLog(@"e");
+            }];
+            NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
+            NSLog(@"1");
+            
+           
+//            [JIM.shared.connectionManager disconnect:NO];
+            
+//            JImageMessage *image = [[JImageMessage alloc] init];
+//            image.localPath = @"asdfasdf";
+//            image.size = 1000;
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            [JIM.shared.messageManager sendMediaMessage:image
+//                                         inConversation:c
+//                                               progress:^(int progress, JMessage *message) {
+//                NSLog(@"asdf");
+//            } success:^(JMessage *message) {
+//                NSLog(@"sadfasdf");
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                NSLog(@"fasdf");
+//            } cancel:^(JMessage *message) {
+//                NSLog(@"fasdf");
+//            }];
+            
+//            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
+//            message.url = @"http://www.baidu.com";
+//            message.width = 1000;
+//            message.height = 2000;
+//            message.size = 3434342;
+//            message.extra = @"extra";
+//            NSData *data = [message encode];
+//            JThumbnailPackedImageMessage *m2 = [[JThumbnailPackedImageMessage alloc] init];
+//            [m2 decode:data];
+//            NSLog(@"asdfsadf");
         });
         
         //register push token
@@ -231,7 +263,7 @@
 ////                                                                  time:1712600893903
 ////                                                             direction:JPullDirectionNewer];
 //
-////        [JIM.shared.messageManager deleteMessageByMessageId:@"nq2crdhwaagk5g4v"];
+////        [JIM.shared.messageManager deleteMessageByMessageIds:@"nq2crdhwaagk5g4v"];
 //        [JIM.shared.messageManager getLocalAndRemoteMessagesFrom:c
 //                                                       startTime:0
 //                                                           count:100
@@ -296,8 +328,8 @@
 //        
 
         //delete messages
-//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqel4yrhaa4k5g4v"];
-//        [JIM.shared.messageManager deleteMessageByMessageId:@"nqe4ddt6abgk5g4v"];
+//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqel4yrhaa4k5g4v"];
+//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqe4ddt6abgk5g4v"];
 ////        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
 //        NSArray *ids = @[@"nqel6ahx2a6k5g4v", @"nqel4yrhaa4k5g4v", @"nqe4dfu5sbgk5g4v", @"nqe4ddt6abgk5g4v"];
 //        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup
@@ -366,6 +398,10 @@
 //                                                        error:nil];
         
     }
+}
+
+- (void)dbDidClose {
+    
 }
 
 - (void)sendMessage {
@@ -490,10 +526,6 @@
     // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 }
 
-
-- (void)connectionStatusDidChange:(JConnectionStatus)status {
-    NSLog(@"connectionStatusDidChange status is %d", status);
-}
 
 @end
 

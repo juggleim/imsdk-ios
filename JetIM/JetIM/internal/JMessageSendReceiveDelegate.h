@@ -13,7 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)messageDidSave:(JConcreteMessage *)message;
 - (void)messageDidSend:(JConcreteMessage *)message;
 - (void)messageDidReceive:(JConcreteMessage *)message;
+- (void)conversationsDidAdd:(JConcreteConversationInfo *)conversationInfo;
 - (void)conversationsDidDelete:(NSArray <JConversation *> *)conversations;
+- (void)conversationsDidUpdate:(JConcreteMessage *)message;
 @end
 
 NS_ASSUME_NONNULL_END

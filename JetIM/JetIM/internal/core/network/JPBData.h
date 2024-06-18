@@ -29,7 +29,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeQryReadDetailAck,
     JPBRcvTypeSimpleQryAck,
     JPBRcvTypeSimpleQryAckCallbackTimestamp,
-    JPBRcvTypeConversationSetTopAck
+    JPBRcvTypeConversationSetTopAck,
+    JPBRcvTypeAddConversation
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -40,6 +41,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JConnectAck : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, copy) NSString *userId;
+@property (nonatomic, copy) NSString *session;
+@property (nonatomic, copy) NSString *extra;
 @end
 
 @interface JPublishMsgAck : NSObject
@@ -73,9 +76,13 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *deletedConvs;
 @end
 
-@interface JQryReadDetailAck: JQryAck
+@interface JQryReadDetailAck : JQryAck
 @property (nonatomic, copy) NSArray<JUserInfo *> *readMembers;
 @property (nonatomic, copy) NSArray<JUserInfo *> *unreadMembers;
+@end
+
+@interface JConversationInfoAck : JQryAck
+@property (nonatomic, strong) JConcreteConversationInfo *conversationInfo;
 @end
 
 @interface JSimpleQryAck : JQryAck
@@ -92,6 +99,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JDisconnectMsg : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, assign) long long timestamp;
+@property (nonatomic, copy) NSString *extra;
 @end
 
 @interface JPBRcvObj : NSObject
@@ -106,6 +114,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
+@property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
 @end
 
 @interface JPBData : NSObject
@@ -135,6 +144,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                         mentionInfo:(nullable JMessageMentionInfo *)mentionInfo;
 
 - (NSData *)recallMessageData:(NSString *)messageId
+                       extras:(NSDictionary *)extras
                  conversation:(JConversation *)conversation
                     timestamp:(long long)msgTime
                         index:(int)index;
@@ -209,6 +219,19 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)clearTotalUnreadCountMessages:(NSString *)userId
                                      time:(long long)time
                                     index:(int)index;
+
+- (NSData *)deleteMessage:(JConversation *)conversation
+                  msgList:(NSArray <JConcreteMessage *> *)msgList
+                    index:(int)index;
+
+- (NSData *)clearHistoryMessage:(JConversation *)conversation
+                           time:(long long)time
+                          scope:(int)scope
+                          index:(int)index;
+
+- (NSData *)createConversationInfo:(JConversation *)conversation
+                            userId:(NSString *)userId
+                             index:(int)index;
 
 - (NSData *)pingData;
 

@@ -11,15 +11,20 @@
 #import "JMessageContent.h"
 #import "JConversation.h"
 #import "JConcreteMessage.h"
+#import "JConcreteConversationInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol JWebSocketConnectDelegate <NSObject>
 - (void)connectCompleteWithCode:(JErrorCodeInternal)error
-                         userId:(NSString *)userId;
-- (void)disconnectWithCode:(JErrorCodeInternal)error;
+                         userId:(NSString *)userId
+                        session:(NSString *)session
+                          extra:(NSString *)extra;
+- (void)disconnectWithCode:(JErrorCodeInternal)error
+                     extra:(NSString *)extra;
 - (void)webSocketDidFail;
 - (void)webSocketDidClose;
+- (void)webSocketDidTimeOut;
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>
@@ -36,7 +41,17 @@ NS_ASSUME_NONNULL_BEGIN
           token:(NSString *)token
       pushToken:(NSString *)pushToken
         servers:(NSArray *)servers;
+
 - (void)disconnect:(BOOL)needPush;
+
+- (void)startHeartbeat;
+
+- (void)stopHeartbeat;
+
+- (void)heartbeatTimeOut;
+
+- (void)pushRemainCmdAndCallbackError;
+
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
@@ -52,6 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
               success:(void (^)(long long timestamp))successBlock
@@ -112,6 +128,11 @@ inConversation:(JConversation *)conversation
        success:(void (^)(long long timestamp))successBlock
          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)createConversationInfo:(JConversation *)conversation
+                        userId:(NSString *)userId
+                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
                        count:(int)count
@@ -135,6 +156,18 @@ inConversation:(JConversation *)conversation
                          time:(long long)time
                       success:(void (^)(void))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)deleteMessage:(JConversation *)conversation
+              msgList:(NSArray <JConcreteMessage *> *)msgList
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+
+- (void)clearHistoryMessage:(JConversation *)conversation
+                       time:(long long)time
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 
 - (void)sendPing;
 @end

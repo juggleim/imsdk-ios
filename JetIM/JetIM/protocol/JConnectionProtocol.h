@@ -11,8 +11,10 @@
 /// - Parameters:
 ///   - status: 变化后的状态
 ///   - code: 连接错误码，在 JConnectionStatusFailure 状态时有效，其它状态均为 0。
+///   - extra: 附加信息
 - (void)connectionStatusDidChange:(JConnectionStatus)status
-                        errorCode:(JErrorCode)code;
+                        errorCode:(JErrorCode)code
+                            extra:(NSString *)extra;
 /// 数据库打开的回调，设备离线的情况下也可以打开本地数据库查看历史消息
 - (void)dbDidOpen;
 - (void)dbDidClose;
@@ -25,6 +27,8 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData;
 
-- (void)setDelegate:(id<JConnectionDelegate>) delegate;
+- (void)addDelegate:(id<JConnectionDelegate>) delegate;
+
+- (void)removeDelegate:(id<JConnectionDelegate>) delegate;
 
 @end

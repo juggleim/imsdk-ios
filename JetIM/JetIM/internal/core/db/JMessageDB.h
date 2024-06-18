@@ -30,16 +30,21 @@ NS_ASSUME_NONNULL_BEGIN
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId;
 
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(NSString *)type
+             withClientMsgNo:(long long)clientMsgNo;
+
 - (void)messageSendFail:(long long)clientMsgNo;
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes;
 
-- (void)deleteMessageByClientId:(long long)clientMsgNo;
-- (void)deleteMessageByMessageId:(NSString *)messageId;
-- (void)clearMessagesIn:(JConversation *)conversation;
+- (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
+- (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
+- (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (void)setMessageState:(JMessageState)state

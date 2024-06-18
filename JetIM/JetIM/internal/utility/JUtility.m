@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <sys/sysctl.h>
 #import "JReachability.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 @import CoreTelephony;
 
 #define jUUID @"JUUID"
+#define jJetIM @"jetim"
 
 static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -21,16 +23,32 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 + (NSString *)getDeviceId {
     NSString *uuid = [[NSUserDefaults standardUserDefaults] objectForKey:jUUID];
     if (uuid.length == 0) {
-        CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
-        NSString *UUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
-        CFRelease(uuidRef);
-        NSMutableString *UUID_temp = [UUID mutableCopy];
-        [UUID_temp replaceOccurrencesOfString:@"-"
-                                   withString:@""
-                                      options:NSLiteralSearch
-                                        range:NSMakeRange(0, UUID.length)];
-
-        uuid = [UUID_temp copy];
+        uuid = [self getUUID];
+        NSString *appIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+        NSString *lastUUID = [NSString stringWithFormat:@"%@%@", uuid, appIdentifier];
+        NSString *md5Str = [self md5EncryptStr:lastUUID bateNum:16 isLowercaseStr:YES];
+        NSData *data = [md5Str dataUsingEncoding:NSUTF8StringEncoding];
+        NSMutableString *base64UUID = [[data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]
+            mutableCopy]; // base64 格式的字符串
+        if ([base64UUID containsString:@"="]) {
+            [base64UUID replaceOccurrencesOfString:@"="
+                                        withString:@""
+                                           options:NSLiteralSearch
+                                             range:NSMakeRange(0, base64UUID.length)];
+        }
+        if ([base64UUID containsString:@"/"]) {
+            [base64UUID replaceOccurrencesOfString:@"/"
+                                        withString:@"_"
+                                           options:NSLiteralSearch
+                                             range:NSMakeRange(0, base64UUID.length)];
+        }
+        if ([base64UUID containsString:@"+"]) {
+            [base64UUID replaceOccurrencesOfString:@"+"
+                                        withString:@"-"
+                                           options:NSLiteralSearch
+                                             range:NSMakeRange(0, base64UUID.length)];
+        }
+        uuid = base64UUID;
         [[NSUserDefaults standardUserDefaults] setObject:uuid forKey:jUUID];
     }
     return uuid;
@@ -292,5 +310,45 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
     bytes = realloc(bytes, length);
     return [NSData dataWithBytesNoCopy:bytes length:length];
+}
+
++ (NSString *)rootPath {
+    NSString *path =
+            NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
+    path = [path stringByAppendingPathComponent:jJetIM];
+    return path;
+}
+
+#pragma mark - private
++ (NSString *)getUUID {
+    CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *UUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
+    CFRelease(uuidRef);
+    NSMutableString *UUID_temp = [UUID mutableCopy];
+    [UUID_temp replaceOccurrencesOfString:@"-"
+                               withString:@""
+                                  options:NSLiteralSearch
+                                    range:NSMakeRange(0, UUID.length)];
+    return [UUID_temp copy];
+}
+
++ (NSString *)md5EncryptStr:(NSString *)str bateNum:(NSInteger)bateNum isLowercaseStr:(BOOL)isLowercaseStr {
+    NSString *md5Str = nil;
+    const char *input = [str UTF8String]; // UTF8转码
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(input, (CC_LONG)strlen(input), result);
+    NSMutableString *digestStr =
+        [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2]; //直接先获取32位md5字符串,16位是通过它演化而来
+    for (NSInteger i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
+        [digestStr appendFormat:isLowercaseStr ? @"%02x" : @"%02X", result[i]]; //%02x即小写,%02X即大写
+    }
+    if (bateNum == 32) {
+        md5Str = digestStr;
+    } else {
+        for (int i = 0; i < 24; i++) {
+            md5Str = [digestStr substringWithRange:NSMakeRange(8, 16)];
+        }
+    }
+    return md5Str;
 }
 @end

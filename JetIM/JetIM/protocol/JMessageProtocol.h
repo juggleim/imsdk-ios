@@ -19,6 +19,13 @@
 
 - (void)messageDidRecall:(JMessage *)message;
 
+- (void)messageDidDelete:(JConversation *)conversation
+            clientMsgNos:(NSArray <NSNumber *> *)clientMsgNos;
+
+- (void)messageDidClear:(JConversation *)conversation
+              timestamp:(long long)timestamp
+               senderId:(NSString *)senderId;
+
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -113,22 +120,44 @@
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray <NSString *> *)contentTypes;
 
-/// 根据 clientMsgNo 删除本地消息（只删除本端消息，服务端消息不受影响）
-/// - Parameter clientMsgNo: 本端消息唯一编号
-- (void)deleteMessageByClientMsgNo:(long long)clientMsgNo;
+/// 在同一个会话里，根据本端消息唯一编号批量删除消息
+/// - Parameters:
+///   - clientMsgNos: 本端消息唯一编号列表
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
+                           conversation:(JConversation *)conversation
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 根据 messageId 删除本地消息（只删除本端消息，服务端消息不受影响）
-/// - Parameter messageId: 消息 id
-- (void)deleteMessageByMessageId:(NSString *)messageId;
+/// 在同一个会话里，根据消息 id 批量删除消息
+/// - Parameters:
+///   - messageIds: 消息 id 列表
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
 - (void)recallMessage:(NSString *)messageId
+               extras:(NSDictionary *)extras
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 清除会话内所有消息
-/// - Parameter conversation: 会话标识
-- (void)clearMessagesIn:(JConversation *)conversation;
+/// 清空会话中指定时间之前的所有消息，startTime 传 0 表示当前时间
+/// - Parameters:
+///   - conversation: 会话标识
+///   - startTime: 开始时间，传 0 表示当前时间
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)clearMessagesIn:(JConversation *)conversation
+              startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组
@@ -152,11 +181,17 @@
 /// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent
 - (void)registerContentType:(Class)messageClass;
 
-- (void)setDelegate:(id<JMessageDelegate>)delegate;
+- (void)addDelegate:(id<JMessageDelegate>)delegate;
 
-- (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+- (void)removeDelegate:(id<JMessageDelegate>)delegate;
 
-- (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+- (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+
+- (void)removeSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+
+- (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+
+- (void)removeReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
@@ -174,7 +209,6 @@
                     direction:(JPullDirection)direction
                       success:(void (^)(NSArray *messages))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
-
 
 /// 先从本地获取消息，如果中间存在缺失，则从远端补齐。如果本地消息已经是完备的，将不会再走 remoteMessageBlock 回调。
 /// - Parameters:

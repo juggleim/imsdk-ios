@@ -58,6 +58,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeOperationTimeOut = 21004,
     //连接不可用
     JErrorCodeConnectionUnavailable = 21005,
+    //服务器设置错误
+    JErrorCodeServerSetError = 21006,
     
     //消息不存在
     JErrorCodeMessageNotExist = 22001,
@@ -85,4 +87,14 @@ typedef NS_ENUM(NSUInteger, JNetworkStatus) {
      移动网络
      */
     JNetworkStatusReachableViaWWAN = 2,
+};
+
+typedef NS_ENUM(NSUInteger, JLogLevel) {
+    JLogLevelNone = 0,
+    JLogLevelFatal = 1,
+    JLogLevelError = 2,
+    JLogLevelWarning = 3,
+    JLogLevelInfo = 4,
+    JLogLevelDebug = 5,
+    JLogLevelVerbose = 6
 };

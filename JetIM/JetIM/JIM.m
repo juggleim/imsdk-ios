@@ -11,6 +11,7 @@
 #import "JConversationManager.h"
 #import "JUserInfoManager.h"
 #import "JetIMCore.h"
+#import "JLogger.h"
 
 @interface JIM ()
 @property (nonatomic, strong) JetIMCore *core;
@@ -41,6 +42,7 @@ static JIM *_instance;
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
+    JLogI(@"J-Init", @"appKey is %@", appKey);
     if ([self.core.appKey isEqualToString:appKey]) {
         return;
     }
@@ -48,7 +50,6 @@ static JIM *_instance;
     self.core.appKey = appKey;
     self.core.userId = @"";
     self.core.token = @"";
-    NSLog(@"init appkey is %@", appKey);
 }
 
 - (NSString *)getSDKVersion {
@@ -59,8 +60,12 @@ static JIM *_instance;
     self.core.delegateQueue = delegateQueue;
 }
 
-- (void)setServer:(NSString *)serverUrl {
-    [self.core setNaviUrl:serverUrl];
+- (void)setServer:(NSArray<NSString *> *)serverUrls {
+    [self.core setNaviUrls:serverUrls];
+}
+
+- (void)setConsoleLogLevel:(JLogLevel)level {
+    JLogger.shared.consoleLogLevel = level;
 }
 
 - (NSString *)currentUserId {

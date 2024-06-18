@@ -12,11 +12,12 @@
 
 #define jSPVideoType @"jg:spvideo"
 #define jSPVideoUrl @"sightUrl"
-#define jSPSnapshotImage @"thumbnailImage"
+#define jSPSnapshotImage @"content"
 #define jSPVideoHeight @"height"
 #define jSPVideoWidth @"width"
 #define jSPVideoSize @"size"
 #define jSPVideoDuration @"duration"
+#define jSPVideoName @"name"
 #define jSPVideoExtra @"extra"
 #define jSPVideoDigest @"[Video]"
 
@@ -40,6 +41,7 @@
                            jSPVideoWidth:@(self.width),
                            jSPVideoSize:@(self.size),
                            jSPVideoDuration:@(self.duration),
+                           jSPVideoName:self.name,
                            jSPVideoExtra:self.extra?:@""
                   };
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
@@ -58,6 +60,7 @@
         snapshotData = [JUtility dataWithBase64EncodedString:snapshotString];
     }
     self.snapshotImage = [UIImage imageWithData:snapshotData];
+    self.name = json[jSPVideoName]?:@"";
     id obj = json[jSPVideoHeight];
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.height = [(NSNumber *)obj intValue];

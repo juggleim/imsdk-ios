@@ -63,6 +63,16 @@
 /// - Parameter conversation: 会话标识
 - (void)clearDraftInConversation:(JConversation *)conversation;
 
+
+/// 创建会话信息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)createConversationInfo:(JConversation *)conversation
+                       success:(void (^)(JConversationInfo *))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
 /// 获取消息未读的总数
 - (int)getTotalUnreadCount;
 
@@ -90,8 +100,12 @@
 /// - Parameters:
 ///   - isTop: YES 表示置顶，NO 表示不置顶
 ///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
 - (void)setTop:(BOOL)isTop
-  conversation:(JConversation *)conversation;
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode code))errorBlock;
 
 /// 分页获取置顶会话信息列表
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count
@@ -99,10 +113,15 @@
                                                           direction:(JPullDirection)direction;
 
 /// 清除总未读数
-- (void)clearTotalUnreadCount;
+- (void)clearTotalUnreadCount:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
 
-- (void)setDelegate:(id<JConversationDelegate>)delegate;
+- (void)addDelegate:(id<JConversationDelegate>)delegate;
 
-- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate;
+- (void)removeDelegate:(id<JConversationDelegate>)delegate;
+
+- (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;
+
+- (void)removeSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 
 @end

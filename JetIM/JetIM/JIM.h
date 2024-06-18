@@ -34,9 +34,13 @@ NS_ASSUME_NONNULL_BEGIN
 /*!
  设置服务器地址
 
- @param serverUrl  服务器地址
+ @param serverUrls  服务器地址
  */
-- (void)setServer:(NSString *)serverUrl;
+- (void)setServer:(NSArray <NSString *> *)serverUrls;
+
+/// 设置控制台日志输出等级
+/// @param level 日志等级
+- (void)setConsoleLogLevel:(JLogLevel)level;
 
 /*!
  获取 SDK 版本

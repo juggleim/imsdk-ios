@@ -124,6 +124,7 @@ typedef GPB_ENUM(ConnectAckMsgBody_FieldNumber) {
   ConnectAckMsgBody_FieldNumber_UserId = 2,
   ConnectAckMsgBody_FieldNumber_Session = 3,
   ConnectAckMsgBody_FieldNumber_Timestamp = 4,
+  ConnectAckMsgBody_FieldNumber_Ext = 5,
 };
 
 GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
@@ -136,6 +137,8 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 
 @property(nonatomic, readwrite) int64_t timestamp;
 
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
 @end
 
 #pragma mark - DisconnectMsgBody
@@ -143,6 +146,7 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 typedef GPB_ENUM(DisconnectMsgBody_FieldNumber) {
   DisconnectMsgBody_FieldNumber_Code = 1,
   DisconnectMsgBody_FieldNumber_Timestamp = 2,
+  DisconnectMsgBody_FieldNumber_Ext = 3,
 };
 
 GPB_FINAL @interface DisconnectMsgBody : GPBMessage
@@ -150,6 +154,8 @@ GPB_FINAL @interface DisconnectMsgBody : GPBMessage
 @property(nonatomic, readwrite) int32_t code;
 
 @property(nonatomic, readwrite) int64_t timestamp;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @end
 
@@ -184,7 +190,7 @@ typedef GPB_ENUM(PublishAckMsgBody_FieldNumber) {
   PublishAckMsgBody_FieldNumber_Code = 2,
   PublishAckMsgBody_FieldNumber_MsgId = 3,
   PublishAckMsgBody_FieldNumber_Timestamp = 4,
-  PublishAckMsgBody_FieldNumber_MsgIndex = 5,
+  PublishAckMsgBody_FieldNumber_MsgSeqNo = 5,
 };
 
 GPB_FINAL @interface PublishAckMsgBody : GPBMessage
@@ -197,7 +203,7 @@ GPB_FINAL @interface PublishAckMsgBody : GPBMessage
 
 @property(nonatomic, readwrite) int64_t timestamp;
 
-@property(nonatomic, readwrite) int64_t msgIndex;
+@property(nonatomic, readwrite) int64_t msgSeqNo;
 
 @end
 

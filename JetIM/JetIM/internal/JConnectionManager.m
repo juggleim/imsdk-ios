@@ -7,17 +7,16 @@
 
 #import "JConnectionManager.h"
 #import "JWebSocket.h"
-#import "JHeartBeatManager.h"
-#import "JNaviManager.h"
+#import "JNaviTask.h"
 #import "JetIMConstInternal.h"
 #import <UIKit/UIKit.h>
+#import "JLogger.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, strong) JConversationManager *conversationManager;
 @property (nonatomic, strong) JMessageManager *messageManager;
-@property (nonatomic, strong) JHeartBeatManager *heartBeatManager;
-@property (nonatomic, weak) id<JConnectionDelegate> delegate;
+@property (nonatomic, strong) NSHashTable <id<JConnectionDelegate>> *delegates;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, assign) BOOL isBackground;
@@ -36,8 +35,6 @@
         self.core = core;
         self.conversationManager = conversationManager;
         self.messageManager = messageManager;
-        JHeartBeatManager *heartBeatManager = [[JHeartBeatManager alloc] initWithCore:core];
-        self.heartBeatManager = heartBeatManager;
         self.bgTask = UIBackgroundTaskInvalid;
         [self addObserver];
     }
@@ -45,6 +42,7 @@
 }
 
 - (void)connectWithToken:(NSString *)token {
+    JLogI(@"CON-Connect", @"token is %@", token);
     //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
     //TODO: 连接状态判断，如果连接中或已连接，而且 token 跟之前不一样的话，先 disconnect
     
@@ -60,38 +58,42 @@
             }
         }
     }
-    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone];
+    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
     
-    [JNaviManager requestNavi:self.core.naviUrl
-                       appKey:self.core.appKey
-                        token:token
-                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
+                                       appKey:self.core.appKey
+                                        token:token
+                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+        JLogI(@"CON-Navi", @"success");
         self.core.servers = servers;
         [self.core.webSocket connect:self.core.appKey
                                token:token
                            pushToken:self.pushToken
                              servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
+        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
         if (errorCode == JErrorCodeInternalTokenIllegal) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:@""];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
         }
     }];
+    [task start];
 }
 
 - (void)disconnect:(BOOL)receivePush {
-    NSLog(@"[JetIM] disconnect, receivePush is %d", receivePush);
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone];
+    JLogI(@"CON-Disconnect", @"receivePush is %d", receivePush);
     [self.core.webSocket disconnect:receivePush];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
 }
 
 - (void)registerDeviceToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        NSLog(@"[JetIM] tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
-               @"deviceToken 传入");
+        JLogE(@"CON-Token", @"tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
+              @"deviceToken 传入");
         return;
     }
+    JLogI(@"CON-Token", @"");
     NSUInteger len = [tokenData length];
     char *chars = (char *)[tokenData bytes];
     NSMutableString *hexString = [[NSMutableString alloc] init];
@@ -102,64 +104,83 @@
     [self.core.webSocket registerPushToken:hexString
                                     userId:self.core.userId
                                    success:^{
-        NSLog(@"[JetIM] register push token success");
+        JLogI(@"CON-Token", @"success");
     } error:^(JErrorCodeInternal code) {
-        NSLog(@"[JetIM] register push token fail, code is %lu", code);
+        JLogE(@"CON-Token", @"fail, code is %lu", code);
     }];
 }
 
-- (void)setDelegate:(id<JConnectionDelegate>)delegate {
-    _delegate = delegate;
+- (void)addDelegate:(id<JConnectionDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates addObject:delegate];
+    });
+}
+
+- (void)removeDelegate:(id<JConnectionDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates removeObject:delegate];
+    });
 }
 
 #pragma mark - JWebSocketConnectDelegate
 - (void)connectCompleteWithCode:(JErrorCodeInternal)error
-                         userId:(NSString *)userId {
+                         userId:(NSString *)userId
+                        session:(NSString *)session
+                          extra:(NSString *)extra {
     if (error == JErrorCodeInternalNone) {
         self.core.userId = userId;
         if (!self.core.dbManager.isOpen) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
                 [self dbOpenNotice:YES];
             } else {
-                NSLog(@"[JetIM] db open fail");
+                JLogE(@"CON-Db", @"open fail");
             }
         }
-        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone];
+        [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{
             [self.messageManager syncMessages];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:error];
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:error extra:extra];
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:extra];
         }
     }
 }
 
-- (void)disconnectWithCode:(JErrorCodeInternal)error {
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:error];
+- (void)disconnectWithCode:(JErrorCodeInternal)error
+                     extra:(NSString *)extra {
+    [self changeStatus:JConnectionStatusInternalDisconnected
+             errorCode:error
+                 extra:extra];
 }
 
 - (void)webSocketDidFail {
-    [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
+    [self handleWebSocketFail];
 }
 
 - (void)webSocketDidClose {
-    dispatch_async(self.core.sendQueue, ^{
-        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected
-            || self.core.connectionStatus == JConnectionStatusInternalFailure) {
-            return;
-        }
-        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone];
-    });
+    [self handleWebSocketFail];
+}
+
+- (void)webSocketDidTimeOut {
+    [self handleWebSocketFail];
 }
 
 #pragma mark -- internal
 - (void)changeStatus:(JConnectionStatusInternal)status
-           errorCode:(JErrorCodeInternal)errorCode {
+           errorCode:(JErrorCodeInternal)errorCode
+               extra:(NSString *)extra {
     dispatch_async(self.core.sendQueue, ^{
+        JLogI(@"CON-Status", @"status is %lu, code is %lu", (unsigned long)status, (unsigned long)errorCode);
         if (status == self.core.connectionStatus) {
             return;
         }
@@ -168,10 +189,12 @@
             return;
         }
         if (status == JConnectionStatusInternalConnected && self.core.connectionStatus != JConnectionStatusInternalConnected) {
-            [self.heartBeatManager start];
+            [[JLogger shared] removeExpiredLogs];
+            [self.core.webSocket startHeartbeat];
         }
         if (self.core.connectionStatus == JConnectionStatusInternalConnected && status != JConnectionStatusInternalConnected) {
-            [self.heartBeatManager stop];
+            [self.core.webSocket stopHeartbeat];
+            [self.core.webSocket pushRemainCmdAndCallbackError];
         }
         JConnectionStatus outStatus = JConnectionStatusIdle;
         switch (status) {
@@ -207,9 +230,11 @@
         }
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:)]) {
-                [self.delegate connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
+                    [obj connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode extra:extra];
+                }
+            }];
         });
     });
 }
@@ -224,15 +249,20 @@
         if (isOpen) {
             [self.core getSyncTimeFromDB];
         }
+        JLogI(@"CON-Db", @"db notice isOpen is %d", isOpen);
         dispatch_async(self.core.delegateQueue, ^{
             if (isOpen) {
-                if ([self.delegate respondsToSelector:@selector(dbDidOpen)]) {
-                    [self.delegate dbDidOpen];
-                }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(dbDidOpen)]) {
+                        [obj dbDidOpen];
+                    }
+                }];
             } else {
-                if ([self.delegate respondsToSelector:@selector(dbDidClose)]) {
-                    [self.delegate dbDidClose];
-                }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(dbDidClose)]) {
+                        [obj dbDidClose];
+                    }
+                }];
             }
         });
     });
@@ -247,7 +277,7 @@
 
 - (void)reconnect {
     //需要在 sendQueue 里
-    NSLog(@"[JetIM] reconnect");
+    JLogI(@"CON-Reconnect", @"");
     //TODO: 线程控制，间隔控制
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.reconnectTimer) {
@@ -266,6 +296,16 @@
     if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
         [self connectWithToken:self.core.token];
     }
+}
+
+- (void)handleWebSocketFail {
+    dispatch_async(self.core.sendQueue, ^{
+        if (self.core.connectionStatus == JConnectionStatusInternalDisconnected
+            || self.core.connectionStatus == JConnectionStatusInternalFailure) {
+            return;
+        }
+        [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:JErrorCodeInternalNone extra:@""];
+    });
 }
 
 - (BOOL)checkConnectionFailure:(JErrorCodeInternal)code {
@@ -315,6 +355,13 @@
 
 - (void)appTerminate {
     
+}
+
+- (NSHashTable<id<JConnectionDelegate>> *)delegates {
+    if (!_delegates) {
+        _delegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _delegates;
 }
 
 @end
