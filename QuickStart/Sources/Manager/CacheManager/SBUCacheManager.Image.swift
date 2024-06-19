@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import JetIM
 
 // File cache path: {cachesDirectory}/image/{REQ_ID}.{EXT}
 
@@ -67,72 +68,72 @@ extension SBUCacheManager {
             return image
         }
         
-        static func preSave(
-            fileMessage: FileMessage,
-            isQuotedImage: Bool? = false,
-            completionHandler: SBUImageCacheCompletionHandler? = nil
-        ) {
-            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
-                var fileName = self.createCacheFileName(
-                    urlString: fileMessage.url,
-                    cacheKey: fileMessage.cacheKey,
-                    fileNameForExtension: fileMessage.name
-                )
-                if isQuotedImage == true { fileName = "quoted_\(fileName)" }
-                
-                switch SBUUtils.getFileType(by: fileMessage) {
-                case .image:
-                    self.save(
-                        data: messageParams.file,
-                        fileName: fileName,
-                        subPath: fileMessage.channelURL,
-                        completionHandler: completionHandler
-                    )
-                case .video:
-                    guard let asset = messageParams.file?.getAVAsset() else { break }
-                    
-                    let avAssetImageGenerator = AVAssetImageGenerator(asset: asset)
-                    avAssetImageGenerator.appliesPreferredTrackTransform = true
-                    let cmTime = CMTimeMake(value: 2, timescale: 1)
-                    guard let cgImage = try? avAssetImageGenerator
-                        .copyCGImage(at: cmTime, actualTime: nil) else {
-                        break
-                    }
-                    
-                    let image = UIImage(cgImage: cgImage)
-                    self.save(
-                        image: image,
-                        fileName: fileName,
-                        subPath: fileMessage.channelURL,
-                        completionHandler: completionHandler
-                    )
-                default:
-                    break
-                }
-            }
-        }
+//        static func preSave(
+//            fileMessage: JFileMessage,
+//            isQuotedImage: Bool? = false,
+//            completionHandler: SBUImageCacheCompletionHandler? = nil
+//        ) {
+//            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
+//                var fileName = self.createCacheFileName(
+//                    urlString: fileMessage.url,
+//                    cacheKey: fileMessage.cacheKey,
+//                    fileNameForExtension: fileMessage.name
+//                )
+//                if isQuotedImage == true { fileName = "quoted_\(fileName)" }
+//
+//                switch SBUUtils.getFileType(by: fileMessage) {
+//                case .image:
+//                    self.save(
+//                        data: messageParams.file,
+//                        fileName: fileName,
+//                        subPath: fileMessage.channelURL,
+//                        completionHandler: completionHandler
+//                    )
+//                case .video:
+//                    guard let asset = messageParams.file?.getAVAsset() else { break }
+//
+//                    let avAssetImageGenerator = AVAssetImageGenerator(asset: asset)
+//                    avAssetImageGenerator.appliesPreferredTrackTransform = true
+//                    let cmTime = CMTimeMake(value: 2, timescale: 1)
+//                    guard let cgImage = try? avAssetImageGenerator
+//                        .copyCGImage(at: cmTime, actualTime: nil) else {
+//                        break
+//                    }
+//
+//                    let image = UIImage(cgImage: cgImage)
+//                    self.save(
+//                        image: image,
+//                        fileName: fileName,
+//                        subPath: fileMessage.channelURL,
+//                        completionHandler: completionHandler
+//                    )
+//                default:
+//                    break
+//                }
+//            }
+//        }
         
-        static func preSave(
-            multipleFilesMessage: MultipleFilesMessage,
-            uploadableFileInfo: UploadableFileInfo,
-            index: Int,
-            isQuotedImage: Bool = false,
-            completionHandler: SBUImageCacheCompletionHandler? = nil
-        ) {
-            var fileName = self.createCacheFileName(
-                urlString: uploadableFileInfo.fileURL ?? "",
-                cacheKey: multipleFilesMessage.cacheKey + "_\(index)",
-                fileNameForExtension: uploadableFileInfo.fileName
-            )
-            if isQuotedImage == true { fileName = "quoted_\(fileName)" }
-
-            self.save(
-                data: uploadableFileInfo.file,
-                fileName: fileName,
-                subPath: multipleFilesMessage.channelURL,
-                completionHandler: completionHandler
-            )
-        }
+//        static func preSave(
+//            multipleFilesMessage: MultipleFilesMessage,
+//            uploadableFileInfo: UploadableFileInfo,
+//            index: Int,
+//            isQuotedImage: Bool = false,
+//            completionHandler: SBUImageCacheCompletionHandler? = nil
+//        ) {
+//            var fileName = self.createCacheFileName(
+//                urlString: uploadableFileInfo.fileURL ?? "",
+//                cacheKey: multipleFilesMessage.cacheKey + "_\(index)",
+//                fileNameForExtension: uploadableFileInfo.fileName
+//            )
+//            if isQuotedImage == true { fileName = "quoted_\(fileName)" }
+//
+//            self.save(
+//                data: uploadableFileInfo.file,
+//                fileName: fileName,
+//                subPath: multipleFilesMessage.channelURL,
+//                completionHandler: completionHandler
+//            )
+//        }
         
         static func get(fileName: String, subPath: String) -> UIImage? {
             let key = key(fileName: fileName, subPath: subPath)

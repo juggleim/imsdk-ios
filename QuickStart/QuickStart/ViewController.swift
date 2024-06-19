@@ -108,7 +108,7 @@ class ViewController: UIViewController {
         userIdTextField.text = UserDefaults.loadUserID()
         nicknameTextField.text = UserDefaults.loadNickname()
         
-        JIM.shared().connectionManager.add
+        JIM.shared().connectionManager.add(self)
         
         //TODO:
 //        SendbirdChat.addUserEventDelegate(self, identifier: self.description)
@@ -204,25 +204,25 @@ class ViewController: UIViewController {
         }
         
         SBUGlobals.currentUser = SBUUser(userId: userID, nickname: nickname)
-        SendbirdUI.connect { [weak self] user, error in
-            self?.loadingIndicator.stopAnimating()
-            self?.view.isUserInteractionEnabled = true
-            
-            if let user = user {
-                UserDefaults.saveUserID(userID)
-                UserDefaults.saveNickname(nickname)
-                
-                print("SendbirdUIKit.connect: \(user)")
-                self?.isSignedIn = true
-                self?.updateUnreadCount()
-                
-                if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-                    let payload = appDelegate.pendingNotificationPayload {
-                    self?.startChatAction(with: payload)
-                    appDelegate.pendingNotificationPayload = nil
-                }
-            }
-        }
+//        SendbirdUI.connect { [weak self] user, error in
+//            self?.loadingIndicator.stopAnimating()
+//            self?.view.isUserInteractionEnabled = true
+//            
+//            if let user = user {
+//                UserDefaults.saveUserID(userID)
+//                UserDefaults.saveNickname(nickname)
+//                
+//                print("SendbirdUIKit.connect: \(user)")
+//                self?.isSignedIn = true
+//                self?.updateUnreadCount()
+//                
+//                if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+//                    let payload = appDelegate.pendingNotificationPayload {
+//                    self?.startChatAction(with: payload)
+//                    appDelegate.pendingNotificationPayload = nil
+//                }
+//            }
+//        }
     }
     
     func signOutAction() {
@@ -232,12 +232,6 @@ class ViewController: UIViewController {
     func startChatAction(type: ButtonType) {
         if type == .startChatWithVC {
             JIM.shared().connectionManager.connect(withToken: token3)
-            
-            
-            let mainVC = SBUGroupChannelListViewController()
-            let naviVC = UINavigationController(rootViewController: mainVC)
-            naviVC.modalPresentationStyle = .fullScreen
-            present(naviVC, animated: true)
         }
     }
     
@@ -249,30 +243,52 @@ class ViewController: UIViewController {
         let naviVC = UINavigationController(rootViewController: mainVC)
         naviVC.modalPresentationStyle = .fullScreen
         self.present(naviVC, animated: true) {
-            SendbirdUI.moveToChannel(channelURL: channelURL)
+//            SendbirdUI.moveToChannel(channelURL: channelURL)
         }
     }
     
     func startOpenChatAction(type: ButtonType) {
-        guard type == .startOpenChatWithTC else { return }
-        
-        let mainVC = MainOpenChannelTabbarController()
-        mainVC.modalPresentationStyle = .fullScreen
-        present(mainVC, animated: true)
+//        guard type == .startOpenChatWithTC else { return }
+//
+//        let mainVC = MainOpenChannelTabbarController()
+//        mainVC.modalPresentationStyle = .fullScreen
+//        present(mainVC, animated: true)
     }
     
     func startChatBotAction(type: ButtonType) {
-        guard type == .startChatBotWithVC else { return }
-        
-        SendbirdUI.startChatWithAIBot(botId: "client_bot", isDistinct: true)
+//        guard type == .startChatBotWithVC else { return }
+//
+//        SendbirdUI.startChatWithAIBot(botId: "client_bot", isDistinct: true)
     }
     
     func moveToCustomSamples() {
-        SBUTheme.set(theme: .light)
-        let mainVC = CustomBaseViewController(style: .grouped)
-        let naviVC = UINavigationController(rootViewController: mainVC)
-        naviVC.modalPresentationStyle = .fullScreen
-        present(naviVC, animated: true)
+//        SBUTheme.set(theme: .light)
+//        let mainVC = CustomBaseViewController(style: .grouped)
+//        let naviVC = UINavigationController(rootViewController: mainVC)
+//        naviVC.modalPresentationStyle = .fullScreen
+//        present(naviVC, animated: true)
+    }
+    
+    // MARK: - JConnectionDelegate
+    
+}
+
+extension ViewController: JConnectionDelegate {
+    func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+
+    }
+    
+    func dbDidOpen() {
+        DispatchQueue.main.async {
+            let mainVC = SBUGroupChannelListViewController()
+            let naviVC = UINavigationController(rootViewController: mainVC)
+            naviVC.modalPresentationStyle = .fullScreen
+            self.present(naviVC, animated: true)
+        }
+    }
+    
+    func dbDidClose() {
+        
     }
 }
 
@@ -286,18 +302,6 @@ extension ViewController: UINavigationControllerDelegate {
 extension ViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
-    }
-}
-
-extension ViewController: UserEventDelegate {
-    func didUpdateTotalUnreadMessageCount(_ totalCount: Int32, totalCountByCustomType: [String : Int]?) {
-        self.setUnreadMessageCount(unreadCount: Int32(totalCount))
-    }
-}
-
-extension ViewController: ConnectionDelegate {
-    func didSucceedReconnection() {
-        self.updateUnreadCount()
     }
 }
 

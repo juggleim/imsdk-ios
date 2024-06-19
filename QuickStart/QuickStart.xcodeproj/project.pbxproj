@@ -25,7 +25,6 @@
 		A07F3B432BF4A2260087920B /* SBUMessageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395E2BF4A2230087920B /* SBUMessageCache.swift */; };
 		A07F3B442BF4A2260087920B /* SBUUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395F2BF4A2230087920B /* SBUUser.swift */; };
 		A07F3B452BF4A2260087920B /* SBUVoiceFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */; };
-		A07F3B462BF4A2260087920B /* SBUTypingIndicatorInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39612BF4A2230087920B /* SBUTypingIndicatorInfo.swift */; };
 		A07F3B482BF4A2260087920B /* SBUHighlightMessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */; };
 		A07F3B492BF4A2260087920B /* SBUScrollOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39642BF4A2230087920B /* SBUScrollOptions.swift */; };
 		A07F3B4A2BF4A2260087920B /* UIStackView.SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39662BF4A2230087920B /* UIStackView.SBUIKit.swift */; };
@@ -69,12 +68,8 @@
 		A07F3B722BF4A2270087920B /* SBUCacheManager.Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39932BF4A2240087920B /* SBUCacheManager.Template.swift */; };
 		A07F3B732BF4A2270087920B /* SBUCacheManager.Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39942BF4A2240087920B /* SBUCacheManager.Image.swift */; };
 		A07F3B742BF4A2270087920B /* SBUCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39952BF4A2240087920B /* SBUCacheManager.swift */; };
-		A07F3B752BF4A2270087920B /* SBUCacheManager.NotificationSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39962BF4A2240087920B /* SBUCacheManager.NotificationSetting.swift */; };
 		A07F3B762BF4A2270087920B /* SBUVoicePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39972BF4A2240087920B /* SBUVoicePlayer.swift */; };
 		A07F3B772BF4A2270087920B /* SBUToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39982BF4A2240087920B /* SBUToastView.swift */; };
-		A07F3B792BF4A2270087920B /* SBUTypingIndicatorMessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F399A2BF4A2240087920B /* SBUTypingIndicatorMessageManager.swift */; };
-		A07F3B7A2BF4A2270087920B /* SBUPendingMessageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F399B2BF4A2240087920B /* SBUPendingMessageManager.swift */; };
-		A07F3B7B2BF4A2270087920B /* SBUDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F399C2BF4A2240087920B /* SBUDownloadManager.swift */; };
 		A07F3B7C2BF4A2270087920B /* SBUVoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F399D2BF4A2240087920B /* SBUVoiceRecorder.swift */; };
 		A07F3B7D2BF4A2270087920B /* SBUPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F399E2BF4A2240087920B /* SBUPermissionManager.swift */; };
 		A07F3B7E2BF4A2270087920B /* SBUViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39A02BF4A2240087920B /* SBUViewModelDelegate.swift */; };
@@ -92,7 +87,6 @@
 		A07F3B9E2BF4A2270087920B /* SBUMentionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39D02BF4A2240087920B /* SBUMentionConfiguration.swift */; };
 		A07F3B9F2BF4A2270087920B /* SBUUserMentionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39D12BF4A2240087920B /* SBUUserMentionConfiguration.swift */; };
 		A07F3BA02BF4A2270087920B /* SBUConfig.Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39D22BF4A2240087920B /* SBUConfig.Common.swift */; };
-		A07F3BA12BF4A2270087920B /* SBUDashboardConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39D32BF4A2240087920B /* SBUDashboardConfig.swift */; };
 		A07F3BA22BF4A2270087920B /* SBUConfig.CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39D42BF4A2240087920B /* SBUConfig.CodingKeys.swift */; };
 		A07F3BBF2BF4A2270087920B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A07F39FE2BF4A2240087920B /* Assets.xcassets */; };
 		A07F3BC02BF4A2270087920B /* SBUBaseChannelListModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F3A012BF4A2240087920B /* SBUBaseChannelListModule.swift */; };
@@ -196,7 +190,6 @@
 		A07F395E2BF4A2230087920B /* SBUMessageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageCache.swift; sourceTree = "<group>"; };
 		A07F395F2BF4A2230087920B /* SBUUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUser.swift; sourceTree = "<group>"; };
 		A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceFileInfo.swift; sourceTree = "<group>"; };
-		A07F39612BF4A2230087920B /* SBUTypingIndicatorInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTypingIndicatorInfo.swift; sourceTree = "<group>"; };
 		A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUHighlightMessageInfo.swift; sourceTree = "<group>"; };
 		A07F39642BF4A2230087920B /* SBUScrollOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUScrollOptions.swift; sourceTree = "<group>"; };
 		A07F39662BF4A2230087920B /* UIStackView.SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIStackView.SBUIKit.swift; sourceTree = "<group>"; };
@@ -240,12 +233,8 @@
 		A07F39932BF4A2240087920B /* SBUCacheManager.Template.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCacheManager.Template.swift; sourceTree = "<group>"; };
 		A07F39942BF4A2240087920B /* SBUCacheManager.Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCacheManager.Image.swift; sourceTree = "<group>"; };
 		A07F39952BF4A2240087920B /* SBUCacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCacheManager.swift; sourceTree = "<group>"; };
-		A07F39962BF4A2240087920B /* SBUCacheManager.NotificationSetting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCacheManager.NotificationSetting.swift; sourceTree = "<group>"; };
 		A07F39972BF4A2240087920B /* SBUVoicePlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoicePlayer.swift; sourceTree = "<group>"; };
 		A07F39982BF4A2240087920B /* SBUToastView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUToastView.swift; sourceTree = "<group>"; };
-		A07F399A2BF4A2240087920B /* SBUTypingIndicatorMessageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTypingIndicatorMessageManager.swift; sourceTree = "<group>"; };
-		A07F399B2BF4A2240087920B /* SBUPendingMessageManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUPendingMessageManager.swift; sourceTree = "<group>"; };
-		A07F399C2BF4A2240087920B /* SBUDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUDownloadManager.swift; sourceTree = "<group>"; };
 		A07F399D2BF4A2240087920B /* SBUVoiceRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceRecorder.swift; sourceTree = "<group>"; };
 		A07F399E2BF4A2240087920B /* SBUPermissionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUPermissionManager.swift; sourceTree = "<group>"; };
 		A07F39A02BF4A2240087920B /* SBUViewModelDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUViewModelDelegate.swift; sourceTree = "<group>"; };
@@ -263,7 +252,6 @@
 		A07F39D02BF4A2240087920B /* SBUMentionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMentionConfiguration.swift; sourceTree = "<group>"; };
 		A07F39D12BF4A2240087920B /* SBUUserMentionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMentionConfiguration.swift; sourceTree = "<group>"; };
 		A07F39D22BF4A2240087920B /* SBUConfig.Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUConfig.Common.swift; sourceTree = "<group>"; };
-		A07F39D32BF4A2240087920B /* SBUDashboardConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUDashboardConfig.swift; sourceTree = "<group>"; };
 		A07F39D42BF4A2240087920B /* SBUConfig.CodingKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUConfig.CodingKeys.swift; sourceTree = "<group>"; };
 		A07F39FE2BF4A2240087920B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A07F3A012BF4A2240087920B /* SBUBaseChannelListModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelListModule.swift; sourceTree = "<group>"; };
@@ -408,7 +396,6 @@
 				A07F395E2BF4A2230087920B /* SBUMessageCache.swift */,
 				A07F395F2BF4A2230087920B /* SBUUser.swift */,
 				A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */,
-				A07F39612BF4A2230087920B /* SBUTypingIndicatorInfo.swift */,
 				A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */,
 				A07F39642BF4A2230087920B /* SBUScrollOptions.swift */,
 			);
@@ -485,9 +472,6 @@
 				A07F398F2BF4A2240087920B /* CacheManager */,
 				A07F39972BF4A2240087920B /* SBUVoicePlayer.swift */,
 				A07F39982BF4A2240087920B /* SBUToastView.swift */,
-				A07F399A2BF4A2240087920B /* SBUTypingIndicatorMessageManager.swift */,
-				A07F399B2BF4A2240087920B /* SBUPendingMessageManager.swift */,
-				A07F399C2BF4A2240087920B /* SBUDownloadManager.swift */,
 				A07F399D2BF4A2240087920B /* SBUVoiceRecorder.swift */,
 				A07F399E2BF4A2240087920B /* SBUPermissionManager.swift */,
 			);
@@ -503,7 +487,6 @@
 				A07F39932BF4A2240087920B /* SBUCacheManager.Template.swift */,
 				A07F39942BF4A2240087920B /* SBUCacheManager.Image.swift */,
 				A07F39952BF4A2240087920B /* SBUCacheManager.swift */,
-				A07F39962BF4A2240087920B /* SBUCacheManager.NotificationSetting.swift */,
 			);
 			path = CacheManager;
 			sourceTree = "<group>";
@@ -548,7 +531,6 @@
 				A07F39CE2BF4A2240087920B /* SBUConfig.GroupChannel.swift */,
 				A07F39CF2BF4A2240087920B /* Mention */,
 				A07F39D22BF4A2240087920B /* SBUConfig.Common.swift */,
-				A07F39D32BF4A2240087920B /* SBUDashboardConfig.swift */,
 				A07F39D42BF4A2240087920B /* SBUConfig.CodingKeys.swift */,
 			);
 			path = Configuration;
@@ -991,7 +973,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A07F3B6C2BF4A2270087920B /* MessageTemplateRenderer.swift in Sources */,
-				A07F3BA12BF4A2270087920B /* SBUDashboardConfig.swift in Sources */,
 				A07F3B4D2BF4A2260087920B /* Array+SBUIKit.swift in Sources */,
 				A07F3B6E2BF4A2270087920B /* SBUToastType.swift in Sources */,
 				A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */,
@@ -1002,7 +983,6 @@
 				A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */,
 				A09645F32BF3A98000290775 /* Float+SBUKit.swift in Sources */,
 				A07F3C902BF4A2290087920B /* SBUTemplateLabel.swift in Sources */,
-				A07F3B752BF4A2270087920B /* SBUCacheManager.NotificationSetting.swift in Sources */,
 				A07F3B972BF4A2270087920B /* SBUReplyConfiguration.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
@@ -1035,7 +1015,6 @@
 				A07F3B712BF4A2270087920B /* SBUCacheManager.File.swift in Sources */,
 				A07F3B492BF4A2260087920B /* SBUScrollOptions.swift in Sources */,
 				A07F3B732BF4A2270087920B /* SBUCacheManager.Image.swift in Sources */,
-				A07F3B7B2BF4A2270087920B /* SBUDownloadManager.swift in Sources */,
 				A07F3B762BF4A2270087920B /* SBUVoicePlayer.swift in Sources */,
 				A07F3C912BF4A2290087920B /* SBUMarginView.swift in Sources */,
 				A07F3C0C2BF4A2280087920B /* SBUColorSet.swift in Sources */,
@@ -1078,7 +1057,6 @@
 				A07F3C822BF4A2290087920B /* SBUUserProfileView.swift in Sources */,
 				A07F3B7D2BF4A2270087920B /* SBUPermissionManager.swift in Sources */,
 				A09645EE2BF3A2E800290775 /* SBUFontSet.swift in Sources */,
-				A07F3B462BF4A2260087920B /* SBUTypingIndicatorInfo.swift in Sources */,
 				A07F3C8A2BF4A2290087920B /* SBUMenuSheetViewController.swift in Sources */,
 				A07F3C9B2BF4A2290087920B /* SBUCollectionViewCell.swift in Sources */,
 				A07F3C152BF4A2280087920B /* SBUGroupChannelListViewController.swift in Sources */,
@@ -1086,7 +1064,6 @@
 				A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */,
 				A07F3B4C2BF4A2260087920B /* Thread+SBUIKit.swift in Sources */,
 				A07F3C812BF4A2290087920B /* SBULayoutableButton.swift in Sources */,
-				A07F3B7A2BF4A2270087920B /* SBUPendingMessageManager.swift in Sources */,
 				A07F3B662BF4A2270087920B /* SBULogger.swift in Sources */,
 				A07F3C142BF4A2280087920B /* SBUBaseChannelListViewController.swift in Sources */,
 				A07F3C852BF4A2290087920B /* SBUBarButtonItem.swift in Sources */,
@@ -1104,7 +1081,6 @@
 				A07F3BA22BF4A2270087920B /* SBUConfig.CodingKeys.swift in Sources */,
 				A07F35E22BF4928B0087920B /* UIcolor+Ext.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
-				A07F3B792BF4A2270087920B /* SBUTypingIndicatorMessageManager.swift in Sources */,
 				A07F3C782BF4A2290087920B /* SBUStackView.swift in Sources */,
 				A09645E52BF39EA300290775 /* NibCustomView.swift in Sources */,
 				A07F3B3E2BF4A2260087920B /* SBUIconSetType.swift in Sources */,

@@ -245,9 +245,9 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     
     open func groupChannelListModule(
         _ listComponent: SBUGroupChannelListModule.List,
-        channel: JConversationInfo
+        didSelectLeave channel: JConversationInfo
     ) {
-        self.viewModel?.changePushTriggerOption(option: option, channel: channel)
+//        self.viewModel?.leaveChannel(channel)
     }
     
     // MARK: - SBUGroupChannelListModuleListDataSource
@@ -287,4 +287,10 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         
         self.listComponent?.reloadTableView()
     }
+    
+    open func groupChannelListViewModel(_ viewModel: SBUGroupChannelListViewModel,
+                                        didUpdateChannel channel: JConversationInfo) { }
+    
+    open func groupChannelListViewModel(_ viewModel: SBUGroupChannelListViewModel,
+                                        didLeaveChannel channel: JConversationInfo) { }
 }

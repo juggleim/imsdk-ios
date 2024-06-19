@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 // File cache path: {cachesDirectory}/file/{REQ_ID}/{FILENAME}.{EXT}
 
@@ -88,20 +89,20 @@ extension SBUCacheManager {
             return diskData as Data?
         }
         
-        static func preSave(fileMessage: FileMessage, fileName: String?, completionHandler: SBUCacheCompletionHandler? = nil) {
-            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
-                let fileName = self.createCacheFileName(
-                    urlString: fileMessage.url,
-                    cacheKey: fileMessage.cacheKey,
-                    fileName: fileName
-                )
-                
-                self.save(
-                    data: messageParams.file,
-                    fileName: fileName,
-                    completionHandler: completionHandler
-                )
-            }
+        static func preSave(fileMessage: JFileMessage, fileName: String?, completionHandler: SBUCacheCompletionHandler? = nil) {
+//            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
+//                let fileName = self.createCacheFileName(
+//                    urlString: fileMessage.url,
+//                    cacheKey: fileMessage.cacheKey,
+//                    fileName: fileName
+//                )
+//                
+//                self.save(
+//                    data: messageParams.file,
+//                    fileName: fileName,
+//                    completionHandler: completionHandler
+//                )
+//            }
         }
         
         static func createCacheFileName(urlString: String, cacheKey: String?, fileName: String?) -> String {

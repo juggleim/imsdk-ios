@@ -6,6 +6,7 @@
 //  Copyright © 2020 Sendbird, Inc. All rights reserved.
 //
 import UIKit
+import JetIM
 
 /// This is an enumeration for channel type.
 /// - Since: 3.0.0
@@ -30,9 +31,6 @@ public enum ChannelSettingItemType: Int {
             ? [.moderations, notifications, members, leave]
             : [.notifications, members, leave]
         
-        if SBUAvailable.isSupportMessageSearch() {
-            items += [.search]
-        }
         return items
     }
     
@@ -41,12 +39,7 @@ public enum ChannelSettingItemType: Int {
         case 0: return .moderations
         case 1: return .notifications
         case 2: return .members
-        case 3:
-            if SBUAvailable.isSupportMessageSearch() {
-                return .search
-            } else {
-                return .leave
-            }
+        case 3: return .leave
         case 4: return .leave
         default: return nil
         }
@@ -78,28 +71,28 @@ public enum ModerationItemType: Int {
     @available(*, unavailable, renamed: "bannedUsers") // 3.0.0
     case bannedMembers
     
-    static func allTypes(isBroadcast: Bool, channelType: ChannelType = .group) -> [ModerationItemType] {
-        return isBroadcast
-        ? [.operators, .bannedUsers]
-        : ((channelType == .group)
-           ? [.operators, .mutedMembers, .bannedUsers, .freezeChannel]
-           : [.operators, .mutedParticipants, .bannedUsers])
-    }
-    
-    static func allTypes(channel: BaseChannel) -> [ModerationItemType] {
-        var isBroadcast = false
-        let channelType: ChannelType = (channel is GroupChannel) ? .group : .open
-        
-        if channelType == .group, let groupChannel = channel as? GroupChannel {
-            isBroadcast = groupChannel.isBroadcast
-        }
-        
-        return isBroadcast
-        ? [.operators, .bannedUsers]
-        : ((channelType == .group)
-           ? [.operators, .mutedMembers, .bannedUsers, .freezeChannel]
-           : [.operators, .mutedParticipants, .bannedUsers])
-    }
+//    static func allTypes(isBroadcast: Bool, channelType: ChannelType = .group) -> [ModerationItemType] {
+//        return isBroadcast
+//        ? [.operators, .bannedUsers]
+//        : ((channelType == .group)
+//           ? [.operators, .mutedMembers, .bannedUsers, .freezeChannel]
+//           : [.operators, .mutedParticipants, .bannedUsers])
+//    }
+//
+//    static func allTypes(channel: BaseChannel) -> [ModerationItemType] {
+//        var isBroadcast = false
+//        let channelType: ChannelType = (channel is GroupChannel) ? .group : .open
+//
+//        if channelType == .group, let groupChannel = channel as? GroupChannel {
+//            isBroadcast = groupChannel.isBroadcast
+//        }
+//
+//        return isBroadcast
+//        ? [.operators, .bannedUsers]
+//        : ((channelType == .group)
+//           ? [.operators, .mutedMembers, .bannedUsers, .freezeChannel]
+//           : [.operators, .mutedParticipants, .bannedUsers])
+//    }
 }
 
 /// This is an enumeration used to display `UserCell` by type.
@@ -364,12 +357,12 @@ public enum SBUSuggestedRepliesRenderType {
     ///   - fullMessageList: The list of all `BaseMessage` objects.
     /// - Returns: A `Bool` indicating whether to hide the suggested replies. `true` means hide, `false` means show.
     public func shouldHideSuggestedReplies(
-        message: BaseMessage,
-        fullMessageList: [BaseMessage]
+        message: JMessage,
+        fullMessageList: [JMessage]
     ) -> Bool {
         switch self {
         case .lastMessageOnly:
-            let latestMessageId = fullMessageList.first(where: { $0.sender != nil })?.messageId
+            let latestMessageId = fullMessageList.first(where: { $0.senderUserId != nil })?.messageId
             return message.messageId != latestMessageId
         case .allMessages:
             return false

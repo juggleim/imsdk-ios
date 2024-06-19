@@ -25,19 +25,15 @@ protocol SBUUpdatableConfigProtocol {
 ///   - P2: UIKit default value
 ///   
 /// - Since: 3.6.0
-public class SBUConfig: NSObject, Codable, SBUUpdatableConfigProtocol {
+public class SBUConfig: NSObject, SBUUpdatableConfigProtocol {
     /// Application common configuration set
     public var common: Common = Common()
     
     /// GroupChannel configuration set
     public var groupChannel: GroupChannel = GroupChannel()
     
-    /// OpenChannel configuration set
-    public var openChannel: OpenChannel = OpenChannel()
-    
     func updateWithDashboardData(_ dashboardConfig: SBUConfig) {
         self.common.updateWithDashboardData(dashboardConfig.common)
         self.groupChannel.updateWithDashboardData(dashboardConfig.groupChannel)
-        self.openChannel.updateWithDashboardData(dashboardConfig.openChannel)
     }
 }

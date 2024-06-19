@@ -61,21 +61,21 @@ extension SBUConfig {
 //        return cachedUpdatedAt < serverUpdatedAt
 //    }
     
-    func decodeDashboardConfig(with jsonPayload: String) -> SBUDashboardConfig? {
-        guard let jsonData = jsonPayload.data(using: .utf8) else {
-            SBULog.error("Failed to decode JSON")
-            return nil
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            let dashboardConfig = try decoder.decode(SBUDashboardConfig.self, from: jsonData)
-            return dashboardConfig
-        } catch {
-            SBULog.error("Failed to decode JSON: \(error)")
-        }
-        
-        return nil
-    }
+//    func decodeDashboardConfig(with jsonPayload: String) -> SBUDashboardConfig? {
+//        guard let jsonData = jsonPayload.data(using: .utf8) else {
+//            SBULog.error("Failed to decode JSON")
+//            return nil
+//        }
+//
+//        do {
+//            let decoder = JSONDecoder()
+//            decoder.keyDecodingStrategy = .convertFromSnakeCase
+//            let dashboardConfig = try decoder.decode(SBUDashboardConfig.self, from: jsonData)
+//            return dashboardConfig
+//        } catch {
+//            SBULog.error("Failed to decode JSON: \(error)")
+//        }
+//
+//        return nil
+//    }
 }

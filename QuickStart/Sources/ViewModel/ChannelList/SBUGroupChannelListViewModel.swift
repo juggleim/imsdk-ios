@@ -64,7 +64,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     }
     
     private func createCollectionIfNeeded() {
-        guard self.channelCollection == nil else { return }
+//        guard self.channelCollection == nil else { return }
         
 //        if let query = self.customizedChannelListQuery?.copy() as? GroupChannelListQuery {
 //            self.channelListQuery = query
@@ -88,7 +88,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
 //        if let query = self.channelListQuery {
 //            self.channelCollection = SendbirdChat.createGroupChannelCollection(query: query)
 //        }
-        self.channelCollection?.delegate = self
+//        self.channelCollection?.delegate = self
     }
     
     // MARK: - List handling
@@ -110,11 +110,6 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         }
         
         self.createCollectionIfNeeded()
-        
-        guard self.channelCollection?.hasNext == true else {
-            SBULog.info("All channels have been loaded.")
-            return
-        }
 
         self.setLoading(true, false)
         

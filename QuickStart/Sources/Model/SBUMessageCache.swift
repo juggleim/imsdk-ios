@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import JetIM
 
 class SBUMessageCache {
     
     private let fetchLimit: Int = 100
-    private let channel: BaseChannel
+    private let channel: JConversationInfo
     
     @SBUAtomic private(set) var cachedMessageList: [BaseMessage] = []
     private let messageListParam: MessageListParams

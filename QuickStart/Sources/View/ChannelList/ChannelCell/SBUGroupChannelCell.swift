@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 /// Typealias for SBUGroupChannelCell. This is deprecated and renamed to SBUGroupChannelCell.
 @available(*, deprecated, renamed: "SBUGroupChannelCell")
@@ -245,10 +246,10 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     
     /// This function configure a cell using `GroupChannel` information.
     /// - Parameter channel: `GroupChannel` object
-    open override func configure(channel: BaseChannel) {
+    open override func configure(channel: JConversationInfo) {
         super.configure(channel: channel)
         
-        guard let channel = channel as? GroupChannel else { return }
+        guard let channel = channel as? JConversationInfo else { return }
 
         // Cover image
         if let url = channel.coverURL, SBUUtils.isValid(coverURL: url) {
