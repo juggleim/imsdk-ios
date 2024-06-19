@@ -9,6 +9,7 @@
 
 #import <JetIM/JConversation.h>
 #import <JetIM/JMessage.h>
+#import "JConversationMentionInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL mute;
 /// 会话草稿
 @property (nonatomic, copy) NSString *draft;
-/// 会话中是否存在被 @ 的消息（清除会话未读数时会将此状态置为 NO）
-@property (nonatomic, assign) BOOL hasMentioned;
+
+@property (nonatomic, strong) JConversationMentionInfo * mentionInfo;
 
 @end
 

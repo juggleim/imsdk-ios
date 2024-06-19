@@ -17,6 +17,12 @@
 		5B4DB6932BFC3BF700DD18B6 /* JDeleteMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */; };
 		5B4DB6962BFC3C0D00DD18B6 /* JCleanMsgMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */; };
 		5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */; };
+		5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */; };
+		5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */; };
+		5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E32C21790600AF6519 /* JMessageOptions.h */; };
+		5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E42C21790600AF6519 /* JMessageOptions.m */; };
+		5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */; };
+		5B9980EA2C21794B00AF6519 /* JMessageReferredInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
@@ -268,6 +274,12 @@
 		5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteMsgMessage.m; sourceTree = "<group>"; };
 		5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCleanMsgMessage.h; sourceTree = "<group>"; };
 		5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCleanMsgMessage.m; sourceTree = "<group>"; };
+		5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConversationMentionInfo.h; sourceTree = "<group>"; };
+		5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationMentionInfo.m; sourceTree = "<group>"; };
+		5B9980E32C21790600AF6519 /* JMessageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageOptions.h; sourceTree = "<group>"; };
+		5B9980E42C21790600AF6519 /* JMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageOptions.m; sourceTree = "<group>"; };
+		5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReferredInfo.h; sourceTree = "<group>"; };
+		5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReferredInfo.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
@@ -634,8 +646,8 @@
 			isa = PBXGroup;
 			children = (
 				A08AA4142B1ADE4F008B114C /* messages */,
-				A08AA24E2B14AF1F008B114C /* JMessage.h */,
-				A08AA24F2B14AF1F008B114C /* JMessage.m */,
+				5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */,
+				5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */,
 				A08AA2522B14AF2E008B114C /* JConversation.h */,
 				A08AA2532B14AF2E008B114C /* JConversation.m */,
 				A08AA2562B14B153008B114C /* JConversationInfo.h */,
@@ -648,6 +660,12 @@
 				A094F0052B9C9C200000E97F /* JUserInfo.m */,
 				A09716BB2B9FFE3C00D1DB24 /* JGroupInfo.h */,
 				A09716BC2B9FFE3C00D1DB24 /* JGroupInfo.m */,
+				A08AA24E2B14AF1F008B114C /* JMessage.h */,
+				A08AA24F2B14AF1F008B114C /* JMessage.m */,
+				5B9980E32C21790600AF6519 /* JMessageOptions.h */,
+				5B9980E42C21790600AF6519 /* JMessageOptions.m */,
+				5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */,
+				5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */,
 				A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */,
 				A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */,
 				A09645752BECCDF800290775 /* JMediaMessageContent.h */,
@@ -1030,6 +1048,7 @@
 				5B4DB6862BFC340700DD18B6 /* JUnDisturbConvMessage.h in Headers */,
 				A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */,
 				A08AA2812B175646008B114C /* JConnectionManager.h in Headers */,
+				5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */,
 				A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */,
 				A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */,
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
@@ -1063,6 +1082,7 @@
 				A08AA2542B14AF2E008B114C /* JConversation.h in Headers */,
 				A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */,
 				A08AA3A42B19CB78008B114C /* GPBUnknownFieldSet_PackagePrivate.h in Headers */,
+				5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */,
 				A08AA3732B19CB77008B114C /* Api.pbobjc.h in Headers */,
 				A08AA37A2B19CB78008B114C /* Timestamp.pbobjc.h in Headers */,
 				A08AA3892B19CB78008B114C /* GPBExtensionRegistry.h in Headers */,
@@ -1099,6 +1119,7 @@
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
 				A07F3CB92BFC928E0087920B /* JLogCommandMessage.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
+				5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
 				A08AA4012B19EEDB008B114C /* SRError.h in Headers */,
@@ -1222,6 +1243,7 @@
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
 				A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */,
+				5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */,
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
 				A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */,
 				A09716C72BA0004600D1DB24 /* JUserInfoDB.m in Sources */,
@@ -1240,6 +1262,7 @@
 				A08AA4062B19EEDB008B114C /* SRError.m in Sources */,
 				A08AA3662B19CB77008B114C /* GPBMessage.m in Sources */,
 				A08AA3642B19CB77008B114C /* GPBRootObject.m in Sources */,
+				5B9980EA2C21794B00AF6519 /* JMessageReferredInfo.m in Sources */,
 				A08AA4092B19EEDB008B114C /* SRSIMDHelpers.m in Sources */,
 				A08AA37F2B19CB78008B114C /* GPBCodedInputStream.m in Sources */,
 				A09716C32B9FFF1F00D1DB24 /* JUserInfoManager.m in Sources */,
@@ -1297,6 +1320,7 @@
 				A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */,
 				A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */,
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
+				5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */,
 				A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */,
 				A08AA2862B1756E3008B114C /* JMessageManager.m in Sources */,
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,

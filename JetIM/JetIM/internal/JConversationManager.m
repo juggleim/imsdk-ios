@@ -149,37 +149,69 @@
                                         direction:direction];
 }
 
-- (void)deleteConversationInfoBy:(JConversation *)conversation {
-    [self.core.dbManager deleteConversationInfoBy:conversation];
+- (void)deleteConversationInfoBy:(JConversation *)conversation
+                         success:(void (^)(void))successBlock
+                           error:(void (^)(JErrorCode code))errorBlock{
     //手动删除不给回调
+    __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
                                         success:^(void) {
         //删除会话不更新时间戳，只通过命令消息来更新
         JLogI(@"CONV-Delete", @"success");
+        [weakSelf.core.dbManager deleteConversationInfoBy:conversation];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if(successBlock){
+                successBlock();
+            }
+        });
+
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-Delete", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if(errorBlock){
+                errorBlock((JErrorCode)code);
+            }
+        });
     }];
 }
 
-- (void)clearUnreadCountByConversation:(JConversation *)conversation {
+- (void)clearUnreadCountByConversation:(JConversation *)conversation
+                               success:(void (^)(void))successBlock
+                                 error:(void (^)(JErrorCode code))errorBlock {
     JConcreteConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
     if (!info) {
-        return;
+        dispatch_async(self.core.delegateQueue, ^{
+            if(errorBlock){
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
     }
-    [self.core.dbManager clearUnreadCountBy:conversation
-                                   msgIndex:info.lastMessageIndex];
-    [self.core.dbManager setMention:NO
-                       conversation:conversation];
-    [self noticeTotalUnreadCountChange];
+
+    __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:info.lastMessageIndex
                                   success:^(void) {
         //清除未读数暂时不用更新 syncTime
         JLogI(@"CONV-ClearUnread", @"success");
+        [weakSelf.core.dbManager clearUnreadCountBy:conversation
+                                       msgIndex:info.lastMessageIndex];
+        [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
+        [weakSelf noticeTotalUnreadCountChange];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+        });
+
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-ClearUnread", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if(errorBlock){
+                errorBlock((JErrorCode)code);
+            }
+        });
     }];
 }
 
@@ -288,16 +320,22 @@
                                        success:^{
         JLogI(@"CONV-ClearTotal", @"success");
         [weakSelf.core.dbManager clearTotalUnreadCount];
-        [weakSelf.core.dbManager clearMentionstatus];
+        [weakSelf.core.dbManager clearMentionInfo];
         [weakSelf noticeTotalUnreadCountChange];
-        if(successBlock){
-            successBlock();
-        }
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if(successBlock){
+                successBlock();
+            }
+        });
+  
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-ClearTotal", @"error code is %lu", code);
-        if(errorBlock){
-            errorBlock((JErrorCode)code);
-        }
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+            
+        });
     }];
     
 }
@@ -409,7 +447,7 @@
         for (JConcreteConversationInfo * conv in content.conversations) {
             //更新数据库
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
-            [self.core.dbManager setMention:NO conversation:conv.conversation];
+            [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
 
             //获取会话对象
             JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
@@ -466,6 +504,11 @@
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
         }
+        if (obj.mentionUserList!= nil){
+            for (JUserInfo * userInfo in obj.mentionUserList) {
+                [userDic setObject:userInfo forKey:userInfo.userId];
+            }
+        }
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
@@ -475,12 +518,12 @@
     BOOL hasMention = NO;
     //接收的消息才处理 mention
     if (message.direction == JMessageDirectionReceive
-        && message.content.mentionInfo) {
-        if (message.content.mentionInfo.type == JMentionTypeAll
-            || message.content.mentionInfo.type == JMentionTypeAllAndSomeOne) {
+        && message.messageOptions.mentionInfo != nil) {
+        if (message.messageOptions.mentionInfo.type == JMentionTypeAll
+            || message.messageOptions.mentionInfo.type == JMentionTypeAllAndSomeOne) {
             hasMention = YES;
-        } else if (message.content.mentionInfo.type == JMentionTypeSomeOne) {
-            for (JUserInfo *userInfo in message.content.mentionInfo.targetUsers) {
+        } else if (message.messageOptions.mentionInfo.type == JMentionTypeSomeOne) {
+            for (JUserInfo *userInfo in message.messageOptions.mentionInfo.targetUsers) {
                 if ([userInfo.userId isEqualToString:self.core.userId]) {
                     hasMention = YES;
                     break;
@@ -488,6 +531,20 @@
             }
         }
     }
+    
+    JConversationMentionInfo * mentionInfo;
+
+    if(hasMention){
+        NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
+        JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
+        msg.senderId = message.senderUserId;
+        msg.msgId = message.messageId;
+        msg.msgTime = message.timestamp;
+        [msgs addObject:msg];
+        mentionInfo = [[JConversationMentionInfo alloc] init];
+        mentionInfo.mentionMsgList = msgs;
+    }
+    
     BOOL isBroadcast = NO;
     if (message.flags & JMessageFlagIsBroadcast) {
         isBroadcast = YES;
@@ -505,8 +562,8 @@
         addInfo.lastMessageIndex = message.msgIndex;
         addInfo.lastReadMessageIndex = message.msgIndex - 1;
         addInfo.unreadCount = 1;
-        if (hasMention) {
-            addInfo.hasMentioned = YES;
+        if (mentionInfo) {
+            addInfo.mentionInfo = mentionInfo;
         }
         [self.core.dbManager insertConversations:@[addInfo] completion:nil];
         dispatch_async(self.core.delegateQueue, ^{
@@ -515,9 +572,18 @@
             }
         });
     } else {
-        if (hasMention) {
-            [self.core.dbManager setMention:YES conversation:message.conversation];
-            info.hasMentioned = YES;
+        if (mentionInfo) {
+            if(info.mentionInfo.mentionMsgList != nil){
+                NSMutableArray * msgs = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
+                for (JConversationMentionMessage * msg in mentionInfo.mentionMsgList) {
+                    if(![msgs containsObject:msg]){
+                        [msgs addObject:msg];
+                    }
+                }
+                mentionInfo.mentionMsgList = msgs;
+            }
+            info.mentionInfo = mentionInfo;
+            [self.core.dbManager setMentionInfo:message.conversation mentionInfoJson:[mentionInfo encodeToJson]];
         }
         //更新未读数
         if (message.msgIndex > 0) {

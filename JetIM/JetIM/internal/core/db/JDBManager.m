@@ -133,15 +133,14 @@
   conversation:(JConversation *)conversation {
     [self.conversationDb setTop:isTop time:time conversation:conversation];
 }
-
-- (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {
-    [self.conversationDb setMention:isMention conversation:conversation];
+-(void)setMentionInfo:(JConversation *)conversation
+      mentionInfoJson:(NSString *)mentionInfoJson{
+    [self.conversationDb setMentionInfo:conversation mentionInfoJson:mentionInfoJson];
 }
 
-- (void)clearMentionstatus {
-    [self.conversationDb clearMentionstatus];
+-(void)clearMentionInfo{
+    [self.conversationDb clearMentionInfo];
 }
-
 - (int)getTotalUnreadCount {
     return [self.conversationDb getTotalUnreadCount];
 }
@@ -157,6 +156,9 @@
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
+}
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId{
+    return [self.messageDb getMessageWithMessageId:messageId];
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo
@@ -259,16 +261,6 @@
     [self.messageDb setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
-
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction {
-//    return [self.messageDb getMentionMessages:conversation
-//                                        count:count
-//                                         time:time
-//                                    direction:direction];
-//}
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {

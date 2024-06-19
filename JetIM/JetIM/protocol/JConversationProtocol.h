@@ -50,7 +50,9 @@
 
 /// 删除特定会话
 /// - Parameter conversation: 会话标识
-- (void)deleteConversationInfoBy:(JConversation *)conversation;
+- (void)deleteConversationInfoBy:(JConversation *)conversation
+                         success:(void (^)(void))successBlock
+                           error:(void (^)(JErrorCode code))errorBlock;
 
 /// 设置草稿内容
 /// - Parameters:
@@ -83,7 +85,9 @@
 
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象
-- (void)clearUnreadCountByConversation:(JConversation *)conversation;
+- (void)clearUnreadCountByConversation:(JConversation *)conversation
+                               success:(void (^)(void))successBlock
+                                 error:(void (^)(JErrorCode code))errorBlock;
 
 /// 设置静音
 /// - Parameters:

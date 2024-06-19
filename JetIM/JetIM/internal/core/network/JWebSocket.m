@@ -114,14 +114,16 @@
 
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(nonnull JConversation *)conversation
+       inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
            mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo))successBlock
-                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
+          mentionInfo:(JMessageMentionInfo *)mentionInfo
+      referredMessage:(JConcreteMessage *)referredMessage
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
@@ -134,7 +136,8 @@
                                                    index:self.cmdIndex++
                                         conversationType:conversation.conversationType
                                           conversationId:conversation.conversationId
-                                             mentionInfo:content.mentionInfo];
+                                             mentionInfo:mentionInfo
+                                         referredMessage:referredMessage];
         JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];

@@ -24,12 +24,14 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "extra TEXT,"
                                         "seq_no INTEGER,"
                                         "message_index INTEGER,"
-                                        "read_count INTEGER,"
+                                        "read_count INTEGER DEFAULT 0,"
                                         "member_count INTEGER DEFAULT -1,"
                                         "is_deleted BOOLEAN DEFAULT 0,"
                                         "search_content TEXT,"
+                                        "local_attribute TEXT,"
                                         "mention_info TEXT,"
-                                        "local_attribute TEXT"
+                                        "refer_msg_id VARCHAR (64),"
+                                        "refer_sender_id VARCHAR (64)"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
@@ -41,7 +43,7 @@ NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info ,refer_msg_id ,refer_sender_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE ";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
@@ -63,9 +65,6 @@ NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 
-
-//NSString *const jGetMentionMessages = @"SELECT * FROM message WHERE LENGTH(mention_info) > 0 AND conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
-
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
 NSString *const jMessageId = @"id";
@@ -84,8 +83,10 @@ NSString *const jMessageIndex = @"message_index";
 NSString *const jReadCount = @"read_count";
 NSString *const jMemberCount = @"member_count";
 NSString *const jIsDeleted = @"is_deleted";
-NSString *const jMentionInfo = @"mention_info";
 NSString *const jLocalAttribute = @"local_attribute";
+NSString *const jMentionInfo = @"mention_info";
+NSString *const jReferMsgId = @"refer_msg_id";
+NSString *const jReferSenderId = @"refer_sender_id";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -409,48 +410,6 @@ NSString *const jLocalAttribute = @"local_attribute";
     
 }
 
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction {
-//    if (time == 0) {
-//        time = INT64_MAX;
-//    }
-//    if (count > 100) {
-//        count = 100;
-//    }
-//    NSString *sql = jGetMentionMessages;
-//    if (direction == JPullDirectionNewer) {
-//        sql = [sql stringByAppendingString:jAndGreaterThan];
-//    } else {
-//        sql = [sql stringByAppendingString:jAndLessThan];
-//    }
-//    sql = [sql stringByAppendingString:jOrderByTimestamp];
-//    if (direction == JPullDirectionNewer) {
-//        sql = [sql stringByAppendingString:jASC];
-//    } else {
-//        sql = [sql stringByAppendingString:jDESC];
-//    }
-//    sql = [sql stringByAppendingString:jLimit];
-//    NSMutableArray *messages = [[NSMutableArray alloc] init];
-//    NSArray *args = @[@(conversation.conversationType), conversation.conversationId, @(time), @(count)];
-//    [self.dbHelper executeQuery:sql
-//           withArgumentsInArray:args
-//                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
-//        while ([resultSet next]) {
-//            JConcreteMessage *m = [self messageWith:resultSet];
-//            [messages addObject:m];
-//        }
-//    }];
-//    NSArray *result;
-//    if (direction == JPullDirectionOlder) {
-//        result = [[messages reverseObjectEnumerator] allObjects];
-//    } else {
-//        result = [messages copy];
-//    }
-//    return result;
-//}
-
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo {
     [self.dbHelper executeUpdate:jUpdateMessageState
@@ -497,7 +456,47 @@ NSString *const jLocalAttribute = @"local_attribute";
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     int memberCount = message.groupReadInfo.memberCount?:-1;
-    [db executeUpdate:jInsertMessage, @(message.conversation.conversationType), message.conversation.conversationId, message.contentType, message.messageId, clientUid, @(message.direction), @(message.messageState), @(message.hasRead), @(message.timestamp), message.senderUserId, content, @(seqNo), @(msgIndex), @(message.groupReadInfo.readCount), @(memberCount), message.content.searchContent, [message.content.mentionInfo encodeToJson]];
+    
+    NSString * mentionInfo;
+    if(message.messageOptions.mentionInfo){
+        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    }else{
+        mentionInfo = @"";
+    }
+    
+    NSString * referMsgId;
+    NSString * referSenderId;
+    if(message.messageOptions.referredInfo){
+        referMsgId = message.messageOptions.referredInfo.messageId;
+        referSenderId = message.messageOptions.referredInfo.senderId;
+        if(referMsgId == nil){
+            referMsgId = @"";
+        }
+        if(referSenderId == nil){
+            referSenderId = @"";
+        }
+    }
+    
+    [db executeUpdate:jInsertMessage,
+                      @(message.conversation.conversationType),
+                      message.conversation.conversationId,
+                      message.contentType,
+                      message.messageId,
+                      clientUid,
+                      @(message.direction),
+                      @(message.messageState),
+                      @(message.hasRead),
+                      @(message.timestamp),
+                      message.senderUserId,
+                      content,
+                      @(seqNo),
+                      @(msgIndex),
+                      @(message.groupReadInfo.readCount),
+                      @(memberCount),
+                      message.content.searchContent,
+                      mentionInfo,
+                      referMsgId,
+                      referSenderId];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
@@ -539,9 +538,22 @@ NSString *const jLocalAttribute = @"local_attribute";
     info.readCount = [rs intForColumn:jReadCount];
     info.memberCount = [rs intForColumn:jMemberCount];
     message.groupReadInfo = info;
+    message.messageOptions = [[JMessageOptions alloc] init];
     NSString *mentionInfoStr = [rs stringForColumn:jMentionInfo];
     if (mentionInfoStr.length > 0) {
-        message.content.mentionInfo = [JMessageMentionInfo decodeFromJson:mentionInfoStr];
+        message.messageOptions.mentionInfo = [JMessageMentionInfo decodeFromJson:mentionInfoStr];
+    }
+    NSString * referMsgId = [rs stringForColumn:jReferMsgId];
+    NSString * referSenderId = [rs stringForColumn:jReferSenderId];
+    if(referMsgId!= nil && referSenderId != nil){
+        message.messageOptions.referredInfo = [[JMessageReferredInfo alloc] init];
+        message.messageOptions.referredInfo.messageId = referMsgId;
+        message.messageOptions.referredInfo.senderId = referSenderId;
+        JConcreteMessage * referredInfo = [self getMessageWithMessageId:referMsgId];
+        if(referredInfo){
+            message.referMsg = referredInfo;
+            message.messageOptions.referredInfo.content = referredInfo.content;
+        }
     }
     return message;
 }

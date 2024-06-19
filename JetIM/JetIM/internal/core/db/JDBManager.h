@@ -54,15 +54,16 @@ NS_ASSUME_NONNULL_BEGIN
           time:(long long)time
   conversation:(JConversation *)conversation;
 - (int)getTotalUnreadCount;
-- (void)setMention:(BOOL)isMention
-      conversation:(JConversation *)conversation;
-- (void)clearMentionstatus;
+-(void)setMentionInfo:(JConversation *)conversation
+      mentionInfoJson:(NSString *)mentionInfoJson;
+-(void)clearMentionInfo;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
@@ -99,10 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction;
+
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;
