@@ -152,7 +152,6 @@
 - (void)deleteConversationInfoBy:(JConversation *)conversation
                          success:(void (^)(void))successBlock
                            error:(void (^)(JErrorCode code))errorBlock{
-    //手动删除不给回调
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
@@ -163,6 +162,11 @@
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if(successBlock){
                 successBlock();
+            }
+            JConversationInfo *info = [[JConversationInfo alloc] init];
+            info.conversation = conversation;
+            if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                [weakSelf.delegate conversationInfoDidDelete:@[info]];
             }
         });
 

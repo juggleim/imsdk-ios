@@ -126,7 +126,7 @@
                                success:^{
         JLogI(@"MSG-Delete", @"websocket success");
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
-
+        
 #warning TODO 通知会话更新
         dispatch_async(self.core.delegateQueue, ^{
             if(successBlock){
@@ -145,9 +145,9 @@
 }
 
 - (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
-                     conversation:(JConversation *)conversation
-                          success:(void (^)(void))successBlock
-                            error:(void (^)(JErrorCode))errorBlock{
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode))errorBlock{
     if(messageIds == nil || messageIds.count == 0 || conversation == nil){
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -309,6 +309,14 @@
                                       direction:direction
                                    contentTypes:contentTypes];
 }
+- (JMessage *)saveMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation
+                direction:(JMessageDirection)direction{
+    return [self saveMessage:content
+               messageOption:nil
+              inConversation:conversation
+                   direction:direction];
+}
 
 - (JMessage *)saveMessage:(JMessageContent *)content
             messageOption:(JMessageOptions *)messageOption
@@ -340,6 +348,18 @@
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation
+                  success:(void (^)(JMessage *message))successBlock
+                    error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock{
+    return [self sendMessage:content
+               messageOption:nil
+              inConversation:conversation
+                 isBroadcast:NO
+                     success:successBlock
+                       error:errorBlock];
+}
+
+- (JMessage *)sendMessage:(JMessageContent *)content
             messageOption:(JMessageOptions *)messageOption
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *message))successBlock
@@ -350,6 +370,21 @@
                  isBroadcast:NO
                      success:successBlock
                        error:errorBlock];
+}
+
+- (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
+                inConversation:(JConversation *)conversation
+                      progress:(void (^)(int progress, JMessage *message))progressBlock
+                       success:(void (^)(JMessage *message))successBlock
+                         error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                        cancel:(void (^)(JMessage *message))cancelBlock{
+    return [self sendMediaMessage:content
+                    messageOption:nil
+                   inConversation:conversation
+                         progress:progressBlock
+                          success:successBlock
+                            error:errorBlock
+                           cancel:cancelBlock];
 }
 
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
@@ -1126,7 +1161,7 @@
         [messageIds addObject:message.messageId];
     }
     [self.core.dbManager deleteMessageByMessageIds:messageIds];
-
+    
     dispatch_async(self.core.delegateQueue, ^{
         if(self.delegate && [self.delegate respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
             [self.delegate messageDidDelete:message.conversation clientMsgNos:clientMsgNos];

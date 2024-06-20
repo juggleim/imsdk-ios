@@ -84,7 +84,7 @@ NSString *const jReadCount = @"read_count";
 NSString *const jMemberCount = @"member_count";
 NSString *const jIsDeleted = @"is_deleted";
 NSString *const jLocalAttribute = @"local_attribute";
-NSString *const jMentionInfo = @"mention_info";
+NSString *const jMessageMentionInfo = @"mention_info";
 NSString *const jReferMsgId = @"refer_msg_id";
 NSString *const jReferSenderId = @"refer_sender_id";
 
@@ -539,7 +539,7 @@ NSString *const jReferSenderId = @"refer_sender_id";
     info.memberCount = [rs intForColumn:jMemberCount];
     message.groupReadInfo = info;
     message.messageOptions = [[JMessageOptions alloc] init];
-    NSString *mentionInfoStr = [rs stringForColumn:jMentionInfo];
+    NSString *mentionInfoStr = [rs stringForColumn:jMessageMentionInfo];
     if (mentionInfoStr.length > 0) {
         message.messageOptions.mentionInfo = [JMessageMentionInfo decodeFromJson:mentionInfoStr];
     }

@@ -17,11 +17,11 @@
 		5B4DB6932BFC3BF700DD18B6 /* JDeleteMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */; };
 		5B4DB6962BFC3C0D00DD18B6 /* JCleanMsgMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */; };
 		5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */; };
-		5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */; };
+		5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */; };
-		5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E32C21790600AF6519 /* JMessageOptions.h */; };
+		5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E32C21790600AF6519 /* JMessageOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E42C21790600AF6519 /* JMessageOptions.m */; };
-		5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */; };
+		5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980EA2C21794B00AF6519 /* JMessageReferredInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
@@ -534,6 +534,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B9980EB2C22C4DA00AF6519 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A05EED642B20827300809F13 /* utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -604,6 +611,7 @@
 			children = (
 				A08AA1E52B148B68008B114C /* JetIM */,
 				A08AA1E42B148B68008B114C /* Products */,
+				5B9980EB2C22C4DA00AF6519 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1020,7 +1028,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */,
+				5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */,
 				A09645902BF339EA00290775 /* JSnapshotPackedVideoMessage.h in Headers */,
+				5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */,
 				A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */,
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
@@ -1048,7 +1059,6 @@
 				5B4DB6862BFC340700DD18B6 /* JUnDisturbConvMessage.h in Headers */,
 				A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */,
 				A08AA2812B175646008B114C /* JConnectionManager.h in Headers */,
-				5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */,
 				A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */,
 				A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */,
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
@@ -1082,7 +1092,6 @@
 				A08AA2542B14AF2E008B114C /* JConversation.h in Headers */,
 				A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */,
 				A08AA3A42B19CB78008B114C /* GPBUnknownFieldSet_PackagePrivate.h in Headers */,
-				5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */,
 				A08AA3732B19CB77008B114C /* Api.pbobjc.h in Headers */,
 				A08AA37A2B19CB78008B114C /* Timestamp.pbobjc.h in Headers */,
 				A08AA3892B19CB78008B114C /* GPBExtensionRegistry.h in Headers */,
@@ -1119,7 +1128,6 @@
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
 				A07F3CB92BFC928E0087920B /* JLogCommandMessage.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
-				5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
 				A08AA4012B19EEDB008B114C /* SRError.h in Headers */,
