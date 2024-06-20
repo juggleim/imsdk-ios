@@ -172,9 +172,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A0755ABF2C2417A8003F3135 /* ConnectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ConnectView.xib; path = QuickStart/MainViews/ConnectView.xib; sourceTree = "<group>"; };
-		A0755AC02C2417A8003F3135 /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainView.xib; path = QuickStart/MainViews/MainView.xib; sourceTree = "<group>"; };
-		A0755AC12C2417A8003F3135 /* MainItemView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainItemView.xib; path = QuickStart/MainViews/MainItemView.xib; sourceTree = "<group>"; };
+		A0755ABF2C2417A8003F3135 /* ConnectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConnectView.xib; sourceTree = "<group>"; };
+		A0755AC02C2417A8003F3135 /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainView.xib; sourceTree = "<group>"; };
+		A0755AC12C2417A8003F3135 /* MainItemView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainItemView.xib; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -778,9 +778,6 @@
 		A09645BD2BF36BD000290775 = {
 			isa = PBXGroup;
 			children = (
-				A0755ABF2C2417A8003F3135 /* ConnectView.xib */,
-				A0755AC12C2417A8003F3135 /* MainItemView.xib */,
-				A0755AC02C2417A8003F3135 /* MainView.xib */,
 				A09645C82BF36BD000290775 /* QuickStart */,
 				A09645DD2BF36BF700290775 /* Sources */,
 				A09645C72BF36BD000290775 /* Products */,
@@ -844,6 +841,9 @@
 		A09645E12BF39E3A00290775 /* MainViews */ = {
 			isa = PBXGroup;
 			children = (
+				A0755ABF2C2417A8003F3135 /* ConnectView.xib */,
+				A0755AC12C2417A8003F3135 /* MainItemView.xib */,
+				A0755AC02C2417A8003F3135 /* MainView.xib */,
 				A09645E22BF39E5E00290775 /* ConnectView.swift */,
 				A09645E42BF39EA300290775 /* NibCustomView.swift */,
 				A09645E62BF3A16C00290775 /* MainView.swift */,

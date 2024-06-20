@@ -110,10 +110,6 @@ class ViewController: UIViewController {
         
         JIM.shared().connectionManager.add(self)
         
-        //TODO:
-//        SendbirdChat.addUserEventDelegate(self, identifier: self.description)
-//        SendbirdChat.addConnectionDelegate(self, identifier: self.description)
-        
         guard userIdTextField.text != nil,
               nicknameTextField.text != nil else { return }
         signinAction()
@@ -182,47 +178,7 @@ class ViewController: UIViewController {
     }
 
     func signinAction() {
-        loadingIndicator.startAnimating()
-        view.isUserInteractionEnabled = false
-        
-        let userID = userIdTextField.text ?? ""
-        let nickname = nicknameTextField.text ?? ""
-        
-        guard !userID.isEmpty else {
-            userIdTextField.shake()
-            userIdTextField.becomeFirstResponder()
-            loadingIndicator.stopAnimating()
-            view.isUserInteractionEnabled = true
-            return
-        }
-        guard !nickname.isEmpty else {
-            nicknameTextField.shake()
-            nicknameTextField.becomeFirstResponder()
-            loadingIndicator.stopAnimating()
-            view.isUserInteractionEnabled = true
-            return
-        }
-        
-        SBUGlobals.currentUser = SBUUser(userId: userID, nickname: nickname)
-//        SendbirdUI.connect { [weak self] user, error in
-//            self?.loadingIndicator.stopAnimating()
-//            self?.view.isUserInteractionEnabled = true
-//            
-//            if let user = user {
-//                UserDefaults.saveUserID(userID)
-//                UserDefaults.saveNickname(nickname)
-//                
-//                print("SendbirdUIKit.connect: \(user)")
-//                self?.isSignedIn = true
-//                self?.updateUnreadCount()
-//                
-//                if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-//                    let payload = appDelegate.pendingNotificationPayload {
-//                    self?.startChatAction(with: payload)
-//                    appDelegate.pendingNotificationPayload = nil
-//                }
-//            }
-//        }
+        JIM.shared().connectionManager.connect(withToken: token3)
     }
     
     func signOutAction() {
@@ -230,9 +186,9 @@ class ViewController: UIViewController {
     }
     
     func startChatAction(type: ButtonType) {
-        if type == .startChatWithVC {
-            JIM.shared().connectionManager.connect(withToken: token3)
-        }
+//        if type == .startChatWithVC {
+//            JIM.shared().connectionManager.connect(withToken: token3)
+//        }
     }
     
     func startChatAction(with payload: NSDictionary) {
@@ -268,9 +224,6 @@ class ViewController: UIViewController {
 //        naviVC.modalPresentationStyle = .fullScreen
 //        present(naviVC, animated: true)
     }
-    
-    // MARK: - JConnectionDelegate
-    
 }
 
 extension ViewController: JConnectionDelegate {
