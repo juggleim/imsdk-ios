@@ -169,7 +169,7 @@
                 [weakSelf.delegate conversationInfoDidDelete:@[info]];
             }
         });
-
+        
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-Delete", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -191,7 +191,7 @@
             }
         });
     }
-
+    
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
@@ -200,7 +200,7 @@
         //清除未读数暂时不用更新 syncTime
         JLogI(@"CONV-ClearUnread", @"success");
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
-                                       msgIndex:info.lastMessageIndex];
+                                           msgIndex:info.lastMessageIndex];
         [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
         [weakSelf noticeTotalUnreadCountChange];
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -208,7 +208,7 @@
                 successBlock();
             }
         });
-
+        
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-ClearUnread", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -331,7 +331,7 @@
                 successBlock();
             }
         });
-  
+        
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-ClearTotal", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -469,7 +469,104 @@
     }
 }
 
+- (void)messageDidRemove:(JConversation *)conversation
+         removedMessages:(NSArray <JConcreteMessage *> *)removedMessages
+             lastMessage:(JConcreteMessage *)lastMessage{
+    
+    JConcreteConversationInfo * info = [self getConversationAfterCommonResolved:conversation lastMessage:lastMessage];
+    if(info == nil){
+        return;
+    }
+    NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
+    NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
+    for (JConcreteMessage * removedMessage in removedMessages) {
+        if(removedMessage.messageId == nil){
+            continue;
+        }
+        JConversationMentionMessage * temp = [[JConversationMentionMessage alloc] init];
+        temp.msgId = removedMessage.messageId;
+        if([mentionMessages containsObject:temp]){
+            [removeMentionMessage addObject:temp];
+        }
+    }
+    if(removeMentionMessage.count != 0){
+        [mentionMessages removeObjectsInArray:removeMentionMessage];
+        info.mentionInfo.mentionMsgList = mentionMessages;
+        [self.core.dbManager setMentionInfo:conversation mentionInfoJson:[info.mentionInfo encodeToJson]];
+    }
+    
+    [self updateConversationLastMessage:info lastMessage:lastMessage];
+}
+- (void)messageDidClear:(JConversation *)conversation
+              startTime:(long long)startTime
+             sendUserId:(NSString *)sendUserId
+            lastMessage:(JConcreteMessage *)lastMessage{
+    JConcreteConversationInfo * info = [self getConversationAfterCommonResolved:conversation lastMessage:lastMessage];
+    if(info == nil){
+        return;
+    }
+    NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
+    NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
+    for (JConversationMentionMessage * removedMessage in mentionMessages) {
+        if(sendUserId != nil && ![sendUserId isEqualToString:@""]){
+            if([removedMessage.senderId isEqualToString:sendUserId]){
+                [removeMentionMessage addObject:removedMessage];
+            }
+        }
+        if(startTime > 0 && removedMessage.msgTime < startTime){
+            [removeMentionMessage addObject:removedMessage];
+        }
 
+    }
+    if(removeMentionMessage.count != 0){
+        [mentionMessages removeObjectsInArray:removeMentionMessage];
+        info.mentionInfo.mentionMsgList = mentionMessages;
+        [self.core.dbManager setMentionInfo:conversation mentionInfoJson:[info.mentionInfo encodeToJson]];
+    }
+    [self updateConversationLastMessage:info lastMessage:lastMessage];
+}
+-(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
+    if(conversation == nil){
+        return nil;
+    }
+    JConcreteConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
+    if(info == nil){
+        return nil;
+    }
+    if(lastMessage != nil){
+        return info;
+    }
+    [self clearConversationLastMessage:info];
+    return nil;
+}
+
+-(void)clearConversationLastMessage:(JConcreteConversationInfo *)conversationInfo{
+    [self.core.dbManager clearLastMessage:conversationInfo.conversation];
+    conversationInfo.mentionInfo = nil;
+    conversationInfo.lastMessage = nil;
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+            [self.delegate conversationInfoDidUpdate:@[conversationInfo]];
+        }
+    });
+}
+-(void)updateConversationLastMessage:(JConcreteConversationInfo *)info 
+                         lastMessage:(JConcreteMessage *)lastMessage{
+    
+    BOOL isLastMessageUpdate = (info.lastMessage == nil ||
+                                info.lastMessage.clientMsgNo != lastMessage.clientMsgNo ||
+                                ![info.lastMessage.contentType isEqualToString:lastMessage.contentType]);
+    if(isLastMessageUpdate){
+        [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
+        info.lastMessage = lastMessage;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+            [self.delegate conversationInfoDidUpdate:@[info]];
+        }
+    });
+    
+}
 #pragma mark - internal
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];

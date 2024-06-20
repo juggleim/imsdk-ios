@@ -410,6 +410,31 @@ NSString *const jReferSenderId = @"refer_sender_id";
     
 }
 
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
+    if(conversation == nil){
+        return nil;
+    }
+    NSString * sql = jGetMessagesInConversation;
+    sql = [sql stringByAppendingString:jOrderByTimestamp];
+    sql = [sql stringByAppendingString:jDESC];
+    sql = [sql stringByAppendingString:jLimit];
+    NSMutableArray *messages = [[NSMutableArray alloc] init];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(1)]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConcreteMessage *m = [self messageWith:resultSet];
+            [messages addObject:m];
+        }
+    }];
+    JConcreteMessage * lastMessage;
+    if(messages.count >= 1){
+        lastMessage = messages.firstObject;
+    }
+    return lastMessage;
+}
+
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo {
     [self.dbHelper executeUpdate:jUpdateMessageState

@@ -60,6 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;
+- (void)clearLastMessage:(JConversation *)conversation;
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
@@ -99,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
-
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
 
 
 #pragma mark - user table

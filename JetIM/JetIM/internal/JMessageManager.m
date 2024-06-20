@@ -110,7 +110,7 @@
     //如果没有远端消息 只删除本地后直接回调
     if(deleteRemoteList.count == 0){
         [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
-#warning TODO 通知会话更新
+        [self notifyMessageRemoved:conversation removedMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if(successBlock){
                 successBlock();
@@ -126,8 +126,7 @@
                                success:^{
         JLogI(@"MSG-Delete", @"websocket success");
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
-        
-#warning TODO 通知会话更新
+        [weakSelf notifyMessageRemoved:conversation removedMessages:deleteRemoteList];
         dispatch_async(self.core.delegateQueue, ^{
             if(successBlock){
                 successBlock();
@@ -177,7 +176,7 @@
                 [ids addObject:message.messageId];
             }
             [weakSelf.core.dbManager deleteMessageByMessageIds:ids];
-#warning TODO 通知会话更新
+            [weakSelf notifyMessageRemoved:conversation removedMessages:msgList];
             dispatch_async(self.core.delegateQueue, ^{
                 if(successBlock){
                     successBlock();
@@ -234,6 +233,7 @@
             [self.core.dbManager updateMessageContent:recallInfoMsg
                                           contentType:m.contentType
                                         withMessageId:messageId];
+            [self notifyMessageRemoved:m.conversation removedMessages:@[(JConcreteMessage *)m]];
             dispatch_async(self.core.delegateQueue, ^{
                 if (successBlock) {
                     successBlock(m);
@@ -269,7 +269,7 @@
                                      success:^{
         JLogI(@"MSG-Clear", @"success");
         [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:@""];
-#warning  TODO 通知会话更新
+        [weakSelf notifyMessageCleared:conversation startTime:startTime sendUserId:nil];
         
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -284,6 +284,20 @@
             }
         });
     }];
+}
+
+-(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRemove:removedMessages:lastMessage:)]) {
+        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation];
+        [self.sendReceiveDelegate messageDidRemove:conversation removedMessages:removedMessages lastMessage:lastMessage];
+    }
+}
+-(void)notifyMessageCleared:(JConversation *)conversation startTime:(long long)startTime sendUserId:(NSString *)sendUserId{
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]) {
+        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation];
+        [self.sendReceiveDelegate messageDidClear:conversation startTime:startTime sendUserId:sendUserId lastMessage:lastMessage];
+
+    }
 }
 
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
@@ -1141,7 +1155,9 @@
                                 withMessageId:messageId];
     NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
     if (messages.count > 0) {
-        return messages[0];
+        JConcreteMessage * message = (JConcreteMessage *)messages.firstObject;
+        [self notifyMessageRemoved:message.conversation removedMessages:@[message]];
+        return message;
     }
     return nil;
 }
@@ -1167,7 +1183,7 @@
             [self.delegate messageDidDelete:message.conversation clientMsgNos:clientMsgNos];
         }
     });
-#warning TODO 通知会话更新
+    [self notifyMessageRemoved:message.conversation removedMessages:messageList];
 }
 
 - (void)handleClearHistoryMessageCmdMessage:(JConcreteMessage *)message{
@@ -1186,7 +1202,7 @@
                                   senderId:content.senderId];
         }
     });
-#warning TODO 通知会话更新
+    [self notifyMessageCleared:message.conversation startTime:starTime sendUserId:message.senderUserId];
 }
 
 - (void)handleLogCommandMessage:(JConcreteMessage *)message {

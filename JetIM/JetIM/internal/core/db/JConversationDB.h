@@ -49,7 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
       mentionInfoJson:(NSString *)mentionInfoJson;
 
 -(void)clearMentionInfo;
-
+- (void)clearLastMessage:(JConversation *)conversation;
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
 @end
 
 NS_ASSUME_NONNULL_END

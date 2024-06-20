@@ -370,7 +370,47 @@ NSString *const jTotalCount = @"total_count";
 
 -(void)clearMentionInfo{
     [self.dbHelper executeUpdate:jClearConversationMentionInfo withArgumentsInArray:nil];
+}
 
+- (void)clearLastMessage:(JConversation *)conversation{
+    NSString *sql = [jUpdateConversationTime stringByAppendingString:jClearLastMessage];
+    sql = [sql stringByAppendingString:jWhereConversationIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+
+
+}
+
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
+    NSString *sql = [jUpdateConversationTime stringByAppendingString:jUpdateLastMessage];
+    sql = [sql stringByAppendingString:jWhereConversationIs];
+    
+    NSData *data = [message.content encode];
+    NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+    NSString * mentionInfo;
+    if(message.messageOptions.mentionInfo){
+        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    }else{
+        mentionInfo = @"";
+    }
+    
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[message.messageId?:@"",
+                                                                   message.contentType,
+                                                                   message.clientUid,
+                                                                   @(message.clientMsgNo),
+                                                                   @(message.direction),
+                                                                   @(message.messageState),
+                                                                   @(message.hasRead),
+                                                                   @(message.timestamp),
+                                                                   message.senderUserId,
+                                                                   mentionInfo,
+                                                                   content,
+                                                                   @(message.seqNo),
+                                                                   @(message.conversation.conversationType),
+                                                                   message.conversation.conversationId]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
+
+    
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

@@ -11,7 +11,6 @@
 #import <JetIM/JMessage.h>
 #import "JConversationMentionInfo.h"
 
-NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationInfo : NSObject
 /// 会话标识
@@ -35,4 +34,3 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END

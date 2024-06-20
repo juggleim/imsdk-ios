@@ -153,6 +153,12 @@
     [self.conversationDb updateTime:time forConversation:conversation];
 }
 
+- (void)clearLastMessage:(JConversation *)conversation{
+    [self.conversationDb clearLastMessage:conversation];
+}
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
+    [self.conversationDb updateLastMessageWithoutIndex:message];
+}
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
@@ -259,6 +265,9 @@
 }
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     [self.messageDb setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
+}
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
+    return [self.messageDb getLastMessage:conversation];;
 }
 
 
