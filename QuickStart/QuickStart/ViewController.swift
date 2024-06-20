@@ -83,10 +83,6 @@ class ViewController: UIViewController {
         JIM.shared().connectionManager.add(self)
     }
     
-    deinit {
-        JIM.shared().connectionManager.remove(self)
-    }
-    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .default
     }

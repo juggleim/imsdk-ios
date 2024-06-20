@@ -226,11 +226,10 @@ class UserInfoTitleView: UIView {
     }
     
     func configure(user: JUserInfo) {
-        if let urlString = user.portrait {
-            self.coverImage.loadImage(urlString: urlString)
+        if let url = user.portrait {
+            self.coverImage.loadImage(urlString: url)
         }
-        self.userNicknameLabel.text = user.userName ?? ""
-        
+        self.userNicknameLabel.text = user.userName ?? user.userId
         self.userIdTitleLabel.text = "User ID"
         self.userIdLabel.text = user.userId
     }

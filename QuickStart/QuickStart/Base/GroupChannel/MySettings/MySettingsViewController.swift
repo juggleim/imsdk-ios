@@ -131,6 +131,10 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         let userId = JIM.shared().currentUserId
         if let user = JIM.shared().userInfoManager.getUserInfo(userId) {
             self.userInfoView.configure(user: user)
+        } else {
+            let user = JUserInfo()
+            user.userId = userId
+            self.userInfoView.configure(user: user)
         }
     }
 
@@ -146,10 +150,6 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
 
     open override var preferredStatusBarStyle: UIStatusBarStyle {
         return theme.statusBarStyle
-    }
-    
-    deinit {
-        JIM.shared().connectionManager.remove(self)
     }
     
     // MARK: - Actions
