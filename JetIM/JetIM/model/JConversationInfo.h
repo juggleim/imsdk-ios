@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 会话更新时间（服务端时间）
 @property (nonatomic, assign) long long sortTime;
 /// 会话中的最后一条消息
-@property (nonatomic, strong) JMessage *lastMessage;
+@property (nullable, nonatomic, strong) JMessage *lastMessage;
 /// 是否置顶
 @property (nonatomic, assign) BOOL isTop;
 /// 会话置顶时间

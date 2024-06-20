@@ -49,7 +49,7 @@ public class SBUGlobals {
     // MARK: - Reply
     /// The configuration for reply.
     /// - Since: 3.3.0
-    public static var reply: SBUReplyConfiguration = SBUReplyConfiguration()
+//    public static var reply: SBUReplyConfiguration = SBUReplyConfiguration()
     
     // MARK: - PHPickerViewController
     /// If it's `true`, uses `PHPickerViewController` instead of `UIImagePickerController` when access to the photo library for sending file message.

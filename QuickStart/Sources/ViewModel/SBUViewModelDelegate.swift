@@ -26,7 +26,7 @@ extension SBUCommonViewModelDelegate {
     public func connectionStateDidChange(_ isConnected: Bool) { }
     
     /// This method is called when an error is received.
-    public func didReceiveError(_ error: JErrorCode?) {
+    public func didReceiveError(_ error: JErrorCode) {
         self.didReceiveError(error, isBlocker: false)
     }
 }

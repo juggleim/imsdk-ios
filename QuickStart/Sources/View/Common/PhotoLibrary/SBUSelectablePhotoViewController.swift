@@ -215,7 +215,7 @@ open class SBUSelectablePhotoViewController: SBUBaseViewController {
     @objc
     open func didTapRightBarButton() {
         if #available(iOS 14, *) {
-            PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self)
+//            PHPhotoLibrary.shared().presentLimitedLibraryPicker(from: self)
         }
     }
     

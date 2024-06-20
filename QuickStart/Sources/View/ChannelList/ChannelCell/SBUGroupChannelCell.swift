@@ -248,77 +248,49 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     /// - Parameter channel: `GroupChannel` object
     open override func configure(channel: JConversationInfo) {
         super.configure(channel: channel)
-        
-        guard let channel = channel as? JConversationInfo else { return }
 
-        // Cover image
-        if let url = channel.coverURL, SBUUtils.isValid(coverURL: url) {
-            self.coverImage.setImage(withCoverURL: url)
-        } else if channel.isBroadcast {
-            self.coverImage.setBroadcastIcon()
-        } else {
-            if !channel.members.isEmpty {
-                self.coverImage.setImage(withUsers: channel.members)
-            } else {
-                self.coverImage.setPlaceholder(type: .iconUser, iconSize: .init(width: 40, height: 40))
+        var url = ""
+        var name = ""
+        if (channel.conversation.conversationType == .private) {
+            if let user = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId) {
+                url = user.portrait
+                name = user.userName
+            }
+        } else if (channel.conversation.conversationType == .group) {
+            if let group = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId) {
+                url = group.portrait
+                name = group.groupName
             }
         }
         
+        // Cover image
+        if url.count > 0 {
+            self.coverImage.setImage(withCoverURL: url)
+        } else {
+            self.coverImage.setPlaceholder(type: .iconUser, iconSize: .init(width: 40, height: 40))
+        }
+        
         // Title
-        if SBUUtils.isValid(channelName: channel.name) {
-            self.titleLabel.text = channel.name
-        } else {
-            self.titleLabel.text = SBUUtils.generateChannelName(channel: channel)
-        }
-        
-        // Member count. If 1:1 channel, not set
-        if channel.memberCount > 2 {
-            self.memberCountLabel.text = channel.memberCount.unitFormattedString
-        } else {
-            self.memberCountLabel.text = nil
-        }
-        
-        // Broadcast channel state. If isBroadcast is false, this property will hidden.
-        self.broadcastIcon.isHidden = channel.isBroadcast == false
-        
-        // Channel frozen state. If isFrozen is false, this property will hidden.
-        self.freezeState.isHidden = channel.isFrozen == false
+        self.titleLabel.text = name
         
         // Notification state. If myPushTriggerOption is all, this property will hidden.
-        self.notificationState.isHidden = channel.myPushTriggerOption != .off
+        self.notificationState.isHidden = !channel.mute
         
         // Last updated time
         self.lastUpdatedTimeLabel.text = self.buildLastUpdatedDate()
         
         // Last message
-        self.messageLabel.text = ""
-        switch channel.lastMessage {
-        case let userMessage as UserMessage:
-            self.messageLabel.lineBreakMode = .byTruncatingTail
-            self.messageLabel.text = userMessage.message
-            
-        case let fileMessage as FileMessage:
-            self.messageLabel.lineBreakMode = .byTruncatingMiddle
-            self.messageLabel.text = SBUUtils.getFileTypePreviewString(by: fileMessage.type)
-            
-        case let adminMessage as AdminMessage:
-            self.messageLabel.lineBreakMode = .byTruncatingMiddle
-            self.messageLabel.text = adminMessage.message
-        
-        case _ as MultipleFilesMessage:
-            self.messageLabel.lineBreakMode = .byTruncatingMiddle
-            self.messageLabel.text = SBUStringSet.GroupChannel.Preview.multipleFiles
-            
-        default:
-            self.messageLabel.text = ""
+        self.messageLabel.lineBreakMode = .byTruncatingTail
+        if let lastMessage = channel.lastMessage {
+            self.messageLabel.text = lastMessage.content.conversationDigest()
         }
         
         // Unread count
-        switch channel.unreadMessageCount {
+        switch channel.unreadCount {
         case 0:
             self.unreadCount.isHidden = true
         case 1...99:
-            self.unreadCount.setTitle(String(channel.unreadMessageCount), for: .normal)
+            self.unreadCount.setTitle(String(channel.unreadCount), for: .normal)
             self.unreadCount.isHidden = false
         case 100...:
             self.unreadCount.setTitle("99+", for: .normal)
@@ -327,7 +299,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             break
         }
         
-        self.unreadMentionLabel.isHidden = !SendbirdUI.config.groupChannel.channel.isMentionEnabled || channel.unreadMentionCount == 0
+        self.unreadMentionLabel.isHidden = !channel.hasMentioned
         
         self.updateMessageLabel()
         self.updateStateImageView()
@@ -336,66 +308,66 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     // MARK: - Type indicator
     /// Updates message label when someone is typing. To show typing indicator, set `SBUGlobals.isChannelListTypingIndicatorEnabled` to `true`.
     open func updateMessageLabel() {
-        guard SendbirdUI.config.groupChannel.channelList.isTypingIndicatorEnabled else { return }
-        guard let groupChannel = channel as? GroupChannel else { return }
-        
-        if let typingMembers = groupChannel.getTypingUsers(),
-           !typingMembers.isEmpty,
-           SendbirdUI.config.groupChannel.channelList.isTypingIndicatorEnabled {
-            messageLabel.lineBreakMode = .byTruncatingTail
-            messageLabel.text = SBUStringSet.Channel_Typing(typingMembers)
-        } else {
-            switch groupChannel.lastMessage {
-            case let userMessage as UserMessage:
-                messageLabel.lineBreakMode = .byTruncatingTail
-                messageLabel.text = userMessage.message
-                messageLabel.numberOfLines = 2
-            case let fileMessage as FileMessage:
-                self.messageLabel.lineBreakMode = .byTruncatingMiddle
-                self.messageLabel.text = SBUUtils.getFileTypePreviewString(by: fileMessage.type)
-            case let adminMessage as AdminMessage:
-                if groupChannel.isChatNotification {
-                    self.messageLabel.lineBreakMode = .byTruncatingMiddle
-                    self.messageLabel.text = adminMessage.message
-                }
-            case _ as MultipleFilesMessage:
-                self.messageLabel.lineBreakMode = .byTruncatingMiddle
-                self.messageLabel.text = SBUStringSet.GroupChannel.Preview.multipleFiles
-            default:
-                messageLabel.text = ""
-            }
-        }
+//        guard SendbirdUI.config.groupChannel.channelList.isTypingIndicatorEnabled else { return }
+//        guard let groupChannel = channel as? GroupChannel else { return }
+//
+//        if let typingMembers = groupChannel.getTypingUsers(),
+//           !typingMembers.isEmpty,
+//           SendbirdUI.config.groupChannel.channelList.isTypingIndicatorEnabled {
+//            messageLabel.lineBreakMode = .byTruncatingTail
+//            messageLabel.text = SBUStringSet.Channel_Typing(typingMembers)
+//        } else {
+//            switch groupChannel.lastMessage {
+//            case let userMessage as UserMessage:
+//                messageLabel.lineBreakMode = .byTruncatingTail
+//                messageLabel.text = userMessage.message
+//                messageLabel.numberOfLines = 2
+//            case let fileMessage as FileMessage:
+//                self.messageLabel.lineBreakMode = .byTruncatingMiddle
+//                self.messageLabel.text = SBUUtils.getFileTypePreviewString(by: fileMessage.type)
+//            case let adminMessage as AdminMessage:
+//                if groupChannel.isChatNotification {
+//                    self.messageLabel.lineBreakMode = .byTruncatingMiddle
+//                    self.messageLabel.text = adminMessage.message
+//                }
+//            case _ as MultipleFilesMessage:
+//                self.messageLabel.lineBreakMode = .byTruncatingMiddle
+//                self.messageLabel.text = SBUStringSet.GroupChannel.Preview.multipleFiles
+//            default:
+//                messageLabel.text = ""
+//            }
+//        }
     }
     
     // MARK: - Receipt state
     /// Updates the image view that represents read/delivery receipt state. The image view is displayed when the last message was sent by the current user. To show the state image view, set `SBUGlobals.isChannelListMessageReceiptStateEnabled` to `true`.
     /// - NOTE: As a default, the *super* and the *broadcast* group channel are not supported.
     open func updateStateImageView() {
-        guard SendbirdUI.config.groupChannel.channelList.isMessageReceiptStatusEnabled else { return }
-        guard let groupChannel = channel as? GroupChannel else { return }
-        guard !groupChannel.isSuper, !groupChannel.isBroadcast else { return }
-        guard let lastMessage = groupChannel.lastMessage else { return }
-        guard lastMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
-        
-        let stateImage: UIImage?
-        let receiptState = SBUUtils.getReceiptState(of: lastMessage, in: groupChannel)
-        switch receiptState {
-        case .none:
-            stateImage = SBUIconSet.iconDone
-                .sbu_with(tintColor: theme.succeededStateColor)
-                .resize(with: CGSize(value: infoIconSize))
-        case .delivered:
-            stateImage = SBUIconSet.iconDoneAll
-                .sbu_with(tintColor: theme.deliveryReceiptStateColor)
-                .resize(with: CGSize(value: infoIconSize))
-        case .read:
-            stateImage = SBUIconSet.iconDoneAll
-                .sbu_with(tintColor: theme.readReceiptStateColor)
-                .resize(with: CGSize(value: infoIconSize))
-        default:
-            stateImage = nil
-        }
-        stateImageView.image = stateImage
+//        guard SendbirdUI.config.groupChannel.channelList.isMessageReceiptStatusEnabled else { return }
+//        guard let groupChannel = channel as? GroupChannel else { return }
+//        guard !groupChannel.isSuper, !groupChannel.isBroadcast else { return }
+//        guard let lastMessage = groupChannel.lastMessage else { return }
+//        guard lastMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
+//
+//        let stateImage: UIImage?
+//        let receiptState = SBUUtils.getReceiptState(of: lastMessage, in: groupChannel)
+//        switch receiptState {
+//        case .none:
+//            stateImage = SBUIconSet.iconDone
+//                .sbu_with(tintColor: theme.succeededStateColor)
+//                .resize(with: CGSize(value: infoIconSize))
+//        case .delivered:
+//            stateImage = SBUIconSet.iconDoneAll
+//                .sbu_with(tintColor: theme.deliveryReceiptStateColor)
+//                .resize(with: CGSize(value: infoIconSize))
+//        case .read:
+//            stateImage = SBUIconSet.iconDoneAll
+//                .sbu_with(tintColor: theme.readReceiptStateColor)
+//                .resize(with: CGSize(value: infoIconSize))
+//        default:
+//            stateImage = nil
+//        }
+//        stateImageView.image = stateImage
     }
     
     // MARK: - Common
@@ -403,13 +375,13 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     /// This function builds last message updated date.
     /// - Returns: last updated date string
     public func buildLastUpdatedDate() -> String? {
-        guard let channel = self.channel as? GroupChannel else { return nil }
+        guard let channel = self.channel else { return nil }
         var lastUpdatedAt: Int64
         
         if let lastMessage = channel.lastMessage {
-            lastUpdatedAt = Int64(lastMessage.createdAt / 1000)
+            lastUpdatedAt = Int64(lastMessage.timestamp / 1000)
         } else {
-            lastUpdatedAt = Int64(channel.createdAt)
+            lastUpdatedAt = Int64(channel.sortTime / 1000)
         }
         
         guard let lastSeenTimeString = Date.lastUpdatedTimeForChannelCell(

@@ -37,7 +37,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     static let notificationChannelLoadLimit: UInt = 100
     
     // MARK: - Property (Public)
-    public var channelList: [JConversationInfo]
+    public var channelList: [JConversationInfo]?
     
     // MARK: - Property (private)
     weak var delegate: SBUGroupChannelListViewModelDelegate? {

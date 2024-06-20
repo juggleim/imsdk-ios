@@ -96,7 +96,7 @@ public class SBUUser: NSObject {
     /// - Parameter users: CoreSDK's user list
     /// - Returns: UIKit's user list
     /// - Since: 3.0.0
-    public static func convertUsers(_ users: [User]?) -> [SBUUser] {
+    public static func convertUsers(_ users: [JUserInfo]?) -> [SBUUser] {
         var sbuUsers: [SBUUser] = []
         
         if let users = users {

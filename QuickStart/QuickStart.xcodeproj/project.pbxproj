@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A0755AC22C2417A8003F3135 /* ConnectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755ABF2C2417A8003F3135 /* ConnectView.xib */; };
+		A0755AC32C2417A8003F3135 /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC02C2417A8003F3135 /* MainView.xib */; };
+		A0755AC42C2417A8003F3135 /* MainItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC12C2417A8003F3135 /* MainItemView.xib */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -20,9 +23,7 @@
 		A07F3B3E2BF4A2260087920B /* SBUIconSetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39582BF4A2230087920B /* SBUIconSetType.swift */; };
 		A07F3B3F2BF4A2260087920B /* SBUEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39592BF4A2230087920B /* SBUEnums.swift */; };
 		A07F3B402BF4A2260087920B /* SBUExtendedMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395B2BF4A2230087920B /* SBUExtendedMessage.swift */; };
-		A07F3B412BF4A2260087920B /* SBUTypingIndicatorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395C2BF4A2230087920B /* SBUTypingIndicatorMessage.swift */; };
 		A07F3B422BF4A2260087920B /* SBUMention.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395D2BF4A2230087920B /* SBUMention.swift */; };
-		A07F3B432BF4A2260087920B /* SBUMessageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395E2BF4A2230087920B /* SBUMessageCache.swift */; };
 		A07F3B442BF4A2260087920B /* SBUUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F395F2BF4A2230087920B /* SBUUser.swift */; };
 		A07F3B452BF4A2260087920B /* SBUVoiceFileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */; };
 		A07F3B482BF4A2260087920B /* SBUHighlightMessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */; };
@@ -78,7 +79,6 @@
 		A07F3B8C2BF4A2270087920B /* SBUCommonDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39B32BF4A2240087920B /* SBUCommonDelegate.swift */; };
 		A07F3B952BF4A2270087920B /* SBUScrollPostionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39C32BF4A2240087920B /* SBUScrollPostionConfiguration.swift */; };
 		A07F3B962BF4A2270087920B /* SBUMessageCellConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39C52BF4A2240087920B /* SBUMessageCellConfiguration.swift */; };
-		A07F3B972BF4A2270087920B /* SBUReplyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39C72BF4A2240087920B /* SBUReplyConfiguration.swift */; };
 		A07F3B982BF4A2270087920B /* SBUConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39C82BF4A2240087920B /* SBUConfigManager.swift */; };
 		A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39CA2BF4A2240087920B /* SBUConfig.swift */; };
 		A07F3B9B2BF4A2270087920B /* SBUVoiceMessageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39CC2BF4A2240087920B /* SBUVoiceMessageConfiguration.swift */; };
@@ -172,6 +172,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A0755ABF2C2417A8003F3135 /* ConnectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ConnectView.xib; path = QuickStart/MainViews/ConnectView.xib; sourceTree = "<group>"; };
+		A0755AC02C2417A8003F3135 /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainView.xib; path = QuickStart/MainViews/MainView.xib; sourceTree = "<group>"; };
+		A0755AC12C2417A8003F3135 /* MainItemView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainItemView.xib; path = QuickStart/MainViews/MainItemView.xib; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -185,9 +188,7 @@
 		A07F39582BF4A2230087920B /* SBUIconSetType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUIconSetType.swift; sourceTree = "<group>"; };
 		A07F39592BF4A2230087920B /* SBUEnums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUEnums.swift; sourceTree = "<group>"; };
 		A07F395B2BF4A2230087920B /* SBUExtendedMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUExtendedMessage.swift; sourceTree = "<group>"; };
-		A07F395C2BF4A2230087920B /* SBUTypingIndicatorMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTypingIndicatorMessage.swift; sourceTree = "<group>"; };
 		A07F395D2BF4A2230087920B /* SBUMention.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMention.swift; sourceTree = "<group>"; };
-		A07F395E2BF4A2230087920B /* SBUMessageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageCache.swift; sourceTree = "<group>"; };
 		A07F395F2BF4A2230087920B /* SBUUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUser.swift; sourceTree = "<group>"; };
 		A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceFileInfo.swift; sourceTree = "<group>"; };
 		A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUHighlightMessageInfo.swift; sourceTree = "<group>"; };
@@ -243,7 +244,6 @@
 		A07F39B32BF4A2240087920B /* SBUCommonDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCommonDelegate.swift; sourceTree = "<group>"; };
 		A07F39C32BF4A2240087920B /* SBUScrollPostionConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUScrollPostionConfiguration.swift; sourceTree = "<group>"; };
 		A07F39C52BF4A2240087920B /* SBUMessageCellConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageCellConfiguration.swift; sourceTree = "<group>"; };
-		A07F39C72BF4A2240087920B /* SBUReplyConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUReplyConfiguration.swift; sourceTree = "<group>"; };
 		A07F39C82BF4A2240087920B /* SBUConfigManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUConfigManager.swift; sourceTree = "<group>"; };
 		A07F39CA2BF4A2240087920B /* SBUConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUConfig.swift; sourceTree = "<group>"; };
 		A07F39CC2BF4A2240087920B /* SBUVoiceMessageConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceMessageConfiguration.swift; sourceTree = "<group>"; };
@@ -391,9 +391,7 @@
 			isa = PBXGroup;
 			children = (
 				A07F395B2BF4A2230087920B /* SBUExtendedMessage.swift */,
-				A07F395C2BF4A2230087920B /* SBUTypingIndicatorMessage.swift */,
 				A07F395D2BF4A2230087920B /* SBUMention.swift */,
-				A07F395E2BF4A2230087920B /* SBUMessageCache.swift */,
 				A07F395F2BF4A2230087920B /* SBUUser.swift */,
 				A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */,
 				A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */,
@@ -555,7 +553,6 @@
 		A07F39C62BF4A2240087920B /* Replies */ = {
 			isa = PBXGroup;
 			children = (
-				A07F39C72BF4A2240087920B /* SBUReplyConfiguration.swift */,
 			);
 			path = Replies;
 			sourceTree = "<group>";
@@ -781,6 +778,9 @@
 		A09645BD2BF36BD000290775 = {
 			isa = PBXGroup;
 			children = (
+				A0755ABF2C2417A8003F3135 /* ConnectView.xib */,
+				A0755AC12C2417A8003F3135 /* MainItemView.xib */,
+				A0755AC02C2417A8003F3135 /* MainView.xib */,
 				A09645C82BF36BD000290775 /* QuickStart */,
 				A09645DD2BF36BF700290775 /* Sources */,
 				A09645C72BF36BD000290775 /* Products */,
@@ -954,6 +954,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0755AC22C2417A8003F3135 /* ConnectView.xib in Resources */,
+				A0755AC32C2417A8003F3135 /* MainView.xib in Resources */,
+				A0755AC42C2417A8003F3135 /* MainItemView.xib in Resources */,
 				A07F3C092BF4A2280087920B /* Release.xcconfig in Resources */,
 				A07F3BBF2BF4A2270087920B /* Assets.xcassets in Resources */,
 				A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */,
@@ -983,7 +986,6 @@
 				A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */,
 				A09645F32BF3A98000290775 /* Float+SBUKit.swift in Sources */,
 				A07F3C902BF4A2290087920B /* SBUTemplateLabel.swift in Sources */,
-				A07F3B972BF4A2270087920B /* SBUReplyConfiguration.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
 				A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */,
@@ -1020,7 +1022,6 @@
 				A07F3C0C2BF4A2280087920B /* SBUColorSet.swift in Sources */,
 				A07F3B6B2BF4A2270087920B /* MessageTemplateParser.swift in Sources */,
 				A07F3C9E2BF4A2290087920B /* SBUViewLifeCycle.swift in Sources */,
-				A07F3B432BF4A2260087920B /* SBUMessageCache.swift in Sources */,
 				A07F3C882BF4A2290087920B /* SBUAlertView.swift in Sources */,
 				A07F3C9C2BF4A2290087920B /* SBUQuoteMessageInputViewProtocol.swift in Sources */,
 				A07F3C7E2BF4A2290087920B /* SBUSelectablePhotoViewController.swift in Sources */,
@@ -1038,7 +1039,6 @@
 				A07F3B442BF4A2260087920B /* SBUUser.swift in Sources */,
 				A07F3B812BF4A2270087920B /* SBUBaseChannelListViewModel.swift in Sources */,
 				A07F3BC52BF4A2270087920B /* SBUBaseChannelListModule.List.swift in Sources */,
-				A07F3B412BF4A2260087920B /* SBUTypingIndicatorMessage.swift in Sources */,
 				A07F3BC02BF4A2270087920B /* SBUBaseChannelListModule.swift in Sources */,
 				A07F3B5D2BF4A2260087920B /* UIApplication+SBUIKit.swift in Sources */,
 				A07F3CAF2BF4A2290087920B /* SBUStringSet.swift in Sources */,

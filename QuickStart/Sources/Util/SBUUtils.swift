@@ -21,11 +21,11 @@ public class SBUUtils {
     /// - Returns: `SBUMessageFileType`
     public static func getFileType(by fileMessage: JFileMessage) -> SBUMessageFileType {
         let type: SBUMessageFileType = SBUUtils.getFileType(by: fileMessage.type)
-        if type == .audio,
-           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
-           let internalType = metaArray.first?.value.first {
-            return SBUUtils.getFileType(by: internalType)
-        }
+//        if type == .audio,
+//           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
+//           let internalType = metaArray.first?.value.first {
+//            return SBUUtils.getFileType(by: internalType)
+//        }
 
         return type
     }
@@ -110,19 +110,20 @@ public class SBUUtils {
     /// - Parameter channel: `GroupChannel` object
     /// - Returns: Generated channel name
     public static func generateChannelName(channel: JConversationInfo) -> String {
-        guard !SBUUtils.isValid(channelName: channel.name) else {
-            return channel.name
-        }
-        let members = channel.members as [User]
-        let users = members
-            .sbu_convertUserList()
-            .filter { $0.userId != SBUGlobals.currentUser?.userId }
+//        guard !SBUUtils.isValid(channelName: channel.name) else {
+//            return channel.name
+//        }
+//        let members = channel.members as [User]
+//        let users = members
+//            .sbu_convertUserList()
+//            .filter { $0.userId != SBUGlobals.currentUser?.userId }
+//
+//        guard !users.isEmpty else { return SBUStringSet.Channel_Name_No_Members }
+//        let userNicknames = users.sbu_getUserNicknames()
+//        let channelName = userNicknames.joined(separator: ", ")
 
-        guard !users.isEmpty else { return SBUStringSet.Channel_Name_No_Members }
-        let userNicknames = users.sbu_getUserNicknames()
-        let channelName = userNicknames.joined(separator: ", ")
-
-        return channelName
+//        return channelName
+        return ""
     }
     
     /// This function gets the MIME type from the URL.
@@ -148,8 +149,8 @@ public class SBUUtils {
     ///   - message: `BaseMessage` object
     /// - Returns: `SBUMessageReceiptState`
     @available(*, deprecated, renamed: "getReceiptState(of:in:)") // 2.0.5
-    public static func getReceiptState(channel: GroupChannel,
-                                       message: BaseMessage) -> SBUMessageReceiptState {
+    public static func getReceiptState(channel: JConversationInfo,
+                                       message: JMessage) -> SBUMessageReceiptState {
         Self.getReceiptState(of: message, in: channel)
     }
     
@@ -163,8 +164,8 @@ public class SBUUtils {
     ///   - message: `BaseMessage` object
     /// - Returns: `SBUMessageReceiptState`, or nil if the channel doesn't support receipts.
     @available(*, unavailable, message: "It returns nil when th channel is super group channel or broadcast channel. Please set the value to `SBUMessageReceitState.notUsed`.", renamed: "getReceiptState(of:in:)") // 2.2.0
-    public static func getReceiptStateIfExists(for channel: GroupChannel,
-                                               message: BaseMessage) -> SBUMessageReceiptState? {
+    public static func getReceiptStateIfExists(for channel: JConversationInfo,
+                                               message: JMessage) -> SBUMessageReceiptState? {
         let receiptState = Self.getReceiptState(of: message, in: channel)
         return receiptState == .notUsed ? nil : receiptState
     }
@@ -178,21 +179,22 @@ public class SBUUtils {
     /// - Returns: `SBUMessageReceiptState`. , It returns `.notUsed` when the channel is *super group channel* or *broadcast channel* which doesn't support receipts.
     ///
     /// - Since: 2.2.0
-    public static func getReceiptState(of message: BaseMessage, in channel: GroupChannel) -> SBUMessageReceiptState {
-        if channel.isSuper || channel.isBroadcast {
-            return .notUsed
-        }
-        
-        let didReadAll = channel.getUnreadMemberCount(message) == 0
-        let didDeliverAll = channel.getUndeliveredMemberCount(message) == 0
-        
-        if didReadAll {
-            return .read
-        } else if didDeliverAll {
-            return .delivered
-        } else {
-            return .none
-        }
+    public static func getReceiptState(of message: JMessage, in channel: JConversationInfo) -> SBUMessageReceiptState {
+//        if channel.isSuper || channel.isBroadcast {
+//            return .notUsed
+//        }
+//        
+//        let didReadAll = channel.getUnreadMemberCount(message) == 0
+//        let didDeliverAll = channel.getUndeliveredMemberCount(message) == 0
+//        
+//        if didReadAll {
+//            return .read
+//        } else if didDeliverAll {
+//            return .delivered
+//        } else {
+//            return .none
+//        }
+        return .none
     }
     
     /// This function checks the validity of coverURL.
@@ -251,19 +253,17 @@ extension SBUUtils {
     static func dismissPresentedOnDisappear(presentedViewController: UIViewController?) {
         guard let presented = presentedViewController else { return }
         
-        if presented is SBUEmojiListViewController ||
-            presented is SBUReactionsViewController ||
-            presented is SBUMenuSheetViewController {
+        if presented is SBUMenuSheetViewController {
             presented.dismiss(animated: false, completion: nil)
         }
     }
     
-    static func findIndex(of message: BaseMessage, in messageList: [BaseMessage]) -> Int? {
+    static func findIndex(of message: JMessage, in messageList: [JMessage]) -> Int? {
         return messageList.firstIndex(where: { $0.messageId == message.messageId })
     }
     
-    static func contains(messageId: Int64, in messageList: [BaseMessage]) -> Bool {
-        return messageList.contains(where: { $0.messageId == messageId })
+    static func contains(messageId: Int64, in messageList: [JMessage]) -> Bool {
+        return messageList.contains(where: { $0.clientMsgNo == messageId })
     }
 }
 

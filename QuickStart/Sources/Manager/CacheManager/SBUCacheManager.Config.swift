@@ -115,13 +115,13 @@ extension SBUCacheManager {
 
         func get(fullPath: URL, needToSync: Bool = true) -> SBUConfig? {
             let config: SBUConfig? = {
-                do {
-                    let data = try Data(contentsOf: fullPath)
-                    let config = try JSONDecoder().decode(SBUConfig.self, from: data)
-                    return config as SBUConfig
-                } catch {
-                    SBULog.info(error.localizedDescription)
-                }
+//                do {
+//                    let data = try Data(contentsOf: fullPath)
+//                    let config = try JSONDecoder().decode(SBUConfig.self, from: data)
+//                    return config as SBUConfig
+//                } catch {
+//                    SBULog.info(error.localizedDescription)
+//                }
                 return nil
             }()
             
@@ -146,12 +146,12 @@ extension SBUCacheManager {
         
         func set(config: SBUConfig) {
             let encoder = JSONEncoder()
-            do {
-                let data = try encoder.encode(config)
-                self.set(key: configKey, data: data as NSData)
-            } catch {
-                SBULog.error("Failed to save config to disk cache: \(error)")
-            }
+//            do {
+//                let data = try encoder.encode(config)
+//                self.set(key: configKey, data: data as NSData)
+//            } catch {
+//                SBULog.error("Failed to save config to disk cache: \(error)")
+//            }
         }
         
         func set(key: String, data: NSData, completionHandler: SBUCacheCompletionHandler? = nil) {

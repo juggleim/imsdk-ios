@@ -175,7 +175,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     
     // MARK: - Error handling
     private func errorHandler(_ error: JErrorCode) {
-        self.errorHandler(error)
+        SBULog.error("Did receive error: \(error)")
     }
     
     open override func errorHandler(_ code: NSInteger? = nil) {

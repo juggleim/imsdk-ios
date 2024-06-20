@@ -14,5 +14,5 @@ import UIKit
 public protocol SBUQuoteMessageInputViewProtocol: SBUViewLifeCycle {
     /// Configures UI components with `SBUParentMessageInputViewParams`
     /// - Since: 2.2.0
-    func configure(with configuration: SBUQuoteMessageInputViewParams)
+//    func configure(with configuration: SBUQuoteMessageInputViewParams)
 }
