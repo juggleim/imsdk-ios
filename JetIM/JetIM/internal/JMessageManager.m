@@ -59,56 +59,29 @@
 }
 
 - (void)addDelegate:(id<JMessageDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.delegates addObject:delegate];
     });
 }
 
-- (void)removeDelegate:(id<JMessageDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.delegates removeObject:delegate];
-    });
-}
-
 - (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.syncDelegates addObject:delegate];
     });
 }
 
-- (void)removeSyncDelegate:(id<JMessageSyncDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.syncDelegates removeObject:delegate];
-    });
-}
-
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.readReceiptDelegates addObject:delegate];
-    });
-}
-
-- (void)removeReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.readReceiptDelegates removeObject:delegate];
     });
 }
 

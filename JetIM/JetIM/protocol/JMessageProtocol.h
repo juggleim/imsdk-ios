@@ -183,15 +183,9 @@
 
 - (void)addDelegate:(id<JMessageDelegate>)delegate;
 
-- (void)removeDelegate:(id<JMessageDelegate>)delegate;
-
 - (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate;
 
-- (void)removeSyncDelegate:(id<JMessageSyncDelegate>)delegate;
-
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
-
-- (void)removeReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 

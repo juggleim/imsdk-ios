@@ -12,7 +12,7 @@ import MobileCoreServices
 import JetIM
 
 enum MySettingsCellType: Int {
-    case darkTheme, doNotDisturb, signOut
+    case darkTheme, signOut
 }
 
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
@@ -22,8 +22,6 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     lazy var tableView = UITableView()
     
     var theme: SBUChannelSettingsTheme = SBUTheme.channelSettingsTheme
-    
-    var isDoNotDisturbOn: Bool = false
     
     // MARK: - Constant
     private let actionSheetIdEdit = 1
@@ -134,16 +132,11 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         if let user = JIM.shared().userInfoManager.getUserInfo(userId) {
             self.userInfoView.configure(user: user)
         }
-        
-        self.loadDisturbSetting {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
     }
 
     open override func viewDidLoad() {
         super.viewDidLoad()
+        JIM.shared().connectionManager.add(self)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -155,116 +148,11 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         return theme.statusBarStyle
     }
     
-    
-    // MARK: - SDK related
-    func loadDisturbSetting(_ completionHandler: @escaping (() -> Void)) {
-//        SendbirdChat.getDoNotDisturb { [weak self] (isDoNotDisturbOn, _, _, _, _, _, error) in
-//            self?.isDoNotDisturbOn = error == nil ? isDoNotDisturbOn : false
-//            completionHandler()
-//        }
+    deinit {
+        JIM.shared().connectionManager.remove(self)
     }
-    
-    func changeDisturb(isOn: Bool, _ completionHandler: ((Bool) -> Void)? = nil) {
-//        SendbirdChat.setDoNotDisturb(
-//            enable: isOn,
-//            startHour: 0,
-//            startMin: 0,
-//            endHour: 23,
-//            endMin: 59,
-//            timezone: "UTC"
-//        ) { error in
-//            guard error == nil else {
-//                completionHandler?(false)
-//                return
-//            }
-//
-//            completionHandler?(true)
-//        }
-    }
-    
     
     // MARK: - Actions
-    /// Open the user edit action sheet.
-    @objc func onClickEdit() {
-        let changeNameItem = SBUActionSheetItem(
-            title: "Change my nickname",
-            color: theme.itemTextColor,
-            image: nil
-        ) {}
-        let changeImageItem = SBUActionSheetItem(
-            title: "Change my profile image",
-            color: theme.itemTextColor,
-            image: nil
-        ) {}
-        let cancelItem = SBUActionSheetItem(
-            title: SBUStringSet.Cancel,
-            color: theme.itemColor
-        ) {}
-        SBUActionSheet.show(
-            items: [changeNameItem, changeImageItem],
-            cancelItem: cancelItem,
-            identifier: actionSheetIdEdit,
-            delegate: self
-        )
-    }
-    
-    /// Open the nickname change popup.
-    public func changeNickname() {
-//        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] newNickname in
-//            guard let nickname = newNickname as? String,
-//                nickname.trimmingCharacters(in: .whitespacesAndNewlines).count > 0
-//                else { return }
-//
-//            // Sendbird provides various access control options when using the Chat SDK. By default, the Allow retrieving user list attribute is turned on to facilitate creating sample apps. However, this may grant access to unwanted data or operations, leading to potential security concerns. To manage your access control settings, you can turn on or off each setting on Sendbird Dashboard.
-//            SendbirdUI.updateUserInfo(nickname: nickname, profileURL: nil) { (error) in
-//                guard error == nil else {
-//                    SBULog.error(error?.localizedDescription)
-//                    return
-//                }
-//                guard let user = SBUGlobals.currentUser else { return }
-//                UserDefaults.saveNickname(nickname)
-//                DispatchQueue.main.async { [weak self] in
-//                    guard let self = self else { return }
-//                    self.userInfoView.configure(user: user)
-//                }
-//            }
-//        }
-//        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
-//        SBUAlertView.show(
-//            title: "Change my nickname",
-//            needInputField: true,
-//            placeHolder: "Enter nickname",
-//            centerYRatio: 0.75,
-//            confirmButtonItem: okButton,
-//            cancelButtonItem: cancelButton
-//        )
-    }
-    
-    /// Open the user image selection menu.
-    public func selectUserImage() {
-        let cameraItem = SBUActionSheetItem(
-            title: SBUStringSet.Camera,
-            image: SBUIconSet.iconCamera.sbu_with(tintColor: theme.itemColor),
-            completionHandler: nil
-        )
-        let libraryItem = SBUActionSheetItem(
-            title: SBUStringSet.PhotoVideoLibrary,
-            image: SBUIconSet.iconPhoto.sbu_with(tintColor: theme.itemColor),
-            completionHandler: nil
-        )
-        let cancelItem = SBUActionSheetItem(
-            title: SBUStringSet.Cancel,
-            color: theme.itemColor,
-            completionHandler: nil
-        )
-        SBUActionSheet.show(
-            items: [cameraItem, libraryItem],
-            cancelItem: cancelItem,
-            identifier: actionSheetIdPicker,
-            delegate: self
-        )
-    }
-    
     open func changeDarkThemeSwitch(isOn: Bool) {
         SBUTheme.set(theme: isOn ? .dark : .light)
         
@@ -274,13 +162,9 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         self.tableView.reloadData()
     }
     
-    func changeDisturbSwitch(isOn: Bool, _ completionHandler: ((Bool) -> Void)? = nil) {
-        self.changeDisturb(isOn: isOn, completionHandler)
-    }
-    
     /// Sign out and dismiss tabbarController,
     func signOutAction() {
-        self.tabBarController?.dismiss(animated: true, completion: nil)
+        JIM.shared().connectionManager.disconnect(false)
     }
 }
 
@@ -317,17 +201,6 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
                     cell.switchAction = { [weak self] isOn in
                         self?.changeDarkThemeSwitch(isOn: isOn)
                     }
-                case .doNotDisturb:
-                    cell.changeSwitch(self.isDoNotDisturbOn)
-                    cell.switchAction = { [weak self] isOn in
-                        self?.changeDisturb(isOn: isOn, { success in
-                            if !success {
-                                cell.changeBackSwitch()
-                            } else {
-                                self?.isDoNotDisturbOn = isOn
-                            }
-                        })
-                    }
                 case .signOut: break
             }
         }
@@ -336,76 +209,22 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 2
     }
 }
 
-
-// MARK: SBUActionSheetDelegate
-extension MySettingsViewController: SBUActionSheetDelegate {
-    public func didSelectActionSheetItem(index: Int, identifier: Int) {
-        if identifier == actionSheetIdEdit {
-            let type = ChannelEditType.init(rawValue: index)
-            switch type {
-            case .name:
-                self.changeNickname()
-            case .image:
-                self.selectUserImage()
-            default:
-                break
-            }
-        }
-        else {
-            let type = MediaResourceType.init(rawValue: index)
-            var sourceType: UIImagePickerController.SourceType = .photoLibrary
-            let mediaType: [String] = [String(kUTTypeImage)]
-            
-            switch type {
-            case .camera:
-                sourceType = .camera
-            case .library:
-                sourceType = .photoLibrary
-            default:
-                break
-            }
-            
-            if type != .document {
-                if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-                    let imagePickerController = UIImagePickerController()
-                    imagePickerController.delegate = self
-                    imagePickerController.sourceType = sourceType
-                    imagePickerController.mediaTypes = mediaType
-                    self.present(imagePickerController, animated: true, completion: nil)
-                }
-            }
-        }
-    }
-}
-
-
-// MARK: UIImagePickerViewControllerDelegate
-extension MySettingsViewController: UIImagePickerControllerDelegate {
-    public func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+extension MySettingsViewController : JConnectionDelegate {
+    public func dbDidOpen() {
         
-        picker.dismiss(animated: true) { [weak self] in
-            guard let originalImage = info[.originalImage] as? UIImage else { return }
-            
-            self?.userInfoView.coverImage.image = originalImage
-            
-            // Sendbird provides various access control options when using the Chat SDK. By default, the Allow retrieving user list attribute is turned on to facilitate creating sample apps. However, this may grant access to unwanted data or operations, leading to potential security concerns. To manage your access control settings, you can turn on or off each setting on Sendbird Dashboard.
-//            SendbirdUI.updateUserInfo(
-//                nickname: nil,
-//                profileImage: originalImage.jpegData(compressionQuality: 0.5)
-//            ) { error in
-//                guard error == nil else {
-//                    SBULog.error(error?.localizedDescription)
-//                    return
-//                }
-//                guard let user = SBUGlobals.currentUser else { return }
-//                self?.userInfoView.configure(user: user)
-//            }
+    }
+    
+    public func dbDidClose() {
+        
+    }
+    
+    public func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+        if status == .disconnected {
+            self.tabBarController?.dismiss(animated: true, completion: nil)
         }
     }
 }

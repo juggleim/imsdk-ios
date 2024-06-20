@@ -118,10 +118,6 @@
 
 - (void)addDelegate:(id<JConversationDelegate>)delegate;
 
-- (void)removeDelegate:(id<JConversationDelegate>)delegate;
-
 - (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;
-
-- (void)removeSyncDelegate:(id<JConversationSyncDelegate>)delegate;
 
 @end

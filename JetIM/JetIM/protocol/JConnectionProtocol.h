@@ -29,6 +29,4 @@
 
 - (void)addDelegate:(id<JConnectionDelegate>) delegate;
 
-- (void)removeDelegate:(id<JConnectionDelegate>) delegate;
-
 @end

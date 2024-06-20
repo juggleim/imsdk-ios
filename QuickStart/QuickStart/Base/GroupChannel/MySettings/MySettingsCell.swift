@@ -158,16 +158,6 @@ class MySettingsCell: UITableViewCell {
                     circle: true
             )
             self.titleLabel.text = "Dark theme"
-        case .doNotDisturb:
-            self.typeIcon.image = UIImage(named: "iconNotificationsFilled")?
-                .sbu_with(tintColor: isDarkMode ? nil : .white)
-                .resize(with: CGSize(width: 18, height: 18))
-                .withBackground(
-                    color: isDarkMode ? SBUColorSet.secondary200 : SBUColorSet.secondary400,
-                    margin: 3,
-                    circle: true
-            )
-            self.titleLabel.text = "Do not disturb"
         case .signOut:
             self.typeIcon.image = UIImage(named: "iconLeave")?
                 .sbu_with(tintColor: isDarkMode ? nil : .white)

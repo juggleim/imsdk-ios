@@ -111,20 +111,11 @@
 }
 
 - (void)addDelegate:(id<JConnectionDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.delegates addObject:delegate];
-    });
-}
-
-- (void)removeDelegate:(id<JConnectionDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.delegates removeObject:delegate];
     });
 }
 

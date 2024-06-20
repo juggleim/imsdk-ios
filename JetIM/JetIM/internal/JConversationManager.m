@@ -342,38 +342,20 @@
 }
 
 - (void)addDelegate:(id<JConversationDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.delegates addObject:delegate];
     });
 }
 
-- (void)removeDelegate:(id<JConversationDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.delegates removeObject:delegate];
-    });
-}
-
 - (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
     dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
         [self.syncDelegates addObject:delegate];
-    });
-}
-
-- (void)removeSyncDelegate:(id<JConversationSyncDelegate>)delegate {
-    if (!delegate) {
-        return;
-    }
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.syncDelegates removeObject:delegate];
     });
 }
 
