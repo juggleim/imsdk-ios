@@ -9,11 +9,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainView" customModule="QuickStart" customModuleProvider="target">
             <connections>
-                <outlet property="chatBotItemView" destination="Uet-gO-Vc9" id="5u4-ja-1XQ"/>
-                <outlet property="customItemView" destination="5ZD-Ua-BWH" id="h6I-2F-bcJ"/>
-                <outlet property="groupChannelItemView" destination="O35-Wx-57z" id="cee-C3-3kE"/>
                 <outlet property="homeStackView" destination="TTc-Bv-If3" id="L3m-Fh-XdL"/>
-                <outlet property="openChannelItemView" destination="FbN-u6-0sT" id="Xst-n7-xxp"/>
+                <outlet property="user1View" destination="O35-Wx-57z" id="aIg-fh-uIY"/>
+                <outlet property="user2View" destination="FbN-u6-0sT" id="aQE-Ly-8uT"/>
+                <outlet property="user3View" destination="Uet-gO-Vc9" id="3zb-Tu-aIS"/>
+                <outlet property="user4View" destination="5ZD-Ua-BWH" id="eOb-KS-2sR"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>

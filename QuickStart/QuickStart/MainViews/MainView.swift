@@ -14,32 +14,33 @@ class MainView: NibCustomView {
         }
     }
     
-    @IBOutlet weak var groupChannelItemView: MainItemView! {
+    @IBOutlet weak var user1View: MainItemView! {
         willSet {
-            newValue.titleLabel.text = "Group channel"
-            newValue.descriptionLabel.text = "1 on 1, Group chat with members"
-        }
-    }
-    
-    @IBOutlet weak var openChannelItemView: MainItemView! {
-        willSet {
-            newValue.titleLabel.text = "Open channel"
-            newValue.descriptionLabel.text = "Live streams, Open community chat"
+            newValue.titleLabel.text = "User1"
+            newValue.descriptionLabel.isHidden = true
             newValue.unreadCountLabel.isHidden = true
         }
     }
     
-    @IBOutlet weak var chatBotItemView: MainItemView! {
+    @IBOutlet weak var user2View: MainItemView! {
         willSet {
-            newValue.titleLabel.text = "Talk to an AI Chatbot"
-            newValue.descriptionLabel.text = "1 on 1, Group chat with bots"
+            newValue.titleLabel.text = "User2"
+            newValue.descriptionLabel.isHidden = true
             newValue.unreadCountLabel.isHidden = true
         }
     }
     
-    @IBOutlet weak var customItemView: MainItemView! {
+    @IBOutlet weak var user3View: MainItemView! {
         willSet {
-            newValue.titleLabel.text = "Custom samples"
+            newValue.titleLabel.text = "User3"
+            newValue.descriptionLabel.isHidden = true
+            newValue.unreadCountLabel.isHidden = true
+        }
+    }
+    
+    @IBOutlet weak var user4View: MainItemView! {
+        willSet {
+            newValue.titleLabel.text = "User4"
             newValue.descriptionLabel.isHidden = true
             newValue.unreadCountLabel.isHidden = true
         }
