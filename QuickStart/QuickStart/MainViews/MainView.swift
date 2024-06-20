@@ -44,14 +44,4 @@ class MainView: NibCustomView {
             newValue.unreadCountLabel.isHidden = true
         }
     }
-    
-    @IBOutlet weak var signOutButton: UIButton! {
-        willSet {
-            let signOutColor = UIColor.black.withAlphaComponent(0.88)
-            newValue.layer.cornerRadius = ViewController.CornerRadius.small.rawValue
-            newValue.layer.borderWidth = 1
-            newValue.layer.borderColor = signOutColor.cgColor
-            newValue.setTitleColor(signOutColor, for: .normal)
-        }
-    }
 }
