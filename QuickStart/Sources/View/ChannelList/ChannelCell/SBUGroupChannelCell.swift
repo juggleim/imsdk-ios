@@ -253,13 +253,13 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         var name = ""
         if (channel.conversation.conversationType == .private) {
             if let user = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId) {
-                url = user.portrait
-                name = user.userName
+                url = user.portrait ?? ""
+                name = user.userName ?? ""
             }
         } else if (channel.conversation.conversationType == .group) {
             if let group = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId) {
-                url = group.portrait
-                name = group.groupName
+                url = group.portrait ?? ""
+                name = group.groupName ?? ""
             }
         }
         

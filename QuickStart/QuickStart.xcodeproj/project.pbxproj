@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
+		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
+		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
+		A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */; };
+		A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */; };
 		A0755AC32C2417A8003F3135 /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC02C2417A8003F3135 /* MainView.xib */; };
 		A0755AC42C2417A8003F3135 /* MainItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC12C2417A8003F3135 /* MainItemView.xib */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
@@ -170,6 +175,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
+		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
+		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
+		A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsViewController.swift; sourceTree = "<group>"; };
+		A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		A0755AC02C2417A8003F3135 /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainView.xib; sourceTree = "<group>"; };
 		A0755AC12C2417A8003F3135 /* MainItemView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainItemView.xib; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
@@ -346,6 +356,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A047D7D62C245A7D00E50BCF /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				A047D7D72C245A7D00E50BCF /* GroupChannel */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		A047D7D72C245A7D00E50BCF /* GroupChannel */ = {
+			isa = PBXGroup;
+			children = (
+				A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */,
+				A047D7D92C245A7D00E50BCF /* MySettings */,
+				A047D7DD2C245A7D00E50BCF /* Channels */,
+			);
+			path = GroupChannel;
+			sourceTree = "<group>";
+		};
+		A047D7D92C245A7D00E50BCF /* MySettings */ = {
+			isa = PBXGroup;
+			children = (
+				A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */,
+				A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */,
+				A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */,
+			);
+			path = MySettings;
+			sourceTree = "<group>";
+		};
+		A047D7DD2C245A7D00E50BCF /* Channels */ = {
+			isa = PBXGroup;
+			children = (
+				A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */,
+			);
+			path = Channels;
+			sourceTree = "<group>";
+		};
 		A07F35D52BF462040087920B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -792,6 +838,7 @@
 		A09645C82BF36BD000290775 /* QuickStart */ = {
 			isa = PBXGroup;
 			children = (
+				A047D7D62C245A7D00E50BCF /* Base */,
 				A07F35D52BF462040087920B /* Extension */,
 				A09645F62BF3AB5B00290775 /* Customize */,
 				A09645E12BF39E3A00290775 /* MainViews */,
@@ -994,6 +1041,7 @@
 				A07F3C122BF4A2280087920B /* SBUGroupChannelCell.swift in Sources */,
 				A07F3C7C2BF4A2290087920B /* SBUPhotoAccess.swift in Sources */,
 				A07F3C792BF4A2290087920B /* SBUAnimation.swift in Sources */,
+				A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */,
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
@@ -1053,7 +1101,9 @@
 				A07F3C8A2BF4A2290087920B /* SBUMenuSheetViewController.swift in Sources */,
 				A07F3C9B2BF4A2290087920B /* SBUCollectionViewCell.swift in Sources */,
 				A07F3C152BF4A2280087920B /* SBUGroupChannelListViewController.swift in Sources */,
+				A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */,
 				A07F3B402BF4A2260087920B /* SBUExtendedMessage.swift in Sources */,
+				A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */,
 				A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */,
 				A07F3B4C2BF4A2260087920B /* Thread+SBUIKit.swift in Sources */,
 				A07F3C812BF4A2290087920B /* SBULayoutableButton.swift in Sources */,
@@ -1085,6 +1135,7 @@
 				A07F3B3F2BF4A2260087920B /* SBUEnums.swift in Sources */,
 				A07F3B642BF4A2270087920B /* BlockingOperation.swift in Sources */,
 				A07F3C7A2BF4A2290087920B /* SBUEmptyView.swift in Sources */,
+				A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */,
 				A07F3C9F2BF4A2290087920B /* SBUQuotedMessageViewProtocol.swift in Sources */,
 				A07F3B622BF4A2270087920B /* UITextField+SBUIKit.swift in Sources */,
 				A07F3B3D2BF4A2260087920B /* VoiceMessageStatus.swift in Sources */,
@@ -1092,6 +1143,7 @@
 				A07F3BC12BF4A2270087920B /* SBUGroupChannelListModule.List.swift in Sources */,
 				A07F35E72BF497820087920B /* SBUStringSet.swift in Sources */,
 				A07F3B982BF4A2270087920B /* SBUConfigManager.swift in Sources */,
+				A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */,
 				A07F3B482BF4A2260087920B /* SBUHighlightMessageInfo.swift in Sources */,
 				A07F3B452BF4A2260087920B /* SBUVoiceFileInfo.swift in Sources */,
 				A07F3CA02BF4A2290087920B /* SBUView.swift in Sources */,

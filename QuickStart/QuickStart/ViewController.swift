@@ -96,6 +96,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func onTapButton(_ sender: UIButton) {
+        loadingIndicator.startAnimating()
+        view.isUserInteractionEnabled = false
+        
         let type = ButtonType(rawValue: sender.tag)
         
         switch type {
@@ -121,10 +124,11 @@ extension ViewController: JConnectionDelegate {
     
     func dbDidOpen() {
         DispatchQueue.main.async {
-            let mainVC = SBUGroupChannelListViewController()
-            let naviVC = UINavigationController(rootViewController: mainVC)
-            naviVC.modalPresentationStyle = .fullScreen
-            self.present(naviVC, animated: true)
+            self.loadingIndicator.stopAnimating()
+            self.view.isUserInteractionEnabled = true
+            let mainVC = MainChannelTabbarController()
+            mainVC.modalPresentationStyle = .fullScreen
+            self.present(mainVC, animated: true)
         }
     }
     

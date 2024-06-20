@@ -81,13 +81,22 @@ public class SBUStringSet {
     }
     
     public static var Channel_Typing: ([JUserInfo]) -> String = { members in
+        var nickname1 = "Member"
+        var nickname2 = "Member"
+        
         switch members.count {
         case 1:
-            let nickname = !members[0].userName.isEmpty ? members[0].userName : "Member"
-            return String(format: "%@ is typing...", nickname)
+            if let userName = members[0].userName {
+                nickname1 = userName
+            }
+            return String(format: "%@ is typing...", nickname1)
         case 2:
-            let nickname1 = !members[0].userName.isEmpty ? members[0].userName : "Member"
-            let nickname2 = !members[1].userName.isEmpty ? members[1].userName : "Member"
+            if let userName1 = members[0].userName {
+                nickname1 = userName1
+            }
+            if let userName2 = members[1].userName {
+                nickname2 = userName2
+            }
             return String(format: "%@ and %@ are typing...", nickname1, nickname2)
         default:
             return "Several people are typing..."

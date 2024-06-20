@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JUserInfo : NSObject
 
 @property (nonatomic, copy) NSString *userId;
-@property (nonatomic, copy) NSString *userName;
-@property (nonatomic, copy) NSString *portrait;
-@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
+@property (nullable, nonatomic, copy) NSString *userName;
+@property (nullable, nonatomic, copy) NSString *portrait;
+@property (nullable, nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
 
 @end
 
