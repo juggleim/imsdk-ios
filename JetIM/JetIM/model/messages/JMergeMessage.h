@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSArray <NSString *> *messageIdList;
 /// 消息气泡上用来预览的被合并消息列表，不能超过 10 条
 @property (nonatomic, copy, readonly) NSArray <JMergeMessagePreviewUnit *> *previewList;
+/// 扩展字段
+@property (nonatomic, copy) NSString *extra;
 
 /// 构造方法
 /// - Parameters:

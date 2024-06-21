@@ -311,8 +311,8 @@ NSString *const jTotalCount = @"total_count";
                                                                    @(message.hasRead),
                                                                    @(message.timestamp),
                                                                    message.senderUserId,
-                                                                   mentionInfo,
                                                                    content,
+                                                                   mentionInfo,
                                                                    @(message.seqNo)]];
     if (isUpdateSortTime) {
         [args addObject:@(message.timestamp)];

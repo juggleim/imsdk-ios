@@ -10,6 +10,7 @@
 #define jMergeType @"jg:merge"
 #define jMergeTitle @"title"
 #define jMessageIdList @"messageIdList"
+#define jMergeExtra @"extra"
 #define jPreviewList @"previewList"
 #define jPreviewContent @"content"
 #define jPreviewUserId @"userId"
@@ -53,6 +54,7 @@
 -(NSData *)encode{
     NSMutableDictionary *mergeDic = [NSMutableDictionary dictionary];
     [mergeDic setObject:self.title?:@"" forKey:jMergeTitle];
+    [mergeDic setObject:self.extra?:@"" forKey:jMergeExtra];
     if (self.messageIdList.count > 0) {
         [mergeDic setObject:self.messageIdList forKey:jMessageIdList];
     }
@@ -74,6 +76,7 @@
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.title = json[jMergeTitle];
     self.messageIdList = json[jMessageIdList];
+    self.extra = json[jMergeExtra];
     NSArray *previewListJson = json[jPreviewList];
     NSMutableArray *previewList = [NSMutableArray array];
     if ([previewListJson isKindOfClass:[NSArray class]]) {

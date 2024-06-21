@@ -261,7 +261,7 @@
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock{
     if(startTime == 0){
-        startTime =  [[NSDate date] timeIntervalSince1970] * 1000;
+        startTime =  MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
     }
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
