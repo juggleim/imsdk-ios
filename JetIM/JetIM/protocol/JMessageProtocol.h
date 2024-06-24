@@ -54,7 +54,6 @@
 /// 发送消息
 /// - Parameters:
 ///   - content: 消息实体
-///   - messageOption: 消息扩展选项
 ///   - conversation: 会话
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调

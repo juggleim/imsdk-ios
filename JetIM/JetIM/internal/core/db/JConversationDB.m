@@ -282,7 +282,6 @@ NSString *const jTotalCount = @"total_count";
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSString *sql = jUpdateLastMessage;
     
-    
     BOOL isUpdateSortTime = YES;
     if (message.direction == JMessageDirectionSend && (message.flags & JMessageFlagIsBroadcast)) {
         isUpdateSortTime = NO;
