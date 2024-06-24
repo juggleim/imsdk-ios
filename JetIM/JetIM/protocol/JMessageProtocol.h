@@ -224,11 +224,17 @@
 /// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent
 - (void)registerContentType:(Class)messageClass;
 
-- (void)setDelegate:(id<JMessageDelegate>)delegate;
+- (void)addDelegate:(id<JMessageDelegate>)delegate;
 
-- (void)setSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+- (void)removeDelegate:(id<JMessageDelegate>)delegate;
 
-- (void)setReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+- (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+
+- (void)removeSyncDelegate:(id<JMessageSyncDelegate>)delegate;
+
+- (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+
+- (void)removeReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 

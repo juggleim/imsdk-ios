@@ -16,7 +16,7 @@
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, strong) JConversationManager *conversationManager;
 @property (nonatomic, strong) JMessageManager *messageManager;
-@property (nonatomic, weak) id<JConnectionDelegate> delegate;
+@property (nonatomic, strong) NSHashTable <id<JConnectionDelegate>> *delegates;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, assign) BOOL isBackground;
@@ -110,8 +110,22 @@
     }];
 }
 
-- (void)setDelegate:(id<JConnectionDelegate>)delegate {
-    _delegate = delegate;
+- (void)addDelegate:(id<JConnectionDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates addObject:delegate];
+    });
+}
+
+- (void)removeDelegate:(id<JConnectionDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates removeObject:delegate];
+    });
 }
 
 #pragma mark - JWebSocketConnectDelegate
@@ -216,9 +230,11 @@
         }
         self.core.connectionStatus = status;
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
-                [self.delegate connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode extra:extra];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
+                    [obj connectionStatusDidChange:outStatus errorCode:(JErrorCode)errorCode extra:extra];
+                }
+            }];
         });
     });
 }
@@ -236,13 +252,17 @@
         JLogI(@"CON-Db", @"db notice isOpen is %d", isOpen);
         dispatch_async(self.core.delegateQueue, ^{
             if (isOpen) {
-                if ([self.delegate respondsToSelector:@selector(dbDidOpen)]) {
-                    [self.delegate dbDidOpen];
-                }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(dbDidOpen)]) {
+                        [obj dbDidOpen];
+                    }
+                }];
             } else {
-                if ([self.delegate respondsToSelector:@selector(dbDidClose)]) {
-                    [self.delegate dbDidClose];
-                }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(dbDidClose)]) {
+                        [obj dbDidClose];
+                    }
+                }];
             }
         });
     });
@@ -335,6 +355,13 @@
 
 - (void)appTerminate {
     
+}
+
+- (NSHashTable<id<JConnectionDelegate>> *)delegates {
+    if (!_delegates) {
+        _delegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _delegates;
 }
 
 @end

@@ -18,8 +18,8 @@
 
 @interface JConversationManager ()
 @property (nonatomic, strong) JetIMCore *core;
-@property (nonatomic, weak) id<JConversationDelegate> delegate;
-@property (nonatomic, weak) id<JConversationSyncDelegate> syncDelegate;
+@property (nonatomic, strong) NSHashTable <id<JConversationDelegate>> *delegates;
+@property (nonatomic, strong) NSHashTable <id<JConversationSyncDelegate>> *syncDelegates;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
@@ -55,16 +55,20 @@
                                               completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
                     if (insertConversations.count > 0) {
                         dispatch_async(self.core.delegateQueue, ^{
-                            if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                                [self.delegate conversationInfoDidAdd:insertConversations];
-                            }
+                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                                    [obj conversationInfoDidAdd:insertConversations];
+                                }
+                            }];
                         });
                     }
                     if (updateConversations.count > 0) {
                         dispatch_async(self.core.delegateQueue, ^{
-                            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                                [self.delegate conversationInfoDidUpdate:updateConversations];
-                            }
+                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                                    [obj conversationInfoDidUpdate:updateConversations];
+                                }
+                            }];
                         });
                     }
                 }];
@@ -81,9 +85,11 @@
                 }];
                 //本地没有的给 delete 回调也没事
                 dispatch_async(self.core.delegateQueue, ^{
-                    if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
-                        [self.delegate conversationInfoDidDelete:deletedConversations];
-                    }
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                            [obj conversationInfoDidDelete:deletedConversations];
+                        }
+                    }];
                 });
             }
             if (syncTime > 0) {
@@ -98,9 +104,11 @@
                     self.cachedSyncTime = -1;
                 }
                 dispatch_async(self.core.delegateQueue, ^{
-                    if ([self.syncDelegate respondsToSelector:@selector(conversationSyncDidComplete)]) {
-                        [self.syncDelegate conversationSyncDidComplete];
-                    }
+                    [self.syncDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationSyncDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(conversationSyncDidComplete)]) {
+                            [obj conversationSyncDidComplete];
+                        }
+                    }];
                 });
                 if (completeBlock) {
                     completeBlock();
@@ -167,9 +175,11 @@
             }
             JConversationInfo *info = [[JConversationInfo alloc] init];
             info.conversation = conversation;
-            if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
-                [weakSelf.delegate conversationInfoDidDelete:@[info]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                    [obj conversationInfoDidDelete:@[info]];
+                }
+            }];
         });
         
     } error:^(JErrorCodeInternal code) {
@@ -234,9 +244,11 @@
     JConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
     if (info) {
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:@[info]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[info]];
+                }
+            }];
         });
     }
 }
@@ -246,9 +258,11 @@
     JConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];
     if (info) {
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:@[info]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[info]];
+                }
+            }];
         });
     }
 }
@@ -270,9 +284,11 @@
             }
             JConversationInfo *conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
             if (conversationInfo) {
-                if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [weakSelf.delegate conversationInfoDidUpdate:@[conversationInfo]];
-                }
+                [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:@[conversationInfo]];
+                    }
+                }];
             }
         });
     } error:^(JErrorCodeInternal code) {
@@ -302,9 +318,11 @@
             }
             JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
             if(conversationInfo){
-                if ([weakSelf.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [weakSelf.delegate conversationInfoDidUpdate:@[conversationInfo]];
-                }
+                [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:@[conversationInfo]];
+                    }
+                }];
             }
         });
     } error:^(JErrorCodeInternal code) {
@@ -369,12 +387,40 @@
     }];
 }
 
-- (void)setDelegate:(id<JConversationDelegate>)delegate {
-    _delegate = delegate;
+- (void)addDelegate:(id<JConversationDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates addObject:delegate];
+    });
 }
 
-- (void)setSyncDelegate:(id<JConversationSyncDelegate>)delegate {
-    _syncDelegate = delegate;
+- (void)removeDelegate:(id<JConversationDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates removeObject:delegate];
+    });
+}
+
+- (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.syncDelegates addObject:delegate];
+    });
+}
+
+- (void)removeSyncDelegate:(id<JConversationSyncDelegate>)delegate {
+    if (!delegate) {
+        return;
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.syncDelegates removeObject:delegate];
+    });
 }
 
 #pragma mark - JMessageSendReceiveDelegate
@@ -405,9 +451,11 @@
         [results addObject:info];
     }];
     dispatch_async(self.core.delegateQueue, ^{
-        if ([self.delegate respondsToSelector:@selector(conversationInfoDidDelete:)]) {
-            [self.delegate conversationInfoDidDelete:results];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                [obj conversationInfoDidDelete:results];
+            }
+        }];
     });
 }
 - (void)conversationsDidUpdate:(JConcreteMessage *)message{
@@ -425,9 +473,11 @@
         }
         //回调
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:convs];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:convs];
+                }
+            }];
         });
     }else if([message.contentType isEqualToString:[JTopConvMessage contentType]]){
         JTopConvMessage * content = (JTopConvMessage *)message.content;
@@ -443,9 +493,11 @@
         }
         //回调
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:convs];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:convs];
+                }
+            }];
         });
     }else if([message.contentType isEqualToString:[JClearUnreadMessage contentType]]){
         JClearUnreadMessage * content = (JClearUnreadMessage *)message.content;
@@ -463,9 +515,11 @@
         }
         //回调
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:convs];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:convs];
+                }
+            }];
         });
         [self noticeTotalUnreadCountChange];
     }
@@ -547,9 +601,11 @@
     conversationInfo.mentionInfo = nil;
     conversationInfo.lastMessage = nil;
     dispatch_async(self.core.delegateQueue, ^{
-        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-            [self.delegate conversationInfoDidUpdate:@[conversationInfo]];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [obj conversationInfoDidUpdate:@[conversationInfo]];
+            }
+        }];
     });
 }
 -(void)updateConversationLastMessage:(JConcreteConversationInfo *)info 
@@ -563,9 +619,11 @@
         info.lastMessage = lastMessage;
     }
     dispatch_async(self.core.delegateQueue, ^{
-        if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-            [self.delegate conversationInfoDidUpdate:@[info]];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [obj conversationInfoDidUpdate:@[info]];
+            }
+        }];
     });
     
 }
@@ -582,16 +640,20 @@
         }
         conversationInfo = old;
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:@[conversationInfo]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
         });
     } else {
         [self.core.dbManager insertConversations:@[conversationInfo] completion:nil];
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                [self.delegate conversationInfoDidAdd:@[conversationInfo]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                    [obj conversationInfoDidAdd:@[conversationInfo]];
+                }
+            }];
         });
     }
     return conversationInfo;
@@ -670,9 +732,11 @@
         }
         [self.core.dbManager insertConversations:@[addInfo] completion:nil];
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                [self.delegate conversationInfoDidAdd:@[addInfo]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                    [obj conversationInfoDidAdd:@[addInfo]];
+                }
+            }];
         });
     } else {
         if (mentionInfo) {
@@ -697,9 +761,11 @@
         info.lastMessage = message;
         [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
-            if ([self.delegate respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [self.delegate conversationInfoDidUpdate:@[info]];
-            }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[info]];
+                }
+            }];
         });
     }
 }
@@ -710,9 +776,11 @@
         return;
     }
     dispatch_async(self.core.delegateQueue, ^{
-        if ([self.delegate respondsToSelector:@selector(totalUnreadMessageCountDidUpdate:)]) {
-            [self.delegate totalUnreadMessageCountDidUpdate:count];
-        }
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(totalUnreadMessageCountDidUpdate:)]) {
+                [obj totalUnreadMessageCountDidUpdate:count];
+            }
+        }];
     });
 }
 
@@ -724,6 +792,20 @@
     } else {
         self.core.conversationSyncTime = timestamp;
     }
+}
+
+- (NSHashTable<id<JConversationDelegate>> *)delegates {
+    if (!_delegates) {
+        _delegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _delegates;
+}
+
+- (NSHashTable<id<JConversationSyncDelegate>> *)syncDelegates {
+    if (!_syncDelegates) {
+        _syncDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _syncDelegates;
 }
 
 @end
