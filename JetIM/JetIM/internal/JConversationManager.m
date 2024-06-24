@@ -155,9 +155,11 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
-                                        success:^(void) {
+                                        success:^(long long timestamp) {
         //删除会话不更新时间戳，只通过命令消息来更新
         JLogI(@"CONV-Delete", @"success");
+        //更新消息发送时间
+        weakSelf.core.messageSendSyncTime = timestamp;
         [weakSelf.core.dbManager deleteConversationInfoBy:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if(successBlock){

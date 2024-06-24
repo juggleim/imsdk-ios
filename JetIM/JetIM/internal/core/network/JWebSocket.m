@@ -299,7 +299,7 @@
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -307,10 +307,10 @@
                                                  userId:userId
                                                   index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete conversation, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 

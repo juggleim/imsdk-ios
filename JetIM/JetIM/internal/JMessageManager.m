@@ -261,7 +261,8 @@
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock{
     if(startTime == 0){
-        startTime =  MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime);
+        long long currentTime =  [[NSDate date] timeIntervalSince1970] * 1000;
+        startTime =  MAX(MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime), currentTime);
     }
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
@@ -1255,11 +1256,18 @@
         //delete conversation
         if ([obj.contentType isEqualToString:[JDeleteConvMessage contentType]]) {
             JDeleteConvMessage *deleteConvMsg = (JDeleteConvMessage *)obj.content;
+            NSMutableArray * deletedList = [NSMutableArray array];
             for (JConversation *deleteConversation in deleteConvMsg.conversations) {
+                JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:deleteConversation];
+                if(obj.timestamp <= lastMessage.timestamp){
+                    continue;
+                }else{
+                    [deletedList addObject:deleteConversation];
+                }
                 [self.core.dbManager deleteConversationInfoBy:deleteConversation];
             }
-            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidDelete:)]) {
-                [self.sendReceiveDelegate conversationsDidDelete:deleteConvMsg.conversations];
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidDelete:)] && deletedList.count != 0) {
+                [self.sendReceiveDelegate conversationsDidDelete:deletedList];
             }
             return;
         }
