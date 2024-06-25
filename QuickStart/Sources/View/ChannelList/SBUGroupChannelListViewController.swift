@@ -145,6 +145,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     ///   - channelURL: channel url for use in channelViewController.
     ///   - messageListParams: If there is a messageListParams set directly for use in Channel, set it up here
     open override func showChannel(channelURL: JConversation) {
+        
 //        GroupChannel.getChannel(url: channelURL) { channel, error in
 //            guard error == nil, let channel = channel else { return }
 //
@@ -247,6 +248,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         _ listComponent: SBUGroupChannelListModule.List,
         didSelectLeave channel: JConversationInfo
     ) {
+        //TODO: delete conversation
 //        self.viewModel?.leaveChannel(channel)
     }
     
