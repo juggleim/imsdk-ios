@@ -190,7 +190,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     upMsg.msgContent = msgData;
     upMsg.flags = flags;
     upMsg.clientUid = clientUid;
-    if (mergeInfo.containerMsgId.length == 0) {
+    if (mergeInfo != nil && mergeInfo.containerMsgId.length == 0 && mergeInfo.messages.count > 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
         pbMsgs.channelType = (int32_t)mergeInfo.conversation.conversationType;

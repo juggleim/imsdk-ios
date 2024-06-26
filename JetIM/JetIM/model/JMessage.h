@@ -57,7 +57,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 /// @ 信息（非 @ 消息本字段为 nil）
 @property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
 /// 引用消息
-@property (nonatomic, strong) JMessage * referredMsg;
+@property (nonatomic, strong) JMessage *referredMsg;
 
 @end
 

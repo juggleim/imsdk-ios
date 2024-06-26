@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 合并转发消息
 @interface JMergeMessage : JMessageContent
 /// 被合并消息的会话标识
-@property (nonatomic, strong) JConversation * conversation;
+@property (nonatomic, strong) JConversation *conversation;
 /// 标题
 @property (nonatomic, copy, readonly) NSString *title;
 /// 所有被合并的消息 id 列表，不能超过 100 条（所有消息必须来自同一个会话）
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 扩展字段
 @property (nonatomic, copy) NSString *extra;
 /// 合并转发消息id
-@property (nonatomic, copy) NSString * containerMsgId;
+@property (nonatomic, copy) NSString *containerMsgId;
 
 
 /// 构造方法
