@@ -139,8 +139,8 @@ NSString *const jTotalCount = @"total_count";
                 mentionInfo = @"";
             }
             NSString * lastMsgMentionInfo;
-            if(lastMessage.messageOptions.mentionInfo != nil){
-                lastMsgMentionInfo = [lastMessage.messageOptions.mentionInfo encodeToJson];
+            if(lastMessage.mentionInfo != nil){
+                lastMsgMentionInfo = [lastMessage.mentionInfo encodeToJson];
             }else{
                 lastMsgMentionInfo = @"";
             }
@@ -295,8 +295,8 @@ NSString *const jTotalCount = @"total_count";
     sql = [sql stringByAppendingString:jWhereConversationIs];
     
     NSString * mentionInfo;
-    if(message.messageOptions.mentionInfo){
-        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    if(message.mentionInfo){
+        mentionInfo = [message.mentionInfo encodeToJson];
     }else{
         mentionInfo = @"";
     }
@@ -387,8 +387,8 @@ NSString *const jTotalCount = @"total_count";
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     NSString * mentionInfo;
-    if(message.messageOptions.mentionInfo){
-        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    if(message.mentionInfo){
+        mentionInfo = [message.mentionInfo encodeToJson];
     }else{
         mentionInfo = @"";
     }
@@ -453,8 +453,7 @@ NSString *const jTotalCount = @"total_count";
     
     NSString * lastMsgMentionInfo = [rs stringForColumn:jLastMessageMentionInfo];
     if(lastMsgMentionInfo != nil){
-        lastMessage.messageOptions = [[JMessageOptions alloc] init];
-        lastMessage.messageOptions.mentionInfo = [JMessageMentionInfo decodeFromJson:[rs stringForColumn:jLastMessageMentionInfo]];
+        lastMessage.mentionInfo = [JMessageMentionInfo decodeFromJson:[rs stringForColumn:jLastMessageMentionInfo]];
     }
     lastMessage.seqNo = [rs longLongIntForColumn:jLastMessageSeqNo];
     lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];

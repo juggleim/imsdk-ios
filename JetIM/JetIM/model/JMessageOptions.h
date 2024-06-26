@@ -16,7 +16,7 @@
 @property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
 
 /// 引用消息
-@property (nonatomic, strong) JMessageReferredInfo *referredInfo;
+@property (nonatomic, copy) NSString * referredMsgId;
 
 
 @end

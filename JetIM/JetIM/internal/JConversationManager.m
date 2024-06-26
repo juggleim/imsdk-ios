@@ -614,10 +614,11 @@
     BOOL isLastMessageUpdate = (info.lastMessage == nil ||
                                 info.lastMessage.clientMsgNo != lastMessage.clientMsgNo ||
                                 ![info.lastMessage.contentType isEqualToString:lastMessage.contentType]);
-    if(isLastMessageUpdate){
-        [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
-        info.lastMessage = lastMessage;
+    if(isLastMessageUpdate == NO){
+        return;
     }
+    [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
+    info.lastMessage = lastMessage;
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
@@ -683,12 +684,12 @@
     BOOL hasMention = NO;
     //接收的消息才处理 mention
     if (message.direction == JMessageDirectionReceive
-        && message.messageOptions.mentionInfo != nil) {
-        if (message.messageOptions.mentionInfo.type == JMentionTypeAll
-            || message.messageOptions.mentionInfo.type == JMentionTypeAllAndSomeOne) {
+        && message.mentionInfo != nil) {
+        if (message.mentionInfo.type == JMentionTypeAll
+            || message.mentionInfo.type == JMentionTypeAllAndSomeOne) {
             hasMention = YES;
-        } else if (message.messageOptions.mentionInfo.type == JMentionTypeSomeOne) {
-            for (JUserInfo *userInfo in message.messageOptions.mentionInfo.targetUsers) {
+        } else if (message.mentionInfo.type == JMentionTypeSomeOne) {
+            for (JUserInfo *userInfo in message.mentionInfo.targetUsers) {
                 if ([userInfo.userId isEqualToString:self.core.userId]) {
                     hasMention = YES;
                     break;

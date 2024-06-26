@@ -12,6 +12,7 @@
 #import "JConversation.h"
 #import "JConcreteMessage.h"
 #import "JConcreteConversationInfo.h"
+#import "JMergeInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+            mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
           mentionInfo:(JMessageMentionInfo *)mentionInfo

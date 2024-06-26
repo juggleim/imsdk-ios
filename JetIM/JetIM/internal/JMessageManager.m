@@ -616,8 +616,11 @@
                              error:errorBlock];
         return message;
     } else {
+        JMessageOptions * messageOptions = [[JMessageOptions alloc] init];
+        messageOptions.mentionInfo = message.mentionInfo;
+        messageOptions.referredMsgId = message.referredMsg.messageId;
         return [self sendMessage:message.content
-                   messageOption:message.messageOptions
+                   messageOption:messageOptions
                   inConversation:message.conversation
                          success:successBlock
                            error:errorBlock];
@@ -1043,25 +1046,28 @@
                  isBroadcast:(BOOL)isBroadcast
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
-    NSArray *mergedMessages = nil;
+    JMergeInfo * mergeInfo;
     if ([message.content isKindOfClass:[JMergeMessage class]]) {
-        JMergeMessage *merge = (JMergeMessage *)message.content;
-        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+        JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
+        mergeInfo = [[JMergeInfo alloc]init];
+        mergeInfo.conversation = mergeMessage.conversation;
+        mergeInfo.containerMsgId = mergeMessage.containerMsgId;
+        mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
     JConcreteMessage * referredMessage;
-    if(message.messageOptions.referredInfo){
-        referredMessage = [self.core.dbManager getMessageWithMessageId:message.messageOptions.referredInfo.messageId];
-        message.referMsg = referredMessage;
+    if(message.referredMsg){
+        referredMessage = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
+        message.referredMsg = referredMessage;
     }
     
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation
                            clientMsgNo:message.clientMsgNo
                              clientUid:message.clientUid
-                            mergedMsgs:mergedMessages
+                             mergeInfo:mergeInfo
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
-                           mentionInfo:message.messageOptions.mentionInfo
+                           mentionInfo:message.mentionInfo
                        referredMessage:referredMessage
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
@@ -1078,6 +1084,16 @@
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        
+        if([message.content isKindOfClass:[JMergeMessage class]]){
+            JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
+            if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+                mergeMessage.containerMsgId = msgId;
+            }
+            [self.core.dbManager updateMessageContent:message.content
+                                          contentType:message.contentType
+                                        withMessageId:message.messageId];
+        }
         
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
             [self.sendReceiveDelegate messageDidSend:message];
@@ -1135,14 +1151,13 @@
     message.clientUid = [self createClientUid];
     message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
     message.flags = [[content class] flags];
-    message.messageOptions = messageOption;
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
     
-    if (messageOption.referredInfo != nil) {
-        JConcreteMessage * referMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredInfo.messageId];
-        message.referMsg = referMsg;
+    if (messageOption.referredMsgId != nil) {
+        JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId];
+        message.referredMsg = referredMsg;
     }
     
     [self.core.dbManager insertMessages:@[message]];
@@ -1167,23 +1182,14 @@
 }
 
 -(void)saveReferMessages:(JConcreteMessage *)message{
-    if(message.referMsg == nil){
+    if(message.referredMsg == nil){
         return;
     }
-    if(message.messageOptions == nil){
-        message.messageOptions = [[JMessageOptions alloc] init];
-    }
-    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referMsg.messageId];
+    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
     if(localReferMsg != nil){
-        message.referMsg = localReferMsg;
-        if(message.messageOptions.referredInfo == nil){
-            message.messageOptions.referredInfo = [[JMessageReferredInfo alloc] init];
-        }
-        message.messageOptions.referredInfo.messageId = localReferMsg.messageId;
-        message.messageOptions.referredInfo.senderId = localReferMsg.senderUserId;
-        message.messageOptions.referredInfo.content = localReferMsg.content;
+        message.referredMsg = localReferMsg;
     }else{
-        NSArray * messages = [self messagesToSave:@[message.referMsg]];
+        NSArray * messages = [self messagesToSave:@[message.referredMsg]];
         [self.core.dbManager insertMessages:messages];
         [self updateUserInfos:messages];
     }
@@ -1393,8 +1399,8 @@
             return;
         }
         
-        if (obj.messageOptions.mentionInfo) {
-            for (JUserInfo *userInfo in obj.messageOptions.mentionInfo.targetUsers) {
+        if (obj.mentionInfo) {
+            for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
                 [userDic setObject:userInfo forKey:userInfo.userId];
             }
         }

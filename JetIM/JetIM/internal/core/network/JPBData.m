@@ -177,7 +177,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
-                         mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                          mergeInfo:(JMergeInfo *)mergeInfo
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
@@ -190,14 +190,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     upMsg.msgContent = msgData;
     upMsg.flags = flags;
     upMsg.clientUid = clientUid;
-    if (mergedMsgs.count > 0) {
+    if (mergeInfo.containerMsgId.length == 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
-        pbMsgs.channelType = (int32_t)mergedMsgs.firstObject.conversation.conversationType;
+        pbMsgs.channelType = (int32_t)mergeInfo.conversation.conversationType;
         pbMsgs.userId = userId;
-        pbMsgs.targetId = mergedMsgs.firstObject.conversation.conversationId;
+        pbMsgs.targetId = mergeInfo.conversation.conversationId;
         NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
-        for (JConcreteMessage *msg in mergedMsgs) {
+        for (JConcreteMessage *msg in mergeInfo.messages) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
             simpleMsg.msgId = msg.messageId;
             simpleMsg.msgTime = msg.timestamp;
@@ -292,18 +292,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if(message.targetUserInfo){
         downMsg.targetUserInfo = [self pbUserInfoWithUserInfo:message.targetUserInfo];
     }
-    if(message.messageOptions.mentionInfo){
+    if(message.mentionInfo){
         MentionInfo * mentionInfo = [[MentionInfo alloc] init];
-        mentionInfo.mentionType = (int32_t)message.messageOptions.mentionInfo.type;
+        mentionInfo.mentionType = (int32_t)message.mentionInfo.type;
         NSMutableArray * targetUsersArray = [NSMutableArray array];
-        for (JUserInfo * userInfo in message.messageOptions.mentionInfo.targetUsers) {
+        for (JUserInfo * userInfo in message.mentionInfo.targetUsers) {
             [targetUsersArray addObject:[self pbUserInfoWithUserInfo:userInfo]];
         }
         mentionInfo.targetUsersArray = targetUsersArray;
         downMsg.mentionInfo = mentionInfo;
     }
-    if(message.referMsg){
-        downMsg.referMsg = [self downMsgWithMessage:message.referMsg];
+    if(message.referredMsg){
+        downMsg.referMsg = [self downMsgWithMessage:message.referredMsg];
     }
     return downMsg;
 }
@@ -979,7 +979,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.groupReadInfo = info;
     msg.groupInfo = [self groupInfoWithPBGroupInfo:downMsg.groupInfo];
     msg.targetUserInfo = [self userInfoWithPBUserInfo:downMsg.targetUserInfo];
-    msg.messageOptions = [[JMessageOptions alloc] init];
     if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
         JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
         mentionInfo.type = (JMentionType)downMsg.mentionInfo.mentionType;
@@ -991,17 +990,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
             }
         }
         mentionInfo.targetUsers = mentionUserList;
-        msg.messageOptions.mentionInfo = mentionInfo;
+        msg.mentionInfo = mentionInfo;
     }
     if(downMsg.hasReferMsg && downMsg.referMsg != nil){
         JConcreteMessage * referMsg = [self messageWithDownMsg:downMsg.referMsg];
-        msg.referMsg = referMsg;
-        if(msg.messageOptions.referredInfo == nil){
-            msg.messageOptions.referredInfo = [[JMessageReferredInfo alloc] init];
-        }
-        msg.messageOptions.referredInfo.messageId = referMsg.messageId;
-        msg.messageOptions.referredInfo.senderId = referMsg.senderUserId;
-        msg.messageOptions.referredInfo.content = referMsg.content;
+        msg.referredMsg = referMsg;
     }
     
     return msg;

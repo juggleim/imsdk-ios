@@ -11,6 +11,7 @@
 #import "JConcreteConversationInfo.h"
 #import "JetIMConst.h"
 #import "JConcreteMessage.h"
+#import "JMergeInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -135,7 +136,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
-                         mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                          mergeInfo:(JMergeInfo *)mergeInfo
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index

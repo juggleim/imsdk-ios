@@ -117,20 +117,20 @@
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+            mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
-                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;{
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                                  msgData:[content encode]
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
-                                              mergedMsgs:mergedMsgs
+                                               mergeInfo:mergeInfo
                                              isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++

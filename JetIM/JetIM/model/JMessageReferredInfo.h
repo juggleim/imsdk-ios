@@ -14,7 +14,7 @@
 
 @property (nonatomic, copy) NSString * senderId;
 
-@property (nonatomic, copy) JMessageContent * content;
+@property (nonatomic, strong) JMessageContent * content;
 
 @end
 
