@@ -14,7 +14,7 @@ import PhotosUI
 import MobileCoreServices
 
 @objcMembers
-open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroupChannelViewModelDelegate, SBUGroupChannelModuleHeaderDelegate, SBUGroupChannelModuleListDelegate, SBUGroupChannelModuleListDataSource, SBUGroupChannelModuleInputDelegate, SBUGroupChannelModuleInputDataSource, SBUGroupChannelViewModelDataSource, SBUMentionManagerDataSource, SBUMessageThreadViewControllerDelegate, SBUVoiceMessageInputViewDelegate, SBUReactionsViewControllerDelegate {
+open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroupChannelViewModelDelegate, SBUGroupChannelModuleHeaderDelegate, SBUGroupChannelModuleListDelegate, SBUGroupChannelModuleListDataSource, SBUGroupChannelModuleInputDelegate, SBUGroupChannelModuleInputDataSource, SBUGroupChannelViewModelDataSource, SBUMentionManagerDataSource, SBUVoiceMessageInputViewDelegate {
 
     // MARK: - UI properties (Public)
     public var headerComponent: SBUGroupChannelModule.Header? {
