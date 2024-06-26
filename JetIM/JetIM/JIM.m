@@ -28,7 +28,7 @@ static JIM *_instance;
         JetIMCore *core = [[JetIMCore alloc] init];
         _instance.core = core;
         JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core];
-        JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core];
+        JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager];
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
         messageManager.sendReceiveDelegate = conversationManager;
         _instance.conversationManager = conversationManager;

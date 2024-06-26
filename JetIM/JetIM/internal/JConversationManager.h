@@ -9,11 +9,11 @@
 #import "JConversationProtocol.h"
 #import "JetIMCore.h"
 #import "JMessageSendReceiveDelegate.h"
-
+#import "JMessageManager.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationManager : NSObject <JConversationProtocol, JMessageSendReceiveDelegate>
-- (instancetype)initWithCore:(JetIMCore *)core;
+- (instancetype)initWithCore:(JetIMCore *)core messageManager:(JMessageManager *)messageManager;
 - (void)syncConversations:(void(^)(void))completeBlock;
 @end
 

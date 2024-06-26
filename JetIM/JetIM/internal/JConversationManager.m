@@ -23,13 +23,15 @@
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
+@property (nonatomic, strong) JMessageManager * messageManager;
 @end
 
 @implementation JConversationManager
 
-- (instancetype)initWithCore:(JetIMCore *)core {
+- (instancetype)initWithCore:(JetIMCore *)core messageManager:(JMessageManager *)messageManager{
     if (self = [super init]) {
         self.core = core;
+        self.messageManager = messageManager;
         self.cachedSyncTime = -1;
     }
     return self;
@@ -167,7 +169,7 @@
         //删除会话不更新时间戳，只通过命令消息来更新
         JLogI(@"CONV-Delete", @"success");
         //更新消息发送时间
-        weakSelf.core.messageSendSyncTime = timestamp;
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager deleteConversationInfoBy:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if(successBlock){
@@ -545,13 +547,15 @@
             [removeMentionMessage addObject:temp];
         }
     }
+    BOOL isUpDataMention = NO;
     if(removeMentionMessage.count != 0){
         [mentionMessages removeObjectsInArray:removeMentionMessage];
         info.mentionInfo.mentionMsgList = mentionMessages;
         [self.core.dbManager setMentionInfo:conversation mentionInfoJson:[info.mentionInfo encodeToJson]];
+        isUpDataMention = YES;
     }
     
-    [self updateConversationLastMessage:info lastMessage:lastMessage];
+    [self updateConversationLastMessage:info lastMessage:lastMessage isUpDataMention:isUpDataMention];
 }
 - (void)messageDidClear:(JConversation *)conversation
               startTime:(long long)startTime
@@ -564,22 +568,25 @@
     NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
     NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
     for (JConversationMentionMessage * removedMessage in mentionMessages) {
-        if(sendUserId != nil && ![sendUserId isEqualToString:@""]){
-            if([removedMessage.senderId isEqualToString:sendUserId]){
+
+        if(sendUserId.length > 0){
+            if([removedMessage.senderId isEqualToString:sendUserId] && startTime > 0 && removedMessage.msgTime < startTime ){
+                [removeMentionMessage addObject:removedMessage];
+            }
+        }else{
+            if(startTime > 0 && removedMessage.msgTime < startTime){
                 [removeMentionMessage addObject:removedMessage];
             }
         }
-        if(startTime > 0 && removedMessage.msgTime < startTime){
-            [removeMentionMessage addObject:removedMessage];
-        }
-
     }
+    BOOL isUpDataMention = NO;
     if(removeMentionMessage.count != 0){
         [mentionMessages removeObjectsInArray:removeMentionMessage];
         info.mentionInfo.mentionMsgList = mentionMessages;
         [self.core.dbManager setMentionInfo:conversation mentionInfoJson:[info.mentionInfo encodeToJson]];
+        isUpDataMention = YES;
     }
-    [self updateConversationLastMessage:info lastMessage:lastMessage];
+    [self updateConversationLastMessage:info lastMessage:lastMessage isUpDataMention:isUpDataMention];
 }
 -(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
     if(conversation == nil){
@@ -609,24 +616,23 @@
     });
 }
 -(void)updateConversationLastMessage:(JConcreteConversationInfo *)info 
-                         lastMessage:(JConcreteMessage *)lastMessage{
+                         lastMessage:(JConcreteMessage *)lastMessage
+                     isUpDataMention:(BOOL)isUpDataMention{
     
     BOOL isLastMessageUpdate = (info.lastMessage == nil ||
                                 info.lastMessage.clientMsgNo != lastMessage.clientMsgNo ||
                                 ![info.lastMessage.contentType isEqualToString:lastMessage.contentType]);
-    if(isLastMessageUpdate == NO){
-        return;
+    if(isLastMessageUpdate || isUpDataMention){
+        [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
+        info.lastMessage = lastMessage;
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[info]];
+                }
+            }];
+        });
     }
-    [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
-    info.lastMessage = lastMessage;
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [obj conversationInfoDidUpdate:@[info]];
-            }
-        }];
-    });
-    
 }
 #pragma mark - internal
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {

@@ -1372,7 +1372,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
              kRecallMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jDelConvers:@(JPBRcvTypeSimpleQryAck),
+             jDelConvers:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jClearUnread:@(JPBRcvTypeSimpleQryAck),
              jMarkRead:@(JPBRcvTypeSimpleQryAck),
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),

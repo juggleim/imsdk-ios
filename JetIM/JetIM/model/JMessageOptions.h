@@ -7,7 +7,6 @@
 
 #import <Foundation/Foundation.h>
 #import "JMessageMentionInfo.h"
-#import "JMessageReferredInfo.h"
 
 
 @interface JMessageOptions : NSObject

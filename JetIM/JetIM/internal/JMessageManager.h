@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)syncMessages;
 
 @property (nonatomic, weak) id<JMessageSendReceiveDelegate> sendReceiveDelegate;
+
+- (void)updateSendSyncTime:(long long)timestamp;
+
 @end
 
 NS_ASSUME_NONNULL_END

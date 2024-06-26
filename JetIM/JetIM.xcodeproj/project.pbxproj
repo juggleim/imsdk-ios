@@ -21,8 +21,6 @@
 		5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */; };
 		5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E32C21790600AF6519 /* JMessageOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E42C21790600AF6519 /* JMessageOptions.m */; };
-		5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9980EA2C21794B00AF6519 /* JMessageReferredInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */; };
 		5B9980F82C2BF00000AF6519 /* JMergeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980F62C2BF00000AF6519 /* JMergeInfo.h */; };
 		5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980F72C2BF00000AF6519 /* JMergeInfo.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -280,8 +278,6 @@
 		5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationMentionInfo.m; sourceTree = "<group>"; };
 		5B9980E32C21790600AF6519 /* JMessageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageOptions.h; sourceTree = "<group>"; };
 		5B9980E42C21790600AF6519 /* JMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageOptions.m; sourceTree = "<group>"; };
-		5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReferredInfo.h; sourceTree = "<group>"; };
-		5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReferredInfo.m; sourceTree = "<group>"; };
 		5B9980F62C2BF00000AF6519 /* JMergeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeInfo.h; sourceTree = "<group>"; };
 		5B9980F72C2BF00000AF6519 /* JMergeInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeInfo.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
@@ -676,8 +672,6 @@
 				A08AA24F2B14AF1F008B114C /* JMessage.m */,
 				5B9980E32C21790600AF6519 /* JMessageOptions.h */,
 				5B9980E42C21790600AF6519 /* JMessageOptions.m */,
-				5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */,
-				5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */,
 				A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */,
 				A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */,
 				A09645752BECCDF800290775 /* JMediaMessageContent.h */,
@@ -1034,7 +1028,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B9980E92C21794B00AF6519 /* JMessageReferredInfo.h in Headers */,
 				5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */,
 				A09645902BF339EA00290775 /* JSnapshotPackedVideoMessage.h in Headers */,
 				5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */,
@@ -1278,7 +1271,6 @@
 				A08AA4062B19EEDB008B114C /* SRError.m in Sources */,
 				A08AA3662B19CB77008B114C /* GPBMessage.m in Sources */,
 				A08AA3642B19CB77008B114C /* GPBRootObject.m in Sources */,
-				5B9980EA2C21794B00AF6519 /* JMessageReferredInfo.m in Sources */,
 				A08AA4092B19EEDB008B114C /* SRSIMDHelpers.m in Sources */,
 				A08AA37F2B19CB78008B114C /* GPBCodedInputStream.m in Sources */,
 				A09716C32B9FFF1F00D1DB24 /* JUserInfoManager.m in Sources */,

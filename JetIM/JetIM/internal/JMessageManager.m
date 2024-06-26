@@ -263,11 +263,8 @@
                                  timestamp:m.timestamp
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Recall", @"success");
-            if (self.syncProcessing) {
-                self.cachedSendTime = timestamp;
-            } else {
-                self.core.messageSendSyncTime = timestamp;
-            }
+            [self updateSendSyncTime:timestamp];
+
             m.contentType = [JRecallInfoMessage contentType];
             JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
             recallInfoMsg.exts = extras;
@@ -1054,11 +1051,6 @@
         mergeInfo.containerMsgId = mergeMessage.containerMsgId;
         mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
-    JConcreteMessage * referredMessage;
-    if(message.referredMsg){
-        referredMessage = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
-        message.referredMsg = referredMessage;
-    }
     
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation
@@ -1068,14 +1060,10 @@
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
                            mentionInfo:message.mentionInfo
-                       referredMessage:referredMessage
+                       referredMessage:message.referredMsg
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
-        if (self.syncProcessing) {
-            self.cachedSendTime = timestamp;
-        } else {
-            self.core.messageSendSyncTime = timestamp;
-        }
+        [self updateSendSyncTime:timestamp];
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
@@ -1462,6 +1450,17 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
+- (void)updateSendSyncTime:(long long)timestamp {
+    if (self.syncProcessing) {
+        if (timestamp > self.cachedSendTime) {
+            self.cachedSendTime = timestamp;
+        }
+    } else {
+        self.core.messageSendSyncTime = timestamp;
+    }
+    
 }
 
 - (NSHashTable<id<JMessageDelegate>> *)delegates {
