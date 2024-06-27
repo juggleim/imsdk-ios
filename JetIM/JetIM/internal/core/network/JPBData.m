@@ -967,12 +967,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.msgIndex = downMsg.unreadIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
-    int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
-    if (flags < 0) {
-        msg.flags = downMsg.flags;
-    } else {
-        msg.flags = flags;
-    }
+    msg.flags = downMsg.flags;
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
