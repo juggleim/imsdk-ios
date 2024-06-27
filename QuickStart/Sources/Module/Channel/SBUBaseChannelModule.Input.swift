@@ -102,7 +102,7 @@ public protocol SBUBaseChannelModuleInputDataSource: AnyObject {
     ///    - inputComponent: `SBUBaseChannelModule.Input` object.
     ///    - messageInputView: `UIView` object representing `messageInputView` from input component.
     /// - Returns: `BaseChannel` object.
-    func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input, channelForInputView messageInputView: UIView?) -> BaseChannel?
+    func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input, channelForInputView messageInputView: UIView?) -> JConversationInfo?
 }
 
 extension SBUBaseChannelModule {
@@ -148,7 +148,7 @@ extension SBUBaseChannelModule {
         // MARK: - Logic properties (Public)
         /// (Read only) The channel object.
         /// - NOTE: See `baseChannelModule(_:channelForInputView:)`, a data source function.
-        public var baseChannel: BaseChannel? {
+        public var baseChannel: JConversationInfo? {
             self.baseDataSource?.baseChannelModule(self, channelForInputView: self.messageInputView)
         }
         
@@ -331,7 +331,7 @@ extension SBUBaseChannelModule {
         }
         
         // MARK: - SBUMessageInputViewDataSource
-        public func channelForMessageInputView(_ messageInputView: SBUMessageInputView) -> BaseChannel? {
+        public func channelForMessageInputView(_ messageInputView: SBUMessageInputView) -> JConversationInfo? {
             self.baseChannel
         }
     }

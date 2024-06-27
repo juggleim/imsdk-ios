@@ -159,9 +159,9 @@ public class SBUChannelTitleView: UIView {
         if let conversationId = channel?.conversation.conversationId {
             if let conversationType = channel?.conversation.conversationType {
                 if conversationType == .private {
-                    self.titleLabel.text = JIM.shared().userInfoManager.getUserInfo(conversationId)
+                    self.titleLabel.text = JIM.shared().userInfoManager.getUserInfo(conversationId).userName
                 } else if conversationType == .group {
-                    self.titleLabel.text = JIM.shared().userInfoManager.getGroupInfo(conversationId)
+                    self.titleLabel.text = JIM.shared().userInfoManager.getGroupInfo(conversationId).groupName
                 } else {
                     self.titleLabel.text = ""
                 }
@@ -176,73 +176,64 @@ public class SBUChannelTitleView: UIView {
             self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
             return
         }
-        
-        if channel is OpenChannel {
-            if let url = channel.coverURL, SBUUtils.isValid(coverURL: url) {
-                self.coverImage.setImage(withCoverURL: url)
-            } else {
-                self.coverImage.setPlaceholder(type: .iconChannels)
-            }
-        } else if let channel = channel as? GroupChannel {
-            if let coverURL = channel.coverURL,
-               SBUUtils.isValid(coverURL: coverURL) {
-                self.coverImage.setImage(withCoverURL: coverURL)
-            } else if channel.isBroadcast == true {
-                self.coverImage.setBroadcastIcon()
-            } else if channel.isChatNotification == true {
-                self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
-            } else if channel.isFeedChannel() == true {
-                // Not used now
-                self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
-            } else if channel.members.count > 0 {
-                self.coverImage.setImage(withUsers: channel.members)
+        if channel.conversation.conversationType == .private {
+            if let portrait = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId).portrait {
+                self.coverImage.setImage(withCoverURL: portrait)
             } else {
                 self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
             }
+        } else if channel.conversation.conversationType == .group {
+            if let portrait = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId).portrait {
+                self.coverImage.setImage(withCoverURL: portrait)
+            } else {
+                self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+            }
+        } else {
+            self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
         }
     }
     
-    public func updateChannelStatus(channel: BaseChannel?) {
-        self.statusField.leftViewMode = .never
-        
-        if let channel = channel as? GroupChannel {
-            if let typingIndicatorString = self.buildTypingIndicatorString(channel: channel), !channel.isChatNotification,
-               SendbirdUI.config.groupChannel.channel.isTypingIndicatorEnabled,
-               SendbirdUI.config.groupChannel.channel.typingIndicatorTypes.contains(.text) {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.statusField.isHidden = false
-                    self.statusField.text = typingIndicatorString
-                    self.updateConstraints()
-                    self.layoutIfNeeded()
-                }
-            } else {
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.statusField.isHidden = true
-                    self.statusField.text = ""
-                    self.updateConstraints()
-                    self.layoutIfNeeded()
-                }
-            }
-        } else if let channel = channel as? OpenChannel {
-            let count = channel.participantCount
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.statusField.isHidden = false
-                self.statusField.text = SBUStringSet.Open_Channel_Participants_Count(count)
-                self.updateConstraints()
-                self.layoutIfNeeded()
-            }
-        }
+    public func updateChannelStatus(channel: JConversationInfo?) {
+//        self.statusField.leftViewMode = .never
+//
+//        if let channel = channel as? GroupChannel {
+//            if let typingIndicatorString = self.buildTypingIndicatorString(channel: channel), !channel.isChatNotification,
+//               SendbirdUI.config.groupChannel.channel.isTypingIndicatorEnabled,
+//               SendbirdUI.config.groupChannel.channel.typingIndicatorTypes.contains(.text) {
+//                DispatchQueue.main.async { [weak self] in
+//                    guard let self = self else { return }
+//                    self.statusField.isHidden = false
+//                    self.statusField.text = typingIndicatorString
+//                    self.updateConstraints()
+//                    self.layoutIfNeeded()
+//                }
+//            } else {
+//                DispatchQueue.main.async { [weak self] in
+//                    guard let self = self else { return }
+//                    self.statusField.isHidden = true
+//                    self.statusField.text = ""
+//                    self.updateConstraints()
+//                    self.layoutIfNeeded()
+//                }
+//            }
+//        } else if let channel = channel as? OpenChannel {
+//            let count = channel.participantCount
+//            DispatchQueue.main.async { [weak self] in
+//                guard let self = self else { return }
+//                self.statusField.isHidden = false
+//                self.statusField.text = SBUStringSet.Open_Channel_Participants_Count(count)
+//                self.updateConstraints()
+//                self.layoutIfNeeded()
+//            }
+//        }
     }
     
     // MARK: - Util
-    private func buildTypingIndicatorString(channel: GroupChannel) -> String? {
-        guard let typingMembers = channel.getTypingUsers(),
-            !typingMembers.isEmpty else { return nil }
-        return SBUStringSet.Channel_Typing(typingMembers)
-    }
+//    private func buildTypingIndicatorString(channel: GroupChannel) -> String? {
+//        guard let typingMembers = channel.getTypingUsers(),
+//            !typingMembers.isEmpty else { return nil }
+//        return SBUStringSet.Channel_Typing(typingMembers)
+//    }
     
     public override var intrinsicContentSize: CGSize {
         // NOTE: this is under assumption that this view is used in

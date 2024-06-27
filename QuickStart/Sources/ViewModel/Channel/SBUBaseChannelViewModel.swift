@@ -20,6 +20,7 @@ public protocol SBUBaseChannelViewModelDataSource: AnyObject {
     /// - Returns:
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
+        isScrollNearBottomInChannel channel: JConversationInfo?
     ) -> Bool
 }
 
@@ -28,6 +29,8 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     /// Called when the the channel has been changed.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
+        didChangeChannel channel: JConversationInfo?,
+        withContext context: MessageContext
     )
     
     /// Called when the channel has received a new message.
@@ -40,19 +43,19 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     /// Called when the channel should finish editing mode
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldFinishEditModeForChannel channel: BaseChannel
+        shouldFinishEditModeForChannel channel: JConversationInfo
     )
     
     /// Called when the channel should be dismissed.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldDismissForChannel channel: BaseChannel?
+        shouldDismissForChannel channel: JConversationInfo?
     )
     
     /// Called when the messages has been changed. If they're the first loaded messages, `initialLoad` is `true`.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didChangeMessageList messages: [BaseMessage],
+        didChangeMessageList messages: [JMessage],
         needsToReload: Bool,
         initialLoad: Bool
     )
@@ -61,13 +64,13 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     /// - Since: 3.4.0
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        deletedMessages messages: [BaseMessage]
+        deletedMessages messages: [JMessage]
     )
     
     /// Called when it should be updated scroll status for messages.
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldUpdateScrollInMessageList messages: [BaseMessage],
+        shouldUpdateScrollInMessageList messages: [JMessage],
         forContext context: MessageContext?,
         keepsScroll: Bool
     )
@@ -76,7 +79,7 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
         didUpdateReaction reaction: ReactionEvent,
-        forMessage message: BaseMessage
+        forMessage message: JMessage
     )
 }
 
@@ -87,7 +90,7 @@ open class SBUBaseChannelViewModel: NSObject {
     
     // MARK: - Logic properties (Public)
     /// The current channel object. It's `BaseChannel` type.
-    public internal(set) var channel: BaseChannel?
+    public internal(set) var channel: JConversationInfo?
     /// The URL of the current channel.
     public internal(set) var channelURL: String?
     /// The starting point of the message list in the `channel`.
@@ -176,7 +179,7 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Parameters:
     ///   - channelURL: channel url
     ///   - messageListParams: (Optional) The parameter to be used when getting channel information.
-    public func loadChannel(channelURL: String, messageListParams: MessageListParams? = nil, completionHandler: ((BaseChannel?, JErrorCode?) -> Void)? = nil) {}
+    public func loadChannel(channelURL: String, messageListParams: MessageListParams? = nil, completionHandler: ((JConversationInfo?, JErrorCode?) -> Void)? = nil) {}
     
     /// This function refreshes channel.
     public func refreshChannel() {}
@@ -986,7 +989,7 @@ extension SBUBaseChannelViewModel: ConnectionDelegate {
 // MARK: - ChannelDelegate
 extension SBUBaseChannelViewModel: BaseChannelDelegate {
     // Received message
-    open func channel(_ channel: BaseChannel, didReceive message: BaseMessage) {
+    open func channel(_ channel: JConversationInfo, didReceive message: JMessage) {
         guard self.channel?.channelURL == channel.channelURL else { return }
         
         switch message {
@@ -1002,20 +1005,20 @@ extension SBUBaseChannelViewModel: BaseChannelDelegate {
     }
     
     // If channel type is Group, please do not use belows any more.
-    open func channel(_ channel: BaseChannel, didUpdate message: BaseMessage) {}
-    open func channel(_ channel: BaseChannel, messageWasDeleted messageId: Int64) {}
-    open func channel(_ channel: BaseChannel, didUpdateThreadInfo threadInfoUpdateEvent: ThreadInfoUpdateEvent) {}
-    open func channel(_ channel: BaseChannel, updatedReaction reactionEvent: ReactionEvent) {}
+    open func channel(_ channel: JConversationInfo, didUpdate message: JMessage) {}
+    open func channel(_ channel: JConversationInfo, messageWasDeleted messageId: Int64) {}
+    open func channel(_ channel: JConversationInfo, didUpdateThreadInfo threadInfoUpdateEvent: ThreadInfoUpdateEvent) {}
+    open func channel(_ channel: JConversationInfo, updatedReaction reactionEvent: ReactionEvent) {}
 //    open func channelDidUpdateReadReceipt(_ channel: GroupChannel) {}
 //    open func channelDidUpdateDeliveryReceipt(_ channel: GroupChannel) {}
 //    open func channelDidUpdateTypingStatus(_ channel: GroupChannel) {}
-    open func channelWasChanged(_ channel: BaseChannel) {}
-    open func channelWasFrozen(_ channel: BaseChannel) {}
-    open func channelWasUnfrozen(_ channel: BaseChannel) {}
-    open func channel(_ channel: BaseChannel, userWasMuted user: RestrictedUser) {}
-    open func channel(_ channel: BaseChannel, userWasUnmuted user: User) {}
-    open func channelDidUpdateOperators(_ channel: BaseChannel) {}
-    open func channel(_ channel: BaseChannel, userWasBanned user: RestrictedUser) {}
-    open func channel(_ channel: BaseChannel, userWasUnbanned user: User) {}
+    open func channelWasChanged(_ channel: JConversationInfo) {}
+    open func channelWasFrozen(_ channel: JConversationInfo) {}
+    open func channelWasUnfrozen(_ channel: JConversationInfo) {}
+    open func channel(_ channel: JConversationInfo, userWasMuted user: RestrictedUser) {}
+    open func channel(_ channel: JConversationInfo, userWasUnmuted user: User) {}
+    open func channelDidUpdateOperators(_ channel: JConversationInfo) {}
+    open func channel(_ channel: JConversationInfo, userWasBanned user: RestrictedUser) {}
+    open func channel(_ channel: JConversationInfo, userWasUnbanned user: JUserInfo) {}
     open func channelWasDeleted(_ channelURL: String, channelType: ChannelType) {}
 }

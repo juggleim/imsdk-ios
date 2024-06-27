@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import JetIM
 
 /// SBUUserMessageTextViewModel is a structure that represents the view model for user messages.
 public struct SBUUserMessageTextViewModel {
-    var message: BaseMessage?
+    var message: JMessage?
     var text: String
     var attributedText: NSMutableAttributedString?
     var textColor: UIColor
@@ -47,7 +48,8 @@ public struct SBUUserMessageTextViewModel {
     /// This computed property checks if the message has mentioned someone.
     public var hasMentionedMessage: Bool {
         guard let message = message else { return false }
-        return message.mentionedMessageTemplate != nil && message.mentionedMessageTemplate != ""
+        //TODO:
+        return false
     }
     
     /// Initializer for the SBUUserMessageTextViewModel structure.

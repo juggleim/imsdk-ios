@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 protocol SBUQuoteMessageInputViewDelegate: AnyObject {
     func didTapClose()
@@ -199,12 +200,12 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     }
 
     open func configure(with configuration: SBUQuoteMessageInputViewParams) {
-        self.fileMessagePreview.isHidden = !(configuration.isFileType || configuration.isMultipleFilesMessage)
+        self.fileMessagePreview.isHidden = false
         if configuration.messageFileType == .voice {
             self.fileMessagePreview.isHidden = true
             self.userMessagePreview.text = SBUStringSet.VoiceMessage.Preview.quotedMessage
         } else {
-            self.userMessagePreview.text = configuration.message.message
+//            self.userMessagePreview.text = configuration.message.message
         }
         
         self.replyToLabel.text = configuration.replyToText
@@ -219,70 +220,54 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
         }
     }
     
-    func setupFilePreviewForMultipleFilesMessage(with configuration: SBUQuoteMessageInputViewParams) {
-        guard let multipleFilesMessage = configuration.message as? MultipleFilesMessage else { return }
-        guard let firstUploadedFileInfo = multipleFilesMessage.files.first else { return }
-        
-        let thumbnailSize = SBUIconSetType.Metric.defaultIconSizeLarge
-        let cacheKey = multipleFilesMessage.requestId + "_0"  // Previe thumbnail for MultipleFilesMessage is always its first image.
-        self.fileMessagePreview.contentMode = .scaleAspectFill
-        self.fileMessagePreview.loadImage(
-            urlString: firstUploadedFileInfo.url,
-            option: UIImageView.ImageOption.imageToThumbnail,
-            thumbnailSize: thumbnailSize,
-            cacheKey: cacheKey,
-            subPath: multipleFilesMessage.channelURL
-        )
-    }
-    
     func setupFilePreviewForFileMessage(with configuration: SBUQuoteMessageInputViewParams) {
-        guard let fileMessage = configuration.message as? FileMessage else { return }
-        guard configuration.isFileType,
-              let name = configuration.fileName,
-              let messageFileType = configuration.messageFileType
-        else { return }
-        
-        // Set up with file name
-        self.userMessagePreview.text = name
-        
-        var imageOption: UIImageView.ImageOption = .imageToThumbnail
-        var fileIcon: UIImage?
-        
-        switch messageFileType {
-        case .image:
-            imageOption = .imageToThumbnail
-        case .video:
-            imageOption = .videoURLToImage
-        case .audio:
-            fileIcon = SBUIconSetType.iconFileAudio.image(
-                with: theme.quotedFileMessageThumbnailTintColor,
-                to: SBUIconSetType.Metric.quotedMessageIconSize
-            )
-        case .voice:
-            self.userMessagePreview.text = SBUStringSet.VoiceMessage.Preview.quotedMessage
-            
-        case .pdf, .etc:
-            fileIcon = SBUIconSetType.iconFileDocument.image(
-                with: theme.quotedFileMessageThumbnailTintColor,
-                to: SBUIconSetType.Metric.quotedMessageIconSize
-            )
-        }
-        
-        if let fileIcon = fileIcon {
-            self.fileMessagePreview.contentMode = .center
-            self.fileMessagePreview.image = fileIcon
-            return
-        }
-        
-        let thumbnailSize = SBUIconSetType.Metric.defaultIconSizeLarge
-        self.fileMessagePreview.contentMode = .scaleAspectFill
-        self.fileMessagePreview.loadImage(
-            urlString: fileMessage.url,
-            option: imageOption,
-            thumbnailSize: thumbnailSize,
-            cacheKey: fileMessage.cacheKey,
-            subPath: fileMessage.channelURL
-        )
+//        guard let fileMessage = configuration.message as? JMessage else { return }
+//        guard configuration.isFileType,
+//              let name = configuration.fileName,
+//              let messageFileType = configuration.messageFileType
+//        else { return }
+//
+//        // Set up with file name
+//        self.userMessagePreview.text = name
+//        
+//        var imageOption: UIImageView.ImageOption = .imageToThumbnail
+//        var fileIcon: UIImage?
+//
+//        switch messageFileType {
+//        case .image:
+//            imageOption = .imageToThumbnail
+//        case .video:
+//            imageOption = .videoURLToImage
+//        case .audio:
+//            fileIcon = SBUIconSetType.iconFileAudio.image(
+//                with: theme.quotedFileMessageThumbnailTintColor,
+//                to: SBUIconSetType.Metric.quotedMessageIconSize
+//            )
+//        case .voice:
+//            self.userMessagePreview.text = SBUStringSet.VoiceMessage.Preview.quotedMessage
+//
+//        case .pdf, .etc:
+//            fileIcon = SBUIconSetType.iconFileDocument.image(
+//                with: theme.quotedFileMessageThumbnailTintColor,
+//                to: SBUIconSetType.Metric.quotedMessageIconSize
+//            )
+//        }
+//
+//        if let fileIcon = fileIcon {
+//            self.fileMessagePreview.contentMode = .center
+//            self.fileMessagePreview.image = fileIcon
+//            return
+//        }
+//
+//        let thumbnailSize = SBUIconSetType.Metric.defaultIconSizeLarge
+//        self.fileMessagePreview.contentMode = .scaleAspectFill
+//        self.fileMessagePreview.loadImage(
+//            urlString: fileMessage.url,
+//            option: imageOption,
+//            thumbnailSize: thumbnailSize,
+//            cacheKey: fileMessage.cacheKey,
+//            subPath: fileMessage.channelURL
+//        )
     }
     
     // MARK: - Actions

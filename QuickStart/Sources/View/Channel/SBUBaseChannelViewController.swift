@@ -96,13 +96,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         if displaysLocalCachedListFirst {
             self.createViewModel(
                 channel: baseChannel,
-                messageListParams: messageListParams,
                 displaysLocalCachedListFirst: displaysLocalCachedListFirst
             )
         } else {
             self.createViewModel(
-                channel: baseChannel,
-                messageListParams: messageListParams
+                channel: baseChannel
             )
         }
     }
@@ -135,7 +133,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         
         self.createViewModel(
             channelURL: channelURL,
-            messageListParams: messageListParams,
             startingPoint: startingPoint
         )
     }
@@ -171,14 +168,12 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         if displaysLocalCachedListFirst {
             self.createViewModel(
                 channelURL: channelURL,
-                messageListParams: messageListParams,
                 startingPoint: startingPoint,
                 displaysLocalCachedListFirst: displaysLocalCachedListFirst
             )
         } else {
             self.createViewModel(
                 channelURL: channelURL,
-                messageListParams: messageListParams,
                 startingPoint: startingPoint
             )
         }
@@ -256,9 +251,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - showIndicator: Whether to show loading indicator on loading the initial messages.
     /// - Since: 3.0.0
     open func createViewModel(
-        channel: BaseChannel? = nil,
+        channel: JConversationInfo? = nil,
         channelURL: String? = nil,
-        messageListParams: MessageListParams? = nil,
         startingPoint: Int64? = nil,
         showIndicator: Bool = true
     ) { }
@@ -274,9 +268,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - displaysLocalCachedListFirst: (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
     /// - Since: 3.3.5
     open func createViewModel(
-        channel: BaseChannel? = nil,
+        channel: JConversationInfo? = nil,
         channelURL: String? = nil,
-        messageListParams: MessageListParams? = nil,
         startingPoint: Int64? = nil,
         showIndicator: Bool = true,
         displaysLocalCachedListFirst: Bool
@@ -394,20 +387,20 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// This function presents `SBUEmojiListViewController`
     /// - Parameter message: `BaseMessage` object
     /// - Since: 1.1.0
-    open func showEmojiListModal(message: BaseMessage) {
-        let emojiListVC = SBUEmojiListViewController(message: message)
-        emojiListVC.modalPresentationStyle = .custom
-        emojiListVC.transitioningDelegate = self
-        
-        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
-            guard let self = self else { return }
-            self.baseViewModel?.setReaction(
-                message: message,
-                emojiKey: emojiKey,
-                didSelect: setSelect
-            )
-        }
-        self.present(emojiListVC, animated: true)
+    open func showEmojiListModal(message: JMessage) {
+//        let emojiListVC = SBUEmojiListViewController(message: message)
+//        emojiListVC.modalPresentationStyle = .custom
+//        emojiListVC.transitioningDelegate = self
+//
+//        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
+//            guard let self = self else { return }
+//            self.baseViewModel?.setReaction(
+//                message: message,
+//                emojiKey: emojiKey,
+//                didSelect: setSelect
+//            )
+//        }
+//        self.present(emojiListVC, animated: true)
     }
     
     // MARK: - TableView
@@ -445,7 +438,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///    - needToSearch: If `true`, reloads the collection based on the message information if not found by message ID.
     /// - SeeAlso: ``SBUBaseChannelModule/List/scrollToMessage(id:enablesScrollAnimation:enablesMessageAnimation:)``
     public func scrollToMessage(
-        message: BaseMessage,
+        message: JMessage,
         enablesScrollAnimation: Bool = false,
         enablesMessageAnimation: Bool = false,
         position: SBUScrollPosition = .middle,

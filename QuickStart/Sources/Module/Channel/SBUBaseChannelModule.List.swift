@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 /// Event methods for the views updates and performing actions from the list component.
 public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
@@ -28,7 +29,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - indexPath: An index path locating the row in table view of `listComponent
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapMessage message: BaseMessage,
+        didTapMessage message: JMessage,
         forRowAt indexPath: IndexPath
     )
     
@@ -40,7 +41,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - indexPath: An index path locating the row in table view of `listComponent
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didLongTapMessage message: BaseMessage,
+        didLongTapMessage message: JMessage,
         forRowAt indexPath: IndexPath
     )
     
@@ -50,7 +51,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - user: The `SBUUser` of user profile that was tapped.
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapUserProfile user: SBUUser
+        didTapUserProfile user: JUserInfo
     )
     
     /// Called when the message cell was tapped in the `listComponent`.
@@ -63,7 +64,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     /// - Since: 3.4.0
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapVoiceMessage fileMessage: FileMessage,
+        didTapVoiceMessage fileMessage: JMessage,
         cell: UITableViewCell,
         forRowAt indexPath: IndexPath
     )
@@ -108,43 +109,43 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - failedMessage: The failed message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRetryFailedMessage failedMessage: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRetryFailedMessage failedMessage: JMessage)
     
     /// Called when a user selects the *delete* menu item of a `failedMessage` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - failedMessage: The failed message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteFailedMessage failedMessage: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteFailedMessage failedMessage: JMessage)
     
     /// Called when a user selects the *copy* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapCopyMessage message: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapCopyMessage message: JMessage)
  
     /// Called when a user selects the *delete* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage)
     
     /// Called when a user selects the *edit* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage)
     
     /// Called when a user selects the *save* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapSaveMessage message: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapSaveMessage message: JMessage)
     
     /// Called when a user selects the *reply* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: BaseMessage)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: JMessage)
     
     /// Called when a user *reacts* to a `message` in the `listComponent` with an emoji.
     /// - Parameters:
@@ -154,7 +155,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - selected: Determines whether the emoji has already been used for the message.
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didReactToMessage message: BaseMessage,
+        didReactToMessage message: JMessage,
         withEmoji key: String,
         selected: Bool
     )
@@ -165,7 +166,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - message: The message that the user wants to react with more emojis.
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapMoreEmojisOnMessage message: BaseMessage
+        didTapMoreEmojisOnMessage message: JMessage
     )
     
     /// Called when the ``SBUMenuSheetViewController`` instance is dismissed.
@@ -191,13 +192,13 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - message: The message for which scrolling was attempted
     ///    - needToSearch: If `true`, reloads the collection based on the message information if not found by message ID.
     /// - Since: 3.13.0
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didFailScrollToMessage message: BaseMessage, needToSearch: Bool)
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didFailScrollToMessage message: JMessage, needToSearch: Bool)
 }
 
 extension SBUBaseChannelModuleListDelegate {
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didLongTapMessage message: BaseMessage,
+        didLongTapMessage message: JMessage,
         forRowAt indexPath: IndexPath
     ) {
         listComponent.showMessageMenu(on: message, forRowAt: indexPath)
@@ -211,21 +212,21 @@ public protocol SBUBaseChannelModuleListDataSource: AnyObject {
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: `BaseChannel` object.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, channelForTableView tableView: UITableView) -> BaseChannel?
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, channelForTableView tableView: UITableView) -> JConversationInfo?
     
     /// Ask the data source to return the message list sent successfully.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: The array of `BaseMessage` object that are sent successfully.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, sentMessagesInTableView tableView: UITableView) -> [BaseMessage]
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, sentMessagesInTableView tableView: UITableView) -> [JMessage]
     
     /// Ask the data source to return the message list includes the sent, the failed and the pending.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: The array of `BaseMessage` object including the sent, the failed and the pending.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, fullMessagesInTableView tableView: UITableView) -> [BaseMessage]
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, fullMessagesInTableView tableView: UITableView) -> [JMessage]
     
     /// Ask the data source to return whether the `tableView` has next data.
     /// - Parameters:
@@ -263,7 +264,7 @@ public protocol SBUBaseChannelModuleListDataSource: AnyObject {
     ///    - cell: `UITableViewCell` object from list component.
     /// - Returns: (`SBUPendingMessageManager` object, `isThreadMessageMode` object of view model)
     /// - Since: 3.3.0
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, pendingMessageManagerForCell cell: UITableViewCell) -> (SBUPendingMessageManager?, Bool?)
+//    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, pendingMessageManagerForCell cell: UITableViewCell) -> (SBUPendingMessageManager?, Bool?)
 }
 
 extension SBUBaseChannelModule {
@@ -365,17 +366,17 @@ extension SBUBaseChannelModule {
         // MARK: - Logic properties (Public)
         
         /// The current channel object from `baseChannelModule(_:channelForTableView:)` data source method.
-        public var baseChannel: BaseChannel? {
+        public var baseChannel: JConversationInfo? {
             self.baseDataSource?.baseChannelModule(self, channelForTableView: self.tableView)
         }
         
         /// The array of sent messages in the channel. The value is returned by `baseChannelModule(_:sentMessagesInTableView:)` data source method.
-        public var sentMessages: [BaseMessage] {
+        public var sentMessages: [JMessage] {
             self.baseDataSource?.baseChannelModule(self, sentMessagesInTableView: self.tableView) ?? []
         }
         
         /// The array of all messages includes the sent, the failed and the pending. The value is returned by `baseChannelModule(_:fullMessagesInTableView:)` data source method.
-        public var fullMessageList: [BaseMessage] {
+        public var fullMessageList: [JMessage] {
             self.baseDataSource?.baseChannelModule(self, fullMessagesInTableView: self.tableView) ?? []
         }
         
@@ -546,11 +547,11 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The `BaseMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
-        open func showMessageMenu(on message: BaseMessage, forRowAt indexPath: IndexPath) {
-            switch message.sendingStatus {
-            case .none, .canceled, .pending:
+        open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
+            switch message.messageState {
+            case .unknown, .sending, .sent:
                 break
-            case .failed:
+            case .fail:
                 // shows failed message menu
                 showFailedMessageMenu(on: message)
             default:
@@ -560,7 +561,7 @@ extension SBUBaseChannelModule {
                     return
                 }
                 cell.isSelected = true
-                if SBUEmojiManager.isReactionEnabled(channel: self.baseChannel) {
+                if false {
                     // shows menu sheet view controller
                     self.showMessageMenuSheet(for: message, cell: cell)
                 } else {
@@ -572,7 +573,7 @@ extension SBUBaseChannelModule {
         /// Displays the menu of a message that failed to send.
         /// - NOTE: The event delegate methods, ``SBUBaseChannelModuleListDelegate/baseChannelModule(_:didTapRetryFailedMessage:)`` and ``SBUBaseChannelModuleListDelegate/baseChannelModule(_:didTapDeleteFailedMessage:)`` , are called when the items in the menu are tapped.
         /// - Parameter message: The `BaseMessage` object that corresponds to the message of the menu to show.
-        open func showFailedMessageMenu(on message: BaseMessage) {
+        open func showFailedMessageMenu(on message: JMessage) {
             let retryItem = SBUActionSheetItem(
                 title: SBUStringSet.Retry,
                 color: self.theme?.menuItemTintColor
@@ -605,7 +606,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The message that is to be deleted.
         ///    - oneTimeTheme: The theme applied to the alert. If there's no set theme, the default theme in Sendbird UIKit is used.
-        open func showDeleteMessageAlert(on message: BaseMessage, oneTimeTheme: SBUComponentTheme? = nil) {
+        open func showDeleteMessageAlert(on message: JMessage, oneTimeTheme: SBUComponentTheme? = nil) {
             let deleteButton = SBUAlertButtonItem(
                 title: SBUStringSet.Delete,
                 color: self.theme?.alertRemoveColor
@@ -618,9 +619,6 @@ extension SBUBaseChannelModule {
             let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
             
             var title = SBUStringSet.Alert_Delete
-            if let multipleFilesMessage = message as? MultipleFilesMessage {
-                title = SBUStringSet.Alert_Delete_MultipleFilesMessage(multipleFilesMessage.filesCount)
-            }
             
             SBUAlertView.show(
                 title: title,
@@ -635,7 +633,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The `BaseMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
-        open func showMessageMenuSheet(for message: BaseMessage, cell: UITableViewCell) {
+        open func showMessageMenuSheet(for message: JMessage, cell: UITableViewCell) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
             
             guard let parentViewController = self.baseDataSource?.baseChannelModule(
@@ -643,7 +641,7 @@ extension SBUBaseChannelModule {
                 parentViewControllerDisplayMenuItems: messageMenuItems
             ) else { return }
             
-            let useReaction = SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
+            let useReaction = false//SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
             let menuSheetVC = SBUMenuSheetViewController(message: message, items: messageMenuItems, useReaction: useReaction)
             menuSheetVC.modalPresentationStyle = .custom
             menuSheetVC.transitioningDelegate = parentViewController as? UIViewControllerTransitioningDelegate
@@ -676,7 +674,7 @@ extension SBUBaseChannelModule {
         ///    - message: The `BaseMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
         ///    - indexPath: The `IndexPath` value of the `cell`.
-        open func showMessageContextMenu(for message: BaseMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        open func showMessageContextMenu(for message: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
             guard !messageMenuItems.isEmpty else { return }
             
@@ -693,37 +691,37 @@ extension SBUBaseChannelModule {
         /// Creates an array of ``SBUMenuItem`` objects for a `message`.
         /// - Parameter message: The `BaseMessage` object  that refers to the message of the menu to display.
         /// - Returns: The array of ``SBUMenuItem`` objects for a `message`
-        open func createMessageMenuItems(for message: BaseMessage) -> [SBUMenuItem] {
-            let isSentByMe = message.sender?.userId == SBUGlobals.currentUser?.userId
+        open func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
+            let isSentByMe = message.senderUserId == SBUGlobals.currentUser?.userId
             var items: [SBUMenuItem] = []
             
             switch message {
-            case is UserMessage:
-                // UserMessage: copy, (edit), (delete)
-                let copy = self.createCopyMenuItem(for: message)
-                items.append(copy)
-                if isSentByMe {
-                    let edit = self.createEditMenuItem(for: message)
-                    let delete = self.createDeleteMenuItem(for: message)
-                    items.append(edit)
-                    items.append(delete)
-                }
-            case let fileMessage as FileMessage:
-                // FileMessage: save, (delete)
-                let save = self.createSaveMenuItem(for: message)
-                if SBUUtils.getFileType(by: fileMessage) != .voice {
-                    items.append(save)
-                }
-                if isSentByMe {
-                    let delete = self.createDeleteMenuItem(for: message)
-                    items.append(delete)
-                }
-            case is MultipleFilesMessage:
-                // MultipleFilesMessage: delete
-                if isSentByMe {
-                    let delete = self.createDeleteMenuItem(for: message)
-                    items.append(delete)
-                }
+//            case is UserMessage:
+//                // UserMessage: copy, (edit), (delete)
+//                let copy = self.createCopyMenuItem(for: message)
+//                items.append(copy)
+//                if isSentByMe {
+//                    let edit = self.createEditMenuItem(for: message)
+//                    let delete = self.createDeleteMenuItem(for: message)
+//                    items.append(edit)
+//                    items.append(delete)
+//                }
+//            case let fileMessage as FileMessage:
+//                // FileMessage: save, (delete)
+//                let save = self.createSaveMenuItem(for: message)
+//                if SBUUtils.getFileType(by: fileMessage) != .voice {
+//                    items.append(save)
+//                }
+//                if isSentByMe {
+//                    let delete = self.createDeleteMenuItem(for: message)
+//                    items.append(delete)
+//                }
+//            case is MultipleFilesMessage:
+//                // MultipleFilesMessage: delete
+//                if isSentByMe {
+//                    let delete = self.createDeleteMenuItem(for: message)
+//                    items.append(delete)
+//                }
             default:
                 // UnknownMessage: (delete)
                 if !isSentByMe {
@@ -737,7 +735,7 @@ extension SBUBaseChannelModule {
         /// Creates a ``SBUMenuItem`` object that allows users to *copy* the `message`.
         /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
-        open func createCopyMenuItem(for message: BaseMessage) -> SBUMenuItem {
+        open func createCopyMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
                 title: SBUStringSet.Copy,
                 color: theme?.menuTextColor,
@@ -755,8 +753,8 @@ extension SBUBaseChannelModule {
         /// Creates a ``SBUMenuItem`` object that allows users to *delete* the `message`.
         /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
-        open func createDeleteMenuItem(for message: BaseMessage) -> SBUMenuItem {
-            let isEnabled = message.threadInfo.replyCount == 0
+        open func createDeleteMenuItem(for message: JMessage) -> SBUMenuItem {
+            let isEnabled = false//message.threadInfo.replyCount == 0
             let menuItem = SBUMenuItem(
                 title: SBUStringSet.Delete,
                 color: isEnabled ? theme?.menuTextColor : theme?.menuItemDisabledColor,
@@ -770,14 +768,14 @@ extension SBUBaseChannelModule {
                 guard let self = self else { return }
                 self.showDeleteMessageAlert(on: message)
             }
-            menuItem.isEnabled = message.threadInfo.replyCount == 0
+            menuItem.isEnabled = false//message.threadInfo.replyCount == 0
             return menuItem
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *edit* the `message`.
         /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
-        open func createEditMenuItem(for message: BaseMessage) -> SBUMenuItem {
+        open func createEditMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
                 title: SBUStringSet.Edit,
                 color: theme?.menuTextColor,
@@ -795,7 +793,7 @@ extension SBUBaseChannelModule {
         /// Creates a ``SBUMenuItem`` object that allows users to *save* the `message` when it's a *file message*.
         /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
-        open func createSaveMenuItem(for message: BaseMessage) -> SBUMenuItem {
+        open func createSaveMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
                 title: SBUStringSet.Save,
                 color: theme?.menuTextColor,
@@ -813,8 +811,8 @@ extension SBUBaseChannelModule {
         /// Creates a ``SBUMenuItem`` object that allows users to *reply* to a `message`.
         /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
-        open func createReplyMenuItem(for message: BaseMessage) -> SBUMenuItem {
-            let isThreadType = SendbirdUI.config.groupChannel.channel.replyType == .thread
+        open func createReplyMenuItem(for message: JMessage) -> SBUMenuItem {
+            let isThreadType = false//SendbirdUI.config.groupChannel.channel.replyType == .thread
             let replyMenuTitle = isThreadType
             ? SBUStringSet.MessageThread.Menu.replyInThread
             : SBUStringSet.Reply
@@ -822,7 +820,7 @@ extension SBUBaseChannelModule {
             ? SBUIconSetType.iconThread
             : SBUIconSetType.iconReply
             
-            let isEnabled = message.parentMessage == nil
+            let isEnabled = false//message.parentMessage == nil
             
             let menuItem = SBUMenuItem(
                 title: replyMenuTitle,
@@ -851,22 +849,12 @@ extension SBUBaseChannelModule {
         ///   - cell: Message cell object
         ///   - message: Message object
         ///   - indexPath: indexpath of cell
-        open func setTapGesture(_ cell: UITableViewCell, message: BaseMessage, indexPath: IndexPath) {
-            if let fileMessage = message as? FileMessage,
-               SBUUtils.getFileType(by: fileMessage) == .voice {
-                self.baseDelegate?.baseChannelModule(
-                    self,
-                    didTapVoiceMessage: fileMessage,
-                    cell: cell,
-                    forRowAt: indexPath
-                )
-            } else {
-                self.baseDelegate?.baseChannelModule(
-                    self,
-                    didTapMessage: message,
-                    forRowAt: indexPath
-                )
-            }
+        open func setTapGesture(_ cell: UITableViewCell, message: JMessage, indexPath: IndexPath) {
+            self.baseDelegate?.baseChannelModule(
+                self,
+                didTapMessage: message,
+                forRowAt: indexPath
+            )
         }
         
         /// This function sets the cell's long tap gesture handling.
@@ -874,7 +862,7 @@ extension SBUBaseChannelModule {
         ///   - cell: Message cell object
         ///   - message: Message object
         ///   - indexPath: indexpath of cell
-        open func setLongTapGesture(_ cell: UITableViewCell, message: BaseMessage, indexPath: IndexPath) {
+        open func setLongTapGesture(_ cell: UITableViewCell, message: JMessage, indexPath: IndexPath) {
             self.baseDelegate?.baseChannelModule(self, didLongTapMessage: message, forRowAt: indexPath)
         }
         
@@ -882,7 +870,7 @@ extension SBUBaseChannelModule {
         ///
         /// If you do not want to use the user profile function, override this function and leave it empty.
         /// - Parameter user: `SBUUser` object used for user profile configuration
-        open func setUserProfileTapGesture(_ user: SBUUser) {
+        open func setUserProfileTapGesture(_ user: JUserInfo) {
             self.baseDelegate?.baseChannelModule(self, didTapUserProfile: user)
         }
         
@@ -940,38 +928,31 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///   - cell: File message cell
         ///   - fileMessage: File message object
-        open func setFileMessageCellImage(_ cell: UITableViewCell, fileMessage: FileMessage) {
-            switch fileMessage.sendingStatus {
-            case .canceled, .pending, .failed, .none:
-                guard let (pendingMessageManager, isThreadMessage) = self.baseDataSource?.baseChannelModule(self, pendingMessageManagerForCell: cell),
-                      let fileInfo = pendingMessageManager?.getFileInfo(
-                        requestId: fileMessage.requestId,
-                        forMessageThread: isThreadMessage ?? false
-                      ),
-                      let type = fileInfo.mimeType, let fileData = fileInfo.file,
-                      SBUUtils.getFileType(by: type) == .image else { return }
-                
-                let image = UIImage.createImage(from: fileData)
-                let isAnimatedImage = image?.isAnimatedImage() == true
-                
-                if let cell = cell as? SBUFileMessageCell {
-                    cell.setImage(
-                        isAnimatedImage ? image?.images?.first : image,
-                        size: SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
-                    )
-                } else if let cell = cell as? SBUOpenChannelFileMessageCell {
-                    cell.setImage(
-                        isAnimatedImage ? image?.images?.first : image,
-                        size: SBUGlobals.messageCellConfiguration.openChannel.thumbnailSize
-                    )
-                }
-            case .succeeded:
-                break
-            case .scheduled:
-                break
-            @unknown default:
-                SBULog.error("unknown Type")
-            }
+        open func setFileMessageCellImage(_ cell: UITableViewCell, fileMessage: JMessage) {
+//            switch fileMessage.messageState {
+//            case .fail, .unknown, .sending, .uploading:
+////                guard let (pendingMessageManager, isThreadMessage) = self.baseDataSource?.baseChannelModule(self, pendingMessageManagerForCell: cell),
+////                      let fileInfo = pendingMessageManager?.getFileInfo(
+////                        requestId: fileMessage.requestId,
+////                        forMessageThread: isThreadMessage ?? false
+////                      ),
+////                      let type = fileInfo.mimeType, let fileData = fileInfo.file,
+////                      SBUUtils.getFileType(by: type) == .image else { return }
+////
+////                let image = UIImage.createImage(from: fileData)
+////                let isAnimatedImage = image?.isAnimatedImage() == true
+////
+////                if let cell = cell as? SBUFileMessageCell {
+////                    cell.setImage(
+////                        isAnimatedImage ? image?.images?.first : image,
+////                        size: SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
+////                    )
+////                }
+//            case .sent:
+//                break
+//            @unknown default:
+//                SBULog.error("unknown Type")
+//            }
         }
         
         /// Gets the position of the message to be grouped.
@@ -1001,50 +982,50 @@ extension SBUBaseChannelModule {
                 : nil
             }
             
-            let succeededPrevMsg = prevMessage?.sendingStatus != .failed
+            let succeededPrevMsg = prevMessage?.messageState != .fail
             ? prevMessage
             : nil
-            let succeededCurrentMsg = currentMessage.sendingStatus != .failed
+            let succeededCurrentMsg = currentMessage.messageState != .fail
             ? currentMessage
             : nil
-            let succeededNextMsg = nextMessage?.sendingStatus != .failed
+            let succeededNextMsg = nextMessage?.messageState != .fail
             ? nextMessage
             : nil
             
             // Unit : milliseconds
             let prevTimestamp = Date
-                .sbu_from(succeededPrevMsg?.createdAt ?? -1)
+                .sbu_from(succeededPrevMsg?.timestamp ?? -1)
                 .sbu_toString(dateFormat: SBUDateFormatSet.yyyyMMddhhmm)
             
             let currentTimestamp = Date
-                .sbu_from(succeededCurrentMsg?.createdAt ?? -1)
+                .sbu_from(succeededCurrentMsg?.timestamp ?? -1)
                 .sbu_toString(dateFormat: SBUDateFormatSet.yyyyMMddhhmm)
             
             let nextTimestamp = Date
-                .sbu_from(succeededNextMsg?.createdAt ?? -1)
+                .sbu_from(succeededNextMsg?.timestamp ?? -1)
                 .sbu_toString(dateFormat: SBUDateFormatSet.yyyyMMddhhmm)
             
             // Check sender
-            var prevSender = succeededPrevMsg?.sender?.userId ?? nil
-            var currentSender = succeededCurrentMsg?.sender?.userId ?? nil
-            var nextSender = succeededNextMsg?.sender?.userId ?? nil
+            var prevSender = succeededPrevMsg?.senderUserId ?? nil
+            var currentSender = succeededCurrentMsg?.senderUserId ?? nil
+            var nextSender = succeededNextMsg?.senderUserId ?? nil
             
-            // Check thread info
-            if SendbirdUI.config.groupChannel.channel.replyType == .thread {
-                let prevThreadReplycount = succeededPrevMsg?.threadInfo.replyCount ?? 0
-                let currentThreadReplycount = succeededCurrentMsg?.threadInfo.replyCount ?? 0
-                let nextThreadReplycount = succeededNextMsg?.threadInfo.replyCount ?? 0
-                
-                if prevThreadReplycount > 0 {
-                    prevSender = nil
-                }
-                if currentThreadReplycount > 0 {
-                    currentSender = nil
-                }
-                if nextThreadReplycount > 0 {
-                    nextSender = nil
-                }
-            }
+//            // Check thread info
+//            if SendbirdUI.config.groupChannel.channel.replyType == .thread {
+//                let prevThreadReplycount = succeededPrevMsg?.threadInfo.replyCount ?? 0
+//                let currentThreadReplycount = succeededCurrentMsg?.threadInfo.replyCount ?? 0
+//                let nextThreadReplycount = succeededNextMsg?.threadInfo.replyCount ?? 0
+//
+//                if prevThreadReplycount > 0 {
+//                    prevSender = nil
+//                }
+//                if currentThreadReplycount > 0 {
+//                    currentSender = nil
+//                }
+//                if nextThreadReplycount > 0 {
+//                    nextSender = nil
+//                }
+//            }
             
             if (prevSender != currentSender && nextSender != currentSender) || currentSender == nil {
                 return .none
@@ -1095,7 +1076,7 @@ extension SBUBaseChannelModule.List: SBUUserProfileViewDelegate {
             as? SBUUserProfileViewProtocol {
             userProfileView.dismiss()
             if let userId = userId {
-                SendbirdUI.createAndMoveToChannel(userIds: [userId])
+//                SendbirdUI.createAndMoveToChannel(userIds: [userId])
             }
         }
     }
@@ -1141,15 +1122,15 @@ extension SBUBaseChannelModule.List {
     /// This function keeps the current scroll position with upserted messages.
     /// - Note: Only newly added messages are used for processing.
     /// - Parameter upsertedMessages: upserted messages
-    func keepCurrentScroll(for upsertedMessages: [BaseMessage]) -> IndexPath {
+    func keepCurrentScroll(for upsertedMessages: [JMessage]) -> IndexPath {
         let firstVisibleIndexPath = tableView
             .indexPathsForVisibleRows?.first ?? IndexPath(row: 0, section: 0)
         var nextInsertedCount = 0
         if let newestMessage = sentMessages.first {
             // only filter out messages inserted at the bottom (newer) of current visible item
             nextInsertedCount = upsertedMessages
-                .filter({ $0.createdAt > newestMessage.createdAt })
-                .filter({ !SBUUtils.contains(messageId: $0.messageId, in: sentMessages) }).count
+                .filter({ $0.timestamp > newestMessage.timestamp })
+                .filter({ !SBUUtils.contains(messageId: $0.clientMsgNo, in: sentMessages) }).count
         }
         
         SBULog.info("New messages inserted : \(nextInsertedCount)")
@@ -1169,7 +1150,7 @@ extension SBUBaseChannelModule.List {
             return
         }
 
-        if let index = fullMessageList.firstIndex(where: { $0.createdAt <= startingPoint }) {
+        if let index = fullMessageList.firstIndex(where: { $0.timestamp <= startingPoint }) {
             self.scrollTableView(to: index, at: config.scrollToInitialWithStartingPoint.transform(with: self.tableView))
         } else {
             self.scrollTableView(to: fullMessageList.count - 1, at: config.scrollToInitial.transform(with: self.tableView))
@@ -1193,7 +1174,7 @@ extension SBUBaseChannelModule.List {
         needToSearch: Bool = true
     ) -> Bool {
         guard let row = self.fullMessageList.firstIndex(
-            where: { $0.messageId == messageId }
+            where: { $0.clientMsgNo == messageId }
         ) else {
             SBULog.error("Couldn't find message with ID: \(messageId)")
             self.baseDelegate?.baseChannelModule(self, didFailScrollToMessageId: messageId, needToSearch: needToSearch)
@@ -1220,7 +1201,7 @@ extension SBUBaseChannelModule.List {
     /// - Returns: `false` when it couldn't find message with `id`. If it returns `true`, ``SBUBaseChannelModuleListDelegate/baseChannelModule(_:didScroll:)`` is called.
     @discardableResult
     public func scrollToMessage(
-        message: BaseMessage,
+        message: JMessage,
         enablesScrollAnimation scrollAnimated: Bool = false,
         enablesMessageAnimation messageAnimated: Bool = false,
         position: SBUScrollPosition = .middle,
@@ -1268,14 +1249,14 @@ extension SBUBaseChannelModule.List {
     ///   - currentIndex: Current message index
     ///   - fullMessageList: The full message list including failed/pending messages as well as sent messages
     /// - Returns: If `true`, the messages date is same day.
-    public func checkSameDayAsNextMessage(currentIndex: Int, fullMessageList: [BaseMessage]) -> Bool {
+    public func checkSameDayAsNextMessage(currentIndex: Int, fullMessageList: [JMessage]) -> Bool {
         guard currentIndex < fullMessageList.count-1 else { return false }
         
         let currentMessage = fullMessageList[currentIndex]
         let nextMessage = fullMessageList[currentIndex+1]
         
-        let curCreatedAt = currentMessage.createdAt
-        let nextCreatedAt = nextMessage.createdAt
+        let curCreatedAt = currentMessage.timestamp
+        let nextCreatedAt = nextMessage.timestamp
         
         return Date.sbu_from(nextCreatedAt).isSameDay(as: Date.sbu_from(curCreatedAt))
     }
@@ -1285,15 +1266,15 @@ extension SBUBaseChannelModule.List {
     ///   - currentIndex: Current message index
     ///   - fullMessageList: The full message list including failed/pending messages as well as sent messages
     /// - Returns: If `true`, the messages date is same day.
-    public func checkSameDayAsPrevMessage(currentIndex: Int, fullMessageList: [BaseMessage]) -> Bool {
+    public func checkSameDayAsPrevMessage(currentIndex: Int, fullMessageList: [JMessage]) -> Bool {
         guard currentIndex < fullMessageList.count,
               currentIndex > 0 else { return false }
         
         let currentMessage = fullMessageList[currentIndex]
         let prevMessage = fullMessageList[currentIndex-1]
         
-        let curCreatedAt = currentMessage.createdAt
-        let prevCreatedAt = prevMessage.createdAt
+        let curCreatedAt = currentMessage.timestamp
+        let prevCreatedAt = prevMessage.timestamp
         
         return Date.sbu_from(prevCreatedAt).isSameDay(as: Date.sbu_from(curCreatedAt))
     }
@@ -1302,28 +1283,28 @@ extension SBUBaseChannelModule.List {
     
     /// Reloads a SBUMultipleFilesMessageCollectionViewCell when a file is finished being uploaded.
     func reloadMultipleFilesMessageCollectionViewCell(requestId: String, index: Int) {
-        for cell in self.tableView.visibleCells {
-            if let cell = cell as? SBUMultipleFilesMessageCell,
-               let message = cell.message,
-               message.requestId == requestId {
-                guard let indexPath = tableView.indexPath(for: cell) else { return }
-                guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
-                guard visibleIndexPaths.contains(indexPath) else { return }
-
-                let collectionViewIndexPath = IndexPath(item: index, section: 0)
-                cell.uploadedIndices.append(index)
-                
-                if Thread.isMainThread {
-                    cell.collectionView.reloadItems(at: [collectionViewIndexPath])
-                    cell.collectionView.layoutIfNeeded()
-                } else {
-                    DispatchQueue.main.async {
-                        cell.collectionView.reloadItems(at: [collectionViewIndexPath])
-                        cell.collectionView.layoutIfNeeded()
-                    }
-                }
-            }
-        }
+//        for cell in self.tableView.visibleCells {
+//            if let cell = cell as? SBUMultipleFilesMessageCell,
+//               let message = cell.message,
+//               message.requestId == requestId {
+//                guard let indexPath = tableView.indexPath(for: cell) else { return }
+//                guard let visibleIndexPaths = tableView.indexPathsForVisibleRows else { return }
+//                guard visibleIndexPaths.contains(indexPath) else { return }
+//
+//                let collectionViewIndexPath = IndexPath(item: index, section: 0)
+//                cell.uploadedIndices.append(index)
+//
+//                if Thread.isMainThread {
+//                    cell.collectionView.reloadItems(at: [collectionViewIndexPath])
+//                    cell.collectionView.layoutIfNeeded()
+//                } else {
+//                    DispatchQueue.main.async {
+//                        cell.collectionView.reloadItems(at: [collectionViewIndexPath])
+//                        cell.collectionView.layoutIfNeeded()
+//                    }
+//                }
+//            }
+//        }
     }
     
     /// Reload cell if it's visible status.

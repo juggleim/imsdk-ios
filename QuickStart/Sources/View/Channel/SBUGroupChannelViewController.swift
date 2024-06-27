@@ -12,6 +12,7 @@ import AVKit
 import SafariServices
 import PhotosUI
 import MobileCoreServices
+import JetIM
 
 @objcMembers
 open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroupChannelViewModelDelegate, SBUGroupChannelModuleHeaderDelegate, SBUGroupChannelModuleListDelegate, SBUGroupChannelModuleListDataSource, SBUGroupChannelModuleInputDelegate, SBUGroupChannelModuleInputDataSource, SBUGroupChannelViewModelDataSource, SBUMentionManagerDataSource, SBUVoiceMessageInputViewDelegate {
@@ -40,7 +41,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         set { self.baseViewModel = newValue }
     }
     
-    public override var channel: GroupChannel? { self.viewModel?.channel as? GroupChannel }
+    public override var channel: JConversationInfo? { self.viewModel?.channel as? JConversationInfo }
     
     public private(set) var newMessagesCount: Int = 0
     
@@ -85,7 +86,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     /// - note: The `reverse` and the `previousResultSize` properties in the `MessageListParams` are set in the UIKit. Even though you set that property it will be ignored.
     /// - Parameter channel: Channel object
     /// - Since: 1.0.11
-    required public init(channel: GroupChannel, messageListParams: MessageListParams? = nil) {
+    required public init(channel: JConversationInfo, messageListParams: MessageListParams? = nil) {
         super.init(baseChannel: channel, messageListParams: messageListParams)
         
         self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
