@@ -764,7 +764,9 @@
             info.lastMessageIndex = message.msgIndex;
             info.unreadCount = (int)(info.lastMessageIndex - info.lastReadMessageIndex);
         }
-        info.sortTime = message.timestamp;
+        if (!isBroadcast || message.direction != JMessageDirectionSend) {
+            info.sortTime = message.timestamp;
+        }
         info.lastMessage = message;
         [self.core.dbManager updateLastMessage:message];
         dispatch_async(self.core.delegateQueue, ^{
