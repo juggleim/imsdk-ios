@@ -16,19 +16,19 @@ public class SBUMessageCellConfiguration {
     /// The instance of OpenChannel class.
     public var openChannel = OpenChannel()
     
-    /// BaseChannel is a base class for different types of channels.
-    public class BaseChannel {
+    /// JConversationInfo is a base class for different types of channels.
+    public class JConversationInfo {
         /// The max width of the message cell.
         public var messageCellMaxWidth: CGFloat = SBUConstant.messageCellMaxWidth
     }
     
-    public class GroupChannel: BaseChannel {
+    public class GroupChannel: JConversationInfo {
         /// The thumbnail size for the file message.
         public var thumbnailSize: CGSize = SBUConstant.thumbnailSize
         public var voiceMessageSize: CGSize = SBUConstant.voiceMessageBaseSize
     }
     
-    public class OpenChannel: BaseChannel {
+    public class OpenChannel: JConversationInfo {
         /// The thumbnail size for the file message.
         public var thumbnailSize: CGSize = SBUConstant.openChannelThumbnailSize
     }

@@ -1078,8 +1078,8 @@ public class SBUMessageInputTheme {
         
         // Quoted message
         theme.channelViewDividerColor = SBUColorSet.onlight04
-        theme.quotedFileMessageThumbnailBackgroundColor = SBUColorSet.background200
-        theme.quotedFileMessageThumbnailTintColor = SBUColorSet.onlight02
+        theme.quotedJMessageThumbnailBackgroundColor = SBUColorSet.background200
+        theme.quotedJMessageThumbnailTintColor = SBUColorSet.onlight02
         theme.replyToTextColor = SBUColorSet.onlight01
         theme.replyToTextFont = SBUFontSet.caption1
         theme.quotedMessageTextColor = SBUColorSet.onlight03
@@ -1112,8 +1112,8 @@ public class SBUMessageInputTheme {
         theme.saveButtonTextColor = SBUColorSet.onlight01
         
         theme.channelViewDividerColor = SBUColorSet.ondark04
-        theme.quotedFileMessageThumbnailBackgroundColor = SBUColorSet.background500
-        theme.quotedFileMessageThumbnailTintColor = SBUColorSet.ondark02
+        theme.quotedJMessageThumbnailBackgroundColor = SBUColorSet.background500
+        theme.quotedJMessageThumbnailTintColor = SBUColorSet.ondark02
         theme.replyToTextColor = SBUColorSet.ondark01
         theme.replyToTextFont = SBUFontSet.caption1
         theme.quotedMessageTextColor = SBUColorSet.ondark03
@@ -1168,8 +1168,8 @@ public class SBUMessageInputTheme {
                 saveButtonFont: UIFont = SBUFontSet.button2,
                 saveButtonTextColor: UIColor = SBUColorSet.ondark01,
                 channelViewDividerColor: UIColor = SBUColorSet.onlight04,
-                quotedFileMessageThumbnailBackgroundColor: UIColor = SBUColorSet.background200,
-                quotedFileMessageThumbnailTintColor: UIColor = SBUColorSet.onlight02,
+                quotedJMessageThumbnailBackgroundColor: UIColor = SBUColorSet.background200,
+                quotedJMessageThumbnailTintColor: UIColor = SBUColorSet.onlight02,
                 replyToTextColor: UIColor = SBUColorSet.onlight01,
                 replyToTextFont: UIFont = SBUFontSet.caption1,
                 quotedMessageTextColor: UIColor = SBUColorSet.onlight03,
@@ -1198,8 +1198,8 @@ public class SBUMessageInputTheme {
         
         // Quoted message
         self.channelViewDividerColor = channelViewDividerColor
-        self.quotedFileMessageThumbnailBackgroundColor = quotedFileMessageThumbnailBackgroundColor
-        self.quotedFileMessageThumbnailTintColor = quotedFileMessageThumbnailTintColor
+        self.quotedJMessageThumbnailBackgroundColor = quotedJMessageThumbnailBackgroundColor
+        self.quotedJMessageThumbnailTintColor = quotedJMessageThumbnailTintColor
         self.replyToTextColor = replyToTextColor
         self.replyToTextFont = replyToTextFont
         self.quotedMessageTextColor = quotedMessageTextColor
@@ -1234,11 +1234,11 @@ public class SBUMessageInputTheme {
     
     // swiftlint:disable identifier_name
     /// The background color of thumbnail image of the quoted message
-    public var quotedFileMessageThumbnailBackgroundColor: UIColor
+    public var quotedJMessageThumbnailBackgroundColor: UIColor
     // swiftlint:enable identifier_name
     
     /// The tint color of thumbnail image of the quoted message such as file icon.
-    public var quotedFileMessageThumbnailTintColor: UIColor
+    public var quotedJMessageThumbnailTintColor: UIColor
     /// The text color of `replyToLabel`
     public var replyToTextColor: UIColor
     /// The font of `replyToLabel` text.
@@ -1315,10 +1315,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary300
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.fileMessageNameFont = SBUFontSet.body3
-        theme.fileMessageLeftTextColor = SBUColorSet.onlight01
-        theme.fileMessageRightTextColor = SBUColorSet.ondark01
-        theme.fileMessagePlaceholderColor = SBUColorSet.onlight02
+        theme.JMessageNameFont = SBUFontSet.body3
+        theme.JMessageLeftTextColor = SBUColorSet.onlight01
+        theme.JMessageRightTextColor = SBUColorSet.ondark01
+        theme.JMessagePlaceholderColor = SBUColorSet.onlight02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1346,7 +1346,7 @@ public class SBUMessageCellTheme {
         // Quoted Message
         theme.quotedMessageLeftBackgroundColor = SBUColorSet.background100.withAlphaComponent(0.5)
         theme.quotedMessageRightBackgroundColor = SBUColorSet.background100
-        theme.quotedFileMessageThumbnailColor = SBUColorSet.onlight02
+        theme.quotedJMessageThumbnailColor = SBUColorSet.onlight02
         theme.quotedMessageTextColor = SBUColorSet.onlight03
         theme.quotedMessageTextFont = SBUFontSet.body3
         theme.repliedIconColor = SBUColorSet.onlight03
@@ -1491,10 +1491,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary200
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.fileMessageNameFont = SBUFontSet.body3
-        theme.fileMessageLeftTextColor = SBUColorSet.ondark01
-        theme.fileMessageRightTextColor = SBUColorSet.onlight01
-        theme.fileMessagePlaceholderColor = SBUColorSet.ondark02
+        theme.JMessageNameFont = SBUFontSet.body3
+        theme.JMessageLeftTextColor = SBUColorSet.ondark01
+        theme.JMessageRightTextColor = SBUColorSet.onlight01
+        theme.JMessagePlaceholderColor = SBUColorSet.ondark02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1521,7 +1521,7 @@ public class SBUMessageCellTheme {
         // Quoted Message
         theme.quotedMessageLeftBackgroundColor = SBUColorSet.background500.withAlphaComponent(0.5)
         theme.quotedMessageRightBackgroundColor = SBUColorSet.background500
-        theme.quotedFileMessageThumbnailColor = SBUColorSet.ondark02
+        theme.quotedJMessageThumbnailColor = SBUColorSet.ondark02
         theme.quotedMessageTextColor = SBUColorSet.ondark03
         theme.quotedMessageTextFont = SBUFontSet.body3
         theme.repliedIconColor = SBUColorSet.ondark03
@@ -1666,10 +1666,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary200
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.fileMessageNameFont = SBUFontSet.body3
-        theme.fileMessageLeftTextColor = SBUColorSet.ondark01
-        theme.fileMessageRightTextColor = SBUColorSet.onlight01
-        theme.fileMessagePlaceholderColor = SBUColorSet.ondark02
+        theme.JMessageNameFont = SBUFontSet.body3
+        theme.JMessageLeftTextColor = SBUColorSet.ondark01
+        theme.JMessageRightTextColor = SBUColorSet.onlight01
+        theme.JMessagePlaceholderColor = SBUColorSet.ondark02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1696,7 +1696,7 @@ public class SBUMessageCellTheme {
         // Quoted Message
         theme.quotedMessageLeftBackgroundColor = SBUColorSet.background500.withAlphaComponent(0.5)
         theme.quotedMessageRightBackgroundColor = SBUColorSet.background500
-        theme.quotedFileMessageThumbnailColor = SBUColorSet.ondark02
+        theme.quotedJMessageThumbnailColor = SBUColorSet.ondark02
         theme.quotedMessageTextColor = SBUColorSet.ondark03
         theme.quotedMessageTextFont = SBUFontSet.body3
         theme.repliedIconColor = SBUColorSet.ondark03
@@ -1792,10 +1792,10 @@ public class SBUMessageCellTheme {
                 fileImageBackgroundColor: UIColor = SBUColorSet.ondark01,
                 fileImageIconColor: UIColor = SBUColorSet.onlight02,
                 fileIconColor: UIColor = SBUColorSet.primary300,
-                fileMessageNameFont: UIFont = SBUFontSet.body3,
-                fileMessageLeftTextColor: UIColor = SBUColorSet.onlight01,
-                fileMessageRightTextColor: UIColor = SBUColorSet.ondark01,
-                fileMessagePlaceholderColor: UIColor = SBUColorSet.onlight02,
+                JMessageNameFont: UIFont = SBUFontSet.body3,
+                JMessageLeftTextColor: UIColor = SBUColorSet.onlight01,
+                JMessageRightTextColor: UIColor = SBUColorSet.ondark01,
+                JMessagePlaceholderColor: UIColor = SBUColorSet.onlight02,
                 adminMessageFont: UIFont = SBUFontSet.caption2,
                 adminMessageTextColor: UIColor = SBUColorSet.onlight02,
                 unknownMessageDescFont: UIFont  = SBUFontSet.body3,
@@ -1813,7 +1813,7 @@ public class SBUMessageCellTheme {
                 pressedContentBackgroundColor: UIColor = SBUColorSet.background300,
                 quotedMessageLeftBackgroundColor: UIColor = SBUColorSet.background100.withAlphaComponent(0.5),
                 quotedMessageRightBackgroundColor: UIColor = SBUColorSet.background100,
-                quotedFileMessageThumbnailColor: UIColor = SBUColorSet.onlight02,
+                quotedJMessageThumbnailColor: UIColor = SBUColorSet.onlight02,
                 quotedMessageTextColor: UIColor = SBUColorSet.onlight03,
                 quotedMessageTextFont: UIFont = SBUFontSet.body3,
                 repliedIconColor: UIColor = SBUColorSet.onlight03,
@@ -1914,10 +1914,10 @@ public class SBUMessageCellTheme {
         self.fileImageBackgroundColor = fileImageBackgroundColor
         self.fileImageIconColor = fileImageIconColor
         self.fileIconColor = fileIconColor
-        self.fileMessageNameFont = fileMessageNameFont
-        self.fileMessageLeftTextColor = fileMessageLeftTextColor
-        self.fileMessageRightTextColor = fileMessageRightTextColor
-        self.fileMessagePlaceholderColor = fileMessagePlaceholderColor
+        self.JMessageNameFont = JMessageNameFont
+        self.JMessageLeftTextColor = JMessageLeftTextColor
+        self.JMessageRightTextColor = JMessageRightTextColor
+        self.JMessagePlaceholderColor = JMessagePlaceholderColor
         
         self.adminMessageFont = adminMessageFont
         self.adminMessageTextColor = adminMessageTextColor
@@ -1941,7 +1941,7 @@ public class SBUMessageCellTheme {
         
         self.quotedMessageLeftBackgroundColor = quotedMessageLeftBackgroundColor
         self.quotedMessageRightBackgroundColor = quotedMessageRightBackgroundColor
-        self.quotedFileMessageThumbnailColor = quotedFileMessageThumbnailColor
+        self.quotedJMessageThumbnailColor = quotedJMessageThumbnailColor
         self.quotedMessageTextColor = quotedMessageTextColor
         self.quotedMessageTextFont = quotedMessageTextFont
         self.repliedIconColor = repliedIconColor
@@ -2073,10 +2073,10 @@ public class SBUMessageCellTheme {
     public var fileIconColor: UIColor
     public var fileImageBackgroundColor: UIColor
     public var fileImageIconColor: UIColor
-    public var fileMessageNameFont: UIFont
-    public var fileMessageLeftTextColor: UIColor
-    public var fileMessageRightTextColor: UIColor
-    public var fileMessagePlaceholderColor: UIColor
+    public var JMessageNameFont: UIFont
+    public var JMessageLeftTextColor: UIColor
+    public var JMessageRightTextColor: UIColor
+    public var JMessagePlaceholderColor: UIColor
     
     // Multiple Files Message
     public var multipleFilesMessageFileOverlayColor: UIColor
@@ -2134,7 +2134,7 @@ public class SBUMessageCellTheme {
     public var quotedMessageRightBackgroundColor: UIColor
     
     /// The tint color of thumbnail image of the quoted file message.
-    public var quotedFileMessageThumbnailColor: UIColor
+    public var quotedJMessageThumbnailColor: UIColor
     /// The text color of the quoted message view
     public var quotedMessageTextColor: UIColor
     /// The tint color of `SBUIconSet.iconReplied`
@@ -3581,10 +3581,10 @@ public class SBUMessageSearchResultCellTheme {
         theme.descriptionTextColor = SBUColorSet.onlight03
         theme.updatedAtFont = SBUFontSet.caption2
         theme.updatedAtTextColor = SBUColorSet.onlight02
-        theme.fileMessageFont = SBUFontSet.body3
-        theme.fileMessageTextColor = SBUColorSet.onlight01
-        theme.fileMessageIconBackgroundColor = SBUColorSet.background100
-        theme.fileMessageIconTintColor = SBUColorSet.onlight02
+        theme.JMessageFont = SBUFontSet.body3
+        theme.JMessageTextColor = SBUColorSet.onlight01
+        theme.JMessageIconBackgroundColor = SBUColorSet.background100
+        theme.JMessageIconTintColor = SBUColorSet.onlight02
         theme.separatorLineColor = SBUColorSet.onlight04
         
         return theme
@@ -3600,10 +3600,10 @@ public class SBUMessageSearchResultCellTheme {
         theme.descriptionTextColor = SBUColorSet.ondark03
         theme.updatedAtFont = SBUFontSet.caption2
         theme.updatedAtTextColor = SBUColorSet.ondark02
-        theme.fileMessageFont = SBUFontSet.body3
-        theme.fileMessageTextColor = SBUColorSet.ondark01
-        theme.fileMessageIconBackgroundColor = SBUColorSet.background500
-        theme.fileMessageIconTintColor = SBUColorSet.ondark02
+        theme.JMessageFont = SBUFontSet.body3
+        theme.JMessageTextColor = SBUColorSet.ondark01
+        theme.JMessageIconBackgroundColor = SBUColorSet.background500
+        theme.JMessageIconTintColor = SBUColorSet.ondark02
         theme.separatorLineColor = SBUColorSet.ondark04
         
         return theme
@@ -3616,10 +3616,10 @@ public class SBUMessageSearchResultCellTheme {
     public var descriptionTextColor: UIColor
     public var updatedAtFont: UIFont
     public var updatedAtTextColor: UIColor
-    public var fileMessageFont: UIFont
-    public var fileMessageTextColor: UIColor
-    public var fileMessageIconBackgroundColor: UIColor
-    public var fileMessageIconTintColor: UIColor
+    public var JMessageFont: UIFont
+    public var JMessageTextColor: UIColor
+    public var JMessageIconBackgroundColor: UIColor
+    public var JMessageIconTintColor: UIColor
     public var separatorLineColor: UIColor
     
     public init(backgroundColor: UIColor = SBUColorSet.background50,
@@ -3629,10 +3629,10 @@ public class SBUMessageSearchResultCellTheme {
                 descriptionTextColor: UIColor = SBUColorSet.onlight03,
                 updatedAtFont: UIFont = SBUFontSet.caption2,
                 updatedAtTextColor: UIColor = SBUColorSet.onlight02,
-                fileMessageFont: UIFont = SBUFontSet.body3,
-                fileMessageTextColor: UIColor = SBUColorSet.onlight01,
-                fileMessageIconBackgroundColor: UIColor = SBUColorSet.background100,
-                fileMessageIconTintColor: UIColor = SBUColorSet.onlight02,
+                JMessageFont: UIFont = SBUFontSet.body3,
+                JMessageTextColor: UIColor = SBUColorSet.onlight01,
+                JMessageIconBackgroundColor: UIColor = SBUColorSet.background100,
+                JMessageIconTintColor: UIColor = SBUColorSet.onlight02,
                 separatorLineColor: UIColor = SBUColorSet.onlight04) {
         
         self.backgroundColor = backgroundColor
@@ -3642,10 +3642,10 @@ public class SBUMessageSearchResultCellTheme {
         self.descriptionTextColor = descriptionTextColor
         self.updatedAtFont = updatedAtFont
         self.updatedAtTextColor = updatedAtTextColor
-        self.fileMessageFont = fileMessageFont
-        self.fileMessageTextColor = fileMessageTextColor
-        self.fileMessageIconBackgroundColor = fileMessageIconBackgroundColor
-        self.fileMessageIconTintColor = fileMessageIconTintColor
+        self.JMessageFont = JMessageFont
+        self.JMessageTextColor = JMessageTextColor
+        self.JMessageIconBackgroundColor = JMessageIconBackgroundColor
+        self.JMessageIconTintColor = JMessageIconTintColor
         self.separatorLineColor = separatorLineColor
     }
 }

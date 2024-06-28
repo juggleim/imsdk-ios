@@ -157,7 +157,7 @@ extension SBUGroupChannelListModule.List {
         cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
 //        guard indexPath.row < self.channelList?.count ?? 0 else {
-//            let error = SBError(domain: "The index is out of range.", code: -1, userInfo: nil)
+//            let error = JErrorCode(domain: "The index is out of range.", code: -1, userInfo: nil)
 //            self.delegate?.didReceiveError(error, isBlocker: false)
 //            return UITableViewCell()
 //        }

@@ -51,20 +51,20 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - user: The `SBUUser` of user profile that was tapped.
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapUserProfile user: JUserInfo
+        didTapUserProfile user: SBUUser
     )
     
     /// Called when the message cell was tapped in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
-    ///    - fileMessage: The message that was tapped.
+    ///    - JMessage: The message that was tapped.
     ///    - cell: The table view cell that the selected cell.
     ///    - indexPath: An index path locating the row in table view of `listComponent
     ///
     /// - Since: 3.4.0
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        didTapVoiceMessage fileMessage: JMessage,
+        didTapVoiceMessage JMessage: JMessage,
         cell: UITableViewCell,
         forRowAt indexPath: IndexPath
     )
@@ -207,25 +207,25 @@ extension SBUBaseChannelModuleListDelegate {
 
 /// Methods to get data source for the list component.
 public protocol SBUBaseChannelModuleListDataSource: AnyObject {
-    /// Ask the data source to return the `BaseChannel` object.
+    /// Ask the data source to return the `JConversationInfo` object.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
-    /// - Returns: `BaseChannel` object.
+    /// - Returns: `JConversationInfo` object.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, channelForTableView tableView: UITableView) -> JConversationInfo?
     
     /// Ask the data source to return the message list sent successfully.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
-    /// - Returns: The array of `BaseMessage` object that are sent successfully.
+    /// - Returns: The array of `JMessage` object that are sent successfully.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, sentMessagesInTableView tableView: UITableView) -> [JMessage]
     
     /// Ask the data source to return the message list includes the sent, the failed and the pending.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
-    /// - Returns: The array of `BaseMessage` object including the sent, the failed and the pending.
+    /// - Returns: The array of `JMessage` object including the sent, the failed and the pending.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, fullMessagesInTableView tableView: UITableView) -> [JMessage]
     
     /// Ask the data source to return whether the `tableView` has next data.
@@ -545,7 +545,7 @@ extension SBUBaseChannelModule {
         /// Displays the menu of the message located on the given `indexPath` value.
         /// It internally decides whether to show a *context menu*, a menu for *a failed message*, or a *sheet menu*.
         /// - Parameters:
-        ///    - message: The `BaseMessage` object that corresponds to the message of the menu to show.
+        ///    - message: The `JMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
         open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
             switch message.messageState {
@@ -572,7 +572,7 @@ extension SBUBaseChannelModule {
         
         /// Displays the menu of a message that failed to send.
         /// - NOTE: The event delegate methods, ``SBUBaseChannelModuleListDelegate/baseChannelModule(_:didTapRetryFailedMessage:)`` and ``SBUBaseChannelModuleListDelegate/baseChannelModule(_:didTapDeleteFailedMessage:)`` , are called when the items in the menu are tapped.
-        /// - Parameter message: The `BaseMessage` object that corresponds to the message of the menu to show.
+        /// - Parameter message: The `JMessage` object that corresponds to the message of the menu to show.
         open func showFailedMessageMenu(on message: JMessage) {
             let retryItem = SBUActionSheetItem(
                 title: SBUStringSet.Retry,
@@ -631,7 +631,7 @@ extension SBUBaseChannelModule {
         /// Calls the ``SBUMenuSheetViewController`` instance in ``UIViewController``, which is returned after ``SBUBaseChannelModuleListDataSource/baseChannelModule(_:parentViewControllerDisplayMenuItems:)`` is called.
         /// - NOTE: To learn about the event delegates in this instance, refer to the event delegate methods in ``SBUBaseChannelModuleListDelegate``.
         /// - Parameters:
-        ///    - message: The `BaseMessage` object  that refers to the message of the menu to display.
+        ///    - message: The `JMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
         open func showMessageMenuSheet(for message: JMessage, cell: UITableViewCell) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
@@ -671,7 +671,7 @@ extension SBUBaseChannelModule {
         /// Displays ``SBUMenuView`` in the form of a context menu.
         /// - NOTE: To learn about the event delegates in ``SBUMenuView``, refer to the even delegate method of each menu item in ``SBUBaseChannelModuleListDelegate``.
         /// - Parameters:
-        ///    - message: The `BaseMessage` object  that refers to the message of the menu to display.
+        ///    - message: The `JMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
         ///    - indexPath: The `IndexPath` value of the `cell`.
         open func showMessageContextMenu(for message: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -689,7 +689,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates an array of ``SBUMenuItem`` objects for a `message`.
-        /// - Parameter message: The `BaseMessage` object  that refers to the message of the menu to display.
+        /// - Parameter message: The `JMessage` object  that refers to the message of the menu to display.
         /// - Returns: The array of ``SBUMenuItem`` objects for a `message`
         open func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
             let isSentByMe = message.senderUserId == SBUGlobals.currentUser?.userId
@@ -706,10 +706,10 @@ extension SBUBaseChannelModule {
 //                    items.append(edit)
 //                    items.append(delete)
 //                }
-//            case let fileMessage as FileMessage:
-//                // FileMessage: save, (delete)
+//            case let JMessage as JMessage:
+//                // JMessage: save, (delete)
 //                let save = self.createSaveMenuItem(for: message)
-//                if SBUUtils.getFileType(by: fileMessage) != .voice {
+//                if SBUUtils.getFileType(by: JMessage) != .voice {
 //                    items.append(save)
 //                }
 //                if isSentByMe {
@@ -733,7 +733,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *copy* the `message`.
-        /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
+        /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createCopyMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
@@ -751,7 +751,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *delete* the `message`.
-        /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
+        /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createDeleteMenuItem(for message: JMessage) -> SBUMenuItem {
             let isEnabled = false//message.threadInfo.replyCount == 0
@@ -773,7 +773,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *edit* the `message`.
-        /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
+        /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createEditMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
@@ -791,7 +791,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *save* the `message` when it's a *file message*.
-        /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
+        /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createSaveMenuItem(for message: JMessage) -> SBUMenuItem {
             let menuItem = SBUMenuItem(
@@ -809,7 +809,7 @@ extension SBUBaseChannelModule {
         }
         
         /// Creates a ``SBUMenuItem`` object that allows users to *reply* to a `message`.
-        /// - Parameter message: The `BaseMessage` object  that corresponds to the message of the menu item to show.
+        /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createReplyMenuItem(for message: JMessage) -> SBUMenuItem {
             let isThreadType = false//SendbirdUI.config.groupChannel.channel.replyType == .thread
@@ -927,13 +927,13 @@ extension SBUBaseChannelModule {
         /// Sets images in file message cell. (for not succeeded message)
         /// - Parameters:
         ///   - cell: File message cell
-        ///   - fileMessage: File message object
-        open func setFileMessageCellImage(_ cell: UITableViewCell, fileMessage: JMessage) {
-//            switch fileMessage.messageState {
+        ///   - JMessage: File message object
+        open func setJMessageCellImage(_ cell: UITableViewCell, JMessage: JMessage) {
+//            switch JMessage.messageState {
 //            case .fail, .unknown, .sending, .uploading:
 ////                guard let (pendingMessageManager, isThreadMessage) = self.baseDataSource?.baseChannelModule(self, pendingMessageManagerForCell: cell),
 ////                      let fileInfo = pendingMessageManager?.getFileInfo(
-////                        requestId: fileMessage.requestId,
+////                        requestId: JMessage.requestId,
 ////                        forMessageThread: isThreadMessage ?? false
 ////                      ),
 ////                      let type = fileInfo.mimeType, let fileData = fileInfo.file,
@@ -942,7 +942,7 @@ extension SBUBaseChannelModule {
 ////                let image = UIImage.createImage(from: fileData)
 ////                let isAnimatedImage = image?.isAnimatedImage() == true
 ////
-////                if let cell = cell as? SBUFileMessageCell {
+////                if let cell = cell as? SBUBaseMessageCell {
 ////                    cell.setImage(
 ////                        isAnimatedImage ? image?.images?.first : image,
 ////                        size: SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize

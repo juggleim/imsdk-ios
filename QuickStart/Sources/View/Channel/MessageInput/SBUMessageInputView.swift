@@ -50,7 +50,7 @@ public protocol SBUMessageInputViewDelegate: AnyObject {
     /// - Parameters:
     ///    - messageInputView: `SBUMessageinputView` object.
     ///    - mode: `SBUMessageInputMode` value. It represents the current mode of `messageInputView`.
-    ///    - message: `BaseMessage` object. It's `nil` when the `mode` is `none`.
+    ///    - message: `JMessage` object. It's `nil` when the `mode` is `none`.
     /// - Since: 2.2.0
     func messageInputView(_ messageInputView: SBUMessageInputView, didChangeMode mode: SBUMessageInputMode, message: JMessage?)
     
@@ -58,7 +58,7 @@ public protocol SBUMessageInputViewDelegate: AnyObject {
     /// - Parameters:
     ///    - messageInputView: `SBUMessageinputView` object.
     ///    - mode: `SBUMessageInputMode` value. The `messageInputView` changes its mode to this value.
-    ///    - message: `BaseMessage` object. It's `nil` when the `mode` is `none`.
+    ///    - message: `JMessage` object. It's `nil` when the `mode` is `none`.
     /// - Since: 2.2.0
     func messageInputView(_ messageInputView: SBUMessageInputView, willChangeMode mode: SBUMessageInputMode, message: JMessage?)
     
@@ -130,10 +130,10 @@ public extension SBUMessageInputViewDelegate {
 // swiftlint:enable missing_docs
 
 public protocol SBUMessageInputViewDataSource: AnyObject {
-    /// Ask the data source to return the `BaseChannel` object.
+    /// Ask the data source to return the `JConversationInfo` object.
     /// - Parameters:
     ///    - messageInputView: `SBUMessageInputView` object.
-    /// - Returns: `BaseChannel` object.
+    /// - Returns: `JConversationInfo` object.
     func channelForMessageInputView(_ messageInputView: SBUMessageInputView) -> JConversationInfo?
 }
 
@@ -248,7 +248,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
     public var showsSendButton: Bool = false
     /// (Group channel only) Whether to always show the voice message button. Default value follows the `SendbirdUI.config.groupChannel.channel.enableVoiceMessage`.
     /// - Since: 3.4.0
-    public var showsVoiceMessageButton: Bool = SendbirdUI.config.groupChannel.channel.isVoiceMessageEnabled
+    public var showsVoiceMessageButton: Bool = true
     
     /// Leading spacing value for `textView`.
     /// If `addButton` is available, this will be spacing between the `addButton` and the `textView`.
@@ -418,10 +418,6 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
     
     var isOverlay = false
     
-    var channelType: SendbirdChatSDK.ChannelType {
-        self.datasource?.channelForMessageInputView(self)?.channelType ?? .group
-    }
-    
     // MARK: - Life cycle
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -497,7 +493,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
     /**
      Starts to reply to message. It's called when `mode` is set to `.quoteReply`
      
-     - Parameter message: `BaseMessage` that is replied to.
+     - Parameter message: `JMessage` that is replied to.
      - Since: 2.2.0
      */
     public func startQuoteReplyMode(message: JMessage) {

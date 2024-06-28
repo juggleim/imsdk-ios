@@ -8,14 +8,10 @@
 
 import UIKit
 import AVFAudio
+import JetIM
 
 /// Event methods for the views updates and performing actions from the list component in a group channel.
 public protocol SBUGroupChannelModuleListDelegate: SBUBaseChannelModuleListDelegate {
-    
-    /// Called when tapped quoted message view in the cell.
-    /// - Parameters:
-    ///   - didTapQuotedMessageView: `SBUQuotedBaseMessageView` object of the message cell.
-    func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapQuotedMessageView quotedMessageView: SBUQuotedBaseMessageView)
     
     /// Called when tapped emoji in the cell.
     /// - Parameters:
@@ -38,45 +34,6 @@ public protocol SBUGroupChannelModuleListDelegate: SBUBaseChannelModuleListDeleg
     /// - Parameters:
     ///    - user: The`SBUUser` object from the tapped mention.
     func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapMentionUser user: SBUUser)
-    
-    /// Called when tapped the thread info in the cell
-    /// - Parameter threadInfoView: The `SBUThreadInfoView` object from the tapped thread info.
-    /// - Since: 3.3.0
-    func groupChannelModuleDidTapThreadInfoView(_ threadInfoView: SBUThreadInfoView)
-    
-    /// Called when one of the suggested reply options is tapped.
-    /// - Parameters:
-    ///    - text: The reply text that is selected by user
-    /// - Since: 3.11.0
-    func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didSelect suggestedReplyOptionView: SBUSuggestedReplyOptionView)
-    
-    /// Called when selected one of the files in the multiple file message cell.
-    /// - Parameters:
-    ///    - index: The index number of the selected file in `MultipleFilesMessage.files`
-    ///    - multipleFilesMessageCell: ``SBUMultipleFilesMessageCell`` that contains the tapped file.
-    ///    - cellIndexPath: `IndexPath` value of the ``SBUMultipleFilesMessageCell``.
-    /// - Since: 3.10.0
-    func groupChannelModule(
-        _ listComponent: SBUGroupChannelModule.List,
-        didSelectFileAt index: Int,
-        multipleFilesMessageCell: SBUMultipleFilesMessageCell,
-        forRowAt cellIndexPath: IndexPath
-    )
-    
-    /// Called when submit the form.
-    /// - Parameters:
-    ///   - listComponent: `SBUGroupChannelModule.List` object.
-    ///   - form: `SendbirdChatSDK.Form` object.
-    ///   - messageCell: Message cell object
-    /// - Since: 3.16.0
-    func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didSubmit form: SendbirdChatSDK.Form, messageCell: SBUBaseMessageCell)
-    
-    /// Called when updated the feedback answer.
-    /// - Parameters:
-    ///    - answer: The answer of the feedback that is updated by user.
-    ///    - messageCell: Message cell object
-    /// - Since: 3.15.0
-    func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didUpdate feedbackAnswer: SBUFeedbackAnswer, messageCell: SBUBaseMessageCell)
 }
 
 /// Methods to get data source for list component in a group channel.
@@ -103,8 +60,8 @@ extension SBUGroupChannelModule {
         /// The message cell for `UserMessage` object. Use `register(userMessageCell:nib:)` to update.
         public private(set) var userMessageCell: SBUBaseMessageCell?
         
-        /// The message cell for `FileMessage` object. Use `register(fileMessageCell:nib:)` to update.
-        public private(set) var fileMessageCell: SBUBaseMessageCell?
+        /// The message cell for `JMessage` object. Use `register(JMessageCell:nib:)` to update.
+        public private(set) var JMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `MultipleFilesMessage` object.
         /// Use `register(multipleFilesMessageCell:nib:)` to update.
@@ -116,10 +73,10 @@ extension SBUGroupChannelModule {
         /// - Since: 3.12.0
         public private(set) var typingIndicatorMessageCell: SBUBaseMessageCell?
         
-        /// The message cell for some unknown message which is not a type of `AdminMessage` | `UserMessage` | ` FileMessage`. Use `register(unknownMessageCell:nib:)` to update.
+        /// The message cell for some unknown message which is not a type of `AdminMessage` | `UserMessage` | ` JMessage`. Use `register(unknownMessageCell:nib:)` to update.
         public private(set) var unknownMessageCell: SBUBaseMessageCell?
         
-        /// The custom message cell for some `BaseMessage`. Use `register(customMessageCell:nib:)` to update.
+        /// The custom message cell for some `JMessage`. Use `register(customMessageCell:nib:)` to update.
         public private(set) var customMessageCell: SBUBaseMessageCell?
         
         /// A high light information of the message with ID and updated time.
@@ -145,15 +102,14 @@ extension SBUGroupChannelModule {
         }
         
         /// The current *group* channel object casted from `baseChannel`
-        public var channel: GroupChannel? {
-            self.baseChannel as? GroupChannel
+        public var channel: JConversationInfo? {
+            self.baseChannel as? JConversationInfo
         }
         
         // MARK: Private properties
         public var voicePlayer: SBUVoicePlayer?
         var voiceFileInfos: [String: SBUVoiceFileInfo] = [:]
         var currentVoiceFileInfo: SBUVoiceFileInfo?
-        var currentVoiceContentView: SBUVoiceContentView?
         var currentVoiceContentIndexPath: IndexPath?
         
         var shouldRedrawTypingBubble: Bool = false
@@ -189,8 +145,8 @@ extension SBUGroupChannelModule {
             if self.userMessageCell == nil {
                 self.register(userMessageCell: SBUUserMessageCell())
             }
-            if self.fileMessageCell == nil {
-                self.register(fileMessageCell: SBUFileMessageCell())
+            if self.JMessageCell == nil {
+                self.register(JMessageCell: SBUBaseMessageCell())
             }
             if self.multipleFilesMessageCell == nil {
                 self.register(messageCell: SBUMultipleFilesMessageCell())
@@ -295,11 +251,11 @@ extension SBUGroupChannelModule {
             return menuPoint
         }
         
-        open override func createMessageMenuItems(for message: BaseMessage) -> [SBUMenuItem] {
+        open override func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
             var items = super.createMessageMenuItems(for: message)
             
             switch message {
-            case is UserMessage, is FileMessage, is MultipleFilesMessage:
+            case is UserMessage, is JMessage, is MultipleFilesMessage:
                 if SendbirdUI.config.groupChannel.channel.replyType != .none {
                     let reply = self.createReplyMenuItem(for: message)
                     items.append(reply)
@@ -310,7 +266,7 @@ extension SBUGroupChannelModule {
             return items
         }
         
-        open override func showMessageContextMenu(for message: BaseMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        open override func showMessageContextMenu(for message: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
             guard !messageMenuItems.isEmpty else { return }
             
@@ -328,7 +284,7 @@ extension SBUGroupChannelModule {
         ///   - cell: The message cell
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
-        open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: BaseMessage, indexPath: IndexPath) {
+        open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
             if let multipleFilesMessageCell = cell as? SBUMultipleFilesMessageCell {
                 multipleFilesMessageCell.fileSelectHandler = { [weak self] _, index in
                     guard let self = self else { return }
@@ -384,16 +340,16 @@ extension SBUGroupChannelModule {
         
         /// Registers a custom cell as a file message cell based on `SBUBaseMessageCell`.
         /// - Parameters:
-        ///   - fileMessageCell: Customized file message cell
+        ///   - JMessageCell: Customized file message cell
         ///   - nib: nib information. If the value is nil, the nib file is not used.
         /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
         /// ```swift
-        /// listComponent.register(fileMessageCell: MyFileMessageCell)
+        /// listComponent.register(JMessageCell: MyJMessageCell)
         /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
         /// ```
-        open func register(fileMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.fileMessageCell = fileMessageCell
-            self.register(messageCell: fileMessageCell, nib: nib)
+        open func register(JMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
+            self.JMessageCell = JMessageCell
+            self.register(messageCell: JMessageCell, nib: nib)
         }
         
         /// Registers a custom cell as a multiple files message cell based on `SBUBaseMessageCell`.
@@ -459,7 +415,7 @@ extension SBUGroupChannelModule {
         ///    - messageCell: `SBUBaseMessageCell` object.
         ///    - message: The message for `messageCell`.
         ///    - indexPath: An index path representing the `messageCell`
-        open func configureCell(_ messageCell: SBUBaseMessageCell, message: BaseMessage, forRowAt indexPath: IndexPath) {
+        open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, forRowAt indexPath: IndexPath) {
             guard let channel = self.channel else {
                 SBULog.error("Channel must exist!")
                 return
@@ -488,7 +444,7 @@ extension SBUGroupChannelModule {
                 self.setMessageCellGestures(adminMessageCell, message: adminMessage, indexPath: indexPath)
                 
                 // Unknown message
-            case let (unknownMessage, unknownMessageCell) as (BaseMessage, SBUUnknownMessageCell):
+            case let (unknownMessage, unknownMessageCell) as (JMessage, SBUUnknownMessageCell):
                 let configuration = SBUUnknownMessageCellParams(
                     message: unknownMessage,
                     hideDateView: isSameDay,
@@ -526,17 +482,17 @@ extension SBUGroupChannelModule {
                 configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
                 userMessageCell.configure(with: configuration)
                 userMessageCell.configure(highlightInfo: self.highlightInfo)
-                (userMessageCell.quotedMessageView as? SBUQuotedBaseMessageView)?.delegate = self
+                (userMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
                 (userMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
                 
                 self.setMessageCellAnimation(userMessageCell, message: userMessage, indexPath: indexPath)
                 self.setMessageCellGestures(userMessageCell, message: userMessage, indexPath: indexPath)
                 
                 // File message
-            case let (fileMessage, fileMessageCell) as (FileMessage, SBUFileMessageCell):
-                let voiceFileInfo = self.voiceFileInfos[fileMessage.cacheKey] ?? nil
-                let configuration = SBUFileMessageCellParams(
-                    message: fileMessage,
+            case let (JMessage, JMessageCell) as (JMessage, SBUBaseMessageCell):
+                let voiceFileInfo = self.voiceFileInfos[JMessage.cacheKey] ?? nil
+                let configuration = SBUJMessageCellParams(
+                    message: JMessage,
                     hideDateView: isSameDay,
                     useMessagePosition: true,
                     groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
@@ -554,17 +510,17 @@ extension SBUGroupChannelModule {
                     self.currentVoiceContentView = nil
                 }
                 
-                fileMessageCell.configure(with: configuration)
-                fileMessageCell.configure(highlightInfo: self.highlightInfo)
-                (fileMessageCell.quotedMessageView as? SBUQuotedBaseMessageView)?.delegate = self
-                (fileMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
-                self.setMessageCellAnimation(fileMessageCell, message: fileMessage, indexPath: indexPath)
-                self.setMessageCellGestures(fileMessageCell, message: fileMessage, indexPath: indexPath)
-                self.setFileMessageCellImage(fileMessageCell, fileMessage: fileMessage)
+                JMessageCell.configure(with: configuration)
+                JMessageCell.configure(highlightInfo: self.highlightInfo)
+                (JMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
+                (JMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
+                self.setMessageCellAnimation(JMessageCell, message: JMessage, indexPath: indexPath)
+                self.setMessageCellGestures(JMessageCell, message: JMessage, indexPath: indexPath)
+                self.setJMessageCellImage(JMessageCell, JMessage: JMessage)
                 
                 if let voiceFileInfo = voiceFileInfo,
                    voiceFileInfo.isPlaying == true,
-                   let voiceContentView = fileMessageCell.baseFileContentView as? SBUVoiceContentView {
+                   let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView {
                     
                     self.currentVoiceContentIndexPath = indexPath
                     self.currentVoiceFileInfo = voiceFileInfo
@@ -582,7 +538,7 @@ extension SBUGroupChannelModule {
                 )
                 configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
                 multipleFilesMessageCell.configure(with: configuration)
-                (multipleFilesMessageCell.quotedMessageView as? SBUQuotedBaseMessageView)?.delegate = self
+                (multipleFilesMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
                 self.setMessageCellAnimation(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
                 self.setMessageCellGestures(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
                 (multipleFilesMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
@@ -596,7 +552,7 @@ extension SBUGroupChannelModule {
                 typingMessageCell.configure(with: configuration)
                 
             default:
-                let configuration = SBUBaseMessageCellParams(
+                let configuration = SBUJMessageCellParams(
                     message: message,
                     hideDateView: isSameDay,
                     messagePosition: .center,
@@ -682,8 +638,8 @@ extension SBUGroupChannelModule {
         }
         
         open override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            guard let fileMessageCell = cell as? SBUFileMessageCell,
-                  fileMessageCell.baseFileContentView is SBUVoiceContentView else { return }
+            guard let JMessageCell = cell as? SBUBaseMessageCell,
+                  JMessageCell.baseFileContentView is SBUVoiceContentView else { return }
         }
         
         /// Register the message cell to the table view.
@@ -702,14 +658,14 @@ extension SBUGroupChannelModule {
         /// Generates identifier of message cell.
         /// - Parameter message: Message object
         /// - Returns: The identifier of message cell.
-        open func generateCellIdentifier(by message: BaseMessage) -> String {
+        open func generateCellIdentifier(by message: JMessage) -> String {
             switch message {
             case is SBUTypingIndicatorMessage:
                 return typingIndicatorMessageCell?.sbu_className ?? SBUTypingIndicatorMessageCell.sbu_className
             case is MultipleFilesMessage:
                 return multipleFilesMessageCell?.sbu_className ?? SBUMultipleFilesMessageCell.sbu_className
-            case is FileMessage:
-                return fileMessageCell?.sbu_className ?? SBUFileMessageCell.sbu_className
+            case is JMessage:
+                return JMessageCell?.sbu_className ?? SBUBaseMessageCell.sbu_className
             case is UserMessage:
                 return userMessageCell?.sbu_className ?? SBUUserMessageCell.sbu_className
             case is AdminMessage:
@@ -724,7 +680,7 @@ extension SBUGroupChannelModule {
         ///   - cell: The message cell
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
-        open func setMessageCellAnimation(_ messageCell: SBUBaseMessageCell, message: BaseMessage, indexPath: IndexPath) {
+        open func setMessageCellAnimation(_ messageCell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
             if message.messageId == highlightInfo?.messageId,
                message.updatedAt == highlightInfo?.updatedAt,
                self.highlightInfo?.animated == true,
@@ -748,18 +704,6 @@ extension SBUGroupChannelModule {
         
         // MARK: - Menu
         
-    }
-}
-
-extension SBUGroupChannelModule.List: SBUQuotedMessageViewDelegate {
-    open func didTapQuotedMessageView(_ quotedMessageView: SBUQuotedBaseMessageView) {
-        self.delegate?.groupChannelModule(self, didTapQuotedMessageView: quotedMessageView)
-    }
-}
-
-extension SBUGroupChannelModule.List: SBUThreadInfoViewDelegate {
-    open func threadInfoViewDidTap(_ threadInfoView: SBUThreadInfoView) {
-        self.delegate?.groupChannelModuleDidTapThreadInfoView(threadInfoView)
     }
 }
 
@@ -797,20 +741,20 @@ extension SBUGroupChannelModule.List {
     ///   - indexPath: Cell's indexPath
     ///
     /// - Since: 3.4.0
-    func updateVoiceMessage(_ cell: SBUBaseMessageCell, message: BaseMessage, indexPath: IndexPath) {
-        guard let fileMessageCell = cell as? SBUFileMessageCell,
-              let fileMessage = message as? FileMessage,
-              let voiceContentView = fileMessageCell.baseFileContentView as? SBUVoiceContentView,
-              SBUUtils.getFileType(by: fileMessage) == .voice else { return }
+    func updateVoiceMessage(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
+        guard let JMessageCell = cell as? SBUBaseMessageCell,
+              let JMessage = message as? JMessage,
+              let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView,
+              SBUUtils.getFileType(by: JMessage) == .voice else { return }
 
-        if self.voiceFileInfos[fileMessage.cacheKey] == nil {
+        if self.voiceFileInfos[JMessage.cacheKey] == nil {
             voiceContentView.updateVoiceContentStatus(.loading)
         }
         
         SBUCacheManager.File.loadFile(
-            urlString: fileMessage.url,
-            cacheKey: fileMessage.cacheKey,
-            fileName: fileMessage.name
+            urlString: JMessage.url,
+            cacheKey: JMessage.cacheKey,
+            fileName: JMessage.name
         ) { [weak self] filePath, _ in
 
             var playtime: Double = 0
@@ -830,17 +774,17 @@ extension SBUGroupChannelModule.List {
             }
             
             var voicefileInfo: SBUVoiceFileInfo?
-            if self?.voiceFileInfos[fileMessage.cacheKey] == nil {
+            if self?.voiceFileInfos[JMessage.cacheKey] == nil {
                 voicefileInfo = SBUVoiceFileInfo(
-                    fileName: fileMessage.name,
+                    fileName: JMessage.name,
                     filePath: filePath,
                     playtime: playtime,
                     currentPlayTime: 0
                 )
                 
-                self?.voiceFileInfos[fileMessage.cacheKey] = voicefileInfo
+                self?.voiceFileInfos[JMessage.cacheKey] = voicefileInfo
             } else {
-                voicefileInfo = self?.voiceFileInfos[fileMessage.cacheKey]
+                voicefileInfo = self?.voiceFileInfos[JMessage.cacheKey]
             }
             
             var actionInSameView = false
@@ -905,7 +849,7 @@ extension SBUGroupChannelModule.List {
         self.currentVoiceFileInfo?.isPlaying = true
         
         if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUFileMessageCell,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
            let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
             voiceContentView.updateVoiceContentStatus(.playing, time: currentPlayTime)
         }
@@ -920,7 +864,7 @@ extension SBUGroupChannelModule.List {
         self.currentVoiceFileInfo?.isPlaying = false
         
         if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUFileMessageCell,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
            let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
             voiceContentView.updateVoiceContentStatus(.pause, time: currentPlayTime)
         }
@@ -933,7 +877,7 @@ extension SBUGroupChannelModule.List {
         self.currentVoiceFileInfo?.isPlaying = false
         
         if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUFileMessageCell,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
            let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
             voiceContentView.updateVoiceContentStatus(.finishPlaying, time: time)
         }
@@ -952,7 +896,7 @@ extension SBUGroupChannelModule.List {
         self.currentVoiceFileInfo?.isPlaying = true
         
         if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUFileMessageCell,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
            let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
             voiceContentView.updateVoiceContentStatus(.playing, time: time)
         }
@@ -963,7 +907,7 @@ extension SBUGroupChannelModule.List {
     ///   - messageId: message id
     ///   - value: message text value
     /// - Since: 3.20.0
-    public func updateStreamMessage(_ message: BaseMessage) {
+    public func updateStreamMessage(_ message: JMessage) {
         let cell = self.tableView.visibleCells
             .compactMap({ $0 as? SBUUserMessageCell })
             .first(where: { $0.message?.messageId == message.messageId })

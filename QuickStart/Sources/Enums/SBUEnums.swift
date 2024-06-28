@@ -79,7 +79,7 @@ public enum ModerationItemType: Int {
 //           : [.operators, .mutedParticipants, .bannedUsers])
 //    }
 //
-//    static func allTypes(channel: BaseChannel) -> [ModerationItemType] {
+//    static func allTypes(channel: JConversationInfo) -> [ModerationItemType] {
 //        var isBroadcast = false
 //        let channelType: ChannelType = (channel is GroupChannel) ? .group : .open
 //
@@ -353,8 +353,8 @@ public enum SBUSuggestedRepliesRenderType {
     
     /// This function determines whether to hide suggested replies for a given message.
     /// - Parameters:
-    ///   - message: The `BaseMessage` object
-    ///   - fullMessageList: The list of all `BaseMessage` objects.
+    ///   - message: The `JMessage` object
+    ///   - fullMessageList: The list of all `JMessage` objects.
     /// - Returns: A `Bool` indicating whether to hide the suggested replies. `true` means hide, `false` means show.
     public func shouldHideSuggestedReplies(
         message: JMessage,

@@ -24,9 +24,9 @@ public class SBUQuoteMessageInputViewParams {
     public var replyToText: String {
         SBUStringSet.MessageInput_Reply_To(self.quotedMessageNickname)
     }
-    /// if `true`, `message` is type of `FileMessage`.
+    /// if `true`, `message` is type of `JMessage`.
     /// - Since: 2.2.0
-    public var isFileType: Bool { message is JFileMessage }
+    public var isFileType: Bool { message is JMessage }
     
     /// Returns `true` if `message` type is `MultipleFilesMessage`.
     /// - Since: 3.10.0
@@ -34,7 +34,7 @@ public class SBUQuoteMessageInputViewParams {
     
     /// The file type of `message`.
     /// - Since: 2.2.0
-    public var fileType: String? { (message as? JFileMessage)?.type }
+    public var fileType: String? { "" }
     
     /// The file name preview of `message`.
     /// - Since: 2.2.0
@@ -48,7 +48,7 @@ public class SBUQuoteMessageInputViewParams {
         case .video:
             return SBUStringSet.MessageInput_Quote_Message_Video
         case .audio, .voice, .pdf, .etc:
-            return (message as? JFileMessage)?.name
+            return ""
         }
     }
     
@@ -60,29 +60,22 @@ public class SBUQuoteMessageInputViewParams {
     ///
     /// - Since: 3.4.0
     public var messageFileType: SBUMessageFileType? {
-        guard let fileMessage = message as? JFileMessage else {
-            return nil
-        }
-        
-        let type = SBUUtils.getFileType(by: fileMessage.type)
-//        if type == .audio,
-//           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
-//           let internalType = metaArray.first?.value.first {
-//            return SBUUtils.getFileType(by: internalType)
-//        }
 
-        return type
+
+        return .audio
     }
     
     /// The original file name of `message`.
     /// - Since: 2.2.0
-    public var originalFileNAme: String? { (message.content as? JFileMessage)?.name }
+    public var originalFileNAme: String? { "" }
     
     /// Initializes a new instance of the class with the provided message.
     /// 
-    /// - Parameter message: The `BaseMessage` instance that the new instance is based on.
+    /// - Parameter message: The `JMessage` instance that the new instance is based on.
     public init(message: JMessage) {
         self.message = message
-        self.quotedMessageNickname = JIM.shared().userInfoManager.getUserInfo(message.senderUserId).userName
+        if let name = JIM.shared().userInfoManager.getUserInfo(message.senderUserId).userName {
+            self.quotedMessageNickname = name
+        }
     }
 }

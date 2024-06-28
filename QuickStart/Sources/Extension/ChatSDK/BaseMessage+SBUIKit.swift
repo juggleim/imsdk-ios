@@ -1,5 +1,5 @@
 //
-//  BaseMessage+SBUIKit.swift
+//  JMessage+SBUIKit.swift
 //  SendbirdUIKit
 //
 //  Created by Tez Park on 2023/06/27.

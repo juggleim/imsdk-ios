@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JetIM
 
 @objc
 public enum SBUMessageInputMode: Int {
@@ -20,8 +21,8 @@ public enum SBUMessageInputMode: Int {
 
 enum MessageInputMode {
     case none
-    case edit(_ message: UserMessage)
-    case quoteReply(_ message: BaseMessage)
+    case edit(_ message: JMessage)
+    case quoteReply(_ message: JMessage)
     
     var value: SBUMessageInputMode {
         switch self {

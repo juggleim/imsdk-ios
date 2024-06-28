@@ -1,5 +1,5 @@
 //
-//  SBUBaseMessageCellParams.swift
+//  SBUJMessageCellParams.swift
 //  SendbirdUIKit
 //
 //  Created by Jaesung Lee on 2021/07/19.
@@ -46,7 +46,7 @@ public class SBUBaseMessageCellParams {
     var profileImageURL: String?
     
     /// The boolean value to indicates that the message cell should hide form type message.
-    /// If it's `true`, never show the form type message view even the `BaseMessage/myFeedbackStatus` has valid status.
+    /// If it's `true`, never show the form type message view even the `JMessage/myFeedbackStatus` has valid status.
     /// - Since: 3.15.0
     public var shouldHideFeedback: Bool = true
     
@@ -80,7 +80,7 @@ public class SBUBaseMessageCellParams {
         self.useThreadInfo = false
         //SendbirdUI.config.groupChannel.channel.replyType == .thread && message.threadInfo.replyCount > 0
         
-        let filterTypes: [SBUReplyType] = [.quoteReply, .thread]
+//        let filterTypes: [SBUReplyType] = [.quoteReply, .thread]
         
         self.groupPosition = groupPosition
 //        if isThreadMessage {

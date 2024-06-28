@@ -33,7 +33,7 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
 
     /// The UIImageView displaying thumbnail of message that user replies to.
     /// - Since: 2.2.0
-    public lazy var fileMessagePreview: UIImageView = {
+    public lazy var JMessagePreview: UIImageView = {
        let imageView = UIImageView()
         imageView.roundCorners(corners: .allCorners, radius: 8)
         return imageView
@@ -72,7 +72,7 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     // MARK: Layouts
     
     // + ------------------ + ------------------- + ----------- +
-    // | fileMessagePreview | replyLabelStackView | closeButton |
+    // | JMessagePreview | replyLabelStackView | closeButton |
     // + ------------------ + ------------------- + ----------- +
     /// The UIStackView contains all components.
     /// - Since: 2.2.0
@@ -137,7 +137,7 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
             self.paddableHStackView.setHStack([
                 self.leadingSpacer,
                 self.contentStackView.setHStack([
-                    self.fileMessagePreview,
+                    self.JMessagePreview,
                     self.replyLabelStackView.setVStack([
                         self.replyToLabel,
                         self.userMessagePreview
@@ -164,7 +164,7 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
         self.topSpacer
             .sbu_constraint(height: 0)
         
-        self.fileMessagePreview
+        self.JMessagePreview
             .sbu_constraint(width: 32, height: 32)
         
         self.closeReplyButton
@@ -181,8 +181,8 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     }
     
     open override func setupStyles() {
-        self.fileMessagePreview.tintColor = theme.quotedFileMessageThumbnailTintColor
-        self.fileMessagePreview.backgroundColor = theme.quotedFileMessageThumbnailBackgroundColor
+        self.JMessagePreview.tintColor = theme.quotedJMessageThumbnailTintColor
+        self.JMessagePreview.backgroundColor = theme.quotedJMessageThumbnailBackgroundColor
         
         self.replyToLabel.font = theme.replyToTextFont
         self.replyToLabel.textColor = theme.replyToTextColor
@@ -200,9 +200,9 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     }
 
     open func configure(with configuration: SBUQuoteMessageInputViewParams) {
-        self.fileMessagePreview.isHidden = false
+        self.JMessagePreview.isHidden = false
         if configuration.messageFileType == .voice {
-            self.fileMessagePreview.isHidden = true
+            self.JMessagePreview.isHidden = true
             self.userMessagePreview.text = SBUStringSet.VoiceMessage.Preview.quotedMessage
         } else {
 //            self.userMessagePreview.text = configuration.message.message
@@ -216,12 +216,12 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     
     func setupFilePreview(with configuration: SBUQuoteMessageInputViewParams) {
         if configuration.isFileType {
-            setupFilePreviewForFileMessage(with: configuration)
+            setupFilePreviewForJMessage(with: configuration)
         }
     }
     
-    func setupFilePreviewForFileMessage(with configuration: SBUQuoteMessageInputViewParams) {
-//        guard let fileMessage = configuration.message as? JMessage else { return }
+    func setupFilePreviewForJMessage(with configuration: SBUQuoteMessageInputViewParams) {
+//        guard let JMessage = configuration.message as? JMessage else { return }
 //        guard configuration.isFileType,
 //              let name = configuration.fileName,
 //              let messageFileType = configuration.messageFileType
@@ -240,7 +240,7 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
 //            imageOption = .videoURLToImage
 //        case .audio:
 //            fileIcon = SBUIconSetType.iconFileAudio.image(
-//                with: theme.quotedFileMessageThumbnailTintColor,
+//                with: theme.quotedJMessageThumbnailTintColor,
 //                to: SBUIconSetType.Metric.quotedMessageIconSize
 //            )
 //        case .voice:
@@ -248,25 +248,25 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
 //
 //        case .pdf, .etc:
 //            fileIcon = SBUIconSetType.iconFileDocument.image(
-//                with: theme.quotedFileMessageThumbnailTintColor,
+//                with: theme.quotedJMessageThumbnailTintColor,
 //                to: SBUIconSetType.Metric.quotedMessageIconSize
 //            )
 //        }
 //
 //        if let fileIcon = fileIcon {
-//            self.fileMessagePreview.contentMode = .center
-//            self.fileMessagePreview.image = fileIcon
+//            self.JMessagePreview.contentMode = .center
+//            self.JMessagePreview.image = fileIcon
 //            return
 //        }
 //
 //        let thumbnailSize = SBUIconSetType.Metric.defaultIconSizeLarge
-//        self.fileMessagePreview.contentMode = .scaleAspectFill
-//        self.fileMessagePreview.loadImage(
-//            urlString: fileMessage.url,
+//        self.JMessagePreview.contentMode = .scaleAspectFill
+//        self.JMessagePreview.loadImage(
+//            urlString: JMessage.url,
 //            option: imageOption,
 //            thumbnailSize: thumbnailSize,
-//            cacheKey: fileMessage.cacheKey,
-//            subPath: fileMessage.channelURL
+//            cacheKey: JMessage.cacheKey,
+//            subPath: JMessage.channelURL
 //        )
     }
     

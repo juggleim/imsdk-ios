@@ -385,7 +385,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func showMessageThread(channelURL: String, parentMessageId: Int64, parentMessageCreatedAt: Int64? = 0, startingPoint: Int64? = 0) { }
     
     /// This function presents `SBUEmojiListViewController`
-    /// - Parameter message: `BaseMessage` object
+    /// - Parameter message: `JMessage` object
     /// - Since: 1.1.0
     open func showEmojiListModal(message: JMessage) {
 //        let emojiListVC = SBUEmojiListViewController(message: message)
@@ -471,7 +471,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// Opens a file that is type of `SBUFileData` according to its file type
     ///
     /// ```swift
-    /// let fileData = SBUFileData(fileMessage: fileMessage)
+    /// let fileData = SBUFileData(JMessage: JMessage)
     /// openFile(fileData)
     /// ```
     ///
@@ -483,14 +483,14 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         SBULoading.start()
         
         switch fileData.fileType {
-        case .image:
-            let viewer = SBUCommonViewControllerSet.FileViewController.init(
-                fileData: fileData,
-                delegate: self
-            )
-            let naviVC = UINavigationController(rootViewController: viewer)
-            SBULoading.stop()
-            self.present(naviVC, animated: true)
+//        case .image:
+//            let viewer = SBUCommonViewControllerSet.FileViewController.init(
+//                fileData: fileData,
+//                delegate: self
+//            )
+//            let naviVC = UINavigationController(rootViewController: viewer)
+//            SBULoading.stop()
+//            self.present(naviVC, animated: true)
             
         case .etc, .pdf, .video, .audio:
             SBUCacheManager.File.loadFile(urlString: fileData.urlString, fileName: fileData.name) { fileURL, _ in
@@ -538,11 +538,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     /// This function opens a file according to the file type.
-    /// - Parameter fileMessage: fileMessage object
+    /// - Parameter JMessage: JMessage object
     /// - Note: Use `openFile(_:)` instead.
     /// - Since: 3.0.0
-    open func openFile(fileMessage: FileMessage) {
-        let fileData = SBUFileData(fileMessage: fileMessage)
+    open func openFile(JMessage: JMessage) {
+        let fileData = SBUFileData(JMessage: JMessage)
         self.openFile(fileData)
     }
     
@@ -573,7 +573,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         
         guard let userProfileView = self.baseListComponent?.userProfileView as? SBUUserProfileView else { return }
         guard let baseView = self.navigationController?.view else { return }
-        guard SendbirdUI.config.common.isUsingDefaultUserProfileEnabled else { return }
         
         let completionHandler: ((SBUUser, UIView) -> Void) = { user, baseView in
             userProfileView.show(
@@ -594,7 +593,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     
     // MARK: - MessageInputView
     
-    open func setMessageInputViewMode(_ mode: SBUMessageInputMode, message: BaseMessage? = nil) {
+    open func setMessageInputViewMode(_ mode: SBUMessageInputMode, message: JMessage? = nil) {
         self.baseInputComponent?.updateMessageInputMode(mode, message: message)
     }
     
@@ -606,8 +605,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func resetVoiceMessageInput(for resignActivity: Bool = false) {}
     
     // MARK: - Error handling
-    func errorHandler(_ error: SBError) {
-        self.errorHandler(error.localizedDescription, error.code)
+    func errorHandler(_ error: JErrorCode) {
+        SBULog.error("Did receive error: \(error)")
     }
     
     /// If an error occurs in viewController, a message is sent through here.
@@ -615,35 +614,34 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameters:
     ///   - message: error message
     ///   - code: error code
-    open override func errorHandler(_ message: String?, _ code: NSInteger? = nil) {
+    open func errorHandler(_ message: String?, _ code: NSInteger? = nil) {
         SBULog.error("Did receive error: \(message ?? "")")
     }
     
     // MARK: - SBUBaseChannelViewModelDelegate
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didChangeChannel channel: BaseChannel?,
-        withContext context: MessageContext
+        didChangeChannel channel: JConversationInfo?
     ) { }
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didReceiveNewMessage message: BaseMessage,
-        forChannel channel: BaseChannel
+        didReceiveNewMessage message: JMessage,
+        forChannel channel: JConversationInfo
     ) {
         self.increaseNewMessageCount()
     }
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldFinishEditModeForChannel channel: BaseChannel
+        shouldFinishEditModeForChannel channel: JConversationInfo
     ) {
         self.setMessageInputViewMode(.none)
     }
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldDismissForChannel channel: BaseChannel?
+        shouldDismissForChannel channel: JConversationInfo?
     ) {
         if let navigationController = self.navigationController,
             navigationController.viewControllers.count > 1 {
@@ -655,7 +653,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didChangeMessageList messages: [BaseMessage],
+        didChangeMessageList messages: [JMessage],
         needsToReload: Bool,
         initialLoad: Bool
     ) {
@@ -670,7 +668,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             }
         }
         
-        self.isDisableChatInputState =  messages.first?.asExtendedMessagePayload?.getDisabledChatInputState(hasNext: self.baseViewModel?.hasNext()) ?? false
+        self.isDisableChatInputState = false// messages.first?.asExtendedMessagePayload?.getDisabledChatInputState(hasNext: self.baseViewModel?.hasNext()) ?? false
         
         guard needsToReload else { return }
         
@@ -698,13 +696,12 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        deletedMessages messages: [BaseMessage]
+        deletedMessages messages: [JMessage]
     ) { }
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        shouldUpdateScrollInMessageList messages: [BaseMessage],
-        forContext context: MessageContext?,
+        shouldUpdateScrollInMessageList messages: [JMessage],
         keepsScroll: Bool
     ) {
         SBULog.info("Fetched : \(messages.count), keepScroll : \(keepsScroll)")
@@ -714,27 +711,15 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             SBULog.info("Fetched empty messages.")
             return
         }
-        
-        if context?.source == .eventMessageSent {
-            if !keepsScroll {
-                self.baseChannelModuleDidTapScrollToButton(baseListComponent, animated: false)
-            }
-        } else if context?.source != .eventMessageReceived {
-            // follow keepScroll flag if context is not `eventMessageReceived`.
-            if keepsScroll, !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.channel) {
-                self.lastSeenIndexPath = baseListComponent.keepCurrentScroll(for: messages)
-            }
-        } else {
-            if !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.channel) {
-                self.lastSeenIndexPath = baseListComponent.keepCurrentScroll(for: messages)
-            }
+    
+        if !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.channel) {
+            self.lastSeenIndexPath = baseListComponent.keepCurrentScroll(for: messages)
         }
     }
     
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didUpdateReaction reaction: ReactionEvent,
-        forMessage message: BaseMessage
+        forMessage message: JMessage
     ) {
         
     }
@@ -782,119 +767,85 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         
         let sentMessageList = baseViewModel.messageList
         let fullMessageList = baseViewModel.fullMessageList
-        let messageListParams = baseViewModel.messageListParams
         
-        if indexPath.row >= (fullMessageList.count - messageListParams.previousResultSize/2),
+        if indexPath.row >= fullMessageList.count,
            baseViewModel.hasPrevious() {
-            if let openChannelViewModel = baseViewModel as? SBUOpenChannelViewModel {
-                openChannelViewModel.loadPrevMessages(timestamp: sentMessageList.last?.createdAt)
-            } else if let messageThreadViewModel = baseViewModel as? SBUMessageThreadViewModel {
-                messageThreadViewModel.loadPrevMessages(timestamp: sentMessageList.last?.createdAt)
-            } else {
-                baseViewModel.loadPrevMessages()
-            }
+            baseViewModel.loadPrevMessages()
         } else if indexPath.row < 5,
                   baseViewModel.hasNext() {
             baseViewModel.loadNextMessages()
         }
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMessage message: BaseMessage, forRowAt indexPath: IndexPath) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
         self.dismissKeyboard()
         
-        switch message {
-            
-        case let userMessage as UserMessage:
-            // User message type, only fail case
-            guard userMessage.sendingStatus == .failed,
-                  userMessage.sender?.userId == SBUGlobals.currentUser?.userId  else { return }
-            self.baseViewModel?.resendMessage(failedMessage: userMessage)
-            self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
-            
-        case let fileMessage as FileMessage:
-            // File message type
-            switch fileMessage.sendingStatus {
-            case .pending:
-                break
-            case .failed:
-                guard fileMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
-                self.baseViewModel?.resendMessage(failedMessage: fileMessage)
-                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
-            case .succeeded:
-                self.openFile(fileMessage: fileMessage)
-            default:
-                break
-            }
-            
-        case _ as AdminMessage:
-            // Admin message type
-            break
-        default:
-            break
-        }
+//        switch message {
+//            
+//        case let userMessage as UserMessage:
+//            // User message type, only fail case
+//            guard userMessage.sendingStatus == .failed,
+//                  userMessage.sender?.userId == SBUGlobals.currentUser?.userId  else { return }
+//            self.baseViewModel?.resendMessage(failedMessage: userMessage)
+//            self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
+//            
+//        case let JMessage as JMessage:
+//            // File message type
+//            switch JMessage.sendingStatus {
+//            case .pending:
+//                break
+//            case .failed:
+//                guard JMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
+//                self.baseViewModel?.resendMessage(failedMessage: JMessage)
+//                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
+//            case .succeeded:
+//                self.openFile(JMessage: JMessage)
+//            default:
+//                break
+//            }
+//            
+//        case _ as AdminMessage:
+//            // Admin message type
+//            break
+//        default:
+//            break
+//        }
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: BaseMessage, forRowAt indexPath: IndexPath) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
         self.view.endEditing(true)
         listComponent.showMessageMenu(on: message, forRowAt: indexPath)
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage fileMessage: FileMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {}
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage JMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {}
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapSaveMessage message: BaseMessage) {
-        guard let fileMessage = message as? FileMessage else { return }
-        SBUDownloadManager.save(fileMessage: fileMessage, parent: self)
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapSaveMessage message: JMessage) {
+        guard let JMessage = message as? JMessage else { return }
+//        SBUDownloadManager.save(JMessage: JMessage, parent: self)
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapCopyMessage message: BaseMessage) {
-        guard let userMessage = message as? UserMessage else { return }
-        let pasteboard = UIPasteboard.general
-        pasteboard.string = userMessage.message
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapCopyMessage message: JMessage) {
+//        guard let userMessage = message as? UserMessage else { return }
+//        let pasteboard = UIPasteboard.general
+//        pasteboard.string = userMessage.message
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: BaseMessage) {
-        guard let channel = self.baseViewModel?.channel else { return }
-        guard let userMessage = message as? UserMessage else { return }
-        
-        if channel.isFrozen == false ||
-            self.baseViewModel?.isOperator == true {
-            self.setMessageInputViewMode(.edit, message: userMessage)
-        } else {
-            SBULog.info("This channel is frozen")
-        }
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage) {
+
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: BaseMessage) {
-        guard message.threadInfo.replyCount == 0 else { return }
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage) {
         self.baseViewModel?.deleteMessage(message: message)
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: BaseMessage) {
-        guard message.parentMessage == nil else { return }
-        
-        switch SendbirdUI.config.groupChannel.channel.replyType {
-        case .quoteReply:
-            self.setMessageInputViewMode(.quoteReply, message: message)
-        case .thread:
-            if let channelURL = self.baseViewModel?.channelURL {
-                // If it is the parent message itself, use `messageId` rather than `parentMessageId`.
-                self.showMessageThread(
-                    channelURL: channelURL,
-                    parentMessageId: message.messageId,
-                    parentMessageCreatedAt: message.createdAt,
-                    startingPoint: .max
-                )
-            }
-        default:
-            break
-        }
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: JMessage) {
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didDismissMenuForCell cell: UITableViewCell) {
         cell.isSelected = false
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMoreEmojisOnMessage message: BaseMessage) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMoreEmojisOnMessage message: JMessage) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.showEmojiListModal(message: message)
@@ -907,37 +858,36 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             return
         }
         
-        self.baseViewModel?.channel?.getMessagesByMessageId(
-            messageId,
-            params: MessageListParams(previousResultSize: 1, nextResultSize: 1),
-            completionHandler: { [weak self] messages, _ in
-                guard let self = self, let message = messages?.first(where: { $0.messageId == messageId }) else {
-                    self?.errorHandler("Couldn't find the message with id: \(messageId)")
-                    return
-                }
-                
-                self.baseViewModel?.loadInitialMessages(
-                    startingPoint: message.createdAt,
-                    showIndicator: true,
-                    initialMessages: self.baseViewModel?.fullMessageList
-                )
-            })
+//        self.baseViewModel?.channel?.getMessagesByMessageId(
+//            messageId,
+//            completionHandler: { [weak self] messages, _ in
+//                guard let self = self, let message = messages?.first(where: { $0.messageId == messageId }) else {
+//                    self?.errorHandler("Couldn't find the message with id: \(messageId)")
+//                    return
+//                }
+//
+//                self.baseViewModel?.loadInitialMessages(
+//                    startingPoint: message.createdAt,
+//                    showIndicator: true,
+//                    initialMessages: self.baseViewModel?.fullMessageList
+//                )
+//            })
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didFailScrollToMessage message: BaseMessage, needToSearch: Bool) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didFailScrollToMessage message: JMessage, needToSearch: Bool) {
         guard needToSearch == true else {
             self.errorHandler("Couldn't find the message with id: \(message.messageId)")
             return
         }
         
         baseViewModel?.loadInitialMessages(
-            startingPoint: message.createdAt,
+            startingPoint: message.timestamp,
             showIndicator: true,
             initialMessages: self.baseViewModel?.fullMessageList
         )
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didReactToMessage message: BaseMessage, withEmoji key: String, selected: Bool) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didReactToMessage message: JMessage, withEmoji key: String, selected: Bool) {
         self.baseViewModel?.setReaction(
             message: message,
             emojiKey: key,
@@ -945,11 +895,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         )
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRetryFailedMessage failedMessage: BaseMessage) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRetryFailedMessage failedMessage: JMessage) {
         self.baseViewModel?.resendMessage(failedMessage: failedMessage)
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteFailedMessage failedMessage: BaseMessage) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteFailedMessage failedMessage: JMessage) {
         self.baseViewModel?.deleteResendableMessage(failedMessage, needReload: true)
     }
     
@@ -1025,21 +975,21 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         channelForTableView tableView: UITableView
-    ) -> BaseChannel? {
+    ) -> JConversationInfo? {
         self.baseViewModel?.channel
     }
     
     open func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         sentMessagesInTableView tableView: UITableView
-    ) -> [BaseMessage] {
+    ) -> [JMessage] {
         self.baseViewModel?.messageList ?? []
     }
     
     open func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         fullMessagesInTableView tableView: UITableView
-    ) -> [BaseMessage] {
+    ) -> [JMessage] {
         self.baseViewModel?.fullMessageList ?? []
     }
     
@@ -1068,20 +1018,16 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         return self
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, pendingMessageManagerForCell cell: UITableViewCell) -> (SBUPendingMessageManager?, Bool?) {
-        return (self.baseViewModel?.pendingMessageManager, self.baseViewModel?.isThreadMessageMode)
-    }
-    
     // MARK: - SBUBaseChannelModuleInputDelegate
     open func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input,
                                 didUpdateFrozenState isFrozen: Bool) { }
     
     open func baseChannelModuleDidStartTyping(_ inputComponent: SBUBaseChannelModule.Input) {
-        guard self.baseViewModel?.channel is GroupChannel else { return }
+        
     }
     
     open func baseChannelModuleDidEndTyping(_ inputComponent: SBUBaseChannelModule.Input) {
-        guard self.baseViewModel?.channel is GroupChannel else { return }
+        
     }
     
     open func baseChannelModuleDidTapAdd(_ inputComponent: SBUBaseChannelModule.Input) {
@@ -1090,7 +1036,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     
     open func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input,
                                 didTapSend text: String,
-                                parentMessage: BaseMessage?) {
+                                parentMessage: JMessage?) {
         self.baseViewModel?.sendUserMessage(text: text, parentMessage: parentMessage)
     }
     
@@ -1132,20 +1078,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func showLimitedPhotoLibraryPicker() {
-        let inputConfig: SBUConfig.BaseInput
-        switch self.baseViewModel?.channel?.channelType {
-        case .group:
-            inputConfig = SendbirdUI.config.groupChannel.channel.input
-        case .open:
-            inputConfig = SendbirdUI.config.openChannel.channel.input
-        default:
-            return
-        }
-        let gallery = inputConfig.gallery
-        
         var mediaType: PHAssetMediaType? // nil is all type support
-        
-        if gallery.isPhotoEnabled && gallery.isVideoEnabled { mediaType = nil } else if gallery.isPhotoEnabled { mediaType = .image } else if gallery.isVideoEnabled { mediaType = .video }
         
         let selectablePhotoVC = SBUSelectablePhotoViewController(mediaType: mediaType)
         selectablePhotoVC.delegate = self
@@ -1157,34 +1090,14 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - NOTE: If you want to use customized `PHPickerConfiguration`, please override this method.
     /// - Since: 2.2.3
     open func showPhotoLibraryPicker() {
-        let inputConfig: SBUConfig.BaseInput
-        switch self.baseViewModel?.channel?.channelType {
-        case .group:
-            inputConfig = SendbirdUI.config.groupChannel.channel.input
-        case .open:
-            inputConfig = SendbirdUI.config.openChannel.channel.input
-        default:
-            return
-        }
-        
         if #available(iOS 14, *), SBUGlobals.isPHPickerEnabled {
             var pickerFilter: [PHPickerFilter] = []
-            if inputConfig.gallery.isPhotoEnabled { pickerFilter += [.images] }
-            if inputConfig.gallery.isVideoEnabled { pickerFilter += [.videos] }
             
             var configuration = PHPickerConfiguration()
             configuration.filter = .any(of: pickerFilter)
             
-            // Multiple files message is allowed only for group channel.
-            if !(self is SBUMessageThreadViewController),
-               let channel = self.baseViewModel?.channel,
-               channel is GroupChannel,
-               SendbirdUI.config.groupChannel.channel.isMultipleFilesMessageEnabled {
-                configuration.selectionLimit = SBUAvailable.multipleFilesMessageFileCountLimit
-                
-                if #available(iOS 15, *) {
-                    configuration.selection = .ordered
-                }
+            if #available(iOS 15, *) {
+                configuration.selection = .ordered
             }
  
             let picker = PHPickerViewController(configuration: configuration)
@@ -1195,9 +1108,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         
         let sourceType: UIImagePickerController.SourceType = .photoLibrary
         var mediaType: [String] = []
-        
-        if inputConfig.gallery.isPhotoEnabled { mediaType += [String(kUTTypeImage), String(kUTTypeGIF)] }
-        if inputConfig.gallery.isVideoEnabled { mediaType += [String(kUTTypeMovie)] }
         
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             let imagePickerController = UIImagePickerController()
@@ -1213,24 +1123,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func showCamera() {
         let sourceType: UIImagePickerController.SourceType = .camera
         var mediaType: [String] = []
-        
-        let inputConfig: SBUConfig.BaseInput
-        switch self.baseViewModel?.channel?.channelType {
-        case .group:
-            inputConfig = SendbirdUI.config.groupChannel.channel.input
-        case .open:
-            inputConfig = SendbirdUI.config.openChannel.channel.input
-        default:
-            return
-        }
-        
-        if inputConfig.camera.isPhotoEnabled {
-            mediaType += [String(kUTTypeImage), String(kUTTypeGIF)]
-        }
-        
-        if inputConfig.camera.isVideoEnabled {
-            mediaType += [String(kUTTypeMovie)]
-        }
         
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             let imagePickerController = UIImagePickerController()
@@ -1256,9 +1148,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         _ inputComponent: SBUBaseChannelModule.Input,
         didTapEdit text: String
     ) {
-        guard let message = self.baseViewModel?.inEditingMessage else { return }
-        
-        self.baseViewModel?.updateUserMessage(message: message, text: text)
+//        guard let message = self.baseViewModel?.inEditingMessage else { return }
+//
+//        self.baseViewModel?.updateUserMessage(message: message, text: text)
     }
     
     open func baseChannelModule(
@@ -1271,7 +1163,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(
         _ inputComponent: SBUBaseChannelModule.Input,
         willChangeMode mode: SBUMessageInputMode, 
-        message: BaseMessage?
+        message: JMessage?
     ) {
         
     }
@@ -1279,15 +1171,15 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(
         _ inputComponent: SBUBaseChannelModule.Input,
         didChangeMode mode: SBUMessageInputMode, 
-        message: BaseMessage?
+        message: JMessage?
     ) {
-        baseViewModel?.inEditingMessage = message as? UserMessage
+//        baseViewModel?.inEditingMessage = message as? UserMessage
     }
     
     open func baseChannelModule(
         _ inputComponent: SBUBaseChannelModule.Input,
         channelForInputView messageInputView: UIView?
-    ) -> BaseChannel? {
+    ) -> JConversationInfo? {
         baseViewModel?.channel
     }
     
@@ -1311,7 +1203,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     
     // MARK: - SBUBaseChannelViewModelDataSource
     open func baseChannelViewModel(_ viewModel: SBUBaseChannelViewModel,
-                                   isScrollNearBottomInChannel channel: BaseChannel?) -> Bool {
+                                   isScrollNearBottomInChannel channel: JConversationInfo?) -> Bool {
         return self.baseListComponent?.isScrollNearByBottom ?? true
     }
     
@@ -1439,7 +1331,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     // MARK: - SBUFileViewControllerDelegate
-    open func didSelectDeleteImage(message: FileMessage) {
+    open func didSelectDeleteImage(message: JMessage) {
         SBULog.info("[Request] Delete message: \(message.description)")
         
         self.baseViewModel?.deleteMessage(message: message)
@@ -1453,14 +1345,14 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         self.showLoading(isLoading)
     }
     
-    open func didReceiveError(_ error: SBError?, isBlocker: Bool) {
+    open func didReceiveError(_ error: JErrorCode, isBlocker: Bool) {
         self.showLoading(false)
         if self.baseViewModel?.fullMessageList.isEmpty == true, isBlocker {
             self.baseListComponent?.updateEmptyView(type: .error)
             self.baseListComponent?.tableView.reloadData()
         }
         
-        self.errorHandler(error?.localizedDescription)
+        self.errorHandler(error)
     }
     
     // MARK: - Deprecated, Unavailable
@@ -1468,11 +1360,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// This function creates message menu items with cell and message.
     /// - Parameters:
     ///   - cell: Sendbird's messageCell object
-    ///   - message: `BaseMessage` object
+    ///   - message: `JMessage` object
     /// - Returns: message menu type array
     @available(*, unavailable, message: "Please use `SBUMenuItem` and  `createMessageMenuItems(for:)` in `SBUBaseChannelModule.List` instead.") // 3.1.2
     public func createMessageMenuTypes(_ cell: UITableViewCell,
-                                       message: BaseMessage) -> [MessageMenuItem]? {
+                                       message: JMessage) -> [MessageMenuItem]? {
         return nil
     }
     
@@ -1487,7 +1379,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - message: Message object
     /// - Since: 3.0.0
     @available(*, deprecated, message: "Please use `showMessageMenuSheet(for:cell:)` in `SBUBaseChannelModule.List` instead.") // 3.1.2
-    public func showMenuViewController(_ cell: UITableViewCell, message: BaseMessage) {
+    public func showMenuViewController(_ cell: UITableViewCell, message: JMessage) {
         guard let listComponent = self.baseListComponent else { return }
         listComponent.showMessageMenuSheet(for: message, cell: cell)
     }
@@ -1502,7 +1394,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     @available(*, unavailable, message: "Please use `showMessageMenuSheet(for:cell:)` and `createMessageMenuItems(for:)` in `SBUBaseChannelModule.List` instead.") // 3.1.2
     public func showMenuViewController(
         _ cell: UITableViewCell,
-        message: BaseMessage,
+        message: JMessage,
         types: [MessageMenuItem]?
     ) {
         guard let listComponent = self.baseListComponent else { return }
@@ -1523,7 +1415,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func showMenuModal(
         _ cell: UITableViewCell,
         indexPath: IndexPath,
-        message: BaseMessage
+        message: JMessage
     ) {
         self.baseListComponent?.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
     }
@@ -1540,7 +1432,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     public func showMenuModal(
         _ cell: UITableViewCell,
         indexPath: IndexPath,
-        message: BaseMessage,
+        message: JMessage,
         types: [MessageMenuItem]?
     ) { self.baseListComponent?.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath) }
     
@@ -1550,7 +1442,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter message: Message object
     /// - Since: 2.1.12
     @available(*, deprecated, message: "Please use `showFailedMessageMenu(on:)` in `SBUBaseChannelModule.List`") // 3.1.2
-    public func showFailedMessageMenu(message: BaseMessage) {
+    public func showFailedMessageMenu(message: JMessage) {
         let retryItem = SBUActionSheetItem(
             title: SBUStringSet.Retry,
             color: self.theme.menuItemTintColor
@@ -1584,7 +1476,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - oneTimetheme: One-time theme
     /// - Since: 3.0.0
     @available(*, deprecated, message: "Please use `showDeleteMessageAlert(on:oneTimeTheme:)` in `SBUBaseChannelModule.List`") // 3.1.2
-    public func showDeleteMessageMenu(message: BaseMessage,
+    public func showDeleteMessageMenu(message: JMessage,
                                       oneTimetheme: SBUComponentTheme? = nil) {
         self.baseListComponent?.showDeleteMessageAlert(on: message, oneTimeTheme: oneTimetheme)
     }

@@ -69,24 +69,24 @@ extension SBUCacheManager {
         }
         
 //        static func preSave(
-//            fileMessage: JFileMessage,
+//            JMessage: JJMessage,
 //            isQuotedImage: Bool? = false,
 //            completionHandler: SBUImageCacheCompletionHandler? = nil
 //        ) {
-//            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
+//            if let messageParams = JMessage.messageParams as? JMessageCreateParams {
 //                var fileName = self.createCacheFileName(
-//                    urlString: fileMessage.url,
-//                    cacheKey: fileMessage.cacheKey,
-//                    fileNameForExtension: fileMessage.name
+//                    urlString: JMessage.url,
+//                    cacheKey: JMessage.cacheKey,
+//                    fileNameForExtension: JMessage.name
 //                )
 //                if isQuotedImage == true { fileName = "quoted_\(fileName)" }
 //
-//                switch SBUUtils.getFileType(by: fileMessage) {
+//                switch SBUUtils.getFileType(by: JMessage) {
 //                case .image:
 //                    self.save(
 //                        data: messageParams.file,
 //                        fileName: fileName,
-//                        subPath: fileMessage.channelURL,
+//                        subPath: JMessage.channelURL,
 //                        completionHandler: completionHandler
 //                    )
 //                case .video:
@@ -104,7 +104,7 @@ extension SBUCacheManager {
 //                    self.save(
 //                        image: image,
 //                        fileName: fileName,
-//                        subPath: fileMessage.channelURL,
+//                        subPath: JMessage.channelURL,
 //                        completionHandler: completionHandler
 //                    )
 //                default:

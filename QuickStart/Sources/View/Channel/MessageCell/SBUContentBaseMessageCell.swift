@@ -1,5 +1,5 @@
 //
-//  SBUContentBaseMessageCell.swift
+//  SBUContentJMessageCell.swift
 //  SendbirdUIKit
 //
 //  Created by Tez Park on 2020/08/27.
@@ -85,7 +85,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         )
     }()
     
-    public lazy var quotedMessageView: (UIView & SBUQuotedMessageViewProtocol)? = SBUQuotedBaseMessageView()
     
     // + ------------------+----------------+
     // | threadInfoSpacing | threadInfoView |
@@ -101,7 +100,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     }()
     
     public private(set) lazy var threadInfoSpacing: UIView = UIView()
-    public lazy var threadInfoView: UIView? = SBUThreadInfoView()
     
     // + ----------------------- + --------- +
     // | mainContainerVStackView | stateView |
@@ -289,7 +287,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     }
     
     // MARK: - Common
-    open override func configure(with configuration: SBUBaseMessageCellParams) {
+    open func configure(with configuration: SBUBaseMessageCellParams) {
         // nil for super/broadcast channel which doesn't support receipts.
         // Kept receipt to .none for backward compatibility as this configure() is *open*.
         // MARK: Configure base message cell
@@ -394,14 +392,14 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
 //        guard self.quotedMessageView != nil,
 //              let message = self.message,
 //              let quotedMessage = self.message?.parentMessage else { return }
-//        let configuration = SBUQuotedBaseMessageViewParams(
+//        let configuration = SBUQuotedJMessageViewParams(
 //            message: message,
 //            position: self.position,
 //            useQuotedMessage: self.useQuotedMessage,
 //            joinedAt: joinedAt,
 //            messageOffsetTimestamp: messageOffsetTimestamp
 //        )
-//        guard self.quotedMessageView is SBUQuotedBaseMessageView else {
+//        guard self.quotedMessageView is SBUQuotedJMessageView else {
 //            // For customized parent message view.
 //            self.quotedMessageView?.configure(with: configuration)
 //            return
@@ -429,21 +427,21 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
 //        switch quotedMessage {
 //        case is UserMessage:
 //            userMessageBlock()
-//        case is FileMessage, is MultipleFilesMessage:
+//        case is JMessage, is MultipleFilesMessage:
 //            if isMessageUnavailable {
 //                userMessageBlock()
 //            }
-//            if !(self.quotedMessageView is SBUQuotedFileMessageView) {
+//            if !(self.quotedMessageView is SBUQuotedJMessageView) {
 //                self.contentVStackView.arrangedSubviews.forEach {
 //                    $0.removeFromSuperview()
 //                }
-//                self.quotedMessageView = SBUQuotedFileMessageView()
+//                self.quotedMessageView = SBUQuotedJMessageView()
 //                self.contentVStackView.setVStack([
 //                    quotedMessageView,
 //                    messageHStackView
 //                ])
 //            }
-//            (self.quotedMessageView as? SBUQuotedFileMessageView)?.configure(with: configuration)
+//            (self.quotedMessageView as? SBUQuotedJMessageView)?.configure(with: configuration)
 //        default:
 //            self.quotedMessageView?.removeFromSuperview()
 //        }
@@ -590,31 +588,31 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     /// Configures profile views for typers.
     /// - Note: Override this method to customize typer profile views.
     /// - Since: 3.12.0
-    open func configureTyperProfileViews(typingInfo: SBUTypingIndicatorInfo) {
-        var profileViews = [SBUMessageProfileView]()
-        
-        for user in typingInfo.typers {
-            let profileView = SBUMessageProfileView()
-            profileView.theme = theme
-            profileView.setupStyles()
-            profileView.configure(urlString: user.profileURL ?? "", imageSize: 30)
-            profileView.configureTyperProfileImageView()
-            profileViews.append(profileView)
-        }
-        
-        if SBUConstant.maxNumberOfProfileImages < typingInfo.numberOfTypers {
-            let profileView = SBUMessageProfileView()
-            profileView.theme = theme
-            profileView.setupStyles()
-            
-            profileView.configure(urlString: "", imageSize: 30)
-            profileView.configureNumberLabel(typingInfo.numberOfTypers)
-            
-            profileViews.append(profileView)
-        }
-        
-        profilesStackView.setHStack(profileViews)
-    }
+//    open func configureTyperProfileViews(typingInfo: SBUTypingIndicatorInfo) {
+//        var profileViews = [SBUMessageProfileView]()
+//        
+//        for user in typingInfo.typers {
+//            let profileView = SBUMessageProfileView()
+//            profileView.theme = theme
+//            profileView.setupStyles()
+//            profileView.configure(urlString: user.profileURL ?? "", imageSize: 30)
+//            profileView.configureTyperProfileImageView()
+//            profileViews.append(profileView)
+//        }
+//        
+//        if SBUConstant.maxNumberOfProfileImages < typingInfo.numberOfTypers {
+//            let profileView = SBUMessageProfileView()
+//            profileView.theme = theme
+//            profileView.setupStyles()
+//            
+//            profileView.configure(urlString: "", imageSize: 30)
+//            profileView.configureNumberLabel(typingInfo.numberOfTypers)
+//            
+//            profileViews.append(profileView)
+//        }
+//        
+//        profilesStackView.setHStack(profileViews)
+//    }
     
     /// Configure profile views for the user who sent the message.
     /// Override this method to customize user profile views.
@@ -654,7 +652,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                         position: MessagePosition,
                         groupPosition: MessageGroupPosition,
                         receiptState: SBUMessageReceiptState?) {
-        let configuration = SBUBaseMessageCellParams(
+        let configuration = SBUJMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             messagePosition: position,

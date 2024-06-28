@@ -17,12 +17,12 @@ private let kDefaultOpenChannelName = "Open Channel"
 public class SBUUtils {
     
     /// This function gets the message file type of the file message.
-    /// - Parameter fileMessage: `FileMessage` object
+    /// - Parameter JMessage: `JMessage` object
     /// - Returns: `SBUMessageFileType`
-    public static func getFileType(by fileMessage: JFileMessage) -> SBUMessageFileType {
-        let type: SBUMessageFileType = SBUUtils.getFileType(by: fileMessage.type)
+    public static func getFileType(by fileMessage: JMessage) -> SBUMessageFileType {
+        let type: SBUMessageFileType = SBUUtils.getFileType(by: JMessage.type)
 //        if type == .audio,
-//           let metaArray = fileMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
+//           let metaArray = JMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
 //           let internalType = metaArray.first?.value.first {
 //            return SBUUtils.getFileType(by: internalType)
 //        }
@@ -146,7 +146,7 @@ public class SBUUtils {
     /// This function gets the receipt state of the message on the channel.
     /// - Parameters:
     ///   - channel: `GroupChannel` object
-    ///   - message: `BaseMessage` object
+    ///   - message: `JMessage` object
     /// - Returns: `SBUMessageReceiptState`
     @available(*, deprecated, renamed: "getReceiptState(of:in:)") // 2.0.5
     public static func getReceiptState(channel: JConversationInfo,
@@ -161,7 +161,7 @@ public class SBUUtils {
     ///
     /// - Parameters:
     ///   - channel: `GroupChannel` object
-    ///   - message: `BaseMessage` object
+    ///   - message: `JMessage` object
     /// - Returns: `SBUMessageReceiptState`, or nil if the channel doesn't support receipts.
     @available(*, unavailable, message: "It returns nil when th channel is super group channel or broadcast channel. Please set the value to `SBUMessageReceitState.notUsed`.", renamed: "getReceiptState(of:in:)") // 2.2.0
     public static func getReceiptStateIfExists(for channel: JConversationInfo,
@@ -174,7 +174,7 @@ public class SBUUtils {
     ///
     /// - Parameters:
     ///   - channel: `GroupChannel` object
-    ///   - message: `BaseMessage` object
+    ///   - message: `JMessage` object
     ///
     /// - Returns: `SBUMessageReceiptState`. , It returns `.notUsed` when the channel is *super group channel* or *broadcast channel* which doesn't support receipts.
     ///

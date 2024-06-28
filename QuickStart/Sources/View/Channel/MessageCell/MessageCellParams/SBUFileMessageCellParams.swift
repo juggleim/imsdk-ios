@@ -1,5 +1,5 @@
 //
-//  SBUFileMessageCellParams.swift
+//  SBUJMessageCellParams.swift
 //  SendbirdUIKit
 //
 //  Created by Jaesung Lee on 2021/07/19.

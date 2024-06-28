@@ -6,10 +6,11 @@
 //  Copyright © 2021 Sendbird, Inc. All rights reserved.
 //
 
+import JetIM
 
 public class SBUUserMessageCellParams: SBUBaseMessageCellParams {
-    public var userMessage: UserMessage? {
-        self.message as? UserMessage
+    public var userMessage: JMessage? {
+        self.message as? JMessage
     }
     public let useReaction: Bool
     public let withTextView: Bool
@@ -20,17 +21,17 @@ public class SBUUserMessageCellParams: SBUBaseMessageCellParams {
     public let enableEmojiLongPress: Bool
 
     /// The boolean value to indicates that the message cell should hide suggested replies.
-    /// If it's `true`, never show the suggested replies view even the `BaseMessage/ExtendedMessagePayload` has the reply `option` values.
+    /// If it's `true`, never show the suggested replies view even the `JMessage/ExtendedMessagePayload` has the reply `option` values.
     /// - Since: 3.11.0
     public let shouldHideSuggestedReplies: Bool
     
     /// The boolean value to indicates that the message cell should hide form type message.
-    /// If it's `true`, never show the form type message view even the `BaseMessage/ExtendedMessagePayload` has the `forms` values.
+    /// If it's `true`, never show the form type message view even the `JMessage/ExtendedMessagePayload` has the `forms` values.
     /// - Since: 3.11.0
     public let shouldHideFormTypeMessage: Bool
 
     public init(
-        message: UserMessage,
+        message: JMessage,
         hideDateView: Bool,
         useMessagePosition: Bool,
         groupPosition: MessageGroupPosition = .none,

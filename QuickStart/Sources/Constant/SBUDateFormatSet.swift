@@ -61,7 +61,7 @@ public struct SBUDateFormatSet {
         /// Used in `SBUMessageStateView timeLabel`
         public static var sentTimeFormat = SBUDateFormatSet.hhmm
         
-        /// Used in `SBUOpenChannelContentBaseMessageCell`
+        /// Used in `SBUOpenChannelContentJMessageCell`
         public static var sentTimeFormatInOpenChannel = SBUDateFormatSet.hhmm
         
         /// Used to show date separates in the message list.

@@ -8,6 +8,7 @@
 
 import UIKit
 import PhotosUI
+import JetIM
 
 /// Event methods for the views updates and performing actions from the input component in the group channel.
 public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDelegate {
@@ -23,19 +24,7 @@ public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDel
         didPickFileData fileData: Data?,
         fileName: String,
         mimeType: String,
-        parentMessage: BaseMessage?
-    )
-    
-    /// Called when multiple files were picked to send a multiple files message.
-    /// - Parameters:
-    ///   - inputComponent: `SBUGroupChannelModule.Input` object.
-    ///   - didPickMultipleFiles: A list of `UploadableFileInfo` for the picked files.
-    ///   - parentMessage: A message that will be a parent message. Please refer to *quote reply* features.
-    /// - Since: 3.10.0
-    func groupChannelModule(
-        _ inputComponent: SBUGroupChannelModule.Input,
-        didPickMultipleFiles fileInfoList: [UploadableFileInfo]?,
-        parentMessage: BaseMessage?
+        parentMessage: JMessage?
     )
     
     /// Called when the send button was tapped.
@@ -55,7 +44,7 @@ public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDel
         didTapSend text: String,
         mentionedMessageTemplate: String,
         mentionedUserIds: [String],
-        parentMessage: BaseMessage?
+        parentMessage: JMessage?
     )
     
     /// Called when the edit button was tapped.
@@ -85,7 +74,7 @@ public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDel
     func groupChannelModule(
         _ inputComponent: SBUGroupChannelModule.Input,
         willChangeMode mode: SBUMessageInputMode,
-        message: BaseMessage?,
+        message: JMessage?,
         mentionedMessageTemplate: String,
         mentionedUserIds: [String]
     )
@@ -122,9 +111,9 @@ extension SBUGroupChannelModule {
         public var suggestedMentionList: SBUSuggestedMentionList?
         
         /// A current quoted message in message input view. This value is only available when the `messageInputView` is type of `SBUMessageInputView` that supports the message replying feature.
-        public var currentQuotedMessage: BaseMessage? {
+        public var currentQuotedMessage: JMessage? {
             guard let messageInputView = messageInputView as? SBUMessageInputView else { return nil }
-            var parentMessage: BaseMessage?
+            var parentMessage: JMessage?
             switch messageInputView.option {
             case .quoteReply(let message):
                 parentMessage = message
@@ -134,8 +123,8 @@ extension SBUGroupChannelModule {
         }
         
         /// The group channel object casted from `baseChannel`.
-        public var channel: GroupChannel? {
-            self.baseChannel as? GroupChannel
+        public var channel: JConversationInfo? {
+            self.baseChannel as? JConversationInfo
         }
         
         /// The object that acts as the delegate of the input component. The delegate must adopt the `SBUGroupChannelModuleInputDelegate`.
@@ -281,8 +270,8 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let sbError = SBError(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(sbError, isBlocker: false)
+                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
@@ -515,8 +504,8 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let sbError = SBError(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(sbError, isBlocker: false)
+                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
@@ -549,12 +538,12 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let sbError = SBError(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(sbError, isBlocker: false)
+                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
-        open override func updateMessageInputMode(_ mode: SBUMessageInputMode, message: BaseMessage? = nil) {
+        open override func updateMessageInputMode(_ mode: SBUMessageInputMode, message: JMessage? = nil) {
             super.updateMessageInputMode(mode, message: message)
             if mode == .edit {
                 guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
@@ -909,9 +898,9 @@ extension SBUGroupChannelModule {
         /// - Parameters:
         ///    - messageInputView: `SBUMessageinputView` object.
         ///    - mode: `SBUMessageInputMode` value. The `messageInputView` changes its mode to this value.
-        ///    - message: `BaseMessage` object. It's `nil` when the `mode` is `none`.
+        ///    - message: `JMessage` object. It's `nil` when the `mode` is `none`.
         /// - NOTE: If there's mentions in `mentionManager.mentionedList`, It invokes ``messageInputView(_:willChangeMode:message:mentionManager:)`` instead.
-        open override func messageInputView(_ messageInputView: SBUMessageInputView, willChangeMode mode: SBUMessageInputMode, message: BaseMessage?) {
+        open override func messageInputView(_ messageInputView: SBUMessageInputView, willChangeMode mode: SBUMessageInputMode, message: JMessage?) {
             if let mentionManager = mentionManager,
                 mentionManager.mentionedList.isEmpty == false {
                 self.messageInputView(messageInputView, willChangeMode: mode, message: message, mentionManager: mentionManager)
@@ -921,7 +910,7 @@ extension SBUGroupChannelModule {
         }
         
         /// Called when the message input mode will be changed via `setMode(_:message:)` method and need to reset the `mentionManager`.
-        open func messageInputView(_ messageInputView: SBUMessageInputView, willChangeMode mode: SBUMessageInputMode, message: BaseMessage?, mentionManager: SBUMentionManager) {
+        open func messageInputView(_ messageInputView: SBUMessageInputView, willChangeMode mode: SBUMessageInputMode, message: JMessage?, mentionManager: SBUMentionManager) {
             let mentionedMessageTemplate: String
             if let text = messageInputView.textView?.attributedText {
                 mentionedMessageTemplate = mentionManager.generateTemplate(
@@ -943,7 +932,7 @@ extension SBUGroupChannelModule {
         }
         
         open func messageInputView(_ messageInputView: SBUMessageInputView, didSelectSend text: NSAttributedString, mentionManager: SBUMentionManager) {
-            var parentMessage: BaseMessage?
+            var parentMessage: JMessage?
             
             switch messageInputView.option {
             case .quoteReply(let message):

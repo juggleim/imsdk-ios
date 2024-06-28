@@ -42,7 +42,7 @@ public protocol SBUBaseChannelListModuleListDataSource: AnyObject {
     /// - Parameters:
     ///    - listComponent: `SBUOpenChannelListModule.List` object.
     ///    - tableView: `UITableView` object from list component.
-    /// - Returns: The array of `BaseChannel` object.
+    /// - Returns: The array of `JConversationInfo` object.
     func baseChannelListModule(_ listComponent: SBUBaseChannelListModule.List, channelsInTableView tableView: UITableView) -> [JConversationInfo]?
 }
 

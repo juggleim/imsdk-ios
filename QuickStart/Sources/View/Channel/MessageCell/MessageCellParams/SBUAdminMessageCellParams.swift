@@ -7,7 +7,7 @@
 //
 
 
-public class SBUAdminMessageCellParams: SBUBaseMessageCellParams {
+public class SBUAdminMessageCellParams {
 //    public var adminMessage: AdminMessage? {
 //        self.message as? AdminMessage
 //    }

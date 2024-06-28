@@ -8,6 +8,7 @@
 
 import UIKit
 import AssetsLibrary
+import JetIM
 
 /// `SBUFileViewer` is a typealias for `SBUFileViewController`.
 /// It is deprecated and should be replaced with `SBUFileViewController`.
@@ -22,14 +23,14 @@ public typealias SBUFileViewerDelegate = SBUFileViewControllerDelegate
 /// `SBUFileViewControllerDelegate` is a protocol that defines the delegate methods for `SBUFileViewController`.
 /// The delegate methods provide information about the interactions with the file view controller.
 public protocol SBUFileViewControllerDelegate: AnyObject {
-    func didSelectDeleteImage(message: FileMessage)
+    func didSelectDeleteImage(message: JMessage)
 }
 
 /// The main information about file used in views.
 ///
 /// - **Example usage:**
 /// ```swift
-/// let file = SBUFileData(fileMessage: fileMessage)
+/// let file = SBUFileData(JMessage: JMessage)
 /// ```
 /// ```swift
 /// // multiple files message case
@@ -46,7 +47,7 @@ public struct SBUFileData {
     /// The string value of the file URL
     let urlString: String
     /// The message that contains the file.
-    let message: BaseMessage
+    let message: JMessage
     /// The key that is used for caching
     let cacheKey: String?
     /// The type of file. See ``SBUMessageFileType`` for more information.
@@ -59,7 +60,7 @@ public struct SBUFileData {
         self.message.channelURL
     }
     
-    init(urlString: String, message: BaseMessage, cacheKey: String?, fileType: SBUMessageFileType, name: String) {
+    init(urlString: String, message: JMessage, cacheKey: String?, fileType: SBUMessageFileType, name: String) {
         self.urlString = urlString
         self.message = message
         self.cacheKey = cacheKey
@@ -67,18 +68,18 @@ public struct SBUFileData {
         self.name = name
     }
     
-    init(fileMessage: FileMessage) {
+    init(JMessage: JMessage) {
         self.init(
-            urlString: fileMessage.url,
-            message: fileMessage,
-            cacheKey: fileMessage.cacheKey,
-            fileType: SBUUtils.getFileType(by: fileMessage),
-            name: fileMessage.name
+            urlString: JMessage.url,
+            message: JMessage,
+            cacheKey: JMessage.cacheKey,
+            fileType: SBUUtils.getFileType(by: JMessage),
+            name: JMessage.name
         )
     }
 }
 
-/// The ``SBUBaseViewController`` that displays file content on `FileMessage`
+/// The ``SBUBaseViewController`` that displays file content on `JMessage`
 ///
 /// **Customization Guide**
 /// ```swift
@@ -145,12 +146,12 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     private var fileData: SBUFileData
     
     // MARK: - Lifecycle
-    /// Initializes ``SBUFileViewController`` with `FileMessage`
+    /// Initializes ``SBUFileViewController`` with `JMessage`
     required public convenience init(
-        fileMessage: FileMessage,
+        JMessage: JMessage,
         delegate: SBUFileViewControllerDelegate?
     ) {
-        let fileData = SBUFileData(fileMessage: fileMessage)
+        let fileData = SBUFileData(JMessage: JMessage)
         self.init(fileData: fileData, delegate: delegate)
     }
     
@@ -158,7 +159,7 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     ///
     /// - File Message Example
     /// ```swift
-    /// let file = SBUFileData(fileMessage: fileMessage)
+    /// let file = SBUFileData(JMessage: JMessage)
     /// SBUCommonViewControllerSet.FileViewController.init(
     ///     file: file,
     ///     delegate: self
@@ -189,8 +190,8 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     
     @available(*, unavailable, renamed: "init(params:delegate:)")
     required public init?(coder: NSCoder) {
-        if let fileMessage = FileMessage.make(["": ""]) {
-            self.fileData = SBUFileData(fileMessage: fileMessage)
+        if let JMessage = JMessage.make(["": ""]) {
+            self.fileData = SBUFileData(JMessage: JMessage)
             super.init(coder: coder)
         } else {
             fatalError("`init?(coder:)` has not been implemented. Use `init(params:delegate:)`")
@@ -255,8 +256,8 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         )
         
         // TODO: MFM also
-        if let fileMessage = self.fileData.message as? FileMessage {
-            SBUCacheManager.Image.preSave(fileMessage: fileMessage)
+        if let JMessage = self.fileData.message as? JMessage {
+            SBUCacheManager.Image.preSave(JMessage: JMessage)
         }
     }
     
@@ -355,8 +356,8 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         let deleteButton = SBUAlertButtonItem(title: SBUStringSet.Delete,
                                               color: SBUColorSet.error300) { [weak self] _ in
             guard let self = self else { return }
-            guard let fileMessage = self.fileData.message as? FileMessage else { return }
-            self.delegate?.didSelectDeleteImage(message: fileMessage)
+            guard let JMessage = self.fileData.message as? JMessage else { return }
+            self.delegate?.didSelectDeleteImage(message: JMessage)
             self.dismiss(animated: true, completion: nil)
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
@@ -423,12 +424,8 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     open func didDismissAlertView() { }
     
     // MARK: - Error handling
-    private func errorHandler(_ error: SBError) {
+    private func errorHandler(_ error: JErrorCode) {
         self.errorHandler(error.localizedDescription, error.code)
-    }
-    
-    open override func errorHandler(_ message: String?, _ code: NSInteger? = nil) {
-        SBULog.error("Did receive error: \(message ?? "")")
     }
     
     @available(*, unavailable, renamed: "errorHandler(_:_:)")

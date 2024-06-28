@@ -41,7 +41,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         set { self.baseViewModel = newValue }
     }
     
-    public override var channel: JConversationInfo? { self.viewModel?.channel as? JConversationInfo }
+    public var channel: JConversationInfo? { self.viewModel?.channel as? JConversationInfo }
     
     public private(set) var newMessagesCount: Int = 0
     
@@ -86,15 +86,15 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     /// - note: The `reverse` and the `previousResultSize` properties in the `MessageListParams` are set in the UIKit. Even though you set that property it will be ignored.
     /// - Parameter channel: Channel object
     /// - Since: 1.0.11
-    required public init(channel: JConversationInfo, messageListParams: MessageListParams? = nil) {
-        super.init(baseChannel: channel, messageListParams: messageListParams)
+    required public init(channel: JConversationInfo) {
+        super.init(baseChannel: channel)
         
         self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
         self.listComponent = SBUModuleSet.GroupChannelModule.ListComponent.init()
         self.inputComponent = SBUModuleSet.GroupChannelModule.InputComponent.init()
     }
     
-    public init(channel: GroupChannel, messageListParams: MessageListParams? = nil, displaysLocalCachedListFirst: Bool) {
+    public init(channel: JConversationInfo, displaysLocalCachedListFirst: Bool) {
         super.init(baseChannel: channel, messageListParams: messageListParams, displaysLocalCachedListFirst: displaysLocalCachedListFirst)
         
         self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
@@ -104,8 +104,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     required public init(
         channelURL: String,
-        startingPoint: Int64? = nil,
-        messageListParams: MessageListParams? = nil
+        startingPoint: Int64? = nil
     ) {
         super.init(
             channelURL: channelURL,
@@ -121,7 +120,6 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     required public override init(
         channelURL: String,
         startingPoint: Int64? = nil,
-        messageListParams: MessageListParams? = nil,
         displaysLocalCachedListFirst: Bool
     ) {
         super.init(
@@ -173,9 +171,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     // MARK: - ViewModel
     open override func createViewModel(
-        channel: BaseChannel? = nil,
+        channel: JConversationInfo? = nil,
         channelURL: String? = nil,
-        messageListParams: MessageListParams? = nil,
         startingPoint: Int64? = .max,
         showIndicator: Bool = true
     ) {
@@ -190,9 +187,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
 
     open override func createViewModel(
-        channel: BaseChannel? = nil,
+        channel: JConversationInfo? = nil,
         channelURL: String? = nil,
-        messageListParams: MessageListParams? = nil,
         startingPoint: Int64? = .max,
         showIndicator: Bool = true,
         displaysLocalCachedListFirst: Bool = false
@@ -368,14 +364,14 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     @available(*, deprecated, message: "Please use `showMessageContextMenu(message:cell:forRowAt:)` in `SBUGroupChannelModule.List`") // 3.1.2
-    open override func showMenuModal(_ cell: UITableViewCell, indexPath: IndexPath, message: BaseMessage) {
+    open override func showMenuModal(_ cell: UITableViewCell, indexPath: IndexPath, message: JMessage) {
         self.listComponent?.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
     }
     
     @available(*, deprecated, message: "Please use `showMessageContextMenu(message:cell:forRowAt:)` in `SBUGroupChannelModule.List`") // 3.1.2
     public override func showMenuModal(_ cell: UITableViewCell,
                                        indexPath: IndexPath,
-                                       message: BaseMessage,
+                                       message: JMessage,
                                        types: [MessageMenuItem]?) {
         self.listComponent?.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
     }
@@ -398,7 +394,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
             return
         }
         
-        var parentMessage: BaseMessage?
+        var parentMessage: JMessage?
         if let fullMessageList = self.viewModel?.fullMessageList {
             parentMessage = fullMessageList.first(where: { $0.messageId == parentMessageId })
         }
@@ -495,7 +491,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
                 inputComponent.pickMultipleImageFiles(itemProviders: imageAndGIFs)
             }
             
-            // single image / gif -> send a fileMessage
+            // single image / gif -> send a JMessage
             else if imageAndGIFs.count == 1 {
                 let itemProvider = imageAndGIFs.first!
                 
@@ -517,7 +513,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         
         // Handle videos.
         if videos.count > 0 {
-            // video(s) selected -> send N fileMessages
+            // video(s) selected -> send N JMessages
             videos.forEach { itemProvider in
                 inputComponent.pickVideoFile(itemProvider: itemProvider)
             }
@@ -735,8 +731,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     // MARK: - SBUGroupChannelViewModelDelegate
     open override func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        didChangeChannel channel: BaseChannel?,
-        withContext context: MessageContext
+        didChangeChannel channel: JConversationInfo?
     ) {
         guard channel != nil else {
             // channel deleted
@@ -783,7 +778,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     open override func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
-        deletedMessages messages: [BaseMessage]
+        deletedMessages messages: [JMessage]
     ) {
         for message in messages {
             self.listComponent?.pauseVoicePlayer(cacheKey: message.cacheKey)
@@ -810,8 +805,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     open func groupChannelViewModel(
         _ viewModel: SBUGroupChannelViewModel,
-        didReceiveStreamMessage message: BaseMessage,
-        forChannel channel: GroupChannel
+        didReceiveStreamMessage message: JMessage,
+        forChannel channel: JConversationInfo
     ) {
         self.listComponent?.updateStreamMessage(message)
     }
@@ -828,36 +823,6 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     // MARK: - SBUGroupChannelModuleListDelegate
-    open func groupChannelModule(
-        _ listComponent: SBUGroupChannelModule.List,
-        didSelectFileAt index: Int,
-        multipleFilesMessageCell: SBUMultipleFilesMessageCell,
-        forRowAt cellIndexPath: IndexPath
-    ) {
-        guard let multipleFilesMessage = multipleFilesMessageCell.multipleFilesMessage else {
-            SBUToastView.show(type: .file(.openFailed))
-            return
-        }
-        guard index < multipleFilesMessage.files.count else { return }
-        let fileInfo = multipleFilesMessage.files[index]
-        
-        // show file view controller
-        let fileType: SBUMessageFileType
-        if let mimeType = fileInfo.mimeType {
-            fileType = SBUUtils.getFileType(by: mimeType)
-        } else {
-            fileType = .etc
-        }
-        let file = SBUFileData(
-            urlString: fileInfo.url,
-            message: multipleFilesMessage,
-            cacheKey: multipleFilesMessage.cacheKey + "_\(index)",
-            fileType: fileType,
-            name: fileInfo.fileName ?? ""
-        )
-        self.openFile(file)
-    }
-    
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
         guard let currentUser = SBUGlobals.currentUser,
               let message = messageCell.message else { return }
@@ -890,120 +855,11 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.showEmojiListModal(message: message)
     }
     
-    open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapQuotedMessageView quotedMessageView: SBUQuotedBaseMessageView) {
-        if SendbirdUI.config.groupChannel.channel.replyType == .thread &&  SendbirdUI.config.groupChannel.channel.threadReplySelectType == .thread {
-            if let channelURL = self.baseViewModel?.channelURL {
-                self.showMessageThread(
-                    channelURL: channelURL,
-                    parentMessageId: quotedMessageView.messageId,
-                    parentMessageCreatedAt: quotedMessageView.params?.quotedMessageCreatedAt,
-                    startingPoint: quotedMessageView.params?.messageCreatedAt
-                )
-            }
-            return
-        }
-        
-        if (quotedMessageView.params?.quotedMessageCreatedAt ?? 0) < (self.channel?.messageOffsetTimestamp ?? 0) {
-            SBULog.warning(SBUStringSet.Message_Reply_Cannot_Found_Original)
-            return
-        }
-        
-        guard let row = self.baseViewModel?.fullMessageList.firstIndex(
-            where: { $0.messageId == quotedMessageView.messageId }
-        ) else {
-            SBULog.info("There is no cached linked message. Reloads messages based on linked messages.")
-            self.viewModel?.loadInitialMessages(
-                startingPoint: quotedMessageView.params?.quotedMessageCreatedAt,
-                showIndicator: true,
-                initialMessages: nil
-            )
-            return
-        }
-        
-        let indexPath = IndexPath(row: row, section: 0)
-        
-        self.listComponent?.tableView.scrollToRow(at: indexPath, at: .middle, animated: false)
-        guard let cell = self.listComponent?.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell else {
-            SBULog.error("The cell for row at \(indexPath) is not `SBUBaseMessageCell`")
-            return
-        }
-        cell.messageContentView.animate(.shakeUpDown)
-    }
-    
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapMentionUser user: SBUUser) {
         self.showUserProfile(user: user)
     }
     
-    open func groupChannelModuleDidTapThreadInfoView(_ threadInfoView: SBUThreadInfoView) {
-        guard let message = threadInfoView.message,
-              let channelURL = self.channel?.channelURL else { return }
-        
-        // If it is the parent message itself, use `messageId` rather than `parentMessageId`.
-        self.showMessageThread(
-            channelURL: channelURL,
-            parentMessageId: message.messageId,
-            parentMessageCreatedAt: message.createdAt
-        )
-    }
-    
-    open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didSelect suggestedReplyOptionView: SBUSuggestedReplyOptionView) {
-        guard let text = suggestedReplyOptionView.text else { return }
-        self.viewModel?.sendUserMessage(text: text)
-    }
-
-    open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didSubmit form: SendbirdChatSDK.Form, messageCell: SBUBaseMessageCell) {
-        guard let message = messageCell.message else { return }
-        
-        self.viewModel?.submitForm(message: message, form: form)
-    }
-    
-    open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didUpdate feedbackAnswer: SBUFeedbackAnswer, messageCell: SBUBaseMessageCell) {
-        
-        guard let message = messageCell.message else { return }
-
-        switch feedbackAnswer.action {
-        case .rating:
-            self.viewModel?.submitFeedback(
-                message: message,
-                answer: feedbackAnswer
-            ) { [weak self, weak message, weak messageCell] _ in
-                self?.listComponent?.reloadCell(messageCell)
-                
-                SBUFeedbackAnswer.showCommentPopup(
-                    answer: feedbackAnswer
-                ) { [weak self, weak message] answer in
-                    guard let message = message else { return }
-                    self?.viewModel?.updateFeedback(message: message, answer: answer) { _ in
-                        self?.listComponent?.reloadTableView()
-                    }
-                }
-            }
-            // end case .rating
-            
-        case .modify:
-            SBUFeedbackAnswer.showModifications(
-                theme: listComponent.theme,
-                answer: feedbackAnswer,
-                updateHandler: { [weak self, weak message] answer in
-                    guard let message = message else { return }
-                    self?.viewModel?.updateFeedback(message: message, answer: answer) { _ in
-                        self?.listComponent?.reloadTableView()
-                        SBUToastView.show(type: .feedback)
-                    }
-                },
-                deleteHandler: { [weak self, weak message] _ in
-                    guard let message = message else { return }
-                    self?.viewModel?.deleteFeedback(message: message) {
-                        self?.listComponent?.reloadTableView()
-                    }
-                }
-            )
-            // end case .modify
-        }
-        // end switch
-    }
-    
-    open override func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage fileMessage: FileMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open override func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage fileMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         super.baseChannelModule(listComponent, didTapVoiceMessage: fileMessage, cell: cell, forRowAt: indexPath)
         
         if let cell = cell as? SBUBaseMessageCell {
@@ -1057,27 +913,17 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.listComponent?.channelStateBanner?.isHidden = !isFrozen
     }
     
-    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickFileData fileData: Data?, fileName: String, mimeType: String, parentMessage: BaseMessage?) {
+    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickFileData fileData: Data?, fileName: String, mimeType: String, parentMessage: JMessage?) {
         
         if let messageInputView = self.baseInputComponent?.messageInputView as? SBUMessageInputView {
             messageInputView.setMode(.none)
         }
         
-        self.viewModel?.sendFileMessage(
+        self.viewModel?.sendJMessage(
             fileData: fileData,
             fileName: fileName,
             mimeType: mimeType,
             parentMessage: parentMessage
-        )
-    }
-    
-    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickMultipleFiles fileInfoList: [UploadableFileInfo]?, parentMessage: BaseMessage?) {
-        if let messageInputView = self.baseInputComponent?.messageInputView as? SBUMessageInputView {
-            messageInputView.setMode(.none)
-        }
-        
-        self.viewModel?.sendMultipleFilesMessage(
-            fileInfoList: fileInfoList!
         )
     }
     
@@ -1086,7 +932,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         didTapSend text: String,
         mentionedMessageTemplate: String,
         mentionedUserIds: [String],
-        parentMessage: BaseMessage?
+        parentMessage: JMessage?
     ) {
         self.viewModel?.sendUserMessage(
             text: text,
@@ -1114,7 +960,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open func groupChannelModule(
         _ inputComponent: SBUGroupChannelModule.Input,
         willChangeMode mode: SBUMessageInputMode,
-        message: BaseMessage?,
+        message: JMessage?,
         mentionedMessageTemplate: String,
         mentionedUserIds: [String]
     ) { }
@@ -1149,7 +995,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     // MARK: - SBUGroupChannelViewModelDataSource
     open func groupChannelViewModel(_ viewModel: SBUGroupChannelViewModel,
-                                    startingPointIndexPathsForChannel channel: GroupChannel?) -> [IndexPath]? {
+                                    startingPointIndexPathsForChannel channel: JConversationInfo?) -> [IndexPath]? {
         return self.listComponent?.tableView.indexPathsForVisibleRows
     }
     
@@ -1157,36 +1003,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open func mentionManager(_ manager: SBUMentionManager, suggestedMentionUsersWith filterText: String) -> [SBUUser] {
         return self.viewModel?.suggestedMemberList ?? []
     }
-    
-    // MARK: - SBUMessageThreadViewControllerDelegate
-    open func messageThreadViewController(
-        _ viewController: SBUMessageThreadViewController,
-        shouldMoveToParentMessage parentMessage: BaseMessage
-    ) {
         
-        guard let row = self.baseViewModel?.fullMessageList.firstIndex(
-            where: { $0.messageId == parentMessage.messageId }
-        ) else {
-            SBULog.info("There is no cached linked message. Reloads messages based on linked messages.")
-            self.viewModel?.loadInitialMessages(
-                startingPoint: parentMessage.createdAt,
-                showIndicator: true,
-                initialMessages: self.viewModel?.fullMessageList
-            )
-            return
-        }
-        
-        let indexPath = IndexPath(row: row, section: 0)
-        self.listComponent?.tableView.scrollToRow(at: indexPath, at: .middle, animated: false)
-        self.listComponent?.tableView.layoutIfNeeded()
-    }
-    
-    open func messageThreadViewController(_ viewController: SBUMessageThreadViewController, shouldSyncVoiceFileInfos voiceFileInfos: [String: SBUVoiceFileInfo]?) {
-        if let voiceFileInfos = voiceFileInfos {
-            self.listComponent?.voiceFileInfos = voiceFileInfos
-        }
-    }
-    
     // MARK: - SBUVoiceMessageInputViewDelegate
     open func voiceMessageInputViewDidTapCacel(_ inputView: SBUVoiceMessageInputView) {
         self.dismissVoiceMessageInput()
@@ -1203,7 +1020,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         _ inputView: SBUVoiceMessageInputView,
         didTapSend voiceFileInfo: SBUVoiceFileInfo
     ) {
-        var parentMessage: BaseMessage?
+        var parentMessage: JMessage?
         if let messageInputView = self.baseInputComponent?.messageInputView as? SBUMessageInputView {
             switch messageInputView.option {
             case .quoteReply(let message):
@@ -1216,25 +1033,5 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         
         self.dismissVoiceMessageInput()
         self.viewModel?.sendVoiceMessage(voiceFileInfo: voiceFileInfo, parentMessage: parentMessage)
-    }
-    
-    // MARK: - SBUReactionsViewControllerDelegate
-    
-    /// - Since: 3.11.0
-    open func reactionsViewController(
-        _ viewController: SBUReactionsViewController,
-        didTapUserProfile user: SBUUser
-    ) {
-        self.showUserProfile(user: user)
-    }
-    
-    /// - Since: 3.11.0
-    open func reactionsViewController(
-        _ viewController: SBUReactionsViewController,
-        tableView: UITableView,
-        didSelect user: SBUUser,
-        forRowAt indexPath: IndexPath
-    ) {
-        
     }
 }

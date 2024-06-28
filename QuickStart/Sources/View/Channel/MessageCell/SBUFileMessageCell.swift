@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import JetIM
 
 @IBDesignable
 open class SBUFileMessageCell: SBUContentBaseMessageCell {
     
     // MARK: - Public property
-    public var fileMessage: FileMessage? {
-        self.message as? FileMessage
+    public var fileMessage: JMessage? {
+        self.message
     }
     
     public lazy var baseFileContentView: SBUBaseFileContentView = {

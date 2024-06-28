@@ -67,7 +67,7 @@ public protocol SBUBaseChannelModuleInputDelegate: SBUCommonDelegate {
     /// - Parameters:
     ///    - inputComponent: `SBUBaseChannelModule.Input` object.
     ///    - mode: `SBUMessageInputMode` value. It represents the current mode of `messageInputView`.
-    ///    - message: `BaseMessage` object. It's `nil` when the `mode` is `none`.
+    ///    - message: `JMessage` object. It's `nil` when the `mode` is `none`.
     func baseChannelModule(
         _ inputComponent: SBUBaseChannelModule.Input,
         willChangeMode mode: SBUMessageInputMode,
@@ -78,7 +78,7 @@ public protocol SBUBaseChannelModuleInputDelegate: SBUCommonDelegate {
     /// - Parameters:
     ///    - inputComponent: `SBUBaseChannelModule.Input` object.
     ///    - mode: `SBUMessageInputMode` value. The `messageInputView` changes its mode to this value.
-    ///    - message: `BaseMessage` object. It's `nil` when the `mode` is `none`.
+    ///    - message: `JMessage` object. It's `nil` when the `mode` is `none`.
     func baseChannelModule(
         _ inputComponent: SBUBaseChannelModule.Input,
         didChangeMode mode: SBUMessageInputMode,
@@ -97,11 +97,11 @@ public protocol SBUBaseChannelModuleInputDelegate: SBUCommonDelegate {
 
 /// Methods to get data source for the input component.
 public protocol SBUBaseChannelModuleInputDataSource: AnyObject {
-    /// Ask the data source to return the `BaseChannel` object.
+    /// Ask the data source to return the `JConversationInfo` object.
     /// - Parameters:
     ///    - inputComponent: `SBUBaseChannelModule.Input` object.
     ///    - messageInputView: `UIView` object representing `messageInputView` from input component.
-    /// - Returns: `BaseChannel` object.
+    /// - Returns: `JConversationInfo` object.
     func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input, channelForInputView messageInputView: UIView?) -> JConversationInfo?
 }
 
@@ -192,7 +192,7 @@ extension SBUBaseChannelModule {
         /// Updates mode of `messageInputView`.
         /// - Parameters:
         ///   - mode: `SBUMessageInputMode` value.
-        ///   - message: `BaseMessage` value for some specific modes such as `.edit` or `.quoteReply`
+        ///   - message: `JMessage` value for some specific modes such as `.edit` or `.quoteReply`
         open func updateMessageInputMode(_ mode: SBUMessageInputMode, message: JMessage? = nil) {
             if let messageInputView = self.messageInputView as? SBUMessageInputView {
                 messageInputView.setMode(mode, message: message)

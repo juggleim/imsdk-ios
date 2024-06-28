@@ -12,5 +12,5 @@ import Foundation
 ///
 /// - Since: 2.2.0
 public protocol SBUQuotedMessageViewProtocol: SBUViewLifeCycle {
-//    func configure(with configuration: SBUQuotedBaseMessageViewParams)
+//    func configure(with configuration: SBUQuotedJMessageViewParams)
 }

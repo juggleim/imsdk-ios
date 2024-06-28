@@ -13,7 +13,7 @@ extension SBUConfig {
     public class BaseInput: NSObject, Codable, SBUUpdatableConfigProtocol {
         // MARK: Property
         
-        /// Use the menu to load files (such as pdf, mp3, etc.) for sending fileMessage.
+        /// Use the menu to load files (such as pdf, mp3, etc.) for sending JMessage.
         @SBUPrioritizedConfig public var isDocumentEnabled: Bool = true
         
         /// Camera configuration set of Input

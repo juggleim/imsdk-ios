@@ -63,7 +63,7 @@ public struct SBUUserMessageTextViewModel {
     ///   - isOverlay: A boolean indicating if the message is an overlay, default is false.
     ///   - highlightKeyword: The keyword to be highlighted in the message, default is nil.
     public init(
-        message: BaseMessage?,
+        message: JMessage?,
         position: MessagePosition = .right,
         text: String? = nil,
         font: UIFont? = nil,
@@ -72,12 +72,15 @@ public struct SBUUserMessageTextViewModel {
         isOverlay: Bool = false,
         highlightKeyword: String? = nil
     ) {
-        let text = message?.message ?? text ?? ""
+        guard let textMessage = message?.content as? JTextMessage else {
+            return
+        }
+        let text = textMessage.content
         
         if let isEdited = isEdited {
             edited = isEdited
         } else {
-            edited = message?.updatedAt != 0
+            edited = message?.timestamp != 0
         }
         
         self.theme = isOverlay ? SBUTheme.overlayTheme.messageCellTheme : SBUTheme.messageCellTheme

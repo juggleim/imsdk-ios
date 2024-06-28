@@ -54,20 +54,20 @@ open class SBUAdminMessageCell: SBUBaseMessageCell {
     }
     
     // MARK: - Common
-    open override func configure(with configuration: SBUBaseMessageCellParams) {
-        return
-        //TODO: 
-//        guard let configuration = configuration as? SBUAdminMessageCellParams else { return }
-//        guard let message = configuration.adminMessage else { return }
-//        // Configure Content base message cell
-//        super.configure(with: configuration)
-//
-//        // Set up message label
-//        self.messageLabel.numberOfLines = 0
-//        self.messageLabel.textAlignment = .center
-//        self.messageLabel.text = message.message
-//        self.layoutIfNeeded()
-    }
+//    open override func configure(with configuration: SBUFileMessageCellParams) {
+//        return
+//        //TODO: 
+////        guard let configuration = configuration as? SBUAdminMessageCellParams else { return }
+////        guard let message = configuration.adminMessage else { return }
+////        // Configure Content base message cell
+////        super.configure(with: configuration)
+////
+////        // Set up message label
+////        self.messageLabel.numberOfLines = 0
+////        self.messageLabel.textAlignment = .center
+////        self.messageLabel.text = message.message
+////        self.layoutIfNeeded()
+//    }
     
 //    @available(*, deprecated, renamed: "configure(with:)") // 2.2.0
 //    open func configure(_ message: AdminMessage, hideDateView: Bool) {

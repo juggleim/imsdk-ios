@@ -14,8 +14,8 @@ import Foundation
 public protocol SBUMessageCellProtocol {
     
     /// This function configure a cell using informations.
-    /// - Parameter configuration: `SBUBaseMessageCellParams` object.
-//    func configure(with configuration: SBUBaseMessageCellParams)
+    /// - Parameter configuration: `SBUJMessageCellParams` object.
+//    func configure(with configuration: SBUJMessageCellParams)
     
     /// Adds highlight attribute to the message
     func configure(highlightInfo: SBUHighlightMessageInfo?)

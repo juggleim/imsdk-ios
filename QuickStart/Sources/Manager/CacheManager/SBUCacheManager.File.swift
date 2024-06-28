@@ -89,11 +89,11 @@ extension SBUCacheManager {
             return diskData as Data?
         }
         
-        static func preSave(fileMessage: JFileMessage, fileName: String?, completionHandler: SBUCacheCompletionHandler? = nil) {
-//            if let messageParams = fileMessage.messageParams as? FileMessageCreateParams {
+        static func preSave(fileMessage: JMessage, fileName: String?, completionHandler: SBUCacheCompletionHandler? = nil) {
+//            if let messageParams = JMessage.messageParams as? JMessageCreateParams {
 //                let fileName = self.createCacheFileName(
-//                    urlString: fileMessage.url,
-//                    cacheKey: fileMessage.cacheKey,
+//                    urlString: JMessage.url,
+//                    cacheKey: JMessage.cacheKey,
 //                    fileName: fileName
 //                )
 //                

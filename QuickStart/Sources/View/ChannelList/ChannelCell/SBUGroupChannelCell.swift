@@ -322,9 +322,9 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
 //                messageLabel.lineBreakMode = .byTruncatingTail
 //                messageLabel.text = userMessage.message
 //                messageLabel.numberOfLines = 2
-//            case let fileMessage as FileMessage:
+//            case let JMessage as JMessage:
 //                self.messageLabel.lineBreakMode = .byTruncatingMiddle
-//                self.messageLabel.text = SBUUtils.getFileTypePreviewString(by: fileMessage.type)
+//                self.messageLabel.text = SBUUtils.getFileTypePreviewString(by: JMessage.type)
 //            case let adminMessage as AdminMessage:
 //                if groupChannel.isChatNotification {
 //                    self.messageLabel.lineBreakMode = .byTruncatingMiddle

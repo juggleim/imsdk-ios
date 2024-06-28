@@ -10,7 +10,7 @@ import UIKit
 import JetIM
 
  @IBDesignable
-open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol, SBUFeedbackViewDelegate {
+open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol {
     // MARK: - Public
     public var message: JMessage?
     public var position: MessagePosition = .center
@@ -61,7 +61,7 @@ open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol, SBUFeed
     
     /// The action of ``SBUSuggestedReplyView`` that is called when a ``SBUSuggestedReplyOptionView`` is selected.
     /// - Parameter selectedOptionView: The selected ``SBUSuggestedReplyOptionView`` object.
-    var suggestedReplySelectHandler: ((_ selectedOptionView: SBUSuggestedReplyOptionView) -> Void)?
+//    var suggestedReplySelectHandler: ((_ selectedOptionView: SBUSuggestedReplyOptionView) -> Void)?
     
     /// The action of ``SBUFormView`` that is called when a ``SendbirdChatSDK.Form`` is submitted.
     /// - Parameters:
@@ -129,25 +129,25 @@ open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol, SBUFeed
     /**
      This function configure a cell using informations.
      
-     - Parameter configuration: `SBUBaseMessageCellParams` object.
+     - Parameter configuration: `SBUJMessageCellParams` object.
      */
-    open func configure(with configuration: SBUBaseMessageCellParams) {
-        self.message = configuration.message
-        self.position = configuration.messagePosition
-        self.groupPosition = configuration.groupPosition
-        self.dateView.isHidden = configuration.hideDateView
-        self.receiptState = configuration.receiptState
-        self.shouldHideFeedback = configuration.shouldHideFeedback
-        
-        if let dateView = self.dateView as? SBUMessageDateView,
-           let message = self.message {
-            dateView.configure(timestamp: message.timestamp)
-        }
-        
-        // MARK: Feedback Views
-//        self.updateFeedbackView(with: self.message)
-        //TODO: 
-    }
+//    open func configure(with configuration: SBUJMessageCellParams) {
+//        self.message = configuration.message
+//        self.position = configuration.messagePosition
+//        self.groupPosition = configuration.groupPosition
+//        self.dateView.isHidden = configuration.hideDateView
+//        self.receiptState = configuration.receiptState
+//        self.shouldHideFeedback = configuration.shouldHideFeedback
+//        
+//        if let dateView = self.dateView as? SBUMessageDateView,
+//           let message = self.message {
+//            dateView.configure(timestamp: message.timestamp)
+//        }
+//        
+//        // MARK: Feedback Views
+////        self.updateFeedbackView(with: self.message)
+//        //TODO: 
+//    }
     
     open func configure(highlightInfo: SBUHighlightMessageInfo?) {
         
@@ -165,7 +165,7 @@ open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol, SBUFeed
                         hideDateView: Bool,
                         groupPosition: MessageGroupPosition = .none,
                         receiptState: SBUMessageReceiptState) {
-        let configuration = SBUBaseMessageCellParams(
+        let configuration = SBUJMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             messagePosition: position,

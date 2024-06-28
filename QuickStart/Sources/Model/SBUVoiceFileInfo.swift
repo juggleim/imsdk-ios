@@ -32,8 +32,8 @@ public class SBUVoiceFileInfo: NSObject {
         self.currentPlayTime = currentPlayTime
     }
     
-    /// Creates voice file info with `FileMessage` object
-    /// - Parameter message: `FileMessage` object
+    /// Creates voice file info with `JMessage` object
+    /// - Parameter message: `JMessage` object
     /// - Returns: ``SBUVoiceFileInfo`` obejct; If the `message` is not the *voice* message, it returns `nil`
     public static func createVoiceFileInfo(with message: JMessage) -> SBUVoiceFileInfo? {
 //        if SBUUtils.getFileType(by: message) == .voice {

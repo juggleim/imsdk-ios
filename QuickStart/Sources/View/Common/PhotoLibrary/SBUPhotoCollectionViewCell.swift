@@ -90,7 +90,7 @@ open class SBUPhotoCollectionViewCell: UICollectionViewCell, SBUViewLifeCycle {
             self.iconImageView.backgroundColor = nil
             if self.imageView.image == nil {
                 self.iconImageView.image = SBUIconSetType.iconPhoto.image(
-                    with: theme.fileMessagePlaceholderColor,
+                    with: theme.JMessagePlaceholderColor,
                     to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
                 )
             } else {
