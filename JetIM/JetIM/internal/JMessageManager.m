@@ -663,6 +663,14 @@
                     localMessageBlock:(void (^)(NSArray *messages,BOOL needRemote))localMessageBlock
                    remoteMessageBlock:(void (^)(NSArray *messages))remoteMessageBlock
                                 error:(void (^)(JErrorCode code))errorBlock{
+    if (conversation.conversationId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
     if (count <= 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if (localMessageBlock) {

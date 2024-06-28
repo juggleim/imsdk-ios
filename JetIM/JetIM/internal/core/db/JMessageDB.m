@@ -170,6 +170,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (conversation.conversationId.length == 0) {
+        return [NSArray array];
+    }
     if (time == 0) {
         time = INT64_MAX;
     }
@@ -236,6 +239,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
 }
 
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId{
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     NSString *sql = jClearMessages;
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(startTime)]];
     if(senderId.length > 0){
@@ -366,6 +372,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
 
 
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
+    if (messageId.length == 0) {
+        return @"";
+    }
     NSString *sql = jGetMessageLocalAttribute;
     sql = [sql stringByAppendingString:jMessageIdIs];
     __block NSString * localAttribute;
@@ -380,6 +389,12 @@ NSString *const jReferMsgId = @"refer_msg_id";
     
 }
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
+    if (messageId.length == 0) {
+        return;
+    }
+    if (!attribute) {
+        attribute = @"";
+    }
     NSString *sql = jUpdateMessageLocalAttribute;
     sql = [sql stringByAppendingString:jMessageIdIs];
     [self.dbHelper executeUpdate:sql
@@ -401,6 +416,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
     
 }
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
+    if (!attribute) {
+        attribute = @"";
+    }
     NSString *sql = jUpdateMessageLocalAttribute;
     sql = [sql stringByAppendingString:jClientMsgNoIs];
     [self.dbHelper executeUpdate:sql
@@ -409,7 +427,7 @@ NSString *const jReferMsgId = @"refer_msg_id";
 }
 
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
-    if(conversation == nil){
+    if(conversation.conversationId.length == 0){
         return nil;
     }
     NSString * sql = jGetMessagesInConversation;

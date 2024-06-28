@@ -159,6 +159,9 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return nil;
+    }
     __block JConcreteConversationInfo *info = nil;
     [self.dbHelper executeQuery:kGetConversation
            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]
@@ -171,6 +174,9 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)deleteConversationInfoBy:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jDeleteConversation
             withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
 }
@@ -265,6 +271,12 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
+    if (!draft) {
+        draft = @"";
+    }
     [self.dbHelper executeUpdate:jSetDraft withArgumentsInArray:@[draft, @(conversation.conversationType), conversation.conversationId]];
 }
 
@@ -274,6 +286,9 @@ NSString *const jTotalCount = @"total_count";
 
 - (void)clearUnreadCountBy:(JConversation *)conversation
                   msgIndex:(long long)msgIndex {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId]];
 }
 
@@ -302,16 +317,16 @@ NSString *const jTotalCount = @"total_count";
     }
     
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[message.messageId?:@"",
-                                                                   message.contentType,
-                                                                   message.clientUid,
+                                                                   message.contentType?:@"",
+                                                                   message.clientUid?:@"",
                                                                    @(message.clientMsgNo),
                                                                    @(message.direction),
                                                                    @(message.messageState),
                                                                    @(message.hasRead),
                                                                    @(message.timestamp),
-                                                                   message.senderUserId,
-                                                                   content,
-                                                                   mentionInfo,
+                                                                   message.senderUserId?:@"",
+                                                                   content?:@"",
+                                                                   mentionInfo?:@"",
                                                                    @(message.seqNo)]];
     if (isUpdateSortTime) {
         [args addObject:@(message.timestamp)];
@@ -326,10 +341,16 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId]];
 }
 
 - (void)setTop:(BOOL)isTop time:(long long)time conversation:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     NSString *sql;
     sql = jSetTop;
     if (!isTop) {
@@ -357,6 +378,9 @@ NSString *const jTotalCount = @"total_count";
 
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     NSString *sql = [jUpdateConversationTime stringByAppendingString:jWhereConversationIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId]];
 }
@@ -364,6 +388,10 @@ NSString *const jTotalCount = @"total_count";
 
 -(void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson{
+    if (conversation.conversationId.length == 0
+        || mentionInfoJson.length == 0) {
+        return;
+    }
     [self.dbHelper executeUpdate:jUpdateConversationMentionInfo withArgumentsInArray:@[mentionInfoJson, @(conversation.conversationType), conversation.conversationId]];
 }
 
@@ -372,6 +400,9 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)clearLastMessage:(JConversation *)conversation{
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
     NSString *sql = [jUpdateConversationTime stringByAppendingString:jClearLastMessage];
     sql = [sql stringByAppendingString:jWhereConversationIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
@@ -394,19 +425,19 @@ NSString *const jTotalCount = @"total_count";
     }
     
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[message.messageId?:@"",
-                                                                   message.contentType,
-                                                                   message.clientUid,
+                                                                   message.contentType?:@"",
+                                                                   message.clientUid?:@"",
                                                                    @(message.clientMsgNo),
                                                                    @(message.direction),
                                                                    @(message.messageState),
                                                                    @(message.hasRead),
                                                                    @(message.timestamp),
-                                                                   message.senderUserId,
-                                                                   mentionInfo,
-                                                                   content,
+                                                                   message.senderUserId?:@"",
+                                                                   mentionInfo?:@"",
+                                                                   content?:@"",
                                                                    @(message.seqNo),
                                                                    @(message.conversation.conversationType),
-                                                                   message.conversation.conversationId]];
+                                                                   message.conversation.conversationId?:@""]];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 
     

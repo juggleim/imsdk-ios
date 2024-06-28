@@ -508,7 +508,7 @@
             //更新数据库
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
             [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
-
+            
             //获取会话对象
             JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
             if(convationInfo){
@@ -614,7 +614,7 @@
         }];
     });
 }
--(void)updateConversationLastMessage:(JConcreteConversationInfo *)info 
+-(void)updateConversationLastMessage:(JConcreteConversationInfo *)info
                          lastMessage:(JConcreteMessage *)lastMessage
                      isUpdateMention:(BOOL)isUpDataMention {
     BOOL isLastMessageUpdate = (info.lastMessage == nil ||
@@ -703,7 +703,7 @@
     }
     
     JConversationMentionInfo * mentionInfo;
-
+    
     if(hasMention){
         NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
         JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
@@ -733,7 +733,7 @@
             addInfo.lastMessageIndex = message.msgIndex;
             addInfo.lastReadMessageIndex = message.msgIndex - 1;
             addInfo.unreadCount = 1;
-          }
+        }
         if (mentionInfo) {
             addInfo.mentionInfo = mentionInfo;
         }

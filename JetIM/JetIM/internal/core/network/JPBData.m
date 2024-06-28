@@ -973,12 +973,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             mergeMessage.containerMsgId = msg.messageId;
         }
     }
-    int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
-    if (flags < 0) {
-        msg.flags = downMsg.flags;
-    } else {
-        msg.flags = flags;
-    }
+    msg.flags = downMsg.flags;
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
