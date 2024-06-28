@@ -1051,7 +1051,6 @@
         mergeInfo.containerMsgId = mergeMessage.containerMsgId;
         mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
-    
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation
                            clientMsgNo:message.clientMsgNo
@@ -1060,7 +1059,7 @@
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
                            mentionInfo:message.mentionInfo
-                       referredMessage:message.referredMsg
+                       referredMessage:(JConcreteMessage *)message.referredMsg
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
         [self updateSendSyncTime:timestamp];
@@ -1142,7 +1141,9 @@
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
-    
+    if(messageOption.mentionInfo != nil){
+        message.mentionInfo = messageOption.mentionInfo;
+    }
     if (messageOption.referredMsgId != nil) {
         JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId];
         message.referredMsg = referredMsg;

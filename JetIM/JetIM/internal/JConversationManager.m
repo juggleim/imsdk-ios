@@ -729,9 +729,11 @@
             addInfo.sortTime = message.timestamp;
         }
         addInfo.lastMessage = message;
-        addInfo.lastMessageIndex = message.msgIndex;
-        addInfo.lastReadMessageIndex = message.msgIndex - 1;
-        addInfo.unreadCount = 1;
+        if (message.msgIndex > 0) {
+            addInfo.lastMessageIndex = message.msgIndex;
+            addInfo.lastReadMessageIndex = message.msgIndex - 1;
+            addInfo.unreadCount = 1;
+          }
         if (mentionInfo) {
             addInfo.mentionInfo = mentionInfo;
         }

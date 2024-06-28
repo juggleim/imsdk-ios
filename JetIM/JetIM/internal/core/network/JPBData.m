@@ -967,6 +967,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.msgIndex = downMsg.unreadIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
+    if([msg.content isKindOfClass:[JMergeMessage class]]){
+        JMergeMessage * mergeMessage = (JMergeMessage *)msg.content;
+        if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+            mergeMessage.containerMsgId = msg.messageId;
+        }
+    }
     int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
     if (flags < 0) {
         msg.flags = downMsg.flags;
