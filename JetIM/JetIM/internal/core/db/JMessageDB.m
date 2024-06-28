@@ -104,6 +104,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
             message = [self messageWith:resultSet];
         }
     }];
+    if(message.referMsgId.length > 0){
+        message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+    }
     return message;
 }
 
@@ -206,6 +209,12 @@ NSString *const jReferMsgId = @"refer_msg_id";
             [messages addObject:m];
         }
     }];
+    for (JConcreteMessage * message in messages) {
+        if(message.referMsgId.length > 0){
+            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        }
+    }
+    
     NSArray *result;
     if (direction == JPullDirectionOlder) {
         result = [[messages reverseObjectEnumerator] allObjects];
@@ -267,6 +276,11 @@ NSString *const jReferMsgId = @"refer_msg_id";
             [result addObject:m];
         }
     }];
+    for (JConcreteMessage * message in result) {
+        if(message.referMsgId.length > 0){
+            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        }
+    }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
     for (NSString *messageId in messageIds) {
         for (JMessage *message in result) {
@@ -294,6 +308,11 @@ NSString *const jReferMsgId = @"refer_msg_id";
             [result addObject:m];
         }
     }];
+    for (JConcreteMessage * message in result) {
+        if(message.referMsgId.length > 0){
+            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        }
+    }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
     for (NSNumber *clientMsgNo in clientMsgNos) {
         for (JMessage *message in result) {
@@ -361,6 +380,11 @@ NSString *const jReferMsgId = @"refer_msg_id";
             [messages addObject:m];
         }
     }];
+    for (JConcreteMessage * message in messages) {
+        if(message.referMsgId.length > 0){
+            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        }
+    }
     NSArray *result;
     if (direction == JPullDirectionOlder) {
         result = [[messages reverseObjectEnumerator] allObjects];
@@ -447,7 +471,11 @@ NSString *const jReferMsgId = @"refer_msg_id";
     JConcreteMessage * lastMessage;
     if(messages.count >= 1){
         lastMessage = messages.firstObject;
+            if(lastMessage.referMsgId.length > 0){
+                lastMessage.referredMsg = [self getMessageWithMessageId:lastMessage.referMsgId];
+            }
     }
+    
     return lastMessage;
 }
 
@@ -544,6 +572,10 @@ NSString *const jReferMsgId = @"refer_msg_id";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
+    if(message.referMsgId.length > 0){
+        message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+    }
+    
     return message;
 }
 
@@ -583,16 +615,7 @@ NSString *const jReferMsgId = @"refer_msg_id";
     if (mentionInfoStr.length > 0) {
         message.mentionInfo = [JMessageMentionInfo decodeFromJson:mentionInfoStr];
     }
-    NSString * referMsgId = [rs stringForColumn:jReferMsgId];
-    if(referMsgId.length > 0){
-        dispatch_async(dispatch_queue_create("com.JetIM.im.referredqueue", DISPATCH_QUEUE_CONCURRENT), ^{
-            JConcreteMessage * referredInfo = [self getMessageWithMessageId:referMsgId];
-            if(referredInfo){
-                message.referredMsg = referredInfo;
-            }
-        });
-        
-    }
+    message.referMsgId = [rs stringForColumn:jReferMsgId];
     return message;
 }
 
