@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
                           startTime:(long long)startTime
                          sendUserId:(NSString *)sendUserId
                         lastMessage:(JConcreteMessage *)lastMessage;
+-(void)onversationsClearTotalUnread:(long long)clearTime;
 @end
 
 NS_ASSUME_NONNULL_END

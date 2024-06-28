@@ -25,6 +25,7 @@
 #import "JCleanMsgMessage.h"
 #import "JLogCommandMessage.h"
 #import "JAddConvMessage.h"
+#import "JClearTotlaUnreadMessage.h"
 #import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -977,6 +978,7 @@
     [self registerContentType:[JCleanMsgMessage class]];
     [self registerContentType:[JLogCommandMessage class]];
     [self registerContentType:[JAddConvMessage class]];
+    [self registerContentType:[JClearTotlaUnreadMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -1361,6 +1363,15 @@
             [obj.contentType isEqualToString:[JClearUnreadMessage contentType]]) {
             if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidUpdate:)]) {
                 [self.sendReceiveDelegate conversationsDidUpdate:obj];
+            }
+            return;
+        }
+        
+        //clear total unread message
+        if ([obj.contentType isEqualToString:[JClearTotlaUnreadMessage contentType]]) {
+            JClearTotlaUnreadMessage * message = (JClearTotlaUnreadMessage *)obj.content;
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(onversationsClearTotalUnread:)]) {
+                [self.sendReceiveDelegate onversationsClearTotalUnread:message.clearTime];
             }
             return;
         }

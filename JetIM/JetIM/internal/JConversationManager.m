@@ -587,6 +587,13 @@
     }
     [self updateConversationLastMessage:info lastMessage:lastMessage isUpdateMention:isUpdateMention];
 }
+
+- (void)onversationsClearTotalUnread:(long long)clearTime { 
+    [self.core.dbManager clearTotalUnreadCount];
+    [self.core.dbManager clearMentionInfo];
+    [self noticeTotalUnreadCountChange];
+}
+
 -(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
     if(conversation == nil){
         return nil;
