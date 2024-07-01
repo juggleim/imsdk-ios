@@ -138,41 +138,40 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     ///
     /// If you want to use a custom channelViewController, override it and implement it.
     /// - Parameters:
-    ///   - channelURL: channel url for use in channelViewController.
-    ///   - messageListParams: If there is a messageListParams set directly for use in Channel, set it up here
-    open override func showChannel(channelURL: JConversation) {
+    ///   - conversationInfo:
+    open override func showChannel(conversationInfo: JConversationInfo) {
         
-//        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
-//                            channel: channelURL
-//                        )
-//                        self.navigationController?.pushViewController(channelVC, animated: true)
+        //        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
+        //                            channel: channelURL
+        //                        )
+        //                        self.navigationController?.pushViewController(channelVC, animated: true)
         
-//        GroupChannel.getChannel(url: channelURL) { channel, error in
-//            guard error == nil, let channel = channel else { return }
-//
-//            if channel.isChatNotification {
-//                let channelVC = SBUViewControllerSet.ChatNotificationChannelViewController.init(
-//                    channel: channel,
-//                    notificationListParams: messageListParams,
-//                    displaysLocalCachedListFirst: true
-//                )
-//                self.navigationController?.pushViewController(channelVC, animated: true)
-//            } else if channel.isFeedChannel() {
-//                let channelVC = SBUViewControllerSet.FeedNotificationChannelViewController.init(
-//                    channelURL: channelURL,
-//                    notificationListParams: messageListParams,
-//                    displaysLocalCachedListFirst: true
-//                )
-//                self.navigationController?.pushViewController(channelVC, animated: true)
-//            } else {
-//                let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
-//                    channelURL: channelURL,
-//                    messageListParams: messageListParams,
-//                    displaysLocalCachedListFirst: true
-//                )
-//                self.navigationController?.pushViewController(channelVC, animated: true)
-//            }
-//        }
+        //        GroupChannel.getChannel(url: channelURL) { channel, error in
+        //            guard error == nil, let channel = channel else { return }
+        //
+        //            if channel.isChatNotification {
+        //                let channelVC = SBUViewControllerSet.ChatNotificationChannelViewController.init(
+        //                    channel: channel,
+        //                    notificationListParams: messageListParams,
+        //                    displaysLocalCachedListFirst: true
+        //                )
+        //                self.navigationController?.pushViewController(channelVC, animated: true)
+        //            } else if channel.isFeedChannel() {
+        //                let channelVC = SBUViewControllerSet.FeedNotificationChannelViewController.init(
+        //                    channelURL: channelURL,
+        //                    notificationListParams: messageListParams,
+        //                    displaysLocalCachedListFirst: true
+        //                )
+        //                self.navigationController?.pushViewController(channelVC, animated: true)
+        //            } else {
+        //                let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
+        //                    channelURL: channelURL,
+        //                    messageListParams: messageListParams,
+        //                    displaysLocalCachedListFirst: true
+        //                )
+        //                self.navigationController?.pushViewController(channelVC, animated: true)
+        //            }
+        //        }
     }
     
     // MARK: - Error handling
@@ -227,7 +226,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     ) {
         guard self.channelList.count > indexPath.row else { return }
         let channel = self.channelList[indexPath.row]
-        self.showChannel(channelURL: channel.conversation)
+        self.showChannel(conversationInfo: channel)
     }
     
     open func baseChannelListModule(
