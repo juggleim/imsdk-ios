@@ -41,7 +41,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         set { self.baseViewModel = newValue }
     }
     
-    public var channel: JConversationInfo? { self.viewModel?.channel as? JConversationInfo }
+    public var conversationInfo: JConversationInfo? { self.viewModel?.conversationInfo }
     
     public private(set) var newMessagesCount: Int = 0
     
@@ -247,7 +247,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     @discardableResult
     public override func increaseNewMessageCount() -> Bool {
         guard let viewModel = viewModel else { return false }
-        guard !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.channel) else { return false }
+        guard !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.conversationInfo) else { return false }
         
         guard super.increaseNewMessageCount() else { return false }
         
@@ -311,7 +311,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     open override func showChannelSettings() {
-        guard let channel = self.channel else { return }
+        guard let conversationInfo = self.conversationInfo else { return }
         
 //        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(channel: channel)
 //        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
@@ -323,7 +323,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         parentMessageCreatedAt: Int64? = 0,
         startingPoint: Int64? = 0
     ) {
-        if (parentMessageCreatedAt ?? 0) < (self.channel?.sortTime ?? 0) {
+        if (parentMessageCreatedAt ?? 0) < (self.conversationInfo?.sortTime ?? 0) {
             SBULog.warning(SBUStringSet.Message_Reply_Cannot_Found_Original)
             return
         }
@@ -767,7 +767,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didLongTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-        guard let channel = self.channel,
+        guard let conversationInfo = self.conversationInfo,
               let message = messageCell.message else { return }
         
 //        let reaction = message.reactions.first { $0.key == emojiKey }

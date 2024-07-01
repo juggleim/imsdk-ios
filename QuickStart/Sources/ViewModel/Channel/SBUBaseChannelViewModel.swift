@@ -86,9 +86,7 @@ open class SBUBaseChannelViewModel: NSObject {
     
     // MARK: - Logic properties (Public)
     /// The current channel object. It's `JConversationInfo` type.
-    public internal(set) var channel: JConversationInfo?
-    /// The URL of the current channel.
-    public internal(set) var channelURL: String?
+    public internal(set) var conversationInfo: JConversationInfo?
     /// The starting point of the message list in the `channel`.
     public internal(set) var startingPoint: Int64?
     

@@ -81,19 +81,14 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.delegate = delegate
         self.dataSource = dataSource
         
-        if let channel = channel {
-            self.channel = channel
+        if let conversationInfo = conversationInfo {
+            self.conversationInfo = conversationInfo
         }
         
         self.startingPoint = startingPoint
         
         self.debouncer = SBUDebouncer(
             debounceTime: SBUGlobals.userMentionConfig?.debounceTime ?? SBUDebouncer.defaultTime
-        )
-        
-        guard let channelURL = self.channelURL else { return }
-        self.loadChannel(
-            channelURL: channelURL
         )
     }
     
@@ -149,55 +144,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 //                )
 //            }
 //        }
-    }
-    
-    public override func refreshChannel() {
-//        if let channel = self.channel as? GroupChannel {
-//            channel.refresh { [weak self] error in
-//                guard let self = self else { return }
-//                guard self.canProceed(with: channel, error: error) == true else {
-//                    let context = MessageContext(source: .eventChannelChanged, sendingStatus: .failed)
-//                    self.delegate?.baseChannelViewModel(self, didChangeChannel: channel, withContext: context)
-//                    return
-//                }
-//
-//                let context = MessageContext(source: .eventChannelChanged, sendingStatus: .succeeded)
-//                self.delegate?.baseChannelViewModel(self, didChangeChannel: channel, withContext: context)
-//            }
-//        } else if let channelURL = self.channelURL {
-//            self.loadChannel(channelURL: channelURL)
-//        }
-    }
-    
-    private func canProceed(with channel: JConversationInfo?, error: JErrorCode?) -> Bool {
-//        if let error = error {
-////            SBULog.error("[Failed] Load channel request: \(error.localizedDescription)")
-//
-//            if error.code == ChatError.nonAuthorized.rawValue {
-//                self.delegate?.baseChannelViewModel(self, shouldDismissForChannel: nil)
-//            } else {
-//                if SendbirdChat.isLocalCachingEnabled &&
-//                    error.code == ChatError.networkError.rawValue &&
-//                    channel != nil {
-//                    return true
-//                } else {
-//                    self.delegate?.didReceiveError(error, isBlocker: true)
-//                }
-//            }
-//            return false
-//        }
-        
-        guard let channel = channel
-        else {
-            self.delegate?.baseChannelViewModel(self, shouldDismissForChannel: channel)
-            return false
-        }
-
-        return true
-    }
-    
-    private func belongsToChannel(error: JErrorCode) -> Bool {
-        return false//error.code != ChatError.nonAuthorized.rawValue
     }
     
     // MARK: - Message
@@ -542,7 +488,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     // MARK: - Common
     private func createCollectionIfNeeded(startingPoint: Int64) {
         // GroupChannel only
-        guard let channel = self.channel as? JConversationInfo else { return }
+        guard let conversationInfo = self.conversationInfo else { return }
     }
     
     override func reset() {

@@ -250,7 +250,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     public func updateChannelTitle() {
         if let titleView = self.baseHeaderComponent?.titleView as? SBUChannelTitleView {
             titleView.configure(
-                channel: self.baseViewModel?.channel,
+                channel: self.baseViewModel?.conversationInfo,
                 title: self.channelName
             )
         }
@@ -260,7 +260,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// Updates channelStatus with channel
     /// - Since: 3.0.0
     public func updateChannelStatus() {
-        guard let channel = self.baseViewModel?.channel else { return }
+        guard let channel = self.baseViewModel?.conversationInfo else { return }
         if let titleView = self.baseHeaderComponent?.titleView as? SBUChannelTitleView {
             titleView.updateChannelStatus(channel: channel)
         }
@@ -608,7 +608,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             return
         }
     
-        if !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.channel) {
+        if !baseChannelViewModel(viewModel, isScrollNearBottomInChannel: viewModel.conversationInfo) {
             self.lastSeenIndexPath = baseListComponent.keepCurrentScroll(for: messages)
         }
     }
@@ -862,9 +862,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModuleDidSelectRetry(_ listComponent: SBUBaseChannelModule.List) {
-        if let channelURL = self.baseViewModel?.channelURL {
-            self.baseViewModel?.loadChannel(channelURL: channelURL)
-        }
+//        if let channelURL = self.baseViewModel?.channelURL {
+//            self.baseViewModel?.loadChannel(channelURL: channelURL)
+//        }
     }
     
     // MARK: SBUBaseChannelModuleListDataSource
@@ -872,7 +872,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         _ listComponent: SBUBaseChannelModule.List,
         channelForTableView tableView: UITableView
     ) -> JConversationInfo? {
-        self.baseViewModel?.channel
+        self.baseViewModel?.conversationInfo
     }
     
     open func baseChannelModule(
@@ -1076,7 +1076,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         _ inputComponent: SBUBaseChannelModule.Input,
         channelForInputView messageInputView: UIView?
     ) -> JConversationInfo? {
-        baseViewModel?.channel
+        baseViewModel?.conversationInfo
     }
     
     // MARK: - Input Keyboard events
