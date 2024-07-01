@@ -73,18 +73,13 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     var displaysLocalCachedListFirst: Bool = false
     
     // MARK: - LifeCycle
-    public init(channel: JConversationInfo? = nil,
-                channelURL: String? = nil,
-                startingPoint: Int64? = .max,
+    public init(conversationInfo: JConversationInfo? = nil,
                 delegate: SBUGroupChannelViewModelDelegate? = nil,
-                dataSource: SBUGroupChannelViewModelDataSource? = nil,
-                displaysLocalCachedListFirst: Bool = false) {
+                dataSource: SBUGroupChannelViewModelDataSource? = nil) {
         super.init()
     
         self.delegate = delegate
         self.dataSource = dataSource
-        
-        self.displaysLocalCachedListFirst = displaysLocalCachedListFirst
         
         if let channel = channel {
             self.channel = channel

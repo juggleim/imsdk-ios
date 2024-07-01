@@ -140,38 +140,8 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     /// - Parameters:
     ///   - conversationInfo:
     open override func showChannel(conversationInfo: JConversationInfo) {
-        
-        //        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
-        //                            channel: channelURL
-        //                        )
-        //                        self.navigationController?.pushViewController(channelVC, animated: true)
-        
-        //        GroupChannel.getChannel(url: channelURL) { channel, error in
-        //            guard error == nil, let channel = channel else { return }
-        //
-        //            if channel.isChatNotification {
-        //                let channelVC = SBUViewControllerSet.ChatNotificationChannelViewController.init(
-        //                    channel: channel,
-        //                    notificationListParams: messageListParams,
-        //                    displaysLocalCachedListFirst: true
-        //                )
-        //                self.navigationController?.pushViewController(channelVC, animated: true)
-        //            } else if channel.isFeedChannel() {
-        //                let channelVC = SBUViewControllerSet.FeedNotificationChannelViewController.init(
-        //                    channelURL: channelURL,
-        //                    notificationListParams: messageListParams,
-        //                    displaysLocalCachedListFirst: true
-        //                )
-        //                self.navigationController?.pushViewController(channelVC, animated: true)
-        //            } else {
-        //                let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
-        //                    channelURL: channelURL,
-        //                    messageListParams: messageListParams,
-        //                    displaysLocalCachedListFirst: true
-        //                )
-        //                self.navigationController?.pushViewController(channelVC, animated: true)
-        //            }
-        //        }
+        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
+        self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
     // MARK: - Error handling

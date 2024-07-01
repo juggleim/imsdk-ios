@@ -89,12 +89,12 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - messageListParams: `MessageListParams` object to be used when loading messages.
     ///   - displaysLocalCachedListFirst: (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
     /// - Since: 1.0.11
-    public init(baseChannel: JConversationInfo) {
+    public init(conversationInfo: JConversationInfo) {
         super.init(nibName: nil, bundle: nil)
         SBULog.info(#function)
     
         self.createViewModel(
-            channel: baseChannel
+            conversationInfo: conversationInfo
         )
     }
     
@@ -169,30 +169,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - startingPoint: The starting point timestamp of the messages. `nil` to start from the latest.
     ///   - showIndicator: Whether to show loading indicator on loading the initial messages.
     /// - Since: 3.0.0
-    open func createViewModel(
-        channel: JConversationInfo? = nil,
-        channelURL: String? = nil,
-        startingPoint: Int64? = nil,
-        showIndicator: Bool = true
-    ) { }
-    
-    /// Creates the view model, loading initial messages from given starting point.
-    /// - Note: If you want to customize the viewModel, override this function
-    /// - Parameters:
-    ///   - baseChannel: Channel object
-    ///   - channelURL: Channel's URL
-    ///   - messageListParams: `MessageListParams` object to be used when loading messages.
-    ///   - startingPoint: The starting point timestamp of the messages. `nil` to start from the latest.
-    ///   - showIndicator: Whether to show loading indicator on loading the initial messages.
-    ///   - displaysLocalCachedListFirst: (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
-    /// - Since: 3.3.5
-    open func createViewModel(
-        channel: JConversationInfo? = nil,
-        channelURL: String? = nil,
-        startingPoint: Int64? = nil,
-        showIndicator: Bool = true,
-        displaysLocalCachedListFirst: Bool
-    ) { }
+    open func createViewModel(conversationInfo: JConversationInfo? = nil) { }
     
     // MARK: - Sendbird UIKit Life cycle
     

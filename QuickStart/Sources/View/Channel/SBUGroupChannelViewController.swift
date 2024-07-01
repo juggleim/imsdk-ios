@@ -86,8 +86,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     /// - note: The `reverse` and the `previousResultSize` properties in the `MessageListParams` are set in the UIKit. Even though you set that property it will be ignored.
     /// - Parameter channel: Channel object
     /// - Since: 1.0.11
-    required public init(channel: JConversationInfo) {
-        super.init(baseChannel: channel)
+    required public override init(conversationInfo: JConversationInfo) {
+        super.init(conversationInfo: conversationInfo)
         
         self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
         self.listComponent = SBUModuleSet.GroupChannelModule.ListComponent.init()
@@ -130,40 +130,16 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     // MARK: - ViewModel
-    open override func createViewModel(
-        channel: JConversationInfo? = nil,
-        channelURL: String? = nil,
-        startingPoint: Int64? = .max,
-        showIndicator: Bool = true
-    ) {
-        self.createViewModel(
-            channel: channel,
-            channelURL: channelURL,
-            startingPoint: startingPoint,
-            showIndicator: showIndicator,
-            displaysLocalCachedListFirst: false
-        )
-    }
-
-    open override func createViewModel(
-        channel: JConversationInfo? = nil,
-        channelURL: String? = nil,
-        startingPoint: Int64? = .max,
-        showIndicator: Bool = true,
-        displaysLocalCachedListFirst: Bool = false
-    ) {
-        guard channel != nil || channelURL != nil else {
-            SBULog.error("Either the channel or the channelURL parameter must be set.")
+    open override func createViewModel(conversationInfo: JConversationInfo? = nil) {
+        guard conversationInfo != nil else {
+            SBULog.error("conversationInfo parameter must be set.")
             return
         }
         
         self.baseViewModel = SBUGroupChannelViewModel(
-            channel: channel,
-            channelURL: channelURL,
-            startingPoint: startingPoint,
+            conversationInfo: conversationInfo,
             delegate: self,
-            dataSource: self,
-            displaysLocalCachedListFirst: displaysLocalCachedListFirst
+            dataSource: self
         )
         
         if let messageInputView = self.baseInputComponent?.messageInputView as? SBUMessageInputView {
