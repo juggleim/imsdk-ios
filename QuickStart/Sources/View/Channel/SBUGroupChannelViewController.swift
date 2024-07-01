@@ -94,46 +94,6 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.inputComponent = SBUModuleSet.GroupChannelModule.InputComponent.init()
     }
     
-    public init(channel: JConversationInfo, displaysLocalCachedListFirst: Bool) {
-        super.init(baseChannel: channel, messageListParams: messageListParams, displaysLocalCachedListFirst: displaysLocalCachedListFirst)
-        
-        self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
-        self.listComponent = SBUModuleSet.GroupChannelModule.ListComponent.init()
-        self.inputComponent = SBUModuleSet.GroupChannelModule.InputComponent.init()
-    }
-    
-    required public init(
-        channelURL: String,
-        startingPoint: Int64? = nil
-    ) {
-        super.init(
-            channelURL: channelURL,
-            startingPoint: startingPoint,
-            messageListParams: messageListParams
-        )
-        
-        self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
-        self.listComponent = SBUModuleSet.GroupChannelModule.ListComponent.init()
-        self.inputComponent = SBUModuleSet.GroupChannelModule.InputComponent.init()
-    }
-    
-    required public override init(
-        channelURL: String,
-        startingPoint: Int64? = nil,
-        displaysLocalCachedListFirst: Bool
-    ) {
-        super.init(
-            channelURL: channelURL,
-            startingPoint: startingPoint,
-            messageListParams: messageListParams,
-            displaysLocalCachedListFirst: displaysLocalCachedListFirst
-        )
-        
-        self.headerComponent = SBUModuleSet.GroupChannelModule.HeaderComponent.init()
-        self.listComponent = SBUModuleSet.GroupChannelModule.ListComponent.init()
-        self.inputComponent = SBUModuleSet.GroupChannelModule.InputComponent.init()
-    }
-    
     open override var preferredStatusBarStyle: UIStatusBarStyle {
         theme.statusBarStyle
     }
@@ -166,7 +126,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         SBULog.info("")
         
         // Clear typing message when exiting the channel.
-        self.viewModel?.clearTypingMessage()
+//        self.viewModel?.clearTypingMessage()
     }
     
     // MARK: - ViewModel
@@ -179,7 +139,6 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.createViewModel(
             channel: channel,
             channelURL: channelURL,
-            messageListParams: messageListParams,
             startingPoint: startingPoint,
             showIndicator: showIndicator,
             displaysLocalCachedListFirst: false
@@ -201,7 +160,6 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.baseViewModel = SBUGroupChannelViewModel(
             channel: channel,
             channelURL: channelURL,
-            messageListParams: messageListParams,
             startingPoint: startingPoint,
             delegate: self,
             dataSource: self,
@@ -379,8 +337,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open override func showChannelSettings() {
         guard let channel = self.channel else { return }
         
-        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(channel: channel)
-        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
+//        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(channel: channel)
+//        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
     }
     
     open override func showMessageThread(
@@ -389,25 +347,25 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         parentMessageCreatedAt: Int64? = 0,
         startingPoint: Int64? = 0
     ) {
-        if (parentMessageCreatedAt ?? 0) < (self.channel?.messageOffsetTimestamp ?? 0) {
+        if (parentMessageCreatedAt ?? 0) < (self.channel?.sortTime ?? 0) {
             SBULog.warning(SBUStringSet.Message_Reply_Cannot_Found_Original)
             return
         }
         
         var parentMessage: JMessage?
         if let fullMessageList = self.viewModel?.fullMessageList {
-            parentMessage = fullMessageList.first(where: { $0.messageId == parentMessageId })
+            parentMessage = fullMessageList.first(where: { $0.clientMsgNo == parentMessageId })
         }
            
-        let messageThreadVC = SBUViewControllerSet.MessageThreadViewController.init(
-            channelURL: channelURL,
-            parentMessage: parentMessage,
-            parentMessageId: parentMessageId,
-            delegate: self,
-            startingPoint: startingPoint,
-            voiceFileInfos: self.listComponent?.voiceFileInfos
-        )
-        self.navigationController?.pushViewController(messageThreadVC, animated: true)
+//        let messageThreadVC = SBUViewControllerSet.MessageThreadViewController.init(
+//            channelURL: channelURL,
+//            parentMessage: parentMessage,
+//            parentMessageId: parentMessageId,
+//            delegate: self,
+//            startingPoint: startingPoint,
+//            voiceFileInfos: self.listComponent?.voiceFileInfos
+//        )
+//        self.navigationController?.pushViewController(messageThreadVC, animated: true)
     }
     
     // MARK: - PHPickerViewControllerDelegate
@@ -424,10 +382,10 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     override open func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         
-        guard results.count <= SBUAvailable.multipleFilesMessageFileCountLimit else {
-            self.errorHandler("Up to \(SBUAvailable.multipleFilesMessageFileCountLimit) can be attached.")
-            return
-        }
+//        guard results.count <= SBUAvailable.multipleFilesMessageFileCountLimit else {
+//            self.errorHandler("Up to \(SBUAvailable.multipleFilesMessageFileCountLimit) can be attached.")
+//            return
+//        }
         
         // Picked multiple files
         if results.count > 1 {
@@ -525,46 +483,46 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     /// - NOTE: If you want to use customized `PHPickerConfiguration`, please override this method.
     /// - Since: 3.10.0
     open override func showPhotoLibraryPicker() {
-        let inputConfig = SendbirdUI.config.groupChannel.channel.input
-        
-        if #available(iOS 14, *), SBUGlobals.isPHPickerEnabled {
-            var pickerFilter: [PHPickerFilter] = []
-            if inputConfig.gallery.isPhotoEnabled { pickerFilter += [.images] }
-            if inputConfig.gallery.isVideoEnabled { pickerFilter += [.videos] }
-            
-            var configuration = PHPickerConfiguration()
-            configuration.filter = .any(of: pickerFilter)
-            
-            if let groupChannel = self.viewModel?.channel as? GroupChannel,
-               !groupChannel.isSuper && !groupChannel.isBroadcast,
-               inputComponent?.currentQuotedMessage == nil,
-               SendbirdUI.config.groupChannel.channel.isMultipleFilesMessageEnabled {
-                configuration.selectionLimit = SBUAvailable.multipleFilesMessageFileCountLimit
-                
-                if #available(iOS 15, *) {
-                    configuration.selection = .ordered
-                }
-            }
- 
-            let picker = PHPickerViewController(configuration: configuration)
-            picker.delegate = self
-            self.present(picker, animated: true, completion: nil)
-            return
-        }
-        
-        let sourceType: UIImagePickerController.SourceType = .photoLibrary
-        var mediaType: [String] = []
-        
-        if inputConfig.gallery.isPhotoEnabled { mediaType += [String(kUTTypeImage), String(kUTTypeGIF)] }
-        if inputConfig.gallery.isVideoEnabled { mediaType += [String(kUTTypeMovie)] }
-        
-        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-            let imagePickerController = UIImagePickerController()
-            imagePickerController.delegate = self
-            imagePickerController.sourceType = sourceType
-            imagePickerController.mediaTypes = mediaType
-            self.present(imagePickerController, animated: true, completion: nil)
-        }
+//        let inputConfig = SendbirdUI.config.groupChannel.channel.input
+//
+//        if #available(iOS 14, *), SBUGlobals.isPHPickerEnabled {
+//            var pickerFilter: [PHPickerFilter] = []
+//            if inputConfig.gallery.isPhotoEnabled { pickerFilter += [.images] }
+//            if inputConfig.gallery.isVideoEnabled { pickerFilter += [.videos] }
+//
+//            var configuration = PHPickerConfiguration()
+//            configuration.filter = .any(of: pickerFilter)
+//
+//            if let groupChannel = self.viewModel?.channel as? GroupChannel,
+//               !groupChannel.isSuper && !groupChannel.isBroadcast,
+//               inputComponent?.currentQuotedMessage == nil,
+//               SendbirdUI.config.groupChannel.channel.isMultipleFilesMessageEnabled {
+//                configuration.selectionLimit = SBUAvailable.multipleFilesMessageFileCountLimit
+//
+//                if #available(iOS 15, *) {
+//                    configuration.selection = .ordered
+//                }
+//            }
+//
+//            let picker = PHPickerViewController(configuration: configuration)
+//            picker.delegate = self
+//            self.present(picker, animated: true, completion: nil)
+//            return
+//        }
+//
+//        let sourceType: UIImagePickerController.SourceType = .photoLibrary
+//        var mediaType: [String] = []
+//
+//        if inputConfig.gallery.isPhotoEnabled { mediaType += [String(kUTTypeImage), String(kUTTypeGIF)] }
+//        if inputConfig.gallery.isVideoEnabled { mediaType += [String(kUTTypeMovie)] }
+//
+//        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
+//            let imagePickerController = UIImagePickerController()
+//            imagePickerController.delegate = self
+//            imagePickerController.sourceType = sourceType
+//            imagePickerController.mediaTypes = mediaType
+//            self.present(imagePickerController, animated: true, completion: nil)
+//        }
     }
 
     @available(iOS 14, *)
@@ -705,21 +663,21 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         var title = ""
         
         // Frozen
-        let isOperator = self.channel?.myRole == .operator
-        let isBroadcast = self.channel?.isBroadcast ?? false
-        let isFrozen = self.channel?.isFrozen ?? false
-        if !isBroadcast, !isOperator && isFrozen, self.voiceMessageInputView.isShowing {
-            title = SBUStringSet.VoiceMessage.Alert.frozen
-        }
-        
-        let isMuted = self.channel?.myMutedState == .muted
-        if (!isFrozen || (isFrozen && isOperator)), isMuted, self.voiceMessageInputView.isShowing {
-            title = SBUStringSet.VoiceMessage.Alert.muted
-        }
-
-        if title.count > 0 {
-            showAlertCompletionHandler(title)
-        }
+//        let isOperator = self.channel?.myRole == .operator
+//        let isBroadcast = self.channel?.isBroadcast ?? false
+//        let isFrozen = self.channel?.isFrozen ?? false
+//        if !isBroadcast, !isOperator && isFrozen, self.voiceMessageInputView.isShowing {
+//            title = SBUStringSet.VoiceMessage.Alert.frozen
+//        }
+//
+//        let isMuted = self.channel?.myMutedState == .muted
+//        if (!isFrozen || (isFrozen && isOperator)), isMuted, self.voiceMessageInputView.isShowing {
+//            title = SBUStringSet.VoiceMessage.Alert.muted
+//        }
+//
+//        if title.count > 0 {
+//            showAlertCompletionHandler(title)
+//        }
     }
     
     open override func resetVoiceMessageInput(for resignActivity: Bool = false) {
@@ -733,56 +691,56 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         _ viewModel: SBUBaseChannelViewModel,
         didChangeChannel channel: JConversationInfo?
     ) {
-        guard channel != nil else {
-            // channel deleted
-            if self.navigationController?.viewControllers.last == self {
-                // If leave is called in the ChannelSettingsViewController, this logic needs to be prevented.
-                self.onClickBack()
-            }
-            return
-        }
-        
-        // channel changed
-        switch context.source {
-        case .eventReadStatusUpdated, .eventDeliveryStatusUpdated:
-            if context.source == .eventReadStatusUpdated {
-                self.updateChannelStatus()
-            }
-            self.listComponent?.reloadTableView()
-            
-        case .eventTypingStatusUpdated:
-            self.updateChannelStatus()
-            self.listComponent?.reloadTableView()
-            
-        case .channelChangelog:
-            self.updateChannelTitle()
-            self.inputComponent?.updateMessageInputModeState()
-            self.listComponent?.reloadTableView()
-            self.updateVoiceMessageInputMode()
-            
-        case .eventChannelChanged:
-            self.updateChannelTitle()
-            self.inputComponent?.updateMessageInputModeState()
-            self.updateVoiceMessageInputMode()
-            
-        case .eventChannelFrozen, .eventChannelUnfrozen,
-                .eventUserMuted, .eventUserUnmuted,
-                .eventOperatorUpdated,
-                .eventUserBanned: // Other User Banned
-            self.inputComponent?.updateMessageInputModeState()
-            self.updateVoiceMessageInputMode()
-            
-        default: break
-        }
+//        guard channel != nil else {
+//            // channel deleted
+//            if self.navigationController?.viewControllers.last == self {
+//                // If leave is called in the ChannelSettingsViewController, this logic needs to be prevented.
+//                self.onClickBack()
+//            }
+//            return
+//        }
+//
+//        // channel changed
+//        switch context.source {
+//        case .eventReadStatusUpdated, .eventDeliveryStatusUpdated:
+//            if context.source == .eventReadStatusUpdated {
+//                self.updateChannelStatus()
+//            }
+//            self.listComponent?.reloadTableView()
+//
+//        case .eventTypingStatusUpdated:
+//            self.updateChannelStatus()
+//            self.listComponent?.reloadTableView()
+//
+//        case .channelChangelog:
+//            self.updateChannelTitle()
+//            self.inputComponent?.updateMessageInputModeState()
+//            self.listComponent?.reloadTableView()
+//            self.updateVoiceMessageInputMode()
+//
+//        case .eventChannelChanged:
+//            self.updateChannelTitle()
+//            self.inputComponent?.updateMessageInputModeState()
+//            self.updateVoiceMessageInputMode()
+//
+//        case .eventChannelFrozen, .eventChannelUnfrozen,
+//                .eventUserMuted, .eventUserUnmuted,
+//                .eventOperatorUpdated,
+//                .eventUserBanned: // Other User Banned
+//            self.inputComponent?.updateMessageInputModeState()
+//            self.updateVoiceMessageInputMode()
+//
+//        default: break
+//        }
     }
     
     open override func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
         deletedMessages messages: [JMessage]
     ) {
-        for message in messages {
-            self.listComponent?.pauseVoicePlayer(cacheKey: message.cacheKey)
-        }
+//        for message in messages {
+//            self.listComponent?.pauseVoicePlayer(cacheKey: message.cacheKey)
+//        }
     }
     
     open func groupChannelViewModel(
@@ -827,25 +785,25 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         guard let currentUser = SBUGlobals.currentUser,
               let message = messageCell.message else { return }
         
-        let shouldSelect = message.reactions.first { $0.key == emojiKey }?
-            .userIds.contains(currentUser.userId) == false
-        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
+//        let shouldSelect = message.reactions.first { $0.key == emojiKey }?
+//            .userIds.contains(currentUser.userId) == false
+//        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didLongTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
         guard let channel = self.channel,
               let message = messageCell.message else { return }
         
-        let reaction = message.reactions.first { $0.key == emojiKey }
-        let reactionsVC = SBUReactionsViewController(
-            channel: channel,
-            message: message,
-            selectedReaction: reaction
-        )
-        reactionsVC.delegate = self
-        reactionsVC.modalPresentationStyle = UIModalPresentationStyle.custom
-        reactionsVC.transitioningDelegate = self
-        self.present(reactionsVC, animated: true)
+//        let reaction = message.reactions.first { $0.key == emojiKey }
+//        let reactionsVC = SBUReactionsViewController(
+//            channel: channel,
+//            message: message,
+//            selectedReaction: reaction
+//        )
+//        reactionsVC.delegate = self
+//        reactionsVC.modalPresentationStyle = UIModalPresentationStyle.custom
+//        reactionsVC.transitioningDelegate = self
+//        self.present(reactionsVC, animated: true)
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapMoreEmojiForCell messageCell: SBUBaseMessageCell) {
@@ -919,7 +877,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
             messageInputView.setMode(.none)
         }
         
-        self.viewModel?.sendJMessage(
+        self.viewModel?.sendFileMessage(
             fileData: fileData,
             fileName: fileName,
             mimeType: mimeType,
@@ -948,13 +906,13 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         mentionedMessageTemplate: String,
         mentionedUserIds: [String]
     ) {
-        guard let message = self.baseViewModel?.inEditingMessage else { return }
-        self.viewModel?.updateUserMessage(
-            message: message,
-            text: text,
-            mentionedMessageTemplate: mentionedMessageTemplate,
-            mentionedUserIds: mentionedUserIds
-        )
+//        guard let message = self.baseViewModel?.inEditingMessage else { return }
+//        self.viewModel?.updateUserMessage(
+//            message: message,
+//            text: text,
+//            mentionedMessageTemplate: mentionedMessageTemplate,
+//            mentionedUserIds: mentionedUserIds
+//        )
     }
     
     open func groupChannelModule(
@@ -966,11 +924,11 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     ) { }
     
     open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, shouldLoadSuggestedMentions filterText: String) {
-        self.viewModel?.loadSuggestedMentions(with: filterText)
+//        self.viewModel?.loadSuggestedMentions(with: filterText)
     }
     
     open func groupChannelModuleShouldStopSuggestingMention(_ inputComponent: SBUGroupChannelModule.Input) {
-        self.viewModel?.cancelLoadingSuggestedMentions()
+//        self.viewModel?.cancelLoadingSuggestedMentions()
     }
     
     open func groupChannelModuleDidTapVoiceMessage(_ inputComponent: SBUGroupChannelModule.Input) {
@@ -985,12 +943,12 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     open override func baseChannelModuleDidStartTyping(_ inputComponent: SBUBaseChannelModule.Input) {
-        self.viewModel?.startTypingMessage()
+//        self.viewModel?.startTypingMessage()
     }
     
     open override func baseChannelModuleDidEndTyping(_ inputComponent: SBUBaseChannelModule.Input) {
-        self.viewModel?.endTypingMessage()
-        self.inputComponent?.dismissSuggestedMentionList()
+//        self.viewModel?.endTypingMessage()
+//        self.inputComponent?.dismissSuggestedMentionList()
     }
     
     // MARK: - SBUGroupChannelViewModelDataSource

@@ -131,23 +131,23 @@ open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol {
      
      - Parameter configuration: `SBUJMessageCellParams` object.
      */
-//    open func configure(with configuration: SBUJMessageCellParams) {
-//        self.message = configuration.message
-//        self.position = configuration.messagePosition
-//        self.groupPosition = configuration.groupPosition
-//        self.dateView.isHidden = configuration.hideDateView
-//        self.receiptState = configuration.receiptState
-//        self.shouldHideFeedback = configuration.shouldHideFeedback
-//        
-//        if let dateView = self.dateView as? SBUMessageDateView,
-//           let message = self.message {
-//            dateView.configure(timestamp: message.timestamp)
-//        }
-//        
-//        // MARK: Feedback Views
-////        self.updateFeedbackView(with: self.message)
-//        //TODO: 
-//    }
+    open func configure(with configuration: SBUBaseMessageCellParams) {
+        self.message = configuration.message
+        self.position = configuration.messagePosition
+        self.groupPosition = configuration.groupPosition
+        self.dateView.isHidden = configuration.hideDateView
+        self.receiptState = configuration.receiptState
+        self.shouldHideFeedback = configuration.shouldHideFeedback
+        
+        if let dateView = self.dateView as? SBUMessageDateView,
+           let message = self.message {
+            dateView.configure(timestamp: message.timestamp)
+        }
+        
+        // MARK: Feedback Views
+//        self.updateFeedbackView(with: self.message)
+        //TODO:
+    }
     
     open func configure(highlightInfo: SBUHighlightMessageInfo?) {
         
@@ -165,7 +165,7 @@ open class SBUBaseMessageCell: SBUTableViewCell, SBUMessageCellProtocol {
                         hideDateView: Bool,
                         groupPosition: MessageGroupPosition = .none,
                         receiptState: SBUMessageReceiptState) {
-        let configuration = SBUJMessageCellParams(
+        let configuration = SBUBaseMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             messagePosition: position,

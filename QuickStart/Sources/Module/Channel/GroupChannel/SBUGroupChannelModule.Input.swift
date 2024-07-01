@@ -183,9 +183,9 @@ extension SBUGroupChannelModule {
             self.setupLayouts()
             self.setupStyles()
             
-            if SendbirdUI.config.groupChannel.channel.isMentionEnabled {
-                self.setupMentionManager()
-            }
+//            if SendbirdUI.config.groupChannel.channel.isMentionEnabled {
+//                self.setupMentionManager()
+//            }
         }
         
         open override func setupViews() {
@@ -270,8 +270,8 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
+//                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+//                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
@@ -285,93 +285,93 @@ extension SBUGroupChannelModule {
         open func pickMultipleImageFiles(itemProviders: [NSItemProvider]) {
             // Define and add a blocking operation to the message queue.
             // This blocking operation will be executed after all images/gifs are finished loading.
-            let operation = BlockingOperation(asyncTask: { operation in
-                defer { operation.complete() }
-                
-                guard let fileInfoList = operation.userInfo[MultipleFilesConstants.fileInfoList] as? [UploadableFileInfo],
-                      fileInfoList.isEmpty == false else {
-                    
-                    return
-                }
-                
-                DispatchQueue.main.async { [self, fileInfoList] in
-                    self.delegate?.groupChannelModule(
-                        self,
-                        didPickMultipleFiles: fileInfoList,
-                        parentMessage: self.currentQuotedMessage
-                    )
-                }
-            }, requireExplicity: true)
-            
-            messageOperationQueue.addOperation(operation)
-            
-            // Load images and GIFs.
-            var fileInfoList: [UploadableFileInfo?] = Array(repeating: nil, count: itemProviders.count)
-            let group = DispatchGroup()
-            
-            for (index, itemProvider) in itemProviders.enumerated() {
-                group.enter()
-                
-                /// !! Warining !!
-                /// Since the image identifier includes the gif identifier, the check of the gif type should take precedence over the image type comparison.
-                
-                // GIF
-                if itemProvider.hasItemConformingToTypeIdentifier(UTType.gif.identifier) {
-                    self.loadGIFfile(itemProvider: itemProvider, index: index) { gifData, fileName, mimeType in
-                        defer {
-                            group.leave()
-                        }
-                        
-                        guard let gifData = gifData, let fileName = fileName, let mimeType = mimeType else {
-                            return
-                        }
-                        
-                        // Create UploadableFileInfo.
-                        let fileInfo = UploadableFileInfo(file: gifData)
-                        fileInfo.mimeType = mimeType
-                        fileInfo.fileName = fileName
-                        
-                        // GIF thumbnail should be static, not animated.
-                        if let image = UIImage(data: gifData) {
-                            let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
-                            fileInfo.thumbnailSizes = [thumbnailSize]
-                        }
-                        
-                        fileInfoList[index] = fileInfo
-                    }
-                }
-                
-                // Image
-                else if itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-                    self.loadImageFile(itemProvider: itemProvider, index: index) { imageData, fileName, mimeType in
-                        defer {
-                            group.leave()
-                        }
-                        
-                        guard let imageData = imageData, let fileName = fileName, let mimeType = mimeType else {
-                            return
-                        }
-                        
-                        // Create UploadableFileInfo.
-                        let fileInfo = UploadableFileInfo(file: imageData)
-                        fileInfo.mimeType = mimeType
-                        fileInfo.fileName = fileName
-                        
-                        if let image = UIImage(data: imageData) {
-                            let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
-                            fileInfo.thumbnailSizes = [thumbnailSize]
-                        }
-                        
-                        fileInfoList[index] = fileInfo
-                    }
-                }
-            }
-            
-            // Finally, execute the blocking operation.
-            group.notify(queue: .main) {
-                operation.userInfo[MultipleFilesConstants.fileInfoList] = fileInfoList
-                operation.markReady()
-            }
+//            let operation = BlockingOperation(asyncTask: { operation in
+//                defer { operation.complete() }
+//
+//                guard let fileInfoList = operation.userInfo[MultipleFilesConstants.fileInfoList] as? [UploadableFileInfo],
+//                      fileInfoList.isEmpty == false else {
+//
+//                    return
+//                }
+//
+//                DispatchQueue.main.async { [self, fileInfoList] in
+//                    self.delegate?.groupChannelModule(
+//                        self,
+//                        didPickMultipleFiles: fileInfoList,
+//                        parentMessage: self.currentQuotedMessage
+//                    )
+//                }
+//            }, requireExplicity: true)
+//
+//            messageOperationQueue.addOperation(operation)
+//
+//            // Load images and GIFs.
+//            var fileInfoList: [UploadableFileInfo?] = Array(repeating: nil, count: itemProviders.count)
+//            let group = DispatchGroup()
+//
+//            for (index, itemProvider) in itemProviders.enumerated() {
+//                group.enter()
+//
+//                /// !! Warining !!
+//                /// Since the image identifier includes the gif identifier, the check of the gif type should take precedence over the image type comparison.
+//
+//                // GIF
+//                if itemProvider.hasItemConformingToTypeIdentifier(UTType.gif.identifier) {
+//                    self.loadGIFfile(itemProvider: itemProvider, index: index) { gifData, fileName, mimeType in
+//                        defer {
+//                            group.leave()
+//                        }
+//
+//                        guard let gifData = gifData, let fileName = fileName, let mimeType = mimeType else {
+//                            return
+//                        }
+//
+//                        // Create UploadableFileInfo.
+//                        let fileInfo = UploadableFileInfo(file: gifData)
+//                        fileInfo.mimeType = mimeType
+//                        fileInfo.fileName = fileName
+//
+//                        // GIF thumbnail should be static, not animated.
+//                        if let image = UIImage(data: gifData) {
+//                            let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
+//                            fileInfo.thumbnailSizes = [thumbnailSize]
+//                        }
+//
+//                        fileInfoList[index] = fileInfo
+//                    }
+//                }
+//
+//                // Image
+//                else if itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+//                    self.loadImageFile(itemProvider: itemProvider, index: index) { imageData, fileName, mimeType in
+//                        defer {
+//                            group.leave()
+//                        }
+//
+//                        guard let imageData = imageData, let fileName = fileName, let mimeType = mimeType else {
+//                            return
+//                        }
+//
+//                        // Create UploadableFileInfo.
+//                        let fileInfo = UploadableFileInfo(file: imageData)
+//                        fileInfo.mimeType = mimeType
+//                        fileInfo.fileName = fileName
+//
+//                        if let image = UIImage(data: imageData) {
+//                            let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
+//                            fileInfo.thumbnailSizes = [thumbnailSize]
+//                        }
+//
+//                        fileInfoList[index] = fileInfo
+//                    }
+//                }
+//            }
+//
+//            // Finally, execute the blocking operation.
+//            group.notify(queue: .main) {
+//                operation.userInfo[MultipleFilesConstants.fileInfoList] = fileInfoList
+//                operation.markReady()
+//            }
         }
         
         @available(iOS 14.0, *)
@@ -504,8 +504,8 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
+//                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+//                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
@@ -538,19 +538,19 @@ extension SBUGroupChannelModule {
                 )
             } catch {
                 SBULog.error(error.localizedDescription)
-                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
-                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
+//                let JErrorCode = JErrorCode(domain: (error as NSError).domain, code: (error as NSError).code)
+//                self.delegate?.didReceiveError(JErrorCode, isBlocker: false)
             }
         }
         
         open override func updateMessageInputMode(_ mode: SBUMessageInputMode, message: JMessage? = nil) {
             super.updateMessageInputMode(mode, message: message)
             if mode == .edit {
-                guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
+//                guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
                 guard let messageInputView = self.messageInputView as? SBUMessageInputView else { return }
-                guard let mentionedUsers = message?.mentionedUsers else { return }
-                guard let mentionedMessageTemplate = message?.mentionedMessageTemplate,
-                      mentionedMessageTemplate != "" else { return }
+//                guard let mentionedUsers = message?.mentionedUsers else { return }
+//                guard let mentionedMessageTemplate = message?.mentionedMessageTemplate,
+//                      mentionedMessageTemplate != "" else { return }
                 
                 if let mentionManager = mentionManager {
                     mentionManager.reset()
@@ -564,11 +564,11 @@ extension SBUGroupChannelModule {
                     )
                 }
                 
-                let attributedText = self.mentionManager!.generateMentionedMessage(
-                    with: mentionedMessageTemplate,
-                    mentionedUsers: SBUUser.convertUsers(mentionedUsers)
-                )
-                messageInputView.textView?.attributedText = attributedText
+//                let attributedText = self.mentionManager!.generateMentionedMessage(
+//                    with: mentionedMessageTemplate,
+//                    mentionedUsers: SBUUser.convertUsers(mentionedUsers)
+//                )
+//                messageInputView.textView?.attributedText = attributedText
             }
         }
         
@@ -588,41 +588,41 @@ extension SBUGroupChannelModule {
         
         /// This is used to update frozen mode of `messageInputView`. This will call `SBUBaseChannelModuleInputDelegate baseChannelModule(_:didUpdateFrozenState:)`
         open override func updateFrozenModeState() {
-            let isOperator = self.channel?.myRole == .operator
-            let isBroadcast = self.channel?.isBroadcast ?? false
-            let isFrozen = self.channel?.isFrozen ?? false
-            if !isBroadcast {
-                if let messageInputView = self.messageInputView as? SBUMessageInputView {
-                    messageInputView.setFrozenModeState(!isOperator && isFrozen)
-                }
-            }
-            self.delegate?.baseChannelModule(self, didUpdateFrozenState: isFrozen)
+//            let isOperator = self.channel?.myRole == .operator
+//            let isBroadcast = self.channel?.isBroadcast ?? false
+//            let isFrozen = self.channel?.isFrozen ?? false
+//            if !isBroadcast {
+//                if let messageInputView = self.messageInputView as? SBUMessageInputView {
+//                    messageInputView.setFrozenModeState(!isOperator && isFrozen)
+//                }
+//            }
+//            self.delegate?.baseChannelModule(self, didUpdateFrozenState: isFrozen)
         }
         
         /// Updates the mode of `messageInputView` according to broadcast state of the channel.
         open func updateBroadcastModeState() {
-            let isOperator = self.channel?.myRole == .operator
-            let isBroadcast = self.channel?.isBroadcast ?? false
-            self.messageInputView?.isHidden = !isOperator && isBroadcast
+//            let isOperator = self.channel?.myRole == .operator
+//            let isBroadcast = self.channel?.isBroadcast ?? false
+//            self.messageInputView?.isHidden = !isOperator && isBroadcast
         }
         
         /// Updates the mode of `messageInputView` according to frozen and muted state of the channel.
         open func updateMutedModeState() {
-            let isOperator = self.channel?.myRole == .operator
-            let isFrozen = self.channel?.isFrozen ?? false
-            let isMuted = self.channel?.myMutedState == .muted
-            if !isFrozen || (isFrozen && isOperator) {
-                if let messageInputView = self.messageInputView as? SBUMessageInputView {
-                    messageInputView.setMutedModeState(isMuted)
-                }
-            }
+//            let isOperator = self.channel?.myRole == .operator
+//            let isFrozen = self.channel?.isFrozen ?? false
+//            let isMuted = self.channel?.myMutedState == .muted
+//            if !isFrozen || (isFrozen && isOperator) {
+//                if let messageInputView = self.messageInputView as? SBUMessageInputView {
+//                    messageInputView.setMutedModeState(isMuted)
+//                }
+//            }
         }
         
         /// Updates the mode of `messageInputView` according to notification state of the channel.
         /// - Since: 3.5.0
         open func updateNotificationModeState() {
-            let isChatNotification = self.channel?.isChatNotification ?? false
-            self.messageInputView?.isHidden = isChatNotification
+//            let isChatNotification = self.channel?.isChatNotification ?? false
+//            self.messageInputView?.isHidden = isChatNotification
         }
         
         // MARK: PHPicker utils
@@ -727,24 +727,24 @@ extension SBUGroupChannelModule {
         /// Initializes `SBUMentionManager` instance and configure with attributes.
         /// The `messageInputView` updates to use its `defaultAttributes` and `mentionedAttributes`.
         open func setupMentionManager() {
-            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
-            
-            if mentionManager == nil {
-                self.mentionManager = SBUMentionManager()
-            }
-            
-            guard let messageInputView = self.messageInputView as? SBUMessageInputView,
-                  let mentionManager = self.mentionManager else { return }
-            
-            mentionManager.configure(
-                delegate: self,
-                dataSource: self.mentionManagerDataSource,
-                defaultTextAttributes: messageInputView.defaultAttributes,
-                mentionTextAttributes: messageInputView.mentionedAttributes
-            )
-            
-            messageInputView.textView?.typingAttributes = mentionManager.defaultTextAttributes
-            messageInputView.textView?.linkTextAttributes = mentionManager.mentionTextAttributes
+//            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
+//
+//            if mentionManager == nil {
+//                self.mentionManager = SBUMentionManager()
+//            }
+//
+//            guard let messageInputView = self.messageInputView as? SBUMessageInputView,
+//                  let mentionManager = self.mentionManager else { return }
+//
+//            mentionManager.configure(
+//                delegate: self,
+//                dataSource: self.mentionManagerDataSource,
+//                defaultTextAttributes: messageInputView.defaultAttributes,
+//                mentionTextAttributes: messageInputView.mentionedAttributes
+//            )
+//
+//            messageInputView.textView?.typingAttributes = mentionManager.defaultTextAttributes
+//            messageInputView.textView?.linkTextAttributes = mentionManager.mentionTextAttributes
         }
         
         /// Handles pending mention suggestion. This calls when the channel view model receives member list from callback.
@@ -758,14 +758,14 @@ extension SBUGroupChannelModule {
                 SBULog.error("`SBUGlobals.userMentionConfig` is `nil`")
                 return
             }
-            
-            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else {
-                SBULog.error("User mention features are disabled. See `SBUGlobals.isMentionEnabled` for more information")
-                return
-            }
+//
+//            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else {
+//                SBULog.error("User mention features are disabled. See `SBUGlobals.isMentionEnabled` for more information")
+//                return
+//            }
             
             var filteredMembers = members.filter {
-                ($0.user?.isActive == true) &&
+//                ($0.user?.isActive == true) &&
                 ($0.userId != SBUGlobals.currentUser?.userId)
             }
             
@@ -874,7 +874,7 @@ extension SBUGroupChannelModule {
 
             guard !mentionManager.needToSkipSelection(textView) else { return }
             
-            guard self.channel?.isBroadcast == false else { return }
+//            guard self.channel?.isBroadcast == false else { return }
             
             self.mentionManager?.handleMentionSuggestion(on: textView, range: range)
         }

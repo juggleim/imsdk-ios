@@ -57,7 +57,8 @@ public struct SBUFileData {
     
     /// The value is same as channel URL.
     var subPath: String {
-        self.message.channelURL
+        ""
+//        self.message.channelURL
     }
     
     init(urlString: String, message: JMessage, cacheKey: String?, fileType: SBUMessageFileType, name: String) {
@@ -68,13 +69,13 @@ public struct SBUFileData {
         self.name = name
     }
     
-    init(JMessage: JMessage) {
+    init(fileMessage: JMessage) {
         self.init(
-            urlString: JMessage.url,
-            message: JMessage,
-            cacheKey: JMessage.cacheKey,
-            fileType: SBUUtils.getFileType(by: JMessage),
-            name: JMessage.name
+            urlString: "",
+            message: fileMessage,
+            cacheKey: "",
+            fileType: SBUUtils.getFileType(by: fileMessage),
+            name: ""
         )
     }
 }
@@ -148,10 +149,10 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     // MARK: - Lifecycle
     /// Initializes ``SBUFileViewController`` with `JMessage`
     required public convenience init(
-        JMessage: JMessage,
+        fileMessage: JMessage,
         delegate: SBUFileViewControllerDelegate?
     ) {
-        let fileData = SBUFileData(JMessage: JMessage)
+        let fileData = SBUFileData(fileMessage: fileMessage)
         self.init(fileData: fileData, delegate: delegate)
     }
     
@@ -190,12 +191,16 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     
     @available(*, unavailable, renamed: "init(params:delegate:)")
     required public init?(coder: NSCoder) {
-        if let JMessage = JMessage.make(["": ""]) {
-            self.fileData = SBUFileData(JMessage: JMessage)
-            super.init(coder: coder)
-        } else {
-            fatalError("`init?(coder:)` has not been implemented. Use `init(params:delegate:)`")
-        }
+        let fileData = SBUFileData(fileMessage: JMessage())
+        self.fileData = fileData
+        super.init(coder: coder)
+        
+//        if let JMessage = JMessage.make(["": ""]) {
+//            self.fileData = SBUFileData(JMessage: JMessage)
+//            super.init(coder: coder)
+//        } else {
+//            fatalError("`init?(coder:)` has not been implemented. Use `init(params:delegate:)`")
+//        }
     }
     
     open override func viewDidLoad() {
@@ -212,53 +217,53 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         self.view.bringSubviewToFront(self.bottomView)
 
         // Title View
-        if let titleView = self.navigationItem.titleView as? TitleView {
-            if let sender = self.fileData.message.sender {
-                titleView.titleLabel.text = SBUUser(user: sender).refinedNickname()
-            } else {
-                titleView.titleLabel.text = SBUStringSet.User_No_Name
-            }
-            
-            titleView.dateTimeLabel.text = Date
-                .sbu_from(self.fileData.message.createdAt)
-                .sbu_toString(dateFormat: SBUDateFormatSet.Message.fileViewControllerTimeFormat)
-            
-            titleView.updateConstraints()
-        }
-        
-        // Bottom View
-        if let bottomView = self.bottomView as? BottomView {
-
-            let hidesDeleteButton = self.fileData.message.threadInfo.replyCount > 0
-            || self.fileData.message.sender?.userId != SBUGlobals.currentUser?.userId
-            || self.fileData.message as? MultipleFilesMessage != nil
-            
-            bottomView.deleteButton.isHidden = hidesDeleteButton
-            if !hidesDeleteButton {
-                bottomView.deleteButton.addTarget(
-                    self,
-                    action: #selector(onClickDelete(sender:)),
-                    for: .touchUpInside
-                )
-            }
-            bottomView.downloadButton.addTarget(
-                self,
-                action: #selector(onClickDownload(sender:)),
-                for: .touchUpInside
-            )
-        }
-        
-        guard let urlString = urlString else { return }
-        self.imageView.loadImage(
-            urlString: urlString,
-            cacheKey: self.fileData.cacheKey,
-            subPath: self.fileData.message.channelURL
-        )
-        
-        // TODO: MFM also
-        if let JMessage = self.fileData.message as? JMessage {
-            SBUCacheManager.Image.preSave(JMessage: JMessage)
-        }
+//        if let titleView = self.navigationItem.titleView as? TitleView {
+//            if let sender = self.fileData.message.sender {
+//                titleView.titleLabel.text = SBUUser(user: sender).refinedNickname()
+//            } else {
+//                titleView.titleLabel.text = SBUStringSet.User_No_Name
+//            }
+//
+//            titleView.dateTimeLabel.text = Date
+//                .sbu_from(self.fileData.message.createdAt)
+//                .sbu_toString(dateFormat: SBUDateFormatSet.Message.fileViewControllerTimeFormat)
+//
+//            titleView.updateConstraints()
+//        }
+//
+//        // Bottom View
+//        if let bottomView = self.bottomView as? BottomView {
+//
+//            let hidesDeleteButton = self.fileData.message.threadInfo.replyCount > 0
+//            || self.fileData.message.sender?.userId != SBUGlobals.currentUser?.userId
+//            || self.fileData.message as? MultipleFilesMessage != nil
+//
+//            bottomView.deleteButton.isHidden = hidesDeleteButton
+//            if !hidesDeleteButton {
+//                bottomView.deleteButton.addTarget(
+//                    self,
+//                    action: #selector(onClickDelete(sender:)),
+//                    for: .touchUpInside
+//                )
+//            }
+//            bottomView.downloadButton.addTarget(
+//                self,
+//                action: #selector(onClickDownload(sender:)),
+//                for: .touchUpInside
+//            )
+//        }
+//
+//        guard let urlString = urlString else { return }
+//        self.imageView.loadImage(
+//            urlString: urlString,
+//            cacheKey: self.fileData.cacheKey,
+//            subPath: self.fileData.message.channelURL
+//        )
+//
+//        // TODO: MFM also
+//        if let JMessage = self.fileData.message as? JMessage {
+//            SBUCacheManager.Image.preSave(JMessage: JMessage)
+//        }
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -356,8 +361,8 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         let deleteButton = SBUAlertButtonItem(title: SBUStringSet.Delete,
                                               color: SBUColorSet.error300) { [weak self] _ in
             guard let self = self else { return }
-            guard let JMessage = self.fileData.message as? JMessage else { return }
-            self.delegate?.didSelectDeleteImage(message: JMessage)
+            guard let fileMessage = self.fileData.message as? JMessage else { return }
+            self.delegate?.didSelectDeleteImage(message: fileMessage)
             self.dismiss(animated: true, completion: nil)
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
@@ -372,10 +377,10 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     
     @objc
     open func onClickDownload(sender: UIButton) {
-        SBUDownloadManager.save(
-            fileData: self.fileData,
-            viewController: self
-        )
+//        SBUDownloadManager.save(
+//            fileData: self.fileData,
+//            viewController: self
+//        )
     }
     
     @objc
@@ -410,7 +415,7 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         contextInfo: UnsafeRawPointer
     ) {
         if let error = error {
-            self.errorHandler(error.localizedDescription, error.code)
+//            self.errorHandler(error.localizedDescription, error.code)
             return
         }
     }
@@ -425,12 +430,12 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     
     // MARK: - Error handling
     private func errorHandler(_ error: JErrorCode) {
-        self.errorHandler(error.localizedDescription, error.code)
+//        self.errorHandler(error.localizedDescription, error.code)
     }
     
     @available(*, unavailable, renamed: "errorHandler(_:_:)")
     open func didReceiveError(_ message: String?, _ code: NSInteger? = nil) {
-        self.errorHandler(message, code)
+//        self.errorHandler(message, code)
     }
 }
 

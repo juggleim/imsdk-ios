@@ -870,19 +870,19 @@ extension SBUBaseChannelModule {
         ///
         /// If you do not want to use the user profile function, override this function and leave it empty.
         /// - Parameter user: `SBUUser` object used for user profile configuration
-        open func setUserProfileTapGesture(_ user: JUserInfo) {
+        open func setUserProfileTapGesture(_ user: SBUUser) {
             self.baseDelegate?.baseChannelModule(self, didTapUserProfile: user)
         }
         
         /// Moves scroll to bottom.
         open func onTapScrollToBottom() {
-            let position = SBUScrollPostionConfiguration.getConfiguration(with: self.baseChannel).scrollToBottom
-            let options = SBUScrollOptions(position: position, isInverted: self.tableView.isInverted)
-            self.baseDelegate?.baseChannelModule(
-                self,
-                didSelectScrollToBottonWithOptions: options,
-                animated: false
-            )
+//            let position = SBUScrollPostionConfiguration.getConfiguration(with: self.baseChannel).scrollToBottom
+//            let options = SBUScrollOptions(position: position, isInverted: self.tableView.isInverted)
+//            self.baseDelegate?.baseChannelModule(
+//                self,
+//                didSelectScrollToBottonWithOptions: options,
+//                animated: false
+//            )
         }
         
         // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -1143,18 +1143,18 @@ extension SBUBaseChannelModule.List {
     /// Scrolls tableview to initial position.
     /// If starting point is set, scroll to the starting point at `.middle`.
     func scrollToInitialPosition() {
-        let config = SBUScrollPostionConfiguration.getConfiguration(with: self.baseChannel)
-        
-        guard let startingPoint = self.baseDataSource?.baseChannelModule(self, startingPointIn: self.tableView) else {
-            self.scrollTableView(to: 0, at: config.scrollToInitial.transform(with: self.tableView))
-            return
-        }
-
-        if let index = fullMessageList.firstIndex(where: { $0.timestamp <= startingPoint }) {
-            self.scrollTableView(to: index, at: config.scrollToInitialWithStartingPoint.transform(with: self.tableView))
-        } else {
-            self.scrollTableView(to: fullMessageList.count - 1, at: config.scrollToInitial.transform(with: self.tableView))
-        }
+//        let config = SBUScrollPostionConfiguration.getConfiguration(with: self.baseChannel)
+//        
+//        guard let startingPoint = self.baseDataSource?.baseChannelModule(self, startingPointIn: self.tableView) else {
+//            self.scrollTableView(to: 0, at: config.scrollToInitial.transform(with: self.tableView))
+//            return
+//        }
+//
+//        if let index = fullMessageList.firstIndex(where: { $0.timestamp <= startingPoint }) {
+//            self.scrollTableView(to: index, at: config.scrollToInitialWithStartingPoint.transform(with: self.tableView))
+//        } else {
+//            self.scrollTableView(to: fullMessageList.count - 1, at: config.scrollToInitial.transform(with: self.tableView))
+//        }
     }
     
     /// Scrolls to the message that is found by `id`.

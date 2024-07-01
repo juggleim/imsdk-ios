@@ -72,10 +72,10 @@ public struct SBUUserMessageTextViewModel {
         isOverlay: Bool = false,
         highlightKeyword: String? = nil
     ) {
-        guard let textMessage = message?.content as? JTextMessage else {
-            return
+        var text = ""
+        if let textMessage = message?.content as? JTextMessage {
+            text = textMessage.content
         }
-        let text = textMessage.content
         
         if let isEdited = isEdited {
             edited = isEdited

@@ -148,12 +148,6 @@ extension SBUGroupChannelModule {
             if self.JMessageCell == nil {
                 self.register(JMessageCell: SBUBaseMessageCell())
             }
-            if self.multipleFilesMessageCell == nil {
-                self.register(messageCell: SBUMultipleFilesMessageCell())
-            }
-            if self.typingIndicatorMessageCell == nil {
-                self.register(messageCell: SBUTypingIndicatorMessageCell())
-            }
             
             if self.unknownMessageCell == nil {
                 self.register(unknownMessageCell: SBUUnknownMessageCell())
@@ -254,14 +248,14 @@ extension SBUGroupChannelModule {
         open override func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
             var items = super.createMessageMenuItems(for: message)
             
-            switch message {
-            case is UserMessage, is JMessage, is MultipleFilesMessage:
-                if SendbirdUI.config.groupChannel.channel.replyType != .none {
-                    let reply = self.createReplyMenuItem(for: message)
-                    items.append(reply)
-                }
-            default: break
-            }
+//            switch message {
+//            case is UserMessage, is JMessage, is MultipleFilesMessage:
+//                if SendbirdUI.config.groupChannel.channel.replyType != .none {
+//                    let reply = self.createReplyMenuItem(for: message)
+//                    items.append(reply)
+//                }
+//            default: break
+//            }
             
             return items
         }
@@ -285,21 +279,9 @@ extension SBUGroupChannelModule {
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
         open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
-            if let multipleFilesMessageCell = cell as? SBUMultipleFilesMessageCell {
-                multipleFilesMessageCell.fileSelectHandler = { [weak self] _, index in
-                    guard let self = self else { return }
-                    self.delegate?.groupChannelModule(
-                        self,
-                        didSelectFileAt: index,
-                        multipleFilesMessageCell: multipleFilesMessageCell,
-                        forRowAt: indexPath
-                    )
-                }
-            } else {
-                cell.tapHandlerToContent = { [weak self] in
-                    guard let self = self else { return }
-                    self.setTapGesture(cell, message: message, indexPath: indexPath)
-                }
+            cell.tapHandlerToContent = { [weak self] in
+                guard let self = self else { return }
+                self.setTapGesture(cell, message: message, indexPath: indexPath)
             }
             
             cell.longPressHandlerToContent = { [weak self] in
@@ -416,203 +398,192 @@ extension SBUGroupChannelModule {
         ///    - message: The message for `messageCell`.
         ///    - indexPath: An index path representing the `messageCell`
         open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, forRowAt indexPath: IndexPath) {
-            guard let channel = self.channel else {
-                SBULog.error("Channel must exist!")
-                return
-            }
-            
-            // NOTE: to disable unwanted animation while configuring cells
-            UIView.setAnimationsEnabled(false)
-            
-            let isSameDay = self.checkSameDayAsNextMessage(
-                currentIndex: indexPath.row,
-                fullMessageList: fullMessageList
-            )
-            let receiptState = SBUUtils.getReceiptState(of: message, in: channel)
-            let useReaction = SBUEmojiManager.isReactionEnabled(channel: self.channel)
-            let enableEmojiLongPress = SBUEmojiManager.isEmojiLongPressEnabled(channel: channel)
-            
-            switch (message, messageCell) {
-                // Admin message
-            case let (adminMessage, adminMessageCell) as (AdminMessage, SBUAdminMessageCell):
-                let configuration = SBUAdminMessageCellParams(
-                    message: adminMessage,
-                    hideDateView: isSameDay
-                )
-                adminMessageCell.configure(with: configuration)
-                self.setMessageCellAnimation(adminMessageCell, message: adminMessage, indexPath: indexPath)
-                self.setMessageCellGestures(adminMessageCell, message: adminMessage, indexPath: indexPath)
-                
-                // Unknown message
-            case let (unknownMessage, unknownMessageCell) as (JMessage, SBUUnknownMessageCell):
-                let configuration = SBUUnknownMessageCellParams(
-                    message: unknownMessage,
-                    hideDateView: isSameDay,
-                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
-                    receiptState: receiptState,
-                    useReaction: useReaction,
-                    joinedAt: self.channel?.joinedAt ?? 0,
-                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0
-                )
-                unknownMessageCell.configure(with: configuration)
-                self.setMessageCellAnimation(unknownMessageCell, message: unknownMessage, indexPath: indexPath)
-                self.setMessageCellGestures(unknownMessageCell, message: unknownMessage, indexPath: indexPath)
-                
-                // User message
-            case let (userMessage, userMessageCell) as (UserMessage, SBUUserMessageCell):
-                let shouldHideSuggestedReplies = SendbirdUI.config.groupChannel.channel.showSuggestedRepliesFor.shouldHideSuggestedReplies(
-                    message: userMessage,
-                    fullMessageList: fullMessageList
-                )
-                
-                let configuration = SBUUserMessageCellParams(
-                    message: userMessage,
-                    hideDateView: isSameDay,
-                    useMessagePosition: true,
-                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
-                    receiptState: receiptState,
-                    useReaction: useReaction,
-                    withTextView: true,
-                    joinedAt: self.channel?.joinedAt ?? 0,
-                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0,
-                    shouldHideSuggestedReplies: shouldHideSuggestedReplies,
-                    shouldHideFormTypeMessage: false,
-                    enableEmojiLongPress: enableEmojiLongPress
-                )
-                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
-                userMessageCell.configure(with: configuration)
-                userMessageCell.configure(highlightInfo: self.highlightInfo)
-                (userMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
-                (userMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
-                
-                self.setMessageCellAnimation(userMessageCell, message: userMessage, indexPath: indexPath)
-                self.setMessageCellGestures(userMessageCell, message: userMessage, indexPath: indexPath)
-                
-                // File message
-            case let (JMessage, JMessageCell) as (JMessage, SBUBaseMessageCell):
-                let voiceFileInfo = self.voiceFileInfos[JMessage.cacheKey] ?? nil
-                let configuration = SBUJMessageCellParams(
-                    message: JMessage,
-                    hideDateView: isSameDay,
-                    useMessagePosition: true,
-                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
-                    receiptState: receiptState,
-                    useReaction: useReaction,
-                    joinedAt: self.channel?.joinedAt ?? 0,
-                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0,
-                    voiceFileInfo: voiceFileInfo,
-                    enableEmojiLongPress: enableEmojiLongPress
-                )
-                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
-                
-                if voiceFileInfo != nil {
-                    self.currentVoiceFileInfo = nil
-                    self.currentVoiceContentView = nil
-                }
-                
-                JMessageCell.configure(with: configuration)
-                JMessageCell.configure(highlightInfo: self.highlightInfo)
-                (JMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
-                (JMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
-                self.setMessageCellAnimation(JMessageCell, message: JMessage, indexPath: indexPath)
-                self.setMessageCellGestures(JMessageCell, message: JMessage, indexPath: indexPath)
-                self.setJMessageCellImage(JMessageCell, JMessage: JMessage)
-                
-                if let voiceFileInfo = voiceFileInfo,
-                   voiceFileInfo.isPlaying == true,
-                   let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView {
-                    
-                    self.currentVoiceContentIndexPath = indexPath
-                    self.currentVoiceFileInfo = voiceFileInfo
-                    self.currentVoiceContentView = voiceContentView
-                }
-                
-            case let (multipleFilesMessage, multipleFilesMessageCell) as (MultipleFilesMessage, SBUMultipleFilesMessageCell):
-                let configuration = SBUMultipleFilesMessageCellParams(
-                    message: multipleFilesMessage,
-                    hideDateView: isSameDay,
-                    useMessagePosition: true,
-                    receiptState: receiptState,
-                    useReaction: true,
-                    enableEmojiLongPress: enableEmojiLongPress
-                )
-                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
-                multipleFilesMessageCell.configure(with: configuration)
-                (multipleFilesMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
-                self.setMessageCellAnimation(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
-                self.setMessageCellGestures(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
-                (multipleFilesMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
-                
-            case let (typingMessage, typingMessageCell) as (SBUTypingIndicatorMessage, SBUTypingIndicatorMessageCell):
-                
-                let configuration = SBUTypingIndicatorMessageCellParams(
-                    message: typingMessage,
-                    shouldRedrawTypingBubble: self.shouldRedrawTypingBubble
-                )
-                typingMessageCell.configure(with: configuration)
-                
-            default:
-                let configuration = SBUJMessageCellParams(
-                    message: message,
-                    hideDateView: isSameDay,
-                    messagePosition: .center,
-                    groupPosition: .none,
-                    receiptState: receiptState,
-                    joinedAt: self.channel?.joinedAt ?? 0,
-                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0
-                )
-                messageCell.configure(with: configuration)
-            }
-            
-            UIView.setAnimationsEnabled(true)
-            
-            // TODO: Move to `setMessageCellGestures`?
-            messageCell.userProfileTapHandler = { [weak messageCell, weak self] in
-                guard let self = self else { return }
-                guard let cell = messageCell else { return }
-                guard let sender = cell.message?.sender else { return }
-                self.setUserProfileTapGesture(SBUUser(sender: sender))
-            }
-            
-            // Reaction action
-            messageCell.emojiTapHandler = { [weak messageCell, weak self] emojiKey in
-                guard let self = self else { return }
-                guard let cell = messageCell else { return }
-                self.delegate?.groupChannelModule(self, didTapEmoji: emojiKey, messageCell: cell)
-            }
-            
-            messageCell.emojiLongPressHandler = { [weak messageCell, weak self] emojiKey in
-                guard let self = self else { return }
-                guard let cell = messageCell else { return }
-                self.delegate?.groupChannelModule(self, didLongTapEmoji: emojiKey, messageCell: cell)
-            }
-            
-            messageCell.moreEmojiTapHandler = { [weak messageCell, weak self] in
-                guard let self = self else { return }
-                guard let cell = messageCell else { return }
-                self.delegate?.groupChannelModule(self, didTapMoreEmojiForCell: cell)
-            }
-            
-            messageCell.mentionTapHandler = { [weak self] user in
-                guard let self = self else { return }
-                self.delegate?.groupChannelModule(self, didTapMentionUser: user)
-            }
-            
-            messageCell.suggestedReplySelectHandler = { [weak self] optionView in
-                guard let self = self else { return }
-                self.delegate?.groupChannelModule(self, didSelect: optionView)
-            }
-            
-//            messageCell.submitFormHandler = { [weak self] form, cell in
-//                guard let self = self else { return }
-//                self.delegate?.groupChannelModule(self, didSubmit: form, messageCell: cell)
+//            guard let channel = self.channel else {
+//                SBULog.error("Channel must exist!")
+//                return
 //            }
-            //TODO: 
-            
-            messageCell.updateFeedbackHandler = { [weak self] answer, cell in
-                guard let self = self else { return }
-                self.delegate?.groupChannelModule(self, didUpdate: answer, messageCell: cell)
-            }
+//
+//            // NOTE: to disable unwanted animation while configuring cells
+//            UIView.setAnimationsEnabled(false)
+//
+//            let isSameDay = self.checkSameDayAsNextMessage(
+//                currentIndex: indexPath.row,
+//                fullMessageList: fullMessageList
+//            )
+//            let receiptState = SBUUtils.getReceiptState(of: message, in: channel)
+//
+//            switch (message, messageCell) {
+//
+//                // Unknown message
+//            case let (unknownMessage, unknownMessageCell) as (JMessage, SBUUnknownMessageCell):
+//                let configuration = SBUUnknownMessageCellParams(
+//                    message: unknownMessage,
+//                    hideDateView: isSameDay,
+//                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+//                    receiptState: receiptState,
+//                    useReaction: useReaction,
+//                    joinedAt: self.channel?.joinedAt ?? 0,
+//                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0
+//                )
+//                unknownMessageCell.configure(with: configuration)
+//                self.setMessageCellAnimation(unknownMessageCell, message: unknownMessage, indexPath: indexPath)
+//                self.setMessageCellGestures(unknownMessageCell, message: unknownMessage, indexPath: indexPath)
+//
+//                // User message
+//            case let (userMessage, userMessageCell) as (JMessage, SBUUserMessageCell):
+//                let shouldHideSuggestedReplies = SendbirdUI.config.groupChannel.channel.showSuggestedRepliesFor.shouldHideSuggestedReplies(
+//                    message: userMessage,
+//                    fullMessageList: fullMessageList
+//                )
+//
+//                let configuration = SBUUserMessageCellParams(
+//                    message: userMessage,
+//                    hideDateView: isSameDay,
+//                    useMessagePosition: true,
+//                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+//                    receiptState: receiptState,
+//                    useReaction: useReaction,
+//                    withTextView: true,
+//                    joinedAt: self.channel?.joinedAt ?? 0,
+//                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0,
+//                    shouldHideSuggestedReplies: shouldHideSuggestedReplies,
+//                    shouldHideFormTypeMessage: false,
+//                    enableEmojiLongPress: enableEmojiLongPress
+//                )
+//                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
+//                userMessageCell.configure(with: configuration)
+//                userMessageCell.configure(highlightInfo: self.highlightInfo)
+//                (userMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
+//                (userMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
+//
+//                self.setMessageCellAnimation(userMessageCell, message: userMessage, indexPath: indexPath)
+//                self.setMessageCellGestures(userMessageCell, message: userMessage, indexPath: indexPath)
+//
+//                // File message
+//            case let (JMessage, JMessageCell) as (JMessage, SBUBaseMessageCell):
+//                let voiceFileInfo = self.voiceFileInfos[JMessage.cacheKey] ?? nil
+//                let configuration = SBUJMessageCellParams(
+//                    message: JMessage,
+//                    hideDateView: isSameDay,
+//                    useMessagePosition: true,
+//                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+//                    receiptState: receiptState,
+//                    useReaction: useReaction,
+//                    joinedAt: self.channel?.joinedAt ?? 0,
+//                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0,
+//                    voiceFileInfo: voiceFileInfo,
+//                    enableEmojiLongPress: enableEmojiLongPress
+//                )
+//                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
+//
+//                if voiceFileInfo != nil {
+//                    self.currentVoiceFileInfo = nil
+//                    self.currentVoiceContentView = nil
+//                }
+//
+//                JMessageCell.configure(with: configuration)
+//                JMessageCell.configure(highlightInfo: self.highlightInfo)
+//                (JMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
+//                (JMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
+//                self.setMessageCellAnimation(JMessageCell, message: JMessage, indexPath: indexPath)
+//                self.setMessageCellGestures(JMessageCell, message: JMessage, indexPath: indexPath)
+//                self.setJMessageCellImage(JMessageCell, JMessage: JMessage)
+//
+//                if let voiceFileInfo = voiceFileInfo,
+//                   voiceFileInfo.isPlaying == true,
+//                   let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView {
+//
+//                    self.currentVoiceContentIndexPath = indexPath
+//                    self.currentVoiceFileInfo = voiceFileInfo
+//                    self.currentVoiceContentView = voiceContentView
+//                }
+//
+//            case let (multipleFilesMessage, multipleFilesMessageCell) as (MultipleFilesMessage, SBUMultipleFilesMessageCell):
+//                let configuration = SBUMultipleFilesMessageCellParams(
+//                    message: multipleFilesMessage,
+//                    hideDateView: isSameDay,
+//                    useMessagePosition: true,
+//                    receiptState: receiptState,
+//                    useReaction: true,
+//                    enableEmojiLongPress: enableEmojiLongPress
+//                )
+//                configuration.shouldHideFeedback = message.myFeedbackStatus == .notApplicable
+//                multipleFilesMessageCell.configure(with: configuration)
+//                (multipleFilesMessageCell.quotedMessageView as? SBUQuotedJMessageView)?.delegate = self
+//                self.setMessageCellAnimation(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
+//                self.setMessageCellGestures(multipleFilesMessageCell, message: multipleFilesMessage, indexPath: indexPath)
+//                (multipleFilesMessageCell.threadInfoView as? SBUThreadInfoView)?.delegate = self
+//
+//            case let (typingMessage, typingMessageCell) as (SBUTypingIndicatorMessage, SBUTypingIndicatorMessageCell):
+//
+//                let configuration = SBUTypingIndicatorMessageCellParams(
+//                    message: typingMessage,
+//                    shouldRedrawTypingBubble: self.shouldRedrawTypingBubble
+//                )
+//                typingMessageCell.configure(with: configuration)
+//
+//            default:
+//                let configuration = SBUJMessageCellParams(
+//                    message: message,
+//                    hideDateView: isSameDay,
+//                    messagePosition: .center,
+//                    groupPosition: .none,
+//                    receiptState: receiptState,
+//                    joinedAt: self.channel?.joinedAt ?? 0,
+//                    messageOffsetTimestamp: self.channel?.messageOffsetTimestamp ?? 0
+//                )
+//                messageCell.configure(with: configuration)
+//            }
+//
+//            UIView.setAnimationsEnabled(true)
+//
+//            // TODO: Move to `setMessageCellGestures`?
+//            messageCell.userProfileTapHandler = { [weak messageCell, weak self] in
+//                guard let self = self else { return }
+//                guard let cell = messageCell else { return }
+//                guard let sender = cell.message?.sender else { return }
+//                self.setUserProfileTapGesture(SBUUser(sender: sender))
+//            }
+//
+//            // Reaction action
+//            messageCell.emojiTapHandler = { [weak messageCell, weak self] emojiKey in
+//                guard let self = self else { return }
+//                guard let cell = messageCell else { return }
+//                self.delegate?.groupChannelModule(self, didTapEmoji: emojiKey, messageCell: cell)
+//            }
+//
+//            messageCell.emojiLongPressHandler = { [weak messageCell, weak self] emojiKey in
+//                guard let self = self else { return }
+//                guard let cell = messageCell else { return }
+//                self.delegate?.groupChannelModule(self, didLongTapEmoji: emojiKey, messageCell: cell)
+//            }
+//
+//            messageCell.moreEmojiTapHandler = { [weak messageCell, weak self] in
+//                guard let self = self else { return }
+//                guard let cell = messageCell else { return }
+//                self.delegate?.groupChannelModule(self, didTapMoreEmojiForCell: cell)
+//            }
+//
+//            messageCell.mentionTapHandler = { [weak self] user in
+//                guard let self = self else { return }
+//                self.delegate?.groupChannelModule(self, didTapMentionUser: user)
+//            }
+//
+//            messageCell.suggestedReplySelectHandler = { [weak self] optionView in
+//                guard let self = self else { return }
+//                self.delegate?.groupChannelModule(self, didSelect: optionView)
+//            }
+//
+////            messageCell.submitFormHandler = { [weak self] form, cell in
+////                guard let self = self else { return }
+////                self.delegate?.groupChannelModule(self, didSubmit: form, messageCell: cell)
+////            }
+//            //TODO:
+//
+//            messageCell.updateFeedbackHandler = { [weak self] answer, cell in
+//                guard let self = self else { return }
+//                self.delegate?.groupChannelModule(self, didUpdate: answer, messageCell: cell)
+//            }
         }
         
         open override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -638,8 +609,8 @@ extension SBUGroupChannelModule {
         }
         
         open override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            guard let JMessageCell = cell as? SBUBaseMessageCell,
-                  JMessageCell.baseFileContentView is SBUVoiceContentView else { return }
+//            guard let JMessageCell = cell as? SBUBaseMessageCell,
+//                  JMessageCell.baseFileContentView is SBUVoiceContentView else { return }
         }
         
         /// Register the message cell to the table view.
@@ -659,20 +630,21 @@ extension SBUGroupChannelModule {
         /// - Parameter message: Message object
         /// - Returns: The identifier of message cell.
         open func generateCellIdentifier(by message: JMessage) -> String {
-            switch message {
-            case is SBUTypingIndicatorMessage:
-                return typingIndicatorMessageCell?.sbu_className ?? SBUTypingIndicatorMessageCell.sbu_className
-            case is MultipleFilesMessage:
-                return multipleFilesMessageCell?.sbu_className ?? SBUMultipleFilesMessageCell.sbu_className
-            case is JMessage:
-                return JMessageCell?.sbu_className ?? SBUBaseMessageCell.sbu_className
-            case is UserMessage:
-                return userMessageCell?.sbu_className ?? SBUUserMessageCell.sbu_className
-            case is AdminMessage:
-                return adminMessageCell?.sbu_className ?? SBUAdminMessageCell.sbu_className
-            default:
-                return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
-            }
+//            switch message {
+//            case is SBUTypingIndicatorMessage:
+//                return typingIndicatorMessageCell?.sbu_className ?? SBUTypingIndicatorMessageCell.sbu_className
+//            case is MultipleFilesMessage:
+//                return multipleFilesMessageCell?.sbu_className ?? SBUMultipleFilesMessageCell.sbu_className
+//            case is JMessage:
+//                return JMessageCell?.sbu_className ?? SBUBaseMessageCell.sbu_className
+//            case is UserMessage:
+//                return userMessageCell?.sbu_className ?? SBUUserMessageCell.sbu_className
+//            case is AdminMessage:
+//                return adminMessageCell?.sbu_className ?? SBUAdminMessageCell.sbu_className
+//            default:
+//                return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
+//            }
+            return ""
         }
         
         /// Sets animation in message cell.
@@ -681,8 +653,8 @@ extension SBUGroupChannelModule {
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
         open func setMessageCellAnimation(_ messageCell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
-            if message.messageId == highlightInfo?.messageId,
-               message.updatedAt == highlightInfo?.updatedAt,
+            if message.clientMsgNo == highlightInfo?.messageId,
+               message.timestamp == highlightInfo?.updatedAt,
                self.highlightInfo?.animated == true,
                self.isHighlightInfoAnimated == false {
                 self.cellAnimationDebouncer.add {
@@ -696,10 +668,11 @@ extension SBUGroupChannelModule {
         /// - returns: `true` if a SBUTypingIndicatorMessageCell was not previoulsy being displayed on screen, `false` if a SBUTypingIndicatorMessageCell was already being displayed.
         /// - Since: 3.12.0
         func decideToRedrawTypingBubble() -> Bool {
-            for cell in tableView.visibleCells where cell is SBUTypingIndicatorMessageCell {
-                return false
-            }
-            return true
+            return false
+//            for cell in tableView.visibleCells where cell is SBUTypingIndicatorMessageCell {
+//                return false
+//            }
+//            return true
         }
         
         // MARK: - Menu
@@ -742,97 +715,97 @@ extension SBUGroupChannelModule.List {
     ///
     /// - Since: 3.4.0
     func updateVoiceMessage(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
-        guard let JMessageCell = cell as? SBUBaseMessageCell,
-              let JMessage = message as? JMessage,
-              let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView,
-              SBUUtils.getFileType(by: JMessage) == .voice else { return }
-
-        if self.voiceFileInfos[JMessage.cacheKey] == nil {
-            voiceContentView.updateVoiceContentStatus(.loading)
-        }
-        
-        SBUCacheManager.File.loadFile(
-            urlString: JMessage.url,
-            cacheKey: JMessage.cacheKey,
-            fileName: JMessage.name
-        ) { [weak self] filePath, _ in
-
-            var playtime: Double = 0
-            let metaArrays = message.metaArrays(keys: [SBUConstant.voiceMessageDurationKey])
-            if metaArrays.count > 0 {
-                let value = metaArrays[0].value[0]
-                playtime = Double(value) ?? 0
-            }
-            
-            guard let filePath = filePath else {
-                self?.pauseAllVoicePlayer()
-                voiceContentView.updateVoiceContentStatus(.none, time: playtime)
-                return
-            }
-            if voiceContentView.status == .loading || voiceContentView.status == .none {
-                voiceContentView.updateVoiceContentStatus(.prepared)
-            }
-            
-            var voicefileInfo: SBUVoiceFileInfo?
-            if self?.voiceFileInfos[JMessage.cacheKey] == nil {
-                voicefileInfo = SBUVoiceFileInfo(
-                    fileName: JMessage.name,
-                    filePath: filePath,
-                    playtime: playtime,
-                    currentPlayTime: 0
-                )
-                
-                self?.voiceFileInfos[JMessage.cacheKey] = voicefileInfo
-            } else {
-                voicefileInfo = self?.voiceFileInfos[JMessage.cacheKey]
-            }
-            
-            var actionInSameView = false
-            if let voicefileInfo = voicefileInfo {
-                if self?.currentVoiceFileInfo?.isPlaying == true {
-                    // updated status of previously contentView
-                    let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
-                    self?.currentVoiceFileInfo?.isPlaying = false
-                    self?.currentVoiceContentView?.updateVoiceContentStatus(.pause, time: currentPlayTime)
-                    
-                    if self?.currentVoiceContentView == voiceContentView {
-                        actionInSameView = true
-                    }
-                }
-                
-                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
-            }
-            
-            if let voicefileInfo = voicefileInfo {
-                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
-                self?.currentVoiceContentIndexPath = indexPath
-            }
-            
-            if self?.currentVoiceFileInfo != voicefileInfo {
-                self?.pauseAllVoicePlayer()
-            }
-            
-            self?.currentVoiceFileInfo = voicefileInfo
-            self?.currentVoiceContentView = voiceContentView
-            
-            switch voiceContentView.status {
-            case .none:
-                break
-            case .loading:
-                break
-            case .prepared:
-                self?.voicePlayer?.play()
-            case .playing:
-                self?.voicePlayer?.pause()
-            case .pause:
-                if actionInSameView == true { break }
-
-                let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
-                self?.voicePlayer?.play(fromTime: currentPlayTime)
-            case .finishPlaying:
-                self?.voicePlayer?.play()
-            }
-        }
+//        guard let JMessageCell = cell as? SBUBaseMessageCell,
+//              let JMessage = message as? JMessage,
+//              let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView,
+//              SBUUtils.getFileType(by: JMessage) == .voice else { return }
+//
+//        if self.voiceFileInfos[JMessage.cacheKey] == nil {
+//            voiceContentView.updateVoiceContentStatus(.loading)
+//        }
+//
+//        SBUCacheManager.File.loadFile(
+//            urlString: JMessage.url,
+//            cacheKey: JMessage.cacheKey,
+//            fileName: JMessage.name
+//        ) { [weak self] filePath, _ in
+//
+//            var playtime: Double = 0
+//            let metaArrays = message.metaArrays(keys: [SBUConstant.voiceMessageDurationKey])
+//            if metaArrays.count > 0 {
+//                let value = metaArrays[0].value[0]
+//                playtime = Double(value) ?? 0
+//            }
+//
+//            guard let filePath = filePath else {
+//                self?.pauseAllVoicePlayer()
+//                voiceContentView.updateVoiceContentStatus(.none, time: playtime)
+//                return
+//            }
+//            if voiceContentView.status == .loading || voiceContentView.status == .none {
+//                voiceContentView.updateVoiceContentStatus(.prepared)
+//            }
+//
+//            var voicefileInfo: SBUVoiceFileInfo?
+//            if self?.voiceFileInfos[JMessage.cacheKey] == nil {
+//                voicefileInfo = SBUVoiceFileInfo(
+//                    fileName: JMessage.name,
+//                    filePath: filePath,
+//                    playtime: playtime,
+//                    currentPlayTime: 0
+//                )
+//
+//                self?.voiceFileInfos[JMessage.cacheKey] = voicefileInfo
+//            } else {
+//                voicefileInfo = self?.voiceFileInfos[JMessage.cacheKey]
+//            }
+//
+//            var actionInSameView = false
+//            if let voicefileInfo = voicefileInfo {
+//                if self?.currentVoiceFileInfo?.isPlaying == true {
+//                    // updated status of previously contentView
+//                    let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
+//                    self?.currentVoiceFileInfo?.isPlaying = false
+//                    self?.currentVoiceContentView?.updateVoiceContentStatus(.pause, time: currentPlayTime)
+//
+//                    if self?.currentVoiceContentView == voiceContentView {
+//                        actionInSameView = true
+//                    }
+//                }
+//
+//                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
+//            }
+//
+//            if let voicefileInfo = voicefileInfo {
+//                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
+//                self?.currentVoiceContentIndexPath = indexPath
+//            }
+//
+//            if self?.currentVoiceFileInfo != voicefileInfo {
+//                self?.pauseAllVoicePlayer()
+//            }
+//
+//            self?.currentVoiceFileInfo = voicefileInfo
+//            self?.currentVoiceContentView = voiceContentView
+//
+//            switch voiceContentView.status {
+//            case .none:
+//                break
+//            case .loading:
+//                break
+//            case .prepared:
+//                self?.voicePlayer?.play()
+//            case .playing:
+//                self?.voicePlayer?.pause()
+//            case .pause:
+//                if actionInSameView == true { break }
+//
+//                let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
+//                self?.voicePlayer?.play(fromTime: currentPlayTime)
+//            case .finishPlaying:
+//                self?.voicePlayer?.play()
+//            }
+//        }
     }
     
     // MARK: - SBUVoicePlayerDelegate
@@ -848,11 +821,11 @@ extension SBUGroupChannelModule.List {
         let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
         self.currentVoiceFileInfo?.isPlaying = true
         
-        if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-            voiceContentView.updateVoiceContentStatus(.playing, time: currentPlayTime)
-        }
+//        if let indexPath = self.currentVoiceContentIndexPath,
+//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
+//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+//            voiceContentView.updateVoiceContentStatus(.playing, time: currentPlayTime)
+//        }
     }
     
     /// This method is called when the voice player is paused.
@@ -860,27 +833,27 @@ extension SBUGroupChannelModule.List {
     ///   - player: The `SBUVoicePlayer` that is paused.
     ///   - voiceFileInfo: The `SBUVoiceFileInfo` of the voice file that is paused.
     public func voicePlayerDidPause(_ player: SBUVoicePlayer, voiceFileInfo: SBUVoiceFileInfo?) {
-        let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
-        self.currentVoiceFileInfo?.isPlaying = false
-        
-        if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-            voiceContentView.updateVoiceContentStatus(.pause, time: currentPlayTime)
-        }
+//        let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
+//        self.currentVoiceFileInfo?.isPlaying = false
+//
+//        if let indexPath = self.currentVoiceContentIndexPath,
+//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
+//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+//            voiceContentView.updateVoiceContentStatus(.pause, time: currentPlayTime)
+//        }
     }
     
     /// This method is called when the voice player stops.
     /// - Parameter player: The `SBUVoicePlayer` that stopped.
     public func voicePlayerDidStop(_ player: SBUVoicePlayer) {
-        let time = self.currentVoiceFileInfo?.playtime ?? 0
-        self.currentVoiceFileInfo?.isPlaying = false
-        
-        if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-            voiceContentView.updateVoiceContentStatus(.finishPlaying, time: time)
-        }
+//        let time = self.currentVoiceFileInfo?.playtime ?? 0
+//        self.currentVoiceFileInfo?.isPlaying = false
+//
+//        if let indexPath = self.currentVoiceContentIndexPath,
+//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
+//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+//            voiceContentView.updateVoiceContentStatus(.finishPlaying, time: time)
+//        }
     }
     
     /// This method is called when the voice player is reset.
@@ -892,14 +865,14 @@ extension SBUGroupChannelModule.List {
     ///   - player: The `SBUVoicePlayer` that updated the play time.
     ///   - time: The updated play time.
     public func voicePlayerDidUpdatePlayTime(_ player: SBUVoicePlayer, time: TimeInterval) {
-        self.currentVoiceFileInfo?.currentPlayTime = time
-        self.currentVoiceFileInfo?.isPlaying = true
-        
-        if let indexPath = self.currentVoiceContentIndexPath,
-           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-            voiceContentView.updateVoiceContentStatus(.playing, time: time)
-        }
+//        self.currentVoiceFileInfo?.currentPlayTime = time
+//        self.currentVoiceFileInfo?.isPlaying = true
+//        
+//        if let indexPath = self.currentVoiceContentIndexPath,
+//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
+//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+//            voiceContentView.updateVoiceContentStatus(.playing, time: time)
+//        }
     }
     
     /// Methods for quickly applying a text value to a stream message

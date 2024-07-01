@@ -19,4 +19,21 @@ extension SBUModuleSet {
     /// ```
     /// - Since: 3.6.0
     public static var GroupChannelListModule: SBUGroupChannelListModule.Type = SBUGroupChannelListModule.self
+    
+    // MARK: Channel
+    
+    /// The base module for channels. The default is `SBUBaseChannelModule` type.
+    /// ```swift
+    /// SBUModuleSet.BaseChannelModule = SBUBaseChannelModule.self
+    /// ```
+    /// - Since: 3.6.0
+    public static var BaseChannelModule: SBUBaseChannelModule.Type = SBUBaseChannelModule.self
+    
+    /// The module for group channels. The default is `SBUGroupChannelModule` type.
+    /// ```swift
+    /// SBUModuleSet.GroupChannelModule = SBUGroupChannelModule.self
+    /// ```
+    /// - Since: 3.6.0
+    public static var GroupChannelModule: SBUGroupChannelModule.Type = SBUGroupChannelModule.self
+    
 }

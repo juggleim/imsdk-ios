@@ -89,94 +89,13 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     ///   - messageListParams: `MessageListParams` object to be used when loading messages.
     ///   - displaysLocalCachedListFirst: (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
     /// - Since: 1.0.11
-    public init(baseChannel: JConversationInfo, displaysLocalCachedListFirst: Bool = false) {
+    public init(baseChannel: JConversationInfo) {
         super.init(nibName: nil, bundle: nil)
         SBULog.info(#function)
-        
-        if displaysLocalCachedListFirst {
-            self.createViewModel(
-                channel: baseChannel,
-                displaysLocalCachedListFirst: displaysLocalCachedListFirst
-            )
-        } else {
-            self.createViewModel(
-                channel: baseChannel
-            )
-        }
-    }
     
-    /// Initiates view controller to enter a channel with its URL, message list params and a specific timestamp representing a starting potint.
-    ///
-    /// See the example below for params generation.
-    /// ```
-    ///     let params = MessageListParams()
-    ///     params.includeMetaArray = true
-    ///     params.includeReactions = true
-    ///     params.includeThreadInfo = true
-    ///     ...
-    /// ```
-    ///
-    /// - note: The `reverse` and the `previousResultSize` properties in the `MessageListParams` are set in the UIKit. Even though you set that property it will be ignored.
-    ///
-    /// - Parameters:
-    ///   - channelURL: Channel's URL
-    ///   - startingPoint: A starting point timestamp to start the message list from.
-    ///   - messageListParams: `MessageListParams` object to be used when loading messages.
-    /// - Since: 2.1.0
-    required public init(
-        channelURL: String,
-        startingPoint: Int64? = nil
-    ) {
-        super.init(nibName: nil, bundle: nil)
-        
-        SBULog.info(#function)
-        
         self.createViewModel(
-            channelURL: channelURL,
-            startingPoint: startingPoint
+            channel: baseChannel
         )
-    }
-    
-    /// Initiates view controller to enter a channel with its URL, message list params and a specific timestamp representing a starting potint.
-    ///
-    /// See the example below for params generation.
-    /// ```
-    ///     let params = MessageListParams()
-    ///     params.includeMetaArray = true
-    ///     params.includeReactions = true
-    ///     params.includeThreadInfo = true
-    ///     ...
-    /// ```
-    ///
-    /// - note: The `reverse` and the `previousResultSize` properties in the `MessageListParams` are set in the UIKit. Even though you set that property it will be ignored.
-    ///
-    /// - Parameters:
-    ///   - channelURL: Channel's URL
-    ///   - startingPoint: A starting point timestamp to start the message list from.
-    ///   - messageListParams: `MessageListParams` object to be used when loading messages.
-    ///   - displaysLocalCachedListFirst: (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
-    /// - Since: 3.3.5
-    public init(
-        channelURL: String,
-        startingPoint: Int64? = nil,
-        displaysLocalCachedListFirst: Bool
-    ) {
-        super.init(nibName: nil, bundle: nil)
-        
-        SBULog.info(#function)
-        
-        if displaysLocalCachedListFirst {
-            self.createViewModel(
-                channelURL: channelURL,
-                startingPoint: startingPoint,
-                displaysLocalCachedListFirst: displaysLocalCachedListFirst
-            )
-        } else {
-            self.createViewModel(
-                channelURL: channelURL,
-                startingPoint: startingPoint
-            )
-        }
     }
     
     open override func loadView() {
@@ -541,9 +460,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter JMessage: JMessage object
     /// - Note: Use `openFile(_:)` instead.
     /// - Since: 3.0.0
-    open func openFile(JMessage: JMessage) {
-        let fileData = SBUFileData(JMessage: JMessage)
-        self.openFile(fileData)
+    open func openFile(fileMessage: JMessage) {
+//        let fileData = SBUFileData(fileMessage: fileMessage)
+//        self.openFile(fileData)
     }
     
     /// This function increases the new message count.

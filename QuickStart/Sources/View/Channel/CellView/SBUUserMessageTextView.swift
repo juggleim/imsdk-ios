@@ -47,7 +47,6 @@ open class SBUUserMessageTextView: SBUView {
         return textView
     }()
     
-    public var channelType: ChannelType = .group
     public var isWebType = false
     
     var longPressHandler: ((URL) -> Void)?
@@ -58,9 +57,7 @@ open class SBUUserMessageTextView: SBUView {
     
     /// Check that margin should be removed. If `true`, it needs to margin
     /// - Since: 3.3.0
-    public var needsToRemoveMargin: Bool {
-        self.channelType == .open || self.removeMargin
-    }
+    public var needsToRemoveMargin: Bool = false
     
     public weak var delegate: SBUUserMessageTextViewDelegate?
 
@@ -82,8 +79,7 @@ open class SBUUserMessageTextView: SBUView {
         super.init(frame: frame)
     }
     
-    public init(channelType: ChannelType = .group, removeMargin: Bool = false) {
-        self.channelType = channelType
+    public init(removeMargin: Bool = false) {
         self.removeMargin = removeMargin
 
         super.init()
@@ -179,26 +175,26 @@ open class SBUUserMessageTextView: SBUView {
             .underlineStyle: NSUnderlineStyle.single.rawValue
         ]
         
-        if model.hasMentionedMessage, SendbirdUI.config.groupChannel.channel.isMentionEnabled {
-            guard let mentionedMessageTemplate = model.message?.mentionedMessageTemplate,
-                  let mentionedUsers = model.message?.mentionedUsers,
-                  !mentionedUsers.isEmpty else { return }
-            self.mentionManager = SBUMentionManager()
-            mentionManager!.configure(
-                defaultTextAttributes: model.defaultAttributes,
-                mentionTextAttributes: model.mentionedAttributes
-            )
-            
-            let attributedText = mentionManager!.generateMentionedMessage(
-                with: mentionedMessageTemplate,
-                mentionedUsers: SBUUser.convertUsers(mentionedUsers)
-            )
-            let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
-            model.addMentionedUserHighlightIfNeeded(with: mutableAttributedText, mentionedList: mentionManager?.mentionedList)
-            model.addEditedStateIfNeeded(with: mutableAttributedText)
-            
-            textView.attributedText = mutableAttributedText
-        }
+//        if model.hasMentionedMessage, SendbirdUI.config.groupChannel.channel.isMentionEnabled {
+//            guard let mentionedMessageTemplate = model.message?.mentionedMessageTemplate,
+//                  let mentionedUsers = model.message?.mentionedUsers,
+//                  !mentionedUsers.isEmpty else { return }
+//            self.mentionManager = SBUMentionManager()
+//            mentionManager!.configure(
+//                defaultTextAttributes: model.defaultAttributes,
+//                mentionTextAttributes: model.mentionedAttributes
+//            )
+//            
+//            let attributedText = mentionManager!.generateMentionedMessage(
+//                with: mentionedMessageTemplate,
+//                mentionedUsers: SBUUser.convertUsers(mentionedUsers)
+//            )
+//            let mutableAttributedText = NSMutableAttributedString(attributedString: attributedText)
+//            model.addMentionedUserHighlightIfNeeded(with: mutableAttributedText, mentionedList: mentionManager?.mentionedList)
+//            model.addEditedStateIfNeeded(with: mutableAttributedText)
+//            
+//            textView.attributedText = mutableAttributedText
+//        }
     }
 }
 

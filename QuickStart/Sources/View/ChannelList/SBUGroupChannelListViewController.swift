@@ -37,10 +37,6 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     /// This object has a list of all channels.
     public var channelList: [JConversationInfo] { self.viewModel?.channelList ?? [] }
     
-    /// This is a property that allows you to show the channel type selector when creating a channel. (default: `true`)
-    /// - Since: 3.0.0
-    public var enableCreateChannelTypeSelector: Bool = true
-    
     // MARK: - Lifecycle
     @available(*, unavailable, renamed: "SBUGroupChannelListViewController()")
     required public init?(coder: NSCoder) {
@@ -145,6 +141,11 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     ///   - channelURL: channel url for use in channelViewController.
     ///   - messageListParams: If there is a messageListParams set directly for use in Channel, set it up here
     open override func showChannel(channelURL: JConversation) {
+        
+//        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(
+//                            channel: channelURL
+//                        )
+//                        self.navigationController?.pushViewController(channelVC, animated: true)
         
 //        GroupChannel.getChannel(url: channelURL) { channel, error in
 //            guard error == nil, let channel = channel else { return }

@@ -15,10 +15,8 @@ public class SBUViewControllerSet {
     /// The view controller for the group channel list.
     public static var GroupChannelListViewController: SBUGroupChannelListViewController.Type = SBUGroupChannelListViewController.self
     
-    /// The view controller for the feed notification channel.
-//    public static var FeedNotificationChannelViewController: SBUFeedNotificationChannelViewController.Type = SBUFeedNotificationChannelViewController.self
-    //TODO: 
-    /// The view controller for the chat notification channel.
+    /// The view controller for the group channel chat.
+    public static var GroupChannelViewController: SBUGroupChannelViewController.Type = SBUGroupChannelViewController.self
 }
 
 // swiftlint:enable identifier_name

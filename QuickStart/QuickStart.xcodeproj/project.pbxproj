@@ -215,6 +215,8 @@
 		A0968CB32C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CAA2C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift */; };
 		A0968CB42C2B03DA00E68790 /* SBUBaseChannelModule.List.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CAC2C2B03DA00E68790 /* SBUBaseChannelModule.List.swift */; };
 		A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */; };
+		A0A09F322C2EB40E00E96EDE /* SBUUserMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */; };
+		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -428,6 +430,8 @@
 		A0968CAA2C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelModule.Header.swift; sourceTree = "<group>"; };
 		A0968CAC2C2B03DA00E68790 /* SBUBaseChannelModule.List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelModule.List.swift; sourceTree = "<group>"; };
 		A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceMessageInputView.swift; sourceTree = "<group>"; };
+		A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMessageCell.swift; sourceTree = "<group>"; };
+		A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1060,6 +1064,8 @@
 				A0968C382C2B020200E68790 /* SBUBaseMessageCell.swift */,
 				A0968C3D2C2B020200E68790 /* SBUAdminMessageCell.swift */,
 				A0968C3E2C2B020200E68790 /* SBUContentBaseMessageCell.swift */,
+				A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */,
+				A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */,
 			);
 			path = MessageCell;
 			sourceTree = "<group>";
@@ -1349,6 +1355,7 @@
 				A0968C842C2B020300E68790 /* SBUGroupChannelViewController.swift in Sources */,
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
+				A0A09F322C2EB40E00E96EDE /* SBUUserMessageCell.swift in Sources */,
 				A07F3B652BF4A2270087920B /* SBUUtils.swift in Sources */,
 				A07F3B5F2BF4A2260087920B /* Sequence+SBUIKit.swift in Sources */,
 				A07F3B632BF4A2270087920B /* SBUPropertyWrapper.swift in Sources */,
@@ -1418,6 +1425,7 @@
 				A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */,
 				A07F3C9F2BF4A2290087920B /* SBUQuotedMessageViewProtocol.swift in Sources */,
 				A07F3B622BF4A2270087920B /* UITextField+SBUIKit.swift in Sources */,
+				A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */,
 				A07F3B3D2BF4A2260087920B /* VoiceMessageStatus.swift in Sources */,
 				A07F3C0B2BF4A2280087920B /* SBUIconSet.swift in Sources */,
 				A07F3BC12BF4A2270087920B /* SBUGroupChannelListModule.List.swift in Sources */,

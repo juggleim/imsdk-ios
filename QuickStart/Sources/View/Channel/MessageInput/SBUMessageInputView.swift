@@ -459,7 +459,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             // Start a new mode
             switch newValue {
             case .edit(let message):
-                self.startEditMode(text: message.message)
+                self.startEditMode(text: "")
             case .quoteReply(let message):
                 self.startQuoteReplyMode(message: message)
             case .none:
@@ -477,7 +477,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         
         switch mode {
         case .edit:
-            guard let message = message as? UserMessage else { break }
+            guard let message = message as? JMessage else { break }
             self.option = .edit(message)
         case .quoteReply:
             guard let message = message else { break }
@@ -859,7 +859,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
     /// Sets disable chat input value
     /// - Parameter isDisable: `true` is disable mode, `false` is available mode
     func setDisableChatInputState(_ isDisable: Bool) {
-        if SendbirdUI.config.groupChannel.channel.isSuggestedRepliesEnabled == false { return }
+//        if SendbirdUI.config.groupChannel.channel.isSuggestedRepliesEnabled == false { return }
         if self.isMuted || self.isFrozen { return }
             
         self.isDisable = isDisable
@@ -965,11 +965,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         var items: [SBUActionSheetItem] = []
         var inputConfig: SBUConfig.BaseInput?
         
-        if self.channelType == .group {
-            inputConfig = SendbirdUI.config.groupChannel.channel.input
-        } else if self.channelType == .open {
-            inputConfig = SendbirdUI.config.openChannel.channel.input
-        }
+//        if self.channelType == .group {
+//            inputConfig = SendbirdUI.config.groupChannel.channel.input
+//        } else if self.channelType == .open {
+//            inputConfig = SendbirdUI.config.openChannel.channel.input
+//        }
         
         guard let inputConfig = inputConfig else { return items }
         

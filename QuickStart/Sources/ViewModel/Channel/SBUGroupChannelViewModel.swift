@@ -302,7 +302,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         
         if self.hasNext() {
             // Hold on to most recent messages in cache for smooth scrolling.
-            setupCache()
+//            setupCache()
         }
         
         self.delegate?.shouldUpdateLoadingState(showIndicator)

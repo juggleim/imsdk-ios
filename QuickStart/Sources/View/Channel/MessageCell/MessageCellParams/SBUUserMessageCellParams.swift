@@ -53,7 +53,7 @@ public class SBUUserMessageCellParams: SBUBaseMessageCellParams {
         
         var messagePosition: MessagePosition = .left
         if useMessagePosition {
-            let isMyMessage = SBUGlobals.currentUser?.userId == message.sender?.userId
+            let isMyMessage = SBUGlobals.currentUser?.userId == message.senderUserId
             messagePosition = isMyMessage ? .right : .left
         }
         

@@ -76,6 +76,8 @@ public class SBUQuoteMessageInputViewParams {
         self.message = message
         if let name = JIM.shared().userInfoManager.getUserInfo(message.senderUserId).userName {
             self.quotedMessageNickname = name
+        } else {
+            self.quotedMessageNickname = ""
         }
     }
 }

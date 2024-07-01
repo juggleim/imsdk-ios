@@ -166,7 +166,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         self.userNameView.isHidden = true
         self.profileView.isHidden = true
         self.profilesStackView.isHidden = true
-        self.quotedMessageView?.isHidden = true
         self.threadHStackView.isHidden = true
         
         // + --------------------------------------------------------------+
@@ -187,7 +186,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 ]),
                 self.profileContentSpacing,
                 self.contentVStackView.setVStack([
-                    self.quotedMessageView,
                     self.messageHStackView.setHStack([
                         self.mainContainerVStackView.setVStack([
                             self.mainContainerView,
@@ -198,8 +196,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 ])
             ]),
             self.threadHStackView.setHStack([
-                self.threadInfoSpacing,
-                self.threadInfoView
+                self.threadInfoSpacing
             ])
         ])
 
@@ -271,9 +268,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
             stateView.setupStyles()
         }
         
-        if let threadInfoView = self.threadInfoView as? SBUThreadInfoView {
-            threadInfoView.setupStyles(theme: self.theme)
-        }
     }
     
     open override func prepareForReuse() {
@@ -287,7 +281,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     }
     
     // MARK: - Common
-    open func configure(with configuration: SBUBaseMessageCellParams) {
+    open override func configure(with configuration: SBUBaseMessageCellParams) {
         // nil for super/broadcast channel which doesn't support receipts.
         // Kept receipt to .none for backward compatibility as this configure() is *open*.
         // MARK: Configure base message cell
@@ -317,8 +311,8 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         if let userNameView = self.userNameView as? SBUUserNameView {
             var username = ""
             let senderId = message.senderUserId
-            if let sender = JIM.shared().userInfoManager.getUserInfo(senderId) {
-                username = sender.userName
+            if let sender = JIM.shared().userInfoManager.getUserInfo(senderId), let name = sender.userName {
+                username = name
             }
             userNameView.configure(username: username)
         }
@@ -371,8 +365,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 joinedAt: configuration.joinedAt,
                 messageOffsetTimestamp: configuration.messageOffsetTimestamp
             )
-        } else {
-            self.quotedMessageView?.isHidden = true
         }
         
         if self.useThreadInfo {
@@ -451,10 +443,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     /// Set up the thread info view.
     /// - Since: 3.3.0
     public func setupThreadInfoView() {
-        guard self.threadInfoView != nil,
-              let message = self.message else { return }
         
-        self.threadInfoView?.configure(with: message, messagePosition: self.position)
     }
     
     public func setMessageGrouping() {
@@ -519,7 +508,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 self.messageSpacing
             ])
             self.contentVStackView.setVStack([
-                self.quotedMessageView,
                 self.messageHStackView
             ])
             self.contentHStackView.setHStack([
@@ -528,8 +516,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 self.contentVStackView
             ])
             self.threadHStackView.setHStack([
-                self.threadInfoSpacing,
-                self.threadInfoView
+                self.threadInfoSpacing
             ])
             
         case .right:
@@ -543,7 +530,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 ]),
             ])
             self.contentVStackView.setVStack([
-                self.quotedMessageView,
                 self.messageHStackView
             ])
             self.contentHStackView.setHStack([
@@ -551,7 +537,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 self.profileContentSpacing
             ])
             self.threadHStackView.setHStack([
-                self.threadInfoView
             ])
             
         case .center:
@@ -574,15 +559,13 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     /// - Since: 3.12.0
     public func configureMessageProfileViews(message: JMessage) {
         // Set profileViews for TypingIndicatorMessage.
-        if let message = message as? SBUTypingIndicatorMessage,
-           let typingInfo = message.typingIndicatorInfo {
-            self.configureTyperProfileViews(typingInfo: typingInfo)
-        } 
+//        if let message = message as? SBUTypingIndicatorMessage,
+//           let typingInfo = message.typingIndicatorInfo {
+//            self.configureTyperProfileViews(typingInfo: typingInfo)
+//        }
         
         // Set profileView for other message types.
-        else {
-            self.configureUserProfileView(message: message)
-        }
+        self.configureUserProfileView(message: message)
     }
     
     /// Configures profile views for typers.
@@ -619,7 +602,8 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     /// - Since: 3.12.0
     open func configureUserProfileView(message: JMessage) {
         if let profileView = self.profileView as? SBUMessageProfileView {
-            let urlString = message.sender?.profileURL ?? ""
+            let userId = message.senderUserId
+            let urlString = JIM.shared().userInfoManager.getUserInfo(userId).portrait ?? ""
             profileView.configure(urlString: urlString)
         }
     }
@@ -652,7 +636,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                         position: MessagePosition,
                         groupPosition: MessageGroupPosition,
                         receiptState: SBUMessageReceiptState?) {
-        let configuration = SBUJMessageCellParams(
+        let configuration = SBUBaseMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             messagePosition: position,
