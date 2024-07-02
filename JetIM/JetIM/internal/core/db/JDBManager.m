@@ -159,6 +159,10 @@
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
     [self.conversationDb updateLastMessageWithoutIndex:message];
 }
+
+- (void)addConversations:(NSArray<JConcreteConversationInfo *> *)addConversations upDataMentions:(NSArray *)upDataMentions upDataLastMessages:(NSArray <JConcreteMessage *> *)upDataLastMessages{
+    [self.conversationDb addConversations:addConversations upDataMentions:upDataMentions upDataLastMessages:upDataLastMessages];
+}
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
@@ -191,6 +195,10 @@
     [self.messageDb updateMessageContent:content
                              contentType:type
                          withClientMsgNo:clientMsgNo];
+}
+
+-(void)updateMessage:(JConcreteMessage *)message{
+    [self.messageDb updateMessage:message];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {

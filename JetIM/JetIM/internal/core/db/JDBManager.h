@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
    forConversation:(JConversation *)conversation;
 - (void)clearLastMessage:(JConversation *)conversation;
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
+- (void)addConversations:(NSArray *)addConversations upDataMentions:(NSArray *)upDataMentions upDataLastMessages:(NSArray *)upDataLastMessages;
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
@@ -76,6 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo;
+-(void)updateMessage:(JConcreteMessage *)message;
 - (void)messageSendFail:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;

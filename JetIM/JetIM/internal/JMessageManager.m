@@ -608,6 +608,7 @@
             message.messageState = JMessageStateSending;
             [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
         }
+        [self updateMessageWithContent:(JConcreteMessage *)message];
         [self sendWebSocketMessage:(JConcreteMessage *)message
                        isBroadcast:NO
                            success:successBlock
@@ -1132,6 +1133,16 @@
     return message;
 }
 
+-(void)updateMessageWithContent:(JConcreteMessage *)message{
+    if(message.content != nil){
+        message.contentType = [[message.content class] contentType];
+    }
+    if (message.referredMsg) {
+        message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
+    }
+    [self.core.dbManager updateMessage:message];
+}
+
 - (JConcreteMessage *)saveMessageWithContent:(JMessageContent *)content
                                messageOption:(JMessageOptions *)messageOption
                               inConversation:(JConversation *)conversation
@@ -1277,10 +1288,13 @@
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
+    JLogI(@"MSG-Sync", @"handle receive messages %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
+    JLogI(@"MSG-Sync", @"handle receive messages insertMessages %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     [self updateUserInfos:messagesToSave];
-    //TODO: 遍历 messagesToSave，同一个会话的最后一个 message 更新会话的 lastMessage
+    JLogI(@"MSG-Sync", @"handle receive messages updateUserInfos %lu, isSync %@", (unsigned long)messages.count, @(isSync));
+    NSMutableArray * upDataConversatonMessages = [NSMutableArray array];
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -1291,7 +1305,6 @@
         } else if (obj.direction == JMessageDirectionReceive) {
             receiveTime = obj.timestamp;
         }
-        
         //recall message
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
@@ -1413,9 +1426,7 @@
             }
         }
         
-        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidReceive:)]) {
-            [self.sendReceiveDelegate messageDidReceive:obj];
-        }
+        [upDataConversatonMessages addObject:obj];
         
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1425,7 +1436,14 @@
             }];
         });
     }];
+    JLogI(@"MSG-Sync", @"handle receive messages 0 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:upDataConversatonMessages];
+    }
+    JLogI(@"MSG-Sync", @"handle receive messages 1 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     [self.core.dbManager insertUserInfos:userDic.allValues];
+    JLogI(@"MSG-Sync", @"handle receive messages 2 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
+
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {
@@ -1442,6 +1460,8 @@
             self.core.messageReceiveSyncTime = receiveTime;
         }
     }
+    JLogI(@"MSG-Sync", @"handle receive messages 3 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
+
 }
 
 - (void)sync {

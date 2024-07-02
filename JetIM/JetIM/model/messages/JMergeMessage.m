@@ -65,7 +65,7 @@
     [mergeDic setObject:self.extra?:@"" forKey:jMergeExtra];
     [mergeDic setObject:self.conversation.conversationId?:@"" forKey:jMessageConversationId];
     [mergeDic setObject:@(self.conversation.conversationType) forKey:jMessageConversationType];
-    [mergeDic setObject:self.conversation.conversationId?:@"" forKey:jMessageContainerMsgId];
+    [mergeDic setObject:self.containerMsgId?:@"" forKey:jMessageContainerMsgId];
     if (self.messageIdList.count > 0) {
         [mergeDic setObject:self.messageIdList forKey:jMessageIdList];
     }
@@ -88,6 +88,7 @@
     self.title = json[jMergeTitle];
     self.messageIdList = json[jMessageIdList];
     self.extra = json[jMergeExtra];
+    self.containerMsgId = json[jMessageContainerMsgId];
     JConversation * conversation = [[JConversation alloc] init];
     conversation.conversationId = json[jMessageConversationId];
     NSNumber * type = json[jMessageConversationType];

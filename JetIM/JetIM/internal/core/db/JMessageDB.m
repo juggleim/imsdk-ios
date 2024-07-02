@@ -49,6 +49,7 @@ NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
 NSString *const jAndSenderIs = @" AND sender = ?";
+NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
@@ -124,8 +125,16 @@ NSString *const jReferMsgId = @"refer_msg_id";
                 [self insertMessage:obj inDb:db];
                 obj.clientMsgNo = db.lastInsertRowId;
             }
+            
+            if(obj.referredMsg != nil){
+                JConcreteMessage * ref = [self getMessageWithMessageId:obj.referredMsg.messageId inDb:db];
+                if(ref == nil){
+                    [self insertMessage:obj.referredMsg inDb:db];
+                }
+            }
         }];
     }];
+    
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo
@@ -162,6 +171,32 @@ NSString *const jReferMsgId = @"refer_msg_id";
     }
     NSString *sql = [jUpdateMessageContent stringByAppendingString:jClientMsgNoIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[s, type, content.searchContent, @(clientMsgNo)]];
+}
+-(void)updateMessage:(JConcreteMessage *)message{
+    NSMutableArray *args = [NSMutableArray array];
+    [args addObject:message.contentType];
+    NSData *data = [message.content encode];
+    NSString * content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    [args addObject:content];
+    [args addObject:message.content.searchContent];
+    NSString * mentionInfo;
+    if(message.mentionInfo){
+        mentionInfo = [message.mentionInfo encodeToJson];
+    }else{
+        mentionInfo = @"";
+    }
+    [args addObject:mentionInfo];
+    NSString * refer_msg_id;
+    if(message.referredMsg){
+        refer_msg_id = message.referredMsg.messageId;
+    }else{
+        refer_msg_id = @"";
+    }
+    [args addObject:refer_msg_id];
+    [args addObject:@(message.clientMsgNo)];
+    [self.dbHelper executeUpdate:jUpdateMessage
+            withArgumentsInArray:args];
+    
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -572,10 +607,6 @@ NSString *const jReferMsgId = @"refer_msg_id";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
-    if(message.referMsgId.length > 0){
-        message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
-    }
-    
     return message;
 }
 

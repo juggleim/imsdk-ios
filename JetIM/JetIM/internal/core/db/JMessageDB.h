@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)messageSendFail:(long long)clientMsgNo;
 
+-(void)updateMessage:(JConcreteMessage *)message;
+
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time

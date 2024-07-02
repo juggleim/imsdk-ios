@@ -12,7 +12,7 @@
 #import "JUserInfoManager.h"
 #import "JetIMCore.h"
 #import "JLogger.h"
-
+#import "JUtility.h"
 @interface JIM ()
 @property (nonatomic, strong) JetIMCore *core;
 @end
@@ -66,6 +66,9 @@ static JIM *_instance;
 
 - (NSString *)currentUserId {
     return self.core.userId;
+}
+-(NSString *)getDeviceId{
+    return [JUtility getDeviceId];
 }
 
 @end
