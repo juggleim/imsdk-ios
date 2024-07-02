@@ -7,6 +7,15 @@
 
 #import "JUserInfoDB.h"
 
+//user 最新版本
+#define jUserTableVersion 1
+//NSUserDefault 中保存 user 数据库版本的 key
+#define jUserTableVersionKey @"UserVersion"
+//group 最新版本
+#define jGroupTableVersion 1
+//NSUserDefault 中保存 group 数据库版本的 key
+#define jGroupTableVersionKey @"GroupVersion"
+
 NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "user_id VARCHAR (64),"
@@ -44,6 +53,24 @@ NSString *const jColExtension = @"extension";
     [self.dbHelper executeUpdate:jCreateGroupTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateUserIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateGroupIndex withArgumentsInArray:nil];
+    [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
+    [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
+}
+
+- (void)updateTables {
+    NSNumber *existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jUserTableVersionKey];
+    if (jUserTableVersion > existedVersion.intValue) {
+        //update table
+        
+        [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
+    }
+
+    existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jGroupTableVersionKey];
+    if (jGroupTableVersion > existedVersion.intValue) {
+        //update table
+        
+        [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
+    }
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

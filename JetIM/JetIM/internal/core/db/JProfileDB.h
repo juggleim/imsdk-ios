@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JProfileDB : NSObject
 
 - (void)createTables;
+- (void)updateTables;
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 

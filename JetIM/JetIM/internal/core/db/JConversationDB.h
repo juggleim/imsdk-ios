@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JMessageDB *messageDB;
 
 - (void)createTables;
+- (void)updateTables;
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
                  completion:(nullable void (^)(NSArray<JConcreteConversationInfo *> *insertConversations, NSArray<JConcreteConversationInfo *> *updateConversations))completeBlock;
