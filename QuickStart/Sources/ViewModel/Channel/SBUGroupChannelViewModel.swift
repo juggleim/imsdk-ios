@@ -90,6 +90,15 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.debouncer = SBUDebouncer(
             debounceTime: SBUGlobals.userMentionConfig?.debounceTime ?? SBUDebouncer.defaultTime
         )
+        
+        JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
+            
+        } remoteMessageBlock: { remoteMessages in
+            
+        } error: { errorCode in
+            
+        }
+
     }
     
     // MARK: - Channel related
