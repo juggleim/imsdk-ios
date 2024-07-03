@@ -868,7 +868,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         mentionedUserIds: [String],
         parentMessage: JMessage?
     ) {
-        self.viewModel?.sendUserMessage(
+        self.viewModel?.sendTextMessage(
             text: text,
             mentionedMessageTemplate: mentionedMessageTemplate,
             mentionedUserIds: mentionedUserIds,

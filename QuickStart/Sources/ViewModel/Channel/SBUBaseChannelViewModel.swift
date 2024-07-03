@@ -196,21 +196,17 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Parameters:
     ///    - text: String value
     ///    - parentMessage: The parent message. The default value is `nil` when there's no parent message.
-    open func sendUserMessage(text: String, parentMessage: JMessage? = nil) {
-//        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-//        let messageParams = UserMessageCreateParams(message: text)
-//
-//        SBUGlobalCustomParams.userMessageParamsSendBuilder?(messageParams)
-//
-//        if let parentMessage = parentMessage,
-//            SendbirdUI.config.groupChannel.channel.replyType != .none {
-//            messageParams.parentMessageId = parentMessage.messageId
-//            messageParams.isReplyToChannel = true
-//        }
-//        messageParams.mentionedMessageTemplate = ""
-//        messageParams.mentionedUserIds = []
-//
-//        self.sendUserMessage(messageParams: messageParams, parentMessage: parentMessage)
+    open func sendTextMessage(text: String, parentMessage: JMessage? = nil) {
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let textMessage = JTextMessage(content: text)
+        let message = JIM.shared().messageManager.sendMessage(textMessage, in: conversationInfo?.conversation) { sendMessage in
+            
+        } error: { code , errorMessage in
+            
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }
     
     /// Sends a user message with mentionedMessageTemplate and mentionedUserIds.
@@ -223,61 +219,20 @@ open class SBUBaseChannelViewModel: NSObject {
     /// print(mentionedMessageTemplate) // "Hi @{UserID}"
     /// print(mentionedUserIds) // ["{UserID}"]
     /// ```
-    open func sendUserMessage(text: String, mentionedMessageTemplate: String, mentionedUserIds: [String], parentMessage: JMessage? = nil) {
-//        let messageParams = UserMessageCreateParams(message: text)
-//
-//        SBUGlobalCustomParams.userMessageParamsSendBuilder?(messageParams)
-//
-//        if let parentMessage = parentMessage,
-//           SendbirdUI.config.groupChannel.channel.replyType != .none {
-//            messageParams.parentMessageId = parentMessage.messageId
-//            messageParams.isReplyToChannel = true
-//        }
-//        messageParams.mentionedMessageTemplate = mentionedMessageTemplate
-//        messageParams.mentionedUserIds = mentionedUserIds
-//        self.sendUserMessage(messageParams: messageParams, parentMessage: parentMessage)
+    open func sendTextMessage(text: String, mentionedMessageTemplate: String, mentionedUserIds: [String], parentMessage: JMessage? = nil) {
+        //        let messageParams = UserMessageCreateParams(message: text)
+        //
+        //        SBUGlobalCustomParams.userMessageParamsSendBuilder?(messageParams)
+        //
+        //        if let parentMessage = parentMessage,
+        //           SendbirdUI.config.groupChannel.channel.replyType != .none {
+        //            messageParams.parentMessageId = parentMessage.messageId
+        //            messageParams.isReplyToChannel = true
+        //        }
+        //        messageParams.mentionedMessageTemplate = mentionedMessageTemplate
+        //        messageParams.mentionedUserIds = mentionedUserIds
+        //        self.sendUserMessage(messageParams: messageParams, parentMessage: parentMessage)
     }
-    
-    /// Sends a user messag with messageParams.
-    ///
-    /// You can send a message by setting various properties of MessageParams.
-    /// - Parameters:
-    ///    - messageParams: `UserMessageCreateParams` class object
-    ///    - parentMessage: The parent message. The default value is `nil` when there's no parent message.
-    /// - Since: 1.0.9
-//    open func sendUserMessage(messageParams: UserMessageCreateParams, parentMessage: JMessage? = nil) {
-//        SBULog.info("[Request] Send user message")
-//
-//        let preSendMessage = self.channel?.sendUserMessage(params: messageParams) { [weak self] userMessage, error in
-//            self?.sendUserMessageCompletionHandler?(userMessage, error)
-//        }
-//
-//        if let preSendMessage = preSendMessage,
-//           self.messageListParams.belongsTo(preSendMessage) {
-//            preSendMessage.parentMessage = parentMessage
-//            self.pendingMessageManager.upsertPendingMessage(
-//                channelURL: self.channel?.channelURL,
-//                message: preSendMessage,
-//                forMessageThread: self.isThreadMessageMode
-//            )
-//        } else {
-//            SBULog.info("A filtered user message has been sent.")
-//        }
-//
-//        self.sortAllMessageList(needReload: true)
-//
-//        if let channel = self.channel as? GroupChannel {
-//            channel.endTyping()
-//        }
-//
-//        let context = MessageContext(source: .eventMessageSent, sendingStatus: .succeeded)
-//        self.baseDelegate?.baseChannelViewModel(
-//            self,
-//            shouldUpdateScrollInMessageList: self.fullMessageList,
-//            forContext: context,
-//            keepsScroll: false
-//        )
-//    }
     
     /// Sends a file message with file data, file name, mime type.
     /// - Parameters:

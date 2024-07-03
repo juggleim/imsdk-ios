@@ -933,7 +933,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input,
                                 didTapSend text: String,
                                 parentMessage: JMessage?) {
-        self.baseViewModel?.sendUserMessage(text: text, parentMessage: parentMessage)
+        self.baseViewModel?.sendTextMessage(text: text, parentMessage: parentMessage)
     }
     
     open func baseChannelModule(_ inputComponent: SBUBaseChannelModule.Input,
