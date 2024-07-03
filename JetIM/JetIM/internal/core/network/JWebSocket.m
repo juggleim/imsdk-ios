@@ -126,8 +126,18 @@
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
+        NSData *encodeData;
+        if ([content isKindOfClass:[JMediaMessageContent class]]) {
+            JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
+            NSString *local = mediaContent.localPath;
+            mediaContent.localPath = nil;
+            encodeData = [mediaContent encode];
+            mediaContent.localPath = local;
+        } else {
+            encodeData = [content encode];
+        }
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                                 msgData:[content encode]
+                                                 msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                               mergedMsgs:mergedMsgs

@@ -12,6 +12,7 @@
 
 #define jSPVideoType @"jg:spvideo"
 #define jSPVideoUrl @"sightUrl"
+#define jLocalPath @"local"
 #define jSPSnapshotImage @"content"
 #define jSPVideoHeight @"height"
 #define jSPVideoWidth @"width"
@@ -36,6 +37,7 @@
         snapshotString = [JUtility base64EncodedStringFrom:snapshotData];
     }
     NSDictionary * dic = @{jSPVideoUrl:self.url?:@"",
+                           jLocalPath:self.localPath?:@"",
                            jSPSnapshotImage:snapshotString?:@"",
                            jSPVideoHeight:@(self.height),
                            jSPVideoWidth:@(self.width),
@@ -51,6 +53,7 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jSPVideoUrl]?:@"";
+    self.localPath = json[jLocalPath]?:@"";
     NSString *snapshotString = json[jSPSnapshotImage]?:@"";
     NSData *snapshotData = nil;
     if (class_getInstanceMethod([NSData class], @selector(initWithBase64EncodedString:options:))) {

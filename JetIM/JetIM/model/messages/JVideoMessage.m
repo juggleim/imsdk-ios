@@ -8,6 +8,7 @@
 #import "JVideoMessage.h"
 
 #define jVideoType @"jg:video"
+#define jLocalPath @"local"
 #define jVideoUrl @"url"
 #define jSnapshotUrl @"poster"
 #define jVideoHeight @"height"
@@ -23,9 +24,9 @@
     return jVideoType;
 }
 
-
 -(NSData *)encode{
     NSDictionary * dic = @{jVideoUrl:self.url?:@"",
+                           jLocalPath:self.localPath?:@"",
                            jSnapshotUrl:self.snapshotUrl?:@"",
                            jVideoHeight:@(self.height),
                            jVideoWidth:@(self.width),
@@ -40,6 +41,7 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jVideoUrl]?:@"";
+    self.localPath = json[jLocalPath]?:@"";
     self.snapshotUrl = json[jSnapshotUrl]?:@"";
     id obj = json[jVideoHeight];
     if ([obj isKindOfClass:[NSNumber class]]) {
