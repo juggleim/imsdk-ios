@@ -212,7 +212,7 @@ public protocol SBUBaseChannelModuleListDataSource: AnyObject {
     ///    - listComponent: `SBUBaseChannelModule.List` object.
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: `JConversationInfo` object.
-    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, channelForTableView tableView: UITableView) -> JConversationInfo?
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, conversationInfoForTableView tableView: UITableView) -> JConversationInfo?
     
     /// Ask the data source to return the message list sent successfully.
     /// - Parameters:
@@ -366,8 +366,8 @@ extension SBUBaseChannelModule {
         // MARK: - Logic properties (Public)
         
         /// The current channel object from `baseChannelModule(_:channelForTableView:)` data source method.
-        public var baseChannel: JConversationInfo? {
-            self.baseDataSource?.baseChannelModule(self, channelForTableView: self.tableView)
+        public var conversationInfo: JConversationInfo? {
+            self.baseDataSource?.baseChannelModule(self, conversationInfoForTableView: self.tableView)
         }
         
         /// The array of sent messages in the channel. The value is returned by `baseChannelModule(_:sentMessagesInTableView:)` data source method.

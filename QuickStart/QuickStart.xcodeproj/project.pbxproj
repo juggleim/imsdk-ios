@@ -192,7 +192,7 @@
 		A0968C8B2C2B020300E68790 /* SBUCategoryFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C4B2C2B020200E68790 /* SBUCategoryFilterCell.swift */; };
 		A0968C8C2C2B020300E68790 /* SBUMessageStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C4D2C2B020200E68790 /* SBUMessageStateView.swift */; };
 		A0968C8D2C2B020300E68790 /* SBUMessageProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C4E2C2B020200E68790 /* SBUMessageProfileView.swift */; };
-		A0968C8E2C2B020300E68790 /* SBUUserMessageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C4F2C2B020200E68790 /* SBUUserMessageTextView.swift */; };
+		A0968C8E2C2B020300E68790 /* SBUTextMessageTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C4F2C2B020200E68790 /* SBUTextMessageTextView.swift */; };
 		A0968C8F2C2B020300E68790 /* SBUUserNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C502C2B020300E68790 /* SBUUserNameView.swift */; };
 		A0968C912C2B020300E68790 /* SBUMessageDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C522C2B020300E68790 /* SBUMessageDateView.swift */; };
 		A0968C922C2B020300E68790 /* SBULinkClickableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C532C2B020300E68790 /* SBULinkClickableTextView.swift */; };
@@ -215,7 +215,7 @@
 		A0968CB32C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CAA2C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift */; };
 		A0968CB42C2B03DA00E68790 /* SBUBaseChannelModule.List.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CAC2C2B03DA00E68790 /* SBUBaseChannelModule.List.swift */; };
 		A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */; };
-		A0A09F322C2EB40E00E96EDE /* SBUUserMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */; };
+		A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */; };
 		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -407,7 +407,7 @@
 		A0968C4B2C2B020200E68790 /* SBUCategoryFilterCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUCategoryFilterCell.swift; sourceTree = "<group>"; };
 		A0968C4D2C2B020200E68790 /* SBUMessageStateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageStateView.swift; sourceTree = "<group>"; };
 		A0968C4E2C2B020200E68790 /* SBUMessageProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageProfileView.swift; sourceTree = "<group>"; };
-		A0968C4F2C2B020200E68790 /* SBUUserMessageTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMessageTextView.swift; sourceTree = "<group>"; };
+		A0968C4F2C2B020200E68790 /* SBUTextMessageTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTextMessageTextView.swift; sourceTree = "<group>"; };
 		A0968C502C2B020300E68790 /* SBUUserNameView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserNameView.swift; sourceTree = "<group>"; };
 		A0968C522C2B020300E68790 /* SBUMessageDateView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageDateView.swift; sourceTree = "<group>"; };
 		A0968C532C2B020300E68790 /* SBULinkClickableTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBULinkClickableTextView.swift; sourceTree = "<group>"; };
@@ -430,7 +430,7 @@
 		A0968CAA2C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelModule.Header.swift; sourceTree = "<group>"; };
 		A0968CAC2C2B03DA00E68790 /* SBUBaseChannelModule.List.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelModule.List.swift; sourceTree = "<group>"; };
 		A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceMessageInputView.swift; sourceTree = "<group>"; };
-		A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMessageCell.swift; sourceTree = "<group>"; };
+		A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTextMessageCell.swift; sourceTree = "<group>"; };
 		A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1065,7 +1065,7 @@
 				A0968C3D2C2B020200E68790 /* SBUAdminMessageCell.swift */,
 				A0968C3E2C2B020200E68790 /* SBUContentBaseMessageCell.swift */,
 				A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */,
-				A0A09F312C2EB40E00E96EDE /* SBUUserMessageCell.swift */,
+				A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */,
 			);
 			path = MessageCell;
 			sourceTree = "<group>";
@@ -1116,7 +1116,7 @@
 			children = (
 				A0968C4D2C2B020200E68790 /* SBUMessageStateView.swift */,
 				A0968C4E2C2B020200E68790 /* SBUMessageProfileView.swift */,
-				A0968C4F2C2B020200E68790 /* SBUUserMessageTextView.swift */,
+				A0968C4F2C2B020200E68790 /* SBUTextMessageTextView.swift */,
 				A0968C502C2B020300E68790 /* SBUUserNameView.swift */,
 				A0968C522C2B020300E68790 /* SBUMessageDateView.swift */,
 				A0968C532C2B020300E68790 /* SBULinkClickableTextView.swift */,
@@ -1355,7 +1355,7 @@
 				A0968C842C2B020300E68790 /* SBUGroupChannelViewController.swift in Sources */,
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
-				A0A09F322C2EB40E00E96EDE /* SBUUserMessageCell.swift in Sources */,
+				A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */,
 				A07F3B652BF4A2270087920B /* SBUUtils.swift in Sources */,
 				A07F3B5F2BF4A2260087920B /* Sequence+SBUIKit.swift in Sources */,
 				A07F3B632BF4A2270087920B /* SBUPropertyWrapper.swift in Sources */,
@@ -1432,7 +1432,7 @@
 				A0968C8D2C2B020300E68790 /* SBUMessageProfileView.swift in Sources */,
 				A07F35E72BF497820087920B /* SBUStringSet.swift in Sources */,
 				A07F3B982BF4A2270087920B /* SBUConfigManager.swift in Sources */,
-				A0968C8E2C2B020300E68790 /* SBUUserMessageTextView.swift in Sources */,
+				A0968C8E2C2B020300E68790 /* SBUTextMessageTextView.swift in Sources */,
 				A0968C8A2C2B020300E68790 /* SBUMessageInputView.swift in Sources */,
 				A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */,
 				A07F3B482BF4A2260087920B /* SBUHighlightMessageInfo.swift in Sources */,

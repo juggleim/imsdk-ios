@@ -870,7 +870,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     // MARK: SBUBaseChannelModuleListDataSource
     open func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
-        channelForTableView tableView: UITableView
+        conversationInfoForTableView tableView: UITableView
     ) -> JConversationInfo? {
         self.baseViewModel?.conversationInfo
     }

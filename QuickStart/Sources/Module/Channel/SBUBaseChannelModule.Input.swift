@@ -148,7 +148,7 @@ extension SBUBaseChannelModule {
         // MARK: - Logic properties (Public)
         /// (Read only) The channel object.
         /// - NOTE: See `baseChannelModule(_:channelForInputView:)`, a data source function.
-        public var baseChannel: JConversationInfo? {
+        public var conversationInfo: JConversationInfo? {
             self.baseDataSource?.baseChannelModule(self, channelForInputView: self.messageInputView)
         }
         
@@ -332,7 +332,7 @@ extension SBUBaseChannelModule {
         
         // MARK: - SBUMessageInputViewDataSource
         public func channelForMessageInputView(_ messageInputView: SBUMessageInputView) -> JConversationInfo? {
-            self.baseChannel
+            self.conversationInfo
         }
     }
 }

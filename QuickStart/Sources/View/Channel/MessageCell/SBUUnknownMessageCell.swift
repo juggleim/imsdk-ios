@@ -9,7 +9,7 @@
 import UIKit
 import JetIM
 
-open class SBUUnknownMessageCell: SBUUserMessageCell {
+open class SBUUnknownMessageCell: SBUTextMessageCell {
     open override func configure(with configuration: SBUBaseMessageCellParams) {
         guard let configuration = configuration as? SBUUnknownMessageCellParams else { return }
         // Configure Content base message cell
@@ -22,7 +22,7 @@ open class SBUUnknownMessageCell: SBUUserMessageCell {
     }
     
     open func setupMessageTextView() {
-        guard let messageTextView = self.messageTextView as? SBUUserMessageTextView else { return }
+        guard let messageTextView = self.messageTextView as? SBUTextMessageTextView else { return }
         let text = SBUStringSet.Message_Unknown_Title
         + "\n"
         + SBUStringSet.Message_Unknown_Description

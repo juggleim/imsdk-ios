@@ -58,10 +58,10 @@ extension SBUGroupChannelModule {
         public private(set) var adminMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `UserMessage` object. Use `register(userMessageCell:nib:)` to update.
-        public private(set) var userMessageCell: SBUBaseMessageCell?
+        public private(set) var textMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `JMessage` object. Use `register(JMessageCell:nib:)` to update.
-        public private(set) var JMessageCell: SBUBaseMessageCell?
+        public private(set) var fileMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `MultipleFilesMessage` object.
         /// Use `register(multipleFilesMessageCell:nib:)` to update.
@@ -101,11 +101,6 @@ extension SBUGroupChannelModule {
             set { self.baseDataSource = newValue }
         }
         
-        /// The current *group* channel object casted from `baseChannel`
-        public var channel: JConversationInfo? {
-            self.baseChannel as? JConversationInfo
-        }
-        
         // MARK: Private properties
         public var voicePlayer: SBUVoicePlayer?
         var voiceFileInfos: [String: SBUVoiceFileInfo] = [:]
@@ -139,14 +134,14 @@ extension SBUGroupChannelModule {
             super.setupViews()
             
             // register cell (GroupChannel)
-            if self.adminMessageCell == nil {
-                self.register(adminMessageCell: SBUAdminMessageCell())
+//            if self.adminMessageCell == nil {
+//                self.register(adminMessageCell: SBUAdminMessageCell())
+//            }
+            if self.textMessageCell == nil {
+                self.register(textMessageCell: SBUTextMessageCell())
             }
-            if self.userMessageCell == nil {
-                self.register(userMessageCell: SBUUserMessageCell())
-            }
-            if self.JMessageCell == nil {
-                self.register(JMessageCell: SBUBaseMessageCell())
+            if self.fileMessageCell == nil {
+                self.register(fileMessageCell: SBUBaseMessageCell())
             }
             
             if self.unknownMessageCell == nil {
@@ -315,9 +310,9 @@ extension SBUGroupChannelModule {
         /// listComponent.register(userMessageCell: MyUserMessageCell)
         /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
         /// ```
-        open func register(userMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.userMessageCell = userMessageCell
-            self.register(messageCell: userMessageCell, nib: nib)
+        open func register(textMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
+            self.textMessageCell = textMessageCell
+            self.register(messageCell: textMessageCell, nib: nib)
         }
         
         /// Registers a custom cell as a file message cell based on `SBUBaseMessageCell`.
@@ -329,9 +324,9 @@ extension SBUGroupChannelModule {
         /// listComponent.register(JMessageCell: MyJMessageCell)
         /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
         /// ```
-        open func register(JMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.JMessageCell = JMessageCell
-            self.register(messageCell: JMessageCell, nib: nib)
+        open func register(fileMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
+            self.fileMessageCell = fileMessageCell
+            self.register(messageCell: fileMessageCell, nib: nib)
         }
         
         /// Registers a custom cell as a multiple files message cell based on `SBUBaseMessageCell`.
@@ -398,7 +393,7 @@ extension SBUGroupChannelModule {
         ///    - message: The message for `messageCell`.
         ///    - indexPath: An index path representing the `messageCell`
         open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, forRowAt indexPath: IndexPath) {
-//            guard let channel = self.channel else {
+//            guard let conversationInfo = self.channel else {
 //                SBULog.error("Channel must exist!")
 //                return
 //            }
@@ -630,25 +625,11 @@ extension SBUGroupChannelModule {
         /// - Parameter message: Message object
         /// - Returns: The identifier of message cell.
         open func generateCellIdentifier(by message: JMessage) -> String {
-            
-            
-            
-            
-//            switch message {
-//            case is SBUTypingIndicatorMessage:
-//                return typingIndicatorMessageCell?.sbu_className ?? SBUTypingIndicatorMessageCell.sbu_className
-//            case is MultipleFilesMessage:
-//                return multipleFilesMessageCell?.sbu_className ?? SBUMultipleFilesMessageCell.sbu_className
-//            case is JMessage:
-//                return JMessageCell?.sbu_className ?? SBUBaseMessageCell.sbu_className
-//            case is UserMessage:
-//                return userMessageCell?.sbu_className ?? SBUUserMessageCell.sbu_className
-//            case is AdminMessage:
-//                return adminMessageCell?.sbu_className ?? SBUAdminMessageCell.sbu_className
-//            default:
-//                return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
-//            }
-            return ""
+            if message.content is JTextMessage {
+                return textMessageCell?.sbu_className ?? SBUTextMessageCell.sbu_className
+            } else {
+                return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
+            }
         }
         
         /// Sets animation in message cell.
@@ -886,11 +867,11 @@ extension SBUGroupChannelModule.List {
     /// - Since: 3.20.0
     public func updateStreamMessage(_ message: JMessage) {
         let cell = self.tableView.visibleCells
-            .compactMap({ $0 as? SBUUserMessageCell })
+            .compactMap({ $0 as? SBUTextMessageCell })
             .first(where: { $0.message?.messageId == message.messageId })
 
         Thread.executeOnMain { [weak cell] in
-            guard let cell = cell, let messageTextView = cell.messageTextView as? SBUUserMessageTextView else { return }
+            guard let cell = cell, let messageTextView = cell.messageTextView as? SBUTextMessageTextView else { return }
             messageTextView.configure(
                 model: SBUUserMessageTextViewModel(
                     message: message,

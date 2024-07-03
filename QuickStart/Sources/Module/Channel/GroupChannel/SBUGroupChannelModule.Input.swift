@@ -122,11 +122,6 @@ extension SBUGroupChannelModule {
             return parentMessage
         }
         
-        /// The group channel object casted from `baseChannel`.
-        public var channel: JConversationInfo? {
-            self.baseChannel as? JConversationInfo
-        }
-        
         /// The object that acts as the delegate of the input component. The delegate must adopt the `SBUGroupChannelModuleInputDelegate`.
         public weak var delegate: SBUGroupChannelModuleInputDelegate? {
             get { self.baseDelegate as? SBUGroupChannelModuleInputDelegate }
@@ -574,7 +569,7 @@ extension SBUGroupChannelModule {
         
         /// Updates state of `messageInputView`.
         open override func updateMessageInputModeState() {
-            if channel != nil {
+            if conversationInfo != nil {
                 self.updateBroadcastModeState()
                 self.updateFrozenModeState()
                 self.updateMutedModeState()

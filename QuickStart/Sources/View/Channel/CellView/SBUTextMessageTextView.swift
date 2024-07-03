@@ -8,15 +8,15 @@
 
 import UIKit
 
-public protocol SBUUserMessageTextViewDelegate: AnyObject {
+public protocol SBUTextMessageTextViewDelegate: AnyObject {
     /// Called when the mention in message has been tapped.
     /// - Parameters:
     ///     textView: `SBUUserMessageTextView` object that contains the message text.
     ///     user: The user corresponding to tapped mention.
-    func userMessageTextView(_ textView: SBUUserMessageTextView, didTapMention user: SBUUser)
+    func userMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser)
 }
 
-open class SBUUserMessageTextView: SBUView {
+open class SBUTextMessageTextView: SBUView {
     public struct Metric {
         public static var textLeftRightMargin = 12.f
         public static var textTopDownMargin = 7.f
@@ -59,7 +59,7 @@ open class SBUUserMessageTextView: SBUView {
     /// - Since: 3.3.0
     public var needsToRemoveMargin: Bool = false
     
-    public weak var delegate: SBUUserMessageTextViewDelegate?
+    public weak var delegate: SBUTextMessageTextViewDelegate?
 
     public var textTopConstraint: NSLayoutConstraint?
     public var textBottomConstraint: NSLayoutConstraint?
@@ -198,7 +198,7 @@ open class SBUUserMessageTextView: SBUView {
     }
 }
 
-extension SBUUserMessageTextView: UITextViewDelegate {
+extension SBUTextMessageTextView: UITextViewDelegate {
     open func textView(
         _ textView: UITextView,
         shouldInteractWith URL: URL,
@@ -211,7 +211,7 @@ extension SBUUserMessageTextView: UITextViewDelegate {
                 self.delegate?.userMessageTextView(self, didTapMention: mention.user)
                 return false
             } else {
-                (self.superview as? SBUUserMessageCell)?.longPressHandlerToContent?()
+                (self.superview as? SBUTextMessageCell)?.longPressHandlerToContent?()
             }
         }
         if interaction == .presentActions {

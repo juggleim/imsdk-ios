@@ -10,9 +10,9 @@ import UIKit
 import JetIM
 
 @IBDesignable
-open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextViewDelegate {
+open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextViewDelegate {
     // MARK: - Public property
-    public lazy var messageTextView: UIView = SBUUserMessageTextView()
+    public lazy var messageTextView: UIView = SBUTextMessageTextView()
     
     public var userMessage: JMessage? {
         self.message as? JMessage
@@ -45,7 +45,7 @@ open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextView
     open override func setupViews() {
         super.setupViews()
         
-        (self.messageTextView as? SBUUserMessageTextView)?.delegate = self
+        (self.messageTextView as? SBUTextMessageTextView)?.delegate = self
 
         // + --------------- +
         // | messageTextView |
@@ -67,7 +67,7 @@ open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextView
     open override func setupActions() {
         super.setupActions()
 
-        if let messageTextView = self.messageTextView as? SBUUserMessageTextView {
+        if let messageTextView = self.messageTextView as? SBUTextMessageTextView {
             messageTextView.longPressHandler = { [weak self] _ in
                 guard let self = self else { return }
                 self.onLongPressContentView(sender: nil)
@@ -123,7 +123,7 @@ open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextView
         self.additionContainerView.isSelected = false
         
         // Set up SBUUserMessageTextView
-        if let messageTextView = messageTextView as? SBUUserMessageTextView, configuration.withTextView {
+        if let messageTextView = messageTextView as? SBUTextMessageTextView, configuration.withTextView {
             messageTextView.configure(
                 model: SBUUserMessageTextViewModel(
                     message: message,
@@ -181,7 +181,7 @@ open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextView
               message.clientMsgNo == highlightInfo?.messageId,
               message.timestamp == highlightInfo?.updatedAt else { return }
 
-        guard let messageTextView = messageTextView as? SBUUserMessageTextView else { return }
+        guard let messageTextView = messageTextView as? SBUTextMessageTextView else { return }
 
         messageTextView.configure(
             model: SBUUserMessageTextViewModel(
@@ -204,7 +204,7 @@ open class SBUUserMessageCell: SBUContentBaseMessageCell, SBUUserMessageTextView
     
     // MARK: - Mention
     /// As a default, it calls `groupChannelModule(_:didTapMentionUser:)` in ``SBUGroupChannelModuleListDelegate``.
-    open func userMessageTextView(_ textView: SBUUserMessageTextView, didTapMention user: SBUUser) {
+    open func userMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser) {
         self.mentionTapHandler?(user)
     }
 
