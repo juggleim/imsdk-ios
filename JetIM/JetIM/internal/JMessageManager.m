@@ -1296,6 +1296,18 @@
     JLogI(@"MSG-Sync", @"handle receive messages updateUserInfos %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     NSMutableArray * upDataConversatonMessages = [NSMutableArray array];
     
+    NSMutableDictionary * contentType = [NSMutableDictionary dictionary];
+    for (JConcreteMessage * message in messages) {
+        NSNumber * count = contentType[message.contentType];
+        if(count == nil){
+            count = [NSNumber numberWithInt:1];
+        }else{
+            count = [NSNumber numberWithInt:count.intValue + 1];
+        }
+        [contentType setValue:count forKey:message.contentType];
+    }
+    NSLog(@"Juggle MSG-Sync handle receive messages ContentType %@", contentType);
+
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];

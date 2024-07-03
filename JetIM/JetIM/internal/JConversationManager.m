@@ -293,6 +293,7 @@
                 }];
             }
         });
+        [weakSelf noticeTotalUnreadCountChange];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-Mute", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -801,6 +802,7 @@
     NSMutableArray * addConversations = [NSMutableArray array];
     NSMutableArray * mentionInfos = [NSMutableArray array];
     NSMutableArray * upDataLastMsgs = [NSMutableArray array];
+    NSMutableArray * upDataConversations = [NSMutableArray array];
     for (JConcreteMessage * message in messages) {
         if (message.direction == JMessageDirectionReceive
             && message.mentionInfo != nil) {
@@ -816,9 +818,7 @@
                 }
             }
         }
-        
         JConversationMentionInfo * mentionInfo;
-        
         if(hasMention){
             NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
             JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
@@ -829,7 +829,6 @@
             mentionInfo = [[JConversationMentionInfo alloc] init];
             mentionInfo.mentionMsgList = msgs;
         }
-        
         BOOL isBroadcast = NO;
         if (message.flags & JMessageFlagIsBroadcast) {
             isBroadcast = YES;
@@ -853,13 +852,6 @@
                 addInfo.mentionInfo = mentionInfo;
             }
             [addConversations addObject:addInfo];
-            dispatch_async(self.core.delegateQueue, ^{
-                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                        [obj conversationInfoDidAdd:@[addInfo]];
-                    }
-                }];
-            });
         } else {
             if (mentionInfo) {
                 if(info.mentionInfo.mentionMsgList != nil){
@@ -888,18 +880,20 @@
             }
             info.lastMessage = message;
             [upDataLastMsgs addObject:message];
-            dispatch_async(self.core.delegateQueue, ^{
-                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                        [obj conversationInfoDidUpdate:@[info]];
-                    }
-                }];
-            });
+            [upDataConversations addObject:info];
         }
     }
-    
     [self.core.dbManager addConversations:addConversations upDataMentions:mentionInfos upDataLastMessages:upDataLastMsgs];
-    
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                [obj conversationInfoDidAdd:addConversations];
+            }
+            if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                [obj conversationInfoDidUpdate:upDataConversations];
+            }
+        }];
+    });
 }
 
 - (void)noticeTotalUnreadCountChange {
