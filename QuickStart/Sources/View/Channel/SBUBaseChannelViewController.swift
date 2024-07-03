@@ -523,7 +523,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
         didReceiveNewMessage message: JMessage,
-        forChannel channel: JConversationInfo
+        forConversation channel: JConversationInfo
     ) {
         self.increaseNewMessageCount()
     }

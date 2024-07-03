@@ -630,6 +630,10 @@ extension SBUGroupChannelModule {
         /// - Parameter message: Message object
         /// - Returns: The identifier of message cell.
         open func generateCellIdentifier(by message: JMessage) -> String {
+            
+            
+            
+            
 //            switch message {
 //            case is SBUTypingIndicatorMessage:
 //                return typingIndicatorMessageCell?.sbu_className ?? SBUTypingIndicatorMessageCell.sbu_className

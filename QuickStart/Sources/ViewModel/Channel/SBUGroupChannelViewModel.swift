@@ -67,10 +67,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     // MARK: - Logic properties (private)
     var debouncer: SBUDebouncer?
     var suggestedMemberList: [SBUUser]?
-
-    /// (GroupChannel only) If this option is `true`, when a list is received through the local cache during initialization, it is displayed first.
-    /// - Since: 3.3.5
-    var displaysLocalCachedListFirst: Bool = false
     
     // MARK: - LifeCycle
     public init(conversationInfo: JConversationInfo? = nil,
@@ -92,9 +88,9 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         )
         
         JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
-            
+            self.upsertMessagesInList(messages: localMessages, needReload: true)
         } remoteMessageBlock: { remoteMessages in
-            
+            self.upsertMessagesInList(messages: remoteMessages, needReload: true)
         } error: { errorCode in
             
         }

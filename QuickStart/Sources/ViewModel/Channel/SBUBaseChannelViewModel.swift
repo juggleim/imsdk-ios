@@ -36,7 +36,7 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
     func baseChannelViewModel(
         _ viewModel: SBUBaseChannelViewModel,
         didReceiveNewMessage message: JMessage,
-        forChannel channel: JConversationInfo
+        forConversation channel: JConversationInfo
     )
     
     /// Called when the channel should finish editing mode
@@ -594,66 +594,22 @@ open class SBUBaseChannelViewModel: NSObject {
         needUpdateNewMessage: Bool = false,
         needReload: Bool
     ) {
-//        SBULog.info("First : \(String(describing: messages?.first)), Last : \(String(describing: messages?.last))")
-//        
-//        var needMarkAsRead = false
-//        
-//        messages?.forEach { message in
-//            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
-//                self.messageList.remove(at: index)
-//            }
-//            
-////            guard self.messageListParams.belongsTo(message) else {
-////                self.sortAllMessageList(needReload: needReload)
-////                return
-////            }
-//            
-//            guard message is UserMessage || message is JMessage || message is MultipleFilesMessage else {
-//                // when message is AdminMessage or unknown message.
-//                self.messageList.append(message)
-//                return
-//            }
-//            
-//            if needUpdateNewMessage {
-//                guard let channel = self.channel else { return }
-//                self.baseDelegate?.baseChannelViewModel(self, didReceiveNewMessage: message, forChannel: channel)
-//            }
-//            
-//            if message.sendingStatus == .succeeded {
-//                self.messageList.append(message)
-//
-//                self.pendingMessageManager.removePendingMessageAllTypes(
-//                    channelURL: channelURL,
-//                    requestId: message.requestId
-//                )
-//                
-//                needMarkAsRead = true
-//                
-//            } else if message.sendingStatus == .failed ||
-//                        message.sendingStatus == .pending {
-//                if !self.isThreadMessageMode, message.parentMessageId > 0 { return }
-//                self.pendingMessageManager.upsertPendingMessage(
-//                    channelURL: channelURL,
-//                    message: message,
-//                    forMessageThread: self.isThreadMessageMode
-//                )
-//            }
-//        }
-//        
-//        let sortAllMessageListBlock = { [weak self] in
-//            self?.sortAllMessageList(needReload: needReload)
-//        }
+        SBULog.info("First : \(String(describing: messages?.first)), Last : \(String(describing: messages?.last))")
         
-//        if needMarkAsRead,
-//           let channel = self.channel as? GroupChannel,
-//           !self.isThreadMessageMode,
-//            SendbirdChat.getConnectState() == .open {
-//            channel.markAsRead { _ in
-//                sortAllMessageListBlock()
-//            }
-//        } else {
-//            sortAllMessageListBlock()
-//        }
+        messages?.forEach { message in
+            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
+                self.messageList.remove(at: index)
+            }
+
+            if needUpdateNewMessage {
+                guard let conversationInfo = self.conversationInfo else { return }
+                self.baseDelegate?.baseChannelViewModel(self, didReceiveNewMessage: message, forConversation: conversationInfo)
+            }
+            
+            self.messageList.append(message)
+        }
+        
+        self.sortAllMessageList(needReload: needReload)
     }
     
     /// This function deletes the messages in the list using the message ids. (Resendable messages are also delete together.)
@@ -761,44 +717,17 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Since: 1.2.5
     public func sortAllMessageList(needReload: Bool) {
         // Generate full list for draw
-//        let pendingMessages = self.pendingMessageManager.getPendingMessages(
-//            channelURL: self.channel?.channelURL,
-//            forMessageThread: self.isThreadMessageMode
-//        )
-//
-//        let refinedPendingMessages = pendingMessages.filter { pendingMessage in
-//            var isInMessageList = false
-//            self.messageList.forEach { message in
-//                if message.requestId == pendingMessage.requestId {
-//                    isInMessageList = true
-//                    return
-//                }
-//            }
-//            return !isInMessageList
-//        }
-//
-//        let typingMessageArray = [typingMessageManager.getTypingMessage(for: self.channel)].compactMap { $0 }
-//
-//        if isTransformedList {
-//            self.messageList.sort { $0.createdAt > $1.createdAt }
-//
-//            self.fullMessageList = typingMessageArray
-//                                    + refinedPendingMessages.sorted { $0.createdAt > $1.createdAt }
-//                                    + self.messageList
-//        } else {
-//            self.messageList.sort { $0.createdAt < $1.createdAt }
-//            self.fullMessageList = self.messageList
-//                                    + refinedPendingMessages.sorted { $0.createdAt < $1.createdAt }
-//                                    + typingMessageArray
-//        }
-//
-//        self.baseDelegate?.shouldUpdateLoadingState(false)
-//        self.baseDelegate?.baseChannelViewModel(
-//            self,
-//            didChangeMessageList: self.fullMessageList,
-//            needsToReload: needReload,
-//            initialLoad: self.isInitialLoading
-//        )
+
+        self.messageList.sort { $0.timestamp > $1.timestamp }
+        self.fullMessageList = self.messageList
+        
+        self.baseDelegate?.shouldUpdateLoadingState(false)
+        self.baseDelegate?.baseChannelViewModel(
+            self,
+            didChangeMessageList: self.fullMessageList,
+            needsToReload: needReload,
+            initialLoad: self.isInitialLoading
+        )
     }
     
     /// This functions clears current message lists

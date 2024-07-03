@@ -217,8 +217,8 @@
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                    localMessageBlock:(void (^)(NSArray *messages,BOOL needRemote))localMessageBlock
-                   remoteMessageBlock:(void (^)(NSArray *messages))remoteMessageBlock
+                    localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
+                   remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
                                 error:(void (^)(JErrorCode code))errorBlock;
 
 /// 发送阅读回执
