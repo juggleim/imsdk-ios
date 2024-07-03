@@ -8,9 +8,9 @@
 
 import JetIM
 
-public class SBUUserMessageCellParams: SBUBaseMessageCellParams {
+public class SBUTextMessageCellParams: SBUBaseMessageCellParams {
     public var userMessage: JMessage? {
-        self.message as? JMessage
+        self.message
     }
     public let useReaction: Bool
     public let withTextView: Bool

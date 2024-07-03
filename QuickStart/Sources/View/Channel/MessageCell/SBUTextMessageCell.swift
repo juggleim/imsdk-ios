@@ -103,7 +103,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
     
     // MARK: - Common
     open override func configure(with configuration: SBUBaseMessageCellParams) {
-        guard let configuration = configuration as? SBUUserMessageCellParams else { return }
+        guard let configuration = configuration as? SBUTextMessageCellParams else { return }
         guard let message = configuration.userMessage else { return }
         // Set using reaction
         self.useReaction = configuration.useReaction
@@ -139,7 +139,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
                         groupPosition: MessageGroupPosition,
                         receiptState: SBUMessageReceiptState?,
                         useReaction: Bool) {
-        let configuration = SBUUserMessageCellParams(
+        let configuration = SBUTextMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             useMessagePosition: true,
@@ -162,7 +162,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
             return
         }
 
-        let configuration = SBUUserMessageCellParams(
+        let configuration = SBUTextMessageCellParams(
             message: userMessage,
             hideDateView: hideDateView,
             useMessagePosition: true,

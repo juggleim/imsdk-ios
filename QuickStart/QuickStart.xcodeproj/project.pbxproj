@@ -174,7 +174,7 @@
 		A09645FA2BF3ABDD00290775 /* GlobalSetCustomManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645F92BF3ABDD00290775 /* GlobalSetCustomManager.swift */; };
 		A0968C5F2C2B020300E68790 /* SBUUserMessageTextViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C0B2C2B020200E68790 /* SBUUserMessageTextViewModel.swift */; };
 		A0968C612C2B020300E68790 /* SBUBaseChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C0E2C2B020200E68790 /* SBUBaseChannelViewController.swift */; };
-		A0968C642C2B020300E68790 /* SBUUserMessageCellParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C132C2B020200E68790 /* SBUUserMessageCellParams.swift */; };
+		A0968C642C2B020300E68790 /* SBUTextMessageCellParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C132C2B020200E68790 /* SBUTextMessageCellParams.swift */; };
 		A0968C652C2B020300E68790 /* SBUUnknownMessageCellParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C142C2B020200E68790 /* SBUUnknownMessageCellParams.swift */; };
 		A0968C662C2B020300E68790 /* SBUAdminMessageCellParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C152C2B020200E68790 /* SBUAdminMessageCellParams.swift */; };
 		A0968C672C2B020300E68790 /* SBUBaseMessageCellParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968C162C2B020200E68790 /* SBUBaseMessageCellParams.swift */; };
@@ -389,7 +389,7 @@
 		A09645F92BF3ABDD00290775 /* GlobalSetCustomManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GlobalSetCustomManager.swift; sourceTree = "<group>"; };
 		A0968C0B2C2B020200E68790 /* SBUUserMessageTextViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMessageTextViewModel.swift; sourceTree = "<group>"; };
 		A0968C0E2C2B020200E68790 /* SBUBaseChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelViewController.swift; sourceTree = "<group>"; };
-		A0968C132C2B020200E68790 /* SBUUserMessageCellParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUserMessageCellParams.swift; sourceTree = "<group>"; };
+		A0968C132C2B020200E68790 /* SBUTextMessageCellParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTextMessageCellParams.swift; sourceTree = "<group>"; };
 		A0968C142C2B020200E68790 /* SBUUnknownMessageCellParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCellParams.swift; sourceTree = "<group>"; };
 		A0968C152C2B020200E68790 /* SBUAdminMessageCellParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUAdminMessageCellParams.swift; sourceTree = "<group>"; };
 		A0968C162C2B020200E68790 /* SBUBaseMessageCellParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseMessageCellParams.swift; sourceTree = "<group>"; };
@@ -1073,7 +1073,7 @@
 		A0968C102C2B020200E68790 /* MessageCellParams */ = {
 			isa = PBXGroup;
 			children = (
-				A0968C132C2B020200E68790 /* SBUUserMessageCellParams.swift */,
+				A0968C132C2B020200E68790 /* SBUTextMessageCellParams.swift */,
 				A0968C142C2B020200E68790 /* SBUUnknownMessageCellParams.swift */,
 				A0968C152C2B020200E68790 /* SBUAdminMessageCellParams.swift */,
 				A0968C162C2B020200E68790 /* SBUBaseMessageCellParams.swift */,
@@ -1441,7 +1441,7 @@
 				A07F3C7D2BF4A2290087920B /* SBUPhotoCollectionViewCell.swift in Sources */,
 				A07F3B772BF4A2270087920B /* SBUToastView.swift in Sources */,
 				A07F3B502BF4A2260087920B /* UIImage+SBUIKit.swift in Sources */,
-				A0968C642C2B020300E68790 /* SBUUserMessageCellParams.swift in Sources */,
+				A0968C642C2B020300E68790 /* SBUTextMessageCellParams.swift in Sources */,
 				A0968CAE2C2B03DA00E68790 /* SBUGroupChannelModule.List.swift in Sources */,
 				A07F3C932BF4A2290087920B /* SBUCommonViewControllerSet.swift in Sources */,
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
