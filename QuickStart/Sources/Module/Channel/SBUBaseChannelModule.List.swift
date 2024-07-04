@@ -1130,7 +1130,7 @@ extension SBUBaseChannelModule.List {
             // only filter out messages inserted at the bottom (newer) of current visible item
             nextInsertedCount = upsertedMessages
                 .filter({ $0.timestamp > newestMessage.timestamp })
-                .filter({ !SBUUtils.contains(messageId: $0.clientMsgNo, in: sentMessages) }).count
+                .filter({ !SBUUtils.contains(clientMsgNo: $0.clientMsgNo, in: sentMessages) }).count
         }
         
         SBULog.info("New messages inserted : \(nextInsertedCount)")

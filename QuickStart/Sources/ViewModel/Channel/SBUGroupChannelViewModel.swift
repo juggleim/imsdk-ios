@@ -243,7 +243,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         
         // Caution in function call order
         self.reset()
-        self.createCollectionIfNeeded(startingPoint: startingPoint ?? .max)
         self.clearMessageList()
         
         if self.hasNext() {
@@ -491,11 +490,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 //    }
     
     // MARK: - Common
-    private func createCollectionIfNeeded(startingPoint: Int64) {
-        // GroupChannel only
-        guard let conversationInfo = self.conversationInfo else { return }
-    }
-    
     override func reset() {
 //        self.markAsRead()
         

@@ -16,4 +16,15 @@
     }
     return self;
 }
+
+- (BOOL)isEqual:(id)object {
+    if (self == object) {
+        return YES;
+    }
+    if ([object isKindOfClass:[self class]]) {
+        JConversation *c = (JConversation *)object;
+        return c.conversationType == self.conversationType && [c.conversationId isEqualToString:self.conversationId];
+    }
+    return NO;
+}
 @end

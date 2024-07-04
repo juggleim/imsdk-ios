@@ -37,7 +37,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     static let notificationChannelLoadLimit: UInt = 100
     
     // MARK: - Property (Public)
-    public var conversationInfoList: [JConversationInfo]?
+    public var conversationInfoList: [JConversationInfo] = []
     
     // MARK: - Property (private)
     weak var delegate: SBUGroupChannelListViewModelDelegate? {
@@ -55,40 +55,13 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         delegate: SBUGroupChannelListViewModelDelegate? = nil
     ) {
         super.init(delegate: delegate)
+        JIM.shared().conversationManager.add(self)
         
         self.initChannelList()
     }
     
     deinit {
         self.reset()
-    }
-    
-    private func createCollectionIfNeeded() {
-//        guard self.channelCollection == nil else { return }
-        
-//        if let query = self.customizedChannelListQuery?.copy() as? GroupChannelListQuery {
-//            self.channelListQuery = query
-//        } else {
-//            let params = GroupChannelListQueryParams()
-//            params.order = .latestLastMessage
-//
-//            if SBUAvailable.isNotificationChannelEnabled {
-//                params.limit = SBUGroupChannelListViewModel.notificationChannelLoadLimit
-//                params.includeChatNotification = true
-//            } else {
-//                params.limit = SBUGroupChannelListViewModel.channelLoadLimit
-//            }
-//            params.includeEmptyChannel = false
-//            params.includeMetaData = true
-//            params.includeEmptyChannel = true
-//
-//            self.channelListQuery = GroupChannel.createMyGroupChannelListQuery(params: params)
-//        }
-//
-//        if let query = self.channelListQuery {
-//            self.channelCollection = SendbirdChat.createGroupChannelCollection(query: query)
-//        }
-//        self.channelCollection?.delegate = self
     }
     
     // MARK: - List handling
@@ -108,8 +81,6 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         if reset {
             self.reset()
         }
-        
-        self.createCollectionIfNeeded()
 
         self.setLoading(true, false)
         
@@ -132,5 +103,42 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         self.isLoading = loadingState
         
         self.delegate?.shouldUpdateLoadingState(showIndicator)
+    }
+    
+    private func updateConversationInfoList(_ conversationInfoList: [JConversationInfo]) {
+        conversationInfoList.forEach { conversationInfo in
+            if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: self.conversationInfoList) {
+                self.conversationInfoList.remove(at: index)
+            }
+            self.conversationInfoList.insert(conversationInfo, at: 0)
+        }
+        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
+    }
+    
+    private func deleteConversationInfoList(_ conversationInfoList: [JConversationInfo]) {
+        conversationInfoList.forEach { conversationInfo in
+            if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: self.conversationInfoList) {
+                self.conversationInfoList.remove(at: index)
+            }
+        }
+        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
+    }
+}
+
+extension SBUGroupChannelListViewModel : JConversationDelegate {
+    public func conversationInfoDidAdd(_ conversationInfoList: [JConversationInfo]!) {
+        updateConversationInfoList(conversationInfoList)
+    }
+    
+    public func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
+        updateConversationInfoList(conversationInfoList)
+    }
+    
+    public func conversationInfoDidDelete(_ conversationInfoList: [JConversationInfo]!) {
+        deleteConversationInfoList(conversationInfoList)
+    }
+    
+    public func totalUnreadMessageCountDidUpdate(_ count: Int32) {
+        
     }
 }
