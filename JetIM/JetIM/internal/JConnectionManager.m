@@ -66,6 +66,8 @@
                                       success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
         JLogI(@"CON-Navi", @"success");
         self.core.servers = servers;
+        [self.messageManager connectStart];
+        [self.conversationManager connectStart];
         [self.core.webSocket connect:self.core.appKey
                                token:token
                            pushToken:self.pushToken

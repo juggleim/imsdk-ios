@@ -424,6 +424,12 @@
     });
 }
 
+- (void)connectStart {
+    dispatch_async(self.core.receiveQueue, ^{
+        self.syncProcessing = YES;
+    });
+}
+
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
     [self addOrUpdateConversationIfNeed:message];

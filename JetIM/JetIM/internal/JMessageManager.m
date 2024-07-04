@@ -915,6 +915,12 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
+- (void)connectStart {
+    dispatch_async(self.core.receiveQueue, ^{
+        self.syncProcessing = YES;
+    });
+}
+
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     if (self.syncProcessing) {
