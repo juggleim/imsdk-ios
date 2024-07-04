@@ -915,10 +915,8 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
-- (void)connectStart {
-    dispatch_async(self.core.receiveQueue, ^{
-        self.syncProcessing = YES;
-    });
+- (void)connectSuccess {
+    self.syncProcessing = YES;
 }
 
 #pragma mark - JWebSocketMessageDelegate

@@ -66,8 +66,6 @@
                                       success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
         JLogI(@"CON-Navi", @"success");
         self.core.servers = servers;
-        [self.messageManager connectStart];
-        [self.conversationManager connectStart];
         [self.core.webSocket connect:self.core.appKey
                                token:token
                            pushToken:self.pushToken
@@ -144,6 +142,8 @@
                 JLogE(@"CON-Db", @"open fail");
             }
         }
+        [self.messageManager connectSuccess];
+        [self.conversationManager connectSuccess];
         [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{

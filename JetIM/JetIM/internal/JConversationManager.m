@@ -424,10 +424,8 @@
     });
 }
 
-- (void)connectStart {
-    dispatch_async(self.core.receiveQueue, ^{
-        self.syncProcessing = YES;
-    });
+- (void)connectSuccess {
+    self.syncProcessing = YES;
 }
 
 #pragma mark - JMessageSendReceiveDelegate

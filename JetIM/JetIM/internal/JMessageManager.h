@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JMessageManager : NSObject <JMessageProtocol>
 - (instancetype)initWithCore:(JetIMCore *)core;
 - (void)syncMessages;
-- (void)connectStart;
+- (void)connectSuccess;
 
 @property (nonatomic, weak) id<JMessageSendReceiveDelegate> sendReceiveDelegate;
 @end
