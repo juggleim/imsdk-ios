@@ -850,6 +850,7 @@
         }
         if(info == nil){
             info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
+            [conversations addObject:info];
         }
         if (!info) {
             JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
@@ -896,11 +897,15 @@
     [self.core.dbManager insertConversations:conversations completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                    [obj conversationInfoDidAdd:insertConversations];
+                if(insertConversations.count > 0){
+                    if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                        [obj conversationInfoDidAdd:insertConversations];
+                    }
                 }
-                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [obj conversationInfoDidUpdate:updateConversations];
+                if(updateConversations.count > 0){
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:updateConversations];
+                    }
                 }
             }];
         });
