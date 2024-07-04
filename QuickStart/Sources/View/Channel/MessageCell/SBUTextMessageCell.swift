@@ -15,7 +15,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
     public lazy var messageTextView: UIView = SBUTextMessageTextView()
     
     public var userMessage: JMessage? {
-        self.message as? JMessage
+        self.message
     }
     
     // + ------------ +
@@ -125,7 +125,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
         // Set up SBUUserMessageTextView
         if let messageTextView = messageTextView as? SBUTextMessageTextView, configuration.withTextView {
             messageTextView.configure(
-                model: SBUUserMessageTextViewModel(
+                model: SBUTextMessageTextViewModel(
                     message: message,
                     position: configuration.messagePosition
                 )
@@ -157,13 +157,8 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
                         receiptState: SBUMessageReceiptState?,
                         groupPosition: MessageGroupPosition,
                         withTextView: Bool) {
-        guard let userMessage = message as? JMessage else {
-            SBULog.error("The message is not a type of UserMessage")
-            return
-        }
-
         let configuration = SBUTextMessageCellParams(
-            message: userMessage,
+            message: message,
             hideDateView: hideDateView,
             useMessagePosition: true,
             groupPosition: groupPosition,
@@ -184,7 +179,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
         guard let messageTextView = messageTextView as? SBUTextMessageTextView else { return }
 
         messageTextView.configure(
-            model: SBUUserMessageTextViewModel(
+            model: SBUTextMessageTextViewModel(
                 message: message,
                 position: position,
                 highlightKeyword: highlightInfo?.keyword

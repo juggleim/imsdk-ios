@@ -10,7 +10,7 @@ import UIKit
 import JetIM
 
 /// SBUUserMessageTextViewModel is a structure that represents the view model for user messages.
-public struct SBUUserMessageTextViewModel {
+public struct SBUTextMessageTextViewModel {
     var message: JMessage?
     var text: String
     var attributedText: NSMutableAttributedString?

@@ -167,7 +167,7 @@ open class SBUTextMessageTextView: SBUView {
     
     open override func setupStyles() { }
     
-    open func configure(model: SBUUserMessageTextViewModel) {
+    open func configure(model: SBUTextMessageTextViewModel) {
         self.text = model.text
         self.textView.attributedText = model.attributedText
         self.textView.linkTextAttributes = [

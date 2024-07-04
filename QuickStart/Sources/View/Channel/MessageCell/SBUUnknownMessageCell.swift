@@ -26,7 +26,7 @@ open class SBUUnknownMessageCell: SBUTextMessageCell {
         let text = SBUStringSet.Message_Unknown_Title
         + "\n"
         + SBUStringSet.Message_Unknown_Description
-        let model = SBUUserMessageTextViewModel(
+        let model = SBUTextMessageTextViewModel(
             message: message,
             position: self.position,
             text: text,

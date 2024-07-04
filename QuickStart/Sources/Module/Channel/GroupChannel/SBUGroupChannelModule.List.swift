@@ -784,7 +784,7 @@ extension SBUGroupChannelModule.List {
         Thread.executeOnMain { [weak cell] in
             guard let cell = cell, let messageTextView = cell.messageTextView as? SBUTextMessageTextView else { return }
             messageTextView.configure(
-                model: SBUUserMessageTextViewModel(
+                model: SBUTextMessageTextViewModel(
                     message: message,
                     position: cell.position,
                     isEdited: false
