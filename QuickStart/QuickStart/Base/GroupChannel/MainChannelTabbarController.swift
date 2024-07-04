@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JetIM
 
 enum TabType {
     case channels, mySettings
@@ -41,10 +42,9 @@ class MainChannelTabbarController: UITabBarController {
         self.viewControllers = tabbarItems
         
         self.setupStyles()
-        
-        
-        
         self.loadTotalUnreadMessageCount()
+        
+        JIM.shared().conversationManager.add(self)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -85,9 +85,9 @@ class MainChannelTabbarController: UITabBarController {
     
     // MARK: - SDK related
     func loadTotalUnreadMessageCount() {
-//        SendbirdChat.getTotalUnreadMessageCount { (totalCount, error) in
-//            self.setUnreadMessagesCount(totalCount)
-//        }
+        let totalCount = JIM.shared().conversationManager.getTotalUnreadCount()
+        let uintCount = UInt(totalCount)
+        self.setUnreadMessagesCount(uintCount)
     }
     
     // MARK: - Create items
@@ -151,3 +151,21 @@ class MainChannelTabbarController: UITabBarController {
     }
 }
 
+extension MainChannelTabbarController: JConversationDelegate {
+    func conversationInfoDidAdd(_ conversationInfoList: [JConversationInfo]!) {
+        
+    }
+    
+    func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
+        
+    }
+    
+    func conversationInfoDidDelete(_ conversationInfoList: [JConversationInfo]!) {
+        
+    }
+    
+    func totalUnreadMessageCountDidUpdate(_ count: Int32) {
+        let uintCount = UInt(count)
+        self.setUnreadMessagesCount(uintCount)
+    }
+}

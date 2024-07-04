@@ -21,5 +21,7 @@
 			</array>
 		</dict>
 	</dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>App 需要您的同意，才能访问麦克风</string>
 </dict>
 </plist>

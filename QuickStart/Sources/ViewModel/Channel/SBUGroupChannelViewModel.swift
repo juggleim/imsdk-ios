@@ -88,6 +88,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         )
         
         JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
+            JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation)
             self.upsertMessagesInList(messages: localMessages, needReload: true)
         } remoteMessageBlock: { remoteMessages in
             self.upsertMessagesInList(messages: remoteMessages, needReload: true)
