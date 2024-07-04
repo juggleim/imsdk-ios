@@ -31,6 +31,7 @@
     if (self = [super init]) {
         self.core = core;
         self.cachedSyncTime = -1;
+        self.syncProcessing = YES;
     }
     return self;
 }

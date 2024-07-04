@@ -772,10 +772,11 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
+    BOOL needAck = NO;
     if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
-        [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
+        needAck = [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
     }
-    if (publishMsgBody.qos == 1) {
+    if (publishMsgBody.qos == 1 && needAck) {
         [self sendPublishAck:publishMsgBody.index];
     }
 }
