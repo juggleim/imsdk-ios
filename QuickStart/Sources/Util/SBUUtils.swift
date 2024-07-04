@@ -259,7 +259,7 @@ extension SBUUtils {
     }
     
     static func findIndex(of message: JMessage, in messageList: [JMessage]) -> Int? {
-        return messageList.firstIndex(where: { $0.messageId == message.messageId })
+        return messageList.firstIndex(where: { $0.clientMsgNo == message.clientMsgNo })
     }
     
     static func contains(messageId: Int64, in messageList: [JMessage]) -> Bool {

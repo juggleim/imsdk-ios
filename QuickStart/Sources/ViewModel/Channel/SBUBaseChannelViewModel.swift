@@ -204,7 +204,9 @@ open class SBUBaseChannelViewModel: NSObject {
                 self.upsertMessagesInList(messages: [sendMessage], needReload: true)
             }
         } error: { code , errorMessage in
-            
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
         }
         if let message = message {
             self.upsertMessagesInList(messages: [message], needReload: true)
