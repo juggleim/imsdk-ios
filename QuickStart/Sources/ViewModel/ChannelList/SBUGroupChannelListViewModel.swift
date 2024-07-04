@@ -37,7 +37,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     static let notificationChannelLoadLimit: UInt = 100
     
     // MARK: - Property (Public)
-    public var channelList: [JConversationInfo]?
+    public var conversationInfoList: [JConversationInfo]?
     
     // MARK: - Property (private)
     weak var delegate: SBUGroupChannelListViewModelDelegate? {
@@ -113,8 +113,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
 
         self.setLoading(true, false)
         
-        self.channelList = JIM.shared().conversationManager.getConversationInfoList()
-        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.channelList, needsToReload: true)
+        self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList()
+        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
     
     /// This function resets channelList

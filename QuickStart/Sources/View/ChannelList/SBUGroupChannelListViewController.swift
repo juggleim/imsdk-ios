@@ -35,7 +35,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     }
     
     /// This object has a list of all channels.
-    public var channelList: [JConversationInfo] { self.viewModel?.channelList ?? [] }
+    public var conversationInfoList: [JConversationInfo] { self.viewModel?.conversationInfoList ?? [] }
     
     // MARK: - Lifecycle
     @available(*, unavailable, renamed: "SBUGroupChannelListViewController()")
@@ -194,8 +194,8 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         _ listComponent: SBUBaseChannelListModule.List,
         didSelectRowAt indexPath: IndexPath
     ) {
-        guard self.channelList.count > indexPath.row else { return }
-        let channel = self.channelList[indexPath.row]
+        guard self.conversationInfoList.count > indexPath.row else { return }
+        let channel = self.conversationInfoList[indexPath.row]
         self.showChannel(conversationInfo: channel)
     }
     
@@ -227,7 +227,7 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         _ listComponent: SBUBaseChannelListModule.List,
         channelsInTableView tableView: UITableView
     ) -> [JConversationInfo]? {
-        return self.channelList
+        return self.conversationInfoList
     }
 
     
