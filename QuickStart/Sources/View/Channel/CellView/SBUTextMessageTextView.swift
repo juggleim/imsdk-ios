@@ -13,7 +13,7 @@ public protocol SBUTextMessageTextViewDelegate: AnyObject {
     /// - Parameters:
     ///     textView: `SBUUserMessageTextView` object that contains the message text.
     ///     user: The user corresponding to tapped mention.
-    func userMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser)
+    func textMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser)
 }
 
 open class SBUTextMessageTextView: SBUView {
@@ -208,7 +208,7 @@ extension SBUTextMessageTextView: UITextViewDelegate {
         if let mentionManager = mentionManager {
             if let mention = mentionManager.findMentions(with: characterRange).first,
                 interaction == .invokeDefaultAction {
-                self.delegate?.userMessageTextView(self, didTapMention: mention.user)
+                self.delegate?.textMessageTextView(self, didTapMention: mention.user)
                 return false
             } else {
                 (self.superview as? SBUTextMessageCell)?.longPressHandlerToContent?()

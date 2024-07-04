@@ -200,7 +200,9 @@ open class SBUBaseChannelViewModel: NSObject {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let textMessage = JTextMessage(content: text)
         let message = JIM.shared().messageManager.sendMessage(textMessage, in: conversationInfo?.conversation) { sendMessage in
-            
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
         } error: { code , errorMessage in
             
         }

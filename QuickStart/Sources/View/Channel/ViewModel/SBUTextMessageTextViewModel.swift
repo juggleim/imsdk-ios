@@ -80,7 +80,7 @@ public struct SBUTextMessageTextViewModel {
         if let isEdited = isEdited {
             edited = isEdited
         } else {
-            edited = message?.timestamp != 0
+            edited = false
         }
         
         self.theme = isOverlay ? SBUTheme.overlayTheme.messageCellTheme : SBUTheme.messageCellTheme

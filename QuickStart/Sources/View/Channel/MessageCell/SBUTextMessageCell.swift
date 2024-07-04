@@ -199,7 +199,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
     
     // MARK: - Mention
     /// As a default, it calls `groupChannelModule(_:didTapMentionUser:)` in ``SBUGroupChannelModuleListDelegate``.
-    open func userMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser) {
+    open func textMessageTextView(_ textView: SBUTextMessageTextView, didTapMention user: SBUUser) {
         self.mentionTapHandler?(user)
     }
 
