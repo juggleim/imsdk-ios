@@ -246,18 +246,18 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     
     /// This function configure a cell using `GroupChannel` information.
     /// - Parameter channel: `GroupChannel` object
-    open override func configure(channel: JConversationInfo) {
-        super.configure(channel: channel)
+    open override func configure(conversationInfo: JConversationInfo) {
+        super.configure(conversationInfo: conversationInfo)
 
         var url = ""
         var name = ""
-        if (channel.conversation.conversationType == .private) {
-            if let user = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId) {
+        if (conversationInfo.conversation.conversationType == .private) {
+            if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId) {
                 url = user.portrait ?? ""
                 name = user.userName ?? ""
             }
-        } else if (channel.conversation.conversationType == .group) {
-            if let group = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId) {
+        } else if (conversationInfo.conversation.conversationType == .group) {
+            if let group = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId) {
                 url = group.portrait ?? ""
                 name = group.groupName ?? ""
             }
@@ -274,23 +274,23 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.titleLabel.text = name
         
         // Notification state. If myPushTriggerOption is all, this property will hidden.
-        self.notificationState.isHidden = !channel.mute
+        self.notificationState.isHidden = !conversationInfo.mute
         
         // Last updated time
         self.lastUpdatedTimeLabel.text = self.buildLastUpdatedDate()
         
         // Last message
         self.messageLabel.lineBreakMode = .byTruncatingTail
-        if let lastMessage = channel.lastMessage {
+        if let lastMessage = conversationInfo.lastMessage {
             self.messageLabel.text = lastMessage.content.conversationDigest()
         }
         
         // Unread count
-        switch channel.unreadCount {
+        switch conversationInfo.unreadCount {
         case 0:
             self.unreadCount.isHidden = true
         case 1...99:
-            self.unreadCount.setTitle(String(channel.unreadCount), for: .normal)
+            self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
             self.unreadCount.isHidden = false
         case 100...:
             self.unreadCount.setTitle("99+", for: .normal)
@@ -299,7 +299,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             break
         }
         
-        self.unreadMentionLabel.isHidden = !channel.hasMentioned
+        self.unreadMentionLabel.isHidden = !conversationInfo.hasMentioned
         
         self.updateMessageLabel()
         self.updateStateImageView()
@@ -375,13 +375,13 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     /// This function builds last message updated date.
     /// - Returns: last updated date string
     public func buildLastUpdatedDate() -> String? {
-        guard let channel = self.channel else { return nil }
+        guard let conversationInfo = self.conversationInfo else { return nil }
         var lastUpdatedAt: Int64
         
-        if let lastMessage = channel.lastMessage {
+        if let lastMessage = conversationInfo.lastMessage {
             lastUpdatedAt = Int64(lastMessage.timestamp / 1000)
         } else {
-            lastUpdatedAt = Int64(channel.sortTime / 1000)
+            lastUpdatedAt = Int64(conversationInfo.sortTime / 1000)
         }
         
         guard let lastSeenTimeString = Date.lastUpdatedTimeForChannelCell(

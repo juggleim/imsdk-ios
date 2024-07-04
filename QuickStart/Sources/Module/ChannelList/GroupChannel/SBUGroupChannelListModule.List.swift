@@ -43,11 +43,6 @@ extension SBUGroupChannelListModule {
             get { self.baseDataSource as? SBUGroupChannelListModuleListDataSource }
             set { self.baseDataSource = newValue }
         }
-        
-        /// The current channel list object from `baseChannelListModule(_:channelsInTableView:)` data source method.
-        public var channelList: [JConversationInfo]? {
-            self.baseChannelList
-        }
 
         // MARK: - LifeCycle
         @available(*, unavailable, renamed: "SBUGroupChannelListModule.List()")
@@ -105,7 +100,7 @@ extension SBUGroupChannelListModule {
         /// - Parameter indexPath: An index path representing the `channelCell`
         /// - Returns: `UIContextualAction` object.
         public func leaveContextualAction(with indexPath: IndexPath) -> UIContextualAction? {
-            guard let channel = self.channelList?[indexPath.row] else { return nil }
+            guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return nil }
             
             let size = tableView.visibleCells[0].frame.height
             let itemSize: CGFloat = 40.0
@@ -115,7 +110,7 @@ extension SBUGroupChannelListModule {
                 title: ""
             ) { [weak self] _, _, actionHandler in
                 guard let self = self else { return }
-                self.delegate?.groupChannelListModule(self, didSelectLeave: channel)
+                self.delegate?.groupChannelListModule(self, didSelectLeave: conversationInfo)
                 actionHandler(true)
             }
             
@@ -188,7 +183,7 @@ extension SBUGroupChannelListModule.List {
         forRowAt indexPath: IndexPath
     ) {
         let rowForPreloading = Int(SBUGroupChannelListViewModel.channelLoadLimit)/2
-        let channelListCount = self.channelList?.count ?? 0
+        let channelListCount = self.conversationInfoList?.count ?? 0
         if channelListCount > 0,
            indexPath.row == (channelListCount - rowForPreloading) {
             self.delegate?.baseChannelListModule(self, didDetectPreloadingPosition: indexPath)
@@ -196,9 +191,9 @@ extension SBUGroupChannelListModule.List {
     }
     
     open override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableView.backgroundView?.isHidden = !(self.channelList?.isEmpty ?? true)
+        tableView.backgroundView?.isHidden = !(self.conversationInfoList?.isEmpty ?? true)
         
-        return self.channelList?.count ?? 0
+        return self.conversationInfoList?.count ?? 0
     }
     
     open override func tableView(
@@ -206,8 +201,8 @@ extension SBUGroupChannelListModule.List {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     )
     -> UISwipeActionsConfiguration? {
-        if self.channelList?.count ?? 0 > indexPath.row,
-           let channelList = channelList {
+        if self.conversationInfoList?.count ?? 0 > indexPath.row,
+           let channelList = conversationInfoList {
             let channel = channelList[indexPath.row]
 //            if channel.isChatNotification {
 //                return nil

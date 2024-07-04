@@ -82,7 +82,7 @@ extension SBUBaseChannelListModule {
         public weak var baseDataSource: SBUBaseChannelListModuleListDataSource?
         
         /// The current channel list object from `channelListModule(_:channelsInTableView:)` data source method.
-        public var baseChannelList: [JConversationInfo]? {
+        public var conversationInfoList: [JConversationInfo]? {
             self.baseDataSource?.baseChannelListModule(self, channelsInTableView: self.tableView)
         }
         
@@ -135,9 +135,9 @@ extension SBUBaseChannelListModule {
         ///   - channelCell: `SBUBaseChannelCell` object
         ///   - indexPath: An index path representing the `channelCell`
         open func configureCell(_ channelCell: SBUBaseChannelCell?, indexPath: IndexPath) {
-            guard let channel = self.baseChannelList?[indexPath.row] else { return }
+            guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return }
             
-            channelCell?.configure(channel: channel)
+            channelCell?.configure(conversationInfo: conversationInfo)
             channelCell?.setupStyles()
         }
         

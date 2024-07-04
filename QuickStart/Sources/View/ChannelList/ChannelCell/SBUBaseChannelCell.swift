@@ -12,14 +12,14 @@ import JetIM
 open class SBUBaseChannelCell: SBUTableViewCell {
 
     // MARK: - Public property
-    public private(set) var channel: JConversationInfo?
+    public private(set) var conversationInfo: JConversationInfo?
 
     // MARK: - View Lifecycle
  
     /// This function configure a cell using channel information.
     /// - Parameter channel: cell object
-    open func configure(channel: JConversationInfo) {
-        self.channel = channel
+    open func configure(conversationInfo: JConversationInfo) {
+        self.conversationInfo = conversationInfo
     }
     
     // MARK: -
