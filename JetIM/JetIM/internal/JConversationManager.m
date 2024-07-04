@@ -216,7 +216,18 @@
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
                                            msgIndex:info.lastMessageIndex];
         [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
+        [weakSelf.core.dbManager setLastMessageHasRead:conversation];
         [weakSelf noticeTotalUnreadCountChange];
+        JConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
+        if (info) {
+            dispatch_async(self.core.delegateQueue, ^{
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:@[info]];
+                    }
+                }];
+            });
+        }
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock();
@@ -798,11 +809,7 @@
 
 -(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *) messages{
     BOOL hasMention = NO;
-    //接收的消息才处理 mention
-    NSMutableArray * addConversations = [NSMutableArray array];
-    NSMutableArray * mentionInfos = [NSMutableArray array];
-    NSMutableArray * upDataLastMsgs = [NSMutableArray array];
-    NSMutableArray * upDataConversations = [NSMutableArray array];
+    NSMutableArray * conversations = [NSMutableArray array];
     for (JConcreteMessage * message in messages) {
         if (message.direction == JMessageDirectionReceive
             && message.mentionInfo != nil) {
@@ -833,7 +840,17 @@
         if (message.flags & JMessageFlagIsBroadcast) {
             isBroadcast = YES;
         }
-        JConcreteConversationInfo *info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
+        JConcreteConversationInfo *info;
+        for (JConcreteConversationInfo * conversationInfo in conversations) {
+            if([conversationInfo.conversation.conversationId isEqualToString:message.conversation.conversationId] &&
+               conversationInfo.conversation.conversationType == message.conversation.conversationType){
+                info = conversationInfo;
+                break;
+            }
+        }
+        if(info == nil){
+            info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
+        }
         if (!info) {
             JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
             addInfo.conversation = message.conversation;
@@ -851,7 +868,7 @@
             if (mentionInfo) {
                 addInfo.mentionInfo = mentionInfo;
             }
-            [addConversations addObject:addInfo];
+            [conversations addObject:addInfo];
         } else {
             if (mentionInfo) {
                 if(info.mentionInfo.mentionMsgList != nil){
@@ -864,11 +881,6 @@
                     mentionInfo.mentionMsgList = msgs;
                 }
                 info.mentionInfo = mentionInfo;
-                
-                NSString * mentionJsonStr = [mentionInfo encodeToJson];
-                if(message.conversation && mentionJsonStr.length > 0){
-                    [mentionInfos addObject:@[message.conversation, mentionJsonStr]];
-                }
             }
             //更新未读数
             if (message.msgIndex > 0) {
@@ -879,21 +891,21 @@
                 info.sortTime = message.timestamp;
             }
             info.lastMessage = message;
-            [upDataLastMsgs addObject:message];
-            [upDataConversations addObject:info];
         }
     }
-    [self.core.dbManager addConversations:addConversations upDataMentions:mentionInfos upDataLastMessages:upDataLastMsgs];
-    dispatch_async(self.core.delegateQueue, ^{
-        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                [obj conversationInfoDidAdd:addConversations];
-            }
-            if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                [obj conversationInfoDidUpdate:upDataConversations];
-            }
-        }];
-    });
+    [self.core.dbManager insertConversations:conversations completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                    [obj conversationInfoDidAdd:insertConversations];
+                }
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:updateConversations];
+                }
+            }];
+        });
+    }];
+    
 }
 
 - (void)noticeTotalUnreadCountChange {

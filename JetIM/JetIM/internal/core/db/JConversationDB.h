@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)clearMentionInfo;
 - (void)clearLastMessage:(JConversation *)conversation;
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
-- (void)addConversations:(NSArray *)addConversations upDataMentions:(NSArray *)upDataMentions upDataLastMessages:(NSArray *)upDataLastMessages;
+- (void)setLastMessageHasRead:(JConversation *)conversation;
 @end
 
 NS_ASSUME_NONNULL_END

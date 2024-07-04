@@ -160,9 +160,11 @@
     [self.conversationDb updateLastMessageWithoutIndex:message];
 }
 
-- (void)addConversations:(NSArray<JConcreteConversationInfo *> *)addConversations upDataMentions:(NSArray *)upDataMentions upDataLastMessages:(NSArray <JConcreteMessage *> *)upDataLastMessages{
-    [self.conversationDb addConversations:addConversations upDataMentions:upDataMentions upDataLastMessages:upDataLastMessages];
+- (void)setLastMessageHasRead:(JConversation *)conversation{
+    [self.conversationDb setLastMessageHasRead:message];
+
 }
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
