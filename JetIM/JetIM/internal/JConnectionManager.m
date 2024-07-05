@@ -142,6 +142,8 @@
                 JLogE(@"CON-Db", @"open fail");
             }
         }
+        [self.messageManager connectSuccess];
+        [self.conversationManager connectSuccess];
         [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{

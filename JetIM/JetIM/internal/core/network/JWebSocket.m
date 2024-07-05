@@ -126,8 +126,18 @@
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
+        NSData *encodeData;
+        if ([content isKindOfClass:[JMediaMessageContent class]]) {
+            JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
+            NSString *local = mediaContent.localPath;
+            mediaContent.localPath = nil;
+            encodeData = [mediaContent encode];
+            mediaContent.localPath = local;
+        } else {
+            encodeData = [content encode];
+        }
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                                 msgData:[content encode]
+                                                 msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
                                                mergeInfo:mergeInfo
@@ -764,10 +774,11 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
+    BOOL needAck = NO;
     if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
-        [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
+        needAck = [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
     }
-    if (publishMsgBody.qos == 1) {
+    if (publishMsgBody.qos == 1 && needAck) {
         [self sendPublishAck:publishMsgBody.index];
     }
 }

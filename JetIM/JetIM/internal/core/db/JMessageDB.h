@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)createTables;
 
+- (void)updateTables;
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;

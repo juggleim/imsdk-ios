@@ -33,6 +33,7 @@
         self.core = core;
         self.messageManager = messageManager;
         self.cachedSyncTime = -1;
+        self.syncProcessing = YES;
     }
     return self;
 }
@@ -435,6 +436,10 @@
     dispatch_async(self.core.delegateQueue, ^{
         [self.syncDelegates removeObject:delegate];
     });
+}
+
+- (void)connectSuccess {
+    self.syncProcessing = YES;
 }
 
 #pragma mark - JMessageSendReceiveDelegate

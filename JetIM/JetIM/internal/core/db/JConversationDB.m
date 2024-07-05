@@ -8,6 +8,11 @@
 #import "JConversationDB.h"
 #import "JContentTypeCenter.h"
 
+//conversation_info 最新版本
+#define jConversationTableVersion 1
+//NSUserDefault 中保存 conversation_info 数据库版本的 key
+#define jConversationTableVersionKey @"ConversationVersion"
+
 NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversation_info ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "conversation_type SMALLINT,"
@@ -32,6 +37,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_content TEXT,"
                                         "last_message_mention_info TEXT,"
                                         "last_message_seq_no INTEGER"//最后一条消息的排序号
+//                                        "extra TEXT"
                                         ")";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
@@ -116,6 +122,22 @@ NSString *const jTotalCount = @"total_count";
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateConversationIndex withArgumentsInArray:nil];
+    [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
+}
+
+- (void)updateTables {
+    NSNumber *existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jConversationTableVersionKey];
+    int existedVersion = existedVersionNumber.intValue;
+    if (jConversationTableVersion > existedVersion) {
+        //update table
+//        if (existedVersion == 1 && jConversationTableVersion == 2) {
+//            NSString *s = @"ALTER TABLE conversation_info ADD COLUMN extra TEXT";
+//            [self.dbHelper executeUpdate:s withArgumentsInArray:nil];
+//            existedVersion = 2;
+//        }
+        
+        [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
+    }
 }
 
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations

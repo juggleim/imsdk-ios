@@ -55,6 +55,7 @@
         [self registerMessages];
         self.cachedSendTime = -1;
         self.cachedReceiveTime = -1;
+        self.syncProcessing = YES;
     }
     return self;
 }
@@ -916,10 +917,18 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
+- (void)connectSuccess {
+    self.syncProcessing = YES;
+}
+
 #pragma mark - JWebSocketMessageDelegate
-- (void)messageDidReceive:(JConcreteMessage *)message {
+- (BOOL)messageDidReceive:(JConcreteMessage *)message {
+    if (self.syncProcessing) {
+        return NO;
+    }
     [self handleReceiveMessages:@[message]
                          isSync:NO];
+    return YES;
 }
 
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
@@ -951,6 +960,9 @@
 }
 
 - (void)syncNotify:(long long)syncTime {
+    if (self.syncProcessing) {
+        return;
+    }
     if (syncTime > self.core.messageReceiveSyncTime) {
         self.syncProcessing = YES;
         [self sync];

@@ -7,6 +7,11 @@
 
 #import "JProfileDB.h"
 
+//profile 最新版本
+#define jProfileTableVersion 1
+//NSUserDefault 中保存 profile 数据库版本的 key
+#define jProfileTableVersionKey @"ProfileVersion"
+
 NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS profile ("
                                         "key VARCHAR (64) PRIMARY KEY,"
                                         "value VARCHAR (64)"
@@ -25,10 +30,19 @@ NSString *const kValue = @"value";
 @end
 
 @implementation JProfileDB
-
-
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateSyncTable withArgumentsInArray:nil];
+    [[NSUserDefaults standardUserDefaults] setObject:@(jProfileTableVersion) forKey:jProfileTableVersionKey];
+}
+
+- (void)updateTables {
+    NSNumber *existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jProfileTableVersionKey];
+    if (jProfileTableVersion > existedVersion.intValue) {
+        //update table
+        
+        [[NSUserDefaults standardUserDefaults] setObject:@(jProfileTableVersion) forKey:jProfileTableVersionKey];
+    }
+
 }
 
 - (long long)getConversationSyncTime {

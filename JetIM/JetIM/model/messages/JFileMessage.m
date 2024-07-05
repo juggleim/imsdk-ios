@@ -10,6 +10,7 @@
 #define kFileType @"jg:file"
 #define kDigest @"[File]"
 #define kName @"name"
+#define jLocalPath @"local"
 #define kURL @"url"
 #define kSize @"size"
 #define kType @"type"
@@ -23,6 +24,7 @@
 
 - (NSData *)encode{
     NSDictionary * dic = @{kURL:self.url?:@"",
+                           jLocalPath:self.localPath?:@"",
                            kName:self.name?:@"",
                            kSize:@(self.size),
                            kType:self.type?:@"",
@@ -33,6 +35,7 @@
 
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    self.localPath = json[jLocalPath]?:@"";
     self.url = json[kURL]?:@"";
     self.name = json[kName]?:@"";
     id obj = json[kSize];

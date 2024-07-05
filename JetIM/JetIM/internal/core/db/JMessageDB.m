@@ -8,6 +8,11 @@
 #import "JMessageDB.h"
 #import "JContentTypeCenter.h"
 
+//message 最新版本
+#define jMessageTableVersion 1
+//NSUserDefault 中保存 message 数据库版本的 key
+#define jMessageTableVersionKey @"MessageVersion"
+
 NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "conversation_type SMALLINT,"
@@ -538,6 +543,16 @@ NSString *const jReferMsgId = @"refer_msg_id";
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
+    [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
+}
+
+- (void)updateTables {
+    NSNumber *existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jMessageTableVersionKey];
+    if (jMessageTableVersion > existedVersion.intValue) {
+        //update table
+        
+        [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
+    }
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {

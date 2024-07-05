@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JConversationManager : NSObject <JConversationProtocol, JMessageSendReceiveDelegate>
 - (instancetype)initWithCore:(JetIMCore *)core messageManager:(JMessageManager *)messageManager;
 - (void)syncConversations:(void(^)(void))completeBlock;
+- (void)connectSuccess;
 @end
 
 NS_ASSUME_NONNULL_END

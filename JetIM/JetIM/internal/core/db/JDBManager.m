@@ -28,7 +28,7 @@
           userId:(NSString *)userId {
     NSString *path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:YES];
     if (path.length > 0) {
-        return [self.dbHelper openDB:path];
+        return [self openIMDB:path];
     } else {
         return [self buildDB:appKey
                       userId:(NSString *)userId];
@@ -315,11 +315,24 @@
     return result;
 }
 
+- (BOOL)openIMDB:(NSString *)path {
+    BOOL result = [self.dbHelper openDB:path];
+    [self updateTables];
+    return result;
+}
+
 - (void)createTables {
     [self.messageDb createTables];
     [self.conversationDb createTables];
     [self.profileDb createTables];
     [self.userInfoDB createTables];
+}
+
+- (void)updateTables {
+    [self.messageDb updateTables];
+    [self.conversationDb updateTables];
+    [self.profileDb updateTables];
+    [self.userInfoDB updateTables];
 }
 
 //DB 目录
