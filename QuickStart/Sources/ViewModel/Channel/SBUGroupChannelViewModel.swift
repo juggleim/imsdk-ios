@@ -86,6 +86,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.debouncer = SBUDebouncer(
             debounceTime: SBUGlobals.userMentionConfig?.debounceTime ?? SBUDebouncer.defaultTime
         )
+        JIM.shared().messageManager.add(self)
         
         JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
             JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation)
@@ -495,5 +496,28 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 //        self.markAsRead()
         
         super.reset()
+    }
+}
+
+extension SBUGroupChannelViewModel : JMessageDelegate {
+    public func messageDidReceive(_ message: JMessage!) {
+//        self.delegate?.baseChannelViewModel(
+//            self,
+//            shouldUpdateScrollInMessageList: [message],
+//            keepsScroll: true
+//        )
+        self.upsertMessagesInList(messages: [message], needReload: true)
+    }
+    
+    public func messageDidRecall(_ message: JMessage!) {
+        
+    }
+    
+    public func messageDidDelete(_ conversation: JConversation!, clientMsgNos: [NSNumber]!) {
+        
+    }
+    
+    public func messageDidClear(_ conversation: JConversation!, timestamp: Int64, senderId: String!) {
+        
     }
 }

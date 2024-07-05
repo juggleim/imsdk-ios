@@ -34,8 +34,18 @@
 
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    self.content = json[jContent]?:@"";
-    self.extra = json[jTextExtra]?:@"";
+    id content = json[jContent];
+    if ([content isKindOfClass:[NSString class]]) {
+        self.content = content;
+    } else {
+        self.content = @"";
+    }
+    id extra = json[jTextExtra];
+    if ([extra isKindOfClass:[NSString class]]) {
+        self.extra = extra;
+    } else {
+        self.extra = @"";
+    }
 }
 
 - (NSString *)conversationDigest {

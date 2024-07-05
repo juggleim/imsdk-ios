@@ -139,4 +139,3 @@ extension ViewController: UINavigationControllerDelegate {
         return UIInterfaceOrientationMask.portrait
     }
 }
-
