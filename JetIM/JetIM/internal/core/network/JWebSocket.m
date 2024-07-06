@@ -15,7 +15,9 @@
 #import "JBlockObj.h"
 #import "JWebSocketCommandManager.h"
 
-#define jWebSocketPrefix @"ws://"
+#define jProtocolHead @"://"
+#define jWSPrefix @"ws://"
+#define jWSSPrefix @"wss://"
 #define jWebSocketSuffix @"/im"
 #define jMaxConcurrentCount 5
 
@@ -890,7 +892,12 @@ inConversation:(JConversation *)conversation
 }
 
 - (SRWebSocket *)createWebSocket:(NSString *)url {
-    NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, url, jWebSocketSuffix];
+    NSString *u;
+    if ([url containsString:jProtocolHead]) {
+        u = url;
+    } else {
+        u = [NSString stringWithFormat:@"%@%@%@", jWSSPrefix, url, jWebSocketSuffix];
+    }
     SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
     sws.delegateDispatchQueue = self.receiveQueue;
     sws.delegate = self;
