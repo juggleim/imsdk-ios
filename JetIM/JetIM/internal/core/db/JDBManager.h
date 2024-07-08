@@ -63,6 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearLastMessage:(JConversation *)conversation;
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
 - (void)setLastMessageHasRead:(JConversation *)conversation;
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo;
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;

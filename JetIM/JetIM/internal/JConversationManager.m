@@ -670,6 +670,31 @@
         });
     }
 }
+
+-(void)messageStateDidChange:(JMessageState)state conversation:(JConversation *)conversation clientMsgNo:(long long)clientMsgNo{
+    if(conversation == nil){
+        return;
+    }
+    if(clientMsgNo< 0 || state == 0){
+        return;
+    }
+    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
+    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
+        return;
+    }
+    if(clientMsgNo == conversationInfo.lastMessage.clientMsgNo){
+        conversationInfo.lastMessage.messageState = state;
+        [self.core.dbManager updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
+        });
+    }
+    
+}
 #pragma mark - internal
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];

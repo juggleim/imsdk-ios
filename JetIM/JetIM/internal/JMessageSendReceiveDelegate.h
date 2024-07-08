@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
              sendUserId:(NSString *)sendUserId
             lastMessage:(JConcreteMessage *)lastMessage;
 -(void)onversationsClearTotalUnread:(long long)clearTime;
+-(void)messageStateDidChange:(JMessageState)state
+                conversation:(JConversation *)conversation
+                 clientMsgNo:(long long)clientMsgNo;
 @end
 
 NS_ASSUME_NONNULL_END

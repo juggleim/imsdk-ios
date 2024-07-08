@@ -392,6 +392,11 @@
         withClientMsgNo:(long long)clientMsgNo {
     [self.core.dbManager setMessageState:state
                          withClientMsgNo:clientMsgNo];
+    NSArray<JMessage *> * messages = [self getMessagesByClientMsgNos:@[@(clientMsgNo)]];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageStateDidChange:conversation:clientMsgNo:)] && messages != nil && messages.count != 0) {
+        JMessage * message = messages.firstObject;
+        [self.sendReceiveDelegate messageStateDidChange:state conversation:message.conversation clientMsgNo:clientMsgNo];
+    }
 }
 
 /// 搜素本地消息 SearchContent内容包含 指定内容
@@ -477,7 +482,7 @@
         } success:^(JMessage * _Nonnull uploadMessage) {
             if (![uploadMessage isKindOfClass:[JConcreteMessage class]]) {
                 uploadMessage.messageState = JMessageStateFail;
-                [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:uploadMessage.clientMsgNo];
+                [self setMessageState:JMessageStateFail withClientMsgNo:uploadMessage.clientMsgNo];
                 dispatch_async(self.core.delegateQueue, ^{
                     if (errorBlock) {
                         errorBlock(JErrorCodeMessageUploadError, uploadMessage);
@@ -490,7 +495,7 @@
                                           contentType:cm.contentType
                                       withClientMsgNo:cm.clientMsgNo];
             cm.messageState = JMessageStateSending;
-            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
+            [self setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
             [self sendWebSocketMessage:cm
                            isBroadcast:NO
                                success:successBlock
@@ -498,7 +503,7 @@
             
         } error:^{
             message.messageState = JMessageStateFail;
-            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
             dispatch_async(self.core.delegateQueue, ^{
                 if (errorBlock) {
                     errorBlock(JErrorCodeMessageUploadError, message);
@@ -506,7 +511,7 @@
             });
         } cancel:^{
             message.messageState = JMessageStateFail;
-            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
             dispatch_async(self.core.delegateQueue, ^{
                 if (cancelBlock) {
                     cancelBlock(message);
@@ -610,7 +615,7 @@
     if (message.clientMsgNo > 0) {
         if (message.messageState != JMessageStateSending) {
             message.messageState = JMessageStateSending;
-            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
         }
         [self updateMessageWithContent:(JConcreteMessage *)message];
         [self sendWebSocketMessage:(JConcreteMessage *)message

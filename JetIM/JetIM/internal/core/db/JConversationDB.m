@@ -88,6 +88,7 @@ NSString *const jUpdateConversationTime = @"UPDATE conversation_info SET timesta
 NSString *const jUpdateConversationMentionInfo = @"UPDATE conversation_info SET mention_info = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearConversationMentionInfo = @"UPDATE conversation_info SET mention_info = NULL";
 NSString *const jUpdateConversationLastMessageHasRead = @"UPDATE conversation_info SET last_message_has_read = 1 WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jUpdateConversationLastMessageState = @"UPDATE conversation_info SET last_message_state = ? WHERE conversation_type = ? AND conversation_id = ? AND last_message_client_msg_no = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -464,6 +465,17 @@ NSString *const jTotalCount = @"total_count";
 }
 - (void)setLastMessageHasRead:(JConversation *)conversation{
     [self.dbHelper executeUpdate:jUpdateConversationLastMessageHasRead withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+}
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo{
+    NSString *sql = jUpdateConversationLastMessageState;
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(state),
+                                                                   @(conversation.conversationType),
+                                                                   conversation.conversationId,
+                                                                   @(clientMsgNo)]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
+
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
