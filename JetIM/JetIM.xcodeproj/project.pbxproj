@@ -280,6 +280,7 @@
 		5B9980E42C21790600AF6519 /* JMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageOptions.m; sourceTree = "<group>"; };
 		5B9980E72C21794B00AF6519 /* JMessageReferredInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReferredInfo.h; sourceTree = "<group>"; };
 		5B9980E82C21794B00AF6519 /* JMessageReferredInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReferredInfo.m; sourceTree = "<group>"; };
+		A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomProtocol.h; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
@@ -644,6 +645,7 @@
 				A08AA2212B14934F008B114C /* JConnectionProtocol.h */,
 				A08AA2222B149419008B114C /* JMessageProtocol.h */,
 				A08AA24A2B14A525008B114C /* JConversationProtocol.h */,
+				A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */,
 				A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */,
 				A09645792BECCFE800290775 /* JMessageUploadProvider.h */,
 			);
