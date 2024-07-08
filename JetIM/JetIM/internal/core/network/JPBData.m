@@ -303,7 +303,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         downMsg.mentionInfo = mentionInfo;
     }
     if(message.referredMsg){
-        downMsg.referMsg = [self downMsgWithMessage:message.referredMsg];
+        downMsg.referMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
     }
     return downMsg;
 }

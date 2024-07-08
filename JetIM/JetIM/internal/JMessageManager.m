@@ -1219,7 +1219,8 @@
     if(localReferMsg != nil){
         message.referredMsg = localReferMsg;
     }else{
-        NSArray * messages = [self messagesToSave:@[message.referredMsg]];
+        JConcreteMessage *refer = (JConcreteMessage *)message.referredMsg;
+        NSArray * messages = [self messagesToSave:@[refer]];
         [self.core.dbManager insertMessages:messages];
         [self updateUserInfos:messages];
     }
