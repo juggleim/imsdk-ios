@@ -457,12 +457,6 @@
     [self updateSyncTime:message.timestamp];
 }
 
-- (void)messageDidReceive:(JConcreteMessage *)message {
-    [self addOrUpdateConversationIfNeed:message];
-    [self updateSyncTime:message.timestamp];
-    [self noticeTotalUnreadCountChange];
-}
-
 -(void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages{
     [self addOrUpdateConversationsIfNeed:messages];
     if(messages.count >0){
@@ -619,7 +613,7 @@
     [self updateConversationLastMessage:info lastMessage:lastMessage isUpdateMention:isUpdateMention];
 }
 
-- (void)onversationsClearTotalUnread:(long long)clearTime { 
+- (void)conversationsDidClearTotalUnread:(long long)clearTime { 
     [self.core.dbManager clearTotalUnreadCount];
     [self.core.dbManager clearMentionInfo];
     [self noticeTotalUnreadCountChange];
@@ -654,11 +648,11 @@
 }
 -(void)updateConversationLastMessage:(JConcreteConversationInfo *)info
                          lastMessage:(JConcreteMessage *)lastMessage
-                     isUpdateMention:(BOOL)isUpDataMention {
+                     isUpdateMention:(BOOL)isUpdateMention {
     BOOL isLastMessageUpdate = (info.lastMessage == nil ||
                                 info.lastMessage.clientMsgNo != lastMessage.clientMsgNo ||
                                 ![info.lastMessage.contentType isEqualToString:lastMessage.contentType]);
-    if (isLastMessageUpdate || isUpDataMention) {
+    if (isLastMessageUpdate || isUpdateMention) {
         [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
         info.lastMessage = lastMessage;
         dispatch_async(self.core.delegateQueue, ^{

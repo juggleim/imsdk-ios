@@ -5,12 +5,12 @@
 //  Created by 郑开 on 2024/6/28.
 //
 
-#import "JClearTotlaUnreadMessage.h"
+#import "JClearTotalUnreadMessage.h"
 
 #define jClearTotalUnreadType            @"jg:cleartotalunread"
 #define jClearTotalClearTime             @"clear_time"
 
-@implementation JClearTotlaUnreadMessage
+@implementation JClearTotalUnreadMessage
 
 + (NSString *)contentType {
     return jClearTotalUnreadType;

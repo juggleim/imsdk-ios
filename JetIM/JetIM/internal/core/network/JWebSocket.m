@@ -595,7 +595,6 @@ inConversation:(JConversation *)conversation
     if (webSocket != self.sws) {
         return;
     }
-    JLogI(@"WS-Receive", @"didReceiveMessageWithData");
     [self.heartbeatManager updateLastMessageReceiveTime];
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
     switch (obj.rcvType) {

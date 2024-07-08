@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5B4CAF582C2E648A00FF9D51 /* JClearTotlaUnreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4CAF562C2E648A00FF9D51 /* JClearTotlaUnreadMessage.h */; };
-		5B4CAF592C2E648A00FF9D51 /* JClearTotlaUnreadMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4CAF572C2E648A00FF9D51 /* JClearTotlaUnreadMessage.m */; };
+		5B4CAF582C2E648A00FF9D51 /* JClearTotalUnreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4CAF562C2E648A00FF9D51 /* JClearTotalUnreadMessage.h */; };
+		5B4CAF592C2E648A00FF9D51 /* JClearTotalUnreadMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4CAF572C2E648A00FF9D51 /* JClearTotalUnreadMessage.m */; };
 		5B4DB6862BFC340700DD18B6 /* JUnDisturbConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4DB6842BFC340700DD18B6 /* JUnDisturbConvMessage.h */; };
 		5B4DB6872BFC340700DD18B6 /* JUnDisturbConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6852BFC340700DD18B6 /* JUnDisturbConvMessage.m */; };
 		5B4DB68A2BFC3BC700DD18B6 /* JTopConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4DB6882BFC3BC700DD18B6 /* JTopConvMessage.h */; };
@@ -266,8 +266,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5B4CAF562C2E648A00FF9D51 /* JClearTotlaUnreadMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JClearTotlaUnreadMessage.h; sourceTree = "<group>"; };
-		5B4CAF572C2E648A00FF9D51 /* JClearTotlaUnreadMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JClearTotlaUnreadMessage.m; sourceTree = "<group>"; };
+		5B4CAF562C2E648A00FF9D51 /* JClearTotalUnreadMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JClearTotalUnreadMessage.h; sourceTree = "<group>"; };
+		5B4CAF572C2E648A00FF9D51 /* JClearTotalUnreadMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JClearTotalUnreadMessage.m; sourceTree = "<group>"; };
 		5B4DB6842BFC340700DD18B6 /* JUnDisturbConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUnDisturbConvMessage.h; sourceTree = "<group>"; };
 		5B4DB6852BFC340700DD18B6 /* JUnDisturbConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUnDisturbConvMessage.m; sourceTree = "<group>"; };
 		5B4DB6882BFC3BC700DD18B6 /* JTopConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTopConvMessage.h; sourceTree = "<group>"; };
@@ -570,6 +570,8 @@
 				A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */,
 				A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */,
 				A0F3761A2B3994920076CB84 /* JConcreteConversationInfo.m */,
+				5B9980F62C2BF00000AF6519 /* JMergeInfo.h */,
+				5B9980F72C2BF00000AF6519 /* JMergeInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1011,8 +1013,8 @@
 				5B4DB6892BFC3BC700DD18B6 /* JTopConvMessage.m */,
 				5B4DB68C2BFC3BD600DD18B6 /* JClearUnreadMessage.h */,
 				5B4DB68D2BFC3BD600DD18B6 /* JClearUnreadMessage.m */,
-				5B4CAF562C2E648A00FF9D51 /* JClearTotlaUnreadMessage.h */,
-				5B4CAF572C2E648A00FF9D51 /* JClearTotlaUnreadMessage.m */,
+				5B4CAF562C2E648A00FF9D51 /* JClearTotalUnreadMessage.h */,
+				5B4CAF572C2E648A00FF9D51 /* JClearTotalUnreadMessage.m */,
 				5B4DB6902BFC3BF700DD18B6 /* JDeleteMsgMessage.h */,
 				5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */,
 				5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */,
@@ -1021,8 +1023,6 @@
 				A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */,
 				A0834F752C19B67B0074AE93 /* JAddConvMessage.h */,
 				A0834F762C19B67B0074AE93 /* JAddConvMessage.m */,
-				5B9980F62C2BF00000AF6519 /* JMergeInfo.h */,
-				5B9980F72C2BF00000AF6519 /* JMergeInfo.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1129,7 +1129,7 @@
 				A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */,
 				A08AA37C2B19CB78008B114C /* Any.pbobjc.h in Headers */,
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
-				5B4CAF582C2E648A00FF9D51 /* JClearTotlaUnreadMessage.h in Headers */,
+				5B4CAF582C2E648A00FF9D51 /* JClearTotalUnreadMessage.h in Headers */,
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
 				A08AA2712B162A11008B114C /* JFMDatabaseQueue.h in Headers */,
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
@@ -1251,7 +1251,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B4CAF592C2E648A00FF9D51 /* JClearTotlaUnreadMessage.m in Sources */,
+				5B4CAF592C2E648A00FF9D51 /* JClearTotalUnreadMessage.m in Sources */,
 				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,
 				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,

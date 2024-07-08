@@ -25,7 +25,7 @@
 #import "JCleanMsgMessage.h"
 #import "JLogCommandMessage.h"
 #import "JAddConvMessage.h"
-#import "JClearTotlaUnreadMessage.h"
+#import "JClearTotalUnreadMessage.h"
 #import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -999,7 +999,7 @@
     [self registerContentType:[JCleanMsgMessage class]];
     [self registerContentType:[JLogCommandMessage class]];
     [self registerContentType:[JAddConvMessage class]];
-    [self registerContentType:[JClearTotlaUnreadMessage class]];
+    [self registerContentType:[JClearTotalUnreadMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -1308,25 +1308,10 @@
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
-    JLogI(@"MSG-Sync", @"handle receive messages %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
-    JLogI(@"MSG-Sync", @"handle receive messages insertMessages %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     [self updateUserInfos:messagesToSave];
-    JLogI(@"MSG-Sync", @"handle receive messages updateUserInfos %lu, isSync %@", (unsigned long)messages.count, @(isSync));
-    NSMutableArray * upDataConversatonMessages = [NSMutableArray array];
-    
-    NSMutableDictionary * contentType = [NSMutableDictionary dictionary];
-    for (JConcreteMessage * message in messages) {
-        NSNumber * count = contentType[message.contentType];
-        if(count == nil){
-            count = [NSNumber numberWithInt:1];
-        }else{
-            count = [NSNumber numberWithInt:count.intValue + 1];
-        }
-        [contentType setValue:count forKey:message.contentType];
-    }
-    NSLog(@"Juggle MSG-Sync handle receive messages ContentType %@", contentType);
+    NSMutableArray * updateConversationMessages = [NSMutableArray array];
 
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -1413,10 +1398,10 @@
         }
         
         //clear total unread message
-        if ([obj.contentType isEqualToString:[JClearTotlaUnreadMessage contentType]]) {
-            JClearTotlaUnreadMessage * message = (JClearTotlaUnreadMessage *)obj.content;
-            if ([self.sendReceiveDelegate respondsToSelector:@selector(onversationsClearTotalUnread:)]) {
-                [self.sendReceiveDelegate onversationsClearTotalUnread:message.clearTime];
+        if ([obj.contentType isEqualToString:[JClearTotalUnreadMessage contentType]]) {
+            JClearTotalUnreadMessage * message = (JClearTotalUnreadMessage *)obj.content;
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidClearTotalUnread:)]) {
+                [self.sendReceiveDelegate conversationsDidClearTotalUnread:message.clearTime];
             }
             return;
         }
@@ -1458,7 +1443,7 @@
             }
         }
         
-        [upDataConversatonMessages addObject:obj];
+        [updateConversationMessages addObject:obj];
         
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1468,13 +1453,10 @@
             }];
         });
     }];
-    JLogI(@"MSG-Sync", @"handle receive messages 0 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:upDataConversatonMessages];
+        [self.sendReceiveDelegate messagesDidReceive:updateConversationMessages];
     }
-    JLogI(@"MSG-Sync", @"handle receive messages 1 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
     [self.core.dbManager insertUserInfos:userDic.allValues];
-    JLogI(@"MSG-Sync", @"handle receive messages 2 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
 
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
@@ -1492,8 +1474,6 @@
             self.core.messageReceiveSyncTime = receiveTime;
         }
     }
-    JLogI(@"MSG-Sync", @"handle receive messages 3 %lu, isSync %@", (unsigned long)messages.count, @(isSync));
-
 }
 
 - (void)sync {
