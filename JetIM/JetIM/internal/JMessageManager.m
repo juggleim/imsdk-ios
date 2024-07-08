@@ -167,8 +167,9 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
-                               success:^{
+                               success:^(long long timestamp) {
         JLogI(@"MSG-Delete", @"websocket success");
+        [weakSelf updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [weakSelf notifyMessageRemoved:conversation removedMessages:deleteRemoteList];
         dispatch_async(self.core.delegateQueue, ^{
@@ -213,8 +214,9 @@
         __weak typeof(self) weakSelf = self;
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
-                                   success:^{
+                                   success:^(long long timestamp) {
             JLogI(@"MSG-Delete", @"websocket success");
+            [weakSelf updateSendSyncTime:timestamp];
             NSMutableArray * ids = [NSMutableArray array];
             for (JMessage * message in msgList) {
                 [ids addObject:message.messageId];
@@ -266,7 +268,6 @@
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Recall", @"success");
             [self updateSendSyncTime:timestamp];
-
             m.contentType = [JRecallInfoMessage contentType];
             JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
             recallInfoMsg.exts = extras;
@@ -308,8 +309,9 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
-                                     success:^{
+                                     success:^(long long timestamp) {
         JLogI(@"MSG-Clear", @"success");
+        [weakSelf updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:@""];
         [weakSelf notifyMessageCleared:conversation startTime:startTime sendUserId:nil];
         
@@ -547,7 +549,8 @@
                   error:(void (^)(JErrorCode))errorBlock {
     [self.core.webSocket sendReadReceipt:messageIds
                           inConversation:conversation
-                                 success:^{
+                                 success:^(long long timestamp) {
+        [self updateSendSyncTime:timestamp];
         [self.core.dbManager setMessagesRead:messageIds];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {

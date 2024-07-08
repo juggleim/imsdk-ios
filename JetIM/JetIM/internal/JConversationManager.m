@@ -211,9 +211,9 @@
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:info.lastMessageIndex
-                                  success:^(void) {
-        //清除未读数暂时不用更新 syncTime
+                                  success:^(long long timestamp) {
         JLogI(@"CONV-ClearUnread", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
                                            msgIndex:info.lastMessageIndex];
         [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
@@ -289,8 +289,9 @@
     [self.core.webSocket setMute:isMute
                   inConversation:conversation
                           userId:self.core.userId
-                         success:^{
+                         success:^(long long timestamp) {
         JLogI(@"CONV-Mute", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager setMute:isMute conversation:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
@@ -326,6 +327,7 @@
                          userId:self.core.userId
                         success:^(long long timestamp) {
         JLogI(@"CONV-Top", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager setTop:isTop time:timestamp conversation:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
@@ -356,8 +358,9 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearTotalUnreadCount:self.core.userId
                                           time:time
-                                       success:^{
+                                       success:^(long long timestamp) {
         JLogI(@"CONV-ClearTotal", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearTotalUnreadCount];
         [weakSelf.core.dbManager clearMentionInfo];
         [weakSelf noticeTotalUnreadCountChange];
@@ -382,10 +385,12 @@
 - (void)createConversationInfo:(JConversation *)conversation
                        success:(void (^)(JConversationInfo *))successBlock
                          error:(void (^)(JErrorCode))errorBlock {
+    __weak typeof(self) weakSelf = self;
     [self.core.webSocket createConversationInfo:conversation
                                          userId:self.core.userId
-                                        success:^(JConcreteConversationInfo * _Nonnull conversationInfo) {
+                                        success:^(JConcreteConversationInfo * _Nonnull conversationInfo, long long timestamp) {
         JLogI(@"CONV-Create", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
         JConcreteConversationInfo *info = [self handleConversationAdd:conversationInfo];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
