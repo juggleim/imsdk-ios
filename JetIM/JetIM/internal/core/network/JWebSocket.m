@@ -21,6 +21,12 @@
 #define jWebSocketSuffix @"/im"
 #define jMaxConcurrentCount 5
 
+typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
+    JWebSocketStatusIdle,
+    JWebSocketStatusFailure,
+    JWebSocketStatusSuccess
+};
+
 @interface JWebSocket () <SRWebSocketDelegate, JCommandTimeOutDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
@@ -36,6 +42,7 @@
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
 @property (nonatomic, assign) BOOL isCompeteFinish;
 @property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
+@property (nonatomic, strong) NSMutableArray <NSNumber *> *competeStatusList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @property (nonatomic, strong) JWebSocketCommandManager *commandManager;
 @end
@@ -72,6 +79,7 @@
             JLogI(@"WS-Connect", @"create web socket url is %@", url);
             SRWebSocket *sws = [self createWebSocket:url];
             [self.competeSwsList addObject:sws];
+            [self.competeStatusList addObject:@(JWebSocketStatusIdle)];
             NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
                 [sws open];
             }];
@@ -555,10 +563,12 @@ inConversation:(JConversation *)conversation
             return;
         }
         //防止上一批竞速的 webSocket 被选中
-        for (SRWebSocket *sws in self.competeSwsList) {
+        for (int i = 0; i < self.competeSwsList.count; i++) {
+            SRWebSocket *sws = self.competeSwsList[i];
             if (webSocket == sws) {
                 JLogI(@"WS-Connect", @"compete success, url is %@", webSocket.url);
                 self.isCompeteFinish = YES;
+                self.competeStatusList[i] = @(JWebSocketStatusSuccess);
                 self.sws = webSocket;
                 [self sendConnectMsgByWebSocket:webSocket];
                 break;
@@ -568,16 +578,38 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    if (webSocket != self.sws) {
-        return;
-    }
-    JLogI(@"WS-Connect", @"fail message is %@", error.description);
     dispatch_async(self.sendQueue, ^{
-        [self resetSws];
+        if (self.isCompeteFinish) {
+            if (webSocket != self.sws) {
+                return;
+            }
+            JLogI(@"WS-Connect", @"fail message is %@", error.description);
+            [self resetSws];
+            if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                [self.connectDelegate webSocketDidFail];
+            }
+        } else {
+            for (int i = 0; i < self.competeSwsList.count; i++) {
+                SRWebSocket *sws = self.competeSwsList[i];
+                if (webSocket == sws) {
+                    self.competeStatusList[i] = @(JWebSocketStatusFailure);
+                    break;
+                }
+            }
+            BOOL allFailed = YES;
+            for (NSNumber *status in self.competeStatusList) {
+                if (status.unsignedIntValue != JWebSocketStatusFailure) {
+                    allFailed = NO;
+                    break;
+                }
+            }
+            if (allFailed && [self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                JLogI(@"WS-Connect", @"fail message is %@", error.description);
+                [self resetSws];
+                [self.connectDelegate webSocketDidFail];
+            }
+        }
     });
-    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
-        [self.connectDelegate webSocketDidFail];
-    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
@@ -894,7 +926,7 @@ inConversation:(JConversation *)conversation
 - (SRWebSocket *)createWebSocket:(NSString *)url {
     NSString *u;
     if ([url containsString:jProtocolHead]) {
-        u = url;
+        u = [NSString stringWithFormat:@"%@%@", url, jWebSocketSuffix];
     } else {
         u = [NSString stringWithFormat:@"%@%@%@", jWSSPrefix, url, jWebSocketSuffix];
     }
@@ -907,6 +939,7 @@ inConversation:(JConversation *)conversation
 - (void)resetSws {
     self.sws = nil;
     [self.competeSwsList removeAllObjects];
+    [self.competeStatusList removeAllObjects];
     self.isCompeteFinish = NO;
 }
 
@@ -916,5 +949,12 @@ inConversation:(JConversation *)conversation
         _competeSwsList = [NSMutableArray array];
     }
     return _competeSwsList;
+}
+
+- (NSMutableArray<NSNumber *> *)competeStatusList {
+    if (!_competeStatusList) {
+        _competeStatusList = [NSMutableArray array];
+    }
+    return _competeStatusList;
 }
 @end
