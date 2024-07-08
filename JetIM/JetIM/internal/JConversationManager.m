@@ -855,7 +855,9 @@
         }
         if(info == nil){
             info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
-            [conversations addObject:info];
+            if(info != nil){
+                [conversations addObject:info];
+            }
         }
         if (!info) {
             JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
