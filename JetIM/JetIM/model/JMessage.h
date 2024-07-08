@@ -54,9 +54,10 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, strong) JMessageContent *content;
 /// 群消息阅读信息（只对群消息生效）
 @property (nonatomic, strong) JGroupMessageReadInfo *groupReadInfo;
-/// 消息扩展功能
-@property (nonatomic, strong) JMessageOptions * messageOptions;
-
+/// @ 信息（非 @ 消息本字段为 nil）
+@property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
+/// 引用消息
+@property (nonatomic, strong) JMessage *referredMsg;
 
 @end
 

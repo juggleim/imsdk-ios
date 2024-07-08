@@ -159,6 +159,17 @@
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
     [self.conversationDb updateLastMessageWithoutIndex:message];
 }
+
+- (void)setLastMessageHasRead:(JConversation *)conversation{
+    [self.conversationDb setLastMessageHasRead:conversation];
+}
+
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo{
+    [self.conversationDb updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
@@ -191,6 +202,10 @@
     [self.messageDb updateMessageContent:content
                              contentType:type
                          withClientMsgNo:clientMsgNo];
+}
+
+-(void)updateMessage:(JConcreteMessage *)message{
+    [self.messageDb updateMessage:message];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {

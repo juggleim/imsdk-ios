@@ -119,13 +119,13 @@
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+            mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
-                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;{
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData;
@@ -142,7 +142,7 @@
                                                  msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
-                                              mergedMsgs:mergedMsgs
+                                               mergeInfo:mergeInfo
                                              isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++
@@ -191,7 +191,7 @@
 
 - (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation
-                success:(void (^)(void))successBlock
+                success:(void (^)(long long timestamp))successBlock
                   error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -199,10 +199,10 @@
                                       inConversation:conversation
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"send read receipt");
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
@@ -329,7 +329,7 @@
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
-                 success:(void (^)(void))successBlock
+                 success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -338,17 +338,17 @@
                                              msgIndex:msgIndex
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear unread, type is %lu, id is %@, msgIndex is %lld", (unsigned long)conversation.conversationType, conversation.conversationId, msgIndex);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)setMute:(BOOL)isMute
  inConversation:(JConversation *)conversation
          userId:(NSString *)userId
-        success:(void (^)(void))successBlock
+        success:(void (^)(long long timestamp))successBlock
           error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -357,10 +357,10 @@
                                         isMute:isMute
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"set mute, mute is %d, type is %lu, id is %@", isMute, (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
@@ -452,7 +452,7 @@ inConversation:(JConversation *)conversation
 
 - (void)clearTotalUnreadCount:(NSString *)userId
                          time:(long long)time
-                      success:(void (^)(void))successBlock
+                      success:(void (^)(long long timestamp))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -460,35 +460,35 @@ inConversation:(JConversation *)conversation
                                                           time:time
                                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear total unread, time is %lld", time);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
     
 }
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
-              success:(void (^)(void))successBlock
+              success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
-        NSData *d = [self.pbData deleteMessage:conversation 
+        NSData *d = [self.pbData deleteMessage:conversation
                                        msgList:msgList
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete message");
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
-                    success:(void (^)(void))successBlock
+                    success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -497,16 +497,16 @@ inConversation:(JConversation *)conversation
                                                scope:0
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear history message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)createConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                       success:(void (^)(JConcreteConversationInfo * conversationInfo, long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -832,7 +832,7 @@ inConversation:(JConversation *)conversation
         if (ack.code != 0) {
             conversationObj.errorBlock(ack.code);
         } else {
-            conversationObj.successBlock(ack.conversationInfo);
+            conversationObj.successBlock(ack.conversationInfo,ack.timestamp);
         }
     }
 }

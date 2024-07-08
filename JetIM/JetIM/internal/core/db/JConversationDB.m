@@ -81,12 +81,14 @@ NSString *const jTimestampEqualsQustion = @", timestamp=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
-NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info";
+NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jUpdateConversationTime = @"UPDATE conversation_info SET timestamp = ?";
 NSString *const jUpdateConversationMentionInfo = @"UPDATE conversation_info SET mention_info = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearConversationMentionInfo = @"UPDATE conversation_info SET mention_info = NULL";
+NSString *const jUpdateConversationLastMessageHasRead = @"UPDATE conversation_info SET last_message_has_read = 1 WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jUpdateConversationLastMessageState = @"UPDATE conversation_info SET last_message_state = ? WHERE conversation_type = ? AND conversation_id = ? AND last_message_client_msg_no = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -161,8 +163,8 @@ NSString *const jTotalCount = @"total_count";
                 mentionInfo = @"";
             }
             NSString * lastMsgMentionInfo;
-            if(lastMessage.messageOptions.mentionInfo != nil){
-                lastMsgMentionInfo = [lastMessage.messageOptions.mentionInfo encodeToJson];
+            if(lastMessage.mentionInfo != nil){
+                lastMsgMentionInfo = [lastMessage.mentionInfo encodeToJson];
             }else{
                 lastMsgMentionInfo = @"";
             }
@@ -332,8 +334,8 @@ NSString *const jTotalCount = @"total_count";
     sql = [sql stringByAppendingString:jWhereConversationIs];
     
     NSString * mentionInfo;
-    if(message.messageOptions.mentionInfo){
-        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    if(message.mentionInfo){
+        mentionInfo = [message.mentionInfo encodeToJson];
     }else{
         mentionInfo = @"";
     }
@@ -360,7 +362,7 @@ NSString *const jTotalCount = @"total_count";
     [args addObject:message.conversation.conversationId];
     
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
-}
+} 
 
 - (void)setMute:(BOOL)isMute conversation:(JConversation *)conversation {
     if (conversation.conversationId.length == 0) {
@@ -410,8 +412,7 @@ NSString *const jTotalCount = @"total_count";
 
 -(void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson{
-    if (conversation.conversationId.length == 0
-        || mentionInfoJson.length == 0) {
+    if (conversation.conversationId.length == 0) {
         return;
     }
     [self.dbHelper executeUpdate:jUpdateConversationMentionInfo withArgumentsInArray:@[mentionInfoJson, @(conversation.conversationType), conversation.conversationId]];
@@ -425,7 +426,7 @@ NSString *const jTotalCount = @"total_count";
     if (conversation.conversationId.length == 0) {
         return;
     }
-    NSString *sql = [jUpdateConversationTime stringByAppendingString:jClearLastMessage];
+    NSString *sql = jClearLastMessage;
     sql = [sql stringByAppendingString:jWhereConversationIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
 
@@ -433,15 +434,15 @@ NSString *const jTotalCount = @"total_count";
 }
 
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
-    NSString *sql = [jUpdateConversationTime stringByAppendingString:jUpdateLastMessage];
+    NSString *sql = jUpdateLastMessage;
     sql = [sql stringByAppendingString:jWhereConversationIs];
     
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     NSString * mentionInfo;
-    if(message.messageOptions.mentionInfo){
-        mentionInfo = [message.messageOptions.mentionInfo encodeToJson];
+    if(message.mentionInfo){
+        mentionInfo = [message.mentionInfo encodeToJson];
     }else{
         mentionInfo = @"";
     }
@@ -455,14 +456,26 @@ NSString *const jTotalCount = @"total_count";
                                                                    @(message.hasRead),
                                                                    @(message.timestamp),
                                                                    message.senderUserId?:@"",
-                                                                   mentionInfo?:@"",
                                                                    content?:@"",
+                                                                   mentionInfo?:@"",
                                                                    @(message.seqNo),
                                                                    @(message.conversation.conversationType),
                                                                    message.conversation.conversationId?:@""]];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
+}
+- (void)setLastMessageHasRead:(JConversation *)conversation{
+    [self.dbHelper executeUpdate:jUpdateConversationLastMessageHasRead withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+}
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo{
+    NSString *sql = jUpdateConversationLastMessageState;
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(state),
+                                                                   @(conversation.conversationType),
+                                                                   conversation.conversationId,
+                                                                   @(clientMsgNo)]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 
-    
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
@@ -506,8 +519,7 @@ NSString *const jTotalCount = @"total_count";
     
     NSString * lastMsgMentionInfo = [rs stringForColumn:jLastMessageMentionInfo];
     if(lastMsgMentionInfo != nil){
-        lastMessage.messageOptions = [[JMessageOptions alloc] init];
-        lastMessage.messageOptions.mentionInfo = [JMessageMentionInfo decodeFromJson:[rs stringForColumn:jLastMessageMentionInfo]];
+        lastMessage.mentionInfo = [JMessageMentionInfo decodeFromJson:[rs stringForColumn:jLastMessageMentionInfo]];
     }
     lastMessage.seqNo = [rs longLongIntForColumn:jLastMessageSeqNo];
     lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];

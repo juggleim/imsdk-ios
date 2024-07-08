@@ -25,6 +25,7 @@
 #import "JCleanMsgMessage.h"
 #import "JLogCommandMessage.h"
 #import "JAddConvMessage.h"
+#import "JClearTotalUnreadMessage.h"
 #import "JLogger.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -166,8 +167,9 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
-                               success:^{
+                               success:^(long long timestamp) {
         JLogI(@"MSG-Delete", @"websocket success");
+        [weakSelf updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [weakSelf notifyMessageRemoved:conversation removedMessages:deleteRemoteList];
         dispatch_async(self.core.delegateQueue, ^{
@@ -212,8 +214,9 @@
         __weak typeof(self) weakSelf = self;
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
-                                   success:^{
+                                   success:^(long long timestamp) {
             JLogI(@"MSG-Delete", @"websocket success");
+            [weakSelf updateSendSyncTime:timestamp];
             NSMutableArray * ids = [NSMutableArray array];
             for (JMessage * message in msgList) {
                 [ids addObject:message.messageId];
@@ -264,11 +267,7 @@
                                  timestamp:m.timestamp
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Recall", @"success");
-            if (self.syncProcessing) {
-                self.cachedSendTime = timestamp;
-            } else {
-                self.core.messageSendSyncTime = timestamp;
-            }
+            [self updateSendSyncTime:timestamp];
             m.contentType = [JRecallInfoMessage contentType];
             JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
             recallInfoMsg.exts = extras;
@@ -310,8 +309,9 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
-                                     success:^{
+                                     success:^(long long timestamp) {
         JLogI(@"MSG-Clear", @"success");
+        [weakSelf updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearMessagesIn:conversation startTime:startTime senderId:@""];
         [weakSelf notifyMessageCleared:conversation startTime:startTime sendUserId:nil];
         
@@ -392,6 +392,11 @@
         withClientMsgNo:(long long)clientMsgNo {
     [self.core.dbManager setMessageState:state
                          withClientMsgNo:clientMsgNo];
+    NSArray<JMessage *> * messages = [self getMessagesByClientMsgNos:@[@(clientMsgNo)]];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageStateDidChange:conversation:clientMsgNo:)] && messages != nil && messages.count != 0) {
+        JMessage * message = messages.firstObject;
+        [self.sendReceiveDelegate messageStateDidChange:state conversation:message.conversation clientMsgNo:clientMsgNo];
+    }
 }
 
 /// 搜素本地消息 SearchContent内容包含 指定内容
@@ -477,7 +482,7 @@
         } success:^(JMessage * _Nonnull uploadMessage) {
             if (![uploadMessage isKindOfClass:[JConcreteMessage class]]) {
                 uploadMessage.messageState = JMessageStateFail;
-                [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:uploadMessage.clientMsgNo];
+                [self setMessageState:JMessageStateFail withClientMsgNo:uploadMessage.clientMsgNo];
                 dispatch_async(self.core.delegateQueue, ^{
                     if (errorBlock) {
                         errorBlock(JErrorCodeMessageUploadError, uploadMessage);
@@ -490,7 +495,7 @@
                                           contentType:cm.contentType
                                       withClientMsgNo:cm.clientMsgNo];
             cm.messageState = JMessageStateSending;
-            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
+            [self setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
             [self sendWebSocketMessage:cm
                            isBroadcast:NO
                                success:successBlock
@@ -498,7 +503,7 @@
             
         } error:^{
             message.messageState = JMessageStateFail;
-            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
             dispatch_async(self.core.delegateQueue, ^{
                 if (errorBlock) {
                     errorBlock(JErrorCodeMessageUploadError, message);
@@ -506,7 +511,7 @@
             });
         } cancel:^{
             message.messageState = JMessageStateFail;
-            [self.core.dbManager setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
             dispatch_async(self.core.delegateQueue, ^{
                 if (cancelBlock) {
                     cancelBlock(message);
@@ -549,7 +554,8 @@
                   error:(void (^)(JErrorCode))errorBlock {
     [self.core.webSocket sendReadReceipt:messageIds
                           inConversation:conversation
-                                 success:^{
+                                 success:^(long long timestamp) {
+        [self updateSendSyncTime:timestamp];
         [self.core.dbManager setMessagesRead:messageIds];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -609,16 +615,20 @@
     if (message.clientMsgNo > 0) {
         if (message.messageState != JMessageStateSending) {
             message.messageState = JMessageStateSending;
-            [self.core.dbManager setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
+            [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
         }
+        [self updateMessageWithContent:(JConcreteMessage *)message];
         [self sendWebSocketMessage:(JConcreteMessage *)message
                        isBroadcast:NO
                            success:successBlock
                              error:errorBlock];
         return message;
     } else {
+        JMessageOptions * messageOptions = [[JMessageOptions alloc] init];
+        messageOptions.mentionInfo = message.mentionInfo;
+        messageOptions.referredMsgId = message.referredMsg.messageId;
         return [self sendMessage:message.content
-                   messageOption:message.messageOptions
+                   messageOption:messageOptions
                   inConversation:message.conversation
                          success:successBlock
                            error:errorBlock];
@@ -989,6 +999,7 @@
     [self registerContentType:[JCleanMsgMessage class]];
     [self registerContentType:[JLogCommandMessage class]];
     [self registerContentType:[JAddConvMessage class]];
+    [self registerContentType:[JClearTotalUnreadMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -1063,33 +1074,26 @@
                  isBroadcast:(BOOL)isBroadcast
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
-    NSArray *mergedMessages = nil;
+    JMergeInfo * mergeInfo;
     if ([message.content isKindOfClass:[JMergeMessage class]]) {
-        JMergeMessage *merge = (JMergeMessage *)message.content;
-        mergedMessages = [self.core.dbManager getMessagesByMessageIds:merge.messageIdList];
+        JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
+        mergeInfo = [[JMergeInfo alloc]init];
+        mergeInfo.conversation = mergeMessage.conversation;
+        mergeInfo.containerMsgId = mergeMessage.containerMsgId;
+        mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
-    JConcreteMessage * referredMessage;
-    if(message.messageOptions.referredInfo){
-        referredMessage = [self.core.dbManager getMessageWithMessageId:message.messageOptions.referredInfo.messageId];
-        message.referMsg = referredMessage;
-    }
-    
     [self.core.webSocket sendIMMessage:message.content
                         inConversation:message.conversation
                            clientMsgNo:message.clientMsgNo
                              clientUid:message.clientUid
-                            mergedMsgs:mergedMessages
+                             mergeInfo:mergeInfo
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
-                           mentionInfo:message.messageOptions.mentionInfo
-                       referredMessage:referredMessage
+                           mentionInfo:message.mentionInfo
+                       referredMessage:(JConcreteMessage *)message.referredMsg
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
-        if (self.syncProcessing) {
-            self.cachedSendTime = timestamp;
-        } else {
-            self.core.messageSendSyncTime = timestamp;
-        }
+        [self updateSendSyncTime:timestamp];
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
@@ -1098,6 +1102,16 @@
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        
+        if([message.content isKindOfClass:[JMergeMessage class]]){
+            JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
+            if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+                mergeMessage.containerMsgId = msgId;
+            }
+            [self.core.dbManager updateMessageContent:message.content
+                                          contentType:message.contentType
+                                        withMessageId:message.messageId];
+        }
         
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
             [self.sendReceiveDelegate messageDidSend:message];
@@ -1139,6 +1153,16 @@
     return message;
 }
 
+-(void)updateMessageWithContent:(JConcreteMessage *)message{
+    if(message.content != nil){
+        message.contentType = [[message.content class] contentType];
+    }
+    if (message.referredMsg) {
+        message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
+    }
+    [self.core.dbManager updateMessage:message];
+}
+
 - (JConcreteMessage *)saveMessageWithContent:(JMessageContent *)content
                                messageOption:(JMessageOptions *)messageOption
                               inConversation:(JConversation *)conversation
@@ -1155,14 +1179,15 @@
     message.clientUid = [self createClientUid];
     message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
     message.flags = [[content class] flags];
-    message.messageOptions = messageOption;
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
-    
-    if (messageOption.referredInfo != nil) {
-        JConcreteMessage * referMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredInfo.messageId];
-        message.referMsg = referMsg;
+    if(messageOption.mentionInfo != nil){
+        message.mentionInfo = messageOption.mentionInfo;
+    }
+    if (messageOption.referredMsgId != nil) {
+        JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId];
+        message.referredMsg = referredMsg;
     }
     
     [self.core.dbManager insertMessages:@[message]];
@@ -1187,23 +1212,14 @@
 }
 
 -(void)saveReferMessages:(JConcreteMessage *)message{
-    if(message.referMsg == nil){
+    if(message.referredMsg == nil){
         return;
     }
-    if(message.messageOptions == nil){
-        message.messageOptions = [[JMessageOptions alloc] init];
-    }
-    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referMsg.messageId];
+    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
     if(localReferMsg != nil){
-        message.referMsg = localReferMsg;
-        if(message.messageOptions.referredInfo == nil){
-            message.messageOptions.referredInfo = [[JMessageReferredInfo alloc] init];
-        }
-        message.messageOptions.referredInfo.messageId = localReferMsg.messageId;
-        message.messageOptions.referredInfo.senderId = localReferMsg.senderUserId;
-        message.messageOptions.referredInfo.content = localReferMsg.content;
+        message.referredMsg = localReferMsg;
     }else{
-        NSArray * messages = [self messagesToSave:@[message.referMsg]];
+        NSArray * messages = [self messagesToSave:@[message.referredMsg]];
         [self.core.dbManager insertMessages:messages];
         [self updateUserInfos:messages];
     }
@@ -1295,8 +1311,8 @@
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
     [self updateUserInfos:messagesToSave];
-    //TODO: 遍历 messagesToSave，同一个会话的最后一个 message 更新会话的 lastMessage
-    
+    NSMutableArray * updateConversationMessages = [NSMutableArray array];
+
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
@@ -1306,7 +1322,6 @@
         } else if (obj.direction == JMessageDirectionReceive) {
             receiveTime = obj.timestamp;
         }
-        
         //recall message
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
@@ -1382,6 +1397,15 @@
             return;
         }
         
+        //clear total unread message
+        if ([obj.contentType isEqualToString:[JClearTotalUnreadMessage contentType]]) {
+            JClearTotalUnreadMessage * message = (JClearTotalUnreadMessage *)obj.content;
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidClearTotalUnread:)]) {
+                [self.sendReceiveDelegate conversationsDidClearTotalUnread:message.clearTime];
+            }
+            return;
+        }
+        
         //delete Msg
         if ([obj.contentType isEqualToString:[JDeleteMsgMessage contentType]]) {
             [self handleDeleteMsgMessageCmdMessage:obj];
@@ -1413,15 +1437,13 @@
             return;
         }
         
-        if (obj.messageOptions.mentionInfo) {
-            for (JUserInfo *userInfo in obj.messageOptions.mentionInfo.targetUsers) {
+        if (obj.mentionInfo) {
+            for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
                 [userDic setObject:userInfo forKey:userInfo.userId];
             }
         }
         
-        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidReceive:)]) {
-            [self.sendReceiveDelegate messageDidReceive:obj];
-        }
+        [updateConversationMessages addObject:obj];
         
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1431,7 +1453,11 @@
             }];
         });
     }];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:updateConversationMessages];
+    }
     [self.core.dbManager insertUserInfos:userDic.allValues];
+
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {
@@ -1476,6 +1502,17 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
+- (void)updateSendSyncTime:(long long)timestamp {
+    if (self.syncProcessing) {
+        if (timestamp > self.cachedSendTime) {
+            self.cachedSendTime = timestamp;
+        }
+    } else {
+        self.core.messageSendSyncTime = timestamp;
+    }
+    
 }
 
 - (NSHashTable<id<JMessageDelegate>> *)delegates {
