@@ -6,6 +6,8 @@
 //
 
 #import <JetIM/JetIMConst.h>
+#import "JChatroomInfoOption.h"
+#import "JChatroomInfo.h"
 
 @protocol JChatroomDelegate <NSObject>
 
@@ -30,6 +32,11 @@
 /// 退出聊天室
 /// - Parameter chatroomId: 聊天室 id
 - (void)quitChatroom:(NSString *)chatroomId;
+
+- (void)getChatroomInfo:(NSString *)chatroomId
+                 option:(JChatroomInfoOption *)option
+                success:(void (^)(JChatroomInfo *chatroomInfo))successBlock
+                  error:(void (^)(JErrorCode code))errorBlock;
 
 - (void)addDelegate:(id<JChatroomDelegate>)delegate;
 

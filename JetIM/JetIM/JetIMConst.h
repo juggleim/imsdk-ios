@@ -11,6 +11,14 @@ typedef NS_ENUM(NSUInteger, JPullDirection) {
     JPullDirectionOlder = 1,
 };
 
+//聊天室成员排列顺序
+typedef NS_ENUM(NSUInteger, JChatroomMemberOrder) {
+    //返回最早加入的成员
+    JChatroomMemberOrderAscending = 0,
+    //返回最晚加入的成员
+    JChatroomMemberOrderDescending = 1
+};
+
 typedef NS_ENUM(NSUInteger, JConnectionStatus) {
     //未连接
     JConnectionStatusIdle = 0,
