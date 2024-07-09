@@ -122,6 +122,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             }
             self.conversationInfoList.insert(conversationInfo, at: 0)
         }
+        self.conversationInfoList.sort { $0.sortTime > $1.sortTime }
+        
         self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
     
