@@ -93,6 +93,16 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         super.reset()
     }
     
+    // MARK: - SDK Relations
+    public func deleteConversationInfo(_ conversationInfo: JConversationInfo) {
+        self.setLoading(true, true)
+        JIM.shared().conversationManager.deleteConversationInfo(by: conversationInfo.conversation) {
+            self.setLoading(false, false)
+        } error: { code in
+            self.setLoading(false, false)
+        }
+    }
+    
     // MARK: - Common
     
     /// This is used to check the loading status and control loading indicator.

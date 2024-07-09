@@ -15,7 +15,7 @@ public protocol SBUGroupChannelListModuleListDelegate: SBUBaseChannelListModuleL
     /// - Parameters:
     ///    - listComponent: `SBUGroupChannelListModule.List` object.
     ///    - channel: The channel that was selected.
-    func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didSelectLeave channel: JConversationInfo)
+    func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didSelectLeave conversationInfo: JConversationInfo)
 }
 
 /// Methods to get data source for the list component in the group channel list.

@@ -216,10 +216,9 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     
     open func groupChannelListModule(
         _ listComponent: SBUGroupChannelListModule.List,
-        didSelectLeave channel: JConversationInfo
+        didSelectLeave conversationInfo: JConversationInfo
     ) {
-        //TODO: delete conversation
-//        self.viewModel?.leaveChannel(channel)
+        self.viewModel?.deleteConversationInfo(conversationInfo)
     }
     
     // MARK: - SBUGroupChannelListModuleListDataSource
