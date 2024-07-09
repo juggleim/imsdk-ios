@@ -23,10 +23,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@[@"https://im-nav.yometalk.com"]];
+//    [JIM.shared setServer:@[@"https://im-nav.yometalk.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"nslrrgrmgaqf8ywd"];
-    [JIM.shared.connectionManager connectWithToken:@"ChBuc2xycmdybWdhcWY4eXdkGiAvuJ3uRTdwBIZJWjtNauEs2bxBDFP2cjnJbrowbbbiyg=="];
+    [JIM.shared initWithAppKey:@"appkey"];
+    [JIM.shared.connectionManager connectWithToken:kToken4];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
