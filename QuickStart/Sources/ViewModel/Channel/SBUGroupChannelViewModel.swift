@@ -90,9 +90,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         
         JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
             JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
-                
             } error: { errorCode in
-                
             }
             self.upsertMessagesInList(messages: localMessages, needReload: true)
         } remoteMessageBlock: { remoteMessages in
@@ -451,12 +449,19 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 
 extension SBUGroupChannelViewModel : JMessageDelegate {
     public func messageDidReceive(_ message: JMessage!) {
+        if !message.conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
 //        self.delegate?.baseChannelViewModel(
 //            self,
 //            shouldUpdateScrollInMessageList: [message],
 //            keepsScroll: true
 //        )
         self.upsertMessagesInList(messages: [message], needReload: true)
+        
+        JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
+        } error: { code in
+        }
     }
     
     public func messageDidRecall(_ message: JMessage!) {
