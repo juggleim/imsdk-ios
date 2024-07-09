@@ -928,7 +928,7 @@ inConversation:(JConversation *)conversation
     if ([url containsString:jProtocolHead]) {
         u = [NSString stringWithFormat:@"%@%@", url, jWebSocketSuffix];
     } else {
-        u = [NSString stringWithFormat:@"%@%@%@", jWSSPrefix, url, jWebSocketSuffix];
+        u = [NSString stringWithFormat:@"%@%@%@", jWSPrefix, url, jWebSocketSuffix];
     }
     SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
     sws.delegateDispatchQueue = self.receiveQueue;

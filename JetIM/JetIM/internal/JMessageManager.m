@@ -562,6 +562,9 @@
                 successBlock();
             }
         });
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRead:messageIds:)]) {
+            [self.sendReceiveDelegate messageDidRead:conversation messageIds:messageIds];
+        }
     } error:^(JErrorCodeInternal code) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -1370,6 +1373,9 @@
                     }
                 }];
             });
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRead:messageIds:)]) {
+                [self.sendReceiveDelegate messageDidRead:obj.conversation messageIds:readNtfMsg.messageIds];
+            }
             return;
         }
         

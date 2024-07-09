@@ -217,7 +217,6 @@
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
                                            msgIndex:info.lastMessageIndex];
         [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
-        [weakSelf.core.dbManager setLastMessageHasRead:conversation];
         [weakSelf noticeTotalUnreadCountChange];
         JConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
         if (info) {
@@ -449,11 +448,11 @@
 
 #pragma mark - JMessageSendReceiveDelegate
 - (void)messageDidSave:(JConcreteMessage *)message {
-    [self addOrUpdateConversationIfNeed:message];
+    [self addOrUpdateConversationsIfNeed:@[message]];
 }
 
 - (void)messageDidSend:(JConcreteMessage *)message {
-    [self addOrUpdateConversationIfNeed:message];
+    [self addOrUpdateConversationsIfNeed:@[message]];
     [self updateSyncTime:message.timestamp];
 }
 
@@ -689,6 +688,31 @@
     }
     
 }
+
+-(void)messageDidRead:(JConversation *)conversation messageIds:(NSArray<NSString *> *)messageIds{
+    if(conversation == nil){
+        return;
+    }
+    if(messageIds == nil || messageIds.count == 0){
+        return;
+    }
+    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
+    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
+        return;
+    }
+    if([messageIds containsObject:conversationInfo.lastMessage.messageId]){
+        conversationInfo.lastMessage.hasRead = YES;
+        [self.core.dbManager setLastMessageHasRead:conversation];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
+        });
+    }
+}
+
 #pragma mark - internal
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];
@@ -739,101 +763,6 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
-}
-
-- (void)addOrUpdateConversationIfNeed:(JConcreteMessage *)message {
-    BOOL hasMention = NO;
-    //接收的消息才处理 mention
-    if (message.direction == JMessageDirectionReceive
-        && message.mentionInfo != nil) {
-        if (message.mentionInfo.type == JMentionTypeAll
-            || message.mentionInfo.type == JMentionTypeAllAndSomeOne) {
-            hasMention = YES;
-        } else if (message.mentionInfo.type == JMentionTypeSomeOne) {
-            for (JUserInfo *userInfo in message.mentionInfo.targetUsers) {
-                if ([userInfo.userId isEqualToString:self.core.userId]) {
-                    hasMention = YES;
-                    break;
-                }
-            }
-        }
-    }
-    
-    JConversationMentionInfo * mentionInfo;
-    
-    if(hasMention){
-        NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
-        JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
-        msg.senderId = message.senderUserId;
-        msg.msgId = message.messageId;
-        msg.msgTime = message.timestamp;
-        [msgs addObject:msg];
-        mentionInfo = [[JConversationMentionInfo alloc] init];
-        mentionInfo.mentionMsgList = msgs;
-    }
-    
-    BOOL isBroadcast = NO;
-    if (message.flags & JMessageFlagIsBroadcast) {
-        isBroadcast = YES;
-    }
-    JConcreteConversationInfo *info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
-    if (!info) {
-        JConcreteConversationInfo *addInfo = [[JConcreteConversationInfo alloc] init];
-        addInfo.conversation = message.conversation;
-        if (isBroadcast && message.direction == JMessageDirectionSend) {
-            addInfo.sortTime = 0;
-        } else {
-            addInfo.sortTime = message.timestamp;
-        }
-        addInfo.lastMessage = message;
-        if (message.msgIndex > 0) {
-            addInfo.lastMessageIndex = message.msgIndex;
-            addInfo.lastReadMessageIndex = message.msgIndex - 1;
-            addInfo.unreadCount = 1;
-        }
-        if (mentionInfo) {
-            addInfo.mentionInfo = mentionInfo;
-        }
-        [self.core.dbManager insertConversations:@[addInfo] completion:nil];
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                    [obj conversationInfoDidAdd:@[addInfo]];
-                }
-            }];
-        });
-    } else {
-        if (mentionInfo) {
-            if(info.mentionInfo.mentionMsgList != nil){
-                NSMutableArray * msgs = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
-                for (JConversationMentionMessage * msg in mentionInfo.mentionMsgList) {
-                    if(![msgs containsObject:msg]){
-                        [msgs addObject:msg];
-                    }
-                }
-                mentionInfo.mentionMsgList = msgs;
-            }
-            info.mentionInfo = mentionInfo;
-            [self.core.dbManager setMentionInfo:message.conversation mentionInfoJson:[mentionInfo encodeToJson]];
-        }
-        //更新未读数
-        if (message.msgIndex > 0) {
-            info.lastMessageIndex = message.msgIndex;
-            info.unreadCount = (int)(info.lastMessageIndex - info.lastReadMessageIndex);
-        }
-        if (!isBroadcast || message.direction != JMessageDirectionSend) {
-            info.sortTime = message.timestamp;
-        }
-        info.lastMessage = message;
-        [self.core.dbManager updateLastMessage:message];
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [obj conversationInfoDidUpdate:@[info]];
-                }
-            }];
-        });
-    }
 }
 
 -(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *) messages{

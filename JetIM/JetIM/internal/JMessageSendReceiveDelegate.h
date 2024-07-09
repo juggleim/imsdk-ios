@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)messageStateDidChange:(JMessageState)state
                 conversation:(JConversation *)conversation
                  clientMsgNo:(long long)clientMsgNo;
+-(void)messageDidRead:(JConversation *)conversation
+           messageIds:(NSArray <NSString *> *)messageIds;
 @end
 
 NS_ASSUME_NONNULL_END
