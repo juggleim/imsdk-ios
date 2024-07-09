@@ -15,9 +15,17 @@
 #import "JBlockObj.h"
 #import "JWebSocketCommandManager.h"
 
-#define jWebSocketPrefix @"ws://"
+#define jProtocolHead @"://"
+#define jWSPrefix @"ws://"
+#define jWSSPrefix @"wss://"
 #define jWebSocketSuffix @"/im"
 #define jMaxConcurrentCount 5
+
+typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
+    JWebSocketStatusIdle,
+    JWebSocketStatusFailure,
+    JWebSocketStatusSuccess
+};
 
 @interface JWebSocket () <SRWebSocketDelegate, JCommandTimeOutDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
@@ -34,6 +42,7 @@
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
 @property (nonatomic, assign) BOOL isCompeteFinish;
 @property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
+@property (nonatomic, strong) NSMutableArray <NSNumber *> *competeStatusList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @property (nonatomic, strong) JWebSocketCommandManager *commandManager;
 @end
@@ -70,6 +79,7 @@
             JLogI(@"WS-Connect", @"create web socket url is %@", url);
             SRWebSocket *sws = [self createWebSocket:url];
             [self.competeSwsList addObject:sws];
+            [self.competeStatusList addObject:@(JWebSocketStatusIdle)];
             NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
                 [sws open];
             }];
@@ -114,27 +124,40 @@
 
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(nonnull JConversation *)conversation
+       inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+            mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo))successBlock
+          mentionInfo:(JMessageMentionInfo *)mentionInfo
+      referredMessage:(JConcreteMessage *)referredMessage
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
+        NSData *encodeData;
+        if ([content isKindOfClass:[JMediaMessageContent class]]) {
+            JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
+            NSString *local = mediaContent.localPath;
+            mediaContent.localPath = nil;
+            encodeData = [mediaContent encode];
+            mediaContent.localPath = local;
+        } else {
+            encodeData = [content encode];
+        }
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
-                                                 msgData:[content encode]
+                                                 msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
-                                              mergedMsgs:mergedMsgs
+                                               mergeInfo:mergeInfo
                                              isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++
                                         conversationType:conversation.conversationType
                                           conversationId:conversation.conversationId
-                                             mentionInfo:content.mentionInfo];
+                                             mentionInfo:mentionInfo
+                                         referredMessage:referredMessage];
         JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];
@@ -176,7 +199,7 @@
 
 - (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation
-                success:(void (^)(void))successBlock
+                success:(void (^)(long long timestamp))successBlock
                   error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -184,10 +207,10 @@
                                       inConversation:conversation
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"send read receipt");
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
@@ -296,7 +319,7 @@
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -304,17 +327,17 @@
                                                  userId:userId
                                                   index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete conversation, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
-                 success:(void (^)(void))successBlock
+                 success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -323,17 +346,17 @@
                                              msgIndex:msgIndex
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear unread, type is %lu, id is %@, msgIndex is %lld", (unsigned long)conversation.conversationType, conversation.conversationId, msgIndex);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)setMute:(BOOL)isMute
  inConversation:(JConversation *)conversation
          userId:(NSString *)userId
-        success:(void (^)(void))successBlock
+        success:(void (^)(long long timestamp))successBlock
           error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -342,10 +365,10 @@
                                         isMute:isMute
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"set mute, mute is %d, type is %lu, id is %@", isMute, (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
@@ -437,7 +460,7 @@ inConversation:(JConversation *)conversation
 
 - (void)clearTotalUnreadCount:(NSString *)userId
                          time:(long long)time
-                      success:(void (^)(void))successBlock
+                      success:(void (^)(long long timestamp))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -445,35 +468,35 @@ inConversation:(JConversation *)conversation
                                                           time:time
                                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear total unread, time is %lld", time);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
     
 }
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
-              success:(void (^)(void))successBlock
+              success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
-        NSData *d = [self.pbData deleteMessage:conversation 
+        NSData *d = [self.pbData deleteMessage:conversation
                                        msgList:msgList
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete message");
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
-                    success:(void (^)(void))successBlock
+                    success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -482,16 +505,16 @@ inConversation:(JConversation *)conversation
                                                scope:0
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear history message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)createConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                       success:(void (^)(JConcreteConversationInfo * conversationInfo, long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -540,10 +563,12 @@ inConversation:(JConversation *)conversation
             return;
         }
         //防止上一批竞速的 webSocket 被选中
-        for (SRWebSocket *sws in self.competeSwsList) {
+        for (int i = 0; i < self.competeSwsList.count; i++) {
+            SRWebSocket *sws = self.competeSwsList[i];
             if (webSocket == sws) {
                 JLogI(@"WS-Connect", @"compete success, url is %@", webSocket.url);
                 self.isCompeteFinish = YES;
+                self.competeStatusList[i] = @(JWebSocketStatusSuccess);
                 self.sws = webSocket;
                 [self sendConnectMsgByWebSocket:webSocket];
                 break;
@@ -553,16 +578,38 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    if (webSocket != self.sws) {
-        return;
-    }
-    JLogI(@"WS-Connect", @"fail message is %@", error.description);
     dispatch_async(self.sendQueue, ^{
-        [self resetSws];
+        if (self.isCompeteFinish) {
+            if (webSocket != self.sws) {
+                return;
+            }
+            JLogI(@"WS-Connect", @"fail message is %@", error.description);
+            [self resetSws];
+            if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                [self.connectDelegate webSocketDidFail];
+            }
+        } else {
+            for (int i = 0; i < self.competeSwsList.count; i++) {
+                SRWebSocket *sws = self.competeSwsList[i];
+                if (webSocket == sws) {
+                    self.competeStatusList[i] = @(JWebSocketStatusFailure);
+                    break;
+                }
+            }
+            BOOL allFailed = YES;
+            for (NSNumber *status in self.competeStatusList) {
+                if (status.unsignedIntValue != JWebSocketStatusFailure) {
+                    allFailed = NO;
+                    break;
+                }
+            }
+            if (allFailed && [self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                JLogI(@"WS-Connect", @"fail message is %@", error.description);
+                [self resetSws];
+                [self.connectDelegate webSocketDidFail];
+            }
+        }
     });
-    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
-        [self.connectDelegate webSocketDidFail];
-    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
@@ -759,10 +806,11 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
+    BOOL needAck = NO;
     if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
-        [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
+        needAck = [self.messageDelegate messageDidReceive:publishMsgBody.rcvMessage];
     }
-    if (publishMsgBody.qos == 1) {
+    if (publishMsgBody.qos == 1 && needAck) {
         [self sendPublishAck:publishMsgBody.index];
     }
 }
@@ -816,7 +864,7 @@ inConversation:(JConversation *)conversation
         if (ack.code != 0) {
             conversationObj.errorBlock(ack.code);
         } else {
-            conversationObj.successBlock(ack.conversationInfo);
+            conversationObj.successBlock(ack.conversationInfo,ack.timestamp);
         }
     }
 }
@@ -876,7 +924,12 @@ inConversation:(JConversation *)conversation
 }
 
 - (SRWebSocket *)createWebSocket:(NSString *)url {
-    NSString *u = [NSString stringWithFormat:@"%@%@%@", jWebSocketPrefix, url, jWebSocketSuffix];
+    NSString *u;
+    if ([url containsString:jProtocolHead]) {
+        u = [NSString stringWithFormat:@"%@%@", url, jWebSocketSuffix];
+    } else {
+        u = [NSString stringWithFormat:@"%@%@%@", jWSPrefix, url, jWebSocketSuffix];
+    }
     SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
     sws.delegateDispatchQueue = self.receiveQueue;
     sws.delegate = self;
@@ -886,6 +939,7 @@ inConversation:(JConversation *)conversation
 - (void)resetSws {
     self.sws = nil;
     [self.competeSwsList removeAllObjects];
+    [self.competeStatusList removeAllObjects];
     self.isCompeteFinish = NO;
 }
 
@@ -895,5 +949,12 @@ inConversation:(JConversation *)conversation
         _competeSwsList = [NSMutableArray array];
     }
     return _competeSwsList;
+}
+
+- (NSMutableArray<NSNumber *> *)competeStatusList {
+    if (!_competeStatusList) {
+        _competeStatusList = [NSMutableArray array];
+    }
+    return _competeStatusList;
 }
 @end

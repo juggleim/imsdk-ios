@@ -299,7 +299,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             break
         }
         
-        self.unreadMentionLabel.isHidden = !conversationInfo.hasMentioned
+        self.unreadMentionLabel.isHidden = (conversationInfo.mentionInfo == nil)
         
         self.updateMessageLabel()
         self.updateStateImageView()

@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JMessageDB *messageDB;
 
 - (void)createTables;
+- (void)updateTables;
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
                  completion:(nullable void (^)(NSArray<JConcreteConversationInfo *> *insertConversations, NSArray<JConcreteConversationInfo *> *updateConversations))completeBlock;
@@ -40,12 +41,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTop:(BOOL)isTop
           time:(long long)time
   conversation:(JConversation *)conversation;
-- (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation;
-- (void)clearMentionstatus;
 - (int)getTotalUnreadCount;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;
+
+-(void)setMentionInfo:(JConversation *)conversation
+      mentionInfoJson:(NSString *)mentionInfoJson;
+
+-(void)clearMentionInfo;
+- (void)clearLastMessage:(JConversation *)conversation;
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message;
+- (void)setLastMessageHasRead:(JConversation *)conversation;
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo;
 @end
 
 NS_ASSUME_NONNULL_END

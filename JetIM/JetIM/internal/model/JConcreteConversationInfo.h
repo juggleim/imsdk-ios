@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long syncTime;
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
+@property (nonatomic, strong) NSArray <JUserInfo *> * mentionUserList;
 @end
 
 NS_ASSUME_NONNULL_END

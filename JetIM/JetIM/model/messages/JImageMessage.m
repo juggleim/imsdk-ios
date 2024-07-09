@@ -9,6 +9,7 @@
 
 #define kImageType @"jg:img"
 #define kDigest @"[Image]"
+#define jLocalPath @"local"
 #define jURL @"url"
 #define jThumbnail @"thumbnail"
 #define jImageHeight @"height"
@@ -26,6 +27,7 @@
 - (NSData *)encode{
     NSDictionary * dic = @{jURL:self.url?:@"",
                            jThumbnail:self.thumbnailUrl?:@"",
+                           jLocalPath:self.localPath?:@"",
                            jImageWidth:@(self.width),
                            jImageHeight:@(self.height),
                            jImageSize:@(self.size),
@@ -36,6 +38,7 @@
 
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    self.localPath = json[jLocalPath]?:@"";
     self.url = json[jURL]?:@"";
     self.thumbnailUrl = json[jThumbnail]?:@"";
     id obj = json[jImageWidth];

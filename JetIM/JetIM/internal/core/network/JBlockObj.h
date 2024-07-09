@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JConversationObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(JConcreteConversationInfo *conversationInfo);
+@property (nonatomic, copy) void (^successBlock)(JConcreteConversationInfo *conversationInfo, long long timestamp);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

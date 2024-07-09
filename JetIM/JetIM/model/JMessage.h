@@ -11,6 +11,7 @@
 #import <JetIM/JMessageContent.h>
 #import <JetIM/JGroupMessageReadInfo.h>
 #import <JetIM/JUserInfo.h>
+#import <JetIM/JMessageOptions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -53,6 +54,11 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, strong) JMessageContent *content;
 /// 群消息阅读信息（只对群消息生效）
 @property (nonatomic, strong) JGroupMessageReadInfo *groupReadInfo;
+/// @ 信息（非 @ 消息本字段为 nil）
+@property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
+/// 引用消息
+@property (nonatomic, strong) JMessage *referredMsg;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -13,6 +13,7 @@
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
 #import "JMessageMentionInfo.h"
+#import "JConversationMentionInfo.h"
 #import "JLogger.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
@@ -176,26 +177,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
                             msgData:(NSData *)msgData
                               flags:(int)flags
                           clientUid:(NSString *)clientUid
-                         mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+                          mergeInfo:(JMergeInfo *)mergeInfo
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId
-                        mentionInfo:(nullable JMessageMentionInfo *)mentionInfo {
+                        mentionInfo:(JMessageMentionInfo *)mentionInfo
+                    referredMessage:(JConcreteMessage *)referredMessage{
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
     upMsg.flags = flags;
     upMsg.clientUid = clientUid;
-    if (mergedMsgs.count > 0) {
+    if (mergeInfo != nil && mergeInfo.containerMsgId.length == 0 && mergeInfo.messages.count > 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
-        pbMsgs.channelType = (int32_t)mergedMsgs.firstObject.conversation.conversationType;
+        pbMsgs.channelType = (int32_t)mergeInfo.conversation.conversationType;
         pbMsgs.userId = userId;
-        pbMsgs.targetId = mergedMsgs.firstObject.conversation.conversationId;
+        pbMsgs.targetId = mergeInfo.conversation.conversationId;
         NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
-        for (JConcreteMessage *msg in mergedMsgs) {
+        for (JConcreteMessage *msg in mergeInfo.messages) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
             simpleMsg.msgId = msg.messageId;
             simpleMsg.msgTime = msg.timestamp;
@@ -208,7 +210,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (isBroadcast) {
         upMsg.flags |= JMessageFlagIsBroadcast;
     }
-    if (mentionInfo) {
+    if (mentionInfo != nil) {
         MentionInfo *pbMentionInfo = [[MentionInfo alloc] init];
         pbMentionInfo.mentionType = (int32_t)mentionInfo.type;
         NSMutableArray <UserInfo *> *pbUsers = [NSMutableArray array];
@@ -219,6 +221,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         pbMentionInfo.targetUsersArray = pbUsers;
         upMsg.mentionInfo = pbMentionInfo;
+    }
+    
+    if(referredMessage != nil){
+        DownMsg * referredDownMsg = [self downMsgWithMessage:referredMessage];
+        upMsg.referMsg = referredDownMsg;
+        
     }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
@@ -251,6 +259,53 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     ImWebsocketMsg *sm = [self createImWebSocketMsgWithPublishMsg:publishMsg];
     return sm.data;
+}
+
+-(DownMsg *)downMsgWithMessage:(JConcreteMessage *)message{
+    if(message == nil){
+        return nil;
+    }
+    if(message.conversation == nil){
+        return nil;
+    }
+    DownMsg * downMsg = [[DownMsg alloc] init];
+    downMsg.targetId = message.conversation.conversationId;
+    downMsg.channelType = (int32_t)message.conversation.conversationType;
+    downMsg.msgType = message.contentType;
+    downMsg.senderId = message.senderUserId;
+    downMsg.msgId = message.messageId;
+    downMsg.msgSeqNo = message.seqNo;
+    downMsg.msgContent = [message.content encode];
+    downMsg.msgTime = message.timestamp;
+    downMsg.flags = message.flags;
+    downMsg.isSend = (message.direction == JMessageDirectionSend);
+    downMsg.clientUid = message.clientUid;
+    downMsg.isRead = message.hasRead;
+    downMsg.unreadIndex = message.msgIndex;
+    if(message.groupReadInfo){
+        downMsg.readCount = message.groupReadInfo.readCount;
+        downMsg.memberCount = message.groupReadInfo.memberCount;
+    }
+    if(message.groupInfo){
+        downMsg.groupInfo = [self pbGroupInfoWithGroupInfo:message.groupInfo];
+    }
+    if(message.targetUserInfo){
+        downMsg.targetUserInfo = [self pbUserInfoWithUserInfo:message.targetUserInfo];
+    }
+    if(message.mentionInfo){
+        MentionInfo * mentionInfo = [[MentionInfo alloc] init];
+        mentionInfo.mentionType = (int32_t)message.mentionInfo.type;
+        NSMutableArray * targetUsersArray = [NSMutableArray array];
+        for (JUserInfo * userInfo in message.mentionInfo.targetUsers) {
+            [targetUsersArray addObject:[self pbUserInfoWithUserInfo:userInfo]];
+        }
+        mentionInfo.targetUsersArray = targetUsersArray;
+        downMsg.mentionInfo = mentionInfo;
+    }
+    if(message.referredMsg){
+        downMsg.referMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
+    }
+    return downMsg;
 }
 
 - (NSData *)recallMessageData:(NSString *)messageId
@@ -912,12 +967,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.msgIndex = downMsg.unreadIndex;
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
-    int flags = [[JContentTypeCenter shared] flagsWithType:downMsg.msgType];
-    if (flags < 0) {
-        msg.flags = downMsg.flags;
-    } else {
-        msg.flags = flags;
+    if([msg.content isKindOfClass:[JMergeMessage class]]){
+        JMergeMessage * mergeMessage = (JMergeMessage *)msg.content;
+        if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+            mergeMessage.containerMsgId = msg.messageId;
+        }
     }
+    msg.flags = downMsg.flags;
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
@@ -926,7 +982,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.targetUserInfo = [self userInfoWithPBUserInfo:downMsg.targetUserInfo];
     if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
         JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
-        mentionInfo.type = downMsg.mentionInfo.mentionType;
+        mentionInfo.type = (JMentionType)downMsg.mentionInfo.mentionType;
         NSMutableArray <JUserInfo *> *mentionUserList = [NSMutableArray array];
         for (UserInfo *u in downMsg.mentionInfo.targetUsersArray) {
             JUserInfo *userInfo = [self userInfoWithPBUserInfo:u];
@@ -935,9 +991,33 @@ typedef NS_ENUM(NSUInteger, JQos) {
             }
         }
         mentionInfo.targetUsers = mentionUserList;
-        msg.content.mentionInfo = mentionInfo;
+        msg.mentionInfo = mentionInfo;
     }
+    if(downMsg.hasReferMsg && downMsg.referMsg != nil){
+        JConcreteMessage * referMsg = [self messageWithDownMsg:downMsg.referMsg];
+        msg.referredMsg = referMsg;
+    }
+    
     return msg;
+}
+
+- (GroupInfo *)pbGroupInfoWithGroupInfo:(JGroupInfo *)groupInfo{
+    if(groupInfo == nil){
+        return nil;
+    }
+    GroupInfo * pbGroupInfo = [[GroupInfo alloc] init];
+    pbGroupInfo.groupId = groupInfo.groupId;
+    pbGroupInfo.groupName = groupInfo.groupName;
+    pbGroupInfo.groupPortrait = groupInfo.portrait;
+    NSMutableArray * extFieldsArray = [NSMutableArray array];
+    for (NSString * key in groupInfo.extraDic.allKeys) {
+        KvItem * item = [[KvItem alloc] init];
+        item.key = key;
+        item.value = [groupInfo.extraDic objectForKey:key];
+        [extFieldsArray addObject:item];
+    }
+    pbGroupInfo.extFieldsArray = extFieldsArray;
+    return pbGroupInfo;
 }
 
 - (JGroupInfo *)groupInfoWithPBGroupInfo:(GroupInfo *)pbGroupInfo {
@@ -956,6 +1036,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
         result.extraDic = [dic copy];
     }
     return result;
+}
+
+-(UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
+    if(userInfo == nil){
+        return nil;
+    }
+    UserInfo * pbUserInfo = [[UserInfo alloc] init];
+    pbUserInfo.userId = userInfo.userId;
+    pbUserInfo.nickname = userInfo.userName;
+    pbUserInfo.userPortrait = userInfo.portrait;
+    NSMutableArray * extFieldsArray = [NSMutableArray array];
+    for (NSString * key in userInfo.extraDic.allKeys) {
+        KvItem * item = [[KvItem alloc] init];
+        item.key = key;
+        item.value = [userInfo.extraDic objectForKey:key];
+        [extFieldsArray addObject:item];
+    }
+    pbUserInfo.extFieldsArray = extFieldsArray;
+    return pbUserInfo;
 }
 
 - (JUserInfo *)userInfoWithPBUserInfo:(UserInfo *)pbUserInfo {
@@ -1008,7 +1107,43 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
+    if(conversation.mentions != nil && conversation.mentions.isMentioned){
+        JConversationMentionInfo * mentionInfo = [[JConversationMentionInfo alloc] init];
+        if(conversation.mentions.mentionMsgsArray != nil){
+            NSMutableArray<JConversationMentionMessage *> * array = [NSMutableArray array];
+            for (MentionMsg * mentionMsg in conversation.mentions.mentionMsgsArray) {
+                JConversationMentionMessage * mentionMessage = [self mentionMsgWithPBMentionMsg:mentionMsg];
+                if(mentionMessage){
+                    [array addObject:mentionMessage];
+                }
+            }
+            mentionInfo.mentionMsgList = array;
+        }
+        info.mentionInfo = mentionInfo;
+
+        if(conversation.mentions.sendersArray != nil){
+            NSMutableArray<JUserInfo *> * array = [NSMutableArray array];
+            for (UserInfo * userInfo in conversation.mentions.sendersArray) {
+                JUserInfo * jUserInfo = [self userInfoWithPBUserInfo:userInfo];
+                if(jUserInfo){
+                    [array addObject:jUserInfo];
+                }
+            }
+            info.mentionUserList = array;
+        }
+    }
     return info;
+}
+
+-(JConversationMentionMessage *)mentionMsgWithPBMentionMsg:(MentionMsg *)mentionMsg{
+    if(mentionMsg == nil){
+        return nil;
+    }
+    JConversationMentionMessage * mentionMessage = [[JConversationMentionMessage alloc] init];
+    mentionMessage.senderId = mentionMsg.senderId;
+    mentionMessage.msgId = mentionMsg.msgId;
+    mentionMessage.msgTime = mentionMsg.msgTime;
+    return mentionMessage;
 }
 
 - (JPBRcvObj *)queryHistoryMessagesAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
@@ -1238,19 +1373,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kGMsg:@(JPBRcvTypePublishMsgAck),
              kCMsg:@(JPBRcvTypePublishMsgAck),
              kRecallMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jDelConvers:@(JPBRcvTypeSimpleQryAck),
-             jClearUnread:@(JPBRcvTypeSimpleQryAck),
-             jMarkRead:@(JPBRcvTypeSimpleQryAck),
+             jDelConvers:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jClearUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jMarkRead:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryReadDetail:@(JPBRcvTypeQryReadDetailAck),
              jQryHisMsgsByIds:@(JPBRcvTypeQryHisMsgsAck),
-             jUndisturb:@(JPBRcvTypeSimpleQryAck),
+             jUndisturb:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jTopConvers:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryMergedMsgs:@(JPBRcvTypeQryHisMsgsAck),
              jRegPushToken:@(JPBRcvTypeSimpleQryAck),
              jQryMentionMsgs:@(JPBRcvTypeQryHisMsgsAck),
-             jClearTotalUnread:@(JPBRcvTypeSimpleQryAck),
-             jDelMsg:@(JPBRcvTypeSimpleQryAck),
-             jCleanHismsg:@(JPBRcvTypeSimpleQryAck),
+             jClearTotalUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jCleanHismsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jAddConver:@(JPBRcvTypeAddConversation)
     };
 }

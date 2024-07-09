@@ -57,7 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) id<JUserInfoProtocol> userInfoManager;
 /// SDK 中所有代理的回调线程，如果不指定则默认使用主线程回调
 @property(nonatomic, strong) dispatch_queue_t delegateQueue;
+
 @property(nonatomic, strong) NSString *currentUserId;
+
+-(NSString *)getDeviceId;
 @end
 
 NS_ASSUME_NONNULL_END

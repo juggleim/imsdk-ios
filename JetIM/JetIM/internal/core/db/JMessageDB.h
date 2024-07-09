@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)createTables;
 
+- (void)updateTables;
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
@@ -35,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
              withClientMsgNo:(long long)clientMsgNo;
 
 - (void)messageSendFail:(long long)clientMsgNo;
+
+-(void)updateMessage:(JConcreteMessage *)message;
 
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
@@ -61,12 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
-
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction;
-
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;

@@ -12,6 +12,7 @@
 #import "JConversation.h"
 #import "JConcreteMessage.h"
 #import "JConcreteConversationInfo.h"
+#import "JMergeInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol JWebSocketMessageDelegate <NSObject>
-- (void)messageDidReceive:(JConcreteMessage *)message;
+- (BOOL)messageDidReceive:(JConcreteMessage *)message;
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished;
 - (void)syncNotify:(long long)syncTime;
@@ -60,9 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
             clientUid:(NSString *)clientUid
-           mergedMsgs:(NSArray <JConcreteMessage *> *)mergedMsgs
+            mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
+          mentionInfo:(JMessageMentionInfo *)mentionInfo
+      referredMessage:(JConcreteMessage *)referredMessage
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
@@ -75,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation
-                success:(void (^)(void))successBlock
+                success:(void (^)(long long timestamp))successBlock
                   error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
@@ -102,13 +105,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)deleteConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
-                 success:(void (^)(void))successBlock
+                 success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)getGroupMessageReadDetail:(NSString *)messageId
@@ -119,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMute:(BOOL)isMute
  inConversation:(JConversation *)conversation
          userId:(NSString *)userId
-        success:(void (^)(void))successBlock
+        success:(void (^)(long long timestamp))successBlock
           error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)setTop:(BOOL)isTop
@@ -130,7 +133,7 @@ inConversation:(JConversation *)conversation
 
 - (void)createConversationInfo:(JConversation *)conversation
                         userId:(NSString *)userId
-                       success:(void (^)(JConcreteConversationInfo *))successBlock
+                       success:(void (^)(JConcreteConversationInfo * conversationInfo, long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)getMergedMessageList:(NSString *)messageId
@@ -154,19 +157,19 @@ inConversation:(JConversation *)conversation
 
 - (void)clearTotalUnreadCount:(NSString *)userId
                          time:(long long)time
-                      success:(void (^)(void))successBlock
+                      success:(void (^)(long long timestamp))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
-              success:(void (^)(void))successBlock
+              success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
-              success:(void (^)(void))successBlock
-                error:(void (^)(JErrorCodeInternal code))errorBlock;
+                    success:(void (^)(long long timestamp))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 
 - (void)sendPing;

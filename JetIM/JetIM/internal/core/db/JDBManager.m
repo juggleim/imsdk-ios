@@ -28,7 +28,7 @@
           userId:(NSString *)userId {
     NSString *path = [self dbPathWith:appKey userId:userId notExistsReturnEmpty:YES];
     if (path.length > 0) {
-        return [self.dbHelper openDB:path];
+        return [self openIMDB:path];
     } else {
         return [self buildDB:appKey
                       userId:(NSString *)userId];
@@ -133,15 +133,14 @@
   conversation:(JConversation *)conversation {
     [self.conversationDb setTop:isTop time:time conversation:conversation];
 }
-
-- (void)setMention:(BOOL)isMention conversation:(JConversation *)conversation {
-    [self.conversationDb setMention:isMention conversation:conversation];
+-(void)setMentionInfo:(JConversation *)conversation
+      mentionInfoJson:(NSString *)mentionInfoJson{
+    [self.conversationDb setMentionInfo:conversation mentionInfoJson:mentionInfoJson];
 }
 
-- (void)clearMentionstatus {
-    [self.conversationDb clearMentionstatus];
+-(void)clearMentionInfo{
+    [self.conversationDb clearMentionInfo];
 }
-
 - (int)getTotalUnreadCount {
     return [self.conversationDb getTotalUnreadCount];
 }
@@ -154,9 +153,29 @@
     [self.conversationDb updateTime:time forConversation:conversation];
 }
 
+- (void)clearLastMessage:(JConversation *)conversation{
+    [self.conversationDb clearLastMessage:conversation];
+}
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
+    [self.conversationDb updateLastMessageWithoutIndex:message];
+}
+
+- (void)setLastMessageHasRead:(JConversation *)conversation{
+    [self.conversationDb setLastMessageHasRead:conversation];
+}
+
+- (void)updateLastMessageState:(JConversation *)conversation
+                         state:(JMessageState)state
+               withClientMsgNo:(long long)clientMsgNo{
+    [self.conversationDb updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
+}
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId{
+    return [self.messageDb getMessageWithMessageId:messageId];
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo
@@ -183,6 +202,10 @@
     [self.messageDb updateMessageContent:content
                              contentType:type
                          withClientMsgNo:clientMsgNo];
+}
+
+-(void)updateMessage:(JConcreteMessage *)message{
+    [self.messageDb updateMessage:message];
 }
 
 - (void)messageSendFail:(long long)clientMsgNo {
@@ -258,17 +281,10 @@
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     [self.messageDb setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
+    return [self.messageDb getLastMessage:conversation];;
+}
 
-
-//- (NSArray <JMessage *> *)getMentionMessages:(JConversation *)conversation
-//                                       count:(int)count
-//                                        time:(long long)time
-//                                   direction:(JPullDirection)direction {
-//    return [self.messageDb getMentionMessages:conversation
-//                                        count:count
-//                                         time:time
-//                                    direction:direction];
-//}
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {
@@ -304,11 +320,24 @@
     return result;
 }
 
+- (BOOL)openIMDB:(NSString *)path {
+    BOOL result = [self.dbHelper openDB:path];
+    [self updateTables];
+    return result;
+}
+
 - (void)createTables {
     [self.messageDb createTables];
     [self.conversationDb createTables];
     [self.profileDb createTables];
     [self.userInfoDB createTables];
+}
+
+- (void)updateTables {
+    [self.messageDb updateTables];
+    [self.conversationDb updateTables];
+    [self.profileDb updateTables];
+    [self.userInfoDB updateTables];
 }
 
 //DB 目录

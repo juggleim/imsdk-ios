@@ -62,6 +62,19 @@
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
+/// 发送消息
+/// - Parameters:
+///   - content: 消息实体
+///   - messageOption: 消息扩展选项
+///   - conversation: 会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (JMessage *)sendMessage:(JMessageContent *)content
+            messageOption:(JMessageOptions *)messageOption
+           inConversation:(JConversation *)conversation
+                  success:(void (^)(JMessage *message))successBlock
+                    error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
+
 /// 发送媒体消息（先上传媒体，再发送消息）
 /// - Parameters:
 ///   - content: 媒体消息实体
@@ -71,6 +84,23 @@
 ///   - errorBlock: 失败回调
 ///   - cancelBlock: 用户取消上传回调
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
+                inConversation:(JConversation *)conversation
+                      progress:(void (^)(int progress, JMessage *message))progressBlock
+                       success:(void (^)(JMessage *message))successBlock
+                         error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                        cancel:(void (^)(JMessage *message))cancelBlock;
+
+/// 发送媒体消息（先上传媒体，再发送消息）
+/// - Parameters:
+///   - content: 媒体消息实体
+///   - messageOption: 消息扩展选项
+///   - conversation: 会话
+///   - progressBlock: 上传进度回调
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+///   - cancelBlock: 用户取消上传回调
+- (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
+                 messageOption:(JMessageOptions *)messageOption
                 inConversation:(JConversation *)conversation
                       progress:(void (^)(int progress, JMessage *message))progressBlock
                        success:(void (^)(JMessage *message))successBlock
@@ -89,9 +119,21 @@
 /// 保存消息
 /// - Parameters:
 ///   - content: 消息实体
+///   - messageOption: 消息扩展选项
 ///   - conversation: 会话
 ///   - direction: 消息方向
 - (JMessage *)saveMessage:(JMessageContent *)content
+           inConversation:(JConversation *)conversation
+                direction:(JMessageDirection)direction;
+
+/// 保存消息
+/// - Parameters:
+///   - content: 消息实体
+///   - messageOption: 消息扩展选项
+///   - conversation: 会话
+///   - direction: 消息方向
+- (JMessage *)saveMessage:(JMessageContent *)content
+            messageOption:(JMessageOptions *)messageOption
            inConversation:(JConversation *)conversation
                 direction:(JMessageDirection)direction;
 

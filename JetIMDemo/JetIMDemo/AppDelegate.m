@@ -23,7 +23,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@[@"https://nav.gxjipei.com"]];
+//    [JIM.shared setServer:@[@"https://im-nav.yometalk.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"appkey"];
     [JIM.shared.connectionManager connectWithToken:kToken4];
@@ -86,34 +86,21 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-            [JIM.shared.conversationManager createConversationInfo:c success:^(JConversationInfo *c) {
-                NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
-                NSLog(@"1");
-            } error:^(JErrorCode code) {
-                NSLog(@"e");
+            JImageMessage *image = [[JImageMessage alloc] init];
+            image.localPath = @"asdfasdf";
+            image.size = 1000;
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+            [JIM.shared.messageManager sendMediaMessage:image
+                                         inConversation:c
+                                               progress:^(int progress, JMessage *message) {
+                NSLog(@"asdf");
+            } success:^(JMessage *message) {
+                NSLog(@"sadfasdf");
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                NSLog(@"fasdf");
+            } cancel:^(JMessage *message) {
+                NSLog(@"fasdf");
             }];
-            NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
-            NSLog(@"1");
-            
-           
-//            [JIM.shared.connectionManager disconnect:NO];
-            
-//            JImageMessage *image = [[JImageMessage alloc] init];
-//            image.localPath = @"asdfasdf";
-//            image.size = 1000;
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.messageManager sendMediaMessage:image
-//                                         inConversation:c
-//                                               progress:^(int progress, JMessage *message) {
-//                NSLog(@"asdf");
-//            } success:^(JMessage *message) {
-//                NSLog(@"sadfasdf");
-//            } error:^(JErrorCode errorCode, JMessage *message) {
-//                NSLog(@"fasdf");
-//            } cancel:^(JMessage *message) {
-//                NSLog(@"fasdf");
-//            }];
             
 //            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
 //            message.url = @"http://www.baidu.com";
