@@ -149,6 +149,7 @@ public class SBUChannelTitleView: UIView {
         self.titleLabel.text = ""
 
         self.loadCoverImage()
+        self.statusField.isHidden = true
         
         guard title == nil else {
             self.titleLabel.text = title
