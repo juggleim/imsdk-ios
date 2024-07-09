@@ -769,6 +769,7 @@
     BOOL hasMention = NO;
     NSMutableArray * conversations = [NSMutableArray array];
     for (JConcreteMessage * message in messages) {
+        //接收的消息才处理 mention
         if (message.direction == JMessageDirectionReceive
             && message.mentionInfo != nil) {
             if (message.mentionInfo.type == JMentionTypeAll
