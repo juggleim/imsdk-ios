@@ -11,7 +11,7 @@ import JetIM
 
 public class SBUChannelTitleView: UIView {
     // MARK: - Public
-    public var channel: JConversationInfo?
+    public var conversationInfo: JConversationInfo?
     
     @SBUThemeWrapper(theme: SBUTheme.componentTheme)
     public var theme: SBUComponentTheme
@@ -144,20 +144,20 @@ public class SBUChannelTitleView: UIView {
     }
 
     // MARK: - Common
-    public func configure(channel: JConversationInfo?, title: String?) {
-        self.channel = channel
+    public func configure(conversationInfo: JConversationInfo?, title: String?) {
+        self.conversationInfo = conversationInfo
         self.titleLabel.text = ""
 
         self.loadCoverImage()
         
         guard title == nil else {
             self.titleLabel.text = title
-            self.updateChannelStatus(channel: channel)
+            self.updateChannelStatus(conversationInfo: conversationInfo)
             return
         }
 
-        if let conversationId = channel?.conversation.conversationId {
-            if let conversationType = channel?.conversation.conversationType {
+        if let conversationId = conversationInfo?.conversation.conversationId {
+            if let conversationType = conversationInfo?.conversation.conversationType {
                 if conversationType == .private {
                     self.titleLabel.text = JIM.shared().userInfoManager.getUserInfo(conversationId).userName
                 } else if conversationType == .group {
@@ -168,22 +168,22 @@ public class SBUChannelTitleView: UIView {
             }
         }
         
-        self.updateChannelStatus(channel: channel)
+        self.updateChannelStatus(conversationInfo: conversationInfo)
     }
     
     func loadCoverImage() {
-        guard let channel = self.channel else {
+        guard let conversationInfo = self.conversationInfo else {
             self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
             return
         }
-        if channel.conversation.conversationType == .private {
-            if let portrait = JIM.shared().userInfoManager.getUserInfo(channel.conversation.conversationId).portrait {
+        if conversationInfo.conversation.conversationType == .private {
+            if let portrait = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId).portrait {
                 self.coverImage.setImage(withCoverURL: portrait)
             } else {
                 self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
             }
-        } else if channel.conversation.conversationType == .group {
-            if let portrait = JIM.shared().userInfoManager.getGroupInfo(channel.conversation.conversationId).portrait {
+        } else if conversationInfo.conversation.conversationType == .group {
+            if let portrait = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId).portrait {
                 self.coverImage.setImage(withCoverURL: portrait)
             } else {
                 self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
@@ -193,39 +193,8 @@ public class SBUChannelTitleView: UIView {
         }
     }
     
-    public func updateChannelStatus(channel: JConversationInfo?) {
-//        self.statusField.leftViewMode = .never
-//
-//        if let channel = channel as? GroupChannel {
-//            if let typingIndicatorString = self.buildTypingIndicatorString(channel: channel), !channel.isChatNotification,
-//               SendbirdUI.config.groupChannel.channel.isTypingIndicatorEnabled,
-//               SendbirdUI.config.groupChannel.channel.typingIndicatorTypes.contains(.text) {
-//                DispatchQueue.main.async { [weak self] in
-//                    guard let self = self else { return }
-//                    self.statusField.isHidden = false
-//                    self.statusField.text = typingIndicatorString
-//                    self.updateConstraints()
-//                    self.layoutIfNeeded()
-//                }
-//            } else {
-//                DispatchQueue.main.async { [weak self] in
-//                    guard let self = self else { return }
-//                    self.statusField.isHidden = true
-//                    self.statusField.text = ""
-//                    self.updateConstraints()
-//                    self.layoutIfNeeded()
-//                }
-//            }
-//        } else if let channel = channel as? OpenChannel {
-//            let count = channel.participantCount
-//            DispatchQueue.main.async { [weak self] in
-//                guard let self = self else { return }
-//                self.statusField.isHidden = false
-//                self.statusField.text = SBUStringSet.Open_Channel_Participants_Count(count)
-//                self.updateConstraints()
-//                self.layoutIfNeeded()
-//            }
-//        }
+    public func updateChannelStatus(conversationInfo: JConversationInfo?) {
+        self.statusField.leftViewMode = .never
     }
     
     // MARK: - Util

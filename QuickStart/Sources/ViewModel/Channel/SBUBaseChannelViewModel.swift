@@ -148,17 +148,6 @@ open class SBUBaseChannelViewModel: NSObject {
 //        )
     }
     
-    // MARK: - Channel related
-    
-    /// This function loads channel information and message list.
-    /// - Parameters:
-    ///   - channelURL: channel url
-    ///   - messageListParams: (Optional) The parameter to be used when getting channel information.
-    public func loadChannel(channelURL: String, completionHandler: ((JConversationInfo?, JErrorCode?) -> Void)? = nil) {}
-    
-    /// This function refreshes channel.
-    public func refreshChannel() {}
-    
     // MARK: - Load Messages
     
     /// Loads initial messages in channel.

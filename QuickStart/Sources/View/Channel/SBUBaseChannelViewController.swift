@@ -250,7 +250,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     public func updateChannelTitle() {
         if let titleView = self.baseHeaderComponent?.titleView as? SBUChannelTitleView {
             titleView.configure(
-                channel: self.baseViewModel?.conversationInfo,
+                conversationInfo: self.baseViewModel?.conversationInfo,
                 title: self.channelName
             )
         }
@@ -260,9 +260,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// Updates channelStatus with channel
     /// - Since: 3.0.0
     public func updateChannelStatus() {
-        guard let channel = self.baseViewModel?.conversationInfo else { return }
+        guard let conversationInfo = self.baseViewModel?.conversationInfo else { return }
         if let titleView = self.baseHeaderComponent?.titleView as? SBUChannelTitleView {
-            titleView.updateChannelStatus(channel: channel)
+            titleView.updateChannelStatus(conversationInfo: conversationInfo)
         }
     }
     
@@ -862,9 +862,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModuleDidSelectRetry(_ listComponent: SBUBaseChannelModule.List) {
-//        if let channelURL = self.baseViewModel?.channelURL {
-//            self.baseViewModel?.loadChannel(channelURL: channelURL)
-//        }
     }
     
     // MARK: SBUBaseChannelModuleListDataSource

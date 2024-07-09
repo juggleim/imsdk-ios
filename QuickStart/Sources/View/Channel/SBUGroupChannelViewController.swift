@@ -105,6 +105,9 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.interactivePopGestureRecognizer?.delegate = nil
+        self.updateChannelTitle()
+        self.inputComponent?.updateMessageInputModeState()
+        self.updateVoiceMessageInputMode()
     }
     open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -667,47 +670,14 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         _ viewModel: SBUBaseChannelViewModel,
         didChangeChannel channel: JConversationInfo?
     ) {
-//        guard channel != nil else {
-//            // channel deleted
-//            if self.navigationController?.viewControllers.last == self {
-//                // If leave is called in the ChannelSettingsViewController, this logic needs to be prevented.
-//                self.onClickBack()
-//            }
-//            return
-//        }
-//
-//        // channel changed
-//        switch context.source {
-//        case .eventReadStatusUpdated, .eventDeliveryStatusUpdated:
-//            if context.source == .eventReadStatusUpdated {
-//                self.updateChannelStatus()
-//            }
-//            self.listComponent?.reloadTableView()
-//
-//        case .eventTypingStatusUpdated:
-//            self.updateChannelStatus()
-//            self.listComponent?.reloadTableView()
-//
-//        case .channelChangelog:
-//            self.updateChannelTitle()
-//            self.inputComponent?.updateMessageInputModeState()
-//            self.listComponent?.reloadTableView()
-//            self.updateVoiceMessageInputMode()
-//
-//        case .eventChannelChanged:
-//            self.updateChannelTitle()
-//            self.inputComponent?.updateMessageInputModeState()
-//            self.updateVoiceMessageInputMode()
-//
-//        case .eventChannelFrozen, .eventChannelUnfrozen,
-//                .eventUserMuted, .eventUserUnmuted,
-//                .eventOperatorUpdated,
-//                .eventUserBanned: // Other User Banned
-//            self.inputComponent?.updateMessageInputModeState()
-//            self.updateVoiceMessageInputMode()
-//
-//        default: break
-//        }
+        guard channel != nil else {
+            // channel deleted
+            if self.navigationController?.viewControllers.last == self {
+                // If leave is called in the ChannelSettingsViewController, this logic needs to be prevented.
+                self.onClickBack()
+            }
+            return
+        }
     }
     
     open override func baseChannelViewModel(

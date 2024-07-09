@@ -103,60 +103,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 
     }
     
-    // MARK: - Channel related
-    public override func loadChannel(channelURL: String,
-                                     completionHandler: ((JConversationInfo?, JErrorCode?) -> Void)? = nil) {
-        
-        // TODO: loading
-//        self.delegate?.shouldUpdateLoadingState(true)
-        
-//        SendbirdUI.connectIfNeeded { [weak self] _, error in
-//            if let error = error {
-//                self?.delegate?.didReceiveError(error, isBlocker: true)
-//                completionHandler?(nil, error)
-//                return
-//            }
-//
-//            SBULog.info("[Request] Load channel: \(String(channelURL))")
-//            GroupChannel.getChannel(url: channelURL) { [weak self] channel, error in
-//                guard let self = self else {
-//                    completionHandler?(nil, error)
-//                    return
-//                }
-//
-//                guard self.canProceed(with: channel, error: error) else {
-//                    completionHandler?(nil, error)
-//                    return
-//                }
-//
-//                self.channel = channel
-//                self.channelURL = channel?.channelURL
-//                SBULog.info("[Succeed] Load channel request: \(String(describing: self.channel))")
-//
-//                // background refresh to check if user is banned or not.
-//                self.refreshChannel()
-//
-//                // for updating channel information when the connection state is closed at the time of initial load.
-//                if SendbirdChat.getConnectState() == .closed {
-//                    let context = MessageContext(source: .eventChannelChanged, sendingStatus: .succeeded)
-//                    self.delegate?.baseChannelViewModel(
-//                        self,
-//                        didChangeChannel: channel,
-//                        withContext: context
-//                    )
-//                    completionHandler?(channel, nil)
-//                }
-//
-//                let cachedMessages = self.flushCache(with: [])
-//                self.loadInitialMessages(
-//                    startingPoint: self.startingPoint,
-//                    showIndicator: true,
-//                    initialMessages: cachedMessages
-//                )
-//            }
-//        }
-    }
-    
     // MARK: - Message
     /// Sends a multiple files message.
     /// - Parameters:
