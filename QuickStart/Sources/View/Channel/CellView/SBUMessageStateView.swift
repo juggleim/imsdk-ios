@@ -211,7 +211,7 @@ open class SBUMessageStateView: SBUView {
             self.timeLabel.textAlignment = isQuotedReplyMessage
             ? .left
             : .right
-            self.stateImageView.isHidden = false
+            self.stateImageView.isHidden = true//TODO: 
         }
         
         guard !self.stateImageView.isHidden else { return }

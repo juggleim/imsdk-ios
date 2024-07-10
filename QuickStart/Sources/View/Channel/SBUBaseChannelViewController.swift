@@ -715,7 +715,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage JMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {}
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapSaveMessage message: JMessage) {
-        guard let JMessage = message as? JMessage else { return }
+//        guard let JMessage = message as? JMessage else { return }
 //        SBUDownloadManager.save(JMessage: JMessage, parent: self)
     }
     
