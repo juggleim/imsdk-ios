@@ -876,13 +876,13 @@ extension SBUBaseChannelModule {
         
         /// Moves scroll to bottom.
         open func onTapScrollToBottom() {
-//            let position = SBUScrollPostionConfiguration.getConfiguration(with: self.baseChannel).scrollToBottom
-//            let options = SBUScrollOptions(position: position, isInverted: self.tableView.isInverted)
-//            self.baseDelegate?.baseChannelModule(
-//                self,
-//                didSelectScrollToBottonWithOptions: options,
-//                animated: false
-//            )
+            let position = SBUScrollPostionConfiguration.getConfiguration().scrollToBottom
+            let options = SBUScrollOptions(position: position, isInverted: self.tableView.isInverted)
+            self.baseDelegate?.baseChannelModule(
+                self,
+                didSelectScrollToBottonWithOptions: options,
+                animated: false
+            )
         }
         
         // MARK: - UITableViewDelegate, UITableViewDataSource

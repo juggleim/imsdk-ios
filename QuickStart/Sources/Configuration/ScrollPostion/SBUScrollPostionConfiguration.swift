@@ -13,14 +13,14 @@ import JetIM
 /// - Since: 3.13.0
 public class SBUScrollPostionConfiguration {
     /// The class for configuring the group channel scroll position.
-    public var groupChannel = JConversationInfo()
+    public var groupChannel = BaseChannel()
     /// The class for configuring the open channel scroll position.
-    public var openChannel = JConversationInfo()
+    public var openChannel = BaseChannel()
     /// The class for configuring the feed channel scroll position.
-    public var feedChannel = JConversationInfo()
+    public var feedChannel = BaseChannel()
     
     /// JConversationInfo class is used to configure the scroll position for different types of channels.
-    public class JConversationInfo {
+    public class BaseChannel {
         /// Position value when the message is scrolled to the bottom by user interaction.
         public var scrollToBottom: SBUScrollPosition = .bottom
         
@@ -40,7 +40,7 @@ public class SBUScrollPostionConfiguration {
 }
 
 extension SBUScrollPostionConfiguration {
-    static func getConfiguration(with channel: JConversationInfo?) -> SBUScrollPostionConfiguration.JConversationInfo {
+    static func getConfiguration() -> SBUScrollPostionConfiguration.BaseChannel {
         return SBUGlobals.scrollPostionConfiguration.groupChannel
     }
 }
