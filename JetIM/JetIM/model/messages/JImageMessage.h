@@ -10,6 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JImageMessage : JMediaMessageContent
+
+///缩略图本地路径
+@property (nonatomic, copy) NSString *thumbnailLocalPath;
 /// 缩略图的远端地址
 @property (nonatomic, copy) NSString *thumbnailUrl;
 /// 图片高度

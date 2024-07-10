@@ -57,6 +57,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jDelMsg @"del_msg"
 #define jCleanHismsg @"clean_hismsg"
 #define jAddConver @"add_conver"
+#define JFileCred @"file_cred"
 
 
 #define jApns @"Apns"
@@ -89,6 +90,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 @implementation JTimestampQryAck
 @end
+
+@implementation JQryFileCredAck
+@end
+
 
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
@@ -775,6 +780,30 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getUploadFileCred:(NSString *)userId
+                     fileType:(JUploadFileType)fileType
+                          ext:(NSString *)ext
+                        index:(int)index{
+    QryFileCredReq * req = [[QryFileCredReq alloc] init];
+    req.fileType = (FileType)fileType;
+    if(ext == nil || ext.length == 0){
+        req.ext = @"";
+    }else{
+        req.ext = ext;
+    }
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = JFileCred;
+    body.targetId = userId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -870,6 +899,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeAddConversation:
                     obj = [self addConversationWithImWebsocketMsg:msg];
                     break;
+                case JPBRcvTypeFileCredMsgAck:
+                    obj = [self qryFileCredAckWithImWebsocketMsg:msg];
                     
                 default:
                     break;
@@ -1246,6 +1277,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)qryFileCredAckWithImWebsocketMsg:(ImWebsocketMsg *)msg{
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    QryFileCredResp * resp = [[QryFileCredResp alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if(e != nil){
+        JLogE(@"PB-Parse", @"file cred ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeFileCredMsgAck;
+    JQryFileCredAck * a = [[JQryFileCredAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.ossType = (JUploadOssType)resp.ossType;
+    if(resp.qiNiuCred != nil){
+        JUploadQiNiuCred * qiNiuCred = [[JUploadQiNiuCred alloc] init];
+        qiNiuCred.domain = resp.qiNiuCred.domain;
+        qiNiuCred.token = resp.qiNiuCred.token;
+        a.qiNiuCred = qiNiuCred;
+    }
+    if(resp.preSignResp != nil){
+        JUploadPreSignCred * preSignCred = [[JUploadPreSignCred alloc] init];
+        preSignCred.url = resp.preSignResp.URL;
+        a.preSignCred = preSignCred;
+    }
+    obj.qryFileCredAck = a;
+    return obj;
+    
+}
+
 - (JPBRcvObj *)conversationSetTopAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -1386,7 +1446,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jClearTotalUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jCleanHismsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jAddConver:@(JPBRcvTypeAddConversation)
+             jAddConver:@(JPBRcvTypeAddConversation),
+             JFileCred:@(JPBRcvTypeFileCredMsgAck)
     };
 }
 @end

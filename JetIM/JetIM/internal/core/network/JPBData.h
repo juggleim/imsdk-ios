@@ -12,6 +12,9 @@
 #import "JetIMConst.h"
 #import "JConcreteMessage.h"
 #import "JMergeInfo.h"
+#import "JUploadEnum.h"
+#import "JUploadQiNiuCred.h"
+#import "JUploadPreSignCred.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +34,9 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeSimpleQryAck,
     JPBRcvTypeSimpleQryAckCallbackTimestamp,
     JPBRcvTypeConversationSetTopAck,
-    JPBRcvTypeAddConversation
+    JPBRcvTypeAddConversation,
+    JPBRcvTypeFileCredMsgAck,
+
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -103,6 +108,14 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, copy) NSString *extra;
 @end
 
+@interface JQryFileCredAck : JQryAck
+
+@property (nonatomic, assign) JUploadOssType ossType;
+@property (nonatomic, strong) JUploadQiNiuCred *qiNiuCred;
+@property (nonatomic, strong) JUploadPreSignCred *preSignCred;
+
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -116,6 +129,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
 @property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
+@property (nonatomic, strong) JQryFileCredAck * qryFileCredAck;
 @end
 
 @interface JPBData : NSObject
@@ -234,6 +248,11 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)createConversationInfo:(JConversation *)conversation
                             userId:(NSString *)userId
                              index:(int)index;
+
+- (NSData *)getUploadFileCred:(NSString *)userId
+                     fileType:(JUploadFileType)fileType
+                          ext:(NSString *)ext
+                        index:(int)index;
 
 - (NSData *)pingData;
 

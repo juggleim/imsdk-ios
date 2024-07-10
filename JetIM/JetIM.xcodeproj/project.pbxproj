@@ -19,10 +19,27 @@
 		5B4DB6932BFC3BF700DD18B6 /* JDeleteMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */; };
 		5B4DB6962BFC3C0D00DD18B6 /* JCleanMsgMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */; };
 		5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */; };
+		5B7C06192C3D30CB00E91783 /* JUploadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C06172C3D30CB00E91783 /* JUploadManager.h */; };
+		5B7C061A2C3D30CB00E91783 /* JUploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C06182C3D30CB00E91783 /* JUploadManager.m */; };
+		5B7C061F2C3D3F1800E91783 /* JUploadQiNiuCred.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C061D2C3D3F1800E91783 /* JUploadQiNiuCred.h */; };
+		5B7C06202C3D3F1800E91783 /* JUploadQiNiuCred.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C061E2C3D3F1800E91783 /* JUploadQiNiuCred.m */; };
+		5B7C06232C3D3F3700E91783 /* JUploadPreSignCred.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C06212C3D3F3700E91783 /* JUploadPreSignCred.h */; };
+		5B7C06242C3D3F3700E91783 /* JUploadPreSignCred.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C06222C3D3F3700E91783 /* JUploadPreSignCred.m */; };
+		5B7C06292C3E260C00E91783 /* JBaseUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C06272C3E260C00E91783 /* JBaseUploader.h */; };
+		5B7C062A2C3E260C00E91783 /* JBaseUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C06282C3E260C00E91783 /* JBaseUploader.m */; };
+		5B7C062C2C3E265600E91783 /* JUploaderProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C062B2C3E265600E91783 /* JUploaderProtocol.h */; };
+		5B7C062F2C3E29AB00E91783 /* JPreSignUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C062D2C3E29AB00E91783 /* JPreSignUploader.h */; };
+		5B7C06302C3E29AB00E91783 /* JPreSignUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C062E2C3E29AB00E91783 /* JPreSignUploader.m */; };
+		5B7C06332C3E29B900E91783 /* JQiNiuUploader.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C06312C3E29B900E91783 /* JQiNiuUploader.h */; };
+		5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C06322C3E29B900E91783 /* JQiNiuUploader.m */; };
+		5B7C06372C3E29E000E91783 /* JUploaderFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7C06352C3E29E000E91783 /* JUploaderFactory.h */; };
+		5B7C06382C3E29E000E91783 /* JUploaderFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7C06362C3E29E000E91783 /* JUploaderFactory.m */; };
 		5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */; };
 		5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980E32C21790600AF6519 /* JMessageOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E42C21790600AF6519 /* JMessageOptions.m */; };
+		5B9980F82C2BF00000AF6519 /* JMergeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980F62C2BF00000AF6519 /* JMergeInfo.h */; };
+		5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980F72C2BF00000AF6519 /* JMergeInfo.m */; };
 		A017F92F2C3BD47D00D527B0 /* JChatroomInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F92D2C3BD47D00D527B0 /* JChatroomInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F92E2C3BD47D00D527B0 /* JChatroomInfo.m */; };
 		A017F9332C3BD57600D527B0 /* JChatroomMember.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F9312C3BD57600D527B0 /* JChatroomMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,8 +47,6 @@
 		A017F9352C3BD66000D527B0 /* JChatroomProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A017F9382C3BD80A00D527B0 /* JChatroomInfoOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F9362C3BD80A00D527B0 /* JChatroomInfoOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A017F9392C3BD80A00D527B0 /* JChatroomInfoOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F9372C3BD80A00D527B0 /* JChatroomInfoOption.m */; };
-		5B9980F82C2BF00000AF6519 /* JMergeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980F62C2BF00000AF6519 /* JMergeInfo.h */; };
-		5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980F72C2BF00000AF6519 /* JMergeInfo.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
@@ -285,10 +300,28 @@
 		5B4DB6912BFC3BF700DD18B6 /* JDeleteMsgMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteMsgMessage.m; sourceTree = "<group>"; };
 		5B4DB6942BFC3C0D00DD18B6 /* JCleanMsgMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCleanMsgMessage.h; sourceTree = "<group>"; };
 		5B4DB6952BFC3C0D00DD18B6 /* JCleanMsgMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCleanMsgMessage.m; sourceTree = "<group>"; };
+		5B7C06172C3D30CB00E91783 /* JUploadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploadManager.h; sourceTree = "<group>"; };
+		5B7C06182C3D30CB00E91783 /* JUploadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUploadManager.m; sourceTree = "<group>"; };
+		5B7C061D2C3D3F1800E91783 /* JUploadQiNiuCred.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploadQiNiuCred.h; sourceTree = "<group>"; };
+		5B7C061E2C3D3F1800E91783 /* JUploadQiNiuCred.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUploadQiNiuCred.m; sourceTree = "<group>"; };
+		5B7C06212C3D3F3700E91783 /* JUploadPreSignCred.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploadPreSignCred.h; sourceTree = "<group>"; };
+		5B7C06222C3D3F3700E91783 /* JUploadPreSignCred.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUploadPreSignCred.m; sourceTree = "<group>"; };
+		5B7C06252C3D3FB500E91783 /* JUploadEnum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploadEnum.h; sourceTree = "<group>"; };
+		5B7C06272C3E260C00E91783 /* JBaseUploader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JBaseUploader.h; sourceTree = "<group>"; };
+		5B7C06282C3E260C00E91783 /* JBaseUploader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JBaseUploader.m; sourceTree = "<group>"; };
+		5B7C062B2C3E265600E91783 /* JUploaderProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploaderProtocol.h; sourceTree = "<group>"; };
+		5B7C062D2C3E29AB00E91783 /* JPreSignUploader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPreSignUploader.h; sourceTree = "<group>"; };
+		5B7C062E2C3E29AB00E91783 /* JPreSignUploader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPreSignUploader.m; sourceTree = "<group>"; };
+		5B7C06312C3E29B900E91783 /* JQiNiuUploader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JQiNiuUploader.h; sourceTree = "<group>"; };
+		5B7C06322C3E29B900E91783 /* JQiNiuUploader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JQiNiuUploader.m; sourceTree = "<group>"; };
+		5B7C06352C3E29E000E91783 /* JUploaderFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUploaderFactory.h; sourceTree = "<group>"; };
+		5B7C06362C3E29E000E91783 /* JUploaderFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUploaderFactory.m; sourceTree = "<group>"; };
 		5B9980DF2C215AEC00AF6519 /* JConversationMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConversationMentionInfo.h; sourceTree = "<group>"; };
 		5B9980E02C215AEC00AF6519 /* JConversationMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationMentionInfo.m; sourceTree = "<group>"; };
 		5B9980E32C21790600AF6519 /* JMessageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageOptions.h; sourceTree = "<group>"; };
 		5B9980E42C21790600AF6519 /* JMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageOptions.m; sourceTree = "<group>"; };
+		5B9980F62C2BF00000AF6519 /* JMergeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeInfo.h; sourceTree = "<group>"; };
+		5B9980F72C2BF00000AF6519 /* JMergeInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeInfo.m; sourceTree = "<group>"; };
 		A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomProtocol.h; sourceTree = "<group>"; };
 		A017F92D2C3BD47D00D527B0 /* JChatroomInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomInfo.h; sourceTree = "<group>"; };
 		A017F92E2C3BD47D00D527B0 /* JChatroomInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfo.m; sourceTree = "<group>"; };
@@ -296,8 +329,6 @@
 		A017F9322C3BD57600D527B0 /* JChatroomMember.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomMember.m; sourceTree = "<group>"; };
 		A017F9362C3BD80A00D527B0 /* JChatroomInfoOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomInfoOption.h; sourceTree = "<group>"; };
 		A017F9372C3BD80A00D527B0 /* JChatroomInfoOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfoOption.m; sourceTree = "<group>"; };
-		5B9980F62C2BF00000AF6519 /* JMergeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeInfo.h; sourceTree = "<group>"; };
-		5B9980F72C2BF00000AF6519 /* JMergeInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeInfo.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
@@ -552,6 +583,34 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5B7C061B2C3D347100E91783 /* uploader */ = {
+			isa = PBXGroup;
+			children = (
+				5B7C062B2C3E265600E91783 /* JUploaderProtocol.h */,
+				5B7C06272C3E260C00E91783 /* JBaseUploader.h */,
+				5B7C06282C3E260C00E91783 /* JBaseUploader.m */,
+				5B7C062D2C3E29AB00E91783 /* JPreSignUploader.h */,
+				5B7C062E2C3E29AB00E91783 /* JPreSignUploader.m */,
+				5B7C06312C3E29B900E91783 /* JQiNiuUploader.h */,
+				5B7C06322C3E29B900E91783 /* JQiNiuUploader.m */,
+				5B7C06352C3E29E000E91783 /* JUploaderFactory.h */,
+				5B7C06362C3E29E000E91783 /* JUploaderFactory.m */,
+			);
+			path = uploader;
+			sourceTree = "<group>";
+		};
+		5B7C061C2C3D3EE800E91783 /* upload */ = {
+			isa = PBXGroup;
+			children = (
+				5B7C06252C3D3FB500E91783 /* JUploadEnum.h */,
+				5B7C061D2C3D3F1800E91783 /* JUploadQiNiuCred.h */,
+				5B7C061E2C3D3F1800E91783 /* JUploadQiNiuCred.m */,
+				5B7C06212C3D3F3700E91783 /* JUploadPreSignCred.h */,
+				5B7C06222C3D3F3700E91783 /* JUploadPreSignCred.m */,
+			);
+			path = upload;
+			sourceTree = "<group>";
+		};
 		5B9980EB2C22C4DA00AF6519 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -579,6 +638,7 @@
 		A06A2F102B221222009B9588 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				5B7C061C2C3D3EE800E91783 /* upload */,
 				A0D3AD2F2B6D1BAE00D170D7 /* messages */,
 				A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */,
 				A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */,
@@ -738,6 +798,7 @@
 		A08AA27E2B175620008B114C /* internal */ = {
 			isa = PBXGroup;
 			children = (
+				5B7C061B2C3D347100E91783 /* uploader */,
 				A06A2F102B221222009B9588 /* model */,
 				A05EED642B20827300809F13 /* utility */,
 				A08AA41B2B1B5B92008B114C /* core */,
@@ -756,6 +817,8 @@
 				A08AA3B32B19D3D9008B114C /* JetIMConstInternal.h */,
 				A07D0E322C0083FD00B9035B /* JNaviTask.h */,
 				A07D0E332C0083FD00B9035B /* JNaviTask.m */,
+				5B7C06172C3D30CB00E91783 /* JUploadManager.h */,
+				5B7C06182C3D30CB00E91783 /* JUploadManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -1062,10 +1125,12 @@
 				5B9980E52C21790600AF6519 /* JMessageOptions.h in Headers */,
 				A09645902BF339EA00290775 /* JSnapshotPackedVideoMessage.h in Headers */,
 				5B9980E12C215AEC00AF6519 /* JConversationMentionInfo.h in Headers */,
+				5B7C06332C3E29B900E91783 /* JQiNiuUploader.h in Headers */,
 				A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */,
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
 				A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */,
+				5B7C062C2C3E265600E91783 /* JUploaderProtocol.h in Headers */,
 				A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */,
 				A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */,
 				A09716BD2B9FFE3C00D1DB24 /* JGroupInfo.h in Headers */,
@@ -1073,9 +1138,11 @@
 				A06CF0FE2B989C7400B5CD89 /* JGroupMessageReadInfo.h in Headers */,
 				A0D3AD322B6DFD4300D170D7 /* JRecallInfoMessage.h in Headers */,
 				A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */,
+				5B7C06372C3E29E000E91783 /* JUploaderFactory.h in Headers */,
 				A0F376272B3A89780076CB84 /* JVoiceMessage.h in Headers */,
 				A0F376232B3A83B20076CB84 /* JFileMessage.h in Headers */,
 				A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */,
+				5B7C062F2C3E29AB00E91783 /* JPreSignUploader.h in Headers */,
 				5B4DB68A2BFC3BC700DD18B6 /* JTopConvMessage.h in Headers */,
 				A09716C62BA0004600D1DB24 /* JUserInfoDB.h in Headers */,
 				A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */,
@@ -1109,6 +1176,7 @@
 				A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */,
 				A08AA3762B19CB77008B114C /* Empty.pbobjc.h in Headers */,
 				A08AA3622B19CB77008B114C /* GPBAny.pbobjc.h in Headers */,
+				5B7C06292C3E260C00E91783 /* JBaseUploader.h in Headers */,
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,
 				A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */,
 				A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */,
@@ -1119,6 +1187,7 @@
 				A08AA4102B19EEDB008B114C /* SRWebSocket.h in Headers */,
 				A08AA3752B19CB77008B114C /* Duration.pbobjc.h in Headers */,
 				5B4DB6922BFC3BF700DD18B6 /* JDeleteMsgMessage.h in Headers */,
+				5B7C06192C3D30CB00E91783 /* JUploadManager.h in Headers */,
 				A08AA2542B14AF2E008B114C /* JConversation.h in Headers */,
 				A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */,
 				A08AA3A42B19CB78008B114C /* GPBUnknownFieldSet_PackagePrivate.h in Headers */,
@@ -1161,6 +1230,7 @@
 				A07F3CB92BFC928E0087920B /* JLogCommandMessage.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
+				5B7C061F2C3D3F1800E91783 /* JUploadQiNiuCred.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
 				A08AA4012B19EEDB008B114C /* SRError.h in Headers */,
 				A08AA3802B19CB78008B114C /* GPBWrappers.pbobjc.h in Headers */,
@@ -1175,6 +1245,7 @@
 				A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */,
 				A08AA3A12B19CB78008B114C /* GPBExtensionInternals.h in Headers */,
 				A08AA3A62B19CB78008B114C /* GPBUnknownField_PackagePrivate.h in Headers */,
+				5B7C06232C3D3F3700E91783 /* JUploadPreSignCred.h in Headers */,
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
 				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
 				A0AF4A2A2C1065B000D97694 /* JLogUploader.h in Headers */,
@@ -1277,12 +1348,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B4CAF592C2E648A00FF9D51 /* JClearTotalUnreadMessage.m in Sources */,
+				5B7C06202C3D3F1800E91783 /* JUploadQiNiuCred.m in Sources */,
+				5B7C062A2C3E260C00E91783 /* JBaseUploader.m in Sources */,
 				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,
 				A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */,
 				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
+				5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
 				A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */,
 				5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */,
@@ -1307,9 +1381,11 @@
 				A08AA3642B19CB77008B114C /* GPBRootObject.m in Sources */,
 				A017F9392C3BD80A00D527B0 /* JChatroomInfoOption.m in Sources */,
 				A08AA4092B19EEDB008B114C /* SRSIMDHelpers.m in Sources */,
+				5B7C061A2C3D30CB00E91783 /* JUploadManager.m in Sources */,
 				A08AA37F2B19CB78008B114C /* GPBCodedInputStream.m in Sources */,
 				A09716C32B9FFF1F00D1DB24 /* JUserInfoManager.m in Sources */,
 				A08AA3FC2B19EEDB008B114C /* SRMutex.m in Sources */,
+				5B7C06242C3D3F3700E91783 /* JUploadPreSignCred.m in Sources */,
 				A08AA3712B19CB77008B114C /* GPBStruct.pbobjc.m in Sources */,
 				A08AA3822B19CB78008B114C /* GPBWellKnownTypes.m in Sources */,
 				A0F376242B3A83B20076CB84 /* JFileMessage.m in Sources */,
@@ -1321,6 +1397,8 @@
 				A08AA2552B14AF2E008B114C /* JConversation.m in Sources */,
 				A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */,
 				A07D0E352C0083FD00B9035B /* JNaviTask.m in Sources */,
+				5B7C06302C3E29AB00E91783 /* JPreSignUploader.m in Sources */,
+				5B7C06382C3E29E000E91783 /* JUploaderFactory.m in Sources */,
 				A096458D2BF252DC00290775 /* JThumbnailPackedImageMessage.m in Sources */,
 				5B4DB68B2BFC3BC700DD18B6 /* JTopConvMessage.m in Sources */,
 				A08AA2512B14AF1F008B114C /* JMessage.m in Sources */,

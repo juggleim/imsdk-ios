@@ -30,3 +30,6 @@
 
 @implementation JConversationObj
 @end
+
+@implementation JUploadFileCredBlockObj
+@end

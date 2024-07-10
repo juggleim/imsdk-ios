@@ -9,6 +9,9 @@
 #import "JetIMConstInternal.h"
 #import "JUserInfo.h"
 #import "JConcreteConversationInfo.h"
+#import "JUploadEnum.h"
+#import "JUploadQiNiuCred.h"
+#import "JUploadPreSignCred.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,6 +51,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(JConcreteConversationInfo *conversationInfo, long long timestamp);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JUploadFileCredBlockObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
