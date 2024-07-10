@@ -647,8 +647,8 @@
                             startTime:(long long)startTime
                                 count:(int)count
                             direction:(JPullDirection)direction
-                    localMessageBlock:(void (^)(NSArray *messages,BOOL needRemote))localMessageBlock
-                   remoteMessageBlock:(void (^)(NSArray *messages))remoteMessageBlock
+                    localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
+                   remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
                                 error:(void (^)(JErrorCode code))errorBlock{
     if (conversation.conversationId.length == 0) {
         dispatch_async(self.core.delegateQueue, ^{
@@ -714,7 +714,7 @@
             //合并
             NSMutableArray * messagesArray = [NSMutableArray array];
             [messagesArray addObjectsFromArray:localMessages];
-            for (JConversation * message in messages) {
+            for (JMessage * message in messages) {
                 if(![messagesArray containsObject:message]){
                     [messagesArray addObject:message];
                 }

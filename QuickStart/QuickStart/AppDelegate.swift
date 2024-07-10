@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let appKey = "appkey"
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
+        SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         return true
     }
 

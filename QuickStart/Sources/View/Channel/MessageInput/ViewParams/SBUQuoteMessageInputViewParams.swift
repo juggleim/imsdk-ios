@@ -74,7 +74,7 @@ public class SBUQuoteMessageInputViewParams {
     /// - Parameter message: The `JMessage` instance that the new instance is based on.
     public init(message: JMessage) {
         self.message = message
-        if let name = JIM.shared().userInfoManager.getUserInfo(message.senderUserId).userName {
+        if let name = JIM.shared().userInfoManager.getUserInfo(message.senderUserId)?.userName {
             self.quotedMessageNickname = name
         } else {
             self.quotedMessageNickname = ""

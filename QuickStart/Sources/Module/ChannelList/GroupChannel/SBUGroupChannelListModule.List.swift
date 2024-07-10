@@ -192,7 +192,9 @@ extension SBUGroupChannelListModule.List {
     
     open override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tableView.backgroundView?.isHidden = !(self.conversationInfoList?.isEmpty ?? true)
-        
+        if let count = self.conversationInfoList?.count {
+            SBULog.info("conversationInfoList count is  \(count)")
+        }
         return self.conversationInfoList?.count ?? 0
     }
     

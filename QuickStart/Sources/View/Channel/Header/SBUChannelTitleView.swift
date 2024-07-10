@@ -160,9 +160,9 @@ public class SBUChannelTitleView: UIView {
         if let conversationId = conversationInfo?.conversation.conversationId {
             if let conversationType = conversationInfo?.conversation.conversationType {
                 if conversationType == .private {
-                    self.titleLabel.text = JIM.shared().userInfoManager.getUserInfo(conversationId).userName
+                    self.titleLabel.text = JIM.shared().userInfoManager.getUserInfo(conversationId)?.userName
                 } else if conversationType == .group {
-                    self.titleLabel.text = JIM.shared().userInfoManager.getGroupInfo(conversationId).groupName
+                    self.titleLabel.text = JIM.shared().userInfoManager.getGroupInfo(conversationId)?.groupName
                 } else {
                     self.titleLabel.text = ""
                 }
@@ -178,13 +178,13 @@ public class SBUChannelTitleView: UIView {
             return
         }
         if conversationInfo.conversation.conversationType == .private {
-            if let portrait = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId).portrait {
+            if let portrait = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId)?.portrait {
                 self.coverImage.setImage(withCoverURL: portrait)
             } else {
                 self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
             }
         } else if conversationInfo.conversation.conversationType == .group {
-            if let portrait = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId).portrait {
+            if let portrait = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId)?.portrait {
                 self.coverImage.setImage(withCoverURL: portrait)
             } else {
                 self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))

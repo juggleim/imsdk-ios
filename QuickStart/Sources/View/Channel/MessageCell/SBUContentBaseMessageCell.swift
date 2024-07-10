@@ -603,7 +603,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     open func configureUserProfileView(message: JMessage) {
         if let profileView = self.profileView as? SBUMessageProfileView {
             let userId = message.senderUserId
-            let urlString = JIM.shared().userInfoManager.getUserInfo(userId).portrait ?? ""
+            let urlString = JIM.shared().userInfoManager.getUserInfo(userId)?.portrait ?? ""
             profileView.configure(urlString: urlString)
         }
     }

@@ -82,7 +82,7 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
 
 open class SBUBaseChannelViewModel: NSObject {
     // MARK: - Constant
-    let defaultFetchLimit: Int = 30
+    let defaultFetchLimit = 20
     
     // MARK: - Logic properties (Public)
     /// The current channel object. It's `JConversationInfo` type.

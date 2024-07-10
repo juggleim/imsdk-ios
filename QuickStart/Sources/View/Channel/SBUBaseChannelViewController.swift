@@ -664,7 +664,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         let sentMessageList = baseViewModel.messageList
         let fullMessageList = baseViewModel.fullMessageList
         
-        if indexPath.row >= fullMessageList.count,
+        if indexPath.row >= fullMessageList.count - baseViewModel.defaultFetchLimit/2,
            baseViewModel.hasPrevious() {
             baseViewModel.loadPrevMessages()
         } else if indexPath.row < 5,

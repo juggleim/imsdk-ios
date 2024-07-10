@@ -67,6 +67,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     // MARK: - Logic properties (private)
     var debouncer: SBUDebouncer?
     var suggestedMemberList: [SBUUser]?
+    var hasPreviousMessage = true
     
     // MARK: - LifeCycle
     public init(conversationInfo: JConversationInfo? = nil,
@@ -86,17 +87,23 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.debouncer = SBUDebouncer(
             debounceTime: SBUGlobals.userMentionConfig?.debounceTime ?? SBUDebouncer.defaultTime
         )
+        JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
+        } error: { errorCode in
+        }
         JIM.shared().messageManager.add(self)
-        
-        JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: 20, direction: .older) { localMessages, needRemote in
-            JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
-            } error: { errorCode in
+        JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: Int32(defaultFetchLimit), direction: .older) { localMessages, needRemote in
+            if let count = localMessages?.count {
+                if count < self.defaultFetchLimit && !needRemote {
+                    self.hasPreviousMessage = false
+                }
             }
             self.upsertMessagesInList(messages: localMessages, needReload: true)
         } remoteMessageBlock: { remoteMessages in
+            if let count = remoteMessages?.count, count < self.defaultFetchLimit {
+                self.hasPreviousMessage = false
+            }
             self.upsertMessagesInList(messages: remoteMessages, needReload: true)
         } error: { errorCode in
-            
         }
 
     }
@@ -249,36 +256,40 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     }
     
     public override func loadPrevMessages() {
-//        guard let messageCollection = self.messageCollection else { return }
-//        guard self.prevLock.try() else {
-//            SBULog.info("Prev message already loading")
-//            return
-//        }
-//
-//        SBULog.info("[Request] Prev message list")
-//
-//        messageCollection.loadPrevious { [weak self] messages, error in
-//            guard let self = self else { return }
-//            defer {
-//                self.prevLock.unlock()
-//            }
-//
-//            if let error = error {
-//                self.delegate?.didReceiveError(error, isBlocker: false)
-//                return
-//            }
-//
-//            guard let messages = messages, !messages.isEmpty else { return }
-//            SBULog.info("[Prev message response] \(messages.count) messages")
-//
-//            self.delegate?.baseChannelViewModel(
-//                self,
-//                shouldUpdateScrollInMessageList: messages,
-//                forContext: nil,
-//                keepsScroll: false
-//            )
-//            self.upsertMessagesInList(messages: messages, needReload: true)
-//        }
+        guard self.prevLock.try() else {
+            SBULog.info("Prev message already loading")
+            return
+        }
+
+        SBULog.info("[Request] Prev message list")
+        
+        let count = self.messageList.count
+        let startTime = count > 0 ? self.messageList[count-1].timestamp : 0
+        JIM.shared().messageManager.getLocalAndRemoteMessages(from: self.conversationInfo?.conversation, startTime: startTime, count: Int32(defaultFetchLimit), direction: .older) { localMessageList, needRemote in
+            self.upsertMessagesInList(messages: localMessageList, needReload: true)
+            if let count = localMessageList?.count {
+                SBULog.info("[Request] Prev message list local count is \(count), needReload is \(needRemote)")
+                if count < self.defaultFetchLimit && !needRemote {
+                    self.hasPreviousMessage = false
+                }
+            }
+            if (!needRemote) {
+                self.prevLock.unlock()
+                SBULog.info("Prev message list local unlock")
+            }
+        } remoteMessageBlock: { remoteMessageList in
+            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count)")
+            if let count = remoteMessageList?.count, count < self.defaultFetchLimit {
+                SBULog.info("[Request] Prev message list remote count is \(count)")
+                self.hasPreviousMessage = false
+            }
+            self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
+            self.prevLock.unlock()
+            SBULog.info("Prev message list remote unlock")
+        } error: { errorCode in
+            self.prevLock.unlock()
+            SBULog.info("Prev message list error unlock")
+        }
     }
     
     /// Loads next messages from `lastUpdatedTimestamp`.
@@ -440,6 +451,10 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 //    }
     
     // MARK: - Common
+    public override func hasPrevious() -> Bool {
+        return hasPreviousMessage
+    }
+    
     override func reset() {
 //        self.markAsRead()
         
