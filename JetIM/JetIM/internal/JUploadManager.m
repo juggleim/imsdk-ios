@@ -69,7 +69,7 @@
     } else if ([content isKindOfClass:[JFileMessage class]]) {
         uploadFileType = JUploadFileType_File;
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
-        uploadFileType = JUploadFileType_Video;
+        uploadFileType = JUploadFileType_Audio;
     } else {
         uploadFileType = JUploadFileType_Default;
     }

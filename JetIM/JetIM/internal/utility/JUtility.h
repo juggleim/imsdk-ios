@@ -22,9 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)dataWithBase64EncodedString:(NSString *)string;
 + (NSString *)rootPath;
 
-+ (NSString *)absolutePathRelativePath;
-+ (NSString *)absolutePathRelativePath;
-
 @end
 
 NS_ASSUME_NONNULL_END

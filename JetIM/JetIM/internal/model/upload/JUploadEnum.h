@@ -22,11 +22,8 @@ typedef NS_ENUM(NSInteger, JUploadOssType) {
     JUploadOssType_Default = 0,     //默认
     JUploadOssType_QiNiu = 1,       //七牛
     JUploadOssType_S3 = 2,          //S3
-    JUploadOssType_MiniIO = 3,      //MiniIO
+    JUploadOssType_MinIO = 3,      //MinIO
     JUploadOssType_OSS = 4          //OSS
 };
-
-
-
 
 #endif /* JUploadEnum_h */

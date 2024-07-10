@@ -561,6 +561,7 @@ inConversation:(JConversation *)conversation
                   success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get upload cred");
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getUploadFileCred:userId fileType:fileType ext:ext index:self.cmdIndex++];
         JUploadFileCredBlockObj *obj = [[JUploadFileCredBlockObj alloc] init];

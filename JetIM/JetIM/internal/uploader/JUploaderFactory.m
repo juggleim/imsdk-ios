@@ -22,7 +22,7 @@
             uploader = [[JQiNiuUploader alloc] initWith:localPath qiNiuCred:qiNiuCred];
             break;
         case JUploadOssType_S3:
-        case JUploadOssType_MiniIO:
+        case JUploadOssType_MinIO:
         case JUploadOssType_OSS:
             uploader = [[JPreSignUploader alloc] initWith:localPath preSignCred:preSignCred];
             break;
