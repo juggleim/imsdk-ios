@@ -554,6 +554,27 @@ inConversation:(JConversation *)conversation
     });
 }
 
+
+- (void)getUploadFileCred:(NSString *)userId
+                 fileType:(JUploadFileType)fileType
+                      ext:(NSString *)ext
+                  success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred))successBlock
+                    error:(void (^)(JErrorCodeInternal code))errorBlock{
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get upload cred");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getUploadFileCred:userId fileType:fileType ext:ext index:self.cmdIndex++];
+        JUploadFileCredBlockObj *obj = [[JUploadFileCredBlockObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
@@ -686,6 +707,9 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeAddConversation:
             JLogI(@"WS-Receive", @"JPBRcvTypeAddConversation");
             [self handleConversationAck:obj.conversationInfoAck];
+        case JPBRcvTypeFileCredMsgAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeFileCredMsgAck");
+            [self handleUploadFileCredCallback:obj.qryFileCredAck];
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -877,6 +901,18 @@ inConversation:(JConversation *)conversation
             qryReadDetailObj.errorBlock(ack.code);
         } else {
             qryReadDetailObj.successBlock(ack.readMembers, ack.unreadMembers);
+        }
+    }
+}
+
+-(void)handleUploadFileCredCallback:(JQryFileCredAck *)ack{
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JUploadFileCredBlockObj class]]) {
+        JUploadFileCredBlockObj * fileCredBlockObj = (JUploadFileCredBlockObj *)obj;
+        if (ack.code != 0) {
+            fileCredBlockObj.errorBlock(ack.code);
+        } else {
+            fileCredBlockObj.successBlock(ack.ossType, ack.qiNiuCred, ack.preSignCred);
         }
     }
 }

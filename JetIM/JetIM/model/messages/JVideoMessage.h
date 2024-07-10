@@ -10,6 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JVideoMessage : JMediaMessageContent
+
+/// 视频封面图本地路径
+@property (nonatomic, copy) NSString *snapshotLocalPath;
 /// 视频封面图远端地址
 @property (nonatomic, copy) NSString *snapshotUrl;
 /// 视频高度

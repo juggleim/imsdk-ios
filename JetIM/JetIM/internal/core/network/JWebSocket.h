@@ -13,6 +13,9 @@
 #import "JConcreteMessage.h"
 #import "JConcreteConversationInfo.h"
 #import "JMergeInfo.h"
+#import "JUploadEnum.h"
+#import "JUploadQiNiuCred.h"
+#import "JUploadPreSignCred.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -171,6 +174,12 @@ inConversation:(JConversation *)conversation
                     success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+
+- (void)getUploadFileCred:(NSString *)userId
+                 fileType:(JUploadFileType)fileType
+                      ext:(NSString *)ext
+                  success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred))successBlock
+                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 @end

@@ -27,13 +27,17 @@
 #import "JAddConvMessage.h"
 #import "JClearTotalUnreadMessage.h"
 #import "JLogger.h"
+#import "JUploadManager.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
+{
+    id<JMessageUploadProvider> _uploadProvider;
+}
 @property (nonatomic, strong) JetIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JMessageDelegate>> *delegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageSyncDelegate>> *syncDelegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
-@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
+//@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -89,6 +93,13 @@
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider {
     _uploadProvider = uploadProvider;
+}
+
+- (id<JMessageUploadProvider>)uploadProvider{
+    if (_uploadProvider == nil) {
+        _uploadProvider = [[JUploadManager alloc] initWithCore:self.core];
+    }
+    return _uploadProvider;
 }
 
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
