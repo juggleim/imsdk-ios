@@ -18,8 +18,8 @@
     return self;
 }
 
--(void)star{
-    
+-(void)start{
+
 }
 
 -(void)cancel{

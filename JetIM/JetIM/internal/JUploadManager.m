@@ -93,14 +93,24 @@
     }
     //有缩略图的情况下先上传缩略图
     if (needPreUpload) {
+        float preProgressPercent = 0.2f;
         [self doRequestUploadFileCred:message
                              fileType:uploadFileType
                             localPath:preUploadLocalPath
                           isPreUpload:YES
                              progress:^(int progress) {
-            
+            int realProgress = progress * preProgressPercent;
+            progressBlock(realProgress);
         } success:^(JMessage *jmessage) {
-            
+            [self doRequestUploadFileCred:jmessage
+                                 fileType:uploadFileType
+                                localPath:content.localPath
+                              isPreUpload:NO
+                                 progress:^(int progress) {
+                int realProgress = (progress * (1 - preProgressPercent)) + (100 * preProgressPercent);
+                progressBlock(realProgress);
+            } success:successBlock error:errorBlock cancel:cancelBlock];
+                                  
         }error:errorBlock cancel:cancelBlock];
     }else{
         [self doRequestUploadFileCred:message
@@ -172,7 +182,39 @@
         }
     };
     uploader.JUploadSuccess = ^(NSString * _Nonnull url) {
+        JMediaMessageContent * content = (JMediaMessageContent *) message.content;
+        if ([content isKindOfClass:[JImageMessage class]]){
+            JImageMessage * messageContent = (JImageMessage *)content;
+            if(isPreUpload){
+                messageContent.thumbnailUrl = url;
+            }else {
+                messageContent.url = url;
+            }
+        }else if([content isKindOfClass:[JThumbnailPackedImageMessage class]]){
+            
+            // todo
+            JThumbnailPackedImageMessage * messageContent = (JThumbnailPackedImageMessage *)content;
         
+        } else if ([content isKindOfClass:[JVideoMessage class]]) {
+            JVideoMessage * messageContent = (JVideoMessage *)content;
+            if(isPreUpload){
+                messageContent.snapshotUrl = url;
+            }else {
+                messageContent.url = url;
+            }
+        }else if([content isKindOfClass:[JSnapshotPackedVideoMessage class]]){
+            // todo
+            JSnapshotPackedVideoMessage * messageContent = (JSnapshotPackedVideoMessage *)content;
+
+        } else if ([content isKindOfClass:[JFileMessage class]]) {
+            JFileMessage * messageContent = (JFileMessage *)content;
+            messageContent.url = url;
+
+        } else if ([content isKindOfClass:[JVoiceMessage class]]) {
+            JVoiceMessage * messageContent = (JVoiceMessage *)content;
+            messageContent.url = url;
+        }
+        successBlock(message);
     };
     
     uploader.JUploadError = ^{
@@ -187,7 +229,7 @@
         }
     };
     
-    [uploader star];
+    [uploader start];
     
     
 }

@@ -26,8 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) void (^JUploadCancel)(void);
 
-
--(void)star;
+-(void)start;
 
 -(void)cancel;
 

@@ -10,6 +10,7 @@
 
 @interface JPreSignUploader ()<NSURLSessionTaskDelegate>
 
+@property (nonatomic, strong) NSURLSessionUploadTask * uploadTask;
 @end
 
 
@@ -24,7 +25,7 @@
     return self;
 }
 
--(void)star{
+-(void)start{
     if(self.localPath == nil || self.localPath.length == 0){
         JLogE(@"J-Uploader", @"PreSignUploader error, localPath is empty");
         [self notifyFail];
@@ -51,31 +52,41 @@
     NSURL *uploadURL = [NSURL URLWithString:self.preSignCred.url];
     // 创建请求
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadURL];
-    [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:@"PUT"];
     // 创建上传任务
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
-    NSURLSessionUploadTask *uploadTask = [session uploadTaskWithRequest:request 
-                                                               fromFile:fileURL
-                                                      completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    NSURLSession * session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    self.uploadTask = [session uploadTaskWithRequest:request
+                                            fromFile:fileURL
+                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error) {
-            NSLog(@"Upload failed: %@", error.localizedDescription);
+            JLogE(@"J-Uploader", @"PreSignUploader error, responseCode is %li, responseMessage is %@",error.code,error.domain);
+            [self notifyFail];
         } else {
-            NSLog(@"Upload successful");
-            // 可以根据需要处理响应数据
-            NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSLog(@"Response: %@", responseString);
+            NSArray * array = [self.preSignCred.url componentsSeparatedByString:@"?"];
+            if(array.count >= 2){
+                NSString * modifiedUrl = array.firstObject;
+                [self notifySuccess:modifiedUrl];
+            }
         }
     }];
     
     // 启动任务
-    [uploadTask resume];
+    [self.uploadTask resume];
+    
+}
+
+-(void)cancel{
+    [self.uploadTask cancel];
+    JLogE(@"J-Uploader", @"PreSignUploader canceled");
+    [self notifyCancel];
 }
 
 //获取上传进度
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
     double progress = (double)totalBytesSent / (double)totalBytesExpectedToSend;
-    NSLog(@"Upload progress: %.2f%%", progress * 100);
+    int IntProgress = progress * 100;
+    [self notifyProgress:IntProgress];
 }
 
 @end

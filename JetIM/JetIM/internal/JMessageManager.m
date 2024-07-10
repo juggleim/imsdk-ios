@@ -124,7 +124,7 @@
 
 - (id<JMessageUploadProvider>)uploadProvider{
     if (_uploadProvider == nil) {
-        _uploadProvider = [[JUploadManager alloc] init];
+        _uploadProvider = [[JUploadManager alloc] initWithCore:self.core];
     }
     return _uploadProvider;
 }
