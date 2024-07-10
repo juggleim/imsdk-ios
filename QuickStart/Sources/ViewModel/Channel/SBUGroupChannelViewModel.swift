@@ -91,21 +91,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         } error: { errorCode in
         }
         JIM.shared().messageManager.add(self)
-        JIM.shared().messageManager.getLocalAndRemoteMessages(from: conversationInfo?.conversation, startTime: 0, count: Int32(defaultFetchLimit), direction: .older) { localMessages, needRemote in
-            if let count = localMessages?.count {
-                if count < self.defaultFetchLimit && !needRemote {
-                    self.hasPreviousMessage = false
-                }
-            }
-            self.upsertMessagesInList(messages: localMessages, needReload: true)
-        } remoteMessageBlock: { remoteMessages in
-            if let count = remoteMessages?.count, count < self.defaultFetchLimit {
-                self.hasPreviousMessage = false
-            }
-            self.upsertMessagesInList(messages: remoteMessages, needReload: true)
-        } error: { errorCode in
-        }
-
+        self.loadPrevMessages()
     }
     
     // MARK: - Message
@@ -278,9 +264,8 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
                 SBULog.info("Prev message list local unlock")
             }
         } remoteMessageBlock: { remoteMessageList in
-            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count)")
+            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0)")
             if let count = remoteMessageList?.count, count < self.defaultFetchLimit {
-                SBULog.info("[Request] Prev message list remote count is \(count)")
                 self.hasPreviousMessage = false
             }
             self.upsertMessagesInList(messages: remoteMessageList, needReload: true)

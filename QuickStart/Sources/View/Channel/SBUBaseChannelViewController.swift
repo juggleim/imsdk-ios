@@ -661,7 +661,6 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         guard let baseViewModel = self.baseViewModel else { return }
         guard baseViewModel.fullMessageList.count > 0 else { return }
         
-        let sentMessageList = baseViewModel.messageList
         let fullMessageList = baseViewModel.fullMessageList
         
         if indexPath.row >= fullMessageList.count - baseViewModel.defaultFetchLimit/2,
