@@ -548,14 +548,16 @@ extension SBUBaseChannelModule {
         ///    - message: The `JMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
         open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
+            return
+            //TODO: 
             switch message.messageState {
-            case .unknown, .sending, .sent:
+            case .unknown, .sending, .uploading:
                 break
             case .fail:
                 // shows failed message menu
                 showFailedMessageMenu(on: message)
             default:
-                // succeed, unknown
+                // sent
                 guard let cell = self.tableView.cellForRow(at: indexPath) else {
                     SBULog.error("Couldn't find cell for row at \(indexPath)")
                     return
@@ -692,7 +694,7 @@ extension SBUBaseChannelModule {
         /// - Parameter message: The `JMessage` object  that refers to the message of the menu to display.
         /// - Returns: The array of ``SBUMenuItem`` objects for a `message`
         open func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
-            let isSentByMe = message.senderUserId == SBUGlobals.currentUser?.userId
+            let isSentByMe = message.senderUserId == JIM.shared().currentUserId
             var items: [SBUMenuItem] = []
             
             switch message {

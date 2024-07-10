@@ -211,7 +211,7 @@ open class SBUMessageStateView: SBUView {
             self.timeLabel.textAlignment = isQuotedReplyMessage
             ? .left
             : .right
-            self.stateImageView.isHidden = true//TODO: 
+            self.stateImageView.isHidden = false
         }
         
         guard !self.stateImageView.isHidden else { return }
@@ -244,10 +244,12 @@ open class SBUMessageStateView: SBUView {
             case .notUsed:
                 stateImage = nil
             case .none:
-                stateImage = SBUIconSetType.iconDone.image(
-                    with: theme.succeededStateColor,
-                    to: SBUIconSetType.Metric.defaultIconSizeSmall
-                )
+                stateImage = nil
+                //TODO: 
+//                stateImage = SBUIconSetType.iconDone.image(
+//                    with: theme.succeededStateColor,
+//                    to: SBUIconSetType.Metric.defaultIconSizeSmall
+//                )
             case .read:
                 stateImage = SBUIconSetType.iconDoneAll.image(
                     with: theme.readReceiptStateColor,

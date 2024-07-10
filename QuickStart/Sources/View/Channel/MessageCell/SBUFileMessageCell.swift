@@ -33,8 +33,7 @@ open class SBUFileMessageCell: SBUContentBaseMessageCell {
         // + ------------------- +
         
         self.mainContainerView.setStack([
-            self.baseFileContentView,
-            self.reactionView
+            self.baseFileContentView
         ])
     }
     
@@ -117,18 +116,18 @@ open class SBUFileMessageCell: SBUContentBaseMessageCell {
     
     open override func configure(highlightInfo: SBUHighlightMessageInfo?) {
         // Only apply highlight for the given message, that's not edited (updatedAt didn't change)
-        guard let message = self.message,
-              message.messageId == highlightInfo?.messageId,
-              message.updatedAt == highlightInfo?.updatedAt else { return }
-        
-        guard let commonContentView = self.baseFileContentView as? SBUCommonContentView,
-              let fileMessage = self.fileMessage else { return }
-        
-        commonContentView.configure(
-            message: fileMessage,
-            position: self.position,
-            highlightKeyword: highlightInfo?.keyword
-        )
+//        guard let message = self.message,
+//              message.messageId == highlightInfo?.messageId,
+//              message.timestamp == highlightInfo?.updatedAt else { return }
+//        
+//        guard let commonContentView = self.baseFileContentView as? SBUCommonContentView,
+//              let fileMessage = self.fileMessage else { return }
+//        
+//        commonContentView.configure(
+//            message: fileMessage,
+//            position: self.position,
+//            highlightKeyword: highlightInfo?.keyword
+//        )
     }
     
     /// This method has to be called in main thread
@@ -139,7 +138,7 @@ open class SBUFileMessageCell: SBUContentBaseMessageCell {
     }
     
     @available(*, deprecated, renamed: "configure(with:)") // 2.2.0
-    open func configure(_ message: FileMessage,
+    open func configure(_ message: JMessage,
                         hideDateView: Bool,
                         groupPosition: MessageGroupPosition,
                         receiptState: SBUMessageReceiptState?,

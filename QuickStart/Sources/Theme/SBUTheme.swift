@@ -1315,10 +1315,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary300
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.JMessageNameFont = SBUFontSet.body3
-        theme.JMessageLeftTextColor = SBUColorSet.onlight01
-        theme.JMessageRightTextColor = SBUColorSet.ondark01
-        theme.JMessagePlaceholderColor = SBUColorSet.onlight02
+        theme.fileMessageNameFont = SBUFontSet.body3
+        theme.fileMessageLeftTextColor = SBUColorSet.onlight01
+        theme.fileMessageRightTextColor = SBUColorSet.ondark01
+        theme.fileMessagePlaceholderColor = SBUColorSet.onlight02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1491,10 +1491,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary200
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.JMessageNameFont = SBUFontSet.body3
-        theme.JMessageLeftTextColor = SBUColorSet.ondark01
-        theme.JMessageRightTextColor = SBUColorSet.onlight01
-        theme.JMessagePlaceholderColor = SBUColorSet.ondark02
+        theme.fileMessageNameFont = SBUFontSet.body3
+        theme.fileMessageLeftTextColor = SBUColorSet.ondark01
+        theme.fileMessageRightTextColor = SBUColorSet.onlight01
+        theme.fileMessagePlaceholderColor = SBUColorSet.ondark02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1666,10 +1666,10 @@ public class SBUMessageCellTheme {
         theme.fileIconColor = SBUColorSet.primary200
         theme.fileImageBackgroundColor = SBUColorSet.ondark01
         theme.fileImageIconColor = SBUColorSet.onlight02
-        theme.JMessageNameFont = SBUFontSet.body3
-        theme.JMessageLeftTextColor = SBUColorSet.ondark01
-        theme.JMessageRightTextColor = SBUColorSet.onlight01
-        theme.JMessagePlaceholderColor = SBUColorSet.ondark02
+        theme.fileMessageNameFont = SBUFontSet.body3
+        theme.fileMessageLeftTextColor = SBUColorSet.ondark01
+        theme.fileMessageRightTextColor = SBUColorSet.onlight01
+        theme.fileMessagePlaceholderColor = SBUColorSet.ondark02
         
         // Admin message
         theme.adminMessageFont = SBUFontSet.caption2
@@ -1914,10 +1914,10 @@ public class SBUMessageCellTheme {
         self.fileImageBackgroundColor = fileImageBackgroundColor
         self.fileImageIconColor = fileImageIconColor
         self.fileIconColor = fileIconColor
-        self.JMessageNameFont = JMessageNameFont
-        self.JMessageLeftTextColor = JMessageLeftTextColor
-        self.JMessageRightTextColor = JMessageRightTextColor
-        self.JMessagePlaceholderColor = JMessagePlaceholderColor
+        self.fileMessageNameFont = JMessageNameFont
+        self.fileMessageLeftTextColor = JMessageLeftTextColor
+        self.fileMessageRightTextColor = JMessageRightTextColor
+        self.fileMessagePlaceholderColor = JMessagePlaceholderColor
         
         self.adminMessageFont = adminMessageFont
         self.adminMessageTextColor = adminMessageTextColor
@@ -2073,10 +2073,10 @@ public class SBUMessageCellTheme {
     public var fileIconColor: UIColor
     public var fileImageBackgroundColor: UIColor
     public var fileImageIconColor: UIColor
-    public var JMessageNameFont: UIFont
-    public var JMessageLeftTextColor: UIColor
-    public var JMessageRightTextColor: UIColor
-    public var JMessagePlaceholderColor: UIColor
+    public var fileMessageNameFont: UIFont
+    public var fileMessageLeftTextColor: UIColor
+    public var fileMessageRightTextColor: UIColor
+    public var fileMessagePlaceholderColor: UIColor
     
     // Multiple Files Message
     public var multipleFilesMessageFileOverlayColor: UIColor

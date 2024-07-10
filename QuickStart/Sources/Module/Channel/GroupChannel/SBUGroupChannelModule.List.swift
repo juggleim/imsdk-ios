@@ -133,15 +133,11 @@ extension SBUGroupChannelModule {
         open override func setupViews() {
             super.setupViews()
             
-            // register cell (GroupChannel)
-//            if self.adminMessageCell == nil {
-//                self.register(adminMessageCell: SBUAdminMessageCell())
-//            }
             if self.textMessageCell == nil {
                 self.register(textMessageCell: SBUTextMessageCell())
             }
             if self.fileMessageCell == nil {
-                self.register(fileMessageCell: SBUBaseMessageCell())
+                self.register(fileMessageCell: SBUFileMessageCell())
             }
             
             if self.unknownMessageCell == nil {
@@ -538,6 +534,8 @@ extension SBUGroupChannelModule {
         open func generateCellIdentifier(by message: JMessage) -> String {
             if message.content is JTextMessage {
                 return textMessageCell?.sbu_className ?? SBUTextMessageCell.sbu_className
+            } else if message.content is JImageMessage {
+                return fileMessageCell?.sbu_className ?? SBUFileMessageCell.sbu_className
             } else {
                 return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
             }
