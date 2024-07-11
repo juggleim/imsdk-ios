@@ -77,10 +77,10 @@
     BOOL needPreUpload = NO;
     NSString * preUploadLocalPath = @"";
     if ([content isKindOfClass:[JImageMessage class]]) {
-        needPreUpload = true;
+        needPreUpload = YES;
         preUploadLocalPath = ((JImageMessage *) content).thumbnailLocalPath;
     } else if ([content isKindOfClass:[JVideoMessage class]]) {
-        needPreUpload = true;
+        needPreUpload = YES;
         preUploadLocalPath = ((JVideoMessage *) content).snapshotLocalPath;
     }
     //判空封面或缩略图
@@ -109,8 +109,11 @@
                                  progress:^(int progress) {
                 int realProgress = (progress * (1 - preProgressPercent)) + (100 * preProgressPercent);
                 progressBlock(realProgress);
-            } success:successBlock error:errorBlock cancel:cancelBlock];
-                                  
+            }
+                                  success:successBlock
+                                    error:errorBlock
+                                   cancel:cancelBlock];
+            
         }error:errorBlock cancel:cancelBlock];
     }else{
         [self doRequestUploadFileCred:message
@@ -170,12 +173,9 @@
             cancel:(void (^)(void))cancelBlock
        isPreUpload:(BOOL)isPreUpload{
     JBaseUploader * uploader = [JUploaderFactory getUpload:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred];
-    
     if(uploader == nil){
         JLogE(@"J-Uploader", @"doRealUpload failed, uploader is null, localPath = %@ , message = %lld", localPath,message.clientMsgNo);
-
     }
-    
     uploader.JUploadProgress = ^(int progress) {
         if(progressBlock){
             progressBlock(progress);
@@ -183,54 +183,29 @@
     };
     uploader.JUploadSuccess = ^(NSString * _Nonnull url) {
         JMediaMessageContent * content = (JMediaMessageContent *) message.content;
-        if ([content isKindOfClass:[JImageMessage class]]){
-            JImageMessage * messageContent = (JImageMessage *)content;
-            if(isPreUpload){
+        if(isPreUpload == NO){
+            content.url = url;
+        }else{
+            if ([content isKindOfClass:[JImageMessage class]]){
+                JImageMessage * messageContent = (JImageMessage *)content;
                 messageContent.thumbnailUrl = url;
-            }else {
-                messageContent.url = url;
-            }
-        }else if([content isKindOfClass:[JThumbnailPackedImageMessage class]]){
-            
-            // todo
-            JThumbnailPackedImageMessage * messageContent = (JThumbnailPackedImageMessage *)content;
-        
-        } else if ([content isKindOfClass:[JVideoMessage class]]) {
-            JVideoMessage * messageContent = (JVideoMessage *)content;
-            if(isPreUpload){
+            }else if ([content isKindOfClass:[JVideoMessage class]]) {
+                JVideoMessage * messageContent = (JVideoMessage *)content;
                 messageContent.snapshotUrl = url;
-            }else {
-                messageContent.url = url;
             }
-        }else if([content isKindOfClass:[JSnapshotPackedVideoMessage class]]){
-            // todo
-            JSnapshotPackedVideoMessage * messageContent = (JSnapshotPackedVideoMessage *)content;
-
-        } else if ([content isKindOfClass:[JFileMessage class]]) {
-            JFileMessage * messageContent = (JFileMessage *)content;
-            messageContent.url = url;
-
-        } else if ([content isKindOfClass:[JVoiceMessage class]]) {
-            JVoiceMessage * messageContent = (JVoiceMessage *)content;
-            messageContent.url = url;
         }
         successBlock(message);
     };
-    
     uploader.JUploadError = ^{
         if(errorBlock){
             errorBlock();
         }
     };
-    
     uploader.JUploadCancel = ^{
         if(cancelBlock){
             cancelBlock();
         }
     };
-    
     [uploader start];
-    
-    
 }
 @end

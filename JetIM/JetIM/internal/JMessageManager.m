@@ -455,6 +455,18 @@
                                                        state:JMessageStateUploading
                                                    direction:JMessageDirectionSend
                                                  isBroadcast:NO];
+    return [self sendMediaMessage:message
+                         progress:progressBlock
+                          success:successBlock
+                            error:errorBlock
+                           cancel:cancelBlock];;
+}
+
+-(JMessage *)sendMediaMessage:(JMessage *)message
+                     progress:(void (^)(int progress, JMessage *message))progressBlock
+                      success:(void (^)(JMessage *message))successBlock
+                        error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                       cancel:(void (^)(JMessage *message))cancelBlock{
     if ([self.uploadProvider respondsToSelector:@selector(uploadMessage:progress:success:error:cancel:)]) {
         [self.uploadProvider uploadMessage:message
                                   progress:^(int progress) {
@@ -620,6 +632,36 @@
                          success:successBlock
                            error:errorBlock];
     }
+}
+- (JMessage *)resendMediaMessage:(JMessage *)message
+                        progress:(void (^)(int progress, JMessage *message))progressBlock
+                         success:(void (^)(JMessage *message))successBlock
+                           error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                          cancel:(void (^)(JMessage *message))cancelBlock{
+    if(message.clientMsgNo <= 0 ||
+       !(message.messageId == nil || message.messageId.length == 0) ||   //已发送的消息不允许重发
+       message.content == nil ||
+       ![message.content isKindOfClass:[JMediaMessageContent class]] ||
+       message.conversation == nil ||
+       (message.conversation.conversationId == nil || message.conversation.conversationId.length == 0)){
+        if(errorBlock){
+            errorBlock(JErrorCodeInvalidParam,message);
+        }
+        return message;
+    }
+    
+    if(message.messageState != JMessageStateSending){
+        message.messageState = JMessageStateSending;
+        [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
+    }
+    [self updateMessageWithContent:(JConcreteMessage *)message];
+    
+    return [self sendMediaMessage:message
+                         progress:progressBlock
+                          success:successBlock
+                            error:errorBlock
+                           cancel:cancelBlock];
+    
 }
 
 - (void)getRemoteMessagesFrom:(JConversation *)conversation

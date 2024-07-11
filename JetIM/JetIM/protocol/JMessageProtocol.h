@@ -116,6 +116,19 @@
              success:(void (^)(JMessage *message))successBlock
                error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
+
+/// 重发消息，用于媒体类型消息重发
+/// - Parameters:
+///   - message: 消息对象
+///   - progressBlock: 上传进度回调
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+///   - cancelBlock: 取消回调
+- (JMessage *)resendMediaMessage:(JMessage *)message
+                        progress:(void (^)(int progress, JMessage *message))progressBlock
+                         success:(void (^)(JMessage *message))successBlock
+                           error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
+                          cancel:(void (^)(JMessage *message))cancelBlock;
 /// 保存消息
 /// - Parameters:
 ///   - content: 消息实体
