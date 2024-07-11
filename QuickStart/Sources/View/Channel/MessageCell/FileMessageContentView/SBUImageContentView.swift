@@ -84,49 +84,35 @@ open class SBUImageContentView: SBUBaseFileContentView {
         }
         
         super.configure(message: message, position: position)
-//        let thumbnail = message.thumbnails?.first
-//
-//        let imageOption: UIImageView.ImageOption
-//        let urlString: String
-//        
-//        let isGifImage = message.type.hasPrefix("image/gif")
-//        
-//        if let thumbnailURL = thumbnail?.url, !thumbnailURL.isEmpty, !isGifImage {
-//            imageOption = .imageToThumbnail
-//            urlString = thumbnailURL
-//        } else {
-//            switch SBUUtils.getFileType(by: message) {
-//            case .image where message.sendingStatus == .succeeded:
-//                urlString = message.url
-//                imageOption = .imageToThumbnail
-//
-//            case .video where message.sendingStatus == .succeeded:
-//                urlString = message.url
-//                imageOption = .videoURLToImage
-//
-//            default:
-//                imageOption = .imageToThumbnail
-//                urlString = ""
-//            }
-//        }
-//        
-//        let thumbnailSize = message.channelType == .group
-//        ? SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
-//        : SBUGlobals.messageCellConfiguration.openChannel.thumbnailSize
-//
-//        self.resizeImageView(by: thumbnailSize)
-//        self.loadImageSession = self.imageView.loadImage(
-//            urlString: urlString,
-//            option: imageOption,
-//            thumbnailSize: thumbnailSize,
-//            cacheKey: message.cacheKey,
-//            subPath: message.channelURL
-//        ) { [weak self] _ in
-//            DispatchQueue.main.async {
-//                self?.setFileIcon()
-//            }
-//        }
-//        self.setFileIcon()
+
+        let imageOption: UIImageView.ImageOption
+        let urlString: String
+        
+        let isGifImage = false
+        if let imageMessage = message.content as? JImageMessage {
+            imageOption = .imageToThumbnail
+            urlString = imageMessage.thumbnailUrl
+        } else if let videoMessage = message.content as? JVideoMessage {
+            imageOption = .videoURLToImage
+            urlString = videoMessage.snapshotUrl
+        } else {
+            imageOption = .imageToThumbnail
+            urlString = ""
+        }
+        
+        
+        let thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
+        self.resizeImageView(by: thumbnailSize)
+        self.loadImageSession = self.imageView.loadImage(
+            urlString: urlString,
+            option: imageOption,
+            thumbnailSize: thumbnailSize
+        ) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.setFileIcon()
+            }
+        }
+        self.setFileIcon()
     }
     
     public func setImage(_ image: UIImage?, size: CGSize? = nil) {
@@ -139,42 +125,15 @@ open class SBUImageContentView: SBUBaseFileContentView {
     }
     
     public func setFileIcon() {
-//        switch SBUUtils.getFileType(by: self.message) {
-//        case .video:
-//            self.iconImageView.image = SBUIconSetType.iconPlay.image(
-//                with: theme.fileImageIconColor,
-//                to: SBUIconSetType.Metric.iconGifPlay
-//            )
-//            
-//            self.iconImageView.backgroundColor = theme.fileImageBackgroundColor
-//            self.iconImageView.layer.cornerRadius = self.iconImageView.frame.height / 2
-//        case .image where message.type.hasPrefix("image/gif"):
-//            self.iconImageView.image = SBUIconSetType.iconGif.image(
-//                with: theme.fileImageIconColor,
-//                to: SBUIconSetType.Metric.iconGifPlay
-//            )
-//            
-//            self.iconImageView.backgroundColor = theme.fileImageBackgroundColor
-//            self.iconImageView.layer.cornerRadius = self.iconImageView.frame.height / 2
-//        default:
-//            self.iconImageView.backgroundColor = nil
-//            switch self.message.sendingStatus {
-//            case .canceled, .failed:
-//                self.iconImageView.image = SBUIconSetType.iconThumbnailNone.image(
-//                    with: theme.fileMessagePlaceholderColor,
-//                    to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
-//                )
-//            default:
-//                if self.imageView.image == nil {
-//                    self.iconImageView.image = SBUIconSetType.iconPhoto.image(
-//                        with: theme.fileMessagePlaceholderColor,
-//                        to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
-//                    )
-//                } else {
-//                    self.iconImageView.image = nil
-//                }
-//            }
-//        }
+        self.iconImageView.backgroundColor = nil
+        if self.imageView.image == nil {
+            self.iconImageView.image = SBUIconSetType.iconPhoto.image(
+                with: theme.fileMessagePlaceholderColor,
+                to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
+            )
+        } else {
+            self.iconImageView.image = nil
+        }
     }
     
     open func resizeImageView(by size: CGSize) {

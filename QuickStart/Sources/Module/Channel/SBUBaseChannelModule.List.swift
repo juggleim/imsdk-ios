@@ -930,7 +930,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///   - cell: File message cell
         ///   - JMessage: File message object
-        open func setJMessageCellImage(_ cell: UITableViewCell, JMessage: JMessage) {
+        open func setMediaMessageCellImage(_ cell: UITableViewCell, mediaMessage: JMessage) {
 //            switch JMessage.messageState {
 //            case .fail, .unknown, .sending, .uploading:
 ////                guard let (pendingMessageManager, isThreadMessage) = self.baseDataSource?.baseChannelModule(self, pendingMessageManagerForCell: cell),

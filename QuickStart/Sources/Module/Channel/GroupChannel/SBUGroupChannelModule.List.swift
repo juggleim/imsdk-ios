@@ -105,6 +105,7 @@ extension SBUGroupChannelModule {
         public var voicePlayer: SBUVoicePlayer?
         var voiceFileInfos: [String: SBUVoiceFileInfo] = [:]
         var currentVoiceFileInfo: SBUVoiceFileInfo?
+        var currentVoiceContentView: SBUVoiceContentView?
         var currentVoiceContentIndexPath: IndexPath?
         
         var shouldRedrawTypingBubble: Bool = false
@@ -389,11 +390,6 @@ extension SBUGroupChannelModule {
         ///    - message: The message for `messageCell`.
         ///    - indexPath: An index path representing the `messageCell`
         open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, forRowAt indexPath: IndexPath) {
-            guard let conversationInfo = self.conversationInfo else {
-                SBULog.error("Channel must exist!")
-                return
-            }
-
             // NOTE: to disable unwanted animation while configuring cells
             UIView.setAnimationsEnabled(false)
 
@@ -429,6 +425,28 @@ extension SBUGroupChannelModule {
 
                 self.setMessageCellAnimation(textMessageCell, message: message, indexPath: indexPath)
                 self.setMessageCellGestures(textMessageCell, message: message, indexPath: indexPath)
+            } else if message.content is JMediaMessageContent {
+                guard let mediaMessageCell = messageCell as? SBUMediaMessageCell else {
+                    return
+                }
+                let configuration = SBUMediaMessageCellParams(
+                    message: message,
+                    hideDateView: isSameDay,
+                    useMessagePosition: true,
+                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+                    receiptState: receiptState,
+                    useReaction: false,
+                    joinedAt: 0,
+                    messageOffsetTimestamp: 0,
+                    voiceFileInfo: nil,
+                    enableEmojiLongPress: false
+                )
+                configuration.shouldHideFeedback = true
+                mediaMessageCell.configure(with: configuration)
+                mediaMessageCell.configure(highlightInfo: self.highlightInfo)
+                self.setMessageCellAnimation(mediaMessageCell, message: message, indexPath: indexPath)
+                self.setMessageCellGestures(mediaMessageCell, message: message, indexPath: indexPath)
+                self.setMediaMessageCellImage(mediaMessageCell, mediaMessage: message)
             } else {
                 guard let unknownMessageCell = messageCell as? SBUUnknownMessageCell else {
                     return
