@@ -379,14 +379,14 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         SBULoading.start()
         
         switch fileData.fileType {
-//        case .image:
-//            let viewer = SBUCommonViewControllerSet.FileViewController.init(
-//                fileData: fileData,
-//                delegate: self
-//            )
-//            let naviVC = UINavigationController(rootViewController: viewer)
-//            SBULoading.stop()
-//            self.present(naviVC, animated: true)
+        case .image:
+            let viewer = SBUCommonViewControllerSet.FileViewController.init(
+                fileData: fileData,
+                delegate: self
+            )
+            let naviVC = UINavigationController(rootViewController: viewer)
+            SBULoading.stop()
+            self.present(naviVC, animated: true)
             
         case .etc, .pdf, .video, .audio:
             SBUCacheManager.File.loadFile(urlString: fileData.urlString, fileName: fileData.name) { fileURL, _ in
@@ -437,9 +437,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter JMessage: JMessage object
     /// - Note: Use `openFile(_:)` instead.
     /// - Since: 3.0.0
-    open func openFile(fileMessage: JMessage) {
-//        let fileData = SBUFileData(fileMessage: fileMessage)
-//        self.openFile(fileData)
+    open func openFile(message: JMessage) {
+        let fileData = SBUFileData(message: message)
+        self.openFile(fileData)
     }
     
     /// This function increases the new message count.
@@ -675,35 +675,47 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
         self.dismissKeyboard()
         
-//        switch message {
-//            
-//        case let userMessage as UserMessage:
-//            // User message type, only fail case
-//            guard userMessage.sendingStatus == .failed,
-//                  userMessage.sender?.userId == SBUGlobals.currentUser?.userId  else { return }
-//            self.baseViewModel?.resendMessage(failedMessage: userMessage)
-//            self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
-//            
-//        case let JMessage as JMessage:
-//            // File message type
-//            switch JMessage.sendingStatus {
-//            case .pending:
-//                break
-//            case .failed:
-//                guard JMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
-//                self.baseViewModel?.resendMessage(failedMessage: JMessage)
-//                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
-//            case .succeeded:
-//                self.openFile(JMessage: JMessage)
-//            default:
-//                break
-//            }
-//            
-//        case _ as AdminMessage:
-//            // Admin message type
-//            break
-//        default:
-//            break
+        if let imageMessage = message.content as? JImageMessage {
+            switch message.messageState {
+            case .uploading, .sending, .unknown:
+                break
+            case .fail:
+                //TODO: resend
+                break
+            case .sent:
+                self.openFile(message: message)
+            }
+        }
+        
+//        switch message.content {
+//
+////        case let textMessage as JTextMessage:
+////            // User message type, only fail case
+////            guard message.messageState == .fail,
+////                  message.senderUserId == JIM.shared().currentUserId  else { return }
+////            self.baseViewModel?.resendMessage(failedMessage: message)
+////            self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
+//
+////        case let JMessage as JMessage:
+////            // File message type
+////            switch JMessage.sendingStatus {
+////            case .pending:
+////                break
+////            case .failed:
+////                guard JMessage.sender?.userId == SBUGlobals.currentUser?.userId else { return }
+////                self.baseViewModel?.resendMessage(failedMessage: JMessage)
+////                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
+////            case .succeeded:
+////                self.openFile(JMessage: JMessage)
+////            default:
+////                break
+////            }
+////
+////        case _ as AdminMessage:
+////            // Admin message type
+////            break
+////        default:
+////            break
 //        }
     }
     

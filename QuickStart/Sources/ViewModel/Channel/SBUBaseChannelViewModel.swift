@@ -408,6 +408,7 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Parameter failedMessage: `JMessage` class based failed object
     /// - Since: 1.0.9
     public func resendMessage(failedMessage: JMessage) {
+        
 //        if let failedMessage = failedMessage as? UserMessage {
 //            SBULog.info("[Request] Resend failed user message")
 //

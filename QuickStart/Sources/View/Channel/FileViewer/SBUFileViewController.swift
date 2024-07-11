@@ -69,12 +69,18 @@ public struct SBUFileData {
         self.name = name
     }
     
-    init(fileMessage: JMessage) {
+    init(message: JMessage) {
+        let urlString: String
+        if let mediaMessage = message.content as? JMediaMessageContent, let url = mediaMessage.url {
+            urlString = url
+        } else {
+            urlString = ""
+        }
         self.init(
-            urlString: "",
-            message: fileMessage,
+            urlString: urlString,
+            message: message,
             cacheKey: "",
-            fileType: SBUUtils.getMediaType(by: fileMessage),
+            fileType: SBUUtils.getMediaType(by: message),
             name: ""
         )
     }
@@ -152,7 +158,7 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         fileMessage: JMessage,
         delegate: SBUFileViewControllerDelegate?
     ) {
-        let fileData = SBUFileData(fileMessage: fileMessage)
+        let fileData = SBUFileData(message: fileMessage)
         self.init(fileData: fileData, delegate: delegate)
     }
     
@@ -191,7 +197,7 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
     
     @available(*, unavailable, renamed: "init(params:delegate:)")
     required public init?(coder: NSCoder) {
-        let fileData = SBUFileData(fileMessage: JMessage())
+        let fileData = SBUFileData(message: JMessage())
         self.fileData = fileData
         super.init(coder: coder)
         
@@ -217,50 +223,49 @@ open class SBUFileViewController: SBUBaseViewController, UIScrollViewDelegate, S
         self.view.bringSubviewToFront(self.bottomView)
 
         // Title View
-//        if let titleView = self.navigationItem.titleView as? TitleView {
-//            if let sender = self.fileData.message.sender {
-//                titleView.titleLabel.text = SBUUser(user: sender).refinedNickname()
-//            } else {
-//                titleView.titleLabel.text = SBUStringSet.User_No_Name
-//            }
-//
-//            titleView.dateTimeLabel.text = Date
-//                .sbu_from(self.fileData.message.createdAt)
-//                .sbu_toString(dateFormat: SBUDateFormatSet.Message.fileViewControllerTimeFormat)
-//
-//            titleView.updateConstraints()
-//        }
-//
-//        // Bottom View
-//        if let bottomView = self.bottomView as? BottomView {
-//
-//            let hidesDeleteButton = self.fileData.message.threadInfo.replyCount > 0
-//            || self.fileData.message.sender?.userId != SBUGlobals.currentUser?.userId
-//            || self.fileData.message as? MultipleFilesMessage != nil
-//
-//            bottomView.deleteButton.isHidden = hidesDeleteButton
-//            if !hidesDeleteButton {
-//                bottomView.deleteButton.addTarget(
-//                    self,
-//                    action: #selector(onClickDelete(sender:)),
-//                    for: .touchUpInside
-//                )
-//            }
-//            bottomView.downloadButton.addTarget(
-//                self,
-//                action: #selector(onClickDownload(sender:)),
-//                for: .touchUpInside
-//            )
-//        }
-//
-//        guard let urlString = urlString else { return }
-//        self.imageView.loadImage(
-//            urlString: urlString,
-//            cacheKey: self.fileData.cacheKey,
-//            subPath: self.fileData.message.channelURL
-//        )
-//
-//        // TODO: MFM also
+        if let titleView = self.navigationItem.titleView as? TitleView {
+            let senderId = self.fileData.message.senderUserId
+            if let sender = JIM.shared().userInfoManager.getUserInfo(senderId), let name = sender.userName {
+                titleView.titleLabel.text = name
+            } else {
+                titleView.titleLabel.text = SBUStringSet.User_No_Name
+            }
+
+            titleView.dateTimeLabel.text = Date
+                .sbu_from(self.fileData.message.timestamp)
+                .sbu_toString(dateFormat: SBUDateFormatSet.Message.fileViewControllerTimeFormat)
+
+            titleView.updateConstraints()
+        }
+
+        // Bottom View
+        if let bottomView = self.bottomView as? BottomView {
+
+            let hidesDeleteButton = true
+            bottomView.deleteButton.isHidden = hidesDeleteButton
+            if !hidesDeleteButton {
+                bottomView.deleteButton.addTarget(
+                    self,
+                    action: #selector(onClickDelete(sender:)),
+                    for: .touchUpInside
+                )
+            }
+            bottomView.downloadButton.isHidden = true
+            bottomView.downloadButton.addTarget(
+                self,
+                action: #selector(onClickDownload(sender:)),
+                for: .touchUpInside
+            )
+        }
+
+        guard let urlString = urlString else { return }
+        self.imageView.loadImage(
+            urlString: urlString,
+            cacheKey: self.fileData.cacheKey,
+            subPath: ""
+        )
+
+        // TODO: MFM also
 //        if let JMessage = self.fileData.message as? JMessage {
 //            SBUCacheManager.Image.preSave(JMessage: JMessage)
 //        }
