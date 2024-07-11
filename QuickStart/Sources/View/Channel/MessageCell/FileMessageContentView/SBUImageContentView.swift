@@ -87,20 +87,26 @@ open class SBUImageContentView: SBUBaseFileContentView {
 
         let imageOption: UIImageView.ImageOption
         let urlString: String
+        let thumbnailSize: CGSize
         
         if let imageMessage = message.content as? JImageMessage {
             imageOption = .imageToThumbnail
             urlString = imageMessage.thumbnailUrl
+            if (imageMessage.width > 0 && imageMessage.height > 0) {
+                thumbnailSize = CGSize(width: Int(imageMessage.width), height: Int(imageMessage.height))
+            } else {
+                thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
+            }
         } else if let videoMessage = message.content as? JVideoMessage {
             imageOption = .videoURLToImage
             urlString = videoMessage.snapshotUrl
+            thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
         } else {
             imageOption = .imageToThumbnail
             urlString = ""
+            thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
         }
         
-        
-        let thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
         self.resizeImageView(by: thumbnailSize)
         self.loadImageSession = self.imageView.loadImage(
             urlString: urlString,
