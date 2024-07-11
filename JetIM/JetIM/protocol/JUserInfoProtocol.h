@@ -12,10 +12,10 @@
 
 /// 获取用户信息
 /// - Parameter userId: 用户 id
-- (nullable JUserInfo *)getUserInfo:(NSString *)userId;
+- (JUserInfo *)getUserInfo:(NSString *)userId;
 
 /// 获取群组信息
 /// - Parameter groupId: 群组 id
-- (nullable JGroupInfo *)getGroupInfo:(NSString *)groupId;
+- (JGroupInfo *)getGroupInfo:(NSString *)groupId;
 
 @end

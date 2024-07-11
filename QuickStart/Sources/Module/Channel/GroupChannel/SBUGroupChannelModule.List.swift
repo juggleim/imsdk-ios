@@ -61,7 +61,7 @@ extension SBUGroupChannelModule {
         public private(set) var textMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `JMessage` object. Use `register(JMessageCell:nib:)` to update.
-        public private(set) var fileMessageCell: SBUBaseMessageCell?
+        public private(set) var mediaMessageCell: SBUBaseMessageCell?
         
         /// The message cell for `MultipleFilesMessage` object.
         /// Use `register(multipleFilesMessageCell:nib:)` to update.
@@ -136,8 +136,8 @@ extension SBUGroupChannelModule {
             if self.textMessageCell == nil {
                 self.register(textMessageCell: SBUTextMessageCell())
             }
-            if self.fileMessageCell == nil {
-                self.register(fileMessageCell: SBUFileMessageCell())
+            if self.mediaMessageCell == nil {
+                self.register(mediaMessageCell: SBUMediaMessageCell())
             }
             
             if self.unknownMessageCell == nil {
@@ -320,9 +320,9 @@ extension SBUGroupChannelModule {
         /// listComponent.register(JMessageCell: MyJMessageCell)
         /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
         /// ```
-        open func register(fileMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.fileMessageCell = fileMessageCell
-            self.register(messageCell: fileMessageCell, nib: nib)
+        open func register(mediaMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
+            self.mediaMessageCell = mediaMessageCell
+            self.register(messageCell: mediaMessageCell, nib: nib)
         }
         
         /// Registers a custom cell as a multiple files message cell based on `SBUBaseMessageCell`.
@@ -534,8 +534,8 @@ extension SBUGroupChannelModule {
         open func generateCellIdentifier(by message: JMessage) -> String {
             if message.content is JTextMessage {
                 return textMessageCell?.sbu_className ?? SBUTextMessageCell.sbu_className
-            } else if message.content is JImageMessage {
-                return fileMessageCell?.sbu_className ?? SBUFileMessageCell.sbu_className
+            } else if message.content is JMediaMessageContent {
+                return mediaMessageCell?.sbu_className ?? SBUMediaMessageCell.sbu_className
             } else {
                 return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
             }

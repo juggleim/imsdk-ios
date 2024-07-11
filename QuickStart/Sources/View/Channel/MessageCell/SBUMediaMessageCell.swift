@@ -10,10 +10,10 @@ import UIKit
 import JetIM
 
 @IBDesignable
-open class SBUFileMessageCell: SBUContentBaseMessageCell {
+open class SBUMediaMessageCell: SBUContentBaseMessageCell {
     
     // MARK: - Public property
-    public var fileMessage: JMessage? {
+    public var mediaMessage: JMessage? {
         self.message
     }
     
@@ -52,8 +52,8 @@ open class SBUFileMessageCell: SBUContentBaseMessageCell {
     
     // MARK: - Common
     open override func configure(with configuration: SBUBaseMessageCellParams) {
-        guard let configuration = configuration as? SBUFileMessageCellParams else { return }
-        guard let message = configuration.fileMessage else { return }
+        guard let configuration = configuration as? SBUMediaMessageCellParams else { return }
+        guard let message = configuration.mediaMessage else { return }
         // Set using reaction
         self.useReaction = configuration.useReaction
         self.enableEmojiLongPress = configuration.enableEmojiLongPress
@@ -143,7 +143,7 @@ open class SBUFileMessageCell: SBUContentBaseMessageCell {
                         groupPosition: MessageGroupPosition,
                         receiptState: SBUMessageReceiptState?,
                         useReaction: Bool) {
-        let configuration = SBUFileMessageCellParams(
+        let configuration = SBUMediaMessageCellParams(
             message: message,
             hideDateView: hideDateView,
             useMessagePosition: true,

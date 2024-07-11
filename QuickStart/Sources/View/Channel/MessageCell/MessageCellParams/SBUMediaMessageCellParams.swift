@@ -7,8 +7,8 @@
 //
 import JetIM
 
-public class SBUFileMessageCellParams: SBUBaseMessageCellParams {
-    public var fileMessage: JMessage? {
+public class SBUMediaMessageCellParams: SBUBaseMessageCellParams {
+    public var mediaMessage: JMessage? {
         self.message as? JMessage
     }
     public let useReaction: Bool
