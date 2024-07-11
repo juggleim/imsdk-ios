@@ -110,6 +110,10 @@
     }];
 }
 
+- (JConnectionStatus)getConnectionStatus {
+    return (JConnectionStatus)self.core.connectionStatus;
+}
+
 - (void)addDelegate:(id<JConnectionDelegate>)delegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!delegate) {

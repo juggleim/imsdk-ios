@@ -27,6 +27,8 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData;
 
+- (JConnectionStatus)getConnectionStatus;
+
 - (void)addDelegate:(id<JConnectionDelegate>) delegate;
 
 @end

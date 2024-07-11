@@ -24,9 +24,7 @@
     return kImageType;
 }
 
-
 - (NSData *)encode{
-    
     //绝对路径转换成相对路径
     NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
     
