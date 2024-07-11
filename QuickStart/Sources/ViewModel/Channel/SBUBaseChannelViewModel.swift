@@ -233,7 +233,7 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - fileName: file name. Used when displayed in channel list.
     ///   - mimeType: file's mime type.
     ///   - parentMessage: The parent message. The default value is `nil` when there's no parent message.
-    open func sendFileMessage(fileData: Data?, fileName: String, mimeType: String, parentMessage: JMessage? = nil) {
+    open func sendMediaMessage(fileData: Data?, fileName: String, mimeType: String, parentMessage: JMessage? = nil) {
 //        guard let fileData = fileData else { return }
 //        let messageParams = JMessageCreateParams(file: fileData)
 //        messageParams.fileName = fileName

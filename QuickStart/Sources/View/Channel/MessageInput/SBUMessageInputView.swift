@@ -963,26 +963,10 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
     /// - Since: 3.6.0
     open func generateResourceItems() -> [SBUActionSheetItem] {
         var items: [SBUActionSheetItem] = []
-        var inputConfig: SBUConfig.BaseInput?
         
-//        if self.channelType == .group {
-//            inputConfig = SendbirdUI.config.groupChannel.channel.input
-//        } else if self.channelType == .open {
-//            inputConfig = SendbirdUI.config.openChannel.channel.input
-//        }
-        
-        guard let inputConfig = inputConfig else { return items }
-        
-        if inputConfig.camera.isPhotoEnabled || inputConfig.camera.isVideoEnabled {
-            items.append(self.cameraItem)
-        }
-        if inputConfig.gallery.isPhotoEnabled || inputConfig.gallery.isVideoEnabled {
-            items.append(self.libraryItem)
-        }
-        if inputConfig.isDocumentEnabled {
-            items.append(self.documentItem)
-        }
-        
+        items.append(self.cameraItem)
+        items.append(self.libraryItem)
+        items.append(self.documentItem)        
         return items
     }
     

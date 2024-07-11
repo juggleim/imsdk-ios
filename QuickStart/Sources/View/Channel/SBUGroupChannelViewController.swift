@@ -462,46 +462,32 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     /// - NOTE: If you want to use customized `PHPickerConfiguration`, please override this method.
     /// - Since: 3.10.0
     open override func showPhotoLibraryPicker() {
-//        let inputConfig = SendbirdUI.config.groupChannel.channel.input
-//
-//        if #available(iOS 14, *), SBUGlobals.isPHPickerEnabled {
-//            var pickerFilter: [PHPickerFilter] = []
-//            if inputConfig.gallery.isPhotoEnabled { pickerFilter += [.images] }
-//            if inputConfig.gallery.isVideoEnabled { pickerFilter += [.videos] }
-//
-//            var configuration = PHPickerConfiguration()
-//            configuration.filter = .any(of: pickerFilter)
-//
-//            if let groupChannel = self.viewModel?.channel as? GroupChannel,
-//               !groupChannel.isSuper && !groupChannel.isBroadcast,
-//               inputComponent?.currentQuotedMessage == nil,
-//               SendbirdUI.config.groupChannel.channel.isMultipleFilesMessageEnabled {
-//                configuration.selectionLimit = SBUAvailable.multipleFilesMessageFileCountLimit
-//
-//                if #available(iOS 15, *) {
-//                    configuration.selection = .ordered
-//                }
-//            }
-//
-//            let picker = PHPickerViewController(configuration: configuration)
-//            picker.delegate = self
-//            self.present(picker, animated: true, completion: nil)
-//            return
-//        }
-//
-//        let sourceType: UIImagePickerController.SourceType = .photoLibrary
-//        var mediaType: [String] = []
-//
-//        if inputConfig.gallery.isPhotoEnabled { mediaType += [String(kUTTypeImage), String(kUTTypeGIF)] }
-//        if inputConfig.gallery.isVideoEnabled { mediaType += [String(kUTTypeMovie)] }
-//
-//        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-//            let imagePickerController = UIImagePickerController()
-//            imagePickerController.delegate = self
-//            imagePickerController.sourceType = sourceType
-//            imagePickerController.mediaTypes = mediaType
-//            self.present(imagePickerController, animated: true, completion: nil)
-//        }
+        if #available(iOS 14, *), SBUGlobals.isPHPickerEnabled {
+            var pickerFilter: [PHPickerFilter] = []
+            pickerFilter += [.images]
+            pickerFilter += [.videos]
+
+            var configuration = PHPickerConfiguration()
+            configuration.filter = .any(of: pickerFilter)
+
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+            return
+        }
+
+        let sourceType: UIImagePickerController.SourceType = .photoLibrary
+        var mediaType: [String] = []
+        mediaType += [String(kUTTypeImage), String(kUTTypeGIF)]
+        mediaType += [String(kUTTypeMovie)]
+
+        if UIImagePickerController.isSourceTypeAvailable(sourceType) {
+            let imagePickerController = UIImagePickerController()
+            imagePickerController.delegate = self
+            imagePickerController.sourceType = sourceType
+            imagePickerController.mediaTypes = mediaType
+            self.present(imagePickerController, animated: true, completion: nil)
+        }
     }
 
     @available(iOS 14, *)
@@ -823,7 +809,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
             messageInputView.setMode(.none)
         }
         
-        self.viewModel?.sendFileMessage(
+        self.viewModel?.sendMediaMessage(
             fileData: fileData,
             fileName: fileName,
             mimeType: mimeType,
