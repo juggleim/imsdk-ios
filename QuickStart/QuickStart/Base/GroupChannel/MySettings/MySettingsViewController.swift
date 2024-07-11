@@ -164,6 +164,10 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     
     /// Sign out and dismiss tabbarController,
     func signOutAction() {
+        if JIM.shared().connectionManager.getConnectionStatus() == .disconnected {
+            self.tabBarController?.dismiss(animated: true, completion: nil)
+            return
+        }
         JIM.shared().connectionManager.disconnect(false)
     }
 }

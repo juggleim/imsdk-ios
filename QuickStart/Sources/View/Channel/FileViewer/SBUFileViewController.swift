@@ -74,7 +74,7 @@ public struct SBUFileData {
             urlString: "",
             message: fileMessage,
             cacheKey: "",
-            fileType: SBUUtils.getFileType(by: fileMessage),
+            fileType: SBUUtils.getMediaType(by: fileMessage),
             name: ""
         )
     }

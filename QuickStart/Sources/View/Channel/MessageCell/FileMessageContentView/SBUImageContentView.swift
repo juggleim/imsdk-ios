@@ -88,7 +88,6 @@ open class SBUImageContentView: SBUBaseFileContentView {
         let imageOption: UIImageView.ImageOption
         let urlString: String
         
-        let isGifImage = false
         if let imageMessage = message.content as? JImageMessage {
             imageOption = .imageToThumbnail
             urlString = imageMessage.thumbnailUrl

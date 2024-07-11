@@ -85,7 +85,7 @@ open class SBUCommonContentView: SBUBaseFileContentView {
             self.fileImageView.image = nil
         }
         
-        let type = SBUUtils.getFileType(by: message)
+        let type = SBUUtils.getMediaType(by: message)
         
         let image: UIImage
         switch type {

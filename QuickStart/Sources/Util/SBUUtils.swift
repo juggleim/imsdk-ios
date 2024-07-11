@@ -19,15 +19,16 @@ public class SBUUtils {
     /// This function gets the message file type of the file message.
     /// - Parameter JMessage: `JMessage` object
     /// - Returns: `SBUMessageFileType`
-    public static func getFileType(by fileMessage: JMessage) -> SBUMessageFileType {
-//        let type: SBUMessageFileType = SBUUtils.getFileType(by: JMessage.type)
-//        if type == .audio,
-//           let metaArray = JMessage.metaArrays?.filter({ $0.key == SBUConstant.internalMessageTypeKey }),
-//           let internalType = metaArray.first?.value.first {
-//            return SBUUtils.getFileType(by: internalType)
-//        }
-
-        return .audio
+    public static func getMediaType(by message: JMessage) -> SBUMessageFileType {
+        if message.content is JImageMessage {
+            return .image
+        } else if message.content is JVoiceMessage {
+            return .voice
+        } else if message.content is JVideoMessage {
+            return .video
+        } else {
+            return .etc
+        }
     }
     
     /// This function gets the message file type string as the type.

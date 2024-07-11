@@ -66,7 +66,7 @@ open class SBUMediaMessageCell: SBUContentBaseMessageCell {
         super.configure(with: configuration)
         
         // Set up base file content view
-        switch SBUUtils.getFileType(by: message) {
+        switch SBUUtils.getMediaType(by: message) {
         case .image, .video:
             if !(self.baseFileContentView is SBUImageContentView) {
                 self.baseFileContentView.removeFromSuperview()
