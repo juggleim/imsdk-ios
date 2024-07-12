@@ -36,19 +36,13 @@ public class SBUVoiceFileInfo: NSObject {
     /// - Parameter message: `JMessage` object
     /// - Returns: ``SBUVoiceFileInfo`` obejct; If the `message` is not the *voice* message, it returns `nil`
     public static func createVoiceFileInfo(with message: JMessage) -> SBUVoiceFileInfo? {
-//        if SBUUtils.getFileType(by: message) == .voice {
-//            var playtime: Double = 0
-////            let metaArrays = message.metaArrays(keys: [SBUConstant.voiceMessageDurationKey])
-////            if metaArrays.count > 0 {
-////                let value = metaArrays[0].value[0]
-////                playtime = Double(value) ?? 0
-////            }
-//
-//            return SBUVoiceFileInfo(
-//                fileName: SBUStringSet.VoiceMessage.fileName,
-//                playtime: playtime
-//            )
-//        }
+        if let voiceMessage = message.content as? JVoiceMessage {
+            let time: Double = Double(voiceMessage.duration)
+            return SBUVoiceFileInfo(
+                fileName: SBUStringSet.VoiceMessage.fileName,
+                playtime: time
+            )
+        }
         
         return nil
     }

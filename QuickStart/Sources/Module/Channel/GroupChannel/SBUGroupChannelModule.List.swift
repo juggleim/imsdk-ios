@@ -790,14 +790,14 @@ extension SBUGroupChannelModule.List {
     ///   - player: The `SBUVoicePlayer` that updated the play time.
     ///   - time: The updated play time.
     public func voicePlayerDidUpdatePlayTime(_ player: SBUVoicePlayer, time: TimeInterval) {
-//        self.currentVoiceFileInfo?.currentPlayTime = time
-//        self.currentVoiceFileInfo?.isPlaying = true
-//        
-//        if let indexPath = self.currentVoiceContentIndexPath,
-//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-//            voiceContentView.updateVoiceContentStatus(.playing, time: time)
-//        }
+        self.currentVoiceFileInfo?.currentPlayTime = time
+        self.currentVoiceFileInfo?.isPlaying = true
+        
+        if let indexPath = self.currentVoiceContentIndexPath,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUMediaMessageCell,
+           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+            voiceContentView.updateVoiceContentStatus(.playing, time: time)
+        }
     }
     
     /// Methods for quickly applying a text value to a stream message

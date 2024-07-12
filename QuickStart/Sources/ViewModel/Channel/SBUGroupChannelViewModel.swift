@@ -254,7 +254,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         JIM.shared().messageManager.getLocalAndRemoteMessages(from: self.conversationInfo?.conversation, startTime: startTime, count: Int32(defaultFetchLimit), direction: .older) { localMessageList, needRemote in
             self.upsertMessagesInList(messages: localMessageList, needReload: true)
             if let count = localMessageList?.count {
-                SBULog.info("[Request] Prev message list local count is \(count), needReload is \(needRemote)")
+                SBULog.info("[Request] Prev message list local count is \(count), needRemote is \(needRemote)")
                 if count < self.defaultFetchLimit && !needRemote {
                     self.hasPreviousMessage = false
                 }

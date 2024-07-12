@@ -749,11 +749,11 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.showUserProfile(user: user)
     }
     
-    open override func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage fileMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        super.baseChannelModule(listComponent, didTapVoiceMessage: fileMessage, cell: cell, forRowAt: indexPath)
+    open override func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage mediaMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        super.baseChannelModule(listComponent, didTapVoiceMessage: mediaMessage, cell: cell, forRowAt: indexPath)
         
         if let cell = cell as? SBUBaseMessageCell {
-            self.listComponent?.updateVoiceMessage(cell, message: fileMessage, indexPath: indexPath)
+            self.listComponent?.updateVoiceMessage(cell, message: mediaMessage, indexPath: indexPath)
         }
     }
     
