@@ -42,7 +42,7 @@
 		A07F3B512BF4A2260087920B /* NSLayoutConstraint+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F396D2BF4A2230087920B /* NSLayoutConstraint+SBUIKit.swift */; };
 		A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F396E2BF4A2230087920B /* UIButton+SBUIKit.swift */; };
 		A07F3B532BF4A2260087920B /* UINavigationController+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F396F2BF4A2230087920B /* UINavigationController+SBUIKit.swift */; };
-		A07F3B542BF4A2260087920B /* BaseMessage+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39712BF4A2230087920B /* BaseMessage+SBUIKit.swift */; };
+		A07F3B542BF4A2260087920B /* JMessage+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39712BF4A2230087920B /* JMessage+SBUIKit.swift */; };
 		A07F3B562BF4A2260087920B /* String+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39732BF4A2230087920B /* String+SBUIKit.swift */; };
 		A07F3B572BF4A2260087920B /* CGSize+SBUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39742BF4A2230087920B /* CGSize+SBUIKit.swift */; };
 		A07F3B582BF4A2260087920B /* Float+SBUKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F39752BF4A2230087920B /* Float+SBUKit.swift */; };
@@ -262,7 +262,7 @@
 		A07F396D2BF4A2230087920B /* NSLayoutConstraint+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+SBUIKit.swift"; sourceTree = "<group>"; };
 		A07F396E2BF4A2230087920B /* UIButton+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIButton+SBUIKit.swift"; sourceTree = "<group>"; };
 		A07F396F2BF4A2230087920B /* UINavigationController+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+SBUIKit.swift"; sourceTree = "<group>"; };
-		A07F39712BF4A2230087920B /* BaseMessage+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BaseMessage+SBUIKit.swift"; sourceTree = "<group>"; };
+		A07F39712BF4A2230087920B /* JMessage+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "JMessage+SBUIKit.swift"; sourceTree = "<group>"; };
 		A07F39732BF4A2230087920B /* String+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+SBUIKit.swift"; sourceTree = "<group>"; };
 		A07F39742BF4A2230087920B /* CGSize+SBUIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGSize+SBUIKit.swift"; sourceTree = "<group>"; };
 		A07F39752BF4A2230087920B /* Float+SBUKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Float+SBUKit.swift"; sourceTree = "<group>"; };
@@ -580,7 +580,7 @@
 		A07F39702BF4A2230087920B /* ChatSDK */ = {
 			isa = PBXGroup;
 			children = (
-				A07F39712BF4A2230087920B /* BaseMessage+SBUIKit.swift */,
+				A07F39712BF4A2230087920B /* JMessage+SBUIKit.swift */,
 			);
 			path = ChatSDK;
 			sourceTree = "<group>";
@@ -1487,7 +1487,7 @@
 				A0968C892C2B020300E68790 /* SBUQuoteMessageInputViewParams.swift in Sources */,
 				A09645CC2BF36BD000290775 /* SceneDelegate.swift in Sources */,
 				A07F3C0F2BF4A2280087920B /* SBUTheme.swift in Sources */,
-				A07F3B542BF4A2260087920B /* BaseMessage+SBUIKit.swift in Sources */,
+				A07F3B542BF4A2260087920B /* JMessage+SBUIKit.swift in Sources */,
 				A07F3B4E2BF4A2260087920B /* UIColor+SBUIKit.swift in Sources */,
 				A07F3C7F2BF4A2290087920B /* SBUPaddingLabel.swift in Sources */,
 				A07F3B7C2BF4A2270087920B /* SBUVoiceRecorder.swift in Sources */,

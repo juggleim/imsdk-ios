@@ -10,11 +10,11 @@ import Foundation
 import JetIM
 
 extension JMessage {
-//    /// Gets the key value to be used in the cache
-//    /// - Since: 3.6.2
-//    var cacheKey: String {
-//        self.isRequestIdValid ? self.requestId : "\(self.messageId)"
-//    }
+    /// Gets the key value to be used in the cache
+    /// - Since: 3.6.2
+    var cacheKey: String {
+        "\(self.clientMsgNo)"
+    }
 //
 //    /// Validates request id
 //    /// - Returns: `true` is valid value

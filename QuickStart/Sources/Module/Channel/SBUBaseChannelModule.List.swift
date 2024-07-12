@@ -852,11 +852,20 @@ extension SBUBaseChannelModule {
         ///   - message: Message object
         ///   - indexPath: indexpath of cell
         open func setTapGesture(_ cell: UITableViewCell, message: JMessage, indexPath: IndexPath) {
-            self.baseDelegate?.baseChannelModule(
-                self,
-                didTapMessage: message,
-                forRowAt: indexPath
-            )
+            if message.content is JVoiceMessage {
+                self.baseDelegate?.baseChannelModule(
+                    self,
+                    didTapVoiceMessage: message,
+                    cell: cell,
+                    forRowAt: indexPath
+                )
+            } else {
+                self.baseDelegate?.baseChannelModule(
+                    self,
+                    didTapMessage: message,
+                    forRowAt: indexPath
+                )
+            }
         }
         
         /// This function sets the cell's long tap gesture handling.

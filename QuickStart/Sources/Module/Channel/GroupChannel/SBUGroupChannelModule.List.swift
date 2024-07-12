@@ -426,6 +426,7 @@ extension SBUGroupChannelModule {
                 self.setMessageCellAnimation(textMessageCell, message: message, indexPath: indexPath)
                 self.setMessageCellGestures(textMessageCell, message: message, indexPath: indexPath)
             } else if message.content is JMediaMessageContent {
+                let voiceFileInfo = self.voiceFileInfos[message.cacheKey] ?? nil
                 guard let mediaMessageCell = messageCell as? SBUMediaMessageCell else {
                     return
                 }
@@ -438,15 +439,30 @@ extension SBUGroupChannelModule {
                     useReaction: false,
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
-                    voiceFileInfo: nil,
+                    voiceFileInfo: voiceFileInfo,
                     enableEmojiLongPress: false
                 )
                 configuration.shouldHideFeedback = true
+                
+                if voiceFileInfo != nil {
+                    self.currentVoiceFileInfo = nil
+                    self.currentVoiceContentView = nil
+                }
+                
                 mediaMessageCell.configure(with: configuration)
                 mediaMessageCell.configure(highlightInfo: self.highlightInfo)
                 self.setMessageCellAnimation(mediaMessageCell, message: message, indexPath: indexPath)
                 self.setMessageCellGestures(mediaMessageCell, message: message, indexPath: indexPath)
                 self.setMediaMessageCellImage(mediaMessageCell, mediaMessage: message)
+                
+                if let voiceFileInfo = voiceFileInfo,
+                   voiceFileInfo.isPlaying == true,
+                   let voiceContentView = mediaMessageCell.baseFileContentView as? SBUVoiceContentView {
+                    
+                    self.currentVoiceContentIndexPath = indexPath
+                    self.currentVoiceFileInfo = voiceFileInfo
+                    self.currentVoiceContentView = voiceContentView
+                }
             } else {
                 guard let unknownMessageCell = messageCell as? SBUUnknownMessageCell else {
                     return
@@ -627,97 +643,94 @@ extension SBUGroupChannelModule.List {
     ///
     /// - Since: 3.4.0
     func updateVoiceMessage(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
-//        guard let JMessageCell = cell as? SBUBaseMessageCell,
-//              let JMessage = message as? JMessage,
-//              let voiceContentView = JMessageCell.baseFileContentView as? SBUVoiceContentView,
-//              SBUUtils.getFileType(by: JMessage) == .voice else { return }
-//
-//        if self.voiceFileInfos[JMessage.cacheKey] == nil {
-//            voiceContentView.updateVoiceContentStatus(.loading)
-//        }
-//
-//        SBUCacheManager.File.loadFile(
-//            urlString: JMessage.url,
-//            cacheKey: JMessage.cacheKey,
-//            fileName: JMessage.name
-//        ) { [weak self] filePath, _ in
-//
-//            var playtime: Double = 0
-//            let metaArrays = message.metaArrays(keys: [SBUConstant.voiceMessageDurationKey])
-//            if metaArrays.count > 0 {
-//                let value = metaArrays[0].value[0]
-//                playtime = Double(value) ?? 0
-//            }
-//
-//            guard let filePath = filePath else {
-//                self?.pauseAllVoicePlayer()
-//                voiceContentView.updateVoiceContentStatus(.none, time: playtime)
-//                return
-//            }
-//            if voiceContentView.status == .loading || voiceContentView.status == .none {
-//                voiceContentView.updateVoiceContentStatus(.prepared)
-//            }
-//
-//            var voicefileInfo: SBUVoiceFileInfo?
-//            if self?.voiceFileInfos[JMessage.cacheKey] == nil {
-//                voicefileInfo = SBUVoiceFileInfo(
-//                    fileName: JMessage.name,
-//                    filePath: filePath,
-//                    playtime: playtime,
-//                    currentPlayTime: 0
-//                )
-//
-//                self?.voiceFileInfos[JMessage.cacheKey] = voicefileInfo
-//            } else {
-//                voicefileInfo = self?.voiceFileInfos[JMessage.cacheKey]
-//            }
-//
-//            var actionInSameView = false
-//            if let voicefileInfo = voicefileInfo {
-//                if self?.currentVoiceFileInfo?.isPlaying == true {
-//                    // updated status of previously contentView
-//                    let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
-//                    self?.currentVoiceFileInfo?.isPlaying = false
-//                    self?.currentVoiceContentView?.updateVoiceContentStatus(.pause, time: currentPlayTime)
-//
-//                    if self?.currentVoiceContentView == voiceContentView {
-//                        actionInSameView = true
-//                    }
-//                }
-//
-//                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
-//            }
-//
-//            if let voicefileInfo = voicefileInfo {
-//                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
-//                self?.currentVoiceContentIndexPath = indexPath
-//            }
-//
-//            if self?.currentVoiceFileInfo != voicefileInfo {
-//                self?.pauseAllVoicePlayer()
-//            }
-//
-//            self?.currentVoiceFileInfo = voicefileInfo
-//            self?.currentVoiceContentView = voiceContentView
-//
-//            switch voiceContentView.status {
-//            case .none:
-//                break
-//            case .loading:
-//                break
-//            case .prepared:
-//                self?.voicePlayer?.play()
-//            case .playing:
-//                self?.voicePlayer?.pause()
-//            case .pause:
-//                if actionInSameView == true { break }
-//
-//                let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
-//                self?.voicePlayer?.play(fromTime: currentPlayTime)
-//            case .finishPlaying:
-//                self?.voicePlayer?.play()
-//            }
-//        }
+        guard let mediaMessageCell = cell as? SBUMediaMessageCell,
+              let voiceContentView = mediaMessageCell.baseFileContentView as? SBUVoiceContentView else { return }
+
+        if self.voiceFileInfos[message.cacheKey] == nil {
+            voiceContentView.updateVoiceContentStatus(.loading)
+        }
+        
+        guard let voiceMessage = message.content as? JVoiceMessage, let voiceUrl = voiceMessage.url else {
+            return
+        }
+
+        SBUCacheManager.File.loadFile(
+            urlString: voiceUrl,
+            cacheKey: message.cacheKey,
+            fileName: ""
+        ) { [weak self] filePath, _ in
+
+            var playtime: Double = Double(voiceMessage.duration)
+
+            guard let filePath = filePath else {
+                self?.pauseAllVoicePlayer()
+                voiceContentView.updateVoiceContentStatus(.none, time: playtime)
+                return
+            }
+            if voiceContentView.status == .loading || voiceContentView.status == .none {
+                voiceContentView.updateVoiceContentStatus(.prepared)
+            }
+
+            var voicefileInfo: SBUVoiceFileInfo?
+            if self?.voiceFileInfos[message.cacheKey] == nil {
+                voicefileInfo = SBUVoiceFileInfo(
+                    fileName: "",
+                    filePath: filePath,
+                    playtime: playtime,
+                    currentPlayTime: 0
+                )
+
+                self?.voiceFileInfos[message.cacheKey] = voicefileInfo
+            } else {
+                voicefileInfo = self?.voiceFileInfos[message.cacheKey]
+            }
+
+            var actionInSameView = false
+            if let voicefileInfo = voicefileInfo {
+                if self?.currentVoiceFileInfo?.isPlaying == true {
+                    // updated status of previously contentView
+                    let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
+                    self?.currentVoiceFileInfo?.isPlaying = false
+                    self?.currentVoiceContentView?.updateVoiceContentStatus(.pause, time: currentPlayTime)
+
+                    if self?.currentVoiceContentView == voiceContentView {
+                        actionInSameView = true
+                    }
+                }
+
+                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
+            }
+
+            if let voicefileInfo = voicefileInfo {
+                self?.voicePlayer?.configure(voiceFileInfo: voicefileInfo)
+                self?.currentVoiceContentIndexPath = indexPath
+            }
+
+            if self?.currentVoiceFileInfo != voicefileInfo {
+                self?.pauseAllVoicePlayer()
+            }
+
+            self?.currentVoiceFileInfo = voicefileInfo
+            self?.currentVoiceContentView = voiceContentView
+
+            switch voiceContentView.status {
+            case .none:
+                break
+            case .loading:
+                break
+            case .prepared:
+                self?.voicePlayer?.play()
+            case .playing:
+                self?.voicePlayer?.pause()
+            case .pause:
+                if actionInSameView == true { break }
+
+                let currentPlayTime = self?.currentVoiceFileInfo?.currentPlayTime ?? 0
+                self?.voicePlayer?.play(fromTime: currentPlayTime)
+            case .finishPlaying:
+                self?.voicePlayer?.play()
+            }
+        }
     }
     
     // MARK: - SBUVoicePlayerDelegate
