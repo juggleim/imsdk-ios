@@ -28,6 +28,8 @@
 #import "JClearTotalUnreadMessage.h"
 #import "JLogger.h"
 #import "JUploadManager.h"
+#import "JDownloader.h"
+#import "JUtility.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
 {
@@ -936,6 +938,93 @@
     }];
 }
 
+- (void)downloadMediaMessage:(NSString *)messageId
+                    progress:(void (^)(JMessage *, int))progressBlock
+                     success:(void (^)(JMessage *))successBlock
+                       error:(void (^)(JErrorCode))errorBlock {
+    JMessage *message = [self.core.dbManager getMessageWithMessageId:messageId];
+    if (!message) {
+        JLogE(@"MSG-Download", @"can't find message with messageId %@", messageId);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    JMessageContent *content = message.content;
+    if (![content isKindOfClass:[JMediaMessageContent class]]) {
+        JLogE(@"MSG-Download", @"content is not a JMediaMessageContent");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
+    NSString *localPath = mediaContent.localPath;
+    if (localPath.length > 0) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if ([fileManager fileExistsAtPath:localPath]) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (successBlock) {
+                    successBlock(message);
+                }
+            });
+            return;
+        }
+    }
+    
+    NSString *appKey = self.core.appKey;
+    NSString *userId = self.core.userId;
+    if (appKey.length == 0 || userId.length == 0) {
+        JLogE(@"MSG-Download", @"appKey or userId length is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    NSString *media = @"file";
+    if ([content isKindOfClass:[JImageMessage class]]) {
+        media = @"image";
+    } else if ([content isKindOfClass:[JVoiceMessage class]]) {
+        media = @"voice";
+    } else if ([content isKindOfClass:[JVideoMessage class]]) {
+        media = @"video";
+    }
+    NSString *url = mediaContent.url;
+    NSString *name = [messageId stringByAppendingFormat:@"_%@", [self getFileNameWith:url]];
+    NSString *path = [self generateLocalPath:self.core.appKey userId:self.core.userId type:media name:name];
+    JDownloader *downloader = [[JDownloader alloc] initWithUrl:url
+                                                          path:path
+                                                      progress:^(int progress) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (progressBlock) {
+                progressBlock(message, progress);
+            }
+        });
+    } success:^(NSString * _Nonnull localPath) {
+        mediaContent.localPath = localPath;
+        [self.core.dbManager updateMessageContent:mediaContent contentType:message.contentType withMessageId:messageId];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(message);
+            }
+        });
+    } error:^(JErrorCode errorCode) {
+        JLogE(@"MSG-Download", @"download fail, code is %ld", errorCode);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(errorCode);
+            }
+        });
+    }];
+    [downloader start];
+}
+
 - (void)registerContentType:(Class)messageClass {
     JLogI(@"MSG-Register", @"class is %@", messageClass);
     [[JContentTypeCenter shared] registerContentType:messageClass];
@@ -1535,6 +1624,37 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
+- (NSString *)generateLocalPath:(NSString *)appKey
+                         userId:(NSString *)userId
+                           type:(NSString *)mediaType
+                           name:(NSString *)fileName {
+    NSString *root = [JUtility rootPath];
+    NSString *path = [root stringByAppendingPathComponent:appKey];
+    path = [path stringByAppendingPathComponent:userId];
+    path = [path stringByAppendingPathComponent:mediaType];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:path
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+    }
+    path = [path stringByAppendingPathComponent:fileName];
+    return path;
+}
+
+- (NSString *)getFileNameWith:(NSString *)url {
+    if (url.length == 0) {
+        return @"";
+    }
+    NSArray *a = [url componentsSeparatedByString:@"/"];
+    NSUInteger c = a.count;
+    if (c > 0) {
+        return a[c-1];
+    } else {
+        return @"";
+    }
 }
 
 - (void)updateSendSyncTime:(long long)timestamp {

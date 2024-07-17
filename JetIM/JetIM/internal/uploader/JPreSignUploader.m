@@ -69,6 +69,7 @@
                 [self notifySuccess:modifiedUrl];
             }
         }
+        [session invalidateAndCancel];
     }];
     
     // 启动任务

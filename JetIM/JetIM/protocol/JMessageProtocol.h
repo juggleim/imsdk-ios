@@ -14,14 +14,20 @@
 @class JMergeMessage;
 
 @protocol JMessageDelegate <NSObject>
-
+/// 接收消息的回调
 - (void)messageDidReceive:(JMessage *)message;
 
+@optional
+/// 消息撤回的回调
 - (void)messageDidRecall:(JMessage *)message;
-
+/// 消息删除的回调
 - (void)messageDidDelete:(JConversation *)conversation
             clientMsgNos:(NSArray <NSNumber *> *)clientMsgNos;
-
+/// 消息清除的回调
+/// - Parameters:
+///   - conversation: 被清除消息所属的会话标识
+///   - timestamp: 消息清除的时间戳，在 timestamp 之前的消息被清除
+///   - senderId: 发送者 id 为 senderId 的消息被清除，如果为 nil，表示所有 timestamp 之前的消息被清除
 - (void)messageDidClear:(JConversation *)conversation
               timestamp:(long long)timestamp
                senderId:(NSString *)senderId;
@@ -370,6 +376,16 @@
                 progress:(void (^)(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount))progressBlock
                 complete:(void (^)(void))completeBlock;
 
+/// 下载消息中的媒体文件
+/// - Parameters:
+///   - messageId: 消息 id
+///   - progressBlock: 进度更新的回调 [progress: 当前的下载进度，0 <= progress <= 100]
+///   - successBlock: 成功的回调 [message: 下载完成的本地路径已写入 message]
+///   - errorBlock: 失败的回调 [errorCode: 错误码]
+- (void)downloadMediaMessage:(NSString *)messageId
+                    progress:(void (^)(JMessage *message, int progress))progressBlock
+                     success:(void (^)(JMessage *message))successBlock
+                       error:(void (^)(JErrorCode errorCode))errorBlock;
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state

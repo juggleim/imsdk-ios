@@ -7,6 +7,7 @@
 #import <JetIM/JetIMConst.h>
 
 @protocol JConnectionDelegate <NSObject>
+@optional
 /// 连接状态变化的回调
 /// - Parameters:
 ///   - status: 变化后的状态

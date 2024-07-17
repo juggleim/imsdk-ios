@@ -23,10 +23,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-//    [JIM.shared setServer:@[@"https://im-nav.yometalk.com"]];
+    [JIM.shared setServer:@[@"http://120.48.178.248:8083"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken4];
+    [JIM.shared.connectionManager connectWithToken:kToken2];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -86,21 +86,24 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JImageMessage *image = [[JImageMessage alloc] init];
-            image.localPath = @"asdfasdf";
-            image.size = 1000;
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-            [JIM.shared.messageManager sendMediaMessage:image
-                                         inConversation:c
-                                               progress:^(int progress, JMessage *message) {
-                NSLog(@"asdf");
-            } success:^(JMessage *message) {
-                NSLog(@"sadfasdf");
-            } error:^(JErrorCode errorCode, JMessage *message) {
-                NSLog(@"fasdf");
-            } cancel:^(JMessage *message) {
-                NSLog(@"fasdf");
-            }];
+            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
+            NSArray *a = [JIM.shared.messageManager getMessagesFrom:conversation count:100 time:0 direction:JPullDirectionOlder];
+            int i = 1;
+//            JImageMessage *image = [[JImageMessage alloc] init];
+//            image.localPath = @"asdfasdf";
+//            image.size = 1000;
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
+//            [JIM.shared.messageManager sendMediaMessage:image
+//                                         inConversation:c
+//                                               progress:^(int progress, JMessage *message) {
+//                NSLog(@"asdf");
+//            } success:^(JMessage *message) {
+//                NSLog(@"sadfasdf");
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                NSLog(@"fasdf");
+//            } cancel:^(JMessage *message) {
+//                NSLog(@"fasdf");
+//            }];
             
 //            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
 //            message.url = @"http://www.baidu.com";
@@ -473,6 +476,17 @@
         NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %d, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
         NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %d, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
+    }
+    
+    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+        [JIM.shared.messageManager downloadMediaMessage:message.messageId
+                                               progress:^(JMessage *message, int progress) {
+            NSLog(@"lifei, download progress %d", progress);
+        } success:^(JMessage *message) {
+            NSLog(@"lifei, download success");
+        } error:^(JErrorCode errorCode) {
+            NSLog(@"lifei, download error code is %d", errorCode);
+        }];
     }
 }
 
