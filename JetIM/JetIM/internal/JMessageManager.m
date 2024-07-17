@@ -1244,6 +1244,11 @@
         JLogI(@"MSG-Send", @"error, code is %lu", errorCode);
         message.messageState = JMessageStateFail;
         [self.core.dbManager messageSendFail:clientMsgNo];
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageStateDidChange:conversation:clientMsgNo:)]) {
+            [self.sendReceiveDelegate messageStateDidChange:JMessageStateFail
+                                               conversation:message.conversation
+                                                clientMsgNo:message.clientMsgNo];
+        }
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)errorCode, message);
