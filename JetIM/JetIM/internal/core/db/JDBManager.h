@@ -80,7 +80,6 @@ NS_ASSUME_NONNULL_BEGIN
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo;
 -(void)updateMessage:(JConcreteMessage *)message;
-- (void)messageSendFail:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation

@@ -208,10 +208,6 @@
     [self.messageDb updateMessage:message];
 }
 
-- (void)messageSendFail:(long long)clientMsgNo {
-    [self.messageDb messageSendFail:clientMsgNo];
-}
-
 - (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
     [self.messageDb setMessagesRead:messageIds];
 }

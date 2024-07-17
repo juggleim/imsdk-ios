@@ -36,8 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo;
 
-- (void)messageSendFail:(long long)clientMsgNo;
-
 -(void)updateMessage:(JConcreteMessage *)message;
 
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation

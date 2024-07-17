@@ -204,10 +204,6 @@ NSString *const jReferMsgId = @"refer_msg_id";
     
 }
 
-- (void)messageSendFail:(long long)clientMsgNo {
-    [self.dbHelper executeUpdate:jMessageSendFail withArgumentsInArray:@[@(JMessageStateFail), @(clientMsgNo)]];
-}
-
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
