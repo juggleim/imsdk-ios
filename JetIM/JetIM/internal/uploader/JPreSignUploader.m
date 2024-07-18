@@ -50,10 +50,10 @@
     NSURL *fileURL = [NSURL fileURLWithPath:self.localPath];
     NSData * data = [NSData dataWithContentsOfURL:fileURL];
     if(data == nil || data.length == 0){
-          JLogE(@"J-Uploader", @"PreSignUploader error, update File is empty");
-          [self notifyFail];
-          return;
-      }
+        JLogE(@"J-Uploader", @"PreSignUploader error, update File is empty");
+        [self notifyFail];
+        return;
+    }
     //上传URL
     NSURL *uploadURL = [NSURL URLWithString:self.preSignCred.url];
     // 创建请求

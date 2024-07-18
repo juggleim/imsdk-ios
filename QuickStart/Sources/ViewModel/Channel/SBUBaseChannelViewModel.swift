@@ -297,28 +297,30 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - voiceFileInfo: ``SBUVoiceFileInfo`` class object
     ///   - parentMessage: The parent message. The default value is `nil` when there's no parent message.
     open func sendVoiceMessage(voiceFileInfo: SBUVoiceFileInfo, parentMessage: JMessage? = nil) {
-//        guard let filePath = voiceFileInfo.filePath,
-//              let fileName = voiceFileInfo.fileName,
-//              let fileData = SBUCacheManager.File.diskCache.get(fullPath: filePath) else { return }
-//        let playtime = String(Int(voiceFileInfo.playtime ?? 0))
-//        let durationMetaArray = MessageMetaArray(key: SBUConstant.voiceMessageDurationKey, value: [playtime])
-//        let typeMetaArray = MessageMetaArray(key: SBUConstant.internalMessageTypeKey, value: [SBUConstant.voiceMessageType])
-//
-//        let messageParams = JMessageCreateParams(file: fileData)
-//        messageParams.fileName = fileName // Maintain the file name used for recording to erase the recording file cache
-//        messageParams.mimeType = "\(SBUConstant.voiceMessageType);\(SBUConstant.voiceMessageTypeVoiceParameter)"
-//        messageParams.fileSize = UInt(fileData.count)
-//        messageParams.metaArrays = [durationMetaArray, typeMetaArray]
-//
-//        SBUGlobalCustomParams.voiceJMessageParamsSendBuilder?(messageParams)
-//
-//        if let parentMessage = parentMessage,
-//           SendbirdUI.config.groupChannel.channel.replyType != .none {
-//            messageParams.parentMessageId = parentMessage.messageId
-//            messageParams.isReplyToChannel = true
-//        }
-//
-//        self.sendJMessage(messageParams: messageParams, parentMessage: parentMessage)
+        guard let filePath = voiceFileInfo.filePath,
+              let fileName = voiceFileInfo.fileName,
+              let fileData = SBUCacheManager.File.diskCache.get(fullPath: filePath) else { return }
+        let playtime = String(Int(voiceFileInfo.playtime ?? 0))
+        
+        let voiceMessage = JVoiceMessage()
+        voiceMessage.duration = Int(voiceFileInfo.playtime ?? 0)
+        voiceMessage.localPath = voiceFileInfo.filePath?.relativePath
+        let message = JIM.shared().messageManager.sendMediaMessage(voiceMessage, in: conversationInfo?.conversation) { progress, message in
+            
+        } success: { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code, errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        } cancel: { cancelMessage in
+            
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }
     
     /// Sends a file message with messageParams.
