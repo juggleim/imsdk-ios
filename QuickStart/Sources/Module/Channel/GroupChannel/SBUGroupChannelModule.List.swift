@@ -545,8 +545,8 @@ extension SBUGroupChannelModule {
         }
         
         open override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-//            guard let JMessageCell = cell as? SBUBaseMessageCell,
-//                  JMessageCell.baseFileContentView is SBUVoiceContentView else { return }
+            guard let mediaMessageCell = cell as? SBUMediaMessageCell,
+                  mediaMessageCell.baseFileContentView is SBUVoiceContentView else { return }
         }
         
         /// Register the message cell to the table view.
@@ -660,7 +660,7 @@ extension SBUGroupChannelModule.List {
             fileName: ""
         ) { [weak self] filePath, _ in
 
-            var playtime: Double = Double(voiceMessage.duration)
+            let playtime: Double = Double(voiceMessage.duration)
 
             guard let filePath = filePath else {
                 self?.pauseAllVoicePlayer()
@@ -746,11 +746,11 @@ extension SBUGroupChannelModule.List {
         let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
         self.currentVoiceFileInfo?.isPlaying = true
         
-//        if let indexPath = self.currentVoiceContentIndexPath,
-//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-//            voiceContentView.updateVoiceContentStatus(.playing, time: currentPlayTime)
-//        }
+        if let indexPath = self.currentVoiceContentIndexPath,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUMediaMessageCell,
+           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+            voiceContentView.updateVoiceContentStatus(.playing, time: currentPlayTime)
+        }
     }
     
     /// This method is called when the voice player is paused.
@@ -758,27 +758,27 @@ extension SBUGroupChannelModule.List {
     ///   - player: The `SBUVoicePlayer` that is paused.
     ///   - voiceFileInfo: The `SBUVoiceFileInfo` of the voice file that is paused.
     public func voicePlayerDidPause(_ player: SBUVoicePlayer, voiceFileInfo: SBUVoiceFileInfo?) {
-//        let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
-//        self.currentVoiceFileInfo?.isPlaying = false
-//
-//        if let indexPath = self.currentVoiceContentIndexPath,
-//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-//            voiceContentView.updateVoiceContentStatus(.pause, time: currentPlayTime)
-//        }
+        let currentPlayTime = self.currentVoiceFileInfo?.currentPlayTime ?? 0
+        self.currentVoiceFileInfo?.isPlaying = false
+
+        if let indexPath = self.currentVoiceContentIndexPath,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUMediaMessageCell,
+           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+            voiceContentView.updateVoiceContentStatus(.pause, time: currentPlayTime)
+        }
     }
     
     /// This method is called when the voice player stops.
     /// - Parameter player: The `SBUVoicePlayer` that stopped.
     public func voicePlayerDidStop(_ player: SBUVoicePlayer) {
-//        let time = self.currentVoiceFileInfo?.playtime ?? 0
-//        self.currentVoiceFileInfo?.isPlaying = false
-//
-//        if let indexPath = self.currentVoiceContentIndexPath,
-//           let cell = self.tableView.cellForRow(at: indexPath) as? SBUBaseMessageCell,
-//           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
-//            voiceContentView.updateVoiceContentStatus(.finishPlaying, time: time)
-//        }
+        let time = self.currentVoiceFileInfo?.playtime ?? 0
+        self.currentVoiceFileInfo?.isPlaying = false
+
+        if let indexPath = self.currentVoiceContentIndexPath,
+           let cell = self.tableView.cellForRow(at: indexPath) as? SBUMediaMessageCell,
+           let voiceContentView = cell.baseFileContentView as? SBUVoiceContentView {
+            voiceContentView.updateVoiceContentStatus(.finishPlaying, time: time)
+        }
     }
     
     /// This method is called when the voice player is reset.
