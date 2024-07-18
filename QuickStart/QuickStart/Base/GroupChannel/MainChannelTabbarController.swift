@@ -45,6 +45,8 @@ class MainChannelTabbarController: UITabBarController {
         self.loadTotalUnreadMessageCount()
         
         JIM.shared().conversationManager.add(self)
+        JIM.shared().connectionManager.add(self)
+        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -167,5 +169,13 @@ extension MainChannelTabbarController: JConversationDelegate {
     func totalUnreadMessageCountDidUpdate(_ count: Int32) {
         let uintCount = UInt(count)
         self.setUnreadMessagesCount(uintCount)
+    }
+}
+
+extension MainChannelTabbarController: JConnectionDelegate {
+    func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+        if (status == .disconnected && code == .userKickedByOtherClient) {
+            self.dismiss(animated: true)
+        }
     }
 }
