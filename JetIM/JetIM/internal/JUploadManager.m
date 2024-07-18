@@ -77,19 +77,15 @@
     BOOL needPreUpload = NO;
     NSString * preUploadLocalPath = @"";
     if ([content isKindOfClass:[JImageMessage class]]) {
-        needPreUpload = YES;
         preUploadLocalPath = ((JImageMessage *) content).thumbnailLocalPath;
-    } else if ([content isKindOfClass:[JVideoMessage class]]) {
-        needPreUpload = YES;
-        preUploadLocalPath = ((JVideoMessage *) content).snapshotLocalPath;
-    }
-    //判空封面或缩略图
-    if (needPreUpload && preUploadLocalPath.length == 0) {
-        JLogE(@"J-Uploader", @"need pre upload but pre upload local path is null, message = %lld", message.clientMsgNo);
-        if(errorBlock){
-            errorBlock();
+        if (preUploadLocalPath.length > 0) {
+            needPreUpload = YES;
         }
-        return;
+    } else if ([content isKindOfClass:[JVideoMessage class]]) {
+        preUploadLocalPath = ((JVideoMessage *) content).snapshotLocalPath;
+        if (preUploadLocalPath.length > 0) {
+            needPreUpload = YES;
+        }
     }
     //有缩略图的情况下先上传缩略图
     if (needPreUpload) {
@@ -175,6 +171,9 @@
     JBaseUploader * uploader = [JUploaderFactory getUpload:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred];
     if(uploader == nil){
         JLogE(@"J-Uploader", @"doRealUpload failed, uploader is null, localPath = %@ , message = %lld", localPath,message.clientMsgNo);
+        if (errorBlock) {
+            errorBlock();
+        }
     }
     uploader.JUploadProgress = ^(int progress) {
         if(progressBlock){

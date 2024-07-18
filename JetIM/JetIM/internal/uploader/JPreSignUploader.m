@@ -48,6 +48,12 @@
     
     //文件URL
     NSURL *fileURL = [NSURL fileURLWithPath:self.localPath];
+    NSData * data = [NSData dataWithContentsOfURL:fileURL];
+    if(data == nil || data.length == 0){
+          JLogE(@"J-Uploader", @"PreSignUploader error, update File is empty");
+          [self notifyFail];
+          return;
+      }
     //上传URL
     NSURL *uploadURL = [NSURL URLWithString:self.preSignCred.url];
     // 创建请求
@@ -57,17 +63,18 @@
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession * session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     self.uploadTask = [session uploadTaskWithRequest:request
-                                            fromFile:fileURL
-                                   completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-        if (error) {
-            JLogE(@"J-Uploader", @"PreSignUploader error, responseCode is %li, responseMessage is %@",error.code,error.domain);
-            [self notifyFail];
-        } else {
+                                            fromData:data
+                                   completionHandler:^(NSData * _Nullable responseData, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error == nil && ((NSHTTPURLResponse *)response).statusCode == 200) {
             NSArray * array = [self.preSignCred.url componentsSeparatedByString:@"?"];
             if(array.count >= 2){
                 NSString * modifiedUrl = array.firstObject;
+                JLogE(@"J-Uploader", @"PreSignUploader success, url is %@",modifiedUrl);
                 [self notifySuccess:modifiedUrl];
             }
+        } else {
+            JLogE(@"J-Uploader", @"PreSignUploader error, responseCode is %li, error is %@",((NSHTTPURLResponse *)response).statusCode,  error.localizedDescription);
+            [self notifyFail];
         }
         [session invalidateAndCancel];
     }];

@@ -86,12 +86,15 @@ open class SBUImageContentView: SBUBaseFileContentView {
         super.configure(message: message, position: position)
 
         let imageOption: UIImageView.ImageOption
-        let urlString: String
+        var urlString: String
         let thumbnailSize: CGSize
         
         if let imageMessage = message.content as? JImageMessage {
             imageOption = .imageToThumbnail
             urlString = imageMessage.thumbnailUrl
+            if urlString.count == 0, let url = imageMessage.url {
+                urlString = url
+            }
             if (imageMessage.width > 0 && imageMessage.height > 0) {
                 thumbnailSize = CGSize(width: Int(imageMessage.width), height: Int(imageMessage.height))
             } else {
