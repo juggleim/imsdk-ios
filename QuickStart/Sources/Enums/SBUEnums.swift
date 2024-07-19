@@ -6,7 +6,7 @@
 //  Copyright © 2020 Sendbird, Inc. All rights reserved.
 //
 import UIKit
-import JetIM
+import JuggleIM
 
 /// This is an enumeration for channel type.
 /// - Since: 3.0.0

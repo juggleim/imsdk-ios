@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 
 protocol SBUViewModelDelegate: AnyObject {
     func dispose()

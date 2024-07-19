@@ -6,7 +6,7 @@
 //  Copyright © 2021 Sendbird, Inc. All rights reserved.
 //
 
-import JetIM
+import JuggleIM
 
 /// This class is used to define the parameters for a base message cell.
 public class SBUBaseMessageCellParams {

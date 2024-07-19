@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 
 @objc
 public enum SBUMessageInputMode: Int {

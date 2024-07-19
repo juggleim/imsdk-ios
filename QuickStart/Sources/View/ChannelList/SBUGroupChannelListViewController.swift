@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 @objcMembers
 open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, SBUGroupChannelListModuleHeaderDelegate, SBUGroupChannelListModuleListDelegate, SBUGroupChannelListModuleListDataSource, SBUCommonViewModelDelegate, SBUGroupChannelListViewModelDelegate {

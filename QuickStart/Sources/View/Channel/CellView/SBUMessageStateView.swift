@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// `SBUMessageStateViewParams` is a class that defines the parameters for a message state view.
 open class SBUMessageStateViewParams {

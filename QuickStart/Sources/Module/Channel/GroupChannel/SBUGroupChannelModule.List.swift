@@ -8,7 +8,7 @@
 
 import UIKit
 import AVFAudio
-import JetIM
+import JuggleIM
 
 /// Event methods for the views updates and performing actions from the list component in a group channel.
 public protocol SBUGroupChannelModuleListDelegate: SBUBaseChannelModuleListDelegate {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public class SBUUser: NSObject {
     public private(set) var userId: String

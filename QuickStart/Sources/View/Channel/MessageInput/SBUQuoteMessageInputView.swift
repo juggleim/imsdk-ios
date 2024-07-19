@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 protocol SBUQuoteMessageInputViewDelegate: AnyObject {
     func didTapClose()

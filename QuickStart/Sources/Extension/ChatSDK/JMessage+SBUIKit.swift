@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 
 extension JMessage {
     /// Gets the key value to be used in the cache

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// The class for configuring scroll position.
 /// - Since: 3.13.0

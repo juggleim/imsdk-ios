@@ -9,7 +9,7 @@
 import UIKit
 import Photos
 import MobileCoreServices
-import JetIM
+import JuggleIM
 
 enum MySettingsCellType: Int {
     case darkTheme, signOut

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// Event methods for the views updates and performing actions from the list component.
 public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {

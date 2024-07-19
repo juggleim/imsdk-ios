@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 // File cache path: {cachesDirectory}/file/{REQ_ID}/{FILENAME}.{EXT}
 

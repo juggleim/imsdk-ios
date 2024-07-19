@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 
 public protocol SBUGroupChannelListViewModelDelegate: SBUBaseChannelListViewModelDelegate {
     /// Called when the channe list has been changed.

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// Typealias for SBUGroupChannelCell. This is deprecated and renamed to SBUGroupChannelCell.
 @available(*, deprecated, renamed: "SBUGroupChannelCell")

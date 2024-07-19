@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// `SBUQuoteMessageInputViewParams` is a class that defines the parameters for a quote message input view.
 public class SBUQuoteMessageInputViewParams {

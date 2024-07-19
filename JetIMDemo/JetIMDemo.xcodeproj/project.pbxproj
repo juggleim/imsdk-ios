@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A07CE4232B45C38C006E3F4D /* JetIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07CE4222B45C38C006E3F4D /* JetIM.framework */; };
 		A08AA1FB2B148B9C008B114C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA1FA2B148B9C008B114C /* AppDelegate.m */; };
 		A08AA1FE2B148B9C008B114C /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA1FD2B148B9C008B114C /* SceneDelegate.m */; };
 		A08AA2012B148B9C008B114C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA2002B148B9C008B114C /* ViewController.m */; };
@@ -15,6 +14,7 @@
 		A08AA2062B148B9E008B114C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2052B148B9E008B114C /* Assets.xcassets */; };
 		A08AA2092B148B9E008B114C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2072B148B9E008B114C /* LaunchScreen.storyboard */; };
 		A08AA20C2B148B9E008B114C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA20B2B148B9E008B114C /* main.m */; };
+		A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +31,7 @@
 		A08AA2082B148B9E008B114C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A08AA20A2B148B9E008B114C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08AA20B2B148B9E008B114C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A07CE4232B45C38C006E3F4D /* JetIM.framework in Frameworks */,
+				A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +84,7 @@
 		A08AA2182B148BD9008B114C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */,
 				A07CE4222B45C38C006E3F4D /* JetIM.framework */,
 			);
 			name = Frameworks;

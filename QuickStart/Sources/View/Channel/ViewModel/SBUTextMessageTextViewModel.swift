@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// SBUUserMessageTextViewModel is a structure that represents the view model for user messages.
 public struct SBUTextMessageTextViewModel {

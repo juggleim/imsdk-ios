@@ -8,7 +8,7 @@
 
 import UIKit
 import AVKit
-import JetIM
+import JuggleIM
 
 
 /// Methods to get data source for the `SBUBaseChannelViewModel`.

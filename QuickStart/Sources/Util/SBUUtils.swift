@@ -8,7 +8,7 @@
 
 import UIKit
 import MobileCoreServices
-import JetIM
+import JuggleIM
 
 private let kDefaultGroupChannelName = "Group Channel"
 private let kDefaultOpenChannelName = "Open Channel"

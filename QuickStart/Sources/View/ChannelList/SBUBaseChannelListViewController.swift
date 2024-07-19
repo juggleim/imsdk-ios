@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /**
  - Note: When you create channel list for open channels, please inherit `SBUBaseChannelListViewController`

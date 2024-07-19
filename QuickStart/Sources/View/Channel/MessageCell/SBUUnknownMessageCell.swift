@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 open class SBUUnknownMessageCell: SBUTextMessageCell {
     open override func configure(with configuration: SBUBaseMessageCellParams) {

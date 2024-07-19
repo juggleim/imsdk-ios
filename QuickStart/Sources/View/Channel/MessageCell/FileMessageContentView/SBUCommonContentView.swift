@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 open class SBUCommonContentView: SBUBaseFileContentView {
     public var stackView: UIStackView = {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// This is a structure that has the essential information of a voice message such as file name, file path, play time and so on.
 public class SBUVoiceFileInfo: NSObject {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// Event methods for the views updates and performing actions from the input component.
 public protocol SBUBaseChannelModuleInputDelegate: SBUCommonDelegate {

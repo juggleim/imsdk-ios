@@ -9,7 +9,7 @@
 import UIKit
 import Photos
 import AVKit
-import JetIM
+import JuggleIM
 
 public protocol SBUMessageInputViewDelegate: AnyObject {
     /// Called when the add button was selected.

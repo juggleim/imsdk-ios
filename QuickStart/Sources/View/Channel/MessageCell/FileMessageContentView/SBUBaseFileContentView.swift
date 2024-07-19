@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 open class SBUBaseFileContentView: SBUView {
     @SBUThemeWrapper(theme: SBUTheme.messageCellTheme)

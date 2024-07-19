@@ -8,7 +8,7 @@
 
 import UIKit
 import AVFoundation
-import JetIM
+import JuggleIM
 
 // File cache path: {cachesDirectory}/image/{REQ_ID}.{EXT}
 

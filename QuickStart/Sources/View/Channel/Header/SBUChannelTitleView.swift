@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public class SBUChannelTitleView: UIView {
     // MARK: - Public

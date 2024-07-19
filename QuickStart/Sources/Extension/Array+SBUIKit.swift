@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public extension Array where Element: SBUUser {
     /// This is a function that extracts the userId array using the `SBUUser` type array.

@@ -8,7 +8,7 @@
 
 import UIKit
 import AssetsLibrary
-import JetIM
+import JuggleIM
 
 /// `SBUFileViewer` is a typealias for `SBUFileViewController`.
 /// It is deprecated and should be replaced with `SBUFileViewController`.

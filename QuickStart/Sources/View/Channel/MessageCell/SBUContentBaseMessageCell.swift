@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// It is a base class used in message cell with contents.
 /// - Since: 1.2.1

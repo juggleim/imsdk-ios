@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// The ``SBUBaseFileContentView`` that displays the voice message
 open class SBUVoiceContentView: SBUBaseFileContentView {

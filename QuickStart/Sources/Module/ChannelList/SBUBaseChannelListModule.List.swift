@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 class SBUBaseChannelListModule_List: NSObject {
 

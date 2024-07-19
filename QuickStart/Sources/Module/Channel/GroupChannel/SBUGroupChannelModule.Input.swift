@@ -8,7 +8,7 @@
 
 import UIKit
 import PhotosUI
-import JetIM
+import JuggleIM
 
 /// Event methods for the views updates and performing actions from the input component in the group channel.
 public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDelegate {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 open class SBUImageContentView: SBUBaseFileContentView {
     public var imageView: UIImageView = {

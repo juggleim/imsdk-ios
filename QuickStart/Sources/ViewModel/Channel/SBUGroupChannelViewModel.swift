@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 import simd
 
 public protocol SBUGroupChannelViewModelDataSource: SBUBaseChannelViewModelDataSource {

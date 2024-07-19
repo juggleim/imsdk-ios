@@ -2,12 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:QuickStart/QuickStart.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:JetIMDemo/JetIMDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:JetIM/JetIM.xcodeproj">
+      location = "group:QuickStart/QuickStart.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:JuggleIM/JuggleIM.xcodeproj">
    </FileRef>
 </Workspace>

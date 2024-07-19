@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

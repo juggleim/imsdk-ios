@@ -12,7 +12,7 @@ import AVKit
 import SafariServices
 import PhotosUI
 import MobileCoreServices
-import JetIM
+import JuggleIM
 
 @objcMembers
 open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroupChannelViewModelDelegate, SBUGroupChannelModuleHeaderDelegate, SBUGroupChannelModuleListDelegate, SBUGroupChannelModuleListDataSource, SBUGroupChannelModuleInputDelegate, SBUGroupChannelModuleInputDataSource, SBUGroupChannelViewModelDataSource, SBUMentionManagerDataSource, SBUVoiceMessageInputViewDelegate {

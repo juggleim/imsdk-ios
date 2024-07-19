@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 class UserInfoTitleView: UIView {
     lazy var stackView = UIStackView()

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 @IBDesignable
 open class SBUMediaMessageCell: SBUContentBaseMessageCell {

@@ -6,7 +6,7 @@
 //  Copyright © 2021 Sendbird, Inc. All rights reserved.
 //
 
-import JetIM
+import JuggleIM
 
 
 public class SBUUnknownMessageCellParams: SBUBaseMessageCellParams {

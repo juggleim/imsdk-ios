@@ -9,7 +9,7 @@
 //  swiftlint:disable identifier_name
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public class SBUStringSet {
     // MARK: - Common

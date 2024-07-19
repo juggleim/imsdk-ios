@@ -5,7 +5,7 @@
 //  Created by Jaesung Lee on 2021/07/19.
 //  Copyright © 2021 Sendbird, Inc. All rights reserved.
 //
-import JetIM
+import JuggleIM
 
 public class SBUMediaMessageCellParams: SBUBaseMessageCellParams {
     public var mediaMessage: JMessage? {

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 /// This delegate is used in the class to handle the action.
 public protocol SBUChannelInfoHeaderViewDelegate: AnyObject {
