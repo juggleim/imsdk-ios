@@ -5,7 +5,7 @@
 //  Created by Nathan on 2024/7/8.
 //
 
-#import <JuggleIM/JuggleIMConst.h>
+#import "JuggleIMConst.h"
 #import "JChatroomInfoOption.h"
 #import "JChatroomInfo.h"
 

@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JIMCore.h"
+#import "JuggleIMConst.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

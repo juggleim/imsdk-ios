@@ -6,7 +6,6 @@
 //
 
 #import <JuggleIM/JuggleIM.h>
-#import <JuggleIM/JUserInfo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

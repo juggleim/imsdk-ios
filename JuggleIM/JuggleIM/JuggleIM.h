@@ -27,4 +27,23 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JMergeMessage.h>
 #import <JuggleIM/JThumbnailPackedImageMessage.h>
 #import <JuggleIM/JSnapshotPackedVideoMessage.h>
-
+#import <JuggleIM/JMessageOptions.h>
+#import <JuggleIM/JConversationMentionInfo.h>
+#import <JuggleIM/JMessageUploadProvider.h>
+#import <JuggleIM/JMessageMentionInfo.h>
+#import <JuggleIM/JUserInfoProtocol.h>
+#import <JuggleIM/JGroupInfo.h>
+#import <JuggleIM/JUserInfo.h>
+#import <JuggleIM/JGroupMessageReadInfo.h>
+#import <JuggleIM/JConnectionProtocol.h>
+#import <JuggleIM/JConversationProtocol.h>
+#import <JuggleIM/JConversation.h>
+#import <JuggleIM/JConversationInfo.h>
+#import <JuggleIM/JMessage.h>
+#import <JuggleIM/JMessageProtocol.h>
+#import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JMessageContent.h>
+#import <JuggleIM/JChatroomInfo.h>
+#import <JuggleIM/JChatroomProtocol.h>
+#import <JuggleIM/JChatroomMember.h>
+#import <JuggleIM/JChatroomInfoOption.h>
