@@ -72,8 +72,8 @@
                              servers:self.core.servers];
     } failure:^(JErrorCodeInternal errorCode) {
         JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
-        if (errorCode == JErrorCodeInternalTokenIllegal) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:JErrorCodeInternalTokenIllegal extra:@""];
+        if ([self checkConnectionFailure:errorCode]) {
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:errorCode extra:@""];
         } else {
             [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
         }

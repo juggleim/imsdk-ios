@@ -13,6 +13,7 @@
 #define jNaviData @"data"
 #define jNaviUserId @"user_id"
 #define jNaviServers @"servers"
+#define jResponseCode @"code"
 
 typedef NS_ENUM(NSUInteger, JTaskStatus) {
     JTaskStatusIdle,
@@ -102,6 +103,19 @@ typedef NS_ENUM(NSUInteger, JTaskStatus) {
             return;
         }
         if (responseDic) {
+            id codeId = responseDic[jResponseCode];
+            if ([codeId isKindOfClass:[NSNumber class]]) {
+                JErrorCodeInternal code = [(NSNumber *)codeId unsignedIntValue];
+                if (code != JErrorCodeInternalNone) {
+                    JLogE(@"NAV-Request", @"navi response error, code is %lu", code);
+                    [self responseError:code url:url];
+                    return;
+                }
+            } else {
+                JLogE(@"NAV-Request", @"navi doesn't response a code");
+                [self responseError:JErrorCodeInternalNaviFailure url:url];
+                return;
+            }
             NSDictionary *dataDic = responseDic[jNaviData];
             if (dataDic) {
                 NSString *userId = dataDic[jNaviUserId]?:@"";
