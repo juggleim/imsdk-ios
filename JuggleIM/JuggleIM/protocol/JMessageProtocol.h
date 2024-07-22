@@ -23,11 +23,11 @@
 /// 消息删除的回调
 - (void)messageDidDelete:(JConversation *)conversation
             clientMsgNos:(NSArray <NSNumber *> *)clientMsgNos;
-/// 消息清除的回调
+/// 消息清除回调，表示清除特定会话中某个时间点之前的所有消息
 /// - Parameters:
 ///   - conversation: 被清除消息所属的会话标识
-///   - timestamp: 消息清除的时间戳，在 timestamp 之前的消息被清除
-///   - senderId: 发送者 id 为 senderId 的消息被清除，如果为 nil，表示所有 timestamp 之前的消息被清除
+///   - timestamp: 时间戳（毫秒），timestamp 之前的消息被清除
+///   - senderId: 若不为空，表示只清除发送者 id 为 senderId 的消息
 - (void)messageDidClear:(JConversation *)conversation
               timestamp:(long long)timestamp
                senderId:(NSString *)senderId;

@@ -658,6 +658,7 @@ NSString *const jReferMsgId = @"refer_msg_id";
         message.mentionInfo = [JMessageMentionInfo decodeFromJson:mentionInfoStr];
     }
     message.referMsgId = [rs stringForColumn:jReferMsgId];
+    message.localAttribute = [rs stringForColumn:jLocalAttribute];
     return message;
 }
 
