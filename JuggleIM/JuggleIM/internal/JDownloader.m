@@ -11,6 +11,7 @@
 @interface JDownloader ()<NSURLSessionDownloadDelegate>
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, copy) NSString *localPath;
+@property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, copy) void (^progressBlock)(int progress);
 @property (nonatomic, copy) void (^successBlock)(NSString *localPath);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCode errorCode);
@@ -35,11 +36,18 @@
 }
 
 - (void)start {
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+    self.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
                                                           delegate:self
                                                      delegateQueue:nil];
-    NSURLSessionDownloadTask *task = [session downloadTaskWithURL:[NSURL URLWithString:self.url]];
+    NSURLSessionDownloadTask *task = [self.session downloadTaskWithURL:[NSURL URLWithString:self.url]];
     [task resume];
+}
+
+- (void)cancel {
+    [self.session invalidateAndCancel];
+    if (self.errorBlock) {
+        self.errorBlock(JErrorCodeDownloadCanceled);
+    }
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location {

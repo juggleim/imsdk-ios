@@ -75,9 +75,16 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeMessageAlreadyRecalled = 22002,
     //消息上传失败
     JErrorCodeMessageUploadError = 22003,
-    
+    //撤回消息扩展信息（extras）中的 key 和 value 不是 NSString
+    JErrorCodeRecallExtrasTypeNotString = 22004,
+    //下载的不是媒体消息
+    JErrorCodeDownloadNotMediaMessage = 23001,
     //消息下载失败
-    JErrorCodeMessageDownloadError = 23006
+    JErrorCodeMessageDownloadError = 23006,
+    //消息下载已存在
+    JErrorCodeDownloadAlreadyExist = 23008,
+    //消息下载被取消
+    JErrorCodeDownloadCanceled = 23009
 };
 
 /*!

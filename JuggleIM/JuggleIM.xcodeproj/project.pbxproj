@@ -261,6 +261,8 @@
 		A09716C62BA0004600D1DB24 /* JUserInfoDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716C42BA0004600D1DB24 /* JUserInfoDB.h */; };
 		A09716C72BA0004600D1DB24 /* JUserInfoDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716C52BA0004600D1DB24 /* JUserInfoDB.m */; };
 		A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09824402C4FABE8001852A6 /* JDownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A098243E2C4FABE8001852A6 /* JDownloadManager.h */; };
+		A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A098243F2C4FABE8001852A6 /* JDownloadManager.m */; };
 		A0A1B0F72C47B25C00DAD93C /* JDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A1B0F52C47B25C00DAD93C /* JDownloader.h */; };
 		A0A1B0F82C47B25C00DAD93C /* JDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A1B0F62C47B25C00DAD93C /* JDownloader.m */; };
 		A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */; };
@@ -548,6 +550,8 @@
 		A09716C12B9FFF1F00D1DB24 /* JUserInfoManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfoManager.m; sourceTree = "<group>"; };
 		A09716C42BA0004600D1DB24 /* JUserInfoDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoDB.h; sourceTree = "<group>"; };
 		A09716C52BA0004600D1DB24 /* JUserInfoDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfoDB.m; sourceTree = "<group>"; };
+		A098243E2C4FABE8001852A6 /* JDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDownloadManager.h; sourceTree = "<group>"; };
+		A098243F2C4FABE8001852A6 /* JDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloadManager.m; sourceTree = "<group>"; };
 		A0A1B0F52C47B25C00DAD93C /* JDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDownloader.h; sourceTree = "<group>"; };
 		A0A1B0F62C47B25C00DAD93C /* JDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloader.m; sourceTree = "<group>"; };
 		A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JWebSocketCommandManager.h; sourceTree = "<group>"; };
@@ -825,6 +829,8 @@
 				5B7C06182C3D30CB00E91783 /* JUploadManager.m */,
 				A0A1B0F52C47B25C00DAD93C /* JDownloader.h */,
 				A0A1B0F62C47B25C00DAD93C /* JDownloader.m */,
+				A098243E2C4FABE8001852A6 /* JDownloadManager.h */,
+				A098243F2C4FABE8001852A6 /* JDownloadManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -1193,6 +1199,7 @@
 				A08AA36F2B19CB77008B114C /* GPBDictionary.h in Headers */,
 				A08AA4102B19EEDB008B114C /* SRWebSocket.h in Headers */,
 				A08AA3752B19CB77008B114C /* Duration.pbobjc.h in Headers */,
+				A09824402C4FABE8001852A6 /* JDownloadManager.h in Headers */,
 				5B4DB6922BFC3BF700DD18B6 /* JDeleteMsgMessage.h in Headers */,
 				5B7C06192C3D30CB00E91783 /* JUploadManager.h in Headers */,
 				A08AA2542B14AF2E008B114C /* JConversation.h in Headers */,
@@ -1434,6 +1441,7 @@
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
+				A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
 				5B4DB6872BFC340700DD18B6 /* JUnDisturbConvMessage.m in Sources */,

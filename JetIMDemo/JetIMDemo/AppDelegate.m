@@ -23,10 +23,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@[@"http://120.48.178.248:8083"]];
+    [JIM.shared setServer:@[@"https://nav.gxjipei.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken2];
+    [JIM.shared.connectionManager connectWithToken:kToken1];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -86,9 +86,10 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-            NSArray *a = [JIM.shared.messageManager getMessagesFrom:conversation count:100 time:0 direction:JPullDirectionOlder];
-            int i = 1;
+            NSDictionary *d = @{@"key1":@"safsdf", @"key2":@"value2"};
+            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
+           
+            
 //            JImageMessage *image = [[JImageMessage alloc] init];
 //            image.localPath = @"asdfasdf";
 //            image.size = 1000;
@@ -482,6 +483,7 @@
         [JIM.shared.messageManager downloadMediaMessage:message.messageId
                                                progress:^(JMessage *message, int progress) {
             NSLog(@"lifei, download progress %d", progress);
+//            [JIM.shared.messageManager cancelDownloadMediaMessage:message.messageId];
         } success:^(JMessage *message) {
             NSLog(@"lifei, download success");
         } error:^(JErrorCode errorCode) {

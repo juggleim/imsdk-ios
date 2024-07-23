@@ -29,6 +29,7 @@
 #import "JLogger.h"
 #import "JUploadManager.h"
 #import "JDownloader.h"
+#import "JDownloadManager.h"
 #import "JUtility.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate>
@@ -40,6 +41,7 @@
 @property (nonatomic, strong) NSHashTable <id<JMessageSyncDelegate>> *syncDelegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
+@property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -236,6 +238,22 @@
                extras:(NSDictionary *)extras
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
+    __block BOOL isAllString = YES;
+    [extras enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+        if (![key isKindOfClass:[NSString class]] || ![obj isKindOfClass:[NSString class]]) {
+            isAllString = NO;
+            *stop = YES;
+        }
+    }];
+    if (!isAllString) {
+        JLogE(@"MSG-Recall", @"recall message extras key/value must be NSString");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeRecallExtrasTypeNotString);
+            }
+        });
+    }
+    
     NSArray *arr = [self getMessagesByMessageIds:@[messageId]];
     if (arr.count > 0) {
         JMessage *m = arr[0];
@@ -957,7 +975,7 @@
         JLogE(@"MSG-Download", @"content is not a JMediaMessageContent");
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
-                errorBlock(JErrorCodeInvalidParam);
+                errorBlock(JErrorCodeDownloadNotMediaMessage);
             }
         });
         return;
@@ -982,7 +1000,7 @@
         JLogE(@"MSG-Download", @"appKey or userId length is 0");
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
-                errorBlock(JErrorCodeInvalidParam);
+                errorBlock(JErrorCodeConnectionUnavailable);
             }
         });
         return;
@@ -998,9 +1016,10 @@
     NSString *url = mediaContent.url;
     NSString *name = [messageId stringByAppendingFormat:@"_%@", [self getFileNameWith:url]];
     NSString *path = [self generateLocalPath:self.core.appKey userId:self.core.userId type:media name:name];
-    JDownloader *downloader = [[JDownloader alloc] initWithUrl:url
-                                                          path:path
-                                                      progress:^(int progress) {
+    [self.downloadManager downloadWithMessageId:messageId
+                                            Url:url
+                                           path:path
+                                       progress:^(int progress) {
         dispatch_async(self.core.delegateQueue, ^{
             if (progressBlock) {
                 progressBlock(message, progress);
@@ -1022,7 +1041,10 @@
             }
         });
     }];
-    [downloader start];
+}
+
+- (void)cancelDownloadMediaMessage:(NSString *)messageId {
+    [self.downloadManager cancelDownload:messageId];
 }
 
 - (void)registerContentType:(Class)messageClass {
@@ -1688,6 +1710,13 @@
         _readReceiptDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _readReceiptDelegates;
+}
+
+- (JDownloadManager *)downloadManager {
+    if (!_downloadManager) {
+        _downloadManager = [[JDownloadManager alloc] init];
+    }
+    return _downloadManager;
 }
 
 @end

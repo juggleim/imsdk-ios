@@ -204,8 +204,13 @@
                              error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
+/// - Parameters:
+///   - messageId: 被撤回的消息 id
+///   - extras: 扩展信息，key 和 value 都只能是 NSString 类型
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
 - (void)recallMessage:(NSString *)messageId
-               extras:(NSDictionary *)extras
+               extras:(NSDictionary <NSString *, NSString *> *)extras
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
@@ -386,6 +391,11 @@
                     progress:(void (^)(JMessage *message, int progress))progressBlock
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode))errorBlock;
+
+
+/// 取消下载消息
+/// - Parameter messageId: 消息 id
+- (void)cancelDownloadMediaMessage:(NSString *)messageId;
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state
