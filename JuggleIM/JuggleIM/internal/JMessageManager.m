@@ -932,7 +932,7 @@
                      count:(int)count
                       time:(long long)time
                  direction:(JPullDirection)direction
-                   success:(void (^)(NSArray<JMessage *> *))successBlock
+                   success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
                      error:(void (^)(JErrorCode))errorBlock {
     [self.core.webSocket getMentionMessages:conversation
                                        time:time
@@ -943,7 +943,7 @@
         [self.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
-                successBlock(messages);
+                successBlock(messages, isFinished);
             }
         });
     } error:^(JErrorCodeInternal code) {

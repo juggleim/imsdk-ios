@@ -345,7 +345,7 @@
                      count:(int)count
                       time:(long long)time
                  direction:(JPullDirection)direction
-                   success:(void (^)(NSArray<JMessage *> *messages))successBlock
+                   success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
 
 /// 获取消息本地属性

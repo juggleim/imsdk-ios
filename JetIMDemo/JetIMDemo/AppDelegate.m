@@ -86,8 +86,33 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            NSDictionary *d = @{@"key1":@"safsdf", @"key2":@"value2"};
-            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
+            
+            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
+            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
+            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId3"];
+            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
+            
+            NSArray *conversations = @[c1, c2, c3, c4];
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"broadcast"];
+            [JIM.shared.messageManager broadcastMessage:text
+                                        inConversations:conversations
+                                               progress:^(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount) {
+                
+            } complete:^{
+                
+            }];
+            
+            [JIM.shared.messageManager getMentionMessages:c4
+                                                    count:100
+                                                     time:0
+                                                direction:JPullDirectionOlder
+                                                  success:^(NSArray<JMessage *> *messages, BOOL isFinished) {
+                int i = 1;
+            } error:^(JErrorCode code) {
+                int i = 2;
+            }];
+            
+            
            
             
 //            JImageMessage *image = [[JImageMessage alloc] init];
@@ -123,7 +148,7 @@
         
         
         //send merge message
-//        NSArray *messageIdList = @[@"nqsu7glz26cgrenb", @"nqsu7g4t26egrenb", @"nqsu7klq26ggrenb", @"nqsu7k4lg6ggrenb"];
+//        NSArray *messageIdList = @[@"messageId1", @"messageId2", @"messageId3", @"messageId4"];
 //        NSMutableArray *previewList = [NSMutableArray array];
 //
 //        for (int i = 0; i < 4; i++) {
@@ -136,16 +161,17 @@
 //            unit.sender = userInfo;
 //            [previewList addObject:unit];
 //        }
+//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
 //        JMergeMessage *merge = [[JMergeMessage alloc] initWithTitle:@"title"
+//                                                       conversation:conversation
 //                                                      MessageIdList:messageIdList
 //                                                        previewList:previewList];
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        JMessage *m = [JIM.shared.messageManager sendMessage:merge
-//                                                   inConversation:c
-//                                                          success:^(JMessage *message) {
-//            NSLog(@"lifei");
+//        [JIM.shared.messageManager sendMessage:merge
+//                                inConversation:conversation
+//                                       success:^(JMessage *message) {
+//
 //        } error:^(JErrorCode errorCode, JMessage *message) {
-//            NSLog(@"lifei");
+//
 //        }];
 //        NSLog(@"lifei");
 
