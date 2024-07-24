@@ -688,7 +688,7 @@
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages))successBlock
+                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock {
     if (count > 100) {
         count = 100;
@@ -703,7 +703,7 @@
         [weakSelf.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
-                successBlock(messages);
+                successBlock(messages, isFinished);
             }
         });
     } error:^(JErrorCodeInternal code) {
@@ -783,7 +783,7 @@
                           startTime:startTime
                               count:count
                           direction:direction
-                            success:^(NSArray *messages) {
+                            success:^(NSArray *messages, BOOL isFinished) {
             //合并
             NSMutableArray * messagesArray = [NSMutableArray array];
             [messagesArray addObjectsFromArray:localMessages];

@@ -267,7 +267,7 @@
                     startTime:(long long)startTime
                         count:(int)count
                     direction:(JPullDirection)direction
-                      success:(void (^)(NSArray *messages))successBlock
+                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
 /// 先从本地获取消息，如果中间存在缺失，则从远端补齐。如果本地消息已经是完备的，将不会再走 remoteMessageBlock 回调。
