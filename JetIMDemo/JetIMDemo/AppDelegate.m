@@ -90,27 +90,13 @@
             JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
             JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
             JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId3"];
-            JConversation *c4 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
+            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
+            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
             
-            NSArray *conversations = @[c1, c2, c3, c4];
-            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"broadcast"];
-            [JIM.shared.messageManager broadcastMessage:text
-                                        inConversations:conversations
-                                               progress:^(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount) {
-                
-            } complete:^{
-                
-            }];
+            NSArray *conversations = @[c1, c2, c3, conversation];
             
-            [JIM.shared.messageManager getMentionMessages:c4
-                                                    count:100
-                                                     time:0
-                                                direction:JPullDirectionOlder
-                                                  success:^(NSArray<JMessage *> *messages, BOOL isFinished) {
-                int i = 1;
-            } error:^(JErrorCode code) {
-                int i = 2;
-            }];
+            [JIM.shared.messageManager setLocalAttribute:@"attribute1" forClientMsgNo:123];
+            
             
             
            
