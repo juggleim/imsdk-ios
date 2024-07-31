@@ -52,10 +52,6 @@ extension SBUGroupChannelListModule {
             self.setupStyles()
         }
         
-        open override func setupViews() {
-            self.rightBarButton = nil
-        }
-        
         /// Sets up style with theme. If the `theme` is `nil`, it uses the stored theme.
         /// - Parameter theme: `SBUGroupChannelListTheme` object
         open func setupStyles(theme: SBUGroupChannelListTheme? = nil) {
