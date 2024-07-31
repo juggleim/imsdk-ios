@@ -23,10 +23,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@[@"https://nav.gxjipei.com"]];
+    [JIM.shared setServer:@[@"https://nav.routechat.im"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"appkey"];
-    [JIM.shared.connectionManager connectWithToken:kToken1];
+    [JIM.shared initWithAppKey:@"kefukey"];
+    [JIM.shared.connectionManager connectWithToken:@"CgdrZWZ1a2V5GiAZk_1YP33HTBye4tR-qpvdf35RNwCqb0GYiugJ7AmOhw=="];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];

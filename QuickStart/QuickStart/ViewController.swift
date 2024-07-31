@@ -19,10 +19,18 @@ enum ButtonType: Int {
     case user2
     case user3
     case user4
+    case signIn
 }
 
 class ViewController: UIViewController {
     // MARK: - Properties
+    @IBOutlet weak var connectView: ConnectView!
+    
+    var titleLabel: UILabel { connectView.titleLabel }
+    var phoneNumberTextField: UITextField { connectView.phoneNumberTextField }
+    var verifyCodeTextField: UITextField { connectView.verifyCodeTextField }
+    var signInButton: UIButton { connectView.signInButton }
+    
     @IBOutlet weak var mainView: MainView!
     
     var homeStackView: UIStackView { mainView.homeStackView }
@@ -63,16 +71,21 @@ class ViewController: UIViewController {
         user2Button.tag = ButtonType.user2.rawValue
         user3Button.tag = ButtonType.user3.rawValue
         user4Button.tag = ButtonType.user4.rawValue
+        signInButton.tag = ButtonType.signIn.rawValue
         
         user1Button.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
         user2Button.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
         user3Button.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
         user4Button.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
+        signInButton.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
         
         UserDefaults.saveIsLightTheme(true)
         
-        self.mainView.isHidden = false
-        self.mainView.alpha = 1
+        self.mainView.isHidden = true
+        self.mainView.alpha = 0
+        self.connectView.isHidden = false
+        self.connectView.alpha = 1
+        
         self.homeStackView.isHidden = false
         self.homeStackView.alpha = 1
         
@@ -106,9 +119,42 @@ class ViewController: UIViewController {
             JIM.shared().connectionManager.connect(withToken: token3)
         case .user4:
             JIM.shared().connectionManager.connect(withToken: token4)
-            
+        case .signIn:
+            signinAction()
         default:
             break
+        }
+    }
+    
+    func signinAction() {
+        loadingIndicator.startAnimating()
+        view.isUserInteractionEnabled = false
+        
+        let phoneNumber = phoneNumberTextField.text ?? ""
+        let verifyCode = verifyCodeTextField.text ?? ""
+        
+        guard !phoneNumber.isEmpty else {
+            phoneNumberTextField.shake()
+            phoneNumberTextField.becomeFirstResponder()
+            loadingIndicator.stopAnimating()
+            view.isUserInteractionEnabled = true
+            return
+        }
+        guard !verifyCode.isEmpty else {
+            verifyCodeTextField.shake()
+            verifyCodeTextField.becomeFirstResponder()
+            loadingIndicator.stopAnimating()
+            view.isUserInteractionEnabled = true
+            return
+        }
+        
+        HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser in
+            if code == 0 {
+                guard let token = jcUser?.token else {
+                    return
+                }
+                JIM.shared().connectionManager.connect(withToken: token)
+            }
         }
     }
 }

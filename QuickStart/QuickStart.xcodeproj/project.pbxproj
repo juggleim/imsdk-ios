@@ -223,6 +223,10 @@
 		A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */; };
 		A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */; };
 		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
+		A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D662C5914D900B68B96 /* ConnectView.swift */; };
+		A0C45D692C5914DA00B68B96 /* ConnectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0C45D672C5914D900B68B96 /* ConnectView.xib */; };
+		A0C45D6C2C59183800B68B96 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6B2C59183800B68B96 /* HttpManager.swift */; };
+		A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6E2C591CC600B68B96 /* JCUser.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -446,6 +450,10 @@
 		A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceMessageInputView.swift; sourceTree = "<group>"; };
 		A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTextMessageCell.swift; sourceTree = "<group>"; };
 		A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCell.swift; sourceTree = "<group>"; };
+		A0C45D662C5914D900B68B96 /* ConnectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectView.swift; sourceTree = "<group>"; };
+		A0C45D672C5914D900B68B96 /* ConnectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConnectView.xib; sourceTree = "<group>"; };
+		A0C45D6B2C59183800B68B96 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
+		A0C45D6E2C591CC600B68B96 /* JCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCUser.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -961,6 +969,8 @@
 		A09645C82BF36BD000290775 /* QuickStart */ = {
 			isa = PBXGroup;
 			children = (
+				A0C45D6D2C591C9700B68B96 /* Model */,
+				A0C45D6A2C59181A00B68B96 /* Http */,
 				A047D7D62C245A7D00E50BCF /* Base */,
 				A07F35D52BF462040087920B /* Extension */,
 				A09645F62BF3AB5B00290775 /* Customize */,
@@ -1007,6 +1017,8 @@
 		A09645E12BF39E3A00290775 /* MainViews */ = {
 			isa = PBXGroup;
 			children = (
+				A0C45D662C5914D900B68B96 /* ConnectView.swift */,
+				A0C45D672C5914D900B68B96 /* ConnectView.xib */,
 				A0755AC12C2417A8003F3135 /* MainItemView.xib */,
 				A0755AC02C2417A8003F3135 /* MainView.xib */,
 				A09645E42BF39EA300290775 /* NibCustomView.swift */,
@@ -1223,6 +1235,22 @@
 			path = VoiceNote;
 			sourceTree = "<group>";
 		};
+		A0C45D6A2C59181A00B68B96 /* Http */ = {
+			isa = PBXGroup;
+			children = (
+				A0C45D6B2C59183800B68B96 /* HttpManager.swift */,
+			);
+			path = Http;
+			sourceTree = "<group>";
+		};
+		A0C45D6D2C591C9700B68B96 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A0C45D6E2C591CC600B68B96 /* JCUser.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1287,6 +1315,7 @@
 				A07F3BBF2BF4A2270087920B /* Assets.xcassets in Resources */,
 				A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */,
 				A09645D32BF36BD300290775 /* Assets.xcassets in Resources */,
+				A0C45D692C5914DA00B68B96 /* ConnectView.xib in Resources */,
 				A07F3C082BF4A2280087920B /* Debug.xcconfig in Resources */,
 				A09645D12BF36BD000290775 /* Main.storyboard in Resources */,
 				A07F3C0A2BF4A2280087920B /* Base.xcconfig in Resources */,
@@ -1313,6 +1342,7 @@
 				A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */,
 				A09645F32BF3A98000290775 /* Float+SBUKit.swift in Sources */,
 				A07F3C902BF4A2290087920B /* SBUTemplateLabel.swift in Sources */,
+				A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
 				A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */,
@@ -1377,6 +1407,7 @@
 				A07F3B602BF4A2270087920B /* UIImageView+SBUIKit.swift in Sources */,
 				A0968CB12C2B03DA00E68790 /* SBUBaseChannelModule.Input.swift in Sources */,
 				A0968C982C2B020300E68790 /* SBUNewMessageInfo.swift in Sources */,
+				A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */,
 				A0968C952C2B020300E68790 /* SBUFileViewController.swift in Sources */,
 				A0968CB42C2B03DA00E68790 /* SBUBaseChannelModule.List.swift in Sources */,
 				A07F3B442BF4A2260087920B /* SBUUser.swift in Sources */,
@@ -1467,6 +1498,7 @@
 				A07F3B3D2BF4A2260087920B /* VoiceMessageStatus.swift in Sources */,
 				A07F3C0B2BF4A2280087920B /* SBUIconSet.swift in Sources */,
 				A07F3BC12BF4A2270087920B /* SBUGroupChannelListModule.List.swift in Sources */,
+				A0C45D6C2C59183800B68B96 /* HttpManager.swift in Sources */,
 				A0968C8D2C2B020300E68790 /* SBUMessageProfileView.swift in Sources */,
 				A07F35E72BF497820087920B /* SBUStringSet.swift in Sources */,
 				A07F3B982BF4A2270087920B /* SBUConfigManager.swift in Sources */,

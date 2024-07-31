@@ -15,8 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        JIM.shared().setServer(["https://nav.gxjipei.com"])
-        let appKey = "appkey"
+        JIM.shared().setServer(["https://nav.juggleim.com"])
+        let appKey = "nsw3sue72begyv7y"
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
