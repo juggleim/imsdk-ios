@@ -12,8 +12,6 @@
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
 		A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */; };
 		A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */; };
-		A0755AC32C2417A8003F3135 /* MainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC02C2417A8003F3135 /* MainView.xib */; };
-		A0755AC42C2417A8003F3135 /* MainItemView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0755AC12C2417A8003F3135 /* MainItemView.xib */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -171,8 +169,6 @@
 		A09645D32BF36BD300290775 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A09645D22BF36BD300290775 /* Assets.xcassets */; };
 		A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A09645D42BF36BD300290775 /* LaunchScreen.storyboard */; };
 		A09645E52BF39EA300290775 /* NibCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645E42BF39EA300290775 /* NibCustomView.swift */; };
-		A09645E72BF3A16C00290775 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645E62BF3A16C00290775 /* MainView.swift */; };
-		A09645E92BF3A1C600290775 /* MainItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645E82BF3A1C600290775 /* MainItemView.swift */; };
 		A09645EC2BF3A27A00290775 /* SBUColorSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645EB2BF3A27A00290775 /* SBUColorSet.swift */; };
 		A09645EE2BF3A2E800290775 /* SBUFontSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645ED2BF3A2E800290775 /* SBUFontSet.swift */; };
 		A09645F32BF3A98000290775 /* Float+SBUKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645F22BF3A98000290775 /* Float+SBUKit.swift */; };
@@ -236,8 +232,6 @@
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
 		A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsViewController.swift; sourceTree = "<group>"; };
 		A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
-		A0755AC02C2417A8003F3135 /* MainView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainView.xib; sourceTree = "<group>"; };
-		A0755AC12C2417A8003F3135 /* MainItemView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainItemView.xib; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -398,8 +392,6 @@
 		A09645D52BF36BD300290775 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A09645D72BF36BD300290775 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A09645E42BF39EA300290775 /* NibCustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibCustomView.swift; sourceTree = "<group>"; };
-		A09645E62BF3A16C00290775 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		A09645E82BF3A1C600290775 /* MainItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainItemView.swift; sourceTree = "<group>"; };
 		A09645EB2BF3A27A00290775 /* SBUColorSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBUColorSet.swift; sourceTree = "<group>"; };
 		A09645ED2BF3A2E800290775 /* SBUFontSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBUFontSet.swift; sourceTree = "<group>"; };
 		A09645F22BF3A98000290775 /* Float+SBUKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Float+SBUKit.swift"; sourceTree = "<group>"; };
@@ -1019,11 +1011,7 @@
 			children = (
 				A0C45D662C5914D900B68B96 /* ConnectView.swift */,
 				A0C45D672C5914D900B68B96 /* ConnectView.xib */,
-				A0755AC12C2417A8003F3135 /* MainItemView.xib */,
-				A0755AC02C2417A8003F3135 /* MainView.xib */,
 				A09645E42BF39EA300290775 /* NibCustomView.swift */,
-				A09645E62BF3A16C00290775 /* MainView.swift */,
-				A09645E82BF3A1C600290775 /* MainItemView.swift */,
 			);
 			path = MainViews;
 			sourceTree = "<group>";
@@ -1309,8 +1297,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0755AC32C2417A8003F3135 /* MainView.xib in Resources */,
-				A0755AC42C2417A8003F3135 /* MainItemView.xib in Resources */,
 				A07F3C092BF4A2280087920B /* Release.xcconfig in Resources */,
 				A07F3BBF2BF4A2270087920B /* Assets.xcassets in Resources */,
 				A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */,
@@ -1334,7 +1320,6 @@
 				A07F3B4D2BF4A2260087920B /* Array+SBUIKit.swift in Sources */,
 				A07F3B6E2BF4A2270087920B /* SBUToastType.swift in Sources */,
 				A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */,
-				A09645E92BF3A1C600290775 /* MainItemView.swift in Sources */,
 				A07F3C802BF4A2290087920B /* SBUCommonItem.swift in Sources */,
 				A0968C962C2B020300E68790 /* SBUBaseChannelViewController.Keyboard.swift in Sources */,
 				A07F3C872BF4A2290087920B /* SBUNotificationEmptyView.swift in Sources */,
@@ -1463,7 +1448,6 @@
 				A07F3B682BF4A2270087920B /* SBUDebouncer.swift in Sources */,
 				A09645FA2BF3ABDD00290775 /* GlobalSetCustomManager.swift in Sources */,
 				A07F3C132BF4A2280087920B /* SBUBaseChannelCell.swift in Sources */,
-				A09645E72BF3A16C00290775 /* MainView.swift in Sources */,
 				A07F3C8F2BF4A2290087920B /* SBUUserCell.swift in Sources */,
 				A07F3C842BF4A2290087920B /* SBUNotificationNavigationTitleView.swift in Sources */,
 				A090B0B32C3EB48C00FE0E10 /* SBUOpenChannelCommonContentView.swift in Sources */,

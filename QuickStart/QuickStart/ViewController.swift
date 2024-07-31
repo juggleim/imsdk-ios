@@ -35,6 +35,10 @@ class ViewController: UIViewController {
         }
     }
     
+    enum CornerRadius: CGFloat {
+        case small = 4.0
+        case large = 8.0
+    }
     
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
