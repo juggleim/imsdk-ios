@@ -147,17 +147,17 @@ class MySettingsCell: UITableViewCell {
         self.rightSwitch.isHidden = false
         
         switch type {
-        case .darkTheme:
-            self.rightSwitch.isOn = isDarkMode
-            self.typeIcon.image = UIImage(named: "iconTheme")?
-                .sbu_with(tintColor: isDarkMode ? nil : .white)
-                .resize(with: CGSize(width: 18, height: 18))
-                .withBackground(
-                    color: isDarkMode ? SBUColorSet.background300 : SBUColorSet.background400,
-                    margin: 3,
-                    circle: true
-            )
-            self.titleLabel.text = "Dark theme"
+//        case .darkTheme:
+//            self.rightSwitch.isOn = isDarkMode
+//            self.typeIcon.image = UIImage(named: "iconTheme")?
+//                .sbu_with(tintColor: isDarkMode ? nil : .white)
+//                .resize(with: CGSize(width: 18, height: 18))
+//                .withBackground(
+//                    color: isDarkMode ? SBUColorSet.background300 : SBUColorSet.background400,
+//                    margin: 3,
+//                    circle: true
+//            )
+//            self.titleLabel.text = "Dark theme"
         case .signOut:
             self.typeIcon.image = UIImage(named: "iconLeave")?
                 .sbu_with(tintColor: isDarkMode ? nil : .white)

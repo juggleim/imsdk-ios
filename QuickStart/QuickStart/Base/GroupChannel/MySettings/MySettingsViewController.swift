@@ -12,7 +12,7 @@ import MobileCoreServices
 import JuggleIM
 
 enum MySettingsCellType: Int {
-    case darkTheme, signOut
+    case signOut
 }
 
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
@@ -197,10 +197,10 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             cell.configure(type: type, isDarkMode: isDarkMode)
 
             switch type {
-                case .darkTheme:
-                    cell.switchAction = { [weak self] isOn in
-                        self?.changeDarkThemeSwitch(isOn: isOn)
-                    }
+//                case .darkTheme:
+//                    cell.switchAction = { [weak self] isOn in
+//                        self?.changeDarkThemeSwitch(isOn: isOn)
+//                    }
                 case .signOut: break
             }
         }
@@ -209,7 +209,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 1
     }
 }
 

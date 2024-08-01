@@ -19,7 +19,7 @@ class HttpManager: NSObject {
     static let dataString = "data"
     static let userIdString = "user_id"
     static let authorizationString = "authorization"
-    static let nickNameString = "nick_name"
+    static let nickNameString = "nickname"
     static let avatarString = "avatar"
     static let statusString = "status"
     static let imTokenString = "im_token"

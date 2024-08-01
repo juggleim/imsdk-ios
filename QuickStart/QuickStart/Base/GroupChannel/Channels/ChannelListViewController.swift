@@ -67,10 +67,12 @@ class ChannelListViewController: SBUGroupChannelListViewController {
         let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] phoneNumber in
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
-                if code == HttpManager.success {
-                    
-                } else {
-                    
+                DispatchQueue.main.async {
+                    let selectUserVC = SelectUserViewController()
+                    if let jcUser = jcUser {
+                        selectUserVC.users = [jcUser]
+                    }
+                    self?.navigationController?.pushViewController(selectUserVC, animated: true)
                 }
             }
         }
