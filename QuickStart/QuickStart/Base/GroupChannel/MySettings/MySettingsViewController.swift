@@ -23,10 +23,6 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     
     var theme: SBUChannelSettingsTheme = SBUTheme.channelSettingsTheme
     
-    // MARK: - Constant
-    private let actionSheetIdEdit = 1
-    private let actionSheetIdPicker = 2
-    
     // MARK: - Life cycle
     open override func loadView() {
         super.loadView()

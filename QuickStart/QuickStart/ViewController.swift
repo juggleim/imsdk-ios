@@ -110,9 +110,9 @@ class ViewController: UIViewController {
             return
         }
         
-        HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser in
+        HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser, token in
             if code == 0 {
-                guard let token = jcUser?.token else {
+                guard let token = token else {
                     return
                 }
                 JIM.shared().connectionManager.connect(withToken: token)

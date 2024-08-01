@@ -9,6 +9,6 @@ import Foundation
 import JuggleIM
 
 class JCUser: JUserInfo {
-    var authorization: String?
-    var token: String?
+    var phoneNumber: String?
+    var isFriend: Bool = false
 }
