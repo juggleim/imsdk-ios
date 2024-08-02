@@ -28,10 +28,14 @@ class HttpManager: NSObject {
     static let itemsString = "items"
     static let isFriendString = "is_friend"
     
+    static let friendAddString = "/friends/add"
+    static let friendIdString = "friend_id"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
     
+    var currentUserId = ""
     var currentAuthorization = ""
     
     func login(
@@ -65,6 +69,7 @@ class HttpManager: NSObject {
                 let jcUser: JCUser = JCUser()
                 if let userId = responseData[Self.userIdString] as? String {
                     jcUser.userId = userId
+                    self?.currentUserId = userId
                 } else {
                     print("login error, userId is not available")
                     if let completion = completion {
@@ -108,6 +113,7 @@ class HttpManager: NSObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         if self.currentAuthorization.isEmpty {
+            print("search user error, currentAuthorization is empty")
             if let completion = completion {
                 completion(Self.unknownError, nil)
             }
@@ -171,6 +177,43 @@ class HttpManager: NSObject {
 
                 if let completion = completion {
                     completion(0, jcUser)
+                }
+            })
+        }
+        task.resume()
+    }
+    
+    func addFriend(
+        userId: String,
+        completion: ((Int) -> Void)?
+    ) {
+        let urlString = Self.domain.appending(Self.friendAddString)
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        if self.currentAuthorization.isEmpty {
+            if let completion = completion {
+                print("add friend error, currentAuthorization is empty")
+                completion(Self.unknownError)
+            }
+            return
+        } else {
+            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        }
+        let dict = [Self.userIdString: self.currentUserId, Self.friendIdString: userId]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    if let completion = completion {
+                        completion(code)
+                    }
+                    return
+                }
+                if let completion = completion {
+                    completion(0)
                 }
             })
         }

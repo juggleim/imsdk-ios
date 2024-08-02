@@ -10,31 +10,23 @@ import UIKit
 
 class SelectUserViewController: UIViewController {
     var users: [JCUser]?
-    var selectedUsers: Set<JCUser> = []
     let tableView = UITableView()
     let emptyView = SBUEmptyView()
+    lazy var loadingIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 37, 37))
     
     override func loadView() {
         super.loadView()
         configNavigationItem()
         configTableView()
         configEmptyView()
+        configIndicator()
     }
     
     private func configNavigationItem() {
         let titleView = SBUNavigationTitleView()
-        titleView.text = "Select members"
+        titleView.text = "Add friend"
         titleView.textAlignment = .center
         self.navigationItem.titleView = titleView
-        
-        let addFriendButton = UIBarButtonItem(
-            title: "Add Friend",
-            style: .plain,
-            target: self,
-            action: #selector(onTapRightBarButton)
-        )
-        addFriendButton.setTitleTextAttributes([.font: SBUFontSet.button2], for: .normal)
-        self.navigationItem.rightBarButtonItem = addFriendButton
     }
     
     private func configTableView() {
@@ -68,20 +60,20 @@ class SelectUserViewController: UIViewController {
         emptyView.type = EmptyViewType.none
     }
     
-    private func isSelectedUser(_ user: JCUser) -> Bool {
-        return self.selectedUsers.contains(where: { $0.userId == user.userId })
+    private func configIndicator() {
+        self.loadingIndicator.style = .large
+        self.loadingIndicator.center = self.view.center
+        self.view.addSubview(self.loadingIndicator)
     }
     
-    private func updateRightBarButton() {
-        if self.selectedUsers.count > 0 {
-            self.configNavigationItem()
-        } else {
-            self.navigationItem.rightBarButtonItem = nil
+    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+        HttpManager.shared.addFriend(userId: userId) { code in
+            if code == HttpManager.success {
+                completion(true)
+            } else {
+                completion(false)
+            }
         }
-    }
-    
-    @objc private func onTapRightBarButton() {
-        
     }
 }
 
@@ -107,7 +99,8 @@ extension SelectUserViewController: UITableViewDataSource, UITableViewDelegate {
         if let userCell = cell as? SelectUserCell, let user = self.users?[indexPath.row] {
             userCell.configure(
                 type: .createChannel,
-                user: user
+                user: user,
+                isChecked: user.isFriend
             )
         }
         
@@ -119,15 +112,20 @@ extension SelectUserViewController: UITableViewDataSource, UITableViewDelegate {
               let defaultCell = self.tableView.cellForRow(at: indexPath)
                 as? SelectUserCell else { return }
         
-        if let index = self.selectedUsers.firstIndex(of: user) {
-            self.selectedUsers.remove(at: index)
-        } else {
-            self.selectedUsers.insert(user)
+        if user.isFriend {
+            return
         }
-        
-        let isSelected = self.isSelectedUser(user)
-        defaultCell.selectUser(isSelected)
-        
-        self.updateRightBarButton()
+        self.loadingIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
+        addFriend(user.userId) { isSuccess in
+            DispatchQueue.main.async {
+                self.loadingIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
+                if isSuccess {
+                    user.isFriend = true
+                    defaultCell.selectUser(true)
+                }
+            }
+        }
     }
 }
