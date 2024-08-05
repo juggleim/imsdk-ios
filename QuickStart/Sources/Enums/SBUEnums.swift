@@ -27,7 +27,7 @@ public enum ChannelSettingItemType: Int {
     case leave
     
     static func allTypes(isOperator: Bool) -> [ChannelSettingItemType] {
-        var items: [ChannelSettingItemType] = isOperator
+        let items: [ChannelSettingItemType] = isOperator
             ? [.moderations, notifications, members, leave]
             : [.notifications, members, leave]
         
@@ -365,7 +365,7 @@ public enum SBUSuggestedRepliesRenderType {
     ) -> Bool {
         switch self {
         case .lastMessageOnly:
-            let latestMessageId = fullMessageList.first(where: { $0.senderUserId != nil })?.messageId
+            let latestMessageId = fullMessageList.first?.messageId
             return message.messageId != latestMessageId
         case .allMessages:
             return false

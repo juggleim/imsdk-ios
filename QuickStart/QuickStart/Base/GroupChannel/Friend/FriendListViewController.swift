@@ -84,7 +84,7 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
         let conversation = JConversation(conversationType: .private, conversationId: user.userId)
         let defaultConversationInfo = JConversationInfo()
         defaultConversationInfo.conversation = conversation
-        var conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
         let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
