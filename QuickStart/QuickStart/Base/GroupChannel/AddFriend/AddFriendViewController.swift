@@ -1,23 +1,18 @@
 //
-//  FriendListViewController.swift
+//  AddFriendViewController.swift
 //  QuickStart
 //
-//  Created by Nathan on 2024/8/2.
+//  Created by Nathan on 2024/8/1.
 //
 
 import Foundation
 import UIKit
-import JuggleIM
 
-class FriendListViewController: BaseUserListViewController {
-    override func loadView() {
-        super.loadView()
-        loadFriends()
-    }
+class AddFriendViewController: BaseUserListViewController {
     
-    open override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        self.titleView.text = "Add Friend"
     }
     
     override func configTableView() {
@@ -30,22 +25,18 @@ class FriendListViewController: BaseUserListViewController {
         )
     }
     
-    private func loadFriends() {
-        HttpManager.shared.getFriends { code, friends in
-            DispatchQueue.main.async {
-                self.users = friends
-                if let friends = friends, !friends.isEmpty {
-                    self.tableView.reloadData()
-                    self.emptyView.reloadData(.none)
-                } else {
-                    self.emptyView.reloadData(.noMembers)
-                }
+    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+        HttpManager.shared.addFriend(userId: userId) { code in
+            if code == HttpManager.success {
+                completion(true)
+            } else {
+                completion(false)
             }
         }
     }
 }
 
-extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
+extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
     }
@@ -66,7 +57,7 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
 
         if let userCell = cell as? BaseUserCell, let user = self.users?[indexPath.row] {
             userCell.configure(
-                type: .createChannel,
+                type: .addFriend,
                 user: user,
                 isChecked: user.isFriend
             )
@@ -76,16 +67,24 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let user = self.users?[indexPath.row] else {
+        guard let user = self.users?[indexPath.row],
+              let defaultCell = self.tableView.cellForRow(at: indexPath)
+                as? BaseUserCell else { return }
+        
+        if user.isFriend {
             return
         }
-        let conversation = JConversation(conversationType: .private, conversationId: user.userId)
-        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation)
-        guard let conversationInfo = conversationInfo else {
-            return
+        self.loadingIndicator.startAnimating()
+        self.view.isUserInteractionEnabled = false
+        addFriend(user.userId) { isSuccess in
+            DispatchQueue.main.async {
+                self.loadingIndicator.stopAnimating()
+                self.view.isUserInteractionEnabled = true
+                if isSuccess {
+                    user.isFriend = true
+                    defaultCell.selectUser(true)
+                }
+            }
         }
-        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelVC, animated: true)
     }
 }
-

@@ -126,7 +126,7 @@ class MainChannelTabbarController: UITabBarController {
             tag = 0
         case .friends:
             title = "Friends"
-            icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
+            icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
         case .mySettings:
             title = "My settings"

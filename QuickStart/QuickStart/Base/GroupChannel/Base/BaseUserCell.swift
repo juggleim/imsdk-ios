@@ -1,6 +1,14 @@
+//
+//  BaseUserCell.swift
+//  QuickStart
+//
+//  Created by Nathan on 2024/8/5.
+//
+
+import Foundation
 import UIKit
 
-class SelectUserCell: SBUTableViewCell {
+class BaseUserCell: SBUTableViewCell {
     
     // MARK: - UI properties (Public)
     public lazy var baseStackView: UIStackView = {
@@ -274,9 +282,15 @@ class SelectUserCell: SBUTableViewCell {
         self.moreButton.isEnabled = true
         
         switch type {
-        case .createChannel, .invite:
+        case .createChannel, .invite, .addFriend:
             self.checkboxButton.isHidden = false
             self.checkboxButton.isSelected = self.isChecked
+            if self.isChecked {
+                self.checkboxButton.isEnabled = false
+            }
+            
+        case .friendList:
+            self.checkboxButton.isHidden = true
             
         case .members, .participants:
             if operatorMode {

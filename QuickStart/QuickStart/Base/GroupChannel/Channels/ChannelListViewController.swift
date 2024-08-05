@@ -68,11 +68,11 @@ class ChannelListViewController: SBUGroupChannelListViewController {
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
-                    let selectUserVC = SelectUserViewController()
+                    let addFriendVC = AddFriendViewController()
                     if let jcUser = jcUser {
-                        selectUserVC.users = [jcUser]
+                        addFriendVC.users = [jcUser]
                     }
-                    self?.navigationController?.pushViewController(selectUserVC, animated: true)
+                    self?.navigationController?.pushViewController(addFriendVC, animated: true)
                 }
             }
         }

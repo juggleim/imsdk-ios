@@ -118,6 +118,8 @@ public enum UserListType: Hashable {
     case mutedMembers
     @available(*, unavailable, renamed: "banned") // 3.0.0
     case bannedMembers
+    case addFriend
+    case friendList
 }
 
 /// This is an enumeration used in `UserListViewController` to load user list by type.

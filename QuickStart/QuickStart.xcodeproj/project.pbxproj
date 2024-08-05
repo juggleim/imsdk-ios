@@ -223,10 +223,10 @@
 		A0C45D692C5914DA00B68B96 /* ConnectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0C45D672C5914D900B68B96 /* ConnectView.xib */; };
 		A0C45D6C2C59183800B68B96 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6B2C59183800B68B96 /* HttpManager.swift */; };
 		A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6E2C591CC600B68B96 /* JCUser.swift */; };
-		A0C80D222C5B8D6600E55080 /* SelectUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D212C5B8D6600E55080 /* SelectUserViewController.swift */; };
-		A0C80D282C5BC0A100E55080 /* SelectUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D272C5BC0A100E55080 /* SelectUserCell.swift */; };
+		A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */; };
 		A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */; };
 		A0C80D2E2C60B58700E55080 /* BaseUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */; };
+		A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D302C60C23200E55080 /* BaseUserCell.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -450,10 +450,10 @@
 		A0C45D672C5914D900B68B96 /* ConnectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConnectView.xib; sourceTree = "<group>"; };
 		A0C45D6B2C59183800B68B96 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
 		A0C45D6E2C591CC600B68B96 /* JCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCUser.swift; sourceTree = "<group>"; };
-		A0C80D212C5B8D6600E55080 /* SelectUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserViewController.swift; sourceTree = "<group>"; };
-		A0C80D272C5BC0A100E55080 /* SelectUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserCell.swift; sourceTree = "<group>"; };
+		A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
 		A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserListViewController.swift; sourceTree = "<group>"; };
+		A0C80D302C60C23200E55080 /* BaseUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserCell.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -484,7 +484,7 @@
 				A0C80D2A2C5CEBF100E55080 /* Group */,
 				A0C80D292C5CEBE700E55080 /* Friend */,
 				A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */,
-				A0C80D1E2C5B8D2000E55080 /* SelectUser */,
+				A0C80D1E2C5B8D2000E55080 /* AddFriend */,
 				A047D7D92C245A7D00E50BCF /* MySettings */,
 				A047D7DD2C245A7D00E50BCF /* Channels */,
 			);
@@ -1251,13 +1251,12 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		A0C80D1E2C5B8D2000E55080 /* SelectUser */ = {
+		A0C80D1E2C5B8D2000E55080 /* AddFriend */ = {
 			isa = PBXGroup;
 			children = (
-				A0C80D212C5B8D6600E55080 /* SelectUserViewController.swift */,
-				A0C80D272C5BC0A100E55080 /* SelectUserCell.swift */,
+				A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */,
 			);
-			path = SelectUser;
+			path = AddFriend;
 			sourceTree = "<group>";
 		};
 		A0C80D292C5CEBE700E55080 /* Friend */ = {
@@ -1279,6 +1278,7 @@
 			isa = PBXGroup;
 			children = (
 				A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */,
+				A0C80D302C60C23200E55080 /* BaseUserCell.swift */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1395,7 +1395,6 @@
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
-				A0C80D282C5BC0A100E55080 /* SelectUserCell.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
 				A07F3C9D2BF4A2290087920B /* SBUMessageCellProtocol.swift in Sources */,
 				A07F3B5C2BF4A2260087920B /* StringProtocol+SBUIKit.swift in Sources */,
@@ -1416,7 +1415,7 @@
 				A07F3C0C2BF4A2280087920B /* SBUColorSet.swift in Sources */,
 				A07F3B6B2BF4A2270087920B /* MessageTemplateParser.swift in Sources */,
 				A0968C9E2C2B02EF00E68790 /* SBUBaseChannelViewModel.swift in Sources */,
-				A0C80D222C5B8D6600E55080 /* SelectUserViewController.swift in Sources */,
+				A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */,
 				A07F3C9E2BF4A2290087920B /* SBUViewLifeCycle.swift in Sources */,
 				A07F3C882BF4A2290087920B /* SBUAlertView.swift in Sources */,
 				A07F3C9C2BF4A2290087920B /* SBUQuoteMessageInputViewProtocol.swift in Sources */,
@@ -1451,6 +1450,7 @@
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
 				A090B0B52C3EB48C00FE0E10 /* SBUImageContentView.swift in Sources */,
+				A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */,
 				A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */,
 				A07F3B652BF4A2270087920B /* SBUUtils.swift in Sources */,
 				A07F3B5F2BF4A2260087920B /* Sequence+SBUIKit.swift in Sources */,
