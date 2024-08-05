@@ -31,6 +31,8 @@ class HttpManager: NSObject {
     static let friendAddString = "/friends/add"
     static let friendIdString = "friend_id"
     
+    static let friendListString = "/friends/list"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -41,7 +43,7 @@ class HttpManager: NSObject {
     func login(
         phoneNumber: String,
         verifyCode: String,
-        completion: ((Int, JCUser?, String?) -> Void)?
+        completion: @escaping ((Int, JCUser?, String?) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.smsLoginString)
         guard let url = URL(string: urlString) else {
@@ -54,16 +56,12 @@ class HttpManager: NSObject {
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error) { code, json in
                 if code != Self.success {
-                    if let completion = completion {
-                        completion(code, nil, nil)
-                    }
+                    completion(code, nil, nil)
                     return
                 }
                 guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
                     print("login error, data is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil, nil)
-                    }
+                    completion(Self.unknownError, nil, nil)
                     return
                 }
                 let jcUser: JCUser = JCUser()
@@ -72,9 +70,7 @@ class HttpManager: NSObject {
                     self?.currentUserId = userId
                 } else {
                     print("login error, userId is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil, nil)
-                    }
+                    completion(Self.unknownError, nil, nil)
                     return
                 }
                 if let authorization = responseData[Self.authorizationString] as? String {
@@ -88,15 +84,11 @@ class HttpManager: NSObject {
                 }
                 guard let token = responseData[Self.imTokenString] as? String else {
                     print("login error, token is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil, nil)
-                    }
+                    completion(Self.unknownError, nil, nil)
                     return
                 }
                 jcUser.phoneNumber = phoneNumber
-                if let completion = completion {
-                    completion(0, jcUser, token)
-                }
+                completion(0, jcUser, token)
             }
         }
         task.resume()
@@ -104,7 +96,7 @@ class HttpManager: NSObject {
     
     func searchUser(
         phoneNumber: String,
-        completion: ((Int, JCUser?) -> Void)?
+        completion: @escaping ((Int, JCUser?) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.searchString)
         guard let url = URL(string: urlString) else {
@@ -114,9 +106,7 @@ class HttpManager: NSObject {
         request.httpMethod = "POST"
         if self.currentAuthorization.isEmpty {
             print("search user error, currentAuthorization is empty")
-            if let completion = completion {
-                completion(Self.unknownError, nil)
-            }
+            completion(Self.unknownError, nil)
             return
         } else {
             request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
@@ -126,29 +116,21 @@ class HttpManager: NSObject {
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
-                    if let completion = completion {
-                        completion(code, nil)
-                    }
+                    completion(code, nil)
                     return
                 }
                 guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
                     print("search user error, data is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil)
-                    }
+                    completion(Self.unknownError, nil)
                     return
                 }
                 guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
                     print("search user error, items is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil)
-                    }
+                    completion(Self.unknownError, nil)
                     return
                 }
                 if items.isEmpty {
-                    if let completion = completion {
-                        completion(Self.emptyCode, nil)
-                    }
+                    completion(Self.emptyCode, nil)
                     return
                 }
                 let item = items[0]
@@ -157,9 +139,7 @@ class HttpManager: NSObject {
                     jcUser.userId = userId
                 } else {
                     print("search user error, userId is not available")
-                    if let completion = completion {
-                        completion(Self.unknownError, nil)
-                    }
+                    completion(Self.unknownError, nil)
                     return
                 }
                 if let nickname = item[Self.nickNameString] as? String {
@@ -175,9 +155,7 @@ class HttpManager: NSObject {
                     jcUser.isFriend = isFriend
                 }
 
-                if let completion = completion {
-                    completion(0, jcUser)
-                }
+                completion(0, jcUser)
             })
         }
         task.resume()
@@ -185,7 +163,7 @@ class HttpManager: NSObject {
     
     func addFriend(
         userId: String,
-        completion: ((Int) -> Void)?
+        completion: @escaping ((Int) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.friendAddString)
         guard let url = URL(string: urlString) else {
@@ -194,10 +172,8 @@ class HttpManager: NSObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         if self.currentAuthorization.isEmpty {
-            if let completion = completion {
-                print("add friend error, currentAuthorization is empty")
-                completion(Self.unknownError)
-            }
+            print("add friend error, currentAuthorization is empty")
+            completion(Self.unknownError)
             return
         } else {
             request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
@@ -207,14 +183,71 @@ class HttpManager: NSObject {
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
-                    if let completion = completion {
-                        completion(code)
-                    }
+                    completion(code)
                     return
                 }
-                if let completion = completion {
-                    completion(0)
+                completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    func getFriends(
+        completion: @escaping ((Int, [JCUser]?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.friendListString).appending("?")
+            .appending("user_id=\(self.currentUserId)").appending("&").appending("count=100")
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        if self.currentAuthorization.isEmpty {
+            print("get friend error, currentAuthorization is empty")
+            completion(Self.unknownError, nil)
+            return
+        } else {
+            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
                 }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("search user error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
+                    print("search user error, items is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if items.isEmpty {
+                    completion(Self.emptyCode, nil)
+                    return
+                }
+                var friends: [JCUser] = []
+                for item in items {
+                    let jcUser: JCUser = JCUser()
+                    if let userId = item[Self.userIdString] as? String {
+                        jcUser.userId = userId
+                    }
+                    if let nickname = item[Self.nickNameString] as? String {
+                        jcUser.userName = nickname
+                    }
+                    if let avatar = item[Self.avatarString] as? String {
+                        jcUser.portrait = avatar
+                    }
+                    if let phone = item[Self.phoneString] as? String {
+                        jcUser.phoneNumber = phone
+                    }
+                    jcUser.isFriend = true
+                    friends.append(jcUser)
+                }
+                completion(0, friends)
             })
         }
         task.resume()

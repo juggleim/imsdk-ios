@@ -10,14 +10,16 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, mySettings
+    case channels, friends, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
     let channelsViewController = ChannelListViewController()
+    let friendListViewController = FriendListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
+    var friendListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
     var theme: SBUComponentTheme = SBUTheme.componentTheme
@@ -34,11 +36,14 @@ class MainChannelTabbarController: UITabBarController {
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
         )
+        self.friendListNavigationController = UINavigationController(
+            rootViewController: friendListViewController
+        )
         self.mySettingsNavigationController = UINavigationController(
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -71,12 +76,20 @@ class MainChannelTabbarController: UITabBarController {
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
+        friendListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "Friends"
+        )
+        friendListViewController.tabBarItem = self.createTabItem(type: .friends)
+        
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
             text: "My settings"
         )
         settingsViewController.tabBarItem = self.createTabItem(type: .mySettings)
         
         self.channelsNavigationController.navigationBar.barStyle = self.isDarkMode
+            ? .black
+            : .default
+        self.friendListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
         self.mySettingsNavigationController.navigationBar.barStyle = self.isDarkMode
@@ -103,12 +116,23 @@ class MainChannelTabbarController: UITabBarController {
     
     func createTabItem(type: TabType) -> UITabBarItem {
         let iconSize = CGSize(width: 24, height: 24)
-        let title = type == .channels ? "Channels" : "My settings"
-        let icon = type == .channels
-            ? UIImage(named: "iconChatFilled")?.resize(with: iconSize)
-            : UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
-        let tag = type == .channels ? 0 : 1
-        
+        let title: String
+        let icon: UIImage?
+        let tag: Int
+        switch type {
+        case .channels:
+            title = "Channels"
+            icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
+            tag = 0
+        case .friends:
+            title = "Friends"
+            icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
+            tag = 1
+        case .mySettings:
+            title = "My settings"
+            icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
+            tag = 2
+        }
         let item = UITabBarItem(title: title, image: icon, tag: tag)
         return item
     }

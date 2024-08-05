@@ -225,6 +225,8 @@
 		A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6E2C591CC600B68B96 /* JCUser.swift */; };
 		A0C80D222C5B8D6600E55080 /* SelectUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D212C5B8D6600E55080 /* SelectUserViewController.swift */; };
 		A0C80D282C5BC0A100E55080 /* SelectUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D272C5BC0A100E55080 /* SelectUserCell.swift */; };
+		A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */; };
+		A0C80D2E2C60B58700E55080 /* BaseUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -450,6 +452,8 @@
 		A0C45D6E2C591CC600B68B96 /* JCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCUser.swift; sourceTree = "<group>"; };
 		A0C80D212C5B8D6600E55080 /* SelectUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserViewController.swift; sourceTree = "<group>"; };
 		A0C80D272C5BC0A100E55080 /* SelectUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserCell.swift; sourceTree = "<group>"; };
+		A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
+		A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserListViewController.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -476,6 +480,9 @@
 		A047D7D72C245A7D00E50BCF /* GroupChannel */ = {
 			isa = PBXGroup;
 			children = (
+				A0C80D2F2C60B59200E55080 /* Base */,
+				A0C80D2A2C5CEBF100E55080 /* Group */,
+				A0C80D292C5CEBE700E55080 /* Friend */,
 				A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */,
 				A0C80D1E2C5B8D2000E55080 /* SelectUser */,
 				A047D7D92C245A7D00E50BCF /* MySettings */,
@@ -1253,6 +1260,29 @@
 			path = SelectUser;
 			sourceTree = "<group>";
 		};
+		A0C80D292C5CEBE700E55080 /* Friend */ = {
+			isa = PBXGroup;
+			children = (
+				A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */,
+			);
+			path = Friend;
+			sourceTree = "<group>";
+		};
+		A0C80D2A2C5CEBF100E55080 /* Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Group;
+			sourceTree = "<group>";
+		};
+		A0C80D2F2C60B59200E55080 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1474,6 +1504,7 @@
 				A07F35E22BF4928B0087920B /* UIcolor+Ext.swift in Sources */,
 				A0968C942C2B020300E68790 /* SBUNotificationTimelineView.swift in Sources */,
 				A0968C852C2B020300E68790 /* SBUMentionLimitGuideCell.swift in Sources */,
+				A0C80D2E2C60B58700E55080 /* BaseUserListViewController.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
 				A0968C912C2B020300E68790 /* SBUMessageDateView.swift in Sources */,
 				A07F3C782BF4A2290087920B /* SBUStackView.swift in Sources */,
@@ -1530,6 +1561,7 @@
 				A0968C972C2B020300E68790 /* SBUNewNotificationInfo.swift in Sources */,
 				A0968C862C2B020300E68790 /* SBUSuggestedMentionList.swift in Sources */,
 				A0968CB32C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift in Sources */,
+				A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */,
 				A07F35EB2BF49B400087920B /* SBUGlobals.swift in Sources */,
 				A07F3B612BF4A2270087920B /* NSObject+SBUIKit.swift in Sources */,
 				A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */,

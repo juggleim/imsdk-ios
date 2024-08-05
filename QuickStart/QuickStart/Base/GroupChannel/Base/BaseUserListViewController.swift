@@ -1,14 +1,14 @@
 //
-//  SelectUserViewController.swift
+//  BaseUserListViewController.swift
 //  QuickStart
 //
-//  Created by Nathan on 2024/8/1.
+//  Created by Nathan on 2024/8/5.
 //
 
 import Foundation
 import UIKit
 
-class SelectUserViewController: UIViewController {
+class BaseUserListViewController: UIViewController {
     var users: [JCUser]?
     let tableView = UITableView()
     let emptyView = SBUEmptyView()
