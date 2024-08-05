@@ -251,6 +251,7 @@ public class SBUStringSet {
     public static var Empty_No_Messages = "No messages"
     public static var Empty_No_Notifications = "No notifications"
     public static var Empty_No_Users = "No users"
+    public static var Empty_No_Groups = "No groups"
     public static var Empty_No_Muted_Members = "No muted members"
     public static var Empty_No_Muted_Participants = "No muted participants"
     public static var Empty_No_Banned_Users = "No banned users"

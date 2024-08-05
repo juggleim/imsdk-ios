@@ -8,8 +8,7 @@
 import Foundation
 import UIKit
 
-class BaseUserListViewController: UIViewController {
-    var users: [JCUser]?
+class BaseTableListViewController: UIViewController {
     let titleView = SBUNavigationTitleView()
     let tableView = UITableView()
     let emptyView = SBUEmptyView()
@@ -38,13 +37,6 @@ class BaseUserListViewController: UIViewController {
         self.tableView.sectionHeaderHeight = 0
         self.view.addSubview(self.tableView)
         self.tableView.frame = self.view.frame
-        if let users = users {
-            if users.isEmpty {
-                self.emptyView.reloadData(.noMembers)
-            }
-        } else {
-            self.emptyView.reloadData(.noMembers)
-        }
     }
     
     private func configEmptyView() {

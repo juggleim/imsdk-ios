@@ -1,20 +1,20 @@
 //
-//  FriendListViewController.swift
+//  GroupListViewController.swift
 //  QuickStart
 //
-//  Created by Nathan on 2024/8/2.
+//  Created by Nathan on 2024/8/5.
 //
 
 import Foundation
 import UIKit
 import JuggleIM
 
-class FriendListViewController: BaseTableListViewController {
-    var users: [JCUser]?
+class GroupListViewController: BaseTableListViewController {
+    var groups: [JGroupInfo]?
     
     override func loadView() {
         super.loadView()
-        loadFriends()
+        loadGroups()
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -27,27 +27,27 @@ class FriendListViewController: BaseTableListViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.register(
-            BaseUserCell.self,
-            forCellReuseIdentifier: BaseUserCell.sbu_className
+            GroupCell.self,
+            forCellReuseIdentifier: GroupCell.sbu_className
         )
     }
     
-    private func loadFriends() {
-        HttpManager.shared.getFriends { code, friends in
+    private func loadGroups() {
+        HttpManager.shared.getMyGroups(completion: { code, groups in
             DispatchQueue.main.async {
-                self.users = friends
-                if let friends = friends, !friends.isEmpty {
+                self.groups = groups
+                if let groups = groups, !groups.isEmpty {
                     self.tableView.reloadData()
                     self.emptyView.reloadData(.none)
                 } else {
-                    self.emptyView.reloadData(.noMembers)
+                    self.emptyView.reloadData(.noGroups)
                 }
             }
-        }
+        })
     }
 }
 
-extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
+extension GroupListViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
     }
@@ -57,20 +57,19 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.users?.count ?? 0
+        return self.groups?.count ?? 0
     }
 
     open func tableView(_ tableView: UITableView,
                         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
+        let cell = tableView.dequeueReusableCell(withIdentifier: GroupCell.sbu_className)
         
         cell?.selectionStyle = .none
 
-        if let userCell = cell as? BaseUserCell, let user = self.users?[indexPath.row] {
-            userCell.configure(
-                type: .friendList,
-                user: user,
-                isChecked: user.isFriend
+        if let groupCell = cell as? GroupCell, let group = self.groups?[indexPath.row] {
+            groupCell.configure(
+                type: .createChannel,
+                group: group
             )
         }
         
@@ -78,15 +77,15 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let user = self.users?[indexPath.row] else {
+        guard let group = self.groups?[indexPath.row] else {
             return
         }
-        let conversation = JConversation(conversationType: .private, conversationId: user.userId)
-        let defaultConversationInfo = JConversationInfo()
-        defaultConversationInfo.conversation = conversation
-        var conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+        let conversation = JConversation(conversationType: .group, conversationId: group.groupId)
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation)
+        guard let conversationInfo = conversationInfo else {
+            return
+        }
         let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
 }
-

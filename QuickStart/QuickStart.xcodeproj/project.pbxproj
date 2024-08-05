@@ -225,8 +225,10 @@
 		A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6E2C591CC600B68B96 /* JCUser.swift */; };
 		A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */; };
 		A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */; };
-		A0C80D2E2C60B58700E55080 /* BaseUserListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */; };
+		A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */; };
 		A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D302C60C23200E55080 /* BaseUserCell.swift */; };
+		A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D322C60ECC800E55080 /* GroupListViewController.swift */; };
+		A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D342C60F5C000E55080 /* GroupCell.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -452,8 +454,10 @@
 		A0C45D6E2C591CC600B68B96 /* JCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCUser.swift; sourceTree = "<group>"; };
 		A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
 		A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
-		A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserListViewController.swift; sourceTree = "<group>"; };
+		A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableListViewController.swift; sourceTree = "<group>"; };
 		A0C80D302C60C23200E55080 /* BaseUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserCell.swift; sourceTree = "<group>"; };
+		A0C80D322C60ECC800E55080 /* GroupListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupListViewController.swift; sourceTree = "<group>"; };
+		A0C80D342C60F5C000E55080 /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1270,6 +1274,8 @@
 		A0C80D2A2C5CEBF100E55080 /* Group */ = {
 			isa = PBXGroup;
 			children = (
+				A0C80D322C60ECC800E55080 /* GroupListViewController.swift */,
+				A0C80D342C60F5C000E55080 /* GroupCell.swift */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1277,7 +1283,7 @@
 		A0C80D2F2C60B59200E55080 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				A0C80D2D2C60B58700E55080 /* BaseUserListViewController.swift */,
+				A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */,
 				A0C80D302C60C23200E55080 /* BaseUserCell.swift */,
 			);
 			path = Base;
@@ -1393,6 +1399,7 @@
 				A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */,
 				A0968C682C2B020300E68790 /* SBUMediaMessageCellParams.swift in Sources */,
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
+				A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */,
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
@@ -1476,6 +1483,7 @@
 				A07F3B402BF4A2260087920B /* SBUExtendedMessage.swift in Sources */,
 				A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */,
 				A090B0B62C3EB48C00FE0E10 /* SBUCommonContentView.swift in Sources */,
+				A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */,
 				A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */,
 				A0968C8C2C2B020300E68790 /* SBUMessageStateView.swift in Sources */,
 				A07F3B4C2BF4A2260087920B /* Thread+SBUIKit.swift in Sources */,
@@ -1504,7 +1512,7 @@
 				A07F35E22BF4928B0087920B /* UIcolor+Ext.swift in Sources */,
 				A0968C942C2B020300E68790 /* SBUNotificationTimelineView.swift in Sources */,
 				A0968C852C2B020300E68790 /* SBUMentionLimitGuideCell.swift in Sources */,
-				A0C80D2E2C60B58700E55080 /* BaseUserListViewController.swift in Sources */,
+				A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
 				A0968C912C2B020300E68790 /* SBUMessageDateView.swift in Sources */,
 				A07F3C782BF4A2290087920B /* SBUStackView.swift in Sources */,

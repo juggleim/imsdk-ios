@@ -166,6 +166,7 @@ public enum EmptyViewType: Int {
     case noMutedParticipants
     case noBannedUsers
     case noSearchResults
+    case noGroups
     case error
     
     @available(*, unavailable, renamed: "noBannedUsers") // 3.0.0

@@ -10,16 +10,18 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, friends, mySettings
+    case channels, friends, groups, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
     let channelsViewController = ChannelListViewController()
     let friendListViewController = FriendListViewController()
+    let groupListViewController = GroupListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
     var friendListNavigationController = UINavigationController()
+    var groupListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
     var theme: SBUComponentTheme = SBUTheme.componentTheme
@@ -39,11 +41,14 @@ class MainChannelTabbarController: UITabBarController {
         self.friendListNavigationController = UINavigationController(
             rootViewController: friendListViewController
         )
+        self.groupListNavigationController = UINavigationController(
+            rootViewController: groupListViewController
+        )
         self.mySettingsNavigationController = UINavigationController(
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.groupListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -81,6 +86,11 @@ class MainChannelTabbarController: UITabBarController {
         )
         friendListViewController.tabBarItem = self.createTabItem(type: .friends)
         
+        groupListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "Groups"
+        )
+        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
+        
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
             text: "My settings"
         )
@@ -90,6 +100,9 @@ class MainChannelTabbarController: UITabBarController {
             ? .black
             : .default
         self.friendListNavigationController.navigationBar.barStyle = self.isDarkMode
+            ? .black
+            : .default
+        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
         self.mySettingsNavigationController.navigationBar.barStyle = self.isDarkMode
@@ -128,10 +141,14 @@ class MainChannelTabbarController: UITabBarController {
             title = "Friends"
             icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
+        case .groups:
+            title = "Groups"
+            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
+            tag = 2
         case .mySettings:
             title = "My settings"
             icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
-            tag = 2
+            tag = 3
         }
         let item = UITabBarItem(title: title, image: icon, tag: tag)
         return item

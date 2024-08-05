@@ -169,6 +169,9 @@ open class SBUEmptyView: SBUView {
         case .noMembers:
             self.statusLabel.text = SBUStringSet.Empty_No_Users
             iconSetType = SBUIconSetType.iconMembers
+        case .noGroups:
+            self.statusLabel.text = SBUStringSet.Empty_No_Groups
+            iconSetType = SBUIconSetType.iconChat
         case .noMutedMembers:
             self.statusLabel.text = SBUStringSet.Empty_No_Muted_Members
             iconSetType = SBUIconSetType.iconMute

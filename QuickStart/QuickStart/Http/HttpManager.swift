@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import JuggleIM
 
 class HttpManager: NSObject {
     static let shared = HttpManager()
@@ -32,6 +33,11 @@ class HttpManager: NSObject {
     static let friendIdString = "friend_id"
     
     static let friendListString = "/friends/list"
+    
+    static let myGroupsString = "/groups/mygroups"
+    static let groupIdString = "group_id"
+    static let groupNameString = "group_name"
+    static let groupPortraitString = "group_portrait"
     
     static let unknownError = 505
     static let emptyCode = 444
@@ -203,7 +209,7 @@ class HttpManager: NSObject {
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         if self.currentAuthorization.isEmpty {
-            print("get friend error, currentAuthorization is empty")
+            print("get friends error, currentAuthorization is empty")
             completion(Self.unknownError, nil)
             return
         } else {
@@ -216,12 +222,12 @@ class HttpManager: NSObject {
                     return
                 }
                 guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
-                    print("search user error, data is not available")
+                    print("get friends error, data is not available")
                     completion(Self.unknownError, nil)
                     return
                 }
                 guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
-                    print("search user error, items is not available")
+                    print("get friends error, items is not available")
                     completion(Self.unknownError, nil)
                     return
                 }
@@ -248,6 +254,63 @@ class HttpManager: NSObject {
                     friends.append(jcUser)
                 }
                 completion(0, friends)
+            })
+        }
+        task.resume()
+    }
+    
+    func getMyGroups(
+        completion: @escaping ((Int, [JGroupInfo]?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.myGroupsString).appending("?")
+            .appending("count=100")
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        if self.currentAuthorization.isEmpty {
+            print("get groups error, currentAuthorization is empty")
+            completion(Self.unknownError, nil)
+            return
+        } else {
+            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get groups error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
+                    print("get groups error, items is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if items.isEmpty {
+                    completion(Self.emptyCode, nil)
+                    return
+                }
+                var groups: [JGroupInfo] = []
+                for item in items {
+                    let group = JGroupInfo()
+                    if let groupId = item[Self.groupIdString] as? String {
+                        group.groupId = groupId
+                    }
+                    if let name = item[Self.groupNameString] as? String {
+                        group.groupName = name
+                    }
+                    if let portrait = item[Self.groupPortraitString] as? String {
+                        group.portrait = portrait
+                    }
+                    groups.append(group)
+                }
+                completion(0, groups)
             })
         }
         task.resume()

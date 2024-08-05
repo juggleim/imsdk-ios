@@ -1,5 +1,5 @@
 //
-//  BaseUserCell.swift
+//  GroupCell.swift
 //  QuickStart
 //
 //  Created by Nathan on 2024/8/5.
@@ -7,8 +7,9 @@
 
 import Foundation
 import UIKit
+import JuggleIM
 
-class BaseUserCell: SBUTableViewCell {
+class GroupCell: SBUTableViewCell {
     
     // MARK: - UI properties (Public)
     public lazy var baseStackView: UIStackView = {
@@ -21,7 +22,7 @@ class BaseUserCell: SBUTableViewCell {
         return stackView
     }()
     
-    public lazy var userImageView: UIImageView = {
+    public lazy var portraitView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -38,7 +39,7 @@ class BaseUserCell: SBUTableViewCell {
     
     public lazy var nicknameLabel = UILabel()
     
-    public lazy var userIdLabel = UILabel()
+    public lazy var groupIdLabel = UILabel()
     
     public lazy var operatorLabel: UILabel = {
         let label = UILabel()
@@ -46,13 +47,6 @@ class BaseUserCell: SBUTableViewCell {
          label.textAlignment = .right
          return label
      }()
-    
-    public lazy var checkboxButton: UIButton = {
-        let button = UIButton()
-        button.isHidden = true
-        button.isUserInteractionEnabled = false
-        return button
-    }()
     
     public lazy var moreButton: UIButton = {
         let button = UIButton()
@@ -77,7 +71,6 @@ class BaseUserCell: SBUTableViewCell {
     public private(set) var type: UserListType = .none
     
     // MARK: - Logic properties (Private)
-    var isChecked: Bool = false
     var hasNickname: Bool = true
     
     var userProfileTapHandler: (() -> Void)?
@@ -93,20 +86,19 @@ class BaseUserCell: SBUTableViewCell {
     /// This function handles the initialization of views.
     open override func setupViews() {
         self.operatorLabel.text = SBUStringSet.User_Operator
-        self.userIdLabel.isHidden = true
-        self.userImageView.addSubview(self.mutedStateImageView)
+        self.groupIdLabel.isHidden = true
+        self.portraitView.addSubview(self.mutedStateImageView)
         
         self.baseStackView.setHStack([
-            self.userImageView,
+            self.portraitView,
             self.nicknameLabel,
-            self.userIdLabel,
+            self.groupIdLabel,
             self.operatorLabel,
             self.moreButton,
-            self.checkboxButton,
         ])
         
         if case .suggestedMention = self.type {
-            self.baseStackView.setCustomSpacing(6.0, after: self.userIdLabel)
+            self.baseStackView.setCustomSpacing(6.0, after: self.groupIdLabel)
         }
         self.baseStackView.setCustomSpacing(8.0, after: self.operatorLabel)
         
@@ -118,7 +110,7 @@ class BaseUserCell: SBUTableViewCell {
     
     /// This function handles the initialization of actions.
     open override func setupActions() {
-        self.userImageView.addGestureRecognizer(UITapGestureRecognizer(
+        self.portraitView.addGestureRecognizer(UITapGestureRecognizer(
             target: self,
             action: #selector(self.onTapUserProfileView(sender:)))
         )
@@ -136,26 +128,23 @@ class BaseUserCell: SBUTableViewCell {
             )
             .sbu_constraint(height: userImageSize)
 
-        self.userImageView
+        self.portraitView
             .sbu_constraint(width: userImageSize, height: userImageSize)
         
         self.nicknameLabel
             .setContentHuggingPriority(.required, for: .horizontal)
         
-        if !self.userIdLabel.isHidden {
-            self.userIdLabel
+        if !self.groupIdLabel.isHidden {
+            self.groupIdLabel
                 .sbu_constraint(width: 32, priority: .defaultLow)
                 .sbu_constraint_greaterThan(width: 32, priority: .defaultLow)
         }
         
         self.mutedStateImageView
             .sbu_constraint(width: userImageSize, height: userImageSize)
-            .sbu_constraint(equalTo: self.userImageView, leading: 0, top: 0)
+            .sbu_constraint(equalTo: self.portraitView, leading: 0, top: 0)
         
         self.moreButton
-            .sbu_constraint(width: 24)
-        
-        self.checkboxButton
             .sbu_constraint(width: 24)
         
         self.separateView
@@ -178,8 +167,8 @@ class BaseUserCell: SBUTableViewCell {
     open override func setupStyles() {
         self.backgroundColor = theme.backgroundColor
 
-        self.userImageView.layer.cornerRadius = userImageSize/2
-        self.userImageView.backgroundColor = theme.userPlaceholderBackgroundColor
+        self.portraitView.layer.cornerRadius = userImageSize/2
+        self.portraitView.backgroundColor = theme.userPlaceholderBackgroundColor
         
         self.mutedStateImageView.image = SBUIconSetType.iconMute.image(
             with: self.theme.mutedStateIconColor,
@@ -195,28 +184,13 @@ class BaseUserCell: SBUTableViewCell {
         }
         self.nicknameLabel.font = theme.nicknameTextFont
         
-        self.userIdLabel.textColor = theme.userIdTextColor
-        self.userIdLabel.font = theme.userIdTextFont
+        self.groupIdLabel.textColor = theme.userIdTextColor
+        self.groupIdLabel.font = theme.userIdTextFont
         
         self.operatorLabel.font = theme.subInfoFont
         self.operatorLabel.textColor = theme.subInfoTextColor
         
         self.separateView.backgroundColor = theme.separateColor
-        
-        self.checkboxButton.setImage(
-            SBUIconSetType.iconCheckboxUnchecked.image(
-                with: theme.checkboxOffColor,
-                to: SBUIconSetType.Metric.defaultIconSize
-            ),
-            for: .normal
-        )
-        self.checkboxButton.setImage(
-            SBUIconSetType.iconCheckboxChecked.image(
-                with: theme.checkboxOnColor,
-                to: SBUIconSetType.Metric.defaultIconSize
-            ),
-            for: .selected
-        )
         
         self.moreButton.setImage(
             SBUIconSetType.iconMore.image(
@@ -242,91 +216,53 @@ class BaseUserCell: SBUTableViewCell {
     
     // MARK: - Common
     open func configure(type: UserListType,
-                        user: JCUser,
-                        isChecked: Bool = false,
+                        group: JGroupInfo,
                         operatorMode: Bool = false) {
         self.type = type
-        self.isChecked = isChecked
         
-        let isMe = (user.userId == SBUGlobals.currentUser?.userId)
-        self.userIdLabel.text = user.userId
+        self.groupIdLabel.text = group.groupId
         
-        if let userName = user.userName {
-            self.nicknameLabel.text = userName
-                + (isMe ? " \(SBUStringSet.UserList_Me)" : "")
+        if let groupName = group.groupName {
+            self.nicknameLabel.text = groupName
             self.hasNickname = true
         }
         
-        let profileURL = user.portrait ?? ""
-        self.loadImageSession = self.userImageView.loadImage(
+        let profileURL = group.portrait ?? ""
+        self.loadImageSession = self.portraitView.loadImage(
             urlString: profileURL,
-            placeholder: SBUIconSetType.iconUser.image(
+            placeholder: SBUIconSetType.iconSupergroup.image(
                 with: self.theme.userPlaceholderTintColor,
                 to: SBUIconSetType.Metric.defaultIconSize
             ),
             subPath: SBUCacheManager.PathType.userProfile
         )
-        self.userImageView.contentMode = profileURL.count > 0 ? .scaleAspectFill : .center
+        self.portraitView.contentMode = profileURL.count > 0 ? .scaleAspectFill : .center
         
-        self.userImageView.backgroundColor = theme.userPlaceholderBackgroundColor
+        self.portraitView.backgroundColor = theme.userPlaceholderBackgroundColor
 
         self.separateView.isHidden = false
-        self.checkboxButton.isHidden = true
         self.moreButton.isHidden = true
         self.moreButton.isEnabled = true
         
         switch type {
-        case .createChannel, .invite, .addFriend:
-            self.checkboxButton.isHidden = false
-            self.checkboxButton.isSelected = self.isChecked
-            if self.isChecked {
-                self.checkboxButton.isEnabled = false
-            }
-            
-        case .friendList:
-            self.checkboxButton.isHidden = true
-            
         case .members, .participants:
             if operatorMode {
                 self.moreButton.isHidden = false
-                self.moreButton.isEnabled = !isMe
             }
-
-        case .reaction:
-            let profileImageURL = user.portrait ?? ""
-            self.userImageView.loadImage(
-                urlString: profileImageURL,
-                placeholder: SBUIconSetType.iconUser.image(
-                    with: self.theme.userPlaceholderTintColor,
-                    to: SBUIconSetType.Metric.defaultIconSize
-                ),
-                subPath: SBUCacheManager.PathType.userProfile
-            )
-        
-            self.separateView.isHidden = true
            
         case .operators:
             self.moreButton.isHidden = false
-            self.moreButton.isEnabled = !isMe
             
         case .muted, .banned:
             self.moreButton.isHidden = false
-            self.moreButton.isEnabled = !isMe
 
         case .suggestedMention(let showsUserId):
-            self.userIdLabel.isHidden = !showsUserId
+            self.groupIdLabel.isHidden = !showsUserId
             self.userImageSize = 28
             self.updateLayouts()
         default:
             break
         }
-    }
-    
-    /// This function selects or deselects user.
-    /// - Parameter selected: `Bool` object
-    public func selectUser(_ selected: Bool) {
-        self.isChecked = selected
-        self.checkboxButton.isSelected = selected
     }
     
     // MARK: - Action
@@ -342,10 +278,6 @@ class BaseUserCell: SBUTableViewCell {
     @objc
     open func onTapUserProfileView(sender: UITapGestureRecognizer) {
         self.userProfileTapHandler?()
-    }
-
-    open override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
     }
 
     open override func prepareForReuse() {

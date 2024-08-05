@@ -8,7 +8,8 @@
 import Foundation
 import UIKit
 
-class AddFriendViewController: BaseUserListViewController {
+class AddFriendViewController: BaseTableListViewController {
+    var users: [JCUser]?
     
     override func configNavigationItem() {
         super.configNavigationItem()
@@ -23,6 +24,13 @@ class AddFriendViewController: BaseUserListViewController {
             BaseUserCell.self,
             forCellReuseIdentifier: BaseUserCell.sbu_className
         )
+        if let users = users {
+            if users.isEmpty {
+                self.emptyView.reloadData(.noMembers)
+            }
+        } else {
+            self.emptyView.reloadData(.noMembers)
+        }
     }
     
     private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
