@@ -115,6 +115,7 @@ class ViewController: UIViewController {
                 guard let token = token else {
                     return
                 }
+                ProfileManager.shared.currentUserInfo = jcUser
                 JIM.shared().connectionManager.connect(withToken: token)
             } else {
                 DispatchQueue.main.async {

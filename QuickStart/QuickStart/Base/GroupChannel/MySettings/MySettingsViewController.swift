@@ -18,14 +18,32 @@ enum MySettingsCellType: Int {
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
 
     // MARK: - Property
+    lazy var rightBarButton: UIBarButtonItem = {
+        let rightItem =  UIBarButtonItem(
+            title: SBUStringSet.Edit,
+            style: .plain,
+            target: self,
+            action: #selector(onClickEdit)
+        )
+        rightItem.setTitleTextAttributes([.font : SBUFontSet.button2], for: .normal)
+        return rightItem
+    }()
+    
     lazy var userInfoView = UserInfoTitleView()
     lazy var tableView = UITableView()
     
     var theme: SBUChannelSettingsTheme = SBUTheme.channelSettingsTheme
     
+    // MARK: - Constant
+    private let actionSheetIdEdit = 1
+    private let actionSheetIdPicker = 2
+    
     // MARK: - Life cycle
     open override func loadView() {
         super.loadView()
+        
+        // navigation bar
+        self.navigationItem.rightBarButtonItem = self.rightBarButton
         
         // tableView
         self.tableView.delegate = self
@@ -101,6 +119,8 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
             tintColor: theme.navigationBarTintColor
         )
         
+        self.rightBarButton.tintColor = theme.rightBarButtonTintColor
+        
         self.view.backgroundColor = theme.backgroundColor
         self.tableView.backgroundColor = theme.backgroundColor
     }
@@ -124,12 +144,11 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        let userId = JIM.shared().currentUserId
-        if let user = JIM.shared().userInfoManager.getUserInfo(userId) {
+        if let user = ProfileManager.shared.currentUserInfo {
             self.userInfoView.configure(user: user)
         } else {
-            let user = JUserInfo()
-            user.userId = userId
+            let user = JCUser()
+            user.userId = JIM.shared().currentUserId
             self.userInfoView.configure(user: user)
         }
     }
@@ -149,6 +168,85 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     }
     
     // MARK: - Actions
+    /// Open the user edit action sheet.
+    @objc func onClickEdit() {
+        let changeNameItem = SBUActionSheetItem(
+            title: "Change my nickname",
+            color: theme.itemTextColor,
+            image: nil
+        ) {}
+        let changeImageItem = SBUActionSheetItem(
+            title: "Change my profile image",
+            color: theme.itemTextColor,
+            image: nil
+        ) {}
+        let cancelItem = SBUActionSheetItem(
+            title: SBUStringSet.Cancel,
+            color: theme.itemColor
+        ) {}
+        SBUActionSheet.show(
+            items: [changeNameItem],
+            cancelItem: cancelItem,
+            identifier: actionSheetIdEdit,
+            delegate: self
+        )
+    }
+    
+    /// Open the nickname change popup.
+    public func changeNickname() {
+        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] newNickname in
+            guard let nickname = newNickname as? String,
+                nickname.trimmingCharacters(in: .whitespacesAndNewlines).count > 0
+                else { return }
+            
+            HttpManager.shared.updateUserInfo(userId: JIM.shared().currentUserId, name: nickname) { code in
+                if code != HttpManager.success {
+                    return
+                }
+                DispatchQueue.main.async { [weak self] in
+                    if let userInfo = ProfileManager.shared.currentUserInfo {
+                        userInfo.userName = nickname
+                        self?.userInfoView.configure(user: userInfo)
+                    }
+                }
+            }
+        }
+        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        SBUAlertView.show(
+            title: "Change my nickname",
+            needInputField: true,
+            placeHolder: "Enter nickname",
+            centerYRatio: 0.75,
+            confirmButtonItem: okButton,
+            cancelButtonItem: cancelButton
+        )
+    }
+    
+    /// Open the user image selection menu.
+    public func selectUserImage() {
+        let cameraItem = SBUActionSheetItem(
+            title: SBUStringSet.Camera,
+            image: SBUIconSet.iconCamera.sbu_with(tintColor: theme.itemColor),
+            completionHandler: nil
+        )
+        let libraryItem = SBUActionSheetItem(
+            title: SBUStringSet.PhotoVideoLibrary,
+            image: SBUIconSet.iconPhoto.sbu_with(tintColor: theme.itemColor),
+            completionHandler: nil
+        )
+        let cancelItem = SBUActionSheetItem(
+            title: SBUStringSet.Cancel,
+            color: theme.itemColor,
+            completionHandler: nil
+        )
+        SBUActionSheet.show(
+            items: [cameraItem, libraryItem],
+            cancelItem: cancelItem,
+            identifier: actionSheetIdPicker,
+            delegate: self
+        )
+    }
+    
     open func changeDarkThemeSwitch(isOn: Bool) {
         SBUTheme.set(theme: isOn ? .dark : .light)
         
@@ -228,3 +326,82 @@ extension MySettingsViewController : JConnectionDelegate {
         }
     }
 }
+
+// MARK: SBUActionSheetDelegate
+extension MySettingsViewController: SBUActionSheetDelegate {
+    public func didSelectActionSheetItem(index: Int, identifier: Int) {
+        if identifier == actionSheetIdEdit {
+            let type = ChannelEditType.init(rawValue: index)
+            switch type {
+            case .name:
+                self.changeNickname()
+            case .image:
+                self.selectUserImage()
+            default:
+                break
+            }
+        }
+//        else {
+//            let type = MediaResourceType.init(rawValue: index)
+//            var sourceType: UIImagePickerController.SourceType = .photoLibrary
+//            let mediaType: [String] = [String(kUTTypeImage)]
+//
+//            switch type {
+//            case .camera:
+//                sourceType = .camera
+//            case .library:
+//                sourceType = .photoLibrary
+//            default:
+//                break
+//            }
+//
+//            if type != .document {
+//                if UIImagePickerController.isSourceTypeAvailable(sourceType) {
+//                    let imagePickerController = UIImagePickerController()
+//                    imagePickerController.delegate = self
+//                    imagePickerController.sourceType = sourceType
+//                    imagePickerController.mediaTypes = mediaType
+//                    self.present(imagePickerController, animated: true, completion: nil)
+//                }
+//            }
+//        }
+    }
+}
+
+
+// MARK: UIImagePickerViewControllerDelegate
+//extension MySettingsViewController: UIImagePickerControllerDelegate {
+//    public func imagePickerController(
+//        _ picker: UIImagePickerController,
+//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//
+//        picker.dismiss(animated: true) { [weak self] in
+//            guard let originalImage = info[.originalImage] as? UIImage else { return }
+//
+//            self?.userInfoView.coverImage.image = originalImage
+//
+//            HttpManager.shared.updateUserInfo(userId: JIM.shared().currentUserId, portrait: portrait) { code in
+//                if code != HttpManager.success {
+//                    return
+//                }
+//                DispatchQueue.main.async { [weak self] in
+//                    self.currentUserInfo?.portrait = portrait
+//                    self.userInfoView.configure(user: self.currentUserInfo)
+//                }
+//            }
+//
+//            // Sendbird provides various access control options when using the Chat SDK. By default, the Allow retrieving user list attribute is turned on to facilitate creating sample apps. However, this may grant access to unwanted data or operations, leading to potential security concerns. To manage your access control settings, you can turn on or off each setting on Sendbird Dashboard.
+//            SendbirdUI.updateUserInfo(
+//                nickname: nil,
+//                profileImage: originalImage.jpegData(compressionQuality: 0.5)
+//            ) { error in
+//                guard error == nil else {
+//                    SBULog.error(error?.localizedDescription)
+//                    return
+//                }
+//                guard let user = SBUGlobals.currentUser else { return }
+//                self?.userInfoView.configure(user: user)
+//            }
+//        }
+//    }
+//}

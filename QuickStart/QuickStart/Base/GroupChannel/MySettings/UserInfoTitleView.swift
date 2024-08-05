@@ -225,7 +225,7 @@ class UserInfoTitleView: UIView {
         self.setupStyles()
     }
     
-    func configure(user: JUserInfo) {
+    func configure(user: JCUser) {
         if let url = user.portrait {
             self.coverImage.loadImage(urlString: url)
         }

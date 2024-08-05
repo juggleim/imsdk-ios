@@ -81,10 +81,9 @@ extension GroupListViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
         let conversation = JConversation(conversationType: .group, conversationId: group.groupId)
-        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation)
-        guard let conversationInfo = conversationInfo else {
-            return
-        }
+        let defaultConversationInfo = JConversationInfo()
+        defaultConversationInfo.conversation = conversation
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
         let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
         self.navigationController?.pushViewController(channelVC, animated: true)
     }

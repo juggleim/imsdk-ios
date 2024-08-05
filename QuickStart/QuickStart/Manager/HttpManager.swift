@@ -39,6 +39,8 @@ class HttpManager: NSObject {
     static let groupNameString = "group_name"
     static let groupPortraitString = "group_portrait"
     
+    static let usersUpdateString = "/users/update"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -311,6 +313,45 @@ class HttpManager: NSObject {
                     groups.append(group)
                 }
                 completion(0, groups)
+            })
+        }
+        task.resume()
+    }
+    
+    func updateUserInfo(
+        userId: String,
+        name: String? = nil,
+        portrait: String? = nil,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.usersUpdateString)
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        if self.currentAuthorization.isEmpty {
+            print("add friend error, currentAuthorization is empty")
+            completion(Self.unknownError)
+            return
+        } else {
+            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        }
+        var dict = [Self.userIdString: userId]
+        if let name = name {
+            dict[Self.nickNameString] = name
+        }
+        if let portrait = portrait {
+            dict[Self.avatarString] = portrait
+        }
+        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(0)
             })
         }
         task.resume()
