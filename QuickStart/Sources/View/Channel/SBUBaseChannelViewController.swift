@@ -1026,7 +1026,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Since: 2.2.3
     open func showCamera() {
         let sourceType: UIImagePickerController.SourceType = .camera
-        var mediaType: [String] = []
+        let mediaType: [String] = [String(kUTTypeImage)]
         
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             let imagePickerController = UIImagePickerController()

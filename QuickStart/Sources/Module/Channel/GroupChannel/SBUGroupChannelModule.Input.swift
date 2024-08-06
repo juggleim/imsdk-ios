@@ -204,19 +204,19 @@ extension SBUGroupChannelModule {
             }
             
             guard let imageURL = tempImageURL else {
-//                let originalImage = info[.originalImage] as? UIImage
-//                // TODO: need to improved. (mimetype)
-//                // for Camera capture
-//                guard let image = originalImage?.fixedOrientation(),
-//                      let imageData = image.sbu_convertToData() else { return }
-//
-//                self.delegate?.groupChannelModule(
-//                    self,
-//                    didPickFileData: imageData,
-//                    fileName: "\(Date().sbu_toString(dateFormat: SBUDateFormatSet.Message.fileNameFormat, localizedFormat: false)).jpg",
-//                    mimeType: "image/jpeg",
-//                    parentMessage: self.currentQuotedMessage
-//                )
+                let originalImage = info[.originalImage] as? UIImage
+                // TODO: need to improved. (mimetype)
+                // for Camera capture
+                guard let image = originalImage?.fixedOrientation(),
+                      let imageData = image.sbu_convertToData() else { return }
+
+                self.delegate?.groupChannelModule(
+                    self,
+                    didPickFileData: imageData,
+                    fileName: "\(Date().sbu_toString(dateFormat: SBUDateFormatSet.Message.fileNameFormat, localizedFormat: false)).jpg",
+                    mimeType: "image/jpeg",
+                    parentMessage: self.currentQuotedMessage
+                )
                 return
             }
             

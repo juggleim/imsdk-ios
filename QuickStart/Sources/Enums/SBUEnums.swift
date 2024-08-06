@@ -120,6 +120,7 @@ public enum UserListType: Hashable {
     case bannedMembers
     case addFriend
     case friendList
+    case createGroup
 }
 
 /// This is an enumeration used in `UserListViewController` to load user list by type.

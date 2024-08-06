@@ -276,7 +276,7 @@ class BaseUserCell: SBUTableViewCell {
         self.moreButton.isEnabled = true
         
         switch type {
-        case .createChannel, .invite, .addFriend:
+        case .createChannel, .invite, .addFriend, .createGroup:
             self.checkboxButton.isHidden = false
             self.checkboxButton.isSelected = self.isChecked
             
