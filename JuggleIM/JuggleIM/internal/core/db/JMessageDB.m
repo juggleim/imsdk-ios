@@ -637,6 +637,7 @@ NSString *const jReferMsgId = @"refer_msg_id";
     message.hasRead = [rs boolForColumn:jHasRead];
     message.timestamp = [rs longLongIntForColumn:jTimestamp];
     message.senderUserId = [rs stringForColumn:jSender];
+    message.isDelete = [rs boolForColumn:jIsDeleted];
     NSString *content = [rs stringForColumn:jContent];
     NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
     message.content = [[JContentTypeCenter shared] contentWithData:data
