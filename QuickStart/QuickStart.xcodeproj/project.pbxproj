@@ -475,12 +475,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A047D7D62C245A7D00E50BCF /* Base */ = {
+		A047D7D62C245A7D00E50BCF /* Sections */ = {
 			isa = PBXGroup;
 			children = (
 				A047D7D72C245A7D00E50BCF /* GroupChannel */,
 			);
-			path = Base;
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		A047D7D72C245A7D00E50BCF /* GroupChannel */ = {
@@ -990,7 +990,7 @@
 			children = (
 				A076CADE2C611DA700417341 /* Manager */,
 				A0C45D6D2C591C9700B68B96 /* Model */,
-				A047D7D62C245A7D00E50BCF /* Base */,
+				A047D7D62C245A7D00E50BCF /* Sections */,
 				A07F35D52BF462040087920B /* Extension */,
 				A09645F62BF3AB5B00290775 /* Customize */,
 				A09645E12BF39E3A00290775 /* MainViews */,

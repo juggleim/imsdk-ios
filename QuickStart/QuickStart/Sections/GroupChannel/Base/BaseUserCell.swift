@@ -279,9 +279,6 @@ class BaseUserCell: SBUTableViewCell {
         case .createChannel, .invite, .addFriend:
             self.checkboxButton.isHidden = false
             self.checkboxButton.isSelected = self.isChecked
-            if self.isChecked {
-                self.checkboxButton.isEnabled = false
-            }
             
         case .friendList:
             self.checkboxButton.isHidden = true

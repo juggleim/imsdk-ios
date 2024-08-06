@@ -33,6 +33,7 @@ class HttpManager: NSObject {
     static let friendIdString = "friend_id"
     
     static let friendListString = "/friends/list"
+    static let countString = "count"
     
     static let myGroupsString = "/groups/mygroups"
     static let groupIdString = "group_id"
@@ -41,9 +42,17 @@ class HttpManager: NSObject {
     
     static let usersUpdateString = "/users/update"
     
+    static let groupsAddString = "/groups/add"
+    static let membersString = "members"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
+    
+    enum HttpMethod {
+        case get
+        case post
+    }
     
     var currentUserId = ""
     var currentAuthorization = ""
@@ -54,13 +63,12 @@ class HttpManager: NSObject {
         completion: @escaping ((Int, JCUser?, String?) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.smsLoginString)
-        guard let url = URL(string: urlString) else {
+        let dict = [Self.phoneString: phoneNumber, Self.codeString: verifyCode]
+        let req = getRequest(url: urlString, method: .post, needAuthorization: false, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil, nil)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let dict = [Self.phoneString: phoneNumber, Self.codeString: verifyCode]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error) { code, json in
                 if code != Self.success {
@@ -107,20 +115,12 @@ class HttpManager: NSObject {
         completion: @escaping ((Int, JCUser?) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.searchString)
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        if self.currentAuthorization.isEmpty {
-            print("search user error, currentAuthorization is empty")
+        let dict = [HttpManager.phoneString: phoneNumber]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError, nil)
             return
-        } else {
-            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
         }
-        let dict = [HttpManager.phoneString: phoneNumber]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
@@ -174,20 +174,12 @@ class HttpManager: NSObject {
         completion: @escaping ((Int) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.friendAddString)
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        if self.currentAuthorization.isEmpty {
-            print("add friend error, currentAuthorization is empty")
+        let dict = [Self.userIdString: self.currentUserId, Self.friendIdString: userId]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError)
             return
-        } else {
-            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
         }
-        let dict = [Self.userIdString: self.currentUserId, Self.friendIdString: userId]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
@@ -203,20 +195,14 @@ class HttpManager: NSObject {
     func getFriends(
         completion: @escaping ((Int, [JCUser]?) -> Void)
     ) {
-        let urlString = Self.domain.appending(Self.friendListString).appending("?")
-            .appending("user_id=\(self.currentUserId)").appending("&").appending("count=100")
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        if self.currentAuthorization.isEmpty {
-            print("get friends error, currentAuthorization is empty")
+        let urlString = Self.domain.appending(Self.friendListString)
+        let dict: [String: Any] = [Self.userIdString: self.currentUserId, Self.countString: 100]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError, nil)
             return
-        } else {
-            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
         }
+        
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
@@ -264,19 +250,12 @@ class HttpManager: NSObject {
     func getMyGroups(
         completion: @escaping ((Int, [JGroupInfo]?) -> Void)
     ) {
-        let urlString = Self.domain.appending(Self.myGroupsString).appending("?")
-            .appending("count=100")
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        if self.currentAuthorization.isEmpty {
-            print("get groups error, currentAuthorization is empty")
+        let urlString = Self.domain.appending(Self.myGroupsString)
+        let dict: [String: Any] = [Self.countString: 100]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError, nil)
             return
-        } else {
-            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
         }
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
@@ -325,18 +304,6 @@ class HttpManager: NSObject {
         completion: @escaping ((Int) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.usersUpdateString)
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        if self.currentAuthorization.isEmpty {
-            print("add friend error, currentAuthorization is empty")
-            completion(Self.unknownError)
-            return
-        } else {
-            request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
-        }
         var dict = [Self.userIdString: userId]
         if let name = name {
             dict[Self.nickNameString] = name
@@ -344,7 +311,12 @@ class HttpManager: NSObject {
         if let portrait = portrait {
             dict[Self.avatarString] = portrait
         }
-        request.httpBody = try? JSONSerialization.data(withJSONObject: dict)
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
         let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
             self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
                 if code != Self.success {
@@ -357,8 +329,95 @@ class HttpManager: NSObject {
         task.resume()
     }
     
+    func createGroup(
+        name: String,
+        portrait: String? = nil,
+        members: [String],
+        completion: @escaping ((Int, JGroupInfo?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsAddString)
+        
+        var membersValue: [[String: String]] = []
+        for userId in members {
+            let userIdDic = [Self.userIdString: userId]
+            membersValue.append(userIdDic)
+        }
+        var dic: [String: Any] = [Self.groupNameString: name, Self.membersString: membersValue]
+        if let portrait = portrait, !portrait.isEmpty {
+            dic[Self.groupPortraitString] = portrait
+        }
+        
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("create group error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                guard let groupId = responseData[Self.groupIdString] as? String else {
+                    print("create group error, groupId is nil")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                let groupInfo = JGroupInfo()
+                groupInfo.groupId = groupId
+                groupInfo.groupName = name
+                groupInfo.portrait = portrait
+                completion(Self.success, groupInfo)
+            })
+        }
+        task.resume()
+    }
+    
     // MARK: - Private
-    func errorCheck(
+    private func getRequest(
+        url: String,
+        method: HttpMethod,
+        needAuthorization: Bool = true,
+        params: [String: Any]?
+    ) -> (isSuccess: Bool, urlRequest: URLRequest?) {
+        var urlString = url
+        if method == .get, let params = params {
+            urlString = urlString.appending("?")
+            for (paramKey, paramValue) in params {
+                urlString = urlString.appending("\(paramKey)").appending("=").appending("\(paramValue)")
+                urlString = urlString.appending("&")
+            }
+            urlString.removeLast()
+        }
+        guard let requestUrl = URL(string: urlString) else {
+            print("get request error, url string is \(urlString)")
+            return (false, nil)
+        }
+        var request = URLRequest(url: requestUrl)
+        switch method {
+        case .get:
+            request.httpMethod = "GET"
+        case .post:
+            request.httpMethod = "POST"
+        }
+        if needAuthorization && self.currentAuthorization.isEmpty {
+            print("get request error, currentAuthorization is empty, url is \(url)")
+            return (false, nil)
+        }
+        request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        if method == .post, let params = params, !params.isEmpty {
+            request.httpBody = try? JSONSerialization.data(withJSONObject: params)
+        }
+        return (true, request)
+    }
+    
+    private func errorCheck(
         data: Data?,
         response: URLResponse?,
         error: Error?,
