@@ -7,7 +7,12 @@
 
 #import "JMediaMessageContent.h"
 
+#define kMediaType @"jg:media"
+
 @implementation JMediaMessageContent
 
++ (NSString *)contentType {
+    return kMediaType;
+}
 
 @end

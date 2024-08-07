@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JuggleIM
 
 class ChannelListViewController: SBUGroupChannelListViewController {
 
@@ -34,6 +35,11 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+    }
+    
+    override func showChannel(conversationInfo: JConversationInfo) {
+        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+        self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
     @objc func onClickMenu() {

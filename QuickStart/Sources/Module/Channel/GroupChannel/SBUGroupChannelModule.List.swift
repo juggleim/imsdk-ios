@@ -54,31 +54,6 @@ extension SBUGroupChannelModule {
 
         // MARK: - UI properties (Public)
         
-        /// The message cell for `AdminMessage` object. Use `register(adminMessageCell:nib:)` to update.
-        public private(set) var adminMessageCell: SBUBaseMessageCell?
-        
-        /// The message cell for `UserMessage` object. Use `register(userMessageCell:nib:)` to update.
-        public private(set) var textMessageCell: SBUBaseMessageCell?
-        
-        /// The message cell for `JMessage` object. Use `register(JMessageCell:nib:)` to update.
-        public private(set) var mediaMessageCell: SBUBaseMessageCell?
-        
-        /// The message cell for `MultipleFilesMessage` object.
-        /// Use `register(multipleFilesMessageCell:nib:)` to update.
-        /// - Since: 3.10.0
-        public private(set) var multipleFilesMessageCell: SBUBaseMessageCell?
-        
-        /// The message cell for `SBUTypingIndicatorMessage` object.
-        /// Use `register(typingIndicatorMessageCell:nib:)` to update.
-        /// - Since: 3.12.0
-        public private(set) var typingIndicatorMessageCell: SBUBaseMessageCell?
-        
-        /// The message cell for some unknown message which is not a type of `AdminMessage` | `UserMessage` | ` JMessage`. Use `register(unknownMessageCell:nib:)` to update.
-        public private(set) var unknownMessageCell: SBUBaseMessageCell?
-        
-        /// The custom message cell for some `JMessage`. Use `register(customMessageCell:nib:)` to update.
-        public private(set) var customMessageCell: SBUBaseMessageCell?
-        
         /// A high light information of the message with ID and updated time.
         public var highlightInfo: SBUHighlightMessageInfo? {
             self.dataSource?.groupChannelModule(self, highlightInfoInTableView: self.tableView)
@@ -107,6 +82,7 @@ extension SBUGroupChannelModule {
         var currentVoiceFileInfo: SBUVoiceFileInfo?
         var currentVoiceContentView: SBUVoiceContentView?
         var currentVoiceContentIndexPath: IndexPath?
+        var cellDict: [String: AnyClass] = [:]
         
         var shouldRedrawTypingBubble: Bool = false
 
@@ -134,16 +110,9 @@ extension SBUGroupChannelModule {
         open override func setupViews() {
             super.setupViews()
             
-            if self.textMessageCell == nil {
-                self.register(textMessageCell: SBUTextMessageCell())
-            }
-            if self.mediaMessageCell == nil {
-                self.register(mediaMessageCell: SBUMediaMessageCell())
-            }
-            
-            if self.unknownMessageCell == nil {
-                self.register(unknownMessageCell: SBUUnknownMessageCell())
-            }
+            self.register(cell: SBUTextMessageCell(), contentType: JTextMessage.contentType())
+            self.register(cell: SBUMediaMessageCell(), contentType: JMediaMessageContent.contentType())
+            self.register(cell: SBUUnknownMessageCell(), contentType: JMessageContent.contentType())
             
             if let newMessageInfoView = self.newMessageInfoView {
                 newMessageInfoView.isHidden = true
@@ -283,105 +252,9 @@ extension SBUGroupChannelModule {
         }
         
         // MARK: - TableView: Cell
-        
-        /// Registers a custom cell as a admin message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///   - adminMessageCell: Customized admin message cell
-        ///   - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(adminMessageCell: MyAdminMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        open func register(adminMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.adminMessageCell = adminMessageCell
-            self.register(messageCell: adminMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a user message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///   - userMessageCell: Customized user message cell
-        ///   - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(userMessageCell: MyUserMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        open func register(textMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.textMessageCell = textMessageCell
-            self.register(messageCell: textMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a file message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///   - JMessageCell: Customized file message cell
-        ///   - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(JMessageCell: MyJMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        open func register(mediaMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.mediaMessageCell = mediaMessageCell
-            self.register(messageCell: mediaMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a multiple files message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///     - multipleFilesMessageCell: Customized multiple files message cell
-        ///     - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(multipleFilesMessageCell: MyMultipleFilesMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        /// - Since: 3.10.0
-        open func register(multipleFilesMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.multipleFilesMessageCell = multipleFilesMessageCell
-            self.register(messageCell: multipleFilesMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a typing message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///     - typingIndicatorMessageCell: Customized typing indicator message cell
-        ///     - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(typingIndicatorMessageCell: MyTypingIndicatorMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        /// - Since: 3.12.0
-        open func register(typingIndicatorMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.typingIndicatorMessageCell = typingIndicatorMessageCell
-            self.register(messageCell: typingIndicatorMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a unknown message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///   - unknownMessageCell: Customized unknown message cell
-        ///   - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(unknownMessageCell: MyUnknownMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        open func register(unknownMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.unknownMessageCell = unknownMessageCell
-            self.register(messageCell: unknownMessageCell, nib: nib)
-        }
-        
-        /// Registers a custom cell as a additional message cell based on `SBUBaseMessageCell`.
-        /// - Parameters:
-        ///   - customMessageCell: Customized message cell
-        ///   - nib: nib information. If the value is nil, the nib file is not used.
-        /// - Important: To register custom message cell, please use this function before calling `configure(delegate:dataSource:theme:)`
-        /// ```swift
-        /// listComponent.register(customMessageCell: MyCustomMessageCell)
-        /// listComponent.configure(delegate: self, dataSource: self, theme: theme)
-        /// ```
-        open func register(customMessageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            self.customMessageCell = customMessageCell
-            self.register(messageCell: customMessageCell, nib: nib)
+        open func register(cell: SBUBaseMessageCell, contentType: String) {
+            self.cellDict[contentType] = type(of: cell)
+            self.tableView.register(type(of: cell), forCellReuseIdentifier: contentType)
         }
         
         /// Configures cell with message for a particular row.
@@ -399,10 +272,7 @@ extension SBUGroupChannelModule {
             )
             let receiptState = SBUMessageReceiptState.none//SBUUtils.getReceiptState(of: message, in: channel)
 
-            if message.content is JTextMessage {
-                guard let textMessageCell = messageCell as? SBUTextMessageCell else {
-                    return
-                }
+            if let textMessageCell = messageCell as? SBUTextMessageCell {
                 let shouldHideSuggestedReplies = false
 
                 let configuration = SBUTextMessageCellParams(
@@ -425,11 +295,8 @@ extension SBUGroupChannelModule {
 
                 self.setMessageCellAnimation(textMessageCell, message: message, indexPath: indexPath)
                 self.setMessageCellGestures(textMessageCell, message: message, indexPath: indexPath)
-            } else if message.content is JMediaMessageContent {
+            } else if let mediaMessageCell = messageCell as? SBUMediaMessageCell {
                 let voiceFileInfo = self.voiceFileInfos[message.cacheKey] ?? nil
-                guard let mediaMessageCell = messageCell as? SBUMediaMessageCell else {
-                    return
-                }
                 let configuration = SBUMediaMessageCellParams(
                     message: message,
                     hideDateView: isSameDay,
@@ -463,10 +330,7 @@ extension SBUGroupChannelModule {
                     self.currentVoiceFileInfo = voiceFileInfo
                     self.currentVoiceContentView = voiceContentView
                 }
-            } else {
-                guard let unknownMessageCell = messageCell as? SBUUnknownMessageCell else {
-                    return
-                }
+            } else if let unknownMessageCell = messageCell as? SBUUnknownMessageCell {
                 let configuration = SBUUnknownMessageCellParams(
                     message: message,
                     hideDateView: isSameDay,
@@ -479,6 +343,9 @@ extension SBUGroupChannelModule {
                 unknownMessageCell.configure(with: configuration)
                 self.setMessageCellAnimation(unknownMessageCell, message: message, indexPath: indexPath)
                 self.setMessageCellGestures(unknownMessageCell, message: message, indexPath: indexPath)
+            } else {
+                let configuration = SBUBaseMessageCellParams(message: message, hideDateView: isSameDay, receiptState: receiptState)
+                messageCell.configure(with: configuration)
             }
 
             UIView.setAnimationsEnabled(true)
@@ -530,7 +397,12 @@ extension SBUGroupChannelModule {
             
             let message = fullMessageList[indexPath.row]
             
-            let cell = tableView.dequeueReusableCell(withIdentifier: self.generateCellIdentifier(by: message)) ?? UITableViewCell()
+            let cell: UITableViewCell
+            if self.cellDict[message.contentType] != nil {
+                cell = tableView.dequeueReusableCell(withIdentifier: message.contentType) ?? UITableViewCell()
+            } else {
+                cell = tableView.dequeueReusableCell(withIdentifier: JMessageContent.contentType()) ?? UITableViewCell()
+            }
             cell.contentView.transform = CGAffineTransform(scaleX: 1, y: -1)
             cell.selectionStyle = .none
             
@@ -547,32 +419,6 @@ extension SBUGroupChannelModule {
         open override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
             guard let mediaMessageCell = cell as? SBUMediaMessageCell,
                   mediaMessageCell.baseFileContentView is SBUVoiceContentView else { return }
-        }
-        
-        /// Register the message cell to the table view.
-        public func register(messageCell: SBUBaseMessageCell, nib: UINib? = nil) {
-            if let nib = nib {
-                self.tableView.register(
-                    nib,
-                    forCellReuseIdentifier: messageCell.sbu_className
-                )
-            } else {
-                self.tableView.register(
-                    type(of: messageCell), forCellReuseIdentifier: messageCell.sbu_className)
-            }
-        }
-        
-        /// Generates identifier of message cell.
-        /// - Parameter message: Message object
-        /// - Returns: The identifier of message cell.
-        open func generateCellIdentifier(by message: JMessage) -> String {
-            if message.content is JTextMessage {
-                return textMessageCell?.sbu_className ?? SBUTextMessageCell.sbu_className
-            } else if message.content is JMediaMessageContent {
-                return mediaMessageCell?.sbu_className ?? SBUMediaMessageCell.sbu_className
-            } else {
-                return unknownMessageCell?.sbu_className ?? SBUUnknownMessageCell.sbu_className
-            }
         }
         
         /// Sets animation in message cell.

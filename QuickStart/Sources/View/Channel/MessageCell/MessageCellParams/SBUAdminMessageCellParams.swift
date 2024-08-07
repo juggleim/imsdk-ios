@@ -21,5 +21,4 @@ public class SBUAdminMessageCellParams {
 //            receiptState: SBUMessageReceiptState.none
 //        )
 //    }
-    //TODO: 
 }

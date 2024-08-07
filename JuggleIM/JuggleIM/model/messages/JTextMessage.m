@@ -26,14 +26,14 @@
 }
 
 -(NSData *)encode{
-    NSDictionary * dic = @{jContent:self.content?:@"",
+    NSDictionary *dic = @{jContent:self.content?:@"",
                            jTextExtra:self.extra?:@""};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
 
 - (void)decode:(NSData *)data{
-    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     id content = json[jContent];
     if ([content isKindOfClass:[NSString class]]) {
         self.content = content;

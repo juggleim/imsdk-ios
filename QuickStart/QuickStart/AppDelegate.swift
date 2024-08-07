@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let appKey = "nsw3sue72begyv7y"
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
+        JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         return true
     }
