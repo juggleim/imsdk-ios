@@ -206,7 +206,7 @@ extension SBUBaseChannelListModule {
         
         /// Reloads table view. This method corresponds to `UITableView reloadData()`.
         public func reloadTableView() {
-            DispatchQueue.main.async { [weak self] in
+            Thread.executeOnMain { [weak self] in
                 self?.tableView.reloadData()
             }
         }
