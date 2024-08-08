@@ -71,7 +71,7 @@ class GroupNotifyMessage: JMessageContent {
             }
             self.members = members
         }
-        if let operatorJson = json[operatorString] as? [String: String] {
+        if let operatorJson = json[operatorString] as? [String: Any] {
             self.operatorInfo = userInfoFromJson(operatorJson)
         }
         if let name = json[nameString] as? String {
