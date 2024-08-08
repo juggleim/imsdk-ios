@@ -17,13 +17,8 @@ class GroupListViewController: BaseTableListViewController {
         loadGroups()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.tabBarController?.tabBar.isHidden = true
-    }
-    
-    open override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
     }
     
@@ -89,7 +84,8 @@ extension GroupListViewController: UITableViewDataSource, UITableViewDelegate {
         let defaultConversationInfo = JConversationInfo()
         defaultConversationInfo.conversation = conversation
         let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-        let channelVC = SBUViewControllerSet.GroupChannelViewController.init(conversationInfo: conversationInfo)
+        self.tabBarController?.tabBar.isHidden = true
+        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
 }

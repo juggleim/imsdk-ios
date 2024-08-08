@@ -27,17 +27,13 @@ class ChannelListViewController: SBUGroupChannelListViewController {
         self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.tabBarController?.tabBar.isHidden = true
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
     }
     
     override func showChannel(conversationInfo: JConversationInfo) {
+        self.tabBarController?.tabBar.isHidden = true
         let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
