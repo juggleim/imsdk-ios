@@ -19,7 +19,8 @@ public protocol SBUTextMessageTextViewDelegate: AnyObject {
 open class SBUTextMessageTextView: SBUView {
     public struct Metric {
         public static var textLeftRightMargin = 12.f
-        public static var textTopDownMargin = 7.f
+        public static var textTopMargin = 4.f
+        public static var textDownMargin = 7.f
         public static var textMaxWidth = SBUConstant.messageCellMaxWidth
         public static var textMinHeight = 16.f
         public static var textMinWidth = 10.f
@@ -126,7 +127,7 @@ open class SBUTextMessageTextView: SBUView {
         
         self.textTopConstraint = self.textView.topAnchor.constraint(
             equalTo: self.topAnchor,
-            constant: self.removeMargin ? 0 : Metric.textTopDownMargin
+            constant: self.removeMargin ? 0 : Metric.textTopMargin
         )
         self.textLeftConstraint = self.textView.leftAnchor.constraint(
             equalTo: self.leftAnchor,
@@ -134,7 +135,7 @@ open class SBUTextMessageTextView: SBUView {
         )
         self.textBottomConstraint = self.textView.bottomAnchor.constraint(
             equalTo: self.bottomAnchor,
-            constant: self.removeMargin ? 0 : -Metric.textTopDownMargin
+            constant: self.removeMargin ? 0 : -Metric.textDownMargin
         )
         self.textRightConstraint = self.textView.rightAnchor.constraint(
             lessThanOrEqualTo: self.rightAnchor,
@@ -196,6 +197,18 @@ open class SBUTextMessageTextView: SBUView {
 //            textView.attributedText = mutableAttributedText
 //        }
     }
+    
+//    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+//            if let textView = object as? UITextView {
+//                var topCorrect = (textView.bounds.size.height - textView.contentSize.height * textView.zoomScale) / 2
+//                topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
+//                textView.contentInset.top = topCorrect
+//            }
+//        }
+//
+//        deinit {
+//            textView.removeObserver(self, forKeyPath: "contentSize")
+//        }
 }
 
 extension SBUTextMessageTextView: UITextViewDelegate {
