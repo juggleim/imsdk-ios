@@ -58,7 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// SDK 中所有代理的回调线程，如果不指定则默认使用主线程回调
 @property(nonatomic, strong) dispatch_queue_t delegateQueue;
 
-@property(nonatomic, strong) NSString *currentUserId;
+@property(nonatomic, copy) NSString *appKey;
+
+@property(nonatomic, copy) NSString *currentUserId;
 
 -(NSString *)getDeviceId;
 @end

@@ -1005,17 +1005,17 @@
         });
         return;
     }
-    NSString *media = @"file";
+    JMediaType type = JMediaTypeFile;
     if ([content isKindOfClass:[JImageMessage class]]) {
-        media = @"image";
+        type = JMediaTypeImage;
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
-        media = @"voice";
+        type = JMediaTypeVoice;
     } else if ([content isKindOfClass:[JVideoMessage class]]) {
-        media = @"video";
+        type = JMediaTypeVideo;
     }
     NSString *url = mediaContent.url;
     NSString *name = [messageId stringByAppendingFormat:@"_%@", [self getFileNameWith:url]];
-    NSString *path = [self generateLocalPath:self.core.appKey userId:self.core.userId type:media name:name];
+    NSString *path = [self generateLocalPath:type name:name];
     [self.downloadManager downloadWithMessageId:messageId
                                             Url:url
                                            path:path
@@ -1648,14 +1648,9 @@
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
 }
 
-- (NSString *)generateLocalPath:(NSString *)appKey
-                         userId:(NSString *)userId
-                           type:(NSString *)mediaType
+- (NSString *)generateLocalPath:(JMediaType)mediaType
                            name:(NSString *)fileName {
-    NSString *root = [JUtility rootPath];
-    NSString *path = [root stringByAppendingPathComponent:appKey];
-    path = [path stringByAppendingPathComponent:userId];
-    path = [path stringByAppendingPathComponent:mediaType];
+    NSString *path = [JUtility mediaPath:mediaType];
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:path
                                   withIntermediateDirectories:YES

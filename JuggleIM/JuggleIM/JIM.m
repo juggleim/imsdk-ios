@@ -68,6 +68,10 @@ static JIM *_instance;
     JLogger.shared.consoleLogLevel = level;
 }
 
+- (NSString *)appKey {
+    return self.core.appKey;
+}
+
 - (NSString *)currentUserId {
     return self.core.userId;
 }

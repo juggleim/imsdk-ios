@@ -47,7 +47,9 @@ class CreateGroupViewController: BaseTableListViewController {
     @objc func onClickMenu() {
         self.loadingIndicator.startAnimating()
         self.view.isUserInteractionEnabled = false
-        var groupName: String = ""
+        let currentName = ProfileManager.shared.currentUserInfo?.userName
+        var groupName: String = currentName ?? ""
+        groupName = groupName.appending(", ")
         
         if selectedUsers.isEmpty {
             return

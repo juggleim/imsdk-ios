@@ -6,10 +6,16 @@
 //
 
 #import <JuggleIM/JuggleIM.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JImageMessage : JMediaMessageContent
+
+- (instancetype)initWithImage:(UIImage *)image;
+
+- (instancetype)initWithImage:(UIImage *)image
+                     fileName:(NSString *)fileName;
 
 ///缩略图本地路径
 @property (nonatomic, copy) NSString *thumbnailLocalPath;

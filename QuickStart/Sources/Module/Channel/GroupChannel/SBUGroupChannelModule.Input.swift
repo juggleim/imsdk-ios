@@ -29,7 +29,12 @@ public protocol SBUGroupChannelModuleInputDelegate: SBUBaseChannelModuleInputDel
     
     func groupChannelModule(
         _ inputComponent: SBUGroupChannelModule.Input,
-        didPickImage imageUrl: URL?
+        didPickImage image: UIImage
+    )
+    
+    func groupChannelModule(
+        _ inputComponent: SBUGroupChannelModule.Input,
+        didPickImageURL imageUrl: URL?
     )
     
     /// Called when the send button was tapped.
@@ -212,10 +217,7 @@ extension SBUGroupChannelModule {
 
                 self.delegate?.groupChannelModule(
                     self,
-                    didPickFileData: imageData,
-                    fileName: "\(Date().sbu_toString(dateFormat: SBUDateFormatSet.Message.fileNameFormat, localizedFormat: false)).jpg",
-                    mimeType: "image/jpeg",
-                    parentMessage: self.currentQuotedMessage
+                    didPickImage: image
                 )
                 return
             }
@@ -242,7 +244,7 @@ extension SBUGroupChannelModule {
                 guard let image = originalImage?.fixedOrientation(),
                       let imageData = image.sbu_convertToData() else { return }
                 
-                self.delegate?.groupChannelModule(self, didPickImage: imageURL)
+                self.delegate?.groupChannelModule(self, didPickImageURL: imageURL)
 //                self.delegate?.groupChannelModule(
 //                    self,
 //                    didPickFileData: imageData,

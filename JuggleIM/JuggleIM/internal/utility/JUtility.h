@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "JuggleIMConstInternal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)base64EncodedStringFrom:(NSData *)data;
 + (NSData *)dataWithBase64EncodedString:(NSString *)string;
 + (NSString *)rootPath;
++ (NSString *)mediaPath:(JMediaType)type;
 
 @end
 

@@ -6,6 +6,8 @@
 //
 
 #import "JImageMessage.h"
+#import <UIKit/UIKit.h>
+#import "JUtility.h"
 
 #define kImageType @"jg:img"
 #define kDigest @"[Image]"
@@ -19,6 +21,38 @@
 #define jImageExtra @"extra"
 
 @implementation JImageMessage
+
+- (instancetype)initWithImage:(UIImage *)image {
+    NSString *fileName = [NSString stringWithFormat:@"%lld.jpg", (long long)[NSDate date].timeIntervalSince1970];
+    return [self initWithImage:image fileName:fileName];
+}
+
+- (instancetype)initWithImage:(UIImage *)image fileName:(NSString *)fileName {
+    if (self = [super init]) {
+        NSData *imgData = UIImageJPEGRepresentation(image, 0.85);
+        
+        NSString *mediaPath = [JUtility mediaPath:JMediaTypeImage];
+        if (![[NSFileManager defaultManager] fileExistsAtPath:mediaPath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:mediaPath
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil
+                                                            error:nil];
+        }
+        if (fileName.length == 0) {
+            fileName = [NSString stringWithFormat:@"%lld.jpg", (long long)[NSDate date].timeIntervalSince1970];
+        }
+        NSString *localPath = [mediaPath stringByAppendingPathComponent:fileName];
+        [imgData writeToFile:localPath atomically:YES];
+        self.localPath = localPath;
+        UIImage *thumbnail = [JUtility generateThumbnail:image targetSize:CGSizeMake(240, 240)];
+        NSData *thumbData = UIImageJPEGRepresentation(image, 0.3);
+        NSString *thumbName = [NSString stringWithFormat:@"thumb_%@", fileName];
+        NSString *thumbPath = [mediaPath stringByAppendingPathComponent:thumbName];
+        [thumbData writeToFile:thumbPath atomically:YES];
+        self.thumbnailLocalPath = thumbPath;
+    }
+    return self;
+}
 
 + (NSString *)contentType {
     return kImageType;

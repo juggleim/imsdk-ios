@@ -251,6 +251,26 @@ open class SBUBaseChannelViewModel: NSObject {
         }
     }
     
+    func sendImageMessage(image: UIImage) {
+        let imageMessage = JImageMessage(image: image)
+        let message = JIM.shared().messageManager.sendMediaMessage(imageMessage, in: conversationInfo?.conversation) { progress, message in
+            
+        } success: { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code, errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        } cancel: { cancelMessage in
+            
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
     /// Sends a file message with file data, file name, mime type.
     /// - Parameters:
     ///   - fileData: `Data` class object

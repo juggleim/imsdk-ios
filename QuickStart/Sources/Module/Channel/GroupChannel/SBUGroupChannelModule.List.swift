@@ -111,7 +111,10 @@ extension SBUGroupChannelModule {
             super.setupViews()
             
             self.register(cell: SBUTextMessageCell(), contentType: JTextMessage.contentType())
-            self.register(cell: SBUMediaMessageCell(), contentType: JMediaMessageContent.contentType())
+            self.register(cell: SBUMediaMessageCell(), contentType: JImageMessage.contentType())
+            self.register(cell: SBUMediaMessageCell(), contentType: JVoiceMessage.contentType())
+            self.register(cell: SBUMediaMessageCell(), contentType: JVideoMessage.contentType())
+            self.register(cell: SBUMediaMessageCell(), contentType: JFileMessage.contentType())
             self.register(cell: SBUUnknownMessageCell(), contentType: JMessageContent.contentType())
             
             if let newMessageInfoView = self.newMessageInfoView {

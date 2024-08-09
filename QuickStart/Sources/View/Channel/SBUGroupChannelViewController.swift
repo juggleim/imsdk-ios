@@ -803,8 +803,12 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.listComponent?.channelStateBanner?.isHidden = !isFrozen
     }
     
-    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickImage imageUrl: URL?) {
+    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickImageURL imageUrl: URL?) {
         self.viewModel?.sendImageMessage(url: imageUrl)
+    }
+    
+    open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickImage image: UIImage) {
+        self.viewModel?.sendImageMessage(image: image)
     }
     
     open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, didPickFileData fileData: Data?, fileName: String, mimeType: String, parentMessage: JMessage?) {

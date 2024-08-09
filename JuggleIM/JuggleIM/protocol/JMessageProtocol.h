@@ -359,7 +359,6 @@
 ///   - messageId: 消息 id
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 
-
 /// 获取消息本地属性
 /// - Parameter clientMsgNo: 本端消息唯一编号
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;

@@ -64,3 +64,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //日志不存在
     JErrorCodeInternalLogNotExist = 22004
 };
+
+typedef NS_ENUM(NSUInteger, JMediaType) {
+    JMediaTypeFile,
+    JMediaTypeImage,
+    JMediaTypeVoice,
+    JMediaTypeVideo
+};

@@ -10,6 +10,7 @@
 #import <sys/sysctl.h>
 #import "JReachability.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import "JIM.h"
 
 @import CoreTelephony;
 
@@ -316,6 +317,32 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     NSString *path =
             NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
     path = [path stringByAppendingPathComponent:jJetIM];
+    return path;
+}
+
++ (NSString *)mediaPath:(JMediaType)type {
+    NSString *path = [self rootPath];
+    if (JIM.shared.appKey.length > 0) {
+        path = [path stringByAppendingPathComponent:JIM.shared.appKey];
+        if (JIM.shared.currentUserId.length > 0) {
+            path = [path stringByAppendingPathComponent:JIM.shared.currentUserId];
+        }
+    }
+    switch (type) {
+        case JMediaTypeFile:
+            path = [path stringByAppendingPathComponent:@"file"];
+            break;
+        case JMediaTypeImage:
+            path = [path stringByAppendingPathComponent:@"image"];
+            break;
+        case JMediaTypeVoice:
+            path = [path stringByAppendingPathComponent:@"voice"];
+            break;
+        case JMediaTypeVideo:
+            path = [path stringByAppendingPathComponent:@"video"];
+            break;
+    }
+    
     return path;
 }
 
