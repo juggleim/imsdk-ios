@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeConversationSetTopAck,
     JPBRcvTypeAddConversation,
     JPBRcvTypeFileCredMsgAck,
-
+    JPBRcvTypeGlobalMuteAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -109,11 +109,15 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @end
 
 @interface JQryFileCredAck : JQryAck
-
 @property (nonatomic, assign) JUploadOssType ossType;
 @property (nonatomic, strong) JUploadQiNiuCred *qiNiuCred;
 @property (nonatomic, strong) JUploadPreSignCred *preSignCred;
+@end
 
+@interface JGlobalMuteAck : JQryAck
+@property (nonatomic, assign) BOOL isMute;
+@property (nonatomic, copy) NSString *timezone;
+@property (nonatomic, strong) NSArray <JTimePeriod *> *periods;
 @end
 
 @interface JPBRcvObj : NSObject
@@ -129,7 +133,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
 @property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
-@property (nonatomic, strong) JQryFileCredAck * qryFileCredAck;
+@property (nonatomic, strong) JQryFileCredAck *qryFileCredAck;
+@property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
 @end
 
 @interface JPBData : NSObject
@@ -253,6 +258,15 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                      fileType:(JUploadFileType)fileType
                           ext:(NSString *)ext
                         index:(int)index;
+
+- (NSData *)setGlobalMute:(BOOL)isMute
+                   userId:(NSString *)userId
+                 timezone:(NSString *)timezone
+                  periods:(NSArray<JTimePeriod *> *)periods
+                    index:(int)index;
+
+- (NSData *)getGlobalMute:(NSString *)userId
+                    index:(int)index;
 
 - (NSData *)pingData;
 

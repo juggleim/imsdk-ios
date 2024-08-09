@@ -57,8 +57,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jDelMsg @"del_msg"
 #define jCleanHismsg @"clean_hismsg"
 #define jAddConver @"add_conver"
-#define JFileCred @"file_cred"
-
+#define jFileCred @"file_cred"
+#define jSetUserUndisturb @"set_user_undisturb"
+#define jGetUserUndisturb @"get_user_undisturb"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -94,6 +95,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JQryFileCredAck
 @end
 
+@implementation JGlobalMuteAck
+@end
 
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
@@ -793,9 +796,51 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
-    body.topic = JFileCred;
+    body.topic = jFileCred;
     body.targetId = userId;
     body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)setGlobalMute:(BOOL)isMute
+                   userId:(NSString *)userId
+                 timezone:(NSString *)timezone
+                  periods:(NSArray<JTimePeriod *> *)periods
+                    index:(int)index {
+    UserUndisturb *req = [[UserUndisturb alloc] init];
+    req.switch_p = isMute;
+    req.timezone = timezone;
+    
+    NSMutableArray <UserUndisturbItem *> *arr = [NSMutableArray array];
+    for (JTimePeriod *period in periods) {
+        UserUndisturbItem *item = [[UserUndisturbItem alloc] init];
+        item.start = period.startTime;
+        item.end = period.endTime;
+        [arr addObject:item];
+    }
+    req.rulesArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jSetUserUndisturb;
+    body.targetId = userId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getGlobalMute:(NSString *)userId index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jGetUserUndisturb;
+    body.targetId = userId;
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -901,6 +946,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeFileCredMsgAck:
                     obj = [self qryFileCredAckWithImWebsocketMsg:msg];
+                    break;
+                case JPBRcvTypeGlobalMuteAck:
+                    obj = [self globalMuteAckWithImWebsocketMsg:msg];
+                    break;
                     
                 default:
                     break;
@@ -1306,6 +1355,32 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
 }
 
+- (JPBRcvObj *)globalMuteAckWithImWebsocketMsg:(ImWebsocketMsg *)msg{
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    UserUndisturb *resp = [[UserUndisturb alloc] initWithData:msg.qryAckMsgBody.data_p error:&e];
+    if(e != nil){
+        JLogE(@"PB-Parse", @"global mute ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGlobalMuteAck;
+    JGlobalMuteAck *a = [[JGlobalMuteAck alloc] init];
+    [a encodeWithQueryAckMsgBody:msg.qryAckMsgBody];
+    a.isMute = resp.switch_p;
+    a.timezone = resp.timezone;
+    NSMutableArray <JTimePeriod *> *periods = [NSMutableArray array];
+    for (UserUndisturbItem *item in resp.rulesArray) {
+        JTimePeriod *p = [[JTimePeriod alloc] init];
+        p.startTime = item.start;
+        p.endTime = item.end;
+        [periods addObject:p];
+    }
+    a.periods = periods;
+    obj.globalMuteAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)conversationSetTopAckWithImWebsocketMsg:(ImWebsocketMsg *)msg {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -1447,7 +1522,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jDelMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jCleanHismsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jAddConver:@(JPBRcvTypeAddConversation),
-             JFileCred:@(JPBRcvTypeFileCredMsgAck)
+             jFileCred:@(JPBRcvTypeFileCredMsgAck),
+             jSetUserUndisturb:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jGetUserUndisturb:@(JPBRcvTypeGlobalMuteAck)
     };
 }
 @end

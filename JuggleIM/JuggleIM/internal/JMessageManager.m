@@ -1065,6 +1065,53 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
+- (void)setMute:(BOOL)isMute
+        periods:(NSArray<JTimePeriod *> *)periods
+       complete:(void (^)(JErrorCode))completeBlock {
+    NSTimeZone *zone = [NSTimeZone systemTimeZone];
+    NSString *zoneName = [zone name].length ? [zone name] : @"";
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket setGlobalMute:isMute
+                                userId:self.core.userId
+                              timezone:zoneName
+                               periods:periods
+                               success:^(long long timestamp) {
+        JLogI(@"MSG-Mute", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Mute", @"code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getMuteStatus:(void (^)(JErrorCode, BOOL, NSString *, NSArray<JTimePeriod *> *))completeBlock {
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket getGlobalMute:self.core.userId
+                               success:^(BOOL isMute, NSString * _Nonnull timezone, NSArray<JTimePeriod *> * _Nonnull periods) {
+        JLogI(@"MSG-GetMute", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, isMute, timezone, periods);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetMute", @"code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock((JErrorCode)code, NO, nil, nil);
+            }
+        });
+    }];
+}
+
 - (void)connectSuccess {
     self.syncProcessing = YES;
 }

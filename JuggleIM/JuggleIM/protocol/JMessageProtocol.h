@@ -10,6 +10,7 @@
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JMessageUploadProvider.h>
 #import <JuggleIM/JMediaMessageContent.h>
+#import <JuggleIM/JTimePeriod.h>
 
 @class JMergeMessage;
 
@@ -395,6 +396,19 @@
 /// 取消下载消息
 /// - Parameter messageId: 消息 id
 - (void)cancelDownloadMediaMessage:(NSString *)messageId;
+
+/// 设置消息全局免打扰
+/// - Parameters:
+///   - isMute: 是否免打扰
+///   - periods: 免打扰的时间段，如果为空则视为全天免打扰
+///   - completeBlock: 结果回调
+- (void)setMute:(BOOL)isMute
+        periods:(NSArray <JTimePeriod *> *)periods
+       complete:(void (^)(JErrorCode errorCode))completeBlock;
+
+/// 获取消息全局免打扰配置
+/// - Parameter completeBlock: 结果回调 [errorCode: 错误码，0 为成功; isMute: 是否免打扰; timezone: 时区; periods: 免打扰的时间段, 为空视为全天免打扰]
+- (void)getMuteStatus:(void (^)(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))completeBlock;
 
 // TODO: 上传做完后删除
 - (void)setMessageState:(JMessageState)state

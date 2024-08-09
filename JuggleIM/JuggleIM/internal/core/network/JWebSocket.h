@@ -181,6 +181,17 @@ inConversation:(JConversation *)conversation
                   success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)setGlobalMute:(BOOL)isMute
+               userId:(NSString *)userId
+             timezone:(NSString *)timezone
+              periods:(NSArray <JTimePeriod *> *)periods
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getGlobalMute:(NSString *)userId
+              success:(void (^)(BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

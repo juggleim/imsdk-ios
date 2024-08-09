@@ -59,4 +59,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
+@interface JGlobalMuteObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(BOOL isMute, NSString * _Nonnull timezone, NSArray<JTimePeriod *> * _Nonnull periods);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
 NS_ASSUME_NONNULL_END

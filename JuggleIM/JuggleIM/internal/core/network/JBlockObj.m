@@ -33,3 +33,6 @@
 
 @implementation JUploadFileCredBlockObj
 @end
+
+@implementation JGlobalMuteObj
+@end

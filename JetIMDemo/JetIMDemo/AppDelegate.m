@@ -87,15 +87,31 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
-            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
-            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId3"];
-            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
-            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
+            NSMutableArray *a = [NSMutableArray array];
+            JTimePeriod *p1 = [[JTimePeriod alloc] init];
+            p1.startTime = @"11:23";
+            p1.endTime = @"20:40";
+            [a addObject:p1];
             
-            NSArray *conversations = @[c1, c2, c3, conversation];
+//            [JIM.shared.messageManager setMute:YES
+//                                       periods:a
+//                                      complete:^(JErrorCode errorCode) {
+//                NSLog(@"lifei, set mute code is %d", errorCode);
+//            }];
             
-            [JIM.shared.messageManager setLocalAttribute:@"attribute1" forClientMsgNo:123];
+            [JIM.shared.messageManager getMuteStatus:^(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray<JTimePeriod *> *periods) {
+                            int i = 1;
+                        }];
+            
+//            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
+//            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
+//            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId3"];
+//            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
+//            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
+//
+//            NSArray *conversations = @[c1, c2, c3, conversation];
+//
+//            [JIM.shared.messageManager setLocalAttribute:@"attribute1" forClientMsgNo:123];
             
             
             

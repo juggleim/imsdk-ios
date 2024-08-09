@@ -530,6 +530,44 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)setGlobalMute:(BOOL)isMute
+               userId:(NSString *)userId
+             timezone:(NSString *)timezone
+              periods:(NSArray<JTimePeriod *> *)periods
+              success:(void (^)(long long))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData setGlobalMute:isMute
+                                        userId:userId
+                                      timezone:timezone
+                                       periods:periods
+                                         index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set global mute, isMute is %d", isMute);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)getGlobalMute:(NSString *)userId
+              success:(void (^)(BOOL, NSString * _Nonnull, NSArray<JTimePeriod *> * _Nonnull))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getGlobalMute:userId index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get global mute");
+        JGlobalMuteObj *obj = [[JGlobalMuteObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -707,9 +745,15 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeAddConversation:
             JLogI(@"WS-Receive", @"JPBRcvTypeAddConversation");
             [self handleConversationAck:obj.conversationInfoAck];
+            break;
         case JPBRcvTypeFileCredMsgAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeFileCredMsgAck");
             [self handleUploadFileCredCallback:obj.qryFileCredAck];
+            break;
+        case JPBRcvTypeGlobalMuteAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGlobalMuteAck");
+            [self handleGlobalMuteAck:obj.globalMuteAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -905,14 +949,26 @@ inConversation:(JConversation *)conversation
     }
 }
 
--(void)handleUploadFileCredCallback:(JQryFileCredAck *)ack{
+-(void)handleUploadFileCredCallback:(JQryFileCredAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JUploadFileCredBlockObj class]]) {
-        JUploadFileCredBlockObj * fileCredBlockObj = (JUploadFileCredBlockObj *)obj;
+        JUploadFileCredBlockObj *fileCredBlockObj = (JUploadFileCredBlockObj *)obj;
         if (ack.code != 0) {
             fileCredBlockObj.errorBlock(ack.code);
         } else {
             fileCredBlockObj.successBlock(ack.ossType, ack.qiNiuCred, ack.preSignCred);
+        }
+    }
+}
+
+- (void)handleGlobalMuteAck:(JGlobalMuteAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JGlobalMuteObj class]]) {
+        JGlobalMuteObj *globalMuteObj = (JGlobalMuteObj *)obj;
+        if (ack.code != 0) {
+            globalMuteObj.errorBlock(ack.code);
+        } else {
+            globalMuteObj.successBlock(ack.isMute, ack.timezone, ack.periods);
         }
     }
 }
