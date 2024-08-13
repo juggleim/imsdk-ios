@@ -678,10 +678,10 @@ inConversation:(JConversation *)conversation
     JLogI(@"WS-Connect", @"close code is %ld, reason is %@", (long)code, reason);
     dispatch_async(self.sendQueue, ^{
         [self resetSws];
+        if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
+            [self.connectDelegate webSocketDidClose];
+        }
     });
-    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
-        [self.connectDelegate webSocketDidClose];
-    }
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {

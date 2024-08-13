@@ -550,26 +550,26 @@ extension SBUBaseChannelModule {
         open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
             return
             //TODO: 
-            switch message.messageState {
-            case .unknown, .sending, .uploading:
-                break
-            case .fail:
-                // shows failed message menu
-                showFailedMessageMenu(on: message)
-            default:
-                // sent
-                guard let cell = self.tableView.cellForRow(at: indexPath) else {
-                    SBULog.error("Couldn't find cell for row at \(indexPath)")
-                    return
-                }
-                cell.isSelected = true
-                if false {
-                    // shows menu sheet view controller
-                    self.showMessageMenuSheet(for: message, cell: cell)
-                } else {
-                    self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
-                }
-            }
+//            switch message.messageState {
+//            case .unknown, .sending, .uploading:
+//                break
+//            case .fail:
+//                // shows failed message menu
+//                showFailedMessageMenu(on: message)
+//            default:
+//                // sent
+//                guard let cell = self.tableView.cellForRow(at: indexPath) else {
+//                    SBULog.error("Couldn't find cell for row at \(indexPath)")
+//                    return
+//                }
+//                cell.isSelected = true
+//                if false {
+//                    // shows menu sheet view controller
+//                    self.showMessageMenuSheet(for: message, cell: cell)
+//                } else {
+//                    self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
+//                }
+//            }
         }
         
         /// Displays the menu of a message that failed to send.
