@@ -680,7 +680,7 @@ inConversation:(JConversation *)conversation
         [self resetSws];
         if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
             [self.connectDelegate webSocketDidClose];
-        }
+        } 
     });
 }
 
