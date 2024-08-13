@@ -161,9 +161,9 @@ extension GlobalSetCustomManager {
             alpha: 1.0
         )
         SBUColorSet.primary300 = UIColor(
-            red: 116.0 / 255.0,
-            green: 45.0 / 255.0,
-            blue: 221.0 / 255.0,
+            red: 34.0 / 255.0,
+            green: 135.0 / 255.0,
+            blue: 252.0 / 255.0,
             alpha: 1.0
         )
         SBUColorSet.primary400 = UIColor(
