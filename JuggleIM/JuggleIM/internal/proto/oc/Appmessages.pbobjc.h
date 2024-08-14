@@ -2908,21 +2908,6 @@ GPB_FINAL @interface QryGrpMemberSettingsResp : GPBMessage
 
 @end
 
-#pragma mark - ChatRoomReq
-
-typedef GPB_ENUM(ChatRoomReq_FieldNumber) {
-  ChatRoomReq_FieldNumber_ChatId = 1,
-};
-
-/**
- * chatroom
- **/
-GPB_FINAL @interface ChatRoomReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@end
-
 #pragma mark - SyncChatroomReq
 
 typedef GPB_ENUM(SyncChatroomReq_FieldNumber) {
@@ -2931,6 +2916,9 @@ typedef GPB_ENUM(SyncChatroomReq_FieldNumber) {
   SyncChatroomReq_FieldNumber_AttSyncTime = 3,
 };
 
+/**
+ * chatroom
+ **/
 GPB_FINAL @interface SyncChatroomReq : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *chatroomId;

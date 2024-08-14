@@ -48,7 +48,6 @@ GPBObjCClassDeclaration(ChatAttReq);
 GPBObjCClassDeclaration(ChatAtts);
 GPBObjCClassDeclaration(ChatMembersDispatchReq);
 GPBObjCClassDeclaration(ChatMsgNode);
-GPBObjCClassDeclaration(ChatRoomReq);
 GPBObjCClassDeclaration(ChatroomInfo);
 GPBObjCClassDeclaration(ChatroomMember);
 GPBObjCClassDeclaration(CheckGroupMembersReq);
@@ -8799,57 +8798,6 @@ typedef struct QryGrpMemberSettingsResp__storage_ {
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\006\001\007\000\002\010\000\003\010\000\004\010\000\005\r\000\006\016\000";
-      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - ChatRoomReq
-
-@implementation ChatRoomReq
-
-@dynamic chatId;
-
-typedef struct ChatRoomReq__storage_ {
-  uint32_t _has_storage_[1];
-  NSString *chatId;
-} ChatRoomReq__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "chatId",
-        .dataTypeSpecific.clazz = Nil,
-        .number = ChatRoomReq_FieldNumber_ChatId,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(ChatRoomReq__storage_, chatId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ChatRoomReq)
-                                   messageName:@"ChatRoomReq"
-                               fileDescription:&AppmessagesRoot_FileDescription
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(ChatRoomReq__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-      static const char *extraTextFormatInfo =
-        "\001\001\006\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
