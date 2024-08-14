@@ -62,7 +62,7 @@
     NSArray *userJson = dic[jConversationMentionInfoMsgs];
     if (userJson.count > 0) {
         NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
-        for (NSDictionary * msg in msgs) {
+        for (NSDictionary * msg in userJson) {
             JConversationMentionMessage * mentionMessage = [[JConversationMentionMessage alloc] init];
             mentionMessage.senderId = msg[jConversationMentionMessageSenderId]?:@"";
             mentionMessage.msgId = msg[jConversationMentionMessageMsgId]?:@"";
