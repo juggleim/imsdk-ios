@@ -684,6 +684,9 @@ message QryGrpMemberSettingsResp{
 }
 
 // chatroom
+message ChatRoomReq{
+    string chatId = 1;
+}
 message SyncChatroomReq{
   string chatroomId = 1;
   int64 syncTime = 2;
