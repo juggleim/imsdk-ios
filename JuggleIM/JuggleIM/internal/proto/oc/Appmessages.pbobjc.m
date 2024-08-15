@@ -4821,6 +4821,7 @@ typedef struct MentionMsg__storage_ {
 @dynamic startTime;
 @dynamic count;
 @dynamic order;
+@dynamic latestReadIndex;
 
 typedef struct QryMentionMsgsReq__storage_ {
   uint32_t _has_storage_[1];
@@ -4829,6 +4830,7 @@ typedef struct QryMentionMsgsReq__storage_ {
   int32_t order;
   NSString *targetId;
   int64_t startTime;
+  int64_t latestReadIndex;
 } QryMentionMsgsReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -4883,6 +4885,15 @@ typedef struct QryMentionMsgsReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
       },
+      {
+        .name = "latestReadIndex",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_LatestReadIndex,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(QryMentionMsgsReq__storage_, latestReadIndex),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(QryMentionMsgsReq)
@@ -4894,7 +4905,7 @@ typedef struct QryMentionMsgsReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\013\000\003\t\000";
+        "\004\001\010\000\002\013\000\003\t\000\006\017\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

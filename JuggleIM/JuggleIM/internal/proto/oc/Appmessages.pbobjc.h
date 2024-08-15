@@ -1739,6 +1739,7 @@ typedef GPB_ENUM(QryMentionMsgsReq_FieldNumber) {
   QryMentionMsgsReq_FieldNumber_StartTime = 3,
   QryMentionMsgsReq_FieldNumber_Count = 4,
   QryMentionMsgsReq_FieldNumber_Order = 5,
+  QryMentionMsgsReq_FieldNumber_LatestReadIndex = 6,
 };
 
 GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
@@ -1752,6 +1753,8 @@ GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
 @property(nonatomic, readwrite) int32_t count;
 
 @property(nonatomic, readwrite) int32_t order;
+
+@property(nonatomic, readwrite) int64_t latestReadIndex;
 
 @end
 
