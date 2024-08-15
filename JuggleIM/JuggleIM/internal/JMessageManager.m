@@ -934,10 +934,12 @@
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
                      error:(void (^)(JErrorCode))errorBlock {
+    JConcreteConversationInfo *conversationInfo = [self.core.dbManager getConversationInfo:conversation];
     [self.core.webSocket getMentionMessages:conversation
                                        time:time
                                       count:count
                                   direction:direction
+                              lastReadIndex:conversationInfo.lastMessageIndex
                                     success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMention", @"success");
         [self.core.dbManager insertMessages:messages];

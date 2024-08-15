@@ -648,6 +648,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                           time:(long long)time
                          count:(int)count
                      direction:(JPullDirection)direction
+                 lastReadIndex:(long long)lastReadIndex
                          index:(int)index {
     QryMentionMsgsReq *req = [[QryMentionMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
@@ -659,6 +660,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     } else {
         req.order = 1;
     }
+    req.latestReadIndex = lastReadIndex;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;

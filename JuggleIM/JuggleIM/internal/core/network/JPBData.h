@@ -235,6 +235,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                           time:(long long)timestamp
                          count:(int)count
                      direction:(JPullDirection)direction
+                 lastReadIndex:(long long)lastReadIndex
                          index:(int)index;
 
 - (NSData *)clearTotalUnreadCountMessages:(NSString *)userId

@@ -419,6 +419,7 @@ inConversation:(JConversation *)conversation
                       time:(long long)time
                      count:(int)count
                  direction:(JPullDirection)direction
+             lastReadIndex:(long long)lastReadIndex
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -427,6 +428,7 @@ inConversation:(JConversation *)conversation
                                                time:time
                                               count:count
                                           direction:direction
+                                      lastReadIndex:lastReadIndex
                                               index:self.cmdIndex++];
         JLogI(@"WS-Send", @"get mention message");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];

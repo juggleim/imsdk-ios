@@ -150,6 +150,7 @@ inConversation:(JConversation *)conversation
                       time:(long long)time
                      count:(int)count
                  direction:(JPullDirection)direction
+             lastReadIndex:(long long)lastReadIndex
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 
