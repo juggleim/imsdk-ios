@@ -60,6 +60,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jFileCred @"file_cred"
 #define jSetUserUndisturb @"set_user_undisturb"
 #define jGetUserUndisturb @"get_user_undisturb"
+#define jJoinChatroom @"c_join"
+#define jQuitChatroom @"c_quit"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -848,6 +850,39 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)joinChatroom:(NSString *)chatroomId
+                   index:(int)index {
+    ChatroomInfo *info = [[ChatroomInfo alloc] init];
+    info.chatId = chatroomId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jJoinChatroom;
+    body.targetId = chatroomId;
+    body.data_p = [info data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)quitChatroom:(NSString *)chatroomId index:(int)index {
+    ChatroomInfo *info = [[ChatroomInfo alloc] init];
+    info.chatId = chatroomId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQuitChatroom;
+    body.targetId = chatroomId;
+    body.data_p = [info data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
@@ -1524,7 +1559,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jAddConver:@(JPBRcvTypeAddConversation),
              jFileCred:@(JPBRcvTypeFileCredMsgAck),
              jSetUserUndisturb:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jGetUserUndisturb:@(JPBRcvTypeGlobalMuteAck)
+             jGetUserUndisturb:@(JPBRcvTypeGlobalMuteAck),
+             jJoinChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jQuitChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp)
     };
 }
 @end

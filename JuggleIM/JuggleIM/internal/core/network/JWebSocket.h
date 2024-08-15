@@ -192,6 +192,14 @@ inConversation:(JConversation *)conversation
               success:(void (^)(BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)joinChatroom:(NSString *)chatroomId
+             success:(void (^)(long long timestamp))successBlock
+               error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)quitChatroom:(NSString *)chatroomId
+             success:(void (^)(long long timestamp))successBlock
+               error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 @end
 

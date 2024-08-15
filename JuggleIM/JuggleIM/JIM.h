@@ -10,6 +10,7 @@
 #import <JuggleIM/JMessageProtocol.h>
 #import <JuggleIM/JConversationProtocol.h>
 #import <JuggleIM/JUserInfoProtocol.h>
+#import <JuggleIM/JChatroomProtocol.h>
 
 @protocol JConnectionProtocol;
 @protocol JMessageProtocol;
@@ -53,8 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) id<JMessageProtocol> messageManager;
 /// 会话管理类
 @property(nonatomic, strong) id<JConversationProtocol> conversationManager;
-
+/// 用户管理类
 @property(nonatomic, strong) id<JUserInfoProtocol> userInfoManager;
+/// 聊天室管理类
+@property(nonatomic, strong) id<JChatroomProtocol> chatroomManager;
 /// SDK 中所有代理的回调线程，如果不指定则默认使用主线程回调
 @property(nonatomic, strong) dispatch_queue_t delegateQueue;
 

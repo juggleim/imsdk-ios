@@ -10,6 +10,7 @@
 #import "JMessageManager.h"
 #import "JConversationManager.h"
 #import "JUserInfoManager.h"
+#import "JChatroomManager.h"
 #import "JIMCore.h"
 #import "JLogger.h"
 #import "JUtility.h"
@@ -37,6 +38,8 @@ static JIM *_instance;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager];
+        JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
+        _instance.chatroomManager = chatroomManager;
     });
     return _instance;
 }

@@ -11,13 +11,25 @@
 
 @protocol JChatroomDelegate <NSObject>
 
+/// 当前用户加入聊天室
+/// - Parameter chatroomId: 聊天室 id
 - (void)chatroomDidJoin:(NSString *)chatroomId;
 
+/// 当前用户退出聊天室
+/// - Parameter chatroomId: 聊天室 id
 - (void)chatroomDidQuit:(NSString *)chatroomId;
 
+/// 加入聊天室失败
+/// - Parameters:
+///   - chatroomId: 聊天室 id
+///   - errorCode: 错误码
 - (void)chatroomJoinFail:(NSString *)chatroomId
                errorCode:(JErrorCode)errorCode;
 
+/// 退出聊天室失败
+/// - Parameters:
+///   - chatroomId: 聊天室 id
+///   - errorCode: 错误码
 - (void)chatroomQuitFail:(NSString *)chatroomId
                errorCode:(JErrorCode)errorCode;
 
@@ -28,9 +40,7 @@
 /// 加入聊天室
 /// - Parameters:
 ///   - chatroomId: 聊天室 id
-///   - createIfNotExist:  YES，当聊天室不存在时自动创建，默认值是 NO
-- (void)joinChatroom:(NSString *)chatroomId
-    createIfNotExist:(BOOL)createIfNotExist;
+- (void)joinChatroom:(NSString *)chatroomId;
 
 /// 退出聊天室
 /// - Parameter chatroomId: 聊天室 id

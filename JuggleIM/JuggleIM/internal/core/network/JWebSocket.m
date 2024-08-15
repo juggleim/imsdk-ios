@@ -568,6 +568,34 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)joinChatroom:(NSString *)chatroomId
+             success:(void (^)(long long))successBlock
+               error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData joinChatroom:chatroomId index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"join chatroom, id is %@", chatroomId);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)quitChatroom:(NSString *)chatroomId
+             success:(void (^)(long long))successBlock
+               error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData quitChatroom:chatroomId index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"quit chatroom, id is %@", chatroomId);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -680,7 +708,7 @@ inConversation:(JConversation *)conversation
         [self resetSws];
         if ([self.connectDelegate respondsToSelector:@selector(webSocketDidClose)]) {
             [self.connectDelegate webSocketDidClose];
-        } 
+        }
     });
 }
 

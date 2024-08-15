@@ -14,7 +14,7 @@
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate>
 
 @end
 
@@ -23,10 +23,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@[@"https://nav.routechat.im"]];
+    [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"kefukey"];
-    [JIM.shared.connectionManager connectWithToken:@"CgdrZWZ1a2V5GiAZk_1YP33HTBye4tR-qpvdf35RNwCqb0GYiugJ7AmOhw=="];
+    [JIM.shared initWithAppKey:@"nrsv8k9msacfxkr8"];
+    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -34,7 +34,7 @@
     [JIM.shared.conversationManager addDelegate:self];
     [JIM.shared.messageManager addReadReceiptDelegate:self];
     [JIM.shared.messageManager setMessageUploadProvider:self];
-    
+    [JIM.shared.chatroomManager addDelegate:self];
     return YES;
 }
 
@@ -87,21 +87,8 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            NSMutableArray *a = [NSMutableArray array];
-            JTimePeriod *p1 = [[JTimePeriod alloc] init];
-            p1.startTime = @"11:23";
-            p1.endTime = @"20:40";
-            [a addObject:p1];
             
-//            [JIM.shared.messageManager setMute:YES
-//                                       periods:a
-//                                      complete:^(JErrorCode errorCode) {
-//                NSLog(@"lifei, set mute code is %d", errorCode);
-//            }];
-            
-            [JIM.shared.messageManager getMuteStatus:^(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray<JTimePeriod *> *periods) {
-                            int i = 1;
-                        }];
+//            [JIM.shared.chatroomManager quitChatroom:@"chatroom1001"];
             
 //            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
 //            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
@@ -423,6 +410,22 @@
     
 }
 
+- (void)chatroomDidJoin:(NSString *)chatroomId {
+    NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
+}
+
+- (void)chatroomDidQuit:(NSString *)chatroomId {
+    NSLog(@"lifei, chatroomDidQuit, chatroomId is %@", chatroomId);
+}
+
+- (void)chatroomJoinFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
+    NSLog(@"lifei, chatroomJoinFail, chatroomId is %@, errorCode is %ld", chatroomId, errorCode);
+}
+
+- (void)chatroomQuitFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
+    NSLog(@"lifei, chatroomQuitFail, chatroomId is %@, errorCode is %ld", chatroomId, errorCode);
+}
+
 - (void)sendMessage {
     JTextMessage *text = [[JTextMessage alloc] initWithContent:@"user5 testSendMessage"];
     text.extra = @"extra";
@@ -540,7 +543,6 @@
     NSLog(@"lifei, totalUnreadMessageCountDidUpdate, count is %d", count);
 }
 
-
 #pragma mark - UISceneSession lifecycle
 
 
@@ -559,5 +561,7 @@
 
 
 @end
+
+
 
 
