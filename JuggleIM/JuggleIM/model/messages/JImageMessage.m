@@ -45,7 +45,7 @@
         [imgData writeToFile:localPath atomically:YES];
         self.localPath = localPath;
         UIImage *thumbnail = [JUtility generateThumbnail:image targetSize:CGSizeMake(240, 240)];
-        NSData *thumbData = UIImageJPEGRepresentation(image, 0.3);
+        NSData *thumbData = UIImageJPEGRepresentation(thumbnail, 0.3);
         NSString *thumbName = [NSString stringWithFormat:@"thumb_%@", fileName];
         NSString *thumbPath = [mediaPath stringByAppendingPathComponent:thumbName];
         [thumbData writeToFile:thumbPath atomically:YES];

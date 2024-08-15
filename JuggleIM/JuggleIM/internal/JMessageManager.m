@@ -1531,7 +1531,11 @@
             JDeleteConvMessage *deleteConvMsg = (JDeleteConvMessage *)obj.content;
             NSMutableArray * deletedList = [NSMutableArray array];
             for (JConversation *deleteConversation in deleteConvMsg.conversations) {
-                JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:deleteConversation];
+                JConcreteConversationInfo *conversationInfo = [self.core.dbManager getConversationInfo:deleteConversation];
+                if (!conversationInfo) {
+                    continue;
+                }
+                JMessage * lastMessage = conversationInfo.lastMessage;
                 if(obj.timestamp <= lastMessage.timestamp){
                     continue;
                 }else{
