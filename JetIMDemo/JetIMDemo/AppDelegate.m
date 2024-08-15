@@ -25,7 +25,7 @@
     // Override point for customization after application launch.
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"nrsv8k9msacfxkr8"];
+    [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
     [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
@@ -86,6 +86,18 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"VV0jm1B59"];
+//            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
+//            [JIM.shared.messageManager getMentionMessages:c
+//                                                    count:100
+//                                                     time:0
+//                                                direction:JPullDirectionOlder
+//                                                  success:^(NSArray<JMessage *> *messages, BOOL isFinished) {
+//                int i = 0;
+//            } error:^(JErrorCode code) {
+//                int i = 0;
+//            }];
             
             
 //            [JIM.shared.chatroomManager quitChatroom:@"chatroom1001"];

@@ -939,7 +939,7 @@
                                        time:time
                                       count:count
                                   direction:direction
-                              lastReadIndex:conversationInfo.lastMessageIndex
+                              lastReadIndex:conversationInfo.lastReadMessageIndex
                                     success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMention", @"success");
         [self.core.dbManager insertMessages:messages];

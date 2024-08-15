@@ -748,9 +748,9 @@
 }
 
 -(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *) messages{
-    BOOL hasMention = NO;
     NSMutableArray * conversations = [NSMutableArray array];
     for (JConcreteMessage * message in messages) {
+        BOOL hasMention = NO;
         //接收的消息才处理 mention
         if (message.direction == JMessageDirectionReceive
             && message.mentionInfo != nil) {
