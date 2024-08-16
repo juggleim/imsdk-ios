@@ -717,6 +717,8 @@
                              contentTypes:contentTypes
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-Get", @"success");
+        //TODO: 拉取的历史消息，重复的本地消息直接覆盖，clientMsgNo 不变，其它字段覆盖
+        //远端消息中间有断档的情况下，表示远端删了而本地没跟进，需要把本地对应的范围删掉
         [weakSelf.core.dbManager insertMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
