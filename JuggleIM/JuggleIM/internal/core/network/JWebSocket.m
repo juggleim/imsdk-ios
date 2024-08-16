@@ -255,6 +255,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                startTime:(long long)startTime
                    count:(int)count
                direction:(JPullDirection)direction
+            contentTypes:(NSArray <NSString *> *)contentTypes
                  success:(void (^)(NSArray * _Nonnull, BOOL))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -263,6 +264,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                                             startTime:startTime
                                                 count:count
                                             direction:direction
+                                         contentTypes:contentTypes
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"query history messages");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];

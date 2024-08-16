@@ -187,6 +187,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                        startTime:(long long)startTime
                            count:(int)count
                        direction:(JPullDirection)direction
+                    contentTypes:(NSArray <NSString *> *)contentTypes
                            index:(int)index;
 
 - (NSData *)queryHisMsgsDataByIds:(NSArray <NSString *> *)messageIds

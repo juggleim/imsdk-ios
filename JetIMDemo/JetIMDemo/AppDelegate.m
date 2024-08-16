@@ -87,7 +87,30 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"VV0jm1B59"];
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"VV0jm1B59"];
+            
+            [JIM.shared.messageManager getRemoteMessagesFrom:c
+                                                   startTime:0
+                                                       count:100 
+                                                   direction:JPullDirectionOlder
+                                                     success:^(NSArray *messages, BOOL isFinished) {
+                int i = 0;
+            } error:^(JErrorCode code) {
+                int i = 0;
+            }];
+            
+//            JGetMessageOptions *option = [[JGetMessageOptions alloc] init];
+//            option.count = 100;
+//            option.contentTypes = @[@"jg:text", @"jgd:grpntf"];
+//            [JIM.shared.messageManager getMessages:c
+//                                         direction:JPullDirectionOlder
+//                                            option:option
+//                                 localMessageBlock:^(NSArray<JMessage *> *messages, JErrorCode code) {
+//                int i = 0;
+//            } remoteMessageBlock:^(NSArray<JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code) {
+//                int i = 0;
+//            }];
+            
 //            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
 //            [JIM.shared.messageManager getMentionMessages:c
 //                                                    count:100

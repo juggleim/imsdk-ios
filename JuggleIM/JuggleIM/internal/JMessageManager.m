@@ -690,6 +690,22 @@
                     direction:(JPullDirection)direction
                       success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock {
+    [self getRemoteMessagesFrom:conversation
+                      startTime:startTime
+                          count:count
+                      direction:direction
+                   contentTypes:nil
+                        success:successBlock
+                          error:errorBlock];
+}
+
+- (void)getRemoteMessagesFrom:(JConversation *)conversation
+                    startTime:(long long)startTime
+                        count:(int)count
+                    direction:(JPullDirection)direction
+                 contentTypes:(NSArray <NSString *> *)contentTypes
+                      success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock {
     if (count > 100) {
         count = 100;
     }
@@ -698,6 +714,7 @@
                                 startTime:startTime
                                     count:count
                                 direction:direction
+                             contentTypes:contentTypes
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-Get", @"success");
         [weakSelf.core.dbManager insertMessages:messages];
@@ -810,6 +827,68 @@
             
         } error:errorBlock];
     }
+}
+
+- (void)getMessages:(JConversation *)conversation
+          direction:(JPullDirection)direction
+             option:(JGetMessageOptions *)option
+  localMessageBlock:(void (^)(NSArray<JMessage *> *, JErrorCode))localMessageBlock
+ remoteMessageBlock:(void (^)(NSArray<JMessage *> *, long long, BOOL, JErrorCode))remoteMessageBlock {
+    if (conversation.conversationId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (localMessageBlock) {
+                localMessageBlock(nil, JErrorCodeInvalidParam);
+            }
+            if (remoteMessageBlock) {
+                remoteMessageBlock(nil, 0, NO, JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    if (!option) {
+        option = [[JGetMessageOptions alloc] init];
+    }
+    if (option.count <= 0 || option.count > 100) {
+        option.count = 100;
+    }
+    NSArray *localMessages = [self getMessagesFrom:conversation
+                                             count:option.count
+                                              time:option.startTime
+                                         direction:direction
+                                      contentTypes:option.contentTypes];
+    
+    dispatch_async(self.core.delegateQueue, ^{
+        if (localMessageBlock) {
+            localMessageBlock(localMessages, JErrorCodeNone);
+        }
+    });
+    
+    [self getRemoteMessagesFrom:conversation
+                      startTime:option.startTime
+                          count:option.count
+                      direction:direction
+                   contentTypes:option.contentTypes
+                        success:^(NSArray *messages, BOOL isFinished) {
+        dispatch_async(self.core.delegateQueue, ^{
+            long long timestamp;
+            if (direction == JPullDirectionNewer) {
+                JMessage *m = messages.lastObject;
+                timestamp = m.timestamp;
+            } else {
+                JMessage *m = messages.firstObject;
+                timestamp = m.timestamp;
+            }
+            if (remoteMessageBlock) {
+                remoteMessageBlock(messages, timestamp, !isFinished, JErrorCodeNone);
+            }
+        });
+    } error:^(JErrorCode code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (remoteMessageBlock) {
+                remoteMessageBlock(nil, 0, NO, code);
+            }
+        });
+    }];
 }
 
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {

@@ -92,6 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
                startTime:(long long)startTime
                    count:(int)count
                direction:(JPullDirection)direction
+            contentTypes:(nullable NSArray <NSString *> *)contentTypes
                  success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 

@@ -425,6 +425,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                        startTime:(long long)startTime
                            count:(int)count
                        direction:(JPullDirection)direction
+                    contentTypes:(NSArray <NSString *> *)contentTypes
                            index:(int)index {
     QryHisMsgsReq *r = [[QryHisMsgsReq alloc] init];
     r.targetId = conversation.conversationId;
@@ -435,6 +436,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         r.order = 0;
     } else {
         r.order = 1;
+    }
+    if (contentTypes.count > 0) {
+        r.msgTypesArray = [contentTypes mutableCopy];
     }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];

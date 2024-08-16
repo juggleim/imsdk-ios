@@ -11,6 +11,7 @@
 #import <JuggleIM/JMessageUploadProvider.h>
 #import <JuggleIM/JMediaMessageContent.h>
 #import <JuggleIM/JTimePeriod.h>
+#import <JuggleIM/JGetMessageOptions.h>
 
 @class JMergeMessage;
 
@@ -256,7 +257,7 @@
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
-/// 从远端拉取历史消息
+/// 从远端拉取历史消息，结果按照消息时间正序排列（旧的在前，新的在后）
 /// - Parameters:
 ///   - conversation: 会话对象
 ///   - startTime: 消息时间戳，如果传 0 为当前时间
@@ -286,7 +287,20 @@
                             direction:(JPullDirection)direction
                     localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
                    remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
-                                error:(void (^)(JErrorCode code))errorBlock;
+                                error:(void (^)(JErrorCode code))errorBlock __deprecated_msg("Please use getMessages:option:localMessageBlock:remoteMessageBlock instead");
+
+/// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。该接口必定回调两次，先回调本地的缓存消息（有可能存在缺失），再回调远端的消息。
+/// - Parameters:
+///   - conversation: 会话对象
+///   - direction: 拉取方向
+///   - option: 获取消息选项
+///   - localMessageBlock: 本地缓存消息回调
+///   - remoteMessageBlock: 远端消息回调，messages: 消息列表，timestamp: 消息时间戳，拉下一批消息的时候可以使用，hasMore: 是否还有更多消息，code: 错误码
+- (void)getMessages:(JConversation *)conversation
+          direction:(JPullDirection)direction
+             option:(JGetMessageOptions *)option
+  localMessageBlock:(void (^)(NSArray <JMessage *> *messages, JErrorCode code))localMessageBlock
+ remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code))remoteMessageBlock;
 
 /// 发送阅读回执
 /// - Parameters:
