@@ -844,6 +844,7 @@ typedef struct QueryConfirmMsgBody__storage_ {
 @dynamic version;
 @dynamic cmd;
 @dynamic qos;
+@dynamic payload;
 @dynamic connectMsgBody;
 @dynamic connectAckMsgBody;
 @dynamic disconnectMsgBody;
@@ -858,6 +859,7 @@ typedef struct ImWebsocketMsg__storage_ {
   int32_t version;
   int32_t cmd;
   int32_t qos;
+  NSData *payload;
   ConnectMsgBody *connectMsgBody;
   ConnectAckMsgBody *connectAckMsgBody;
   DisconnectMsgBody *disconnectMsgBody;
@@ -901,6 +903,15 @@ typedef struct ImWebsocketMsg__storage_ {
         .offset = (uint32_t)offsetof(ImWebsocketMsg__storage_, qos),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "payload",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ImWebsocketMsg_FieldNumber_Payload,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(ImWebsocketMsg__storage_, payload),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBytes,
       },
       {
         .name = "connectMsgBody",

@@ -270,6 +270,7 @@ typedef GPB_ENUM(ImWebsocketMsg_FieldNumber) {
   ImWebsocketMsg_FieldNumber_Version = 1,
   ImWebsocketMsg_FieldNumber_Cmd = 2,
   ImWebsocketMsg_FieldNumber_Qos = 3,
+  ImWebsocketMsg_FieldNumber_Payload = 4,
   ImWebsocketMsg_FieldNumber_ConnectMsgBody = 11,
   ImWebsocketMsg_FieldNumber_ConnectAckMsgBody = 12,
   ImWebsocketMsg_FieldNumber_DisconnectMsgBody = 13,
@@ -299,6 +300,8 @@ GPB_FINAL @interface ImWebsocketMsg : GPBMessage
 @property(nonatomic, readwrite) int32_t cmd;
 
 @property(nonatomic, readwrite) int32_t qos;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *payload;
 
 @property(nonatomic, readonly) ImWebsocketMsg_Testof_OneOfCase testofOneOfCase;
 
