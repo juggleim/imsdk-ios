@@ -1577,6 +1577,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_SyncTime = 14,
   Conversation_FieldNumber_IsDelete = 15,
   Conversation_FieldNumber_LatestUnreadIndex = 16,
+  Conversation_FieldNumber_UnreadTag = 17,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -1620,6 +1621,8 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readwrite) int32_t isDelete;
 
 @property(nonatomic, readwrite) int64_t latestUnreadIndex;
+
+@property(nonatomic, readwrite) int32_t unreadTag;
 
 @end
 

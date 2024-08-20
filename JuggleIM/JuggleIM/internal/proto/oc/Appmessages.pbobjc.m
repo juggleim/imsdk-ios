@@ -4318,6 +4318,7 @@ typedef struct QryConversationsResp__storage_ {
 @dynamic syncTime;
 @dynamic isDelete;
 @dynamic latestUnreadIndex;
+@dynamic unreadTag;
 
 typedef struct Conversation__storage_ {
   uint32_t _has_storage_[1];
@@ -4325,6 +4326,7 @@ typedef struct Conversation__storage_ {
   int32_t isTop;
   int32_t undisturbType;
   int32_t isDelete;
+  int32_t unreadTag;
   NSString *userId;
   NSString *targetId;
   DownMsg *msg;
@@ -4490,6 +4492,15 @@ typedef struct Conversation__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },
+      {
+        .name = "unreadTag",
+        .dataTypeSpecific.clazz = Nil,
+        .number = Conversation_FieldNumber_UnreadTag,
+        .hasIndex = 16,
+        .offset = (uint32_t)offsetof(Conversation__storage_, unreadTag),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(Conversation)
@@ -4501,8 +4512,8 @@ typedef struct Conversation__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\016\001\006\000\002\010\000\003\013\000\004\010\000\005\013\000\007\017\000\t\005\000\n\016\000\013\r\000\014\016\000\r\t\000\016\010\000\017\010\000"
-        "\020\021\000";
+        "\017\001\006\000\002\010\000\003\013\000\004\010\000\005\013\000\007\017\000\t\005\000\n\016\000\013\r\000\014\016\000\r\t\000\016\010\000\017\010\000"
+        "\020\021\000\021\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
