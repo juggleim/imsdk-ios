@@ -43,48 +43,45 @@
 
 - (void)connectWithToken:(NSString *)token {
     JLogI(@"CON-Connect", @"token is %@", token);
-    //TODO: 连接状态判断，如果是连接中而且 token 跟之前的一样的话，直接 return
-    //TODO: 连接状态判断，如果连接中或已连接，而且 token 跟之前不一样的话，先 disconnect
-    
-    if (![self.core.token isEqualToString:token]) {
+    if ([self.core.token isEqualToString:token]) {
+        //如果是已连接成功或者连接中而且 token 跟之前的一样的话，直接 return
+        if (self.core.connectionStatus == JConnectionStatusInternalConnected) {
+            JLogI(@"CON-Connect", @"connection alreay exist");
+            dispatch_async(self.core.delegateQueue, ^{
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
+                        [obj connectionStatusDidChange:JConnectionStatusConnected errorCode:JErrorCodeConnectionAlreadyExist extra:nil];
+                    }
+                }];
+            });
+            return;
+        } else if (self.core.connectionStatus == JConnectionStatusInternalConnecting ||
+                   self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
+            JLogI(@"CON-Connect", @"same token is connecting");
+            return;
+        }
+        [self internalConnectWithToken:token];
+    } else {
         //token 更新了，则原来缓存的 userId 不再适用
         self.core.token = token;
         self.core.userId = @"";
-    }
-    if (![self.core.dbManager isOpen]) {
-        if (self.core.userId.length > 0) {
-            if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
-                [self dbOpenNotice:YES];
-            }
-        }
-    }
-    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
-    
-    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
-                                       appKey:self.core.appKey
-                                        token:token
-                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
-        JLogI(@"CON-Navi", @"success");
-        self.core.servers = servers;
-        [self.core.webSocket connect:self.core.appKey
-                               token:token
-                           pushToken:self.pushToken
-                             servers:self.core.servers];
-    } failure:^(JErrorCodeInternal errorCode) {
-        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
-        if ([self checkConnectionFailure:errorCode]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:errorCode extra:@""];
+        
+        if (self.core.connectionStatus == JConnectionStatusInternalConnected ||
+            self.core.connectionStatus == JConnectionStatusInternalConnecting ||
+            self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
+            [self internalDisconnect:NO];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self internalConnectWithToken:token];
+            });
         } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
+            [self internalConnectWithToken:token];
         }
-    }];
-    [task start];
+    }
 }
 
 - (void)disconnect:(BOOL)receivePush {
     JLogI(@"CON-Disconnect", @"receivePush is %d", receivePush);
-    [self.core.webSocket disconnect:receivePush];
-    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
+    [self internalDisconnect:receivePush];
 }
 
 - (void)registerDeviceToken:(NSData *)tokenData {
@@ -173,6 +170,42 @@
 }
 
 #pragma mark -- internal
+- (void)internalConnectWithToken:(NSString *)token {
+    if (![self.core.dbManager isOpen]) {
+        if (self.core.userId.length > 0) {
+            if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
+                [self dbOpenNotice:YES];
+            }
+        }
+    }
+    [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
+    
+    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
+                                       appKey:self.core.appKey
+                                        token:token
+                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+        JLogI(@"CON-Navi", @"success");
+        self.core.servers = servers;
+        [self.core.webSocket connect:self.core.appKey
+                               token:token
+                           pushToken:self.pushToken
+                             servers:self.core.servers];
+    } failure:^(JErrorCodeInternal errorCode) {
+        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
+        if ([self checkConnectionFailure:errorCode]) {
+            [self changeStatus:JConnectionStatusInternalFailure errorCode:errorCode extra:@""];
+        } else {
+            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
+        }
+    }];
+    [task start];
+}
+
+- (void)internalDisconnect:(BOOL)receivePush {
+    [self.core.webSocket disconnect:receivePush];
+    [self changeStatus:JConnectionStatusInternalDisconnected errorCode:JErrorCodeInternalNone extra:@""];
+}
+
 - (void)changeStatus:(JConnectionStatusInternal)status
            errorCode:(JErrorCodeInternal)errorCode
                extra:(NSString *)extra {
@@ -291,7 +324,7 @@
 - (void)reconnectTimerFired {
     [self stopReconnectTimer];
     if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
-        [self connectWithToken:self.core.token];
+        [self internalConnectWithToken:self.core.token];
     }
 }
 

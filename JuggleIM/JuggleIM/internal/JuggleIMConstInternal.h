@@ -54,6 +54,8 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalConnectionUnavailable = 21005,
     //服务器设置错误
     JErrorCodeInternalServerSetError = 21006,
+    //连接已存在
+    JErrorCodeInternalConnectionAlreadyExist = 21007,
     
     //消息不存在
     JErrorCodeInternalMessageNotExist = 22001,

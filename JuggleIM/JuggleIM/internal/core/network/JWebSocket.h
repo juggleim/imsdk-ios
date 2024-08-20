@@ -205,6 +205,4 @@ inConversation:(JConversation *)conversation
 - (void)sendPing;
 @end
 
-
-
 NS_ASSUME_NONNULL_END

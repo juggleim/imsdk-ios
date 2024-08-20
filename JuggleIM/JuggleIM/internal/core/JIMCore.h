@@ -18,9 +18,9 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     JConnectionStatusInternalDisconnected = 2,
     //连接中
     JConnectionStatusInternalConnecting = 3,
-    //
+    //连接失败
     JConnectionStatusInternalFailure,
-    
+    //
     JConnectionStatusInternalWaitingForConnecting
 };
 

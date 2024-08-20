@@ -138,6 +138,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @end
 
 @interface JPBData : NSObject
+- (void)resetDataConverter;
+
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
                          deviceId:(NSString *)deviceId

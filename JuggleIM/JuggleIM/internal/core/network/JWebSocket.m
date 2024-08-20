@@ -824,6 +824,7 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
+    [self.pbData resetDataConverter];
     NSData *d = [self.pbData connectDataWithAppKey:self.appKey
                                              token:self.token
                                           deviceId:[JUtility getDeviceId]

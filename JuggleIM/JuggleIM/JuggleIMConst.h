@@ -68,6 +68,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeConnectionUnavailable = 21005,
     //服务器设置错误
     JErrorCodeServerSetError = 21006,
+    //连接已存在
+    JErrorCodeConnectionAlreadyExist = 21007,
     
     //消息不存在
     JErrorCodeMessageNotExist = 22001,

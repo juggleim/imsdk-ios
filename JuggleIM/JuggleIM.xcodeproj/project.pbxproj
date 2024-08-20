@@ -242,6 +242,8 @@
 		A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */; };
 		A08AA4432B1C3B33008B114C /* JImageMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4412B1C3B33008B114C /* JImageMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4422B1C3B33008B114C /* JImageMessage.m */; };
+		A08F4B572C7486D900791C52 /* JSimpleDataConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = A08F4B562C7486D900791C52 /* JSimpleDataConverter.m */; };
+		A08F4B582C7486D900791C52 /* JSimpleDataConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A08F4B552C7486D900791C52 /* JSimpleDataConverter.h */; };
 		A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A094F0042B9C9C200000E97F /* JUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A094F0052B9C9C200000E97F /* JUserInfo.m */; };
 		A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798A2B885222004E3D60 /* JDeleteConvMessage.h */; };
@@ -537,6 +539,9 @@
 		A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appmessages.pbobjc.h; sourceTree = "<group>"; };
 		A08AA4412B1C3B33008B114C /* JImageMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageMessage.h; sourceTree = "<group>"; };
 		A08AA4422B1C3B33008B114C /* JImageMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageMessage.m; sourceTree = "<group>"; };
+		A08F4B532C74861400791C52 /* JDataConverterProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDataConverterProtocol.h; sourceTree = "<group>"; };
+		A08F4B552C7486D900791C52 /* JSimpleDataConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSimpleDataConverter.h; sourceTree = "<group>"; };
+		A08F4B562C7486D900791C52 /* JSimpleDataConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSimpleDataConverter.m; sourceTree = "<group>"; };
 		A094F0042B9C9C200000E97F /* JUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfo.h; sourceTree = "<group>"; };
 		A094F0052B9C9C200000E97F /* JUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfo.m; sourceTree = "<group>"; };
 		A095798A2B885222004E3D60 /* JDeleteConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDeleteConvMessage.h; sourceTree = "<group>"; };
@@ -673,8 +678,7 @@
 		A06A2F152B2339C5009B9588 /* network */ = {
 			isa = PBXGroup;
 			children = (
-				A06A2F072B20B2B6009B9588 /* JPBData.h */,
-				A06A2F082B20B2B6009B9588 /* JPBData.m */,
+				A08F4B542C7486B600791C52 /* data */,
 				A08AA28C2B1758F1008B114C /* JWebSocket.h */,
 				A08AA28D2B1758F1008B114C /* JWebSocket.m */,
 				A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */,
@@ -1110,6 +1114,18 @@
 			path = oc;
 			sourceTree = "<group>";
 		};
+		A08F4B542C7486B600791C52 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				A06A2F072B20B2B6009B9588 /* JPBData.h */,
+				A06A2F082B20B2B6009B9588 /* JPBData.m */,
+				A08F4B532C74861400791C52 /* JDataConverterProtocol.h */,
+				A08F4B552C7486D900791C52 /* JSimpleDataConverter.h */,
+				A08F4B562C7486D900791C52 /* JSimpleDataConverter.m */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
 		A0D3AD2F2B6D1BAE00D170D7 /* messages */ = {
 			isa = PBXGroup;
 			children = (
@@ -1162,6 +1178,7 @@
 				A096458C2BF252DC00290775 /* JThumbnailPackedImageMessage.h in Headers */,
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
+				A08F4B582C7486D900791C52 /* JSimpleDataConverter.h in Headers */,
 				A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */,
 				5B7C062C2C3E265600E91783 /* JUploaderProtocol.h in Headers */,
 				A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */,
@@ -1507,6 +1524,7 @@
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,
 				A08AA3902B19CB78008B114C /* GPBDuration.pbobjc.m in Sources */,
 				A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */,
+				A08F4B572C7486D900791C52 /* JSimpleDataConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
