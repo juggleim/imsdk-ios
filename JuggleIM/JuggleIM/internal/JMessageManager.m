@@ -1582,7 +1582,6 @@
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
     [self updateUserInfos:messagesToSave];
-    NSMutableArray * updateConversationMessages = [NSMutableArray array];
 
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -1721,8 +1720,6 @@
             }
         }
         
-        [updateConversationMessages addObject:obj];
-        
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
@@ -1732,7 +1729,7 @@
         });
     }];
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:updateConversationMessages];
+        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
     }
     [self.core.dbManager insertUserInfos:userDic.allValues];
 

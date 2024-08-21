@@ -46,7 +46,7 @@
     if ([self.core.token isEqualToString:token]) {
         //如果是已连接成功或者连接中而且 token 跟之前的一样的话，直接 return
         if (self.core.connectionStatus == JConnectionStatusInternalConnected) {
-            JLogI(@"CON-Connect", @"connection alreay exist");
+            JLogI(@"CON-Connect", @"connection already exist");
             dispatch_async(self.core.delegateQueue, ^{
                 [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     if ([obj respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
