@@ -202,6 +202,11 @@ inConversation:(JConversation *)conversation
              success:(void (^)(long long timestamp))successBlock
                error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)setUnread:(JConversation *)conversation
+           userId:(NSString *)userId
+          success:(void (^)(long long timestamp))successBlock
+            error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)sendPing;
 @end
 

@@ -217,6 +217,7 @@
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
                                            msgIndex:info.lastMessageIndex];
         [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
+        [weakSelf.core.dbManager setUnread:NO conversation:conversation];
         [weakSelf noticeTotalUnreadCountChange];
         JConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
         if (info) {
@@ -362,6 +363,7 @@
         [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearTotalUnreadCount];
         [weakSelf.core.dbManager clearMentionInfo];
+        [weakSelf.core.dbManager clearUnreadTag];
         [weakSelf noticeTotalUnreadCountChange];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if(successBlock){
@@ -379,6 +381,39 @@
         });
     }];
     
+}
+
+- (void)setUnread:(JConversation *)conversation
+          success:(void (^)(void))successBlock
+            error:(void (^)(JErrorCode))errorBlock {
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket setUnread:conversation
+                            userId:self.core.userId
+                           success:^(long long timestamp) {
+        JLogI(@"CONV-SetUnread", @"success");
+        [weakSelf.messageManager updateSendSyncTime:timestamp];
+        [weakSelf.core.dbManager setUnread:YES conversation:conversation];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
+            if(conversationInfo){
+                [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:@[conversationInfo]];
+                    }
+                }];
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-SetUnread", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
 }
 
 - (void)createConversationInfo:(JConversation *)conversation
@@ -514,6 +549,7 @@
             //更新数据库
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
             [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
+            [self.core.dbManager setUnread:NO conversation:conv.conversation];
             
             //获取会话对象
             JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
@@ -597,6 +633,7 @@
 - (void)conversationsDidClearTotalUnread:(long long)clearTime { 
     [self.core.dbManager clearTotalUnreadCount];
     [self.core.dbManager clearMentionInfo];
+    [self.core.dbManager clearUnreadTag];
     [self noticeTotalUnreadCountChange];
 }
 

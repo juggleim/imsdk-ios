@@ -53,10 +53,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTop:(BOOL)isTop
           time:(long long)time
   conversation:(JConversation *)conversation;
+- (void)setUnread:(BOOL)isUnread
+     conversation:(JConversation *)conversation;
+- (void)clearUnreadTag;
 - (int)getTotalUnreadCount;
--(void)setMentionInfo:(JConversation *)conversation
+- (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson;
--(void)clearMentionInfo;
+- (void)clearMentionInfo;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;
@@ -79,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo;
--(void)updateMessage:(JConcreteMessage *)message;
+- (void)updateMessage:(JConcreteMessage *)message;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation

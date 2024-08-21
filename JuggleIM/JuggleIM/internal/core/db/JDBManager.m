@@ -133,14 +133,24 @@
   conversation:(JConversation *)conversation {
     [self.conversationDb setTop:isTop time:time conversation:conversation];
 }
--(void)setMentionInfo:(JConversation *)conversation
+
+- (void)setUnread:(BOOL)isUnread conversation:(JConversation *)conversation {
+    [self.conversationDb setUnread:isUnread conversation:conversation];
+}
+
+- (void)clearUnreadTag {
+    [self.conversationDb clearUnreadTag];
+}
+
+- (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson{
     [self.conversationDb setMentionInfo:conversation mentionInfoJson:mentionInfoJson];
 }
 
--(void)clearMentionInfo{
+- (void)clearMentionInfo{
     [self.conversationDb clearMentionInfo];
 }
+
 - (int)getTotalUnreadCount {
     return [self.conversationDb getTotalUnreadCount];
 }

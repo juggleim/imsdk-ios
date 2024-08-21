@@ -222,6 +222,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                           isTop:(BOOL)isTop
                           index:(int)index;
 
+- (NSData *)markUnread:(JConversation *)conversation
+                userId:(NSString *)userId
+                 index:(int)index;
+
 - (NSData *)getMergedMessageList:(NSString *)messageId
                             time:(long long)timestamp
                            count:(int)count

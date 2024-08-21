@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //conversation_info 最新版本
-#define jConversationTableVersion 1
+#define jConversationTableVersion 2
 //NSUserDefault 中保存 conversation_info 数据库版本的 key
 #define jConversationTableVersionKey @"ConversationVersion"
 
@@ -36,7 +36,8 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_sender VARCHAR (64),"
                                         "last_message_content TEXT,"
                                         "last_message_mention_info TEXT,"
-                                        "last_message_seq_no INTEGER"//最后一条消息的排序号
+                                        "last_message_seq_no INTEGER,"//最后一条消息的排序号
+                                        "unread_tag BOOLEAN"
 //                                        "extra TEXT"
                                         ")";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
@@ -45,13 +46,13 @@ NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info
                                        "last_read_message_index, last_message_index, is_top, top_time, mute, mention_info,"
                                        "last_message_type, last_message_client_uid, last_message_client_msg_no, last_message_direction, last_message_state,"
                                        "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content, last_message_mention_info,"
-                                       "last_message_seq_no)"
-                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                       "last_message_seq_no, unread_tag)"
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
                                        "last_message_index=?, is_top=?, top_time=?, mute=?, mention_info=?, last_message_type=?,  "
                                        "last_message_client_uid=?, last_message_client_msg_no=?, last_message_direction=?, last_message_state=?, "
                                        "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
-                                       "last_message_content=?, last_message_mention_info=?, last_message_seq_no=? WHERE conversation_type = ? "
+                                       "last_message_content=?, last_message_mention_info=?, last_message_seq_no=?, unread_tag =?  WHERE conversation_type = ? "
                                        "AND conversation_id = ?";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY is_top DESC, top_time DESC, timestamp DESC";
@@ -81,6 +82,7 @@ NSString *const jTimestampEqualsQustion = @", timestamp=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
+NSString *const jSetUnread = @"UPDATE conversation_info SET unread_tag = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
@@ -113,6 +115,7 @@ NSString *const jLastMessageMentionInfo = @"last_message_mention_info";
 NSString *const jLastMessageClientMsgNo = @"last_message_client_msg_no";
 NSString *const jLastMessageSeqNo = @"last_message_seq_no";
 NSString *const jTotalCount = @"total_count";
+NSString *const jHasUnread = @"unread_tag";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -131,11 +134,11 @@ NSString *const jTotalCount = @"total_count";
     int existedVersion = existedVersionNumber.intValue;
     if (jConversationTableVersion > existedVersion) {
         //update table
-//        if (existedVersion == 1 && jConversationTableVersion == 2) {
-//            NSString *s = @"ALTER TABLE conversation_info ADD COLUMN extra TEXT";
-//            [self.dbHelper executeUpdate:s withArgumentsInArray:nil];
-//            existedVersion = 2;
-//        }
+        if (existedVersion == 1 && jConversationTableVersion >= 2) {
+            NSString *s = @"ALTER TABLE conversation_info ADD COLUMN unread_tag BOOLEAN";
+            [self.dbHelper executeUpdate:s withArgumentsInArray:nil];
+            existedVersion = 2;
+        }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
     }
@@ -170,10 +173,10 @@ NSString *const jTotalCount = @"total_count";
             }
             if (info) {
                 [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                [db executeUpdate:jUpdateConversation, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread), @(obj.conversation.conversationType), obj.conversation.conversationId];
             } else {
                 [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo)];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread)];
             }
         }];
     }];
@@ -384,6 +387,21 @@ NSString *const jTotalCount = @"total_count";
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(time), @(conversation.conversationType), conversation.conversationId]];
 }
 
+- (void)setUnread:(BOOL)isUnread
+     conversation:(JConversation *)conversation {
+    if (conversation.conversationId.length == 0) {
+        return;
+    }
+    NSString *sql;
+    sql = [jSetUnread stringByAppendingString:jWhereConversationIs];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isUnread), @(conversation.conversationType), conversation.conversationId]];
+}
+
+- (void)clearUnreadTag {
+    NSString *sql = jSetUnread;
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(NO)]];
+}
+
 - (int)getTotalUnreadCount {
     __block int count = 0;
     [self.dbHelper executeQuery:jGetTotalUnreadCount
@@ -524,6 +542,7 @@ NSString *const jTotalCount = @"total_count";
     lastMessage.seqNo = [rs longLongIntForColumn:jLastMessageSeqNo];
     lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];
     info.lastMessage = lastMessage;
+    info.hasUnread = [rs boolForColumn:jHasUnread];
     return info;
 }
 @end

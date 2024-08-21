@@ -120,6 +120,15 @@
 - (void)clearTotalUnreadCount:(void (^)(void))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
+/// 标记未读
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)setUnread:(JConversation *)conversation
+          success:(void (^)(void))successBlock
+            error:(void (^)(JErrorCode code))errorBlock;
+
 - (void)addDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;

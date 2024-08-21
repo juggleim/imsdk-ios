@@ -27,9 +27,6 @@
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
     [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
-    });
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -89,6 +86,24 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            
+            
+            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"rdyIjfi8R"];
+            
+            [JIM.shared.conversationManager setUnread:c success:^{
+                JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
+                [JIM.shared.conversationManager clearTotalUnreadCount:^{
+                    JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
+                    int i = 1;
+                } error:^(JErrorCode code) {
+                    int i = 1;
+                }];
+            } error:^(JErrorCode code) {
+                int i = 0;
+            }];
+            
             
             
             
@@ -160,276 +175,7 @@
 //            NSLog(@"asdfsadf");
         });
         
-        //register push token
-//        [JIM.shared.connectionManager registerToken:@"ppppushtoken"];
         
-        
-        //send merge message
-//        NSArray *messageIdList = @[@"messageId1", @"messageId2", @"messageId3", @"messageId4"];
-//        NSMutableArray *previewList = [NSMutableArray array];
-//
-//        for (int i = 0; i < 4; i++) {
-//            JMergeMessagePreviewUnit *unit = [[JMergeMessagePreviewUnit alloc] init];
-//            unit.previewContent = [NSString stringWithFormat:@"previewContent%d", i];
-//            JUserInfo *userInfo = [[JUserInfo alloc] init];
-//            userInfo.userId = [NSString stringWithFormat:@"userId%d", i];
-//            userInfo.userName = [NSString stringWithFormat:@"name%d", i];
-//            userInfo.portrait = @"portait";
-//            unit.sender = userInfo;
-//            [previewList addObject:unit];
-//        }
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        JMergeMessage *merge = [[JMergeMessage alloc] initWithTitle:@"title"
-//                                                       conversation:conversation
-//                                                      MessageIdList:messageIdList
-//                                                        previewList:previewList];
-//        [JIM.shared.messageManager sendMessage:merge
-//                                inConversation:conversation
-//                                       success:^(JMessage *message) {
-//
-//        } error:^(JErrorCode errorCode, JMessage *message) {
-//
-//        }];
-//        NSLog(@"lifei");
-
-        //query merge message
-
-//
-//        [JIM.shared.messageManager getMergedMessageList:@"nqsu8pvcg6lgrenb"
-//                                                success:^(NSArray<JMessage *> *mergedMessages) {
-//            NSLog(@"lifei");
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei");
-//        }];
-        
-        
-        //get message by id
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"196691553488470016"];
-//        [JIM.shared.messageManager getMessagesByMessageIds:@[@"nqfszuuysfce4xum", @"nqfszu682fee4xum", @"nqfszzcksfgfg38b", @"nqfsz8hngfnfg38b"]
-//                                            inConversation:c
-//                                                   success:^(NSArray<JMessage *> *messages) {
-//            NSLog(@"lifei");
-//        } error:^(JErrorCode errorCode) {
-//            NSLog(@"lifei");
-//        }];
-        
-        
-        //userInfo
-//        JUserInfo *user2 = [JIM.shared.userInfoManager getUserInfo:@"userid2"];
-//        JGroupInfo *group = [JIM.shared.userInfoManager getGroupInfo:@"groupid1"];
-//        JUserInfo *user10 = [JIM.shared.userInfoManager getUserInfo:@"userid10"];
-//        JGroupInfo *group11 = [JIM.shared.userInfoManager getGroupInfo:@"groupid11"];
-//
-//        NSLog(@"lifei");
-        
-        //conversation mute
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//        [JIM.shared.conversationManager setMute:NO
-//                                   conversation:conversation
-//                                        success:^{
-//            NSLog(@"lifei, conversation mute set success");
-//            [JIM.shared.conversationManager setDraft:@"draft1" inConversation:conversation];
-//            JConversationInfo *c = [JIM.shared.conversationManager getConversationInfo:conversation];
-//            NSLog(@"lifei");
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei, conversation mute set error, code is %d", code);
-//        }];
-        
-        
-        //get group read detail
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//        [JIM.shared.messageManager getGroupMessageReadDetail:@"nqel4yrhaa4k5g4v"
-//                                              inConversation:conversation success:^(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers) {
-//            NSLog(@"lifei, getGroupMessageReadDetail success");
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei, getGroupMessageReadDetail error");
-//        }];
-        
-        //getConversationList
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.conversationManager clearUnreadCountByConversation:c];
-//            NSArray *array = [JIM.shared.conversationManager getConversationInfoList];
-//            NSLog(@"conversation count is %d", array.count);
-//        });
-        
-        
-        //delete conversation
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.conversationManager deleteConversationInfoBy:c];
-//        });
-        
-        
-//
-//        array = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypePrivate), @(JConversationTypeGroup)] count:100 timestamp:0 direction:JPullDirectionNewer];
-//
-//        array = [JIM.shared.conversationManager getConversationInfoListByCount:100
-//                                                                     timestamp:0
-//                                                                     direction:JPullDirectionOlder];
-        
-        //recall message
-//        sleep(2);
-//        [JIM.shared.messageManager recallMessage:@"npqarw3waq8e43gq"
-//                                         success:^(JMessage *message) {
-//            NSLog(@"lifei, recallMessage onsuccess messageId is %@", message.messageId);
-//        } error:^(JErrorCode errorCode) {
-//            NSLog(@"lifei, recallMessage onError errorCode is %d", errorCode);
-//        }];
-//
-        //getConversation
-//        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid3"];
-//        JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:conversation];
-//        NSLog(@"lifei, getConversationInfo");
-//
-        //draft
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//        [JIM.shared.conversationManager setDraft:@"draft" inConversation:c];
-//
-//        [JIM.shared.conversationManager clearDraftInConversation:c];
-        
-//        [JIM.shared.conversationManager deleteConversationInfoBy:conversation];
-        
-        //getMessages
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-////        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:c
-////                                                                 count:100
-////                                                                  time:1712600893903
-////                                                             direction:JPullDirectionNewer];
-//
-////        [JIM.shared.messageManager deleteMessageByMessageIds:@"nq2crdhwaagk5g4v"];
-//        [JIM.shared.messageManager getLocalAndRemoteMessagesFrom:c
-//                                                       startTime:0
-//                                                           count:100
-//                                                       direction:JPullDirectionOlder success:^(NSArray *messages) {
-//            NSLog(@"lifei");
-//
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei");
-//
-//        }];
-//
-//        NSLog(@"lifei");
-        
-        //read receipt
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//        NSArray *messageIds = @[@"nqe4ddt6abgk5g4v", @"nqe4dfu5sbgk5g4v"];
-//        [JIM.shared.messageManager sendReadReceipt:messageIds
-//                                    inConversation:c
-//                                           success:^{
-//            NSLog(@"lifei, sendReadReceipt success");
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei, sendReadReceipt error, code is %d", code);
-//        }];
-////
-//        NSArray *messages = [JIM.shared.messageManager getMessagesFrom:conversation
-//                                                                      count:100
-//                                                                       time:0
-//                                                                  direction:JPullDirectionOlder];
-//        NSLog(@"lifei, getMessagesFrom count is %d", messages.count);
-        
-//        [JIM.shared.messageManager clearMessagesIn:conversation];
-        
-//        NSArray *messageIds = @[@"npgkkc69gaegv6fp", @"npgkkcpmaacgv6fp", @"npg3n8gb26lgrenb"];
-//        NSArray *messages1 = [JIM.shared.messageManager getMessagesByMessageIds:messageIds];
-//        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages1.count);
-//
-//        NSArray *clientMsgNos = @[@(3), @(2), @(6)];
-//        NSArray *messages2 = [JIM.shared.messageManager getMessagesByClientMsgNos:clientMsgNos];
-//        NSLog(@"lifei, getMessagesByMessageIds count is %d", messages2.count);
-        
-//        NSArray *contentTypes = @[[JImageMessage contentType]];
-//        NSArray *messages3 = [JIM.shared.messageManager getMessagesFrom:conversation
-//                                                                  count:100
-//                                                                   time:0
-//                                                              direction:JPullDirectionOlder
-//                                                           contentTypes:contentTypes];
-//        NSLog(@"lifei, getMessagesFrom count is %d", messages3.count);
-        
-        //get remote message
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate
-//                                                            conversationId:@"userid5"];
-//        [JIM.shared.messageManager getRemoteMessagesFrom:c
-//                                               startTime:0
-//                                                   count:100
-//                                               direction:JPullDirectionNewer
-//                                                 success:^(NSArray *messages) {
-//            NSLog(@"lifei, getRemoteMessagesFrom count is %d", messages.count);
-//        } error:^(JErrorCode code) {
-//            NSLog(@"lifei, getRemoteMessagesFrom error, code is ", code);
-//
-//        }];
-//        
-
-        //delete messages
-//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqel4yrhaa4k5g4v"];
-//        [JIM.shared.messageManager deleteMessageByMessageIds:@"nqe4ddt6abgk5g4v"];
-////        [JetIM.shared.messageManager deleteMessageByClientMsgNo:550];
-//        NSArray *ids = @[@"nqel6ahx2a6k5g4v", @"nqel4yrhaa4k5g4v", @"nqe4dfu5sbgk5g4v", @"nqe4ddt6abgk5g4v"];
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup
-//                                                            conversationId:@"groupid1"];
-//        [JIM.shared.messageManager getMessagesByMessageIds:ids
-//                                            inConversation:c
-//                                                   success:^(NSArray<JMessage *> *messages) {
-//            NSLog(@"lifei, getMessagesByMessageIds count is %d", messages.count);
-//        } error:^(JErrorCode errorCode) {
-//            NSLog(@"lifei, getMessagesByMessageIds error code is %d", errorCode);
-//        }];
-        
-        //send message
-//        [self sendMessage];
-        
-        //send mention message
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"testMention"];
-//            JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
-//            mentionInfo.type = JMentionTypeSomeOne;
-//            JUserInfo *user1 = [[JUserInfo alloc] init];
-//            user1.userId = @"userid1";
-//            JUserInfo *user2 = [[JUserInfo alloc] init];
-//            user2.userId = @"userid2";
-//            mentionInfo.targetUsers = @[user1, user2];
-////            text.mentionInfo = mentionInfo;
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.messageManager sendMessage:text inConversation:c
-//                                           success:^(JMessage *message) {
-//                NSLog(@"1111");
-//                JConversationInfo *conversationInfo = [JIM.shared.conversationManager getConversationInfo:c];
-//                JMessage *m = [JIM.shared.messageManager getMessagesByMessageIds:@[message.messageId]];
-//                NSLog(@"1111");
-//            } error:^(JErrorCode errorCode, JMessage *message) {
-//                NSLog(@"222");
-//            }];
-//        });
-        
-        
-        //save message
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"save_message"];
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid11"];
-//            JMessage *m = [JIM.shared.messageManager saveMessage:text inConversation:c];
-//            NSLog(@"lifei");
-//            [JIM.shared.messageManager setMessageState:JMessageStateUploading withClientMsgNo:m.clientMsgNo];
-//            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
-//            NSLog(@"lifei");
-//            [JIM.shared.messageManager setMessageState:JMessageStateFail withClientMsgNo:m.clientMsgNo];
-//            m = [JIM.shared.messageManager getMessagesByClientMsgNos:@[@(m.clientMsgNo)]][0];
-//            NSLog(@"lifei");
-//        });
-        
-        
-        
-        //disconnect
-//        [JetIM.shared.connectionManager disconnect:NO];
-        
-        //get remote msgs
-//        JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userid1"];
-//        [JetIM.shared.messageManager getRemoteMessagesFrom:c
-//                                                    startTime:[[NSDate date] timeIntervalSince1970]*1000
-//                                                        count:20
-//                                                    direction:JPullDirectionNewToOld
-//                                                      success:nil
-//                                                        error:nil];
         
     }
 }

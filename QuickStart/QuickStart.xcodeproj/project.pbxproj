@@ -1748,6 +1748,7 @@
 				DEVELOPMENT_TEAM = TH4V3Y8FTM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1777,6 +1778,7 @@
 				DEVELOPMENT_TEAM = TH4V3Y8FTM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

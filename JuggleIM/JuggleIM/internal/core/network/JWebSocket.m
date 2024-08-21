@@ -393,6 +393,21 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)setUnread:(JConversation *)conversation
+           userId:(NSString *)userId
+          success:(void (^)(long long timestamp))successBlock
+            error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData markUnread:conversation userId:userId index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set conversation unread, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
                        count:(int)count

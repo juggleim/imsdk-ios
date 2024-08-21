@@ -17,6 +17,8 @@
 @property (nonatomic, strong) JConversation *conversation;
 /// 当前会话的消息未读数
 @property (nonatomic, assign) int unreadCount;
+/// 会话是否未读状态
+@property (nonatomic, assign) BOOL hasUnread;
 /// 会话排序时间（服务端时间）
 @property (nonatomic, assign) long long sortTime;
 /// 会话中的最后一条消息

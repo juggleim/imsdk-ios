@@ -64,6 +64,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jGetUserUndisturb @"get_user_undisturb"
 #define jJoinChatroom @"c_join"
 #define jQuitChatroom @"c_quit"
+#define jMarkUnread @"mark_unread"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -596,6 +597,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jTopConvers;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)markUnread:(JConversation *)conversation userId:(NSString *)userId index:(int)index {
+    Conversation *pbConversation = [[Conversation alloc] init];
+    pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    pbConversation.targetId = conversation.conversationId;
+    pbConversation.unreadTag = 1;
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:pbConversation];
+    
+    ConversationsReq *req = [[ConversationsReq alloc] init];
+    req.conversationsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jMarkUnread;
     body.targetId = userId;
     body.data_p = req.data;
     
@@ -1302,6 +1326,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             info.mentionUserList = array;
         }
     }
+    info.hasUnread = conversation.unreadTag;
     return info;
 }
 
@@ -1616,7 +1641,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jSetUserUndisturb:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jGetUserUndisturb:@(JPBRcvTypeGlobalMuteAck),
              jJoinChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jQuitChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp)
+             jQuitChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jMarkUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp)
     };
 }
 @end
