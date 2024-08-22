@@ -91,9 +91,10 @@
             
             
             JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"rdyIjfi8R"];
-            
+            int c1 = [JIM.shared.conversationManager getTotalUnreadCount];
             [JIM.shared.conversationManager setUnread:c success:^{
                 JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
+                int count = [JIM.shared.conversationManager getTotalUnreadCount];
                 [JIM.shared.conversationManager clearTotalUnreadCount:^{
                     JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
                     int i = 1;

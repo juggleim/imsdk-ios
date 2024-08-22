@@ -83,7 +83,7 @@ NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
 NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
 NSString *const jSetUnread = @"UPDATE conversation_info SET unread_tag = ?";
-NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index - last_read_message_index >= 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
+NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jUpdateConversationTime = @"UPDATE conversation_info SET timestamp = ?";

@@ -404,6 +404,9 @@
                         [obj conversationInfoDidUpdate:@[conversationInfo]];
                     }
                 }];
+                if (conversationInfo.unreadCount == 0) {
+                    [weakSelf noticeTotalUnreadCountChange];
+                }
             }
         });
     } error:^(JErrorCodeInternal code) {
