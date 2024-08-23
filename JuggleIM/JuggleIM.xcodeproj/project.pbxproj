@@ -246,6 +246,8 @@
 		A08F4B582C7486D900791C52 /* JSimpleDataConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = A08F4B552C7486D900791C52 /* JSimpleDataConverter.h */; };
 		A08F4BB72C7767D500791C52 /* JQueryMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A08F4BB52C7767D500791C52 /* JQueryMessageOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08F4BB82C7767D500791C52 /* JQueryMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A08F4BB62C7767D500791C52 /* JQueryMessageOptions.m */; };
+		A08F4BBB2C7880BC00791C52 /* JMarkUnreadMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08F4BB92C7880BC00791C52 /* JMarkUnreadMessage.h */; };
+		A08F4BBC2C7880BC00791C52 /* JMarkUnreadMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08F4BBA2C7880BC00791C52 /* JMarkUnreadMessage.m */; };
 		A094F0062B9C9C200000E97F /* JUserInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A094F0042B9C9C200000E97F /* JUserInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A094F0052B9C9C200000E97F /* JUserInfo.m */; };
 		A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A095798A2B885222004E3D60 /* JDeleteConvMessage.h */; };
@@ -546,6 +548,8 @@
 		A08F4B562C7486D900791C52 /* JSimpleDataConverter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSimpleDataConverter.m; sourceTree = "<group>"; };
 		A08F4BB52C7767D500791C52 /* JQueryMessageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JQueryMessageOptions.h; sourceTree = "<group>"; };
 		A08F4BB62C7767D500791C52 /* JQueryMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JQueryMessageOptions.m; sourceTree = "<group>"; };
+		A08F4BB92C7880BC00791C52 /* JMarkUnreadMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMarkUnreadMessage.h; sourceTree = "<group>"; };
+		A08F4BBA2C7880BC00791C52 /* JMarkUnreadMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMarkUnreadMessage.m; sourceTree = "<group>"; };
 		A094F0042B9C9C200000E97F /* JUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfo.h; sourceTree = "<group>"; };
 		A094F0052B9C9C200000E97F /* JUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfo.m; sourceTree = "<group>"; };
 		A095798A2B885222004E3D60 /* JDeleteConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDeleteConvMessage.h; sourceTree = "<group>"; };
@@ -1159,6 +1163,8 @@
 				A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */,
 				A0834F752C19B67B0074AE93 /* JAddConvMessage.h */,
 				A0834F762C19B67B0074AE93 /* JAddConvMessage.m */,
+				A08F4BB92C7880BC00791C52 /* JMarkUnreadMessage.h */,
+				A08F4BBA2C7880BC00791C52 /* JMarkUnreadMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1287,6 +1293,7 @@
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
 				A07F3CB92BFC928E0087920B /* JLogCommandMessage.h in Headers */,
 				A08AA3FE2B19EEDB008B114C /* SRSIMDHelpers.h in Headers */,
+				A08F4BBB2C7880BC00791C52 /* JMarkUnreadMessage.h in Headers */,
 				A08AA43B2B1B78FE008B114C /* Appmessages.pbobjc.h in Headers */,
 				5B7C061F2C3D3F1800E91783 /* JUploadQiNiuCred.h in Headers */,
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
@@ -1446,6 +1453,7 @@
 				A08AA37F2B19CB78008B114C /* GPBCodedInputStream.m in Sources */,
 				A09716C32B9FFF1F00D1DB24 /* JUserInfoManager.m in Sources */,
 				A08AA3FC2B19EEDB008B114C /* SRMutex.m in Sources */,
+				A08F4BBC2C7880BC00791C52 /* JMarkUnreadMessage.m in Sources */,
 				5B7C06242C3D3F3700E91783 /* JUploadPreSignCred.m in Sources */,
 				A08AA3712B19CB77008B114C /* GPBStruct.pbobjc.m in Sources */,
 				A08AA3822B19CB78008B114C /* GPBWellKnownTypes.m in Sources */,

@@ -26,6 +26,7 @@
 #import "JLogCommandMessage.h"
 #import "JAddConvMessage.h"
 #import "JClearTotalUnreadMessage.h"
+#import "JMarkUnreadMessage.h"
 #import "JLogger.h"
 #import "JUploadManager.h"
 #import "JDownloader.h"
@@ -1295,6 +1296,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     [self registerContentType:[JLogCommandMessage class]];
     [self registerContentType:[JAddConvMessage class]];
     [self registerContentType:[JClearTotalUnreadMessage class]];
+    [self registerContentType:[JMarkUnreadMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -1602,6 +1604,15 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }
 }
 
+- (void)handleMarkUnreadMessage:(JConcreteMessage *)message {
+    JMarkUnreadMessage *content = (JMarkUnreadMessage *)message.content;
+    [content.conversations enumerateObjectsUsingBlock:^(JConversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationDidSetUnread:)]) {
+            [self.sendReceiveDelegate conversationDidSetUnread:obj];
+        }
+    }];
+}
+
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
@@ -1729,6 +1740,12 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         //add conversation
         if ([obj.contentType isEqualToString:[JAddConvMessage contentType]]) {
             [self handleAddConversationMessage:obj];
+            return;
+        }
+        
+        //mark unread
+        if ([obj.contentType isEqualToString:[JMarkUnreadMessage contentType]]) {
+            [self handleMarkUnreadMessage:obj];
             return;
         }
         

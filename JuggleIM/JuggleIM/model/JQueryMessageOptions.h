@@ -12,9 +12,9 @@
 @interface JQueryMessageOptions : NSObject
 
 @property (nonatomic, copy) NSString *searchContent;
-@property (nonatomic, strong) NSArray <NSString *> *senderUserIds;
-@property (nonatomic, strong) NSArray <NSString *> *contentTypes;
-@property (nonatomic, strong) NSArray <JConversation *> *conversations;
-@property (nonatomic, strong) NSArray <NSNumber *> *states;
+@property (nonatomic, copy) NSArray <NSString *> *senderUserIds;
+@property (nonatomic, copy) NSArray <NSString *> *contentTypes;
+@property (nonatomic, copy) NSArray <JConversation *> *conversations;
+@property (nonatomic, copy) NSArray <NSNumber *> *states;
 
 @end
