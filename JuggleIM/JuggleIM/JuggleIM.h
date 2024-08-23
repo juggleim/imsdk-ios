@@ -46,6 +46,7 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JChatroomInfo.h>
 #import <JuggleIM/JChatroomProtocol.h>
 #import <JuggleIM/JChatroomMember.h>
-#import <JuggleIM/JChatroomInfoOption.h>
+#import <JuggleIM/JChatroomInfoOptions.h>
 #import <JuggleIM/JTimePeriod.h>
 #import <JuggleIM/JGetMessageOptions.h>
+#import <JuggleIM/JQueryMessageOptions.h>

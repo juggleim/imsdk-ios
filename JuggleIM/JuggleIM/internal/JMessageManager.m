@@ -352,12 +352,12 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction {
-    NSArray *arr = [[NSArray alloc] init];
-    return [self getMessagesFrom:conversation
-                           count:count
-                            time:time
-                       direction:direction
-                    contentTypes:arr];
+    JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
+    options.conversations = @[conversation];
+    return [self getMessages:count
+                        time:time
+                   direction:direction
+                 queryOption:options];
 }
 
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
@@ -365,12 +365,30 @@
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes {
-    return [self.core.dbManager getMessagesFrom:conversation
-                                          count:count
-                                           time:time
-                                      direction:direction
-                                   contentTypes:contentTypes];
+    JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
+    options.conversations = @[conversation];
+    options.contentTypes = contentTypes;
+    
+    return [self getMessages:count
+                        time:time
+                   direction:direction
+                 queryOption:options];
 }
+
+- (NSArray<JMessage *> *)getMessages:(int)count
+                                time:(long long)time
+                           direction:(JPullDirection)direction
+                         queryOption:(JQueryMessageOptions *)option {
+return [self.core.dbManager searchMessagesWithContent:option.searchContent
+                                                count:count
+                                                 time:time
+                                        pullDirection:direction
+                                         contentTypes:option.contentTypes
+                                              senders:option.senderUserIds
+                                               states:option.states
+                                        conversations:option.conversations];
+}
+
 - (JMessage *)saveMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                 direction:(JMessageDirection)direction{
@@ -410,8 +428,15 @@
                                              count:(int)count
                                               time:(long long)time
                                          direction:(JPullDirection)direction
-                                      contentTypes:(NSArray<NSString *> *)contentTypes{
-    return [self.core.dbManager searchMessagesWithContent:searchContent inConversation:conversation count:count time:time direction:direction contentTypes:contentTypes];
+                                      contentTypes:(NSArray<NSString *> *)contentTypes {
+    return [self.core.dbManager searchMessagesWithContent:searchContent
+                                                    count:count
+                                                     time:time
+                                            pullDirection:direction
+                                             contentTypes:contentTypes
+                                                  senders:nil
+                                                   states:nil
+                                            conversations:@[conversation]];
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content

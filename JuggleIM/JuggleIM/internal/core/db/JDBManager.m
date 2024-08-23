@@ -265,15 +265,22 @@
 }
 
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
-                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
-                                         direction:(JPullDirection)direction
-                                      contentTypes:(NSArray<NSString *> *)contentTypes{
-    return [self.messageDb searchMessagesWithContent:searchContent inConversation:conversation count:count time:time direction:direction contentTypes:contentTypes];
+                                     pullDirection:(JPullDirection)pullDirection
+                                      contentTypes:(NSArray<NSString *> *)contentTypes
+                                           senders:(NSArray<NSString *> *)senderUserIds
+                                            states:(NSArray<NSNumber *> *)messageStates
+                                     conversations:(NSArray<JConversation *> *)conversations {
+    return [self.messageDb searchMessagesWithContent:searchContent
+                                               count:count
+                                                time:time
+                                       pullDirection:pullDirection
+                                        contentTypes:contentTypes
+                                             senders:senderUserIds
+                                              states:messageStates
+                                       conversations:conversations];
 }
-
-
 
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
     return [self.messageDb getLocalAttributeByMessageId:messageId];

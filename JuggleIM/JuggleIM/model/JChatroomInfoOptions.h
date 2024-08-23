@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JChatroomInfoOption : NSObject
+@interface JChatroomInfoOptions : NSObject
 
 /// 拉取数量，member 大于 0 小于等于 100， 默认为 20
 @property (nonatomic, assign) int memberCount;

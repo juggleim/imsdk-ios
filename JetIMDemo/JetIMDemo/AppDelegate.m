@@ -86,25 +86,39 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            
-            
-            
             JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"rdyIjfi8R"];
-            int c1 = [JIM.shared.conversationManager getTotalUnreadCount];
-            [JIM.shared.conversationManager setUnread:c success:^{
-                JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
-                int count = [JIM.shared.conversationManager getTotalUnreadCount];
-                [JIM.shared.conversationManager clearTotalUnreadCount:^{
-                    JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
-                    int i = 1;
-                } error:^(JErrorCode code) {
-                    int i = 1;
-                }];
-            } error:^(JErrorCode code) {
-                int i = 0;
-            }];
+            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"VV0jm1B59"];
+            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"675NdFjkx"];
+            NSArray <JMessage *> *messages = [JIM.shared.messageManager getMessagesFrom:c
+                                                                                  count:100
+                                                                                   time:0
+                                                                              direction:JPullDirectionOlder];
+            NSArray <JMessage *> *m2 = [JIM.shared.messageManager getMessagesFrom:c
+                                                                            count:100
+                                                                             time:0
+                                                                        direction:JPullDirectionOlder
+                                                                     contentTypes:@[@"jgd:grpntf"]];
             
+            NSArray *m3 = [JIM.shared.messageManager getMessages:100
+                                                            time:0
+                                                       direction:JPullDirectionOlder
+                                                     queryOption:nil];
+            NSArray *m4 = [JIM.shared.messageManager searchMessagesWithContent:@"不"
+                                                                inConversation:c
+                                                                         count:100
+                                                                          time:0
+                                                                     direction:JPullDirectionOlder
+                                                                  contentTypes:nil];
+            JQueryMessageOptions *option = [[JQueryMessageOptions alloc] init];
+            option.searchContent = @"1";
+//            option.conversations = @[c, c2];
+            option.states = @[@(JMessageStateSent)];
+//            option.senderUserIds = @[@"675NdFjkx", @"CYXf6GNeM"];
+            NSArray *m5 = [JIM.shared.messageManager getMessages:100
+                                                            time:0
+                                                       direction:JPullDirectionOlder
+                                                     queryOption:option];
+            int i = 1;
             
             
             

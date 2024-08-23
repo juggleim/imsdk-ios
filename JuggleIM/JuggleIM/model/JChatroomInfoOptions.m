@@ -5,7 +5,7 @@
 //  Created by Nathan on 2024/7/8.
 //
 
-#import "JChatroomInfoOption.h"
+#import "JChatroomInfoOptions.h"
 
-@implementation JChatroomInfoOption
+@implementation JChatroomInfoOptions
 @end
