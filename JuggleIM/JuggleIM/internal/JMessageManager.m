@@ -1263,6 +1263,15 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }
 }
 
+- (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages {
+    if (messages.count == 0) {
+        return;
+    }
+    [self insertReceiveMessagesAndNotice:messages];
+    JConcreteMessage *lastMessage = messages.lastObject;
+    [self.core setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
+}
+
 - (void)syncNotify:(long long)syncTime {
     if (self.syncProcessing) {
         return;
@@ -1270,6 +1279,14 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (syncTime > self.core.messageReceiveSyncTime) {
         self.syncProcessing = YES;
         [self sync];
+    }
+}
+
+- (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
+    long long cachedSyncTime = [self.core getSyncTimeForChatroom:chatroomId];
+    if (syncTime > cachedSyncTime) {
+        [self syncChatroomMessages:chatroomId
+                              time:cachedSyncTime];
     }
 }
 
@@ -1613,12 +1630,36 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }];
 }
 
-- (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
-                       isSync:(BOOL)isSync {
+- (void)insertReceiveMessagesAndNotice:(NSArray<JConcreteMessage *> *)messages {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
     [self updateUserInfos:messagesToSave];
 
+    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.flags & JMessageFlagIsCmd) {
+            return;
+        }
+        if (obj.existed) {
+            return;
+        }
+        
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
+                    [dlg messageDidReceive:obj];
+                }
+            }];
+        });
+    }];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
+    }
+}
+
+- (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
+                       isSync:(BOOL)isSync {
+    [self insertReceiveMessagesAndNotice:messages];
+    
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
@@ -1761,18 +1802,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                 [userDic setObject:userInfo forKey:userInfo.userId];
             }
         }
-        
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
-                    [dlg messageDidReceive:obj];
-                }
-            }];
-        });
     }];
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
-    }
     [self.core.dbManager insertUserInfos:userDic.allValues];
 
     //直发的消息，而且正在同步中，不直接更新 sync time
@@ -1798,6 +1828,13 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
                                             sendTime:self.core.messageSendSyncTime
                                               userId:self.core.userId];
+}
+
+- (void)syncChatroomMessages:(NSString *)chatroomId
+                        time:(long long)syncTime {
+    JLogI(@"MSG-ChrmSync", @"id is %@, time is %lld", chatroomId, syncTime);
+    [self.core.webSocket syncChatroomMessagesWithTime:syncTime
+                                           chatroomId:chatroomId];
 }
 
 - (NSString *)createClientUid {
@@ -1858,6 +1895,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     
 }
 
+#pragma mark - getter
 - (NSHashTable<id<JMessageDelegate>> *)delegates {
     if (!_delegates) {
         _delegates = [NSHashTable weakObjectsHashTable];

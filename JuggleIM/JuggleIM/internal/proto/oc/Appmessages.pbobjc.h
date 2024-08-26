@@ -153,6 +153,7 @@ typedef GPB_ENUM(NotifyType) {
   NotifyType_Default = 0,
   NotifyType_Msg = 1,
   NotifyType_ChatroomMsg = 2,
+  NotifyType_ChatroomAtt = 3,
 };
 
 GPBEnumDescriptor *NotifyType_EnumDescriptor(void);
@@ -2933,6 +2934,20 @@ GPB_FINAL @interface SyncChatroomReq : GPBMessage
 @property(nonatomic, readwrite) int64_t syncTime;
 
 @property(nonatomic, readwrite) int64_t attSyncTime;
+
+@end
+
+#pragma mark - SyncChatroomMsgResp
+
+typedef GPB_ENUM(SyncChatroomMsgResp_FieldNumber) {
+  SyncChatroomMsgResp_FieldNumber_MsgsArray = 1,
+};
+
+GPB_FINAL @interface SyncChatroomMsgResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<DownMsg*> *msgsArray;
+/** The number of items in @c msgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgsArray_Count;
 
 @end
 

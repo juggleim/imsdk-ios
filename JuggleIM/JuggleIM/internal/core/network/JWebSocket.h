@@ -35,7 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)messageDidReceive:(JConcreteMessage *)message;
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished;
+- (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages;
 - (void)syncNotify:(long long)syncTime;
+- (void)syncChatroomNotify:(NSString *)chatroomId
+                      time:(long long)syncTime;
 @end
 
 @interface JWebSocket : NSObject
@@ -206,6 +209,9 @@ inConversation:(JConversation *)conversation
            userId:(NSString *)userId
           success:(void (^)(long long timestamp))successBlock
             error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)syncChatroomMessagesWithTime:(long long)syncTime
+                          chatroomId:(NSString *)chatroomId;
 
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;

@@ -466,11 +466,12 @@
 }
 
 -(void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages{
-    [self addOrUpdateConversationsIfNeed:messages];
-    if(messages.count >0){
-        JConcreteMessage * message = messages.lastObject;
-        [self updateSyncTime:message.timestamp];
+    if (messages.count == 0) {
+        return;
     }
+    [self addOrUpdateConversationsIfNeed:messages];
+    JConcreteMessage * message = messages.lastObject;
+    [self updateSyncTime:message.timestamp];
     [self noticeTotalUnreadCountChange];
 }
 

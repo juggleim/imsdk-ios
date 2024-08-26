@@ -136,6 +136,7 @@ GPBObjCClassDeclaration(SdkRequestLog);
 GPBObjCClassDeclaration(SdkResponseLog);
 GPBObjCClassDeclaration(SimpleConversation);
 GPBObjCClassDeclaration(SimpleMsg);
+GPBObjCClassDeclaration(SyncChatroomMsgResp);
 GPBObjCClassDeclaration(SyncChatroomReq);
 GPBObjCClassDeclaration(SyncChatroomResp);
 GPBObjCClassDeclaration(SyncConversationsReq);
@@ -323,13 +324,14 @@ GPBEnumDescriptor *NotifyType_EnumDescriptor(void) {
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
-        "Default\000Msg\000ChatroomMsg\000";
+        "Default\000Msg\000ChatroomMsg\000ChatroomAtt\000";
     static const int32_t values[] = {
         NotifyType_Default,
         NotifyType_Msg,
         NotifyType_ChatroomMsg,
+        NotifyType_ChatroomAtt,
     };
-    static const char *extraTextFormatInfo = "\003\000\007\000\001\003\000\002\013\000";
+    static const char *extraTextFormatInfo = "\004\000\007\000\001\003\000\002\013\000\003\013\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(NotifyType)
                                        valueNames:valueNames
@@ -351,6 +353,7 @@ BOOL NotifyType_IsValidValue(int32_t value__) {
     case NotifyType_Default:
     case NotifyType_Msg:
     case NotifyType_ChatroomMsg:
+    case NotifyType_ChatroomAtt:
       return YES;
     default:
       return NO;
@@ -8897,6 +8900,52 @@ typedef struct SyncChatroomReq__storage_ {
         "\003\001\n\000\002\010\000\003\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - SyncChatroomMsgResp
+
+@implementation SyncChatroomMsgResp
+
+@dynamic msgsArray, msgsArray_Count;
+
+typedef struct SyncChatroomMsgResp__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *msgsArray;
+} SyncChatroomMsgResp__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "msgsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(DownMsg),
+        .number = SyncChatroomMsgResp_FieldNumber_MsgsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(SyncChatroomMsgResp__storage_, msgsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SyncChatroomMsgResp)
+                                   messageName:@"SyncChatroomMsgResp"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SyncChatroomMsgResp__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG

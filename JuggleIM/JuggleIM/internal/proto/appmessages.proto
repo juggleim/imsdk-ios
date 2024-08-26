@@ -124,6 +124,7 @@ enum NotifyType {
   Default = 0;
   Msg = 1;
   ChatroomMsg = 2;
+  ChatroomAtt =3;
 }
 message SyncMsgReq{
   int64 syncTime = 1;//收件箱同步时间
@@ -690,6 +691,9 @@ message SyncChatroomReq{
   string chatroomId = 1;
   int64 syncTime = 2;
   int64 attSyncTime = 3;
+}
+message SyncChatroomMsgResp{
+  repeated DownMsg msgs = 1;
 }
 message SyncChatroomResp{
   DownMsgSet msgs = 1;

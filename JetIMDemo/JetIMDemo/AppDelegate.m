@@ -86,13 +86,7 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
-            [JIM.shared.conversationManager setUnread:c
-                                              success:^{
-                
-            } error:^(JErrorCode code) {
-                
-            }];
+            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
             
             
             
@@ -175,6 +169,15 @@
 
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
+//    JTextMessage *t = [[JTextMessage alloc] initWithContent:@"test chatroom"];
+//    JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeChatroom conversationId:@"chatroom1001"];
+//    [JIM.shared.messageManager sendMessage:t
+//                            inConversation:c
+//                                   success:^(JMessage *message) {
+//        NSLog(@"lifei, chatroom send message success");
+//    } error:^(JErrorCode errorCode, JMessage *message) {
+//        NSLog(@"lifei, chatroom send message error");
+//    }];
 }
 
 - (void)chatroomDidQuit:(NSString *)chatroomId {

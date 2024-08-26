@@ -36,7 +36,9 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeConversationSetTopAck,
     JPBRcvTypeAddConversation,
     JPBRcvTypeFileCredMsgAck,
-    JPBRcvTypeGlobalMuteAck
+    JPBRcvTypeGlobalMuteAck,
+    JPBRcvTypePublishChatroomMsgNtf,
+    JPBRcvTypeSyncChatroomMsgsAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -100,6 +102,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 
 @interface JPublishMsgNtf : NSObject
 @property (nonatomic, assign) long long syncTime;
+@property (nonatomic, copy) NSString *chatroomId;
 @end
 
 @interface JDisconnectMsg : NSObject
@@ -285,6 +288,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)pushSwitch:(BOOL)enablePush
                 userId:(NSString *)userId
                  index:(int)index;
+
+- (NSData *)syncChatroomMessages:(long long)syncTime
+                      chatroomId:(NSString *)chatroomId
+                           index:(int)index;
 
 - (NSData *)pingData;
 

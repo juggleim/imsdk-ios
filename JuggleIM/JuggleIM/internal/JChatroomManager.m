@@ -37,6 +37,8 @@
     [self.core.webSocket joinChatroom:chatroomId
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
+        [self.core changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
+        [self.core.webSocket syncChatroomMessagesWithTime:[self.core getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidJoin:)]) {
@@ -46,6 +48,8 @@
         });
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CHRM-Join", @"error code is %ld", code);
+        [self.core changeStatus:JChatroomStatusFailed forChatroom:chatroomId];
+        //TODO: 聊天室 rejoin，可以自动 rejoin 的不给回调
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomJoinFail:errorCode:)]) {
@@ -54,6 +58,7 @@
             }];
         });
     }];
+    [self.core changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
 }
 
 - (void)getChatroomInfo:(NSString *)chatroomId option:(JChatroomInfoOptions *)option success:(void (^)(JChatroomInfo *))successBlock error:(void (^)(JErrorCode))errorBlock { 

@@ -45,6 +45,11 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //不是群成员
     JErrorCodeInternalNotGroupMember = 13002,
     
+    //聊天室不存在
+    JErrorCodeInternalChatroomNotExist = 14005,
+    //聊天室已销毁
+    JErrorCodeInternalChatroomDestroyed = 14006,
+    
     JErrorCodeInternalWebSocketFailure = 21001,
     JErrorCodeInternalNaviFailure = 21002,
     JErrorCodeInternalInvalidParam = 21003,

@@ -60,6 +60,11 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //不是群成员
     JErrorCodeNotGroupMember = 13002,
     
+    //聊天室不存在
+    JErrorCodeChatroomNotExist = 14005,
+    //聊天室已销毁
+    JErrorCodeChatroomDestroyed = 14006,
+    
     //非法参数
     JErrorCodeInvalidParam = 21003,
     //操作超时

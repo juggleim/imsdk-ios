@@ -629,6 +629,21 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)syncChatroomMessagesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData syncChatroomMessages:syncTime
+                                           chatroomId:chatroomId
+                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"sync chatroom messages, id is %@, time is %lld", chatroomId, syncTime);
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"sync chatroom message error, msg is %@", err.description);
+        }
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -779,9 +794,17 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypePublishMsgNtf");
             [self handlePublishMsgNtf:obj.publishMsgNtf];
             break;
+        case JPBRcvTypePublishChatroomMsgNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypePublishChatroomMsgNtf");
+            [self handlePublishMsgNtf:obj.publishMsgNtf];
+            break;
         case JPBRcvTypeSyncMsgsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeSyncMsgsAck");
             [self handleSyncMsgsAck:obj.qryHisMsgsAck];
+            break;
+        case JPBRcvTypeSyncChatroomMsgsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSyncChatroomMsgsAck");
+            [self handleSyncChatroomMsgsAck:obj.qryHisMsgsAck];
             break;
         case JPBRcvTypePong:
             JLogV(@"WS-Receive", @"JPBRcvTypePong");
@@ -935,6 +958,12 @@ inConversation:(JConversation *)conversation
     }
 }
 
+- (void)handleSyncChatroomMsgsAck:(JQryHisMsgsAck *)ack {
+    if ([self.messageDelegate respondsToSelector:@selector(chatroomMessagesDidReceive:)]) {
+        [self.messageDelegate chatroomMessagesDidReceive:ack.msgs];
+    }
+}
+
 - (void)handleReceiveMessage:(JPublishMsgBody *)publishMsgBody {
     BOOL needAck = NO;
     if ([self.messageDelegate respondsToSelector:@selector(messageDidReceive:)]) {
@@ -948,6 +977,13 @@ inConversation:(JConversation *)conversation
 - (void)handlePublishMsgNtf:(JPublishMsgNtf *)ntf {
     if ([self.messageDelegate respondsToSelector:@selector(syncNotify:)]) {
         [self.messageDelegate syncNotify:ntf.syncTime];
+    }
+}
+
+- (void)handlePublishChatroomMsgNtf:(JPublishMsgNtf *)ntf {
+    if ([self.messageDelegate respondsToSelector:@selector(syncChatroomNotify:time:)]) {
+        [self.messageDelegate syncChatroomNotify:ntf.chatroomId
+                                            time:ntf.syncTime];
     }
 }
 
