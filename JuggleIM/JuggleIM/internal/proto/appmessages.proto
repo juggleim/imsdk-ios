@@ -868,3 +868,7 @@ message BusinessLog {
   string message = 6;
   string appKey = 9;
 }
+
+message PushSwitch{
+  int32 switch = 1;  //0：关闭；1：开启；
+}

@@ -282,6 +282,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)quitChatroom:(NSString *)chatroomId
                    index:(int)index;
 
+- (NSData *)pushSwitch:(BOOL)enablePush
+                userId:(NSString *)userId
+                 index:(int)index;
+
 - (NSData *)pingData;
 
 - (NSData *)publishAckData:(int)index;

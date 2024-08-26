@@ -86,8 +86,13 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"rdyIjfi8R"];
-            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
+            [JIM.shared.conversationManager setUnread:c
+                                              success:^{
+                
+            } error:^(JErrorCode code) {
+                
+            }];
             
             
             

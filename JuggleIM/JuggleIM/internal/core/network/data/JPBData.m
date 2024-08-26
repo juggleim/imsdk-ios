@@ -65,6 +65,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jJoinChatroom @"c_join"
 #define jQuitChatroom @"c_quit"
 #define jMarkUnread @"mark_unread"
+#define jPushSwitch @"push_switch"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -715,8 +716,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)clearTotalUnreadCountMessages:(NSString *)userId
                                      time:(long long)time
-                                    index:(int)index{
-    
+                                    index:(int)index {
     QryTotalUnreadCountReq * req = [[QryTotalUnreadCountReq alloc] init];
     req.time = time;
     
@@ -729,6 +729,22 @@ typedef NS_ENUM(NSUInteger, JQos) {
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)pushSwitch:(BOOL)enablePush
+                userId:(NSString *)userId
+                 index:(int)index {
+    PushSwitch *ps = [[PushSwitch alloc] init];
+    ps.switch_p = enablePush;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jPushSwitch;
+    body.targetId = userId;
+    body.data_p = ps.data;
+    
     ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
     return m.data;
 }
