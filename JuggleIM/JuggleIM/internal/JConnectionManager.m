@@ -377,10 +377,12 @@
 
 - (void)enterBackground {
     self.isBackground = YES;
+    [self.core.webSocket pushSwitch:YES userId:self.core.userId];
 }
 
 - (void)enterForeground {
     self.isBackground = NO;
+    [self.core.webSocket pushSwitch:NO userId:self.core.userId];
 }
 
 - (void)appTerminate {

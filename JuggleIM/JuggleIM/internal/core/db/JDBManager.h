@@ -97,12 +97,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
-                                    inConversation:(JConversation *)conversation
+- (NSArray<JMessage *> *)searchMessagesWithContent:(nullable NSString *)searchContent
                                              count:(int)count
                                               time:(long long)time
-                                         direction:(JPullDirection)direction
-                                      contentTypes:(NSArray<NSString *> *)contentTypes;
+                                     pullDirection:(JPullDirection)pullDirection
+                                      contentTypes:(nullable NSArray<NSString *> *)contentTypes
+                                           senders:(nullable NSArray<NSString *> *)senderUserIds
+                                            states:(nullable NSArray<NSNumber *> *)messageStates
+                                     conversations:(nullable NSArray<JConversation *> *)conversations;
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;

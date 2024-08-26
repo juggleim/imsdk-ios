@@ -56,7 +56,7 @@
     }];
 }
 
-- (void)getChatroomInfo:(NSString *)chatroomId option:(JChatroomInfoOption *)option success:(void (^)(JChatroomInfo *))successBlock error:(void (^)(JErrorCode))errorBlock { 
+- (void)getChatroomInfo:(NSString *)chatroomId option:(JChatroomInfoOptions *)option success:(void (^)(JChatroomInfo *))successBlock error:(void (^)(JErrorCode))errorBlock { 
     
 }
 

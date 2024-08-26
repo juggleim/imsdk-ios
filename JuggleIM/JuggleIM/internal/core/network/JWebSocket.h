@@ -207,6 +207,9 @@ inConversation:(JConversation *)conversation
           success:(void (^)(long long timestamp))successBlock
             error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)pushSwitch:(BOOL)enablePush
+            userId:(NSString *)userId;
+
 - (void)sendPing;
 @end
 

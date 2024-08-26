@@ -6,7 +6,7 @@
 //
 
 #import "JuggleIMConst.h"
-#import "JChatroomInfoOption.h"
+#import "JChatroomInfoOptions.h"
 #import "JChatroomInfo.h"
 
 @protocol JChatroomDelegate <NSObject>
@@ -53,7 +53,7 @@
 ///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
 - (void)getChatroomInfo:(NSString *)chatroomId
-                 option:(JChatroomInfoOption *)option
+                 option:(JChatroomInfoOptions *)option
                 success:(void (^)(JChatroomInfo *chatroomInfo))successBlock
                   error:(void (^)(JErrorCode code))errorBlock;
 

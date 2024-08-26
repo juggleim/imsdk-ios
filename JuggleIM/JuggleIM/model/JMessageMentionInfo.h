@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, JMentionType) {
 @interface JMessageMentionInfo : NSObject
 
 @property (nonatomic, assign) JMentionType type;
-@property (nonatomic, strong) NSArray <JUserInfo *> *targetUsers;
+@property (nonatomic, copy) NSArray <JUserInfo *> *targetUsers;
 
 - (NSString *)encodeToJson;
 

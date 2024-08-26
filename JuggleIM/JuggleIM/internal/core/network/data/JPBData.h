@@ -117,7 +117,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JGlobalMuteAck : JQryAck
 @property (nonatomic, assign) BOOL isMute;
 @property (nonatomic, copy) NSString *timezone;
-@property (nonatomic, strong) NSArray <JTimePeriod *> *periods;
+@property (nonatomic, copy) NSArray <JTimePeriod *> *periods;
 @end
 
 @interface JPBRcvObj : NSObject
@@ -281,6 +281,10 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 
 - (NSData *)quitChatroom:(NSString *)chatroomId
                    index:(int)index;
+
+- (NSData *)pushSwitch:(BOOL)enablePush
+                userId:(NSString *)userId
+                 index:(int)index;
 
 - (NSData *)pingData;
 

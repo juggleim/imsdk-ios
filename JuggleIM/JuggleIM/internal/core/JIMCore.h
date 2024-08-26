@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JIMCore : NSObject
-@property (nonatomic, strong) NSArray <NSString *> *naviUrls;
+@property (nonatomic, copy) NSArray <NSString *> *naviUrls;
 @property (nonatomic, copy) NSArray *servers;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;

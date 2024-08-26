@@ -42,8 +42,15 @@ NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
-NSString *const jAndTypeIn = @" AND type in ";
+NSString *const jAndTypeIn = @" AND type IN ";
+NSString *const jAndSenderIn = @" AND sender IN ";
+NSString *const jAndStateIn = @" AND state IN ";
 NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
+NSString *const jAnd = @" AND";
+NSString *const jLeftBracket = @" (";
+NSString *const jRightBracket = @")";
+NSString *const jConversationIs = @" conversation_type = ? AND conversation_id = ?";
+NSString *const jOr = @" OR";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
@@ -66,6 +73,8 @@ NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
+NSString *const jGetMessagesNotDeleted = @"SELECT * FROM message WHERE is_deleted = 0";
+NSString *const jAndSearchContentIs = @" AND search_content LIKE ?";
 NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
@@ -362,12 +371,14 @@ NSString *const jReferMsgId = @"refer_msg_id";
 }
 
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
-                                    inConversation:(JConversation *)conversation
                                              count:(int)count
                                               time:(long long)time
-                                         direction:(JPullDirection)direction
-                                      contentTypes:(NSArray<NSString *> *)contentTypes{
-    if (searchContent.length == 0 || searchContent == nil) {
+                                     pullDirection:(JPullDirection)pullDirection
+                                      contentTypes:(NSArray<NSString *> *)contentTypes
+                                           senders:(NSArray<NSString *> *)senderUserIds
+                                            states:(NSArray<NSNumber *> *)messageStates
+                                     conversations:(NSArray<JConversation *> *)conversations {
+    if (count < 1) {
         return [NSArray array];
     }
     if (time == 0) {
@@ -376,31 +387,52 @@ NSString *const jReferMsgId = @"refer_msg_id";
     if (count > 100) {
         count = 100;
     }
-    NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
-    NSString *sql = jGetMessagesBySearchContent;
+    __block NSString *sql = jGetMessagesNotDeleted;
     NSMutableArray *args = [NSMutableArray array];
-    [args addObject:searchString];
-    
-    if(conversation){
-        sql = [sql stringByAppendingString:jAndInConversation];
-        [args addObject:conversation.conversationId];
+    if (searchContent.length > 0) {
+        NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
+        sql = [sql stringByAppendingString:jAndSearchContentIs];
+        [args addObject:searchString];
     }
-    
-    if (direction == JPullDirectionNewer) {
+    if (pullDirection == JPullDirectionNewer) {
         sql = [sql stringByAppendingString:jAndGreaterThan];
     } else {
         sql = [sql stringByAppendingString:jAndLessThan];
     }
     [args addObject:@(time)];
-    
-    
     if (contentTypes.count > 0) {
         sql = [sql stringByAppendingString:jAndTypeIn];
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
         [args addObjectsFromArray:contentTypes];
     }
+    if (senderUserIds.count > 0) {
+        sql = [sql stringByAppendingString:jAndSenderIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:senderUserIds.count]];
+        [args addObjectsFromArray:senderUserIds];
+    }
+    if (messageStates.count > 0) {
+        sql = [sql stringByAppendingString:jAndStateIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageStates.count]];
+        [args addObjectsFromArray:messageStates];
+    }
+    if (conversations.count > 0) {
+        sql = [sql stringByAppendingString:jAnd];
+        sql = [sql stringByAppendingString:jLeftBracket];
+        [conversations enumerateObjectsUsingBlock:^(JConversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            sql = [sql stringByAppendingString:jLeftBracket];
+            sql = [sql stringByAppendingString:jConversationIs];
+            sql = [sql stringByAppendingString:jRightBracket];
+            [args addObject:@(obj.conversationType)];
+            [args addObject:obj.conversationId];
+            if (idx < conversations.count - 1) {
+                sql = [sql stringByAppendingString:jOr];
+            }
+        }];
+        sql = [sql stringByAppendingString:jRightBracket];
+    }
+    
     sql = [sql stringByAppendingString:jOrderByTimestamp];
-    if (direction == JPullDirectionNewer) {
+    if (pullDirection == JPullDirectionNewer) {
         sql = [sql stringByAppendingString:jASC];
     } else {
         sql = [sql stringByAppendingString:jDESC];
@@ -422,14 +454,13 @@ NSString *const jReferMsgId = @"refer_msg_id";
         }
     }
     NSArray *result;
-    if (direction == JPullDirectionOlder) {
+    if (pullDirection == JPullDirectionOlder) {
         result = [[messages reverseObjectEnumerator] allObjects];
     } else {
         result = [messages copy];
     }
     return result;
 }
-
 
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
     if (messageId.length == 0) {

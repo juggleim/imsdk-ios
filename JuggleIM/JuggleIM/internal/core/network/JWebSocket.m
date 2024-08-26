@@ -615,6 +615,20 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)pushSwitch:(BOOL)enablePush userId:(NSString *)userId {
+    dispatch_async(self.sendQueue, ^{
+        NSData *d = [self.pbData pushSwitch:enablePush
+                                     userId:userId
+                                      index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"push switch, enable is %d", enablePush);
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"push switch error, msg is %@", err.description);
+        }
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];

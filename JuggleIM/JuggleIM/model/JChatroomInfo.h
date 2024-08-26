@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int totalMemberCount;
 
 /// 成员列表，只包含前 100 条（按照 memberOrder 排序规则）
-@property (nonatomic, strong) NSArray <JChatroomMember *> *memberList;
+@property (nonatomic, copy) NSArray <JChatroomMember *> *memberList;
 
 @end
 

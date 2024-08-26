@@ -392,18 +392,10 @@
                            success:^(long long timestamp) {
         JLogI(@"CONV-SetUnread", @"success");
         [weakSelf.messageManager updateSendSyncTime:timestamp];
-        [weakSelf.core.dbManager setUnread:YES conversation:conversation];
+        [weakSelf setDBUnreadAndNotice:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock();
-            }
-            JConversationInfo * conversationInfo = [weakSelf.core.dbManager getConversationInfo:conversation];
-            if(conversationInfo){
-                [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                        [obj conversationInfoDidUpdate:@[conversationInfo]];
-                    }
-                }];
             }
         });
     } error:^(JErrorCodeInternal code) {
@@ -732,6 +724,10 @@
     }
 }
 
+- (void)conversationDidSetUnread:(JConversation *)conversation {
+    [self setDBUnreadAndNotice:conversation];
+}
+
 #pragma mark - internal
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];
@@ -890,7 +886,23 @@
             }];
         });
     }];
-    
+}
+
+- (void)setDBUnreadAndNotice:(JConversation *)conversation {
+    [self.core.dbManager setUnread:YES conversation:conversation];
+    dispatch_async(self.core.delegateQueue, ^{
+        JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conversation];
+        if(conversationInfo) {
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
+            if (conversationInfo.unreadCount == 0) {
+                [self noticeTotalUnreadCountChange];
+            }
+        }
+    });
 }
 
 - (void)noticeTotalUnreadCountChange {

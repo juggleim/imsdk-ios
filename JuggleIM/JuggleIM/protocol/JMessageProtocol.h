@@ -12,6 +12,7 @@
 #import <JuggleIM/JMediaMessageContent.h>
 #import <JuggleIM/JTimePeriod.h>
 #import <JuggleIM/JGetMessageOptions.h>
+#import <JuggleIM/JQueryMessageOptions.h>
 
 @class JMergeMessage;
 
@@ -182,6 +183,17 @@
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray <NSString *> *)contentTypes;
+
+/// 从本地搜索消息
+/// - Parameters:
+///   - count: 拉取数量
+///   - time: 消息时间戳，如果传 0 表示当前时间
+///   - direction: 拉取方向
+///   - option: 搜索条件
+- (NSArray<JMessage *> *)getMessages:(int)count
+                                time:(long long)time
+                           direction:(JPullDirection)direction
+                         queryOption:(JQueryMessageOptions *)option;
 
 /// 在同一个会话里，根据本端消息唯一编号批量删除消息
 /// - Parameters:
