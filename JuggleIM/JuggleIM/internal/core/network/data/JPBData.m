@@ -268,9 +268,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             publishMsg.topic = kCMsg;
             break;
             
-        //TODO: 系统会话还没做
         case JConversationTypeSystem:
-//
             break;
         default:
             break;
