@@ -67,6 +67,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jMarkUnread @"mark_unread"
 #define jPushSwitch @"push_switch"
 #define jSyncChatroomMessage @"c_sync_msgs"
+#define jQryFirstUnreadMsg @"qry_first_unread_msg"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -535,12 +536,16 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)clearUnreadCountData:(JConversation *)conversation
                           userId:(NSString *)userId
                         msgIndex:(long long)msgIndex
+                           msgId:(NSString *)msgId
+                       timestamp:(long long)timestamp
                            index:(int)index {
     ClearUnreadReq *req = [[ClearUnreadReq alloc] init];
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     c.latestReadIndex = msgIndex;
+    c.latestReadMsgId = msgId;
+    c.latestReadMsgTime = timestamp;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
     req.conversationsArray = arr;
     
@@ -761,6 +766,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.index = index;
     body.topic = jSyncChatroomMessage;
     body.targetId = chatroomId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)qryFirstUnreadMessage:(JConversation *)conversation index:(int)index {
+    QryFirstUnreadMsgReq *req = [[QryFirstUnreadMsgReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryFirstUnreadMsg;
+    body.targetId = conversation.conversationId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -1087,6 +1110,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeSyncChatroomMsgsAck:
                     obj = [self syncChatroomMsgsAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeQryFirstUnreadMsgAck:
+                    obj = [self qryFirstUnreadMsgAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1493,6 +1519,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
+    JQryHisMsgsAck *a = [[JQryHisMsgsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.isFinished = YES;
+    NSMutableArray *arr = [[NSMutableArray alloc] init];
+    if (body.data_p.length > 0) {
+        NSError *e = nil;
+        DownMsg *downMsg = [[DownMsg alloc] initWithData:body.data_p error:&e];
+        if (e != nil) {
+            JLogE(@"PB-Parse", @"qry first unread message parse error, msg is %@", e.description);
+            obj.rcvType = JPBRcvTypeParseError;
+            return obj;
+        }
+        JConcreteMessage *message = [self messageWithDownMsg:downMsg];
+        [arr addObject:message];
+    }
+    a.msgs = arr;
+    obj.qryHisMsgsAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)simpleQryAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeSimpleQryAck;
@@ -1713,7 +1762,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jJoinChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQuitChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jMarkUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jSyncChatroomMessage:@(JPBRcvTypeSyncChatroomMsgsAck)
+             jSyncChatroomMessage:@(JPBRcvTypeSyncChatroomMsgsAck),
+             jQryFirstUnreadMsg:@(JPBRcvTypeQryFirstUnreadMsgAck)
     };
 }
 @end

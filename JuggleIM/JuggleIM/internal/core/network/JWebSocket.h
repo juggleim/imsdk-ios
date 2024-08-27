@@ -118,6 +118,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
+                   msgId:(NSString *)msgId
+               timestamp:(long long)timestamp
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
@@ -212,6 +214,10 @@ inConversation:(JConversation *)conversation
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId;
+
+- (void)getFirstUnreadMessage:(JConversation *)conversation
+                      success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;

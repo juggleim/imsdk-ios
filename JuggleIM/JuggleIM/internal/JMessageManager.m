@@ -1201,6 +1201,32 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }];
 }
 
+- (void)getFirstUnreadMessage:(JConversation *)conversation
+                      success:(void (^)(JMessage *))successBlock
+                        error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getFirstUnreadMessage:conversation
+                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-FirstUnread", @"success");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (!successBlock) {
+                return;
+            }
+            if (messages.count == 0) {
+                successBlock(nil);
+            } else {
+                successBlock(messages.firstObject);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-FirstUnread", @"code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (void)getMuteStatus:(void (^)(JErrorCode, BOOL, NSString *, NSArray<JTimePeriod *> *))completeBlock {
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket getGlobalMute:self.core.userId

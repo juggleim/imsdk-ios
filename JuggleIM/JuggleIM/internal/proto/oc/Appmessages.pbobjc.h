@@ -1580,6 +1580,8 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_IsDelete = 15,
   Conversation_FieldNumber_LatestUnreadIndex = 16,
   Conversation_FieldNumber_UnreadTag = 17,
+  Conversation_FieldNumber_LatestReadMsgId = 18,
+  Conversation_FieldNumber_LatestReadMsgTime = 19,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -1625,6 +1627,10 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readwrite) int64_t latestUnreadIndex;
 
 @property(nonatomic, readwrite) int32_t unreadTag;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *latestReadMsgId;
+
+@property(nonatomic, readwrite) int64_t latestReadMsgTime;
 
 @end
 
@@ -2915,6 +2921,33 @@ GPB_FINAL @interface QryGrpMemberSettingsResp : GPBMessage
 @property(nonatomic, readonly) NSUInteger memberSettings_Count;
 
 @end
+
+#pragma mark - QryFirstUnreadMsgReq
+
+typedef GPB_ENUM(QryFirstUnreadMsgReq_FieldNumber) {
+  QryFirstUnreadMsgReq_FieldNumber_TargetId = 1,
+  QryFirstUnreadMsgReq_FieldNumber_ChannelType = 2,
+};
+
+GPB_FINAL @interface QryFirstUnreadMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryFirstUnreadMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message);
+/**
+ * Sets the raw value of an @c QryFirstUnreadMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message, int32_t value);
 
 #pragma mark - SyncChatroomReq
 

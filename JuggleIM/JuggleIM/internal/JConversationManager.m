@@ -211,6 +211,8 @@
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:info.lastMessageIndex
+                                    msgId:info.lastMessage.messageId
+                                timestamp:info.lastMessage.timestamp
                                   success:^(long long timestamp) {
         JLogI(@"CONV-ClearUnread", @"success");
         [weakSelf.messageManager updateSendSyncTime:timestamp];

@@ -38,7 +38,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeFileCredMsgAck,
     JPBRcvTypeGlobalMuteAck,
     JPBRcvTypePublishChatroomMsgNtf,
-    JPBRcvTypeSyncChatroomMsgsAck
+    JPBRcvTypeSyncChatroomMsgsAck,
+    JPBRcvTypeQryFirstUnreadMsgAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -213,6 +214,8 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)clearUnreadCountData:(JConversation *)conversation
                           userId:(NSString *)userId
                         msgIndex:(long long)msgIndex
+                           msgId:(NSString *)msgId
+                       timestamp:(long long)timestamp
                            index:(int)index;
 
 - (NSData *)undisturbData:(JConversation *)conversation
@@ -292,6 +295,9 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
                            index:(int)index;
+
+- (NSData *)qryFirstUnreadMessage:(JConversation *)conversation
+                            index:(int)index;
 
 - (NSData *)pingData;
 

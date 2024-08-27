@@ -88,14 +88,37 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
 
-            int count1 = [JIM.shared.conversationManager getTotalUnreadCount];
-            NSArray *a = @[@(JConversationTypeGroup), @(JConversationTypePrivate)];
-            int count2 = [JIM.shared.conversationManager getUnreadCountWithTypes:a];
-            NSArray *group = @[@(JConversationTypeGroup)];
-            NSArray *private = @[@(JConversationTypePrivate)];
-            int countGroup = [JIM.shared.conversationManager getUnreadCountWithTypes:group];
-            int countPrivate = [JIM.shared.conversationManager getUnreadCountWithTypes:private];
-            NSLog(@"lifei, count1 is %d, count2 is %d, countGroup is %d, countPrivate is %d", count1, count2, countGroup, countPrivate);
+//            int count1 = [JIM.shared.conversationManager getTotalUnreadCount];
+//            NSArray *a = @[@(JConversationTypeGroup), @(JConversationTypePrivate)];
+//            int count2 = [JIM.shared.conversationManager getUnreadCountWithTypes:a];
+//            NSArray *group = @[@(JConversationTypeGroup)];
+//            NSArray *private = @[@(JConversationTypePrivate)];
+//            int countGroup = [JIM.shared.conversationManager getUnreadCountWithTypes:group];
+//            int countPrivate = [JIM.shared.conversationManager getUnreadCountWithTypes:private];
+//            NSLog(@"lifei, count1 is %d, count2 is %d, countGroup is %d, countPrivate is %d", count1, count2, countGroup, countPrivate);
+            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"nkXFkybGA"];
+            [JIM.shared.messageManager getFirstUnreadMessage:c
+                                                     success:^(JMessage *message) {
+                int i = 1;
+            } error:^(JErrorCode code) {
+                int i = 1;
+            }];
+//            [JIM.shared.conversationManager clearUnreadCountByConversation:c
+//                                                                   success:^{
+//                [JIM.shared.messageManager getFirstUnreadMessage:c
+//                                                         success:^(JMessage *message) {
+//                    int i = 1;
+//                } error:^(JErrorCode code) {
+//                    int i = 1;
+//                }];
+//            } error:^(JErrorCode code) {
+//                
+//            }];
+            
+            
+            
+            
             
             
             

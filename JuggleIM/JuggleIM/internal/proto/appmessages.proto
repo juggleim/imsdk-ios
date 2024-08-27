@@ -328,6 +328,8 @@ message Conversation{
   int32 isDelete = 15;
   int64 latestUnreadIndex = 16;
   int32 unreadTag = 17;
+  string latestReadMsgId = 18;
+  int64 latestReadMsgTime = 19;
 }
 
 enum UpdLatestMsgAction{
@@ -684,6 +686,11 @@ message QryGrpMemberSettingsResp{
   int64 joinTime = 4;
   map<string,string> groupSettings = 5;
   map<string,string> memberSettings = 6;
+}
+
+message QryFirstUnreadMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
 }
 
 // chatroom

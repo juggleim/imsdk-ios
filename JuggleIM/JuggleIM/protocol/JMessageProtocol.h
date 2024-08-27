@@ -375,6 +375,15 @@
                    success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
 
+/// 获取会话中第一条未读消息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调，如果没有未读消息则回调 nil
+///   - errorBlock: 失败回调
+- (void)getFirstUnreadMessage:(JConversation *)conversation
+                      success:(void (^)(JMessage *message))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
+
 /// 获取消息本地属性
 /// - Parameter messageId: 消息 id
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;

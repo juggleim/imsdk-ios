@@ -339,6 +339,8 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
+                   msgId:(nonnull NSString *)msgId
+               timestamp:(long long)timestamp
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -346,6 +348,8 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
         NSData *d = [self.pbData clearUnreadCountData:conversation
                                                userId:userId
                                              msgIndex:msgIndex
+                                                msgId:msgId
+                                            timestamp:timestamp
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear unread, type is %lu, id is %@, msgIndex is %lld", (unsigned long)conversation.conversationType, conversation.conversationId, msgIndex);
         [self timestampSendData:d
@@ -405,6 +409,23 @@ inConversation:(JConversation *)conversation
                             key:key
                         success:successBlock
                           error:errorBlock];
+    });
+}
+
+- (void)getFirstUnreadMessage:(JConversation *)conversation
+                      success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData qryFirstUnreadMessage:conversation index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get first unread message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -631,7 +652,6 @@ inConversation:(JConversation *)conversation
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
     dispatch_async(self.sendQueue, ^{
-        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncChatroomMessages:syncTime
                                            chatroomId:chatroomId
                                                 index:self.cmdIndex++];
@@ -837,6 +857,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGlobalMuteAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGlobalMuteAck");
             [self handleGlobalMuteAck:obj.globalMuteAck];
+            break;
+        case JPBRcvTypeQryFirstUnreadMsgAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryFirstUnreadMsgAck");
+            [self handleFirstUnreadMsgAck:obj.qryHisMsgsAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1067,6 +1091,18 @@ inConversation:(JConversation *)conversation
             globalMuteObj.errorBlock(ack.code);
         } else {
             globalMuteObj.successBlock(ack.isMute, ack.timezone, ack.periods);
+        }
+    }
+}
+
+- (void)handleFirstUnreadMsgAck:(JQryHisMsgsAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
+        JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
+        if (ack.code != 0) {
+            qryHisMsgsObj.errorBlock(ack.code);
+        } else {
+            qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
         }
     }
 }
