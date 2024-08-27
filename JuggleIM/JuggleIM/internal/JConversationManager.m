@@ -253,6 +253,10 @@
     return [self.core.dbManager getTotalUnreadCount];
 }
 
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
+    return [self.core.dbManager getUnreadCountWithTypes:conversationTypes];
+}
+
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
     [self.core.dbManager setDraft:draft inConversation:conversation];
     JConversationInfo *info = [self.core.dbManager getConversationInfo:conversation];

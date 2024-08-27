@@ -155,6 +155,10 @@
     return [self.conversationDb getTotalUnreadCount];
 }
 
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
+    return [self.conversationDb getUnreadCountWithTypes:conversationTypes];
+}
+
 - (void)clearTotalUnreadCount{
     [self.conversationDb clearTotalUnreadCount];
 }
