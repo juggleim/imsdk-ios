@@ -71,6 +71,7 @@
                               success:^(long long timestamp) {
         JLogI(@"CHRM-quit", @"success");
         [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
+        [self.core.dbManager clearChatroomMessage:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidQuit:)]) {

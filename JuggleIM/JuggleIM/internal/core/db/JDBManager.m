@@ -254,6 +254,10 @@
     [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
+- (void)clearChatroomMessage:(NSString *)chatroomId {
+    [self.messageDb clearChatroomMessage:chatroomId];
+}
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     return [self.messageDb getMessagesByMessageIds:messageIds];
 }

@@ -79,6 +79,7 @@ NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
+NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -299,7 +300,7 @@ NSString *const jReferMsgId = @"refer_msg_id";
     }
     NSString *sql = jClearMessages;
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(startTime)]];
-    if(senderId.length > 0){
+    if(senderId.length > 0) {
         sql = [sql stringByAppendingString:jAndSenderIs];
         [args addObject:senderId];
     }
@@ -572,6 +573,12 @@ NSString *const jReferMsgId = @"refer_msg_id";
     NSString *sql = [jClearChatroomMessagesExclude stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:chatroomIds.count]];
     [self.dbHelper executeUpdate:sql
             withArgumentsInArray:chatroomIds];
+}
+
+- (void)clearChatroomMessage:(NSString *)chatroomId {
+    NSString *sql = jClearChatroomMessagesIn;
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:@[chatroomId]];
 }
 
 - (void)createTables {
