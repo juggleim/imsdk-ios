@@ -15,10 +15,6 @@
 #define jUserId @"JetIMUserId"
 #define jToken @"JetIMToken"
 
-@interface JIMCore ()
-@property (nonatomic, strong) NSMutableDictionary <NSString *, JCachedChatroomStatus *> *cachedChatroomDic;
-@end
-
 @implementation JIMCore
 
 - (instancetype)init {
@@ -88,42 +84,6 @@
     }
 }
 
-- (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedStatus.status;
-    }
-}
-
-- (void)changeStatus:(JChatroomStatus)status forChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        if (!cachedStatus) {
-            cachedStatus = [[JCachedChatroomStatus alloc] init];
-        }
-        cachedStatus.status = status;
-        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
-    }
-}
-
-- (long long)getSyncTimeForChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedStatus.syncTime;
-    }
-}
-
-- (void)setSyncTime:(long long)syncTime forChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        if (!cachedStatus) {
-            cachedStatus = [[JCachedChatroomStatus alloc] init];
-        }
-        cachedStatus.syncTime = syncTime;
-        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
-    }
-}
-
 - (NSArray<NSString *> *)naviUrls {
     if (!_naviUrls) {
         _naviUrls = @[JNaviURL];
@@ -138,11 +98,6 @@
     return _servers;
 }
 
-- (NSMutableDictionary<NSString *, JCachedChatroomStatus *> *)cachedChatroomDic {
-    if (!_cachedChatroomDic) {
-        _cachedChatroomDic = [NSMutableDictionary dictionary];
-    }
-    return _cachedChatroomDic;
-}
+
 
 @end

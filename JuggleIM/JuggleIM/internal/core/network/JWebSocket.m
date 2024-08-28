@@ -816,7 +816,7 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypePublishChatroomMsgNtf:
             JLogI(@"WS-Receive", @"JPBRcvTypePublishChatroomMsgNtf");
-            [self handlePublishMsgNtf:obj.publishMsgNtf];
+            [self handlePublishChatroomMsgNtf:obj.publishMsgNtf];
             break;
         case JPBRcvTypeSyncMsgsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeSyncMsgsAck");

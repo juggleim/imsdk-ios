@@ -301,6 +301,9 @@
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
     return [self.messageDb getLastMessage:conversation];;
 }
+- (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds {
+    return [self.messageDb clearChatroomMessageExclude:chatroomIds];
+}
 
 
 #pragma mark - user table

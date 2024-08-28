@@ -66,6 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
+- (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds;
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;

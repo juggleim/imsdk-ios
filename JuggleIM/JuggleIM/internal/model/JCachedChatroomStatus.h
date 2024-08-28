@@ -13,7 +13,8 @@ typedef NS_ENUM(NSUInteger, JChatroomStatus) {
     JChatroomStatusUnknown,
     JChatroomStatusJoining,
     JChatroomStatusJoined,
-    JChatroomStatusFailed
+    JChatroomStatusFailed,
+    JChatroomStatusQuit
 };
 
 @interface JCachedChatroomStatus : NSObject

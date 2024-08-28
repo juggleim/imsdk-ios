@@ -16,6 +16,7 @@
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) JConversationManager *conversationManager;
 @property (nonatomic, strong) JMessageManager *messageManager;
+@property (nonatomic, strong) JChatroomManager *chatroomManager;
 @property (nonatomic, strong) NSHashTable <id<JConnectionDelegate>> *delegates;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
@@ -27,7 +28,8 @@
 
 - (instancetype)initWithCore:(JIMCore *)core
          conversationManager:(nonnull JConversationManager *)conversationManager
-              messageManager:(nonnull JMessageManager *)messageManager {
+              messageManager:(nonnull JMessageManager *)messageManager
+             chatroomManager:(nonnull JChatroomManager *)chatroomManager {
     self = [super init];
     if (self) {
         [core.webSocket setConnectDelegate:self];
@@ -35,6 +37,7 @@
         self.core = core;
         self.conversationManager = conversationManager;
         self.messageManager = messageManager;
+        self.chatroomManager = chatroomManager;
         self.bgTask = UIBackgroundTaskInvalid;
         [self addObserver];
     }
@@ -81,6 +84,7 @@
 
 - (void)disconnect:(BOOL)receivePush {
     JLogI(@"CON-Disconnect", @"receivePush is %d", receivePush);
+    [self.chatroomManager userDisconnect];
     [self internalDisconnect:receivePush];
 }
 
@@ -136,6 +140,7 @@
         }
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];
+        [self.chatroomManager connectSuccess];
         [self changeStatus:JConnectionStatusInternalConnected errorCode:JErrorCodeInternalNone extra:extra];
         //TODO: operation queue
         [self.conversationManager syncConversations:^{

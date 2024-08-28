@@ -43,6 +43,7 @@
 @property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
+@property (nonatomic, strong) JChatroomManager *chatroomManager;
 @property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
@@ -57,9 +58,11 @@
     [self sync];
 }
 
-- (instancetype)initWithCore:(JIMCore *)core {
+- (instancetype)initWithCore:(JIMCore *)core
+             chatroomManager:(nonnull JChatroomManager *)chatroomManager {
     if (self = [super init]) {
         self.core = core;
+        self.chatroomManager = chatroomManager;
         [self.core.webSocket setMessageDelegate:self];
         [self registerMessages];
         self.cachedSendTime = -1;
@@ -418,7 +421,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     NSArray<JMessage *> * messages = [self getMessagesByClientMsgNos:@[@(clientMsgNo)]];
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageStateDidChange:conversation:clientMsgNo:)] && messages != nil && messages.count != 0) {
         JMessage * message = messages.firstObject;
-        [self.sendReceiveDelegate messageStateDidChange:state conversation:message.conversation clientMsgNo:clientMsgNo];
+        if (message.conversation.conversationType != JConversationTypeChatroom) {
+            [self.sendReceiveDelegate messageStateDidChange:state conversation:message.conversation clientMsgNo:clientMsgNo];
+        }
     }
 }
 
@@ -1295,7 +1300,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }
     [self insertReceiveMessagesAndNotice:messages];
     JConcreteMessage *lastMessage = messages.lastObject;
-    [self.core setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
+    [self.chatroomManager setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
 }
 
 - (void)syncNotify:(long long)syncTime {
@@ -1309,7 +1314,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 }
 
 - (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
-    long long cachedSyncTime = [self.core getSyncTimeForChatroom:chatroomId];
+    long long cachedSyncTime = [self.chatroomManager getSyncTimeForChatroom:chatroomId];
     if (syncTime > cachedSyncTime) {
         [self syncChatroomMessages:chatroomId
                               time:cachedSyncTime];
@@ -1433,7 +1438,6 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                        referredMessage:(JConcreteMessage *)message.referredMsg
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
-        [self updateSendSyncTime:timestamp];
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
@@ -1452,9 +1456,11 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                           contentType:message.contentType
                                         withMessageId:message.messageId];
         }
-        
-        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-            [self.sendReceiveDelegate messageDidSend:message];
+        if (message.conversation.conversationType != JConversationTypeChatroom) {
+            [self updateSendSyncTime:timestamp];
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+                [self.sendReceiveDelegate messageDidSend:message];
+            }
         }
         
         dispatch_async(self.core.delegateQueue, ^{
@@ -1532,8 +1538,10 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     
     [self.core.dbManager insertMessages:@[message]];
     
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
-        [self.sendReceiveDelegate messageDidSave:message];
+    if (conversation.conversationType != JConversationTypeChatroom) {
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+            [self.sendReceiveDelegate messageDidSave:message];
+        }
     }
     
     return message;
@@ -1656,7 +1664,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }];
 }
 
-- (void)insertReceiveMessagesAndNotice:(NSArray<JConcreteMessage *> *)messages {
+- (NSArray <JConcreteMessage *> *)insertReceiveMessagesAndNotice:(NSArray<JConcreteMessage *> *)messages {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self.core.dbManager insertMessages:messagesToSave];
     [self updateUserInfos:messagesToSave];
@@ -1677,14 +1685,15 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
             }];
         });
     }];
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
-    }
+    return messagesToSave;
 }
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
-    [self insertReceiveMessagesAndNotice:messages];
+    NSArray <JConcreteMessage *> *messagesToSave = [self insertReceiveMessagesAndNotice:messages];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
+    }
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;

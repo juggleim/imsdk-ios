@@ -10,13 +10,16 @@
 #import "JIMCore.h"
 #import "JConversationManager.h"
 #import "JMessageManager.h"
+#import "JChatroomManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConnectionManager : NSObject <JConnectionProtocol>
 - (instancetype)initWithCore:(JIMCore *)core
          conversationManager:(JConversationManager *)conversationManager
-              messageManager:(JMessageManager *)messageManager;
+              messageManager:(JMessageManager *)messageManager
+             chatroomManager:(JChatroomManager *)chatroomManager;
+
 @end
 
 NS_ASSUME_NONNULL_END

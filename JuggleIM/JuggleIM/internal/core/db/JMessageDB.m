@@ -64,7 +64,7 @@ NSString *const jAndSenderIs = @" AND sender = ?";
 NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
-NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid in ";
+NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid IN ";
 NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jClientMsgNoIn = @" id in ";
@@ -78,6 +78,7 @@ NSString *const jAndSearchContentIs = @" AND search_content LIKE ?";
 NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
+NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -565,6 +566,12 @@ NSString *const jReferMsgId = @"refer_msg_id";
          withArgumentsInArray:@[@(obj.readCount), @(obj.memberCount), key]];
         }];
     }];
+}
+
+- (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds {
+    NSString *sql = [jClearChatroomMessagesExclude stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:chatroomIds.count]];
+    [self.dbHelper executeUpdate:sql
+            withArgumentsInArray:chatroomIds];
 }
 
 - (void)createTables {

@@ -13,6 +13,8 @@
 #define kToken3 @"CgZhcHBrZXkaINMDzs7BBTTZTwjKtM10zyxL4DBWFuZL6Z/OAU0Iajpv"
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
+#define kToken1181 @"ChBuc3czc3VlNzJiZWd5djd5GiB3vwQOFxILM02aHvzk0yXsSWIyWy-vkA4CLovMyoelAQ=="
+#define kToken1182 @"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="
 
 @interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate>
 
@@ -26,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
+    [JIM.shared.connectionManager connectWithToken:kToken1181];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -86,35 +88,10 @@
     NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
+            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
 
-//            int count1 = [JIM.shared.conversationManager getTotalUnreadCount];
-//            NSArray *a = @[@(JConversationTypeGroup), @(JConversationTypePrivate)];
-//            int count2 = [JIM.shared.conversationManager getUnreadCountWithTypes:a];
-//            NSArray *group = @[@(JConversationTypeGroup)];
-//            NSArray *private = @[@(JConversationTypePrivate)];
-//            int countGroup = [JIM.shared.conversationManager getUnreadCountWithTypes:group];
-//            int countPrivate = [JIM.shared.conversationManager getUnreadCountWithTypes:private];
-//            NSLog(@"lifei, count1 is %d, count2 is %d, countGroup is %d, countPrivate is %d", count1, count2, countGroup, countPrivate);
-            
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"nkXFkybGA"];
-            [JIM.shared.messageManager getFirstUnreadMessage:c
-                                                     success:^(JMessage *message) {
-                int i = 1;
-            } error:^(JErrorCode code) {
-                int i = 1;
-            }];
-//            [JIM.shared.conversationManager clearUnreadCountByConversation:c
-//                                                                   success:^{
-//                [JIM.shared.messageManager getFirstUnreadMessage:c
-//                                                         success:^(JMessage *message) {
-//                    int i = 1;
-//                } error:^(JErrorCode code) {
-//                    int i = 1;
-//                }];
-//            } error:^(JErrorCode code) {
-//                
-//            }];
+
+
             
             
             

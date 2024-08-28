@@ -8,7 +8,6 @@
 #import <Foundation/Foundation.h>
 #import "JWebSocket.h"
 #import "JDBManager.h"
-#import "JCachedChatroomStatus.h"
 
 typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
     //未连接
@@ -47,12 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)getSyncTimeFromDB;
 
-- (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId;
-- (void)changeStatus:(JChatroomStatus)status
-         forChatroom:(NSString *)chatroomId;
-- (long long)getSyncTimeForChatroom:(NSString *)chatroomId;
-- (void)setSyncTime:(long long)syncTime
-        forChatroom:(NSString *)chatroomId;
+
+
 
 @end
 

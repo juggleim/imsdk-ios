@@ -11,7 +11,7 @@
 @interface JChatroomManager ()
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JChatroomDelegate>> *delegates;
-
+@property (nonatomic, strong) NSMutableDictionary <NSString *, JCachedChatroomStatus *> *cachedChatroomDic;
 @end
 
 @implementation JChatroomManager
@@ -37,8 +37,8 @@
     [self.core.webSocket joinChatroom:chatroomId
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
-        [self.core changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
-        [self.core.webSocket syncChatroomMessagesWithTime:[self.core getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
+        [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
+        [self.core.webSocket syncChatroomMessagesWithTime:[self getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidJoin:)]) {
@@ -48,8 +48,8 @@
         });
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CHRM-Join", @"error code is %ld", code);
-        [self.core changeStatus:JChatroomStatusFailed forChatroom:chatroomId];
-        //TODO: 聊天室 rejoin，可以自动 rejoin 的不给回调
+        [self changeStatus:JChatroomStatusFailed forChatroom:chatroomId];
+        //不做自动重新加入
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomJoinFail:errorCode:)]) {
@@ -58,7 +58,7 @@
             }];
         });
     }];
-    [self.core changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
+    [self changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
 }
 
 - (void)getChatroomInfo:(NSString *)chatroomId option:(JChatroomInfoOptions *)option success:(void (^)(JChatroomInfo *))successBlock error:(void (^)(JErrorCode))errorBlock { 
@@ -70,6 +70,7 @@
     [self.core.webSocket quitChatroom:chatroomId
                               success:^(long long timestamp) {
         JLogI(@"CHRM-quit", @"success");
+        [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidQuit:)]) {
@@ -89,12 +90,80 @@
     }];
 }
 
+- (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedStatus.status;
+    }
+}
+
+- (void)changeStatus:(JChatroomStatus)status forChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        if (status == JChatroomStatusQuit
+            || status == JChatroomStatusFailed) {
+            [self.cachedChatroomDic removeObjectForKey:chatroomId];
+            return;
+        }
+        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedStatus) {
+            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        }
+        cachedStatus.status = status;
+        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+    }
+}
+
+- (long long)getSyncTimeForChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedStatus.syncTime;
+    }
+}
+
+- (void)setSyncTime:(long long)syncTime forChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedStatus) {
+            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        }
+        cachedStatus.syncTime = syncTime;
+        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+    }
+}
+
+- (void)connectSuccess {
+    NSArray *chatroomIds;
+    @synchronized (self) {
+        chatroomIds = [self.cachedChatroomDic.allKeys copy];
+    }
+    [self.core.dbManager clearChatroomMessageExclude:chatroomIds];
+    if (chatroomIds.count == 0) {
+        return;
+    }
+    [chatroomIds enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self joinChatroom:obj];
+    }];
+}
+
+- (void)userDisconnect {
+    @synchronized (self) {
+        [self.cachedChatroomDic removeAllObjects];
+    }
+}
+
 #pragma mark -- internal
 - (NSHashTable<id<JChatroomDelegate>> *)delegates {
     if (!_delegates) {
         _delegates = [NSHashTable weakObjectsHashTable];
     }
     return _delegates;
+}
+
+- (NSMutableDictionary<NSString *, JCachedChatroomStatus *> *)cachedChatroomDic {
+    if (!_cachedChatroomDic) {
+        _cachedChatroomDic = [NSMutableDictionary dictionary];
+    }
+    return _cachedChatroomDic;
 }
 
 @end
