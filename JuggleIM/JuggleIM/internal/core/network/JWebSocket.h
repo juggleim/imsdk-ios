@@ -16,6 +16,7 @@
 #import "JUploadEnum.h"
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
+#import "JChatroomAttributeItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -218,6 +219,10 @@ inConversation:(JConversation *)conversation
 - (void)getFirstUnreadMessage:(JConversation *)conversation
                       success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)setAttributes:(NSDictionary <NSString *, NSString *> *)attributes
+          forChatroom:(NSString *)chatroomId
+             complete:(void (^)(JErrorCodeInternal code, NSArray <JChatroomAttributeItem *> *items))completBlock;
 
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;

@@ -12,6 +12,7 @@
 #import "JUploadEnum.h"
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
+#import "JChatroomAttributeItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,13 +56,17 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JUploadFileCredBlockObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred);
+@property (nonatomic, copy) void (^successBlock)(JUploadOssType ossType, JUploadQiNiuCred *qiNiuCred, JUploadPreSignCred *preSignCred);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
 @interface JGlobalMuteObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(BOOL isMute, NSString * _Nonnull timezone, NSArray<JTimePeriod *> * _Nonnull periods);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JSetChatroomAttrObj : JBlockObj
+@property (nonatomic, copy) void (^completeBlock)(JErrorCodeInternal code,  NSArray<JChatroomAttributeItem *> * _Nullable items);
 @end
 
 NS_ASSUME_NONNULL_END

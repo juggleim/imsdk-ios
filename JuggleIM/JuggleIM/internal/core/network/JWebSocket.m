@@ -429,6 +429,30 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)setAttributes:(NSDictionary<NSString *,NSString *> *)attributes
+          forChatroom:(NSString *)chatroomId
+             complete:(void (^)(JErrorCodeInternal, NSArray <JChatroomAttributeItem *> *))completeBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData setAttributes:attributes
+                                   forChatroom:chatroomId
+                                         index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set attributes for chatroom %@", chatroomId);
+        JSetChatroomAttrObj *obj = [[JSetChatroomAttrObj alloc] init];
+        obj.completeBlock = completeBlock;
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"send data error, description is %@", err.description);
+            if (completeBlock) {
+                completeBlock(JErrorCodeInternalWebSocketFailure, nil);
+            }
+        } else {
+            [self.commandManager setBlockObject:obj forKey:key];
+        }
+    });
+}
+
 - (void)getMergedMessageList:(NSString *)messageId
                         time:(long long)timestamp
                        count:(int)count
@@ -862,6 +886,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeQryFirstUnreadMsgAck");
             [self handleFirstUnreadMsgAck:obj.qryHisMsgsAck];
             break;
+        case JPBRcvTypeSetChatroomAttrAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSetChatroomAttrAck");
+            [self handleSetChatroomAttrAck:obj.setChatroomAttrAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1104,6 +1132,14 @@ inConversation:(JConversation *)conversation
         } else {
             qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
         }
+    }
+}
+
+- (void)handleSetChatroomAttrAck:(JSetChatroomAttrAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JSetChatroomAttrObj class]]) {
+        JSetChatroomAttrObj *setChatroomAttrObj = (JSetChatroomAttrObj *)obj;
+        setChatroomAttrObj.completeBlock(ack.code, ack.items);
     }
 }
 

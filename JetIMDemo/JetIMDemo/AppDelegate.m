@@ -179,7 +179,7 @@
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [JIM.shared.chatroomManager quitChatroom:chatroomId];
+//        [JIM.shared.chatroomManager quitChatroom:chatroomId];
     });
 //    JTextMessage *t = [[JTextMessage alloc] initWithContent:@"test chatroom"];
 //    JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeChatroom conversationId:@"chatroom1001"];

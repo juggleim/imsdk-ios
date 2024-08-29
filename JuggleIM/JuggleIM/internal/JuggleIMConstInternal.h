@@ -69,7 +69,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //消息上传失败
     JErrorCodeInternalMessageUploadError = 22003,
     //日志不存在
-    JErrorCodeInternalLogNotExist = 22004
+    JErrorCodeInternalLogNotExist = 22004,
+    
+    //批量设置聊天室属性失败
+    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001
 };
 
 typedef NS_ENUM(NSUInteger, JMediaType) {

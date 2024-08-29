@@ -33,6 +33,8 @@ CF_EXTERN_C_BEGIN
 @class BlockUser;
 @class BusinessLog;
 @class ChatAttItem;
+@class ChatAttReq;
+@class ChatAttResp;
 @class ChatAtts;
 @class ChatroomMember;
 @class ConnectionLog;
@@ -60,6 +62,7 @@ CF_EXTERN_C_BEGIN
 @class SimpleConversation;
 @class SimpleMsg;
 @class UndisturbConverItem;
+@class UpMsg;
 @class UserInfo;
 @class UserOnlineItem;
 @class UserUndisturbItem;
@@ -3118,12 +3121,28 @@ int32_t ChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *mes
  **/
 void SetChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *message, int32_t value);
 
+#pragma mark - ChatAttBatchReq
+
+typedef GPB_ENUM(ChatAttBatchReq_FieldNumber) {
+  ChatAttBatchReq_FieldNumber_AttsArray = 1,
+};
+
+GPB_FINAL @interface ChatAttBatchReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttReq*> *attsArray;
+/** The number of items in @c attsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attsArray_Count;
+
+@end
+
 #pragma mark - ChatAttReq
 
 typedef GPB_ENUM(ChatAttReq_FieldNumber) {
   ChatAttReq_FieldNumber_Key = 1,
   ChatAttReq_FieldNumber_Value = 2,
   ChatAttReq_FieldNumber_IsForce = 3,
+  ChatAttReq_FieldNumber_IsAutoDel = 4,
+  ChatAttReq_FieldNumber_Msg = 5,
 };
 
 GPB_FINAL @interface ChatAttReq : GPBMessage
@@ -3132,7 +3151,66 @@ GPB_FINAL @interface ChatAttReq : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *value;
 
+/** 是否强制覆盖，否：则该key已有值时，不覆盖 */
 @property(nonatomic, readwrite) BOOL isForce;
+
+/** 是否在该属性所有者离开房间时自动删除；否：则不自动删除； */
+@property(nonatomic, readwrite) BOOL isAutoDel;
+
+/** 设置属性时，同时发送一条聊天室消息； */
+@property(nonatomic, readwrite, strong, null_resettable) UpMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@end
+
+#pragma mark - ChatAttBatchResp
+
+typedef GPB_ENUM(ChatAttBatchResp_FieldNumber) {
+  ChatAttBatchResp_FieldNumber_AttRespsArray = 1,
+};
+
+GPB_FINAL @interface ChatAttBatchResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttResp*> *attRespsArray;
+/** The number of items in @c attRespsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attRespsArray_Count;
+
+@end
+
+#pragma mark - ChatAttResp
+
+typedef GPB_ENUM(ChatAttResp_FieldNumber) {
+  ChatAttResp_FieldNumber_Key = 1,
+  ChatAttResp_FieldNumber_Code = 2,
+  ChatAttResp_FieldNumber_AttTime = 3,
+  ChatAttResp_FieldNumber_MsgCode = 11,
+  ChatAttResp_FieldNumber_MsgId = 12,
+  ChatAttResp_FieldNumber_MsgTime = 13,
+  ChatAttResp_FieldNumber_MsgSeq = 14,
+};
+
+GPB_FINAL @interface ChatAttResp : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
+
+/** 设置属性时的返回码 */
+@property(nonatomic, readwrite) int32_t code;
+
+/** 属性的设置时间 */
+@property(nonatomic, readwrite) int64_t attTime;
+
+/** 当设置属性时，附带发送消息时，下列属性有效 */
+@property(nonatomic, readwrite) int32_t msgCode;
+
+/** 消息的id */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+/** 消息的时间戳 */
+@property(nonatomic, readwrite) int64_t msgTime;
+
+/** 消息的序号 */
+@property(nonatomic, readwrite) int64_t msgSeq;
 
 @end
 

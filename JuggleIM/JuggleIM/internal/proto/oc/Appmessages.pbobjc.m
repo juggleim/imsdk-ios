@@ -44,8 +44,11 @@ GPBObjCClassDeclaration(BanUsersReq);
 GPBObjCClassDeclaration(BlockUser);
 GPBObjCClassDeclaration(BlockUsersReq);
 GPBObjCClassDeclaration(BusinessLog);
+GPBObjCClassDeclaration(ChatAttBatchReq);
+GPBObjCClassDeclaration(ChatAttBatchResp);
 GPBObjCClassDeclaration(ChatAttItem);
 GPBObjCClassDeclaration(ChatAttReq);
+GPBObjCClassDeclaration(ChatAttResp);
 GPBObjCClassDeclaration(ChatAtts);
 GPBObjCClassDeclaration(ChatMembersDispatchReq);
 GPBObjCClassDeclaration(ChatMsgNode);
@@ -9492,6 +9495,52 @@ void SetChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *mes
   GPBSetMessageRawEnumField(message, field, value);
 }
 
+#pragma mark - ChatAttBatchReq
+
+@implementation ChatAttBatchReq
+
+@dynamic attsArray, attsArray_Count;
+
+typedef struct ChatAttBatchReq__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *attsArray;
+} ChatAttBatchReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "attsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(ChatAttReq),
+        .number = ChatAttBatchReq_FieldNumber_AttsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(ChatAttBatchReq__storage_, attsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ChatAttBatchReq)
+                                   messageName:@"ChatAttBatchReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(ChatAttBatchReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
 #pragma mark - ChatAttReq
 
 @implementation ChatAttReq
@@ -9499,11 +9548,14 @@ void SetChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *mes
 @dynamic key;
 @dynamic value;
 @dynamic isForce;
+@dynamic isAutoDel;
+@dynamic hasMsg, msg;
 
 typedef struct ChatAttReq__storage_ {
   uint32_t _has_storage_[1];
   NSString *key;
   NSString *value;
+  UpMsg *msg;
 } ChatAttReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -9540,6 +9592,24 @@ typedef struct ChatAttReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeBool,
       },
+      {
+        .name = "isAutoDel",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttReq_FieldNumber_IsAutoDel,
+        .hasIndex = 4,
+        .offset = 5,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "msg",
+        .dataTypeSpecific.clazz = GPBObjCClass(UpMsg),
+        .number = ChatAttReq_FieldNumber_Msg,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(ChatAttReq__storage_, msg),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ChatAttReq)
@@ -9551,7 +9621,175 @@ typedef struct ChatAttReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\003\007\000";
+        "\002\003\007\000\004\t\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - ChatAttBatchResp
+
+@implementation ChatAttBatchResp
+
+@dynamic attRespsArray, attRespsArray_Count;
+
+typedef struct ChatAttBatchResp__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *attRespsArray;
+} ChatAttBatchResp__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "attRespsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(ChatAttResp),
+        .number = ChatAttBatchResp_FieldNumber_AttRespsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(ChatAttBatchResp__storage_, attRespsArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ChatAttBatchResp)
+                                   messageName:@"ChatAttBatchResp"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(ChatAttBatchResp__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\000attResps\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - ChatAttResp
+
+@implementation ChatAttResp
+
+@dynamic key;
+@dynamic code;
+@dynamic attTime;
+@dynamic msgCode;
+@dynamic msgId;
+@dynamic msgTime;
+@dynamic msgSeq;
+
+typedef struct ChatAttResp__storage_ {
+  uint32_t _has_storage_[1];
+  int32_t code;
+  int32_t msgCode;
+  NSString *key;
+  NSString *msgId;
+  int64_t attTime;
+  int64_t msgTime;
+  int64_t msgSeq;
+} ChatAttResp__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "key",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_Key,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, key),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "code",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_Code,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, code),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "attTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_AttTime,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, attTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "msgCode",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_MsgCode,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, msgCode),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "msgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_MsgId,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, msgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "msgTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_MsgTime,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, msgTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "msgSeq",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ChatAttResp_FieldNumber_MsgSeq,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(ChatAttResp__storage_, msgSeq),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ChatAttResp)
+                                   messageName:@"ChatAttResp"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(ChatAttResp__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\005\003\007\000\013\007\000\014\005\000\r\007\000\016\006\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

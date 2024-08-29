@@ -69,7 +69,7 @@
 - (void)quitChatroom:(NSString *)chatroomId { 
     [self.core.webSocket quitChatroom:chatroomId
                               success:^(long long timestamp) {
-        JLogI(@"CHRM-quit", @"success");
+        JLogI(@"CHRM-Quit", @"success");
         [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
         [self.core.dbManager clearChatroomMessage:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
@@ -88,6 +88,58 @@
                 }
             }];
         });
+    }];
+}
+
+- (void)setAttributes:(NSDictionary <NSString *, NSString *> *)attributes
+          forChatroom:(NSString *)chatroomId
+             complete:(void (^)(JErrorCode, NSDictionary<NSString *,NSNumber *> *))completeBlock {
+    if (attributes.count == 0) {
+        JLogE(@"CHRM-SetAttr", @"count is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeInvalidParam, nil);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) ws = self;
+    [self.core.webSocket setAttributes:attributes
+                           forChatroom:chatroomId
+                              complete:^(JErrorCodeInternal code, NSArray<JChatroomAttributeItem *> * _Nonnull items) {
+        NSMutableDictionary *resultDic = [NSMutableDictionary dictionary];
+        if (code == JErrorCodeInternalNone) {
+            [items enumerateObjectsUsingBlock:^(JChatroomAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (obj.code != 0)  {
+                    [resultDic setObject:@(obj.code) forKey:obj.key];
+                }
+            }];
+            if (resultDic.count == 0) {
+                JLogI(@"CHRM-SetAttr", @"success");
+                dispatch_async(ws.core.delegateQueue, ^{
+                    if (completeBlock) {
+                        completeBlock(JErrorCodeNone, nil);
+                    }
+                });
+            } else {
+                JLogE(@"CHRM-SetAttr", @"partial fail");
+                dispatch_async(ws.core.delegateQueue, ^{
+                    if (completeBlock) {
+                        completeBlock(JErrorCodeChatroomBatchSetAttributeFail, [resultDic copy]);
+                    }
+                });
+            }
+        } else {
+            JLogE(@"CHRM-SetAttr", @"fail, code is %ld", code);
+            [attributes enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+                [resultDic setObject:@(code) forKey:key];
+            }];
+            dispatch_async(ws.core.delegateQueue, ^{
+                if (completeBlock) {
+                    completeBlock((JErrorCode)code, [resultDic copy]);
+                }
+            });
+        }
     }];
 }
 
@@ -127,8 +179,23 @@
         if (!cachedStatus) {
             cachedStatus = [[JCachedChatroomStatus alloc] init];
         }
-        cachedStatus.syncTime = syncTime;
-        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        if (syncTime > cachedStatus.syncTime) {
+            cachedStatus.syncTime = syncTime;
+            [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        }
+    }
+}
+
+- (void)setAttrSyncTime:(long long)syncTime forChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedStatus) {
+            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        }
+        if (syncTime > cachedStatus.attrSyncTime) {
+            cachedStatus.attrSyncTime = syncTime;
+            [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        }
     }
 }
 

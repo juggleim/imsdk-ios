@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, JChatroomStatus) {
 @interface JCachedChatroomStatus : NSObject
 @property (nonatomic, assign) JChatroomStatus status;
 @property (nonatomic, assign) long long syncTime;
+@property (nonatomic, assign) long long attrSyncTime;
 @end
 
 NS_ASSUME_NONNULL_END

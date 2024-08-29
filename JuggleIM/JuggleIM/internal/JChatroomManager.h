@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (long long)getSyncTimeForChatroom:(NSString *)chatroomId;
 - (void)setSyncTime:(long long)syncTime
         forChatroom:(NSString *)chatroomId;
+
+- (void)setAttrSyncTime:(long long)syncTime
+            forChatroom:(NSString *)chatroomId;
 @end
 
 NS_ASSUME_NONNULL_END

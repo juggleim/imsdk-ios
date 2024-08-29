@@ -68,6 +68,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jPushSwitch @"push_switch"
 #define jSyncChatroomMessage @"c_sync_msgs"
 #define jQryFirstUnreadMsg @"qry_first_unread_msg"
+#define jBatchAddAtt @"c_batch_add_att"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -104,6 +105,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JGlobalMuteAck
+@end
+
+@implementation JSetChatroomAttrAck
 @end
 
 @implementation JQryAck
@@ -793,6 +797,34 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)setAttributes:(NSDictionary<NSString *,NSString *> *)attributes
+              forChatroom:(NSString *)chatroomId
+                    index:(int)index {
+    NSMutableArray *reqList = [NSMutableArray array];
+    [attributes enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+        ChatAttReq *req = [[ChatAttReq alloc] init];
+        req.key = key;
+        req.value = obj;
+        req.isForce = YES;
+        [reqList addObject:req];
+    }];
+    
+    ChatAttBatchReq *batchReq = [[ChatAttBatchReq alloc] init];
+    batchReq.attsArray = reqList;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jBatchAddAtt;
+    body.targetId = chatroomId;
+    body.data_p = batchReq.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -1113,6 +1145,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeQryFirstUnreadMsgAck:
                     obj = [self qryFirstUnreadMsgAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeSetChatroomAttrAck:
+                    obj = [self setChatroomAttrAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1542,6 +1577,34 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)setChatroomAttrAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    obj.rcvType = JPBRcvTypeSetChatroomAttrAck;
+    
+    JSetChatroomAttrAck *a = [[JSetChatroomAttrAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    NSMutableArray *arr = [NSMutableArray array];
+    if (body.data_p.length > 0) {
+        NSError *e = nil;
+        ChatAttBatchResp *batchResp = [[ChatAttBatchResp alloc] initWithData:body.data_p error:&e];
+        if (e != nil) {
+            JLogE(@"PB-Parse", @"set chatroom attribute parse error, msg is %@", e.description);
+            obj.rcvType = JPBRcvTypeParseError;
+            return obj;
+        }
+        [batchResp.attRespsArray enumerateObjectsUsingBlock:^(ChatAttResp * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            JChatroomAttributeItem *item = [[JChatroomAttributeItem alloc] init];
+            item.key = obj.key;
+            item.code = obj.code;
+            item.timestamp = obj.attTime;
+            [arr addObject:item];
+        }];
+    }
+    a.items = arr;
+    obj.setChatroomAttrAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)simpleQryAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeSimpleQryAck;
@@ -1763,7 +1826,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQuitChatroom:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jMarkUnread:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jSyncChatroomMessage:@(JPBRcvTypeSyncChatroomMsgsAck),
-             jQryFirstUnreadMsg:@(JPBRcvTypeQryFirstUnreadMsgAck)
+             jQryFirstUnreadMsg:@(JPBRcvTypeQryFirstUnreadMsgAck),
+             jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck)
     };
 }
 @end
