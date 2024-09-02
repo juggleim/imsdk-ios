@@ -140,6 +140,7 @@ GPBObjCClassDeclaration(SdkRequestLog);
 GPBObjCClassDeclaration(SdkResponseLog);
 GPBObjCClassDeclaration(SimpleConversation);
 GPBObjCClassDeclaration(SimpleMsg);
+GPBObjCClassDeclaration(SyncChatroomAttResp);
 GPBObjCClassDeclaration(SyncChatroomMsgResp);
 GPBObjCClassDeclaration(SyncChatroomReq);
 GPBObjCClassDeclaration(SyncChatroomResp);
@@ -9792,6 +9793,52 @@ typedef struct ChatAttResp__storage_ {
         "\005\003\007\000\013\007\000\014\005\000\r\007\000\016\006\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - SyncChatroomAttResp
+
+@implementation SyncChatroomAttResp
+
+@dynamic attsArray, attsArray_Count;
+
+typedef struct SyncChatroomAttResp__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *attsArray;
+} SyncChatroomAttResp__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "attsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(ChatAttItem),
+        .number = SyncChatroomAttResp_FieldNumber_AttsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(SyncChatroomAttResp__storage_, attsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SyncChatroomAttResp)
+                                   messageName:@"SyncChatroomAttResp"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SyncChatroomAttResp__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG

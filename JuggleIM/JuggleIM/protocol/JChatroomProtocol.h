@@ -35,6 +35,24 @@
 
 @end
 
+@protocol JChatroomAttributesDelegate <NSObject>
+
+/// 聊天室属性更新（新增或者 value 有变化）
+/// - Parameters:
+///   - attributes: 更新的聊天室属性列表
+///   - chatroomId: 聊天室 id
+- (void)attributesDidUpdate:(NSDictionary <NSString *, NSString *> *)attributes
+                forChatroom:(NSString *)chatroomId;
+
+/// 聊天室属性删除
+/// - Parameters:
+///   - attributes: 删除的聊天室属性列表
+///   - chatroomId: 聊天室 id
+- (void)attributesDidDelete:(NSDictionary <NSString *, NSString *> *)attributes
+                forChatroom:(NSString *)chatroomId;
+
+@end
+
 @protocol JChatroomProtocol <NSObject>
 
 /// 加入聊天室
@@ -59,7 +77,7 @@
 
 /// 设置聊天室属性。
 /// - Parameters:
-///   - attributes: 聊天室属性，key 和 value 都是字符串，设置相同的 key 会覆盖之前的属性，最多支持设置 100 个不同的属性
+///   - attributes: 聊天室属性，key 和 value 都是字符串，最多支持设置 100 个不同的属性。相同的 key 在客户端不能反复设置（重复设置返回 JErrorCodeChatroomKeyAlreadyExist），
 ///   - chatroomId: 聊天室 id
 ///   - completeBlock: 完成回调。
 ///                    code 返回 JErrorCodeNone 时表示所有属性都设置成功。
@@ -70,7 +88,7 @@
 
 /// 删除聊天室属性
 /// - Parameters:
-///   - keys: 待删除的属性 key 列表
+///   - keys: 待删除的属性 key 列表。非当前用户设置的 key 不能删除。
 ///   - chatroomId: 聊天室 id
 ///   - completeBlock: 完成回调。
 ///                    code 返回 JErrorCodeNone 时表示所有属性都删除成功。
@@ -87,5 +105,7 @@
                             complete:(void (^)(JErrorCode code, NSDictionary <NSString *, NSString *> *attributes))completeBlock;
 
 - (void)addDelegate:(id<JChatroomDelegate>)delegate;
+
+- (void)addAttributesDelegate:(id<JChatroomAttributesDelegate>)delegate;
 
 @end

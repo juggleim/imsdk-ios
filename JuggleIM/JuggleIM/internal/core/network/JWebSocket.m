@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @interface JWebSocket () <SRWebSocketDelegate, JCommandTimeOutDelegate>
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
+@property (nonatomic, weak) id<JWebSocketChatroomDelegate> chatroomDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
@@ -120,6 +121,10 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate {
     _messageDelegate = delegate;
+}
+
+- (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate {
+    _chatroomDelegate = delegate;
 }
 
 #pragma mark - send pb
@@ -438,7 +443,31 @@ inConversation:(JConversation *)conversation
                                    forChatroom:chatroomId
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"set attributes for chatroom %@", chatroomId);
-        JSetChatroomAttrObj *obj = [[JSetChatroomAttrObj alloc] init];
+        JUpdateChatroomAttrObj *obj = [[JUpdateChatroomAttrObj alloc] init];
+        obj.completeBlock = completeBlock;
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"send data error, description is %@", err.description);
+            if (completeBlock) {
+                completeBlock(JErrorCodeInternalWebSocketFailure, nil);
+            }
+        } else {
+            [self.commandManager setBlockObject:obj forKey:key];
+        }
+    });
+}
+
+- (void)removeAttributes:(NSArray<NSString *> *)keys
+             forChatroom:(NSString *)chatroomId
+                complete:(void (^)(JErrorCodeInternal, NSArray<JChatroomAttributeItem *> *))completeBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData removeAttributes:keys
+                                      forChatroom:chatroomId
+                                            index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"remove attributes for chatroom %@", chatroomId);
+        JUpdateChatroomAttrObj *obj = [[JUpdateChatroomAttrObj alloc] init];
         obj.completeBlock = completeBlock;
         NSError *err = nil;
         [self.sws sendData:d error:&err];
@@ -688,6 +717,25 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)syncChatroomAttributesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData syncChatroomAttributes:syncTime
+                                             chatroomId:chatroomId
+                                                  index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"sync chatroom attributes, id is %@, time is %lld", chatroomId, syncTime);
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"sync chatroom attributes error, msg is %@", err.description);
+        } else {
+            JChatroomObj *obj = [[JChatroomObj alloc] init];
+            obj.chatroomId = chatroomId;
+            [self.commandManager setBlockObject:obj forKey:key];
+        }
+    });
+}
+
 - (void)sendPing {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData pingData];
@@ -842,6 +890,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypePublishChatroomMsgNtf");
             [self handlePublishChatroomMsgNtf:obj.publishMsgNtf];
             break;
+        case JPBRcvTypePublishChatroomAttrNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypePublishChatroomAttrNtf");
+            [self handlePublishChatroomAttrNtf:obj.publishMsgNtf];
+            break;
         case JPBRcvTypeSyncMsgsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeSyncMsgsAck");
             [self handleSyncMsgsAck:obj.qryHisMsgsAck];
@@ -888,7 +940,15 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeSetChatroomAttrAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeSetChatroomAttrAck");
-            [self handleSetChatroomAttrAck:obj.setChatroomAttrAck];
+            [self handleChatroomAttrAck:obj.chatroomAttrsAck];
+            break;
+        case JPBRcvTypeRemoveChatroomAttrAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRemoveChatroomAttrAck");
+            [self handleChatroomAttrAck:obj.chatroomAttrsAck];
+            break;
+        case JPBRcvTypeSyncChatroomAttrsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeSyncChatroomAttrsAck");
+            [self handleSyncChatroomAttrAck:obj.chatroomAttrsAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -924,6 +984,18 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *s = (JSimpleBlockObj *)obj;
         s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JConversationObj class]]) {
+        JConversationObj *s = (JConversationObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JUploadFileCredBlockObj class]]) {
+        JUploadFileCredBlockObj *s = (JUploadFileCredBlockObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JGlobalMuteObj class]]) {
+        JGlobalMuteObj *s = (JGlobalMuteObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
+        JUpdateChatroomAttrObj *s = (JUpdateChatroomAttrObj *)obj;
+        s.completeBlock(code, nil);
     }
 }
 
@@ -1039,6 +1111,13 @@ inConversation:(JConversation *)conversation
     }
 }
 
+- (void)handlePublishChatroomAttrNtf:(JPublishMsgNtf *)ntf {
+    if ([self.chatroomDelegate respondsToSelector:@selector(syncChatroomAttrNotify:time:)]) {
+        [self.chatroomDelegate syncChatroomAttrNotify:ntf.chatroomId
+                                                 time:ntf.syncTime];
+    }
+}
+
 - (void)handlePong {
 }
 
@@ -1135,11 +1214,22 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleSetChatroomAttrAck:(JSetChatroomAttrAck *)ack {
+- (void)handleChatroomAttrAck:(JChatroomAttrsAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JSetChatroomAttrObj class]]) {
-        JSetChatroomAttrObj *setChatroomAttrObj = (JSetChatroomAttrObj *)obj;
-        setChatroomAttrObj.completeBlock(ack.code, ack.items);
+    if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
+        JUpdateChatroomAttrObj *updateChatroomAttrObj = (JUpdateChatroomAttrObj *)obj;
+        updateChatroomAttrObj.completeBlock(ack.code, ack.items);
+    }
+}
+
+- (void)handleSyncChatroomAttrAck:(JChatroomAttrsAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JChatroomObj class]]) {
+        JChatroomObj *chatroomObj = (JChatroomObj *)obj;
+        if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:)])  {
+            [self.chatroomDelegate attributesDidSync:ack.items
+                                         forChatroom:chatroomObj.chatroomId];
+        }
     }
 }
 

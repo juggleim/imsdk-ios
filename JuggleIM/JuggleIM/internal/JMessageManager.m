@@ -1314,6 +1314,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 }
 
 - (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
+    if (![self.chatroomManager isChatroomAvailable:chatroomId]) {
+        return;
+    }
     long long cachedSyncTime = [self.chatroomManager getSyncTimeForChatroom:chatroomId];
     if (syncTime > cachedSyncTime) {
         [self syncChatroomMessages:chatroomId

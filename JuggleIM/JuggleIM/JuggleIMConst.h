@@ -66,8 +66,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeNotChatroomMember = 14001,
     //聊天室属性已满（最多 100 个）
     JErrorCodeChatroomAttributeCountExceed = 14002,
-    //聊天室属性 key 已被占用
-    JErrorCodeChatroomKeyAlreadyExist = 14003,
+    //无权限操作聊天室属性（非当前用户设置的 key）
+    JErrorCodeChatroomKeyUnauthorized = 14003,
     //聊天室属性不存在
     JErrorCodeChatroomAttributeNotExist = 14004,
     //聊天室不存在

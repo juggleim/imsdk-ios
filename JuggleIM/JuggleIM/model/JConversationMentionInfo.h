@@ -24,13 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JConversationMentionInfo : NSObject
 
 @property (nonatomic, copy) NSArray <JConversationMentionMessage *> * mentionMsgList;
-
-
 - (NSString *)encodeToJson;
-
 + (instancetype)decodeFromJson:(NSString *)json;
-
-
 @end
 
 NS_ASSUME_NONNULL_END

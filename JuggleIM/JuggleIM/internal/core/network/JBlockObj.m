@@ -37,5 +37,8 @@
 @implementation JGlobalMuteObj
 @end
 
-@implementation JSetChatroomAttrObj
+@implementation JUpdateChatroomAttrObj
+@end
+
+@implementation JChatroomObj
 @end

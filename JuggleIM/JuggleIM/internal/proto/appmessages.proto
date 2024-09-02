@@ -763,6 +763,9 @@ message ChatAttResp{
   int64 msgTime = 13; //消息的时间戳
   int64 msgSeq = 14; //消息的序号
 }
+message SyncChatroomAttResp{
+  repeated ChatAttItem atts = 1;
+}
 message ChatAttItem{
   string key = 1;
   string value = 2;

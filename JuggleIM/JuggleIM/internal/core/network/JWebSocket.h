@@ -42,6 +42,13 @@ NS_ASSUME_NONNULL_BEGIN
                       time:(long long)syncTime;
 @end
 
+@protocol JWebSocketChatroomDelegate <NSObject>
+- (void)syncChatroomAttrNotify:(NSString *)chatroomId
+                          time:(long long)syncTime;
+- (void)attributesDidSync:(NSArray <JChatroomAttributeItem *> *)items
+              forChatroom:(NSString *)chatroomId;
+@end
+
 @interface JWebSocket : NSObject
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
@@ -63,6 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
+
+- (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate;
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
@@ -216,6 +225,9 @@ inConversation:(JConversation *)conversation
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId;
 
+- (void)syncChatroomAttributesWithTime:(long long)syncTime
+                            chatroomId:(NSString *)chatroomId;
+
 - (void)getFirstUnreadMessage:(JConversation *)conversation
                       success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCodeInternal))errorBlock;
@@ -223,6 +235,10 @@ inConversation:(JConversation *)conversation
 - (void)setAttributes:(NSDictionary <NSString *, NSString *> *)attributes
           forChatroom:(NSString *)chatroomId
              complete:(void (^)(JErrorCodeInternal code, NSArray <JChatroomAttributeItem *> *items))completBlock;
+
+- (void)removeAttributes:(NSArray <NSString *> *)keys
+             forChatroom:(NSString *)chatroomId
+                complete:(void (^)(JErrorCodeInternal code, NSArray <JChatroomAttributeItem *> *items))completeBlock;
 
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;

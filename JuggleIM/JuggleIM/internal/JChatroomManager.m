@@ -8,10 +8,11 @@
 #import "JChatroomManager.h"
 #import "JLogger.h"
 
-@interface JChatroomManager ()
+@interface JChatroomManager () <JWebSocketChatroomDelegate>
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JChatroomDelegate>> *delegates;
-@property (nonatomic, strong) NSMutableDictionary <NSString *, JCachedChatroomStatus *> *cachedChatroomDic;
+@property (nonatomic, strong) NSHashTable <id<JChatroomAttributesDelegate>> *attributesDelegates;
+@property (nonatomic, strong) NSMutableDictionary <NSString *, JCachedChatroom *> *cachedChatroomDic;
 @end
 
 @implementation JChatroomManager
@@ -20,6 +21,7 @@
     self = [super init];
     if (self) {
         self.core = core;
+        [self.core.webSocket setChatroomDelegate:self];
     }
     return self;
 }
@@ -33,12 +35,22 @@
     });
 }
 
+- (void)addAttributesDelegate:(id<JChatroomAttributesDelegate>)delegate {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.attributesDelegates addObject:delegate];
+    });
+}
+
 - (void)joinChatroom:(NSString *)chatroomId {
     [self.core.webSocket joinChatroom:chatroomId
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
         [self.core.webSocket syncChatroomMessagesWithTime:[self getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
+        [self.core.webSocket syncChatroomAttributesWithTime:[self getAttrSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidJoin:)]) {
@@ -143,10 +155,82 @@
     }];
 }
 
+- (void)removeAttributes:(NSArray<NSString *> *)keys
+             forChatroom:(NSString *)chatroomId
+                complete:(void (^)(JErrorCode, NSDictionary<NSString *,NSNumber *> *))completeBlock {
+    if (keys.count == 0) {
+        JLogE(@"CHRM-RmAttr", @"count is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeInvalidParam, nil);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) ws = self;
+    [self.core.webSocket removeAttributes:keys
+                              forChatroom:chatroomId
+                                 complete:^(JErrorCodeInternal code, NSArray<JChatroomAttributeItem *> * _Nonnull items) {
+        NSMutableDictionary *resultDic = [NSMutableDictionary dictionary];
+        if (code == JErrorCodeInternalNone) {
+            [items enumerateObjectsUsingBlock:^(JChatroomAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (obj.code != 0)  {
+                    [resultDic setObject:@(obj.code) forKey:obj.key];
+                }
+            }];
+            if (resultDic.count == 0) {
+                JLogI(@"CHRM-RemoveAttr", @"success");
+                dispatch_async(ws.core.delegateQueue, ^{
+                    if (completeBlock) {
+                        completeBlock(JErrorCodeNone, nil);
+                    }
+                });
+            } else {
+                JLogE(@"CHRM-RemoveAttr", @"partial fail");
+                dispatch_async(ws.core.delegateQueue, ^{
+                    if (completeBlock) {
+                        completeBlock(JErrorCodeChatroomBatchSetAttributeFail, [resultDic copy]);
+                    }
+                });
+            }
+        } else {
+            JLogE(@"CHRM-RemoveAttr", @"fail, code is %ld", code);
+            [keys enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [resultDic setObject:@(code) forKey:obj];
+            }];
+            dispatch_async(ws.core.delegateQueue, ^{
+                if (completeBlock) {
+                    completeBlock((JErrorCode)code, [resultDic copy]);
+                }
+            });
+        }
+    }];
+}
+
+- (void)getAllAttributesFromChatroom:(NSString *)chatroomId complete:(void (^)(JErrorCode, NSDictionary<NSString *,NSString *> *))completeBlock { 
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (completeBlock) {
+                    completeBlock(JErrorCodeNotChatroomMember, nil);
+                }
+            });
+            return;
+        }
+        NSDictionary <NSString *, NSString *> *attributes = [cachedChatroom.attributes copy];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, attributes);
+            }
+        });
+    }
+}
+
 - (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId {
     @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedStatus.status;
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedChatroom.status;
     }
 }
 
@@ -157,45 +241,88 @@
             [self.cachedChatroomDic removeObjectForKey:chatroomId];
             return;
         }
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        if (!cachedStatus) {
-            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            cachedChatroom = [[JCachedChatroom alloc] init];
         }
-        cachedStatus.status = status;
-        [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        cachedChatroom.status = status;
+        [self.cachedChatroomDic setObject:cachedChatroom forKey:chatroomId];
     }
 }
 
 - (long long)getSyncTimeForChatroom:(NSString *)chatroomId {
     @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedStatus.syncTime;
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedChatroom.syncTime;
+    }
+}
+
+- (long long)getAttrSyncTimeForChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedChatroom.attrSyncTime;
     }
 }
 
 - (void)setSyncTime:(long long)syncTime forChatroom:(NSString *)chatroomId {
     @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        if (!cachedStatus) {
-            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            return;
         }
-        if (syncTime > cachedStatus.syncTime) {
-            cachedStatus.syncTime = syncTime;
-            [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        if (syncTime > cachedChatroom.syncTime) {
+            cachedChatroom.syncTime = syncTime;
+            [self.cachedChatroomDic setObject:cachedChatroom forKey:chatroomId];
         }
     }
 }
 
 - (void)setAttrSyncTime:(long long)syncTime forChatroom:(NSString *)chatroomId {
     @synchronized (self) {
-        JCachedChatroomStatus *cachedStatus = [self.cachedChatroomDic objectForKey:chatroomId];
-        if (!cachedStatus) {
-            cachedStatus = [[JCachedChatroomStatus alloc] init];
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            return;
         }
-        if (syncTime > cachedStatus.attrSyncTime) {
-            cachedStatus.attrSyncTime = syncTime;
-            [self.cachedChatroomDic setObject:cachedStatus forKey:chatroomId];
+        if (syncTime > cachedChatroom.attrSyncTime) {
+            cachedChatroom.attrSyncTime = syncTime;
+            [self.cachedChatroomDic setObject:cachedChatroom forKey:chatroomId];
         }
+    }
+}
+
+- (BOOL)isChatroomAvailable:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (cachedChatroom) {
+            return YES;
+        } else {
+            return NO;
+        }
+    }
+}
+
+- (void)updateAttributes:(NSDictionary <NSString *, NSString *> *)attributes
+             forChatroom:(NSString *)chatroomId
+                isRemove:(BOOL)isRemove {
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            return;
+        }
+        NSMutableDictionary *cachedAttributes;
+        if (cachedChatroom.attributes) {
+            cachedAttributes = [cachedChatroom.attributes mutableCopy];
+        } else {
+            cachedAttributes = [NSMutableDictionary dictionary];
+        }
+        [attributes enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+            if (isRemove) {
+                [cachedAttributes removeObjectForKey:key];
+            } else {
+                [cachedAttributes setObject:obj forKey:key];
+            }
+        }];
+        cachedChatroom.attributes = [cachedAttributes copy];
     }
 }
 
@@ -219,7 +346,73 @@
     }
 }
 
+#pragma mark -- JWebSocketChatroomDelegate
+- (void)syncChatroomAttrNotify:(nonnull NSString *)chatroomId time:(long long)syncTime {
+    if (![self isChatroomAvailable:chatroomId]) {
+        return;
+    }
+    
+    long long cachedSyncTime = [self getAttrSyncTimeForChatroom:chatroomId];
+    if (syncTime > cachedSyncTime) {
+        [self syncChatroomAttr:chatroomId
+                          time:cachedSyncTime];
+    }
+}
+
+- (void)attributesDidSync:(NSArray<JChatroomAttributeItem *> *)items
+              forChatroom:(nonnull NSString *)chatroomId {
+    if (items.count == 0) {
+        return;
+    }
+    NSMutableDictionary *updateDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *deleteDic = [NSMutableDictionary dictionary];
+    __block long long syncTime = 0;
+    [items enumerateObjectsUsingBlock:^(JChatroomAttributeItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.timestamp > syncTime) {
+            syncTime = obj.timestamp;
+        }
+        if (obj.type == JChatroomAttrOptType_Update) {
+            [updateDic setObject:obj.value forKey:obj.key];
+        } else if (obj.type == JChatroomAttrOptType_Delete) {
+            [deleteDic setObject:obj.value forKey:obj.key];
+        }
+    }];
+    if (syncTime > 0) {
+        [self setAttrSyncTime:syncTime forChatroom:chatroomId];
+    }
+    if (updateDic.count > 0) {
+        [self updateAttributes:updateDic
+                   forChatroom:chatroomId
+                      isRemove:NO];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.attributesDelegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomAttributesDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(attributesDidUpdate:forChatroom:)]) {
+                    [obj attributesDidUpdate:[updateDic copy] forChatroom:chatroomId];
+                }
+            }];
+        });
+    }
+    if (deleteDic.count > 0) {
+        [self updateAttributes:updateDic
+                   forChatroom:chatroomId
+                      isRemove:YES];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.attributesDelegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomAttributesDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(attributesDidDelete:forChatroom:)]) {
+                    [obj attributesDidDelete:[deleteDic copy] forChatroom:chatroomId];
+                }
+            }];
+        });
+    }
+}
+
 #pragma mark -- internal
+- (void)syncChatroomAttr:(nonnull NSString *)chatroomId time:(long long)syncTime {
+    JLogI(@"MSG-ChrmAttrSync", @"id is %@, time is %lld", chatroomId, syncTime);
+    [self.core.webSocket syncChatroomAttributesWithTime:syncTime
+                                             chatroomId:chatroomId];
+}
+
 - (NSHashTable<id<JChatroomDelegate>> *)delegates {
     if (!_delegates) {
         _delegates = [NSHashTable weakObjectsHashTable];
@@ -227,7 +420,14 @@
     return _delegates;
 }
 
-- (NSMutableDictionary<NSString *, JCachedChatroomStatus *> *)cachedChatroomDic {
+- (NSHashTable<id<JChatroomAttributesDelegate>> *)attributesDelegates {
+    if (!_attributesDelegates) {
+        _attributesDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _attributesDelegates;
+}
+
+- (NSMutableDictionary<NSString *, JCachedChatroom *> *)cachedChatroomDic {
     if (!_cachedChatroomDic) {
         _cachedChatroomDic = [NSMutableDictionary dictionary];
     }

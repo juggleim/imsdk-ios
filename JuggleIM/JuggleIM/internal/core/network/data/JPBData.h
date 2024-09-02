@@ -41,7 +41,10 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypePublishChatroomMsgNtf,
     JPBRcvTypeSyncChatroomMsgsAck,
     JPBRcvTypeQryFirstUnreadMsgAck,
-    JPBRcvTypeSetChatroomAttrAck
+    JPBRcvTypeSetChatroomAttrAck,
+    JPBRcvTypePublishChatroomAttrNtf,
+    JPBRcvTypeSyncChatroomAttrsAck,
+    JPBRcvTypeRemoveChatroomAttrAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBNotifyType) {
@@ -126,7 +129,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, copy) NSArray <JTimePeriod *> *periods;
 @end
 
-@interface JSetChatroomAttrAck : JQryAck
+@interface JChatroomAttrsAck : JQryAck
 @property (nonatomic, copy) NSArray <JChatroomAttributeItem *> *items;
 @end
 
@@ -145,7 +148,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
 @property (nonatomic, strong) JQryFileCredAck *qryFileCredAck;
 @property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
-@property (nonatomic, strong) JSetChatroomAttrAck *setChatroomAttrAck;
+@property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
 @end
 
 @interface JPBData : NSObject
@@ -303,12 +306,20 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
                       chatroomId:(NSString *)chatroomId
                            index:(int)index;
 
+- (NSData *)syncChatroomAttributes:(long long)syncTime
+                        chatroomId:(NSString *)chatroomId
+                             index:(int)index;
+
 - (NSData *)qryFirstUnreadMessage:(JConversation *)conversation
                             index:(int)index;
 
 - (NSData *)setAttributes:(NSDictionary<NSString *,NSString *> *)attributes
               forChatroom:(NSString *)chatroomId
                     index:(int)index;
+
+- (NSData *)removeAttributes:(NSArray <NSString *> *)keys
+                 forChatroom:(NSString *)chatroomId
+                       index:(int)index;
 
 - (NSData *)pingData;
 

@@ -3214,6 +3214,20 @@ GPB_FINAL @interface ChatAttResp : GPBMessage
 
 @end
 
+#pragma mark - SyncChatroomAttResp
+
+typedef GPB_ENUM(SyncChatroomAttResp_FieldNumber) {
+  SyncChatroomAttResp_FieldNumber_AttsArray = 1,
+};
+
+GPB_FINAL @interface SyncChatroomAttResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttItem*> *attsArray;
+/** The number of items in @c attsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attsArray_Count;
+
+@end
+
 #pragma mark - ChatAttItem
 
 typedef GPB_ENUM(ChatAttItem_FieldNumber) {

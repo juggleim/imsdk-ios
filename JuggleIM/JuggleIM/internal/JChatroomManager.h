@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JChatroomProtocol.h"
 #import "JIMCore.h"
-#import "JCachedChatroomStatus.h"
+#import "JCachedChatroom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (long long)getSyncTimeForChatroom:(NSString *)chatroomId;
 - (void)setSyncTime:(long long)syncTime
         forChatroom:(NSString *)chatroomId;
-
 - (void)setAttrSyncTime:(long long)syncTime
             forChatroom:(NSString *)chatroomId;
+- (BOOL)isChatroomAvailable:(NSString *)chatroomId;
 @end
 
 NS_ASSUME_NONNULL_END
