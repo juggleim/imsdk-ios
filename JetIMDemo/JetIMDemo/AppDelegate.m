@@ -28,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:kToken1182];
+    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiCpZ8oe-D3FNjlRQl_RwC9Wwxj1Slbal1sxQSHfVoXoKw=="];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -109,6 +109,7 @@
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
     
+    
 //    NSDictionary <NSString *, NSString *> *attr = @{@"key4":@"value4", @"key5":@"value5"};
 //    [JIM.shared.chatroomManager setAttributes:attr
 //                                  forChatroom:@"asdfasdfasf"
@@ -148,6 +149,10 @@
 
 - (void)chatroomQuitFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
     NSLog(@"lifei, chatroomQuitFail, chatroomId is %@, errorCode is %ld", chatroomId, errorCode);
+}
+
+- (void)chatroomDidDestroy:(NSString *)chatroomId {
+    NSLog(@"lifei, chatroomDidDestroy, chatroomId is %@", chatroomId);
 }
 
 - (void)sendMessage {

@@ -75,6 +75,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
+#define jCUserNtf @"c_user_ntf"
 
 @implementation JConnectAck
 @end
@@ -1241,6 +1242,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     n.syncTime = ntf.syncTime;
                     n.chatroomId = ntf.chatroomId;
                     obj.publishMsgNtf = n;
+                } else if (ntf.type == NotifyType_ChatroomDestroy) {
+                    obj.rcvType = JPBRcvTypeChatroomDestroyNtf;
+                    JPublishMsgNtf *n = [[JPublishMsgNtf alloc] init];
+                    n.syncTime = ntf.syncTime;
+                    n.chatroomId = ntf.chatroomId;
+                    obj.publishMsgNtf = n;
                 }
             } else if ([body.topic isEqualToString:jMsg]) {
                 DownMsg *downMsg = [[DownMsg alloc] initWithData:body.data_p error:&err];
@@ -1255,6 +1262,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 publishMsgBody.index = body.index;
                 publishMsgBody.qos = msg.qos;
                 obj.publishMsgBody = publishMsgBody;
+            } else if ([body.topic isEqualToString:jCUserNtf]) {
+                ChrmEvent *event = [[ChrmEvent alloc] initWithData:body.data_p error:&err];
+                if (err != nil) {
+                    JLogE(@"PB-Parse", @"publish msg jCUserNtf parse error, msg is %@", err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                obj.rcvType = JPBRcvTypeChatroomEventNtf;
+                JPublishMsgNtf *n = [[JPublishMsgNtf alloc] init];
+                n.chatroomId = event.chatId;
+                n.type = (NSUInteger)event.eventType;
+                obj.publishMsgNtf = n;
             }
         }
             break;

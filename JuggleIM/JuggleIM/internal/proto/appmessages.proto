@@ -125,6 +125,8 @@ enum NotifyType {
   Msg = 1;
   ChatroomMsg = 2;
   ChatroomAtt =3;
+  ChatroomEvent = 4;  // 聊天室事件通知，如有人加入/退出
+  ChatroomDestroy = 5; // 聊天室销毁
 }
 message SyncMsgReq{
   int64 syncTime = 1;//收件箱同步时间
@@ -904,4 +906,17 @@ message BusinessLog {
 
 message PushSwitch{
   int32 switch = 1;  //0：关闭；1：开启；
+}
+
+message ChrmEvent{
+  ChrmEventType eventType = 1;
+  string chatId = 2;
+  string userId = 3;
+  int64 eventTime = 4;
+}
+enum ChrmEventType{
+  Join = 0;  //加入聊天室通知
+  Quit = 1;  // 主动退出聊天室通知
+  Kick = 2;   // 踢出聊天室通知
+  Fallout = 3;  // 自动掉出聊天室通知
 }

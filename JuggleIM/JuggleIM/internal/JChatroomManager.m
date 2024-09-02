@@ -406,6 +406,39 @@
     }
 }
 
+- (void)chatroomDidDestroy:(NSString *)chatroomId {
+    [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(chatroomDidDestroy:)]) {
+                [obj chatroomDidDestroy:chatroomId];
+            }
+        }];
+    });
+}
+
+- (void)chatroomDidQuit:(NSString *)chatroomId {
+    [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(chatroomDidQuit:)]) {
+                [obj chatroomDidQuit:chatroomId];
+            }
+        }];
+    });
+}
+
+- (void)chatroomDidKick:(NSString *)chatroomId {
+    [self changeStatus:JChatroomStatusQuit forChatroom:chatroomId];
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(chatroomDidKick:)]) {
+                [obj chatroomDidKick:chatroomId];
+            }
+        }];
+    });
+}
+
 #pragma mark -- internal
 - (void)syncChatroomAttr:(nonnull NSString *)chatroomId time:(long long)syncTime {
     JLogI(@"MSG-ChrmAttrSync", @"id is %@, time is %lld", chatroomId, syncTime);

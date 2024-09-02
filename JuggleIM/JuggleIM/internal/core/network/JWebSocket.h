@@ -47,6 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
                           time:(long long)syncTime;
 - (void)attributesDidSync:(NSArray <JChatroomAttributeItem *> *)items
               forChatroom:(NSString *)chatroomId;
+- (void)chatroomDidDestroy:(NSString *)chatroomId;
+- (void)chatroomDidQuit:(NSString *)chatroomId;
+- (void)chatroomDidKick:(NSString *)chatroomId;
 @end
 
 @interface JWebSocket : NSObject

@@ -157,6 +157,12 @@ typedef GPB_ENUM(NotifyType) {
   NotifyType_Msg = 1,
   NotifyType_ChatroomMsg = 2,
   NotifyType_ChatroomAtt = 3,
+
+  /** 聊天室事件通知，如有人加入/退出 */
+  NotifyType_ChatroomEvent = 4,
+
+  /** 聊天室销毁 */
+  NotifyType_ChatroomDestroy = 5,
 };
 
 GPBEnumDescriptor *NotifyType_EnumDescriptor(void);
@@ -363,6 +369,36 @@ GPBEnumDescriptor *OssType_EnumDescriptor(void);
  * the time this source was generated.
  **/
 BOOL OssType_IsValidValue(int32_t value);
+
+#pragma mark - Enum ChrmEventType
+
+typedef GPB_ENUM(ChrmEventType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  ChrmEventType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /** 加入聊天室通知 */
+  ChrmEventType_Join = 0,
+
+  /** 主动退出聊天室通知 */
+  ChrmEventType_Quit = 1,
+
+  /** 踢出聊天室通知 */
+  ChrmEventType_Kick = 2,
+
+  /** 自动掉出聊天室通知 */
+  ChrmEventType_Fallout = 3,
+};
+
+GPBEnumDescriptor *ChrmEventType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL ChrmEventType_IsValidValue(int32_t value);
 
 #pragma mark - AppmessagesRoot
 
@@ -3670,6 +3706,39 @@ GPB_FINAL @interface PushSwitch : GPBMessage
 @property(nonatomic, readwrite) int32_t switch_p;
 
 @end
+
+#pragma mark - ChrmEvent
+
+typedef GPB_ENUM(ChrmEvent_FieldNumber) {
+  ChrmEvent_FieldNumber_EventType = 1,
+  ChrmEvent_FieldNumber_ChatId = 2,
+  ChrmEvent_FieldNumber_UserId = 3,
+  ChrmEvent_FieldNumber_EventTime = 4,
+};
+
+GPB_FINAL @interface ChrmEvent : GPBMessage
+
+@property(nonatomic, readwrite) ChrmEventType eventType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite) int64_t eventTime;
+
+@end
+
+/**
+ * Fetches the raw value of a @c ChrmEvent's @c eventType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ChrmEvent_EventType_RawValue(ChrmEvent *message);
+/**
+ * Sets the raw value of an @c ChrmEvent's @c eventType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetChrmEvent_EventType_RawValue(ChrmEvent *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

@@ -33,6 +33,14 @@
 - (void)chatroomQuitFail:(NSString *)chatroomId
                errorCode:(JErrorCode)errorCode;
 
+/// 当前用户被踢出聊天室
+/// - Parameter chatroomId: 聊天室 id
+- (void)chatroomDidKick:(NSString *)chatroomId;
+
+/// 聊天室被销毁
+/// - Parameter chatroomId: 聊天室 id
+- (void)chatroomDidDestroy:(NSString *)chatroomId;
+
 @end
 
 @protocol JChatroomAttributesDelegate <NSObject>

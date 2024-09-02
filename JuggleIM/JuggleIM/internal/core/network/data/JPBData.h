@@ -44,12 +44,16 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeSetChatroomAttrAck,
     JPBRcvTypePublishChatroomAttrNtf,
     JPBRcvTypeSyncChatroomAttrsAck,
-    JPBRcvTypeRemoveChatroomAttrAck
+    JPBRcvTypeRemoveChatroomAttrAck,
+    JPBRcvTypeChatroomDestroyNtf,
+    JPBRcvTypeChatroomEventNtf
 };
 
-typedef NS_ENUM(NSUInteger, JPBNotifyType) {
-    JPBNotifyTypeDefault = 0,
-    JPBNotifyTypeMsg
+typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
+    JPBChrmEventTypeJoin = 0,
+    JPBChrmEventTypeQuit = 1,
+    JPBChrmEventTypeKick = 2,
+    JPBChrmEventTypeFallout = 3
 };
 
 @interface JConnectAck : NSObject
@@ -109,6 +113,7 @@ typedef NS_ENUM(NSUInteger, JPBNotifyType) {
 @interface JPublishMsgNtf : NSObject
 @property (nonatomic, assign) long long syncTime;
 @property (nonatomic, copy) NSString *chatroomId;
+@property (nonatomic, assign) JPBChrmEventType type;
 @end
 
 @interface JDisconnectMsg : NSObject

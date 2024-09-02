@@ -950,6 +950,14 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeSyncChatroomAttrsAck");
             [self handleSyncChatroomAttrAck:obj.chatroomAttrsAck];
             break;
+        case JPBRcvTypeChatroomDestroyNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeChatroomDestroyNtf");
+            [self handleChatroomDestroyNtf:obj.publishMsgNtf];
+            break;
+        case JPBRcvTypeChatroomEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeChatroomEventNtf");
+            [self handleChatroomEventNtf:obj.publishMsgNtf];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1229,6 +1237,24 @@ inConversation:(JConversation *)conversation
         if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:)])  {
             [self.chatroomDelegate attributesDidSync:ack.items
                                          forChatroom:chatroomObj.chatroomId];
+        }
+    }
+}
+
+- (void)handleChatroomDestroyNtf:(JPublishMsgNtf *)ntf {
+    if ([self.chatroomDelegate respondsToSelector:@selector(chatroomDidDestroy:)]) {
+        [self.chatroomDelegate chatroomDidDestroy:ntf.chatroomId];
+    }
+}
+
+- (void)handleChatroomEventNtf:(JPublishMsgNtf *)ntf {
+    if (ntf.type == JPBChrmEventTypeQuit || ntf.type == JPBChrmEventTypeFallout) {
+        if ([self.chatroomDelegate respondsToSelector:@selector(chatroomDidQuit:)]) {
+            [self.chatroomDelegate chatroomDidQuit:ntf.chatroomId];
+        }
+    } else if (ntf.type == JPBChrmEventTypeKick) {
+        if ([self.chatroomDelegate respondsToSelector:@selector(chatroomDidKick:)]) {
+            [self.chatroomDelegate chatroomDidKick:ntf.chatroomId];
         }
     }
 }
