@@ -1745,10 +1745,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1760,11 +1763,15 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.im.QuickStart;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1775,10 +1782,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1790,11 +1800,15 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.im.QuickStart;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
