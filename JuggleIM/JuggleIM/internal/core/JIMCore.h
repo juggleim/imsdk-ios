@@ -45,6 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long messageReceiveSyncTime;
 
 - (void)getSyncTimeFromDB;
+
+
+
+
 @end
 
 NS_ASSUME_NONNULL_END

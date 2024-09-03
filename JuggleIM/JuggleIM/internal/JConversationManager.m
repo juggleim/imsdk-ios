@@ -211,6 +211,8 @@
     [self.core.webSocket clearUnreadCount:conversation
                                    userId:self.core.userId
                                  msgIndex:info.lastMessageIndex
+                                    msgId:info.lastMessage.messageId
+                                timestamp:info.lastMessage.timestamp
                                   success:^(long long timestamp) {
         JLogI(@"CONV-ClearUnread", @"success");
         [weakSelf.messageManager updateSendSyncTime:timestamp];
@@ -251,6 +253,10 @@
 
 - (int)getTotalUnreadCount {
     return [self.core.dbManager getTotalUnreadCount];
+}
+
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
+    return [self.core.dbManager getUnreadCountWithTypes:conversationTypes];
 }
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
@@ -466,11 +472,12 @@
 }
 
 -(void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages{
-    [self addOrUpdateConversationsIfNeed:messages];
-    if(messages.count >0){
-        JConcreteMessage * message = messages.lastObject;
-        [self updateSyncTime:message.timestamp];
+    if (messages.count == 0) {
+        return;
     }
+    [self addOrUpdateConversationsIfNeed:messages];
+    JConcreteMessage * message = messages.lastObject;
+    [self updateSyncTime:message.timestamp];
     [self noticeTotalUnreadCountChange];
 }
 

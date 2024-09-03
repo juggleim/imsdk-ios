@@ -155,6 +155,10 @@
     return [self.conversationDb getTotalUnreadCount];
 }
 
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
+    return [self.conversationDb getUnreadCountWithTypes:conversationTypes];
+}
+
 - (void)clearTotalUnreadCount{
     [self.conversationDb clearTotalUnreadCount];
 }
@@ -250,6 +254,10 @@
     [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
+- (void)clearChatroomMessage:(NSString *)chatroomId {
+    [self.messageDb clearChatroomMessage:chatroomId];
+}
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     return [self.messageDb getMessagesByMessageIds:messageIds];
 }
@@ -296,6 +304,9 @@
 }
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
     return [self.messageDb getLastMessage:conversation];;
+}
+- (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds {
+    return [self.messageDb clearChatroomMessageExclude:chatroomIds];
 }
 
 

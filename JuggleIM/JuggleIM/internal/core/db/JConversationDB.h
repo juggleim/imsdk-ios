@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
      conversation:(JConversation *)conversation;
 - (void)clearUnreadTag;
 - (int)getTotalUnreadCount;
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;

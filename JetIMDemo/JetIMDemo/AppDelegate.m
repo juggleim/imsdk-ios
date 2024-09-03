@@ -13,8 +13,10 @@
 #define kToken3 @"CgZhcHBrZXkaINMDzs7BBTTZTwjKtM10zyxL4DBWFuZL6Z/OAU0Iajpv"
 #define kToken4 @"CgZhcHBrZXkaIDHZwzfny4j4GiJye8y8ehU5fpJ+wVOGI3dCsBMfyLQv"
 #define kToken5 @"CgZhcHBrZXkaIOx2upLCsmsefp8U/KNb52UGnAEu/xf+im3QaUd0HTC2"
+#define kToken1181 @"ChBuc3czc3VlNzJiZWd5djd5GiB3vwQOFxILM02aHvzk0yXsSWIyWy-vkA4CLovMyoelAQ=="
+#define kToken1182 @"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate, JChatroomAttributesDelegate>
 
 @end
 
@@ -26,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="];
+    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiCpZ8oe-D3FNjlRQl_RwC9Wwxj1Slbal1sxQSHfVoXoKw=="];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -35,6 +37,7 @@
     [JIM.shared.messageManager addReadReceiptDelegate:self];
     [JIM.shared.messageManager setMessageUploadProvider:self];
     [JIM.shared.chatroomManager addDelegate:self];
+    [JIM.shared.chatroomManager addAttributesDelegate:self];
     return YES;
 }
 
@@ -62,7 +65,7 @@
 }
 
 - (void)messagesDidRead:(NSArray<NSString *> *)messageIds inConversation:(JConversation *)conversation {
-    NSLog(@"lifei, messagesDidRead, count is %d, conversationType is %d, conversationId is %@", messageIds.count, conversation.conversationType, conversation.conversationId);
+    NSLog(@"lifei, messagesDidRead, count is %lu, conversationType is %lu, conversationId is %@", (unsigned long)messageIds.count, (unsigned long)conversation.conversationType, conversation.conversationId);
 }
 
 - (void)groupMessagesDidRead:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs inConversation:(JConversation *)conversation {
@@ -83,89 +86,19 @@
 - (void)connectionStatusDidChange:(JConnectionStatus)status
                         errorCode:(JErrorCode)code
                             extra:(NSString *)extra {
-    NSLog(@"lifei, connectionStatusDidChange status is %d, code is %d", status, code);
+    NSLog(@"lifei, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
-            [JIM.shared.conversationManager setUnread:c
-                                              success:^{
-                
-            } error:^(JErrorCode code) {
-                
-            }];
+            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                [JIM.shared.chatroomManager getAllAttributesFromChatroom:@"chatroom1001"
+//                                                                                   complete:^(JErrorCode code, NSDictionary<NSString *,NSString *> *attributes) {
+//                    int i = 1;
+//                }];
+//            });
             
             
-            
-//            JGetMessageOptions *option = [[JGetMessageOptions alloc] init];
-//            option.count = 100;
-//            option.contentTypes = @[@"jg:text", @"jgd:grpntf"];
-//            [JIM.shared.messageManager getMessages:c
-//                                         direction:JPullDirectionOlder
-//                                            option:option
-//                                 localMessageBlock:^(NSArray<JMessage *> *messages, JErrorCode code) {
-//                int i = 0;
-//            } remoteMessageBlock:^(NSArray<JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code) {
-//                int i = 0;
-//            }];
-            
-//            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:c];
-//            [JIM.shared.messageManager getMentionMessages:c
-//                                                    count:100
-//                                                     time:0
-//                                                direction:JPullDirectionOlder
-//                                                  success:^(NSArray<JMessage *> *messages, BOOL isFinished) {
-//                int i = 0;
-//            } error:^(JErrorCode code) {
-//                int i = 0;
-//            }];
-            
-            
-//            [JIM.shared.chatroomManager quitChatroom:@"chatroom1001"];
-            
-//            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId1"];
-//            JConversation *c2 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId2"];
-//            JConversation *c3 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"userId3"];
-//            JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupId1"];
-//            JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
-//
-//            NSArray *conversations = @[c1, c2, c3, conversation];
-//
-//            [JIM.shared.messageManager setLocalAttribute:@"attribute1" forClientMsgNo:123];
-            
-            
-            
-           
-            
-//            JImageMessage *image = [[JImageMessage alloc] init];
-//            image.localPath = @"asdfasdf";
-//            image.size = 1000;
-//            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"groupid1"];
-//            [JIM.shared.messageManager sendMediaMessage:image
-//                                         inConversation:c
-//                                               progress:^(int progress, JMessage *message) {
-//                NSLog(@"asdf");
-//            } success:^(JMessage *message) {
-//                NSLog(@"sadfasdf");
-//            } error:^(JErrorCode errorCode, JMessage *message) {
-//                NSLog(@"fasdf");
-//            } cancel:^(JMessage *message) {
-//                NSLog(@"fasdf");
-//            }];
-            
-//            JThumbnailPackedImageMessage *message = [[JThumbnailPackedImageMessage alloc] init];
-//            message.url = @"http://www.baidu.com";
-//            message.width = 1000;
-//            message.height = 2000;
-//            message.size = 3434342;
-//            message.extra = @"extra";
-//            NSData *data = [message encode];
-//            JThumbnailPackedImageMessage *m2 = [[JThumbnailPackedImageMessage alloc] init];
-//            [m2 decode:data];
-//            NSLog(@"asdfsadf");
         });
-        
-        
-        
     }
 }
 
@@ -175,6 +108,35 @@
 
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
+    
+    
+//    NSDictionary <NSString *, NSString *> *attr = @{@"key4":@"value4", @"key5":@"value5"};
+//    [JIM.shared.chatroomManager setAttributes:attr
+//                                  forChatroom:@"asdfasdfasf"
+//                                     complete:^(JErrorCode code, NSDictionary<NSString *,NSNumber *> *failedKeys) {
+//        int i = 1;
+//    }];
+//    
+//    NSArray <NSString *> *keys = @[@"key4"];
+    
+//    [JIM.shared.chatroomManager removeAttributes:keys
+//                                     forChatroom:@"chatroom1001"
+//                                        complete:^(JErrorCode code, NSDictionary<NSString *,NSNumber *> *failedKeys) {
+//        int i = 1;
+//    }];
+    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [JIM.shared.chatroomManager quitChatroom:chatroomId];
+//    });
+//    JTextMessage *t = [[JTextMessage alloc] initWithContent:@"test chatroom"];
+//    JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeChatroom conversationId:@"chatroom1001"];
+//    [JIM.shared.messageManager sendMessage:t
+//                            inConversation:c
+//                                   success:^(JMessage *message) {
+//        NSLog(@"lifei, chatroom send message success");
+//    } error:^(JErrorCode errorCode, JMessage *message) {
+//        NSLog(@"lifei, chatroom send message error");
+//    }];
 }
 
 - (void)chatroomDidQuit:(NSString *)chatroomId {
@@ -187,6 +149,10 @@
 
 - (void)chatroomQuitFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
     NSLog(@"lifei, chatroomQuitFail, chatroomId is %@, errorCode is %ld", chatroomId, errorCode);
+}
+
+- (void)chatroomDidDestroy:(NSString *)chatroomId {
+    NSLog(@"lifei, chatroomDidDestroy, chatroomId is %@", chatroomId);
 }
 
 - (void)sendMessage {
@@ -261,29 +227,29 @@
 }
 
 - (void)messageDidReceive:(JMessage *)message {
-    NSLog(@"lifei, messageDidReceive conversationType is %d, conversationId is %@", message.conversation.conversationType, message.conversation.conversationId);
+    NSLog(@"lifei, messageDidReceive conversationType is %ld, conversationId is %@", message.conversation.conversationType, message.conversation.conversationId);
     JMessageContent *content = message.content;
     if ([content isKindOfClass:[JTextMessage class]]) {
         NSLog(@"lifei, text messageDidReceive, content is %@, extra is %@", ((JTextMessage *)content).content, ((JTextMessage *)content).extra);
     } else if ([content isKindOfClass:[JImageMessage class]]) {
         NSLog(@"lifei, image messageDidReceive, thumb is %@, url is %@, width is %d, height is %d, extra is %@", ((JImageMessage *)content).thumbnailUrl, ((JImageMessage *)content).url, ((JImageMessage *)content).width, ((JImageMessage *)content).height, ((JImageMessage *)content).extra);
     } else if ([content isKindOfClass:[JFileMessage class]]) {
-        NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %d, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
+        NSLog(@"lifei, file messageDidReceive, name is %@, url is %@, size is %lld, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
-        NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %d, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
+        NSLog(@"lifei, voice messageDidReceive, url is %@, duration is %ld, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
     }
     
-    if ([content isKindOfClass:[JMediaMessageContent class]]) {
-        [JIM.shared.messageManager downloadMediaMessage:message.messageId
-                                               progress:^(JMessage *message, int progress) {
-            NSLog(@"lifei, download progress %d", progress);
-//            [JIM.shared.messageManager cancelDownloadMediaMessage:message.messageId];
-        } success:^(JMessage *message) {
-            NSLog(@"lifei, download success");
-        } error:^(JErrorCode errorCode) {
-            NSLog(@"lifei, download error code is %d", errorCode);
-        }];
-    }
+////    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+////        [JIM.shared.messageManager downloadMediaMessage:message.messageId
+////                                               progress:^(JMessage *message, int progress) {
+////            NSLog(@"lifei, download progress %d", progress);
+//////            [JIM.shared.messageManager cancelDownloadMediaMessage:message.messageId];
+////        } success:^(JMessage *message) {
+////            NSLog(@"lifei, download success");
+////        } error:^(JErrorCode errorCode) {
+////            NSLog(@"lifei, download error code is %d", errorCode);
+////        }];
+//    }
 }
 
 - (void)messageDidRecall:(JMessage *)message {
@@ -291,19 +257,27 @@
 }
 
 - (void)conversationInfoDidAdd:(NSArray<JConversationInfo *> *)conversationInfoList {
-    NSLog(@"lifei, conversationInfoDidAdd, count is %d", conversationInfoList.count);
+    NSLog(@"lifei, conversationInfoDidAdd, count is %ld", conversationInfoList.count);
 }
 
 - (void)conversationInfoDidUpdate:(NSArray<JConversationInfo *> *)conversationInfoList {
-    NSLog(@"lifei, conversationInfoDidUpdate, count is %d", conversationInfoList.count);
+    NSLog(@"lifei, conversationInfoDidUpdate, count is %ld", conversationInfoList.count);
 }
 
 - (void)conversationInfoDidDelete:(NSArray<JConversationInfo *> *)conversationInfoList {
-    NSLog(@"lifei, conversationInfoDidDelete, count is %d", conversationInfoList.count);
+    NSLog(@"lifei, conversationInfoDidDelete, count is %ld", conversationInfoList.count);
 }
 
 - (void)totalUnreadMessageCountDidUpdate:(int)count {
     NSLog(@"lifei, totalUnreadMessageCountDidUpdate, count is %d", count);
+}
+
+- (void)attributesDidDelete:(NSDictionary<NSString *,NSString *> *)attributes forChatroom:(NSString *)chatroomId {
+    NSLog(@"lifei, attributesDidDelete, count is %ld, chatroom is %@", attributes.count, chatroomId);
+}
+
+- (void)attributesDidUpdate:(NSDictionary<NSString *,NSString *> *)attributes forChatroom:(NSString *)chatroomId {
+    NSLog(@"lifei, attributesDidUpdate, count is %ld, chatroom is %@", attributes.count, chatroomId);
 }
 
 #pragma mark - UISceneSession lifecycle

@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JMarkUnreadMessage : JMessageContent
 
-@property (nonatomic, strong) NSArray <JConversation *> *conversations;
+@property (nonatomic, copy) NSArray <JConversation *> *conversations;
 
 @end
 

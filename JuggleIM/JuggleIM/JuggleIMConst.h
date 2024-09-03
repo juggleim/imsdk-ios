@@ -60,6 +60,21 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //不是群成员
     JErrorCodeNotGroupMember = 13002,
     
+    //默认错误
+    JErrorCodeChatroomUnknownError = 14000,
+    //非聊天室成员
+    JErrorCodeNotChatroomMember = 14001,
+    //聊天室属性已满（最多 100 个）
+    JErrorCodeChatroomAttributeCountExceed = 14002,
+    //无权限操作聊天室属性（非当前用户设置的 key）
+    JErrorCodeChatroomKeyUnauthorized = 14003,
+    //聊天室属性不存在
+    JErrorCodeChatroomAttributeNotExist = 14004,
+    //聊天室不存在
+    JErrorCodeChatroomNotExist = 14005,
+    //聊天室已销毁
+    JErrorCodeChatroomDestroyed = 14006,
+    
     //非法参数
     JErrorCodeInvalidParam = 21003,
     //操作超时
@@ -86,7 +101,10 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //消息下载已存在
     JErrorCodeDownloadAlreadyExist = 23008,
     //消息下载被取消
-    JErrorCodeDownloadCanceled = 23009
+    JErrorCodeDownloadCanceled = 23009,
+    
+    //批量设置聊天室属性失败
+    JErrorCodeChatroomBatchSetAttributeFail = 24001
 };
 
 /*!

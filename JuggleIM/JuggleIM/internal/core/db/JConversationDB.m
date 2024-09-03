@@ -414,6 +414,24 @@ NSString *const jHasUnread = @"unread_tag";
     return count;
 }
 
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
+    NSString *sql = jGetTotalUnreadCount;
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    sql = [sql stringByAppendingString:jConversationAnd];
+    sql = [sql stringByAppendingString:jConversationTypeIn];
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+    [args addObjectsFromArray:conversationTypes];
+    __block int count = 0;
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            count = [resultSet intForColumn:jTotalCount];
+        }
+    }];
+    return count;
+}
+
 - (void)clearTotalUnreadCount{
     [self.dbHelper executeUpdate:jClearTotalUnreadCount withArgumentsInArray:nil];
 }

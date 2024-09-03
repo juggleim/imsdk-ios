@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -25,10 +25,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="VbF-m9-vGZ">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="633"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="AaH-Fi-LdT">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="459"/>
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="425"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="osw-Bp-R9h">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="24"/>
@@ -48,8 +48,8 @@
                                         <constraint firstAttribute="height" constant="24" id="WDY-dS-TzO"/>
                                     </constraints>
                                 </view>
-                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.87999999523162842" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sendbird UIKit Sample" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6V7-kH-W66">
-                                    <rect key="frame" x="0.0" y="96" width="375" height="323"/>
+                                <label opaque="NO" userInteractionEnabled="NO" alpha="0.87999999523162842" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="JuggleChat" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6V7-kH-W66">
+                                    <rect key="frame" x="0.0" y="96" width="375" height="289"/>
                                     <constraints>
                                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="29" id="dxn-CJ-SLs"/>
                                     </constraints>
@@ -58,7 +58,7 @@
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wHp-7X-suT">
-                                    <rect key="frame" x="0.0" y="419" width="375" height="40"/>
+                                    <rect key="frame" x="0.0" y="385" width="375" height="40"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="40" id="mpq-Fw-qKO"/>
                                     </constraints>
@@ -66,7 +66,7 @@
                             </subviews>
                         </stackView>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="bFG-Um-qgU">
-                            <rect key="frame" x="0.0" y="459" width="375" height="208"/>
+                            <rect key="frame" x="0.0" y="425" width="375" height="208"/>
                             <subviews>
                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Phone Number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vCP-NS-PnP">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>

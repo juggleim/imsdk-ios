@@ -28,7 +28,9 @@ static JIM *_instance;
         _instance = [[self alloc] init];
         JIMCore *core = [[JIMCore alloc] init];
         _instance.core = core;
-        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core];
+        JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
+        _instance.chatroomManager = chatroomManager;
+        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager];
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager];
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
         messageManager.sendReceiveDelegate = conversationManager;
@@ -37,9 +39,8 @@ static JIM *_instance;
         _instance.userInfoManager = userInfoManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager
-                                                                messageManager:messageManager];
-        JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
-        _instance.chatroomManager = chatroomManager;
+                                                                messageManager:messageManager
+                                                               chatroomManager:chatroomManager];
     });
     return _instance;
 }

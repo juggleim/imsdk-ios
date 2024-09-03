@@ -16,6 +16,7 @@
 #import "JUploadEnum.h"
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
+#import "JChatroomAttributeItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,7 +36,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)messageDidReceive:(JConcreteMessage *)message;
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished;
+- (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages;
 - (void)syncNotify:(long long)syncTime;
+- (void)syncChatroomNotify:(NSString *)chatroomId
+                      time:(long long)syncTime;
+@end
+
+@protocol JWebSocketChatroomDelegate <NSObject>
+- (void)syncChatroomAttrNotify:(NSString *)chatroomId
+                          time:(long long)syncTime;
+- (void)attributesDidSync:(NSArray <JChatroomAttributeItem *> *)items
+              forChatroom:(NSString *)chatroomId;
+- (void)chatroomDidDestroy:(NSString *)chatroomId;
+- (void)chatroomDidQuit:(NSString *)chatroomId;
+- (void)chatroomDidKick:(NSString *)chatroomId;
 @end
 
 @interface JWebSocket : NSObject
@@ -59,6 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setConnectDelegate:(id<JWebSocketConnectDelegate>)delegate;
 
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
+
+- (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate;
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
@@ -115,6 +131,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearUnreadCount:(JConversation *)conversation
                   userId:(NSString *)userId
                 msgIndex:(long long)msgIndex
+                   msgId:(NSString *)msgId
+               timestamp:(long long)timestamp
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
@@ -206,6 +224,24 @@ inConversation:(JConversation *)conversation
            userId:(NSString *)userId
           success:(void (^)(long long timestamp))successBlock
             error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)syncChatroomMessagesWithTime:(long long)syncTime
+                          chatroomId:(NSString *)chatroomId;
+
+- (void)syncChatroomAttributesWithTime:(long long)syncTime
+                            chatroomId:(NSString *)chatroomId;
+
+- (void)getFirstUnreadMessage:(JConversation *)conversation
+                      success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)setAttributes:(NSDictionary <NSString *, NSString *> *)attributes
+          forChatroom:(NSString *)chatroomId
+             complete:(void (^)(JErrorCodeInternal code, NSArray <JChatroomAttributeItem *> *items))completBlock;
+
+- (void)removeAttributes:(NSArray <NSString *> *)keys
+             forChatroom:(NSString *)chatroomId
+                complete:(void (^)(JErrorCodeInternal code, NSArray <JChatroomAttributeItem *> *items))completeBlock;
 
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;

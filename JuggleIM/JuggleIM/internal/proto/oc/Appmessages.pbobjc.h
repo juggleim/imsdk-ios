@@ -33,6 +33,8 @@ CF_EXTERN_C_BEGIN
 @class BlockUser;
 @class BusinessLog;
 @class ChatAttItem;
+@class ChatAttReq;
+@class ChatAttResp;
 @class ChatAtts;
 @class ChatroomMember;
 @class ConnectionLog;
@@ -60,6 +62,7 @@ CF_EXTERN_C_BEGIN
 @class SimpleConversation;
 @class SimpleMsg;
 @class UndisturbConverItem;
+@class UpMsg;
 @class UserInfo;
 @class UserOnlineItem;
 @class UserUndisturbItem;
@@ -153,6 +156,13 @@ typedef GPB_ENUM(NotifyType) {
   NotifyType_Default = 0,
   NotifyType_Msg = 1,
   NotifyType_ChatroomMsg = 2,
+  NotifyType_ChatroomAtt = 3,
+
+  /** 聊天室事件通知，如有人加入/退出 */
+  NotifyType_ChatroomEvent = 4,
+
+  /** 聊天室销毁 */
+  NotifyType_ChatroomDestroy = 5,
 };
 
 GPBEnumDescriptor *NotifyType_EnumDescriptor(void);
@@ -359,6 +369,36 @@ GPBEnumDescriptor *OssType_EnumDescriptor(void);
  * the time this source was generated.
  **/
 BOOL OssType_IsValidValue(int32_t value);
+
+#pragma mark - Enum ChrmEventType
+
+typedef GPB_ENUM(ChrmEventType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  ChrmEventType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /** 加入聊天室通知 */
+  ChrmEventType_Join = 0,
+
+  /** 主动退出聊天室通知 */
+  ChrmEventType_Quit = 1,
+
+  /** 踢出聊天室通知 */
+  ChrmEventType_Kick = 2,
+
+  /** 自动掉出聊天室通知 */
+  ChrmEventType_Fallout = 3,
+};
+
+GPBEnumDescriptor *ChrmEventType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL ChrmEventType_IsValidValue(int32_t value);
 
 #pragma mark - AppmessagesRoot
 
@@ -1579,6 +1619,8 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_IsDelete = 15,
   Conversation_FieldNumber_LatestUnreadIndex = 16,
   Conversation_FieldNumber_UnreadTag = 17,
+  Conversation_FieldNumber_LatestReadMsgId = 18,
+  Conversation_FieldNumber_LatestReadMsgTime = 19,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -1624,6 +1666,10 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readwrite) int64_t latestUnreadIndex;
 
 @property(nonatomic, readwrite) int32_t unreadTag;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *latestReadMsgId;
+
+@property(nonatomic, readwrite) int64_t latestReadMsgTime;
 
 @end
 
@@ -2915,6 +2961,33 @@ GPB_FINAL @interface QryGrpMemberSettingsResp : GPBMessage
 
 @end
 
+#pragma mark - QryFirstUnreadMsgReq
+
+typedef GPB_ENUM(QryFirstUnreadMsgReq_FieldNumber) {
+  QryFirstUnreadMsgReq_FieldNumber_TargetId = 1,
+  QryFirstUnreadMsgReq_FieldNumber_ChannelType = 2,
+};
+
+GPB_FINAL @interface QryFirstUnreadMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryFirstUnreadMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message);
+/**
+ * Sets the raw value of an @c QryFirstUnreadMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message, int32_t value);
+
 #pragma mark - SyncChatroomReq
 
 typedef GPB_ENUM(SyncChatroomReq_FieldNumber) {
@@ -2933,6 +3006,20 @@ GPB_FINAL @interface SyncChatroomReq : GPBMessage
 @property(nonatomic, readwrite) int64_t syncTime;
 
 @property(nonatomic, readwrite) int64_t attSyncTime;
+
+@end
+
+#pragma mark - SyncChatroomMsgResp
+
+typedef GPB_ENUM(SyncChatroomMsgResp_FieldNumber) {
+  SyncChatroomMsgResp_FieldNumber_MsgsArray = 1,
+};
+
+GPB_FINAL @interface SyncChatroomMsgResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<DownMsg*> *msgsArray;
+/** The number of items in @c msgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgsArray_Count;
 
 @end
 
@@ -3070,12 +3157,28 @@ int32_t ChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *mes
  **/
 void SetChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *message, int32_t value);
 
+#pragma mark - ChatAttBatchReq
+
+typedef GPB_ENUM(ChatAttBatchReq_FieldNumber) {
+  ChatAttBatchReq_FieldNumber_AttsArray = 1,
+};
+
+GPB_FINAL @interface ChatAttBatchReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttReq*> *attsArray;
+/** The number of items in @c attsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attsArray_Count;
+
+@end
+
 #pragma mark - ChatAttReq
 
 typedef GPB_ENUM(ChatAttReq_FieldNumber) {
   ChatAttReq_FieldNumber_Key = 1,
   ChatAttReq_FieldNumber_Value = 2,
   ChatAttReq_FieldNumber_IsForce = 3,
+  ChatAttReq_FieldNumber_IsAutoDel = 4,
+  ChatAttReq_FieldNumber_Msg = 5,
 };
 
 GPB_FINAL @interface ChatAttReq : GPBMessage
@@ -3084,7 +3187,80 @@ GPB_FINAL @interface ChatAttReq : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *value;
 
+/** 是否强制覆盖，否：则该key已有值时，不覆盖 */
 @property(nonatomic, readwrite) BOOL isForce;
+
+/** 是否在该属性所有者离开房间时自动删除；否：则不自动删除； */
+@property(nonatomic, readwrite) BOOL isAutoDel;
+
+/** 设置属性时，同时发送一条聊天室消息； */
+@property(nonatomic, readwrite, strong, null_resettable) UpMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@end
+
+#pragma mark - ChatAttBatchResp
+
+typedef GPB_ENUM(ChatAttBatchResp_FieldNumber) {
+  ChatAttBatchResp_FieldNumber_AttRespsArray = 1,
+};
+
+GPB_FINAL @interface ChatAttBatchResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttResp*> *attRespsArray;
+/** The number of items in @c attRespsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attRespsArray_Count;
+
+@end
+
+#pragma mark - ChatAttResp
+
+typedef GPB_ENUM(ChatAttResp_FieldNumber) {
+  ChatAttResp_FieldNumber_Key = 1,
+  ChatAttResp_FieldNumber_Code = 2,
+  ChatAttResp_FieldNumber_AttTime = 3,
+  ChatAttResp_FieldNumber_MsgCode = 11,
+  ChatAttResp_FieldNumber_MsgId = 12,
+  ChatAttResp_FieldNumber_MsgTime = 13,
+  ChatAttResp_FieldNumber_MsgSeq = 14,
+};
+
+GPB_FINAL @interface ChatAttResp : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
+
+/** 设置属性时的返回码 */
+@property(nonatomic, readwrite) int32_t code;
+
+/** 属性的设置时间 */
+@property(nonatomic, readwrite) int64_t attTime;
+
+/** 当设置属性时，附带发送消息时，下列属性有效 */
+@property(nonatomic, readwrite) int32_t msgCode;
+
+/** 消息的id */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+/** 消息的时间戳 */
+@property(nonatomic, readwrite) int64_t msgTime;
+
+/** 消息的序号 */
+@property(nonatomic, readwrite) int64_t msgSeq;
+
+@end
+
+#pragma mark - SyncChatroomAttResp
+
+typedef GPB_ENUM(SyncChatroomAttResp_FieldNumber) {
+  SyncChatroomAttResp_FieldNumber_AttsArray = 1,
+};
+
+GPB_FINAL @interface SyncChatroomAttResp : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttItem*> *attsArray;
+/** The number of items in @c attsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger attsArray_Count;
 
 @end
 
@@ -3530,6 +3706,39 @@ GPB_FINAL @interface PushSwitch : GPBMessage
 @property(nonatomic, readwrite) int32_t switch_p;
 
 @end
+
+#pragma mark - ChrmEvent
+
+typedef GPB_ENUM(ChrmEvent_FieldNumber) {
+  ChrmEvent_FieldNumber_EventType = 1,
+  ChrmEvent_FieldNumber_ChatId = 2,
+  ChrmEvent_FieldNumber_UserId = 3,
+  ChrmEvent_FieldNumber_EventTime = 4,
+};
+
+GPB_FINAL @interface ChrmEvent : GPBMessage
+
+@property(nonatomic, readwrite) ChrmEventType eventType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite) int64_t eventTime;
+
+@end
+
+/**
+ * Fetches the raw value of a @c ChrmEvent's @c eventType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ChrmEvent_EventType_RawValue(ChrmEvent *message);
+/**
+ * Sets the raw value of an @c ChrmEvent's @c eventType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetChrmEvent_EventType_RawValue(ChrmEvent *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

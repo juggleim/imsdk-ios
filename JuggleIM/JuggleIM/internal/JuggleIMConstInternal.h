@@ -5,8 +5,8 @@
 //  Created by Nathan on 2023/12/1.
 //
 
-#define JWebSocketURL @"120.48.178.248:9002"
-#define JNaviURL @"http://120.48.178.248:8083"
+#define JWebSocketURL @"ws.juggleim.com"
+#define JNaviURL @"https://nav.juggleim.com"
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
 #define JIMVersion @"1.0.0"
@@ -45,6 +45,11 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //不是群成员
     JErrorCodeInternalNotGroupMember = 13002,
     
+    //聊天室不存在
+    JErrorCodeInternalChatroomNotExist = 14005,
+    //聊天室已销毁
+    JErrorCodeInternalChatroomDestroyed = 14006,
+    
     JErrorCodeInternalWebSocketFailure = 21001,
     JErrorCodeInternalNaviFailure = 21002,
     JErrorCodeInternalInvalidParam = 21003,
@@ -64,7 +69,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //消息上传失败
     JErrorCodeInternalMessageUploadError = 22003,
     //日志不存在
-    JErrorCodeInternalLogNotExist = 22004
+    JErrorCodeInternalLogNotExist = 22004,
+    
+    //批量设置聊天室属性失败
+    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001
 };
 
 typedef NS_ENUM(NSUInteger, JMediaType) {

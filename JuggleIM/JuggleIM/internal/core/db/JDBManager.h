@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
      conversation:(JConversation *)conversation;
 - (void)clearUnreadTag;
 - (int)getTotalUnreadCount;
+- (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
 - (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson;
 - (void)clearMentionInfo;
@@ -110,7 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
-
+- (void)clearChatroomMessageExclude:(NSArray <NSString *> *)chatroomIds;
+- (void)clearChatroomMessage:(NSString *)chatroomId;
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;
