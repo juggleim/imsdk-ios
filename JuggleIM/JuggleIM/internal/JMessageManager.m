@@ -750,7 +750,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         JLogI(@"MSG-Get", @"success");
         //TODO: 拉取的历史消息，重复的本地消息直接覆盖，clientMsgNo 不变，其它字段覆盖
         //远端消息中间有断档的情况下，表示远端删了而本地没跟进，需要把本地对应的范围删掉
-        [weakSelf.core.dbManager insertMessages:messages];
+        [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages, isFinished);
@@ -1020,7 +1020,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMerge", @"success");
-        [self.core.dbManager insertMessages:messages];
+        [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages);
@@ -1054,7 +1054,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                               lastReadIndex:conversationInfo.lastReadMessageIndex
                                     success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMention", @"success");
-        [self.core.dbManager insertMessages:messages];
+        [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages, isFinished);
@@ -1572,8 +1572,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }else{
         JConcreteMessage *refer = (JConcreteMessage *)message.referredMsg;
         NSArray * messages = [self messagesToSave:@[refer]];
-        [self.core.dbManager insertMessages:messages];
-        [self updateUserInfos:messages];
+        [self insertRemoteMessages:messages];
     }
 }
 
@@ -1669,8 +1668,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 - (NSArray <JConcreteMessage *> *)insertReceiveMessagesAndNotice:(NSArray<JConcreteMessage *> *)messages {
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
-    [self.core.dbManager insertMessages:messagesToSave];
-    [self updateUserInfos:messagesToSave];
+    [self insertRemoteMessages:messagesToSave];
 
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.flags & JMessageFlagIsCmd) {
@@ -1700,7 +1698,6 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
-    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.direction == JMessageDirectionSend) {
             sendTime = obj.timestamp;
@@ -1834,14 +1831,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         if (obj.existed) {
             return;
         }
-        
-        if (obj.mentionInfo) {
-            for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
-                [userDic setObject:userInfo forKey:userInfo.userId];
-            }
-        }
     }];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
 
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
@@ -1891,9 +1881,19 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
         }
+        if (obj.mentionInfo) {
+            for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
+                [userDic setObject:userInfo forKey:userInfo.userId];
+            }
+        }
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+}
+
+- (void)insertRemoteMessages:(NSArray<JConcreteMessage *> *)messages {
+    [self.core.dbManager insertMessages:messages];
+    [self updateUserInfos:messages];
 }
 
 - (NSString *)generateLocalPath:(JMediaType)mediaType
