@@ -1298,9 +1298,28 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (messages.count == 0) {
         return;
     }
-    [self insertReceiveMessagesAndNotice:messages];
+    NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
+    [self insertRemoteMessages:messagesToSave];
+    
     JConcreteMessage *lastMessage = messages.lastObject;
     [self.chatroomManager setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
+    
+    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.flags & JMessageFlagIsCmd) {
+            return;
+        }
+        if (obj.existed) {
+            return;
+        }
+        
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
+                    [dlg messageDidReceive:obj];
+                }
+            }];
+        });
+    }];
 }
 
 - (void)syncNotify:(long long)syncTime {
@@ -1666,35 +1685,10 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }];
 }
 
-- (NSArray <JConcreteMessage *> *)insertReceiveMessagesAndNotice:(NSArray<JConcreteMessage *> *)messages {
-    NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
-    [self insertRemoteMessages:messagesToSave];
-
-    [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.flags & JMessageFlagIsCmd) {
-            return;
-        }
-        if (obj.existed) {
-            return;
-        }
-        
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
-                    [dlg messageDidReceive:obj];
-                }
-            }];
-        });
-    }];
-    return messagesToSave;
-}
-
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
-    NSArray <JConcreteMessage *> *messagesToSave = [self insertReceiveMessagesAndNotice:messages];
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
-    }
+    NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
+    [self insertRemoteMessages:messagesToSave];
     
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
@@ -1831,7 +1825,18 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         if (obj.existed) {
             return;
         }
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
+                    [dlg messageDidReceive:obj];
+                }
+            }];
+        });
     }];
+    
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
+    }
 
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {

@@ -179,14 +179,14 @@
                 }
             }];
             if (resultDic.count == 0) {
-                JLogI(@"CHRM-RemoveAttr", @"success");
+                JLogI(@"CHRM-RmAttr", @"success");
                 dispatch_async(ws.core.delegateQueue, ^{
                     if (completeBlock) {
                         completeBlock(JErrorCodeNone, nil);
                     }
                 });
             } else {
-                JLogE(@"CHRM-RemoveAttr", @"partial fail");
+                JLogE(@"CHRM-RmAttr", @"partial fail");
                 dispatch_async(ws.core.delegateQueue, ^{
                     if (completeBlock) {
                         completeBlock(JErrorCodeChatroomBatchSetAttributeFail, [resultDic copy]);
@@ -194,7 +194,7 @@
                 });
             }
         } else {
-            JLogE(@"CHRM-RemoveAttr", @"fail, code is %ld", code);
+            JLogE(@"CHRM-RmAttr", @"fail, code is %ld", code);
             [keys enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [resultDic setObject:@(code) forKey:obj];
             }];
@@ -224,13 +224,6 @@
                 completeBlock(JErrorCodeNone, attributes);
             }
         });
-    }
-}
-
-- (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedChatroom.status;
     }
 }
 

@@ -85,7 +85,7 @@
 
 /// 设置聊天室属性。
 /// - Parameters:
-///   - attributes: 聊天室属性，key 和 value 都是字符串，最多支持设置 100 个不同的属性。相同的 key 在客户端不能反复设置（重复设置返回 JErrorCodeChatroomKeyAlreadyExist），
+///   - attributes: 聊天室属性，key 和 value 都是字符串，最多支持设置 100 个不同的属性。非当前用户设置的 key 在客户端不能进行操作（返回 JErrorCodeChatroomKeyUnauthorized）。
 ///   - chatroomId: 聊天室 id
 ///   - completeBlock: 完成回调。
 ///                    code 返回 JErrorCodeNone 时表示所有属性都设置成功。
