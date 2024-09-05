@@ -89,7 +89,11 @@ class ViewController: UIViewController {
         let phoneNumber = phoneNumberTextField.text ?? ""
         let verifyCode = verifyCodeTextField.text ?? ""
         
-        guard !phoneNumber.isEmpty else {
+        let regex = "^1[3,4,5,6,7,8,9][0-9]{9}$"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+        let isPhoneNumber = predicate.evaluate(with: phoneNumber)
+        
+        if !isPhoneNumber {
             phoneNumberTextField.shake()
             phoneNumberTextField.becomeFirstResponder()
             loadingIndicator.stopAnimating()
