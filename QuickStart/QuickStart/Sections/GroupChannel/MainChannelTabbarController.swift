@@ -10,18 +10,20 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, friends, groups, mySettings
+    case channels, friends, groups, chatrooms, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
-    let channelsViewController = ChannelListViewController()
+    let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue)])
     let friendListViewController = FriendListViewController()
     let groupListViewController = GroupListViewController()
+    let chatroomListViewController = ChatroomListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
     var friendListNavigationController = UINavigationController()
     var groupListNavigationController = UINavigationController()
+    var chatroomListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
     var theme: SBUComponentTheme = SBUTheme.componentTheme
@@ -44,11 +46,14 @@ class MainChannelTabbarController: UITabBarController {
         self.groupListNavigationController = UINavigationController(
             rootViewController: groupListViewController
         )
+        self.chatroomListNavigationController = UINavigationController(
+            rootViewController: chatroomListViewController
+        )
         self.mySettingsNavigationController = UINavigationController(
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.groupListNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.groupListNavigationController, self.chatroomListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -91,6 +96,11 @@ class MainChannelTabbarController: UITabBarController {
         )
         groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
+        chatroomListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "Chatrooms"
+        )
+        chatroomListViewController.tabBarItem = self.createTabItem(type: .chatrooms)
+        
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
             text: "My settings"
         )
@@ -103,6 +113,9 @@ class MainChannelTabbarController: UITabBarController {
             ? .black
             : .default
         self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
+            ? .black
+            : .default
+        self.chatroomListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
         self.mySettingsNavigationController.navigationBar.barStyle = self.isDarkMode
@@ -145,10 +158,14 @@ class MainChannelTabbarController: UITabBarController {
             title = "Groups"
             icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
             tag = 2
+        case .chatrooms:
+            title = "Chatrooms"
+            icon = UIImage(named: "imgOpenchannel")?.resize(with: iconSize)
+            tag = 3
         case .mySettings:
             title = "My settings"
             icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
-            tag = 3
+            tag = 4
         }
         let item = UITabBarItem(title: title, image: icon, tag: tag)
         return item

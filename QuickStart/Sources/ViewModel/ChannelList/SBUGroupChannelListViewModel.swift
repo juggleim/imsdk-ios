@@ -33,7 +33,7 @@ public protocol SBUGroupChannelListViewModelDelegate: SBUBaseChannelListViewMode
 
 open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     // MARK: - Constants
-    static let channelLoadLimit: UInt = 20
+    static let channelLoadLimit: Int32 = 100
     static let notificationChannelLoadLimit: UInt = 100
     
     // MARK: - Property (Public)
@@ -45,6 +45,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         set { self.baseDelegate = newValue }
     }
     
+    var conversationTypes: [NSNumber]?
+    
     // MARK: - Life Cycle
     
     /// This function initializes the ViewModel.
@@ -52,9 +54,11 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     ///   - delegate: This is used to receive events that occur in the view model
     ///   - channelListQuery: This is used to use customized channelListQuery.
     public init(
+        conversationTypes: [NSNumber]?,
         delegate: SBUGroupChannelListViewModelDelegate? = nil
     ) {
         super.init(delegate: delegate)
+        self.conversationTypes = conversationTypes
         JIM.shared().conversationManager.add(self)
         
         self.initChannelList()
@@ -84,7 +88,12 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
 
         self.setLoading(true, false)
         
-        self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList()
+        if let types = self.conversationTypes {
+            self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList(withTypes: types, count: SBUGroupChannelListViewModel.channelLoadLimit, timestamp: 0, direction: .older)
+        } else {
+            self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList()
+        }
+        
         self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
     

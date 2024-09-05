@@ -12,6 +12,8 @@
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
 		A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */; };
 		A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */; };
+		A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */; };
+		A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516062C89B28600E3AEC1 /* ChatroomCell.swift */; };
 		A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A076CADF2C611DD200417341 /* ProfileManager.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
@@ -243,6 +245,8 @@
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
 		A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsViewController.swift; sourceTree = "<group>"; };
 		A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
+		A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomListViewController.swift; sourceTree = "<group>"; };
+		A06516062C89B28600E3AEC1 /* ChatroomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomCell.swift; sourceTree = "<group>"; };
 		A076CADF2C611DD200417341 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
@@ -494,6 +498,7 @@
 		A047D7D72C245A7D00E50BCF /* GroupChannel */ = {
 			isa = PBXGroup;
 			children = (
+				A06516032C89658000E3AEC1 /* Chatroom */,
 				A0C80D2F2C60B59200E55080 /* Base */,
 				A0C80D2A2C5CEBF100E55080 /* Group */,
 				A0C80D292C5CEBE700E55080 /* Friend */,
@@ -523,6 +528,15 @@
 				A0B4C3AF2C63A0F1005AFCEC /* GroupNotifyMessageCell.swift */,
 			);
 			path = Channels;
+			sourceTree = "<group>";
+		};
+		A06516032C89658000E3AEC1 /* Chatroom */ = {
+			isa = PBXGroup;
+			children = (
+				A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */,
+				A06516062C89B28600E3AEC1 /* ChatroomCell.swift */,
+			);
+			path = Chatroom;
 			sourceTree = "<group>";
 		};
 		A076CADE2C611DA700417341 /* Manager */ = {
@@ -1461,6 +1475,7 @@
 				A0968CB12C2B03DA00E68790 /* SBUBaseChannelModule.Input.swift in Sources */,
 				A0968C982C2B020300E68790 /* SBUNewMessageInfo.swift in Sources */,
 				A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */,
+				A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */,
 				A0968C952C2B020300E68790 /* SBUFileViewController.swift in Sources */,
 				A0968CB42C2B03DA00E68790 /* SBUBaseChannelModule.List.swift in Sources */,
 				A07F3B442BF4A2260087920B /* SBUUser.swift in Sources */,
@@ -1470,6 +1485,7 @@
 				A07F3B5D2BF4A2260087920B /* UIApplication+SBUIKit.swift in Sources */,
 				A07F3CAF2BF4A2290087920B /* SBUStringSet.swift in Sources */,
 				A0968C842C2B020300E68790 /* SBUGroupChannelViewController.swift in Sources */,
+				A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */,
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
 				A090B0B52C3EB48C00FE0E10 /* SBUImageContentView.swift in Sources */,
