@@ -212,8 +212,7 @@ extension SBUGroupChannelModule {
                 let originalImage = info[.originalImage] as? UIImage
                 // TODO: need to improved. (mimetype)
                 // for Camera capture
-                guard let image = originalImage?.fixedOrientation(),
-                      let imageData = image.sbu_convertToData() else { return }
+                guard let image = originalImage?.fixedOrientation() else { return }
 
                 self.delegate?.groupChannelModule(
                     self,
@@ -241,17 +240,12 @@ extension SBUGroupChannelModule {
                 )
             default:
                 let originalImage = info[.originalImage] as? UIImage
-                guard let image = originalImage?.fixedOrientation(),
-                      let imageData = image.sbu_convertToData() else { return }
+                guard let image = originalImage?.fixedOrientation() else { return }
                 
-                self.delegate?.groupChannelModule(self, didPickImageURL: imageURL)
-//                self.delegate?.groupChannelModule(
-//                    self,
-//                    didPickFileData: imageData,
-//                    fileName: imageName,
-//                    mimeType: mimeType,
-//                    parentMessage: self.currentQuotedMessage
-//                )
+                self.delegate?.groupChannelModule(
+                    self,
+                    didPickImage: image
+                )
             }
         }
         
