@@ -35,7 +35,7 @@ class MainChannelTabbarController: UITabBarController {
         super.viewDidLoad()
         
         channelsViewController.headerComponent?.titleView = UIView()
-        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "Channels")
+        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "Conversations")
         
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
@@ -82,7 +82,7 @@ class MainChannelTabbarController: UITabBarController {
             ? SBUColorSet.primary200
             : SBUColorSet.primary300
         channelsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Channels"
+            text: "Conversations"
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
@@ -147,7 +147,7 @@ class MainChannelTabbarController: UITabBarController {
         let tag: Int
         switch type {
         case .channels:
-            title = "Channels"
+            title = "Conversations"
             icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
             tag = 0
         case .friends:
