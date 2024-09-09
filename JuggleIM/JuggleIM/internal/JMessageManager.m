@@ -1260,6 +1260,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     if (self.syncProcessing) {
+        self.syncNotifyTime = message.timestamp;
         return NO;
     }
     [self handleReceiveMessages:@[message]
