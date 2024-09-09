@@ -49,6 +49,7 @@
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
+@property (nonatomic, assign) long long syncNotifyTime;
 @end
 
 @implementation JMessageManager
@@ -1273,7 +1274,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     
     if (!isFinished) {
         [self sync];
-    } else {
+    } else if (self.syncNotifyTime > self.core.messageReceiveSyncTime) {
+        [self sync];
+    }  else {
         self.syncProcessing = NO;
         if (self.cachedSendTime > 0) {
             self.core.messageSendSyncTime = self.cachedSendTime;
@@ -1324,6 +1327,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 - (void)syncNotify:(long long)syncTime {
     if (self.syncProcessing) {
+        self.syncNotifyTime = syncTime;
         return;
     }
     if (syncTime > self.core.messageReceiveSyncTime) {
