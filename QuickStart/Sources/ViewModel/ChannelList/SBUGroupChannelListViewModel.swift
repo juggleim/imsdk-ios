@@ -33,7 +33,7 @@ public protocol SBUGroupChannelListViewModelDelegate: SBUBaseChannelListViewMode
 
 open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     // MARK: - Constants
-    static let channelLoadLimit: Int32 = 100
+    static let channelLoadLimit: Int32 = 20
     static let notificationChannelLoadLimit: UInt = 100
     
     // MARK: - Property (Public)
@@ -46,6 +46,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     }
     
     var conversationTypes: [NSNumber]?
+    
+    var historyComplete = false
     
     // MARK: - Life Cycle
     
@@ -80,19 +82,27 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     public override func loadNextChannelList(reset: Bool) {
         super.loadNextChannelList(reset: reset)
         
-        guard !self.isLoading else { return }
-        
         if reset {
             self.reset()
         }
-
-        self.setLoading(true, false)
         
-        if let types = self.conversationTypes {
-            self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList(withTypes: types, count: SBUGroupChannelListViewModel.channelLoadLimit, timestamp: 0, direction: .older)
-        } else {
-            self.conversationInfoList = JIM.shared().conversationManager.getConversationInfoList()
+        if historyComplete {
+            return
         }
+        
+        let count = self.conversationInfoList.count
+        let startTime = count > 0 ? self.conversationInfoList[count-1].sortTime : 0
+        let newConversationInfoList: [JConversationInfo]
+        if let types = self.conversationTypes {
+            newConversationInfoList = JIM.shared().conversationManager.getConversationInfoList(withTypes: types, count: SBUGroupChannelListViewModel.channelLoadLimit, timestamp: startTime, direction: .older)
+        } else {
+            newConversationInfoList = JIM.shared().conversationManager.getConversationInfoList(byCount: SBUGroupChannelListViewModel.channelLoadLimit, timestamp: startTime, direction: .older)
+        }
+        if newConversationInfoList.count < SBUGroupChannelListViewModel.channelLoadLimit {
+            self.historyComplete = true
+        }
+        
+        self.conversationInfoList.append(contentsOf: newConversationInfoList)
         
         self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
@@ -100,15 +110,15 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     /// This function resets channelList
     public override func reset() {
         super.reset()
+        
+        self.conversationInfoList = []
+        self.historyComplete = false
     }
     
     // MARK: - SDK Relations
     public func deleteConversationInfo(_ conversationInfo: JConversationInfo) {
-        self.setLoading(true, true)
         JIM.shared().conversationManager.deleteConversationInfo(by: conversationInfo.conversation) {
-            self.setLoading(false, false)
         } error: { code in
-            self.setLoading(false, false)
         }
     }
     

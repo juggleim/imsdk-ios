@@ -1724,9 +1724,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                     continue;
                 }
                 JMessage * lastMessage = conversationInfo.lastMessage;
-                if(obj.timestamp <= lastMessage.timestamp){
+                if (obj.timestamp <= lastMessage.timestamp) {
                     continue;
-                }else{
+                } else {
                     [deletedList addObject:deleteConversation];
                 }
                 [self.core.dbManager deleteConversationInfoBy:deleteConversation];
