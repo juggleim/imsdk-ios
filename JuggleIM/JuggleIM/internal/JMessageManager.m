@@ -33,7 +33,7 @@
 #import "JDownloadManager.h"
 #import "JUtility.h"
 
-@interface JMessageManager () <JWebSocketMessageDelegate>
+@interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
     id<JMessageUploadProvider> _uploadProvider;
 }
@@ -66,6 +66,7 @@
     if (self = [super init]) {
         self.core = core;
         self.chatroomManager = chatroomManager;
+        [self.chatroomManager addDelegate:self];
         [self.core.webSocket setMessageDelegate:self];
         [self registerMessages];
         self.cachedSendTime = -1;
@@ -1259,6 +1260,27 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     self.syncProcessing = YES;
 }
 
+#pragma mark - JChatroomProtocol
+- (void)chatroomDidJoin:(NSString *)chatroomId {
+    long long time = [self.chatroomManager getSyncTimeForChatroom:chatroomId] + 1;
+    [self syncChatroomNotify:chatroomId time:time];
+}
+
+- (void)chatroomDidDestroy:(NSString *)chatroomId {
+}
+
+- (void)chatroomDidKick:(NSString *)chatroomId {
+}
+
+- (void)chatroomDidQuit:(NSString *)chatroomId {
+}
+
+- (void)chatroomJoinFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
+}
+
+- (void)chatroomQuitFail:(NSString *)chatroomId errorCode:(JErrorCode)errorCode {
+}
+
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     if (self.syncProcessing) {
@@ -1372,6 +1394,8 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (time > cachedSyncTime) {
         [self webSocketSyncChatroomMessages:chatroomId
                                        time:cachedSyncTime];
+    } else {
+        [self checkChatroomSyncDic];
     }
 }
 

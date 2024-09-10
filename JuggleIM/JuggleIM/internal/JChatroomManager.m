@@ -49,7 +49,6 @@
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
-        [self.core.webSocket syncChatroomMessagesWithTime:[self getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
         [self.core.webSocket syncChatroomAttributesWithTime:[self getAttrSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
