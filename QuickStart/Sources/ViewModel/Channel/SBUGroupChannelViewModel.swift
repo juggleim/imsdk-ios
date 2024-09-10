@@ -390,11 +390,6 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
             return
         }
-//        self.delegate?.baseChannelViewModel(
-//            self,
-//            shouldUpdateScrollInMessageList: [message],
-//            keepsScroll: true
-//        )
         self.upsertMessagesInList(messages: [message], needReload: true)
         
         JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {

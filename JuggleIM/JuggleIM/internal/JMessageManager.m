@@ -1283,6 +1283,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
+    JLogI(@"MSG-Rcv", @"direct message id is %@", message.messageId);
     if (self.syncProcessing) {
         self.syncNotifyTime = message.timestamp;
         return NO;
@@ -1294,6 +1295,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished {
+    JLogI(@"MSG-Rcv", @"message count is %ld, isFinish is %d", messages.count, isFinished);
     [self handleReceiveMessages:messages
                          isSync:YES];
     
@@ -1323,6 +1325,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 }
 
 - (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages {
+    JLogI(@"MSG-Rcv", @"chatroom message count is %ld", messages.count);
     if (messages.count == 0) {
         [self checkChatroomSyncDic];
         return;
@@ -1883,6 +1886,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
+                    JLogI(@"MSG-rcv", @"receive message is %@", obj.messageId);
                     [dlg messageDidReceive:obj];
                 }
             }];
