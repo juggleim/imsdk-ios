@@ -50,6 +50,8 @@
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
 @property (nonatomic, assign) long long syncNotifyTime;
+@property (nonatomic, assign) BOOL chatroomSyncProcessing;
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *chatroomSyncDic;
 @end
 
 @implementation JMessageManager
@@ -1300,6 +1302,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 - (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages {
     if (messages.count == 0) {
+        [self checkChatroomSyncDic];
         return;
     }
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
@@ -1324,6 +1327,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
             }];
         });
     }];
+    [self checkChatroomSyncDic];
 }
 
 - (void)syncNotify:(long long)syncTime {
@@ -1338,17 +1342,39 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 }
 
 - (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
-    if (![self.chatroomManager isChatroomAvailable:chatroomId]) {
+    if (self.chatroomSyncProcessing) {
+        [self.chatroomSyncDic setObject:@(syncTime) forKey:chatroomId];
         return;
     }
-    long long cachedSyncTime = [self.chatroomManager getSyncTimeForChatroom:chatroomId];
-    if (syncTime > cachedSyncTime) {
-        [self syncChatroomMessages:chatroomId
-                              time:cachedSyncTime];
-    }
+    [self syncChatroomMessages:chatroomId time:syncTime];
 }
 
 #pragma mark - internal
+- (void)checkChatroomSyncDic {
+    if (self.chatroomSyncDic.count > 0) {
+        NSArray *keys = [self.chatroomSyncDic allKeys];
+        NSString *chatroomId = [keys objectAtIndex:0];
+        long long time = [self.chatroomSyncDic objectForKey:chatroomId].longLongValue;
+        [self.chatroomSyncDic removeObjectForKey:chatroomId];
+        [self syncChatroomMessages:chatroomId time:time];
+    } else {
+        self.chatroomSyncProcessing = NO;
+    }
+}
+
+- (void)syncChatroomMessages:(NSString *)chatroomId
+                        time:(long long)time {
+    if (![self.chatroomManager isChatroomAvailable:chatroomId]) {
+        [self checkChatroomSyncDic];
+        return;
+    }
+    long long cachedSyncTime = [self.chatroomManager getSyncTimeForChatroom:chatroomId];
+    if (time > cachedSyncTime) {
+        [self webSocketSyncChatroomMessages:chatroomId
+                                       time:cachedSyncTime];
+    }
+}
+
 - (void)registerMessages {
     [self registerContentType:[JTextMessage class]];
     [self registerContentType:[JImageMessage class]];
@@ -1868,9 +1894,10 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                               userId:self.core.userId];
 }
 
-- (void)syncChatroomMessages:(NSString *)chatroomId
+- (void)webSocketSyncChatroomMessages:(NSString *)chatroomId
                         time:(long long)syncTime {
     JLogI(@"MSG-ChrmSync", @"id is %@, time is %lld", chatroomId, syncTime);
+    self.chatroomSyncProcessing = YES;
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
                                            chatroomId:chatroomId];
 }
@@ -1971,6 +1998,13 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         _downloadManager = [[JDownloadManager alloc] init];
     }
     return _downloadManager;
+}
+
+- (NSMutableDictionary<NSString *,NSNumber *> *)chatroomSyncDic {
+    if (!_chatroomSyncDic) {
+        _chatroomSyncDic = [NSMutableDictionary dictionary];
+    }
+    return _chatroomSyncDic;
 }
 
 @end
