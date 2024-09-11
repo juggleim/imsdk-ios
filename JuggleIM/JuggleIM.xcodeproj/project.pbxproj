@@ -57,6 +57,8 @@
 		A06515FE2C7C717D00E3AEC1 /* JCachedChatroom.m in Sources */ = {isa = PBXBuildFile; fileRef = A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */; };
 		A06516012C8092C400E3AEC1 /* JChatroomAttributeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */; };
 		A06516022C8092C400E3AEC1 /* JChatroomAttributeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A06516002C8092C400E3AEC1 /* JChatroomAttributeItem.m */; };
+		A065160B2C91DEBE00E3AEC1 /* JIntervalGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = A06516092C91DEBE00E3AEC1 /* JIntervalGenerator.h */; };
+		A065160C2C91DEBE00E3AEC1 /* JIntervalGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = A065160A2C91DEBE00E3AEC1 /* JIntervalGenerator.m */; };
 		A06A2F092B20B2B6009B9588 /* JPBData.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F072B20B2B6009B9588 /* JPBData.h */; };
 		A06A2F0A2B20B2B6009B9588 /* JPBData.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F082B20B2B6009B9588 /* JPBData.m */; };
 		A06A2F132B233351009B9588 /* JDBHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F112B233351009B9588 /* JDBHelper.h */; };
@@ -359,6 +361,8 @@
 		A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCachedChatroom.m; sourceTree = "<group>"; };
 		A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomAttributeItem.h; sourceTree = "<group>"; };
 		A06516002C8092C400E3AEC1 /* JChatroomAttributeItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomAttributeItem.m; sourceTree = "<group>"; };
+		A06516092C91DEBE00E3AEC1 /* JIntervalGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIntervalGenerator.h; sourceTree = "<group>"; };
+		A065160A2C91DEBE00E3AEC1 /* JIntervalGenerator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIntervalGenerator.m; sourceTree = "<group>"; };
 		A06A2F072B20B2B6009B9588 /* JPBData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPBData.h; sourceTree = "<group>"; };
 		A06A2F082B20B2B6009B9588 /* JPBData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPBData.m; sourceTree = "<group>"; };
 		A06A2F0B2B20B34B009B9588 /* JuggleIMPBConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIMPBConst.h; sourceTree = "<group>"; };
@@ -672,6 +676,8 @@
 				A07D0E2D2BFCD0B200B9035B /* JLogFileWriter.m */,
 				A0AF4A282C1065B000D97694 /* JLogUploader.h */,
 				A0AF4A292C1065B000D97694 /* JLogUploader.m */,
+				A06516092C91DEBE00E3AEC1 /* JIntervalGenerator.h */,
+				A065160A2C91DEBE00E3AEC1 /* JIntervalGenerator.m */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1300,6 +1306,7 @@
 				A08AA3782B19CB78008B114C /* Struct.pbobjc.h in Headers */,
 				A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */,
 				A08AA37C2B19CB78008B114C /* Any.pbobjc.h in Headers */,
+				A065160B2C91DEBE00E3AEC1 /* JIntervalGenerator.h in Headers */,
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
 				5B4CAF582C2E648A00FF9D51 /* JClearTotalUnreadMessage.h in Headers */,
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
@@ -1493,6 +1500,7 @@
 				A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */,
 				A08AA2742B162A11008B114C /* JFMDatabase.m in Sources */,
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
+				A065160C2C91DEBE00E3AEC1 /* JIntervalGenerator.m in Sources */,
 				A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */,
 				A0D3AD2A2B6973D600D170D7 /* Connect.pbobjc.m in Sources */,
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,

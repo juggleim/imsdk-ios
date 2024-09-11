@@ -11,6 +11,7 @@
 #import "JuggleIMConstInternal.h"
 #import <UIKit/UIKit.h>
 #import "JLogger.h"
+#import "JIntervalGenerator.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -22,6 +23,7 @@
 @property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, assign) UIBackgroundTaskIdentifier bgTask;
+@property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @end
 
 @implementation JConnectionManager
@@ -313,12 +315,12 @@
 - (void)reconnect {
     //需要在 sendQueue 里
     JLogI(@"CON-Reconnect", @"");
-    //TODO: 线程控制，间隔控制
+    //TODO: 线程控制
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.reconnectTimer) {
             return;
         }
-        self.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:5
+        self.reconnectTimer = [NSTimer scheduledTimerWithTimeInterval:[self.intervalGenerator getNextInterval]
                                                                target:self
                                                              selector:@selector(reconnectTimerFired)
                                                              userInfo:nil
@@ -386,6 +388,7 @@
 }
 
 - (void)enterForeground {
+    self.intervalGenerator = nil;
     self.isBackground = NO;
     [self.core.webSocket pushSwitch:NO userId:self.core.userId];
 }
@@ -399,6 +402,13 @@
         _delegates = [NSHashTable weakObjectsHashTable];
     }
     return _delegates;
+}
+
+- (JIntervalGenerator *)intervalGenerator {
+    if (!_intervalGenerator) {
+        _intervalGenerator = [[JIntervalGenerator alloc] init];
+    }
+    return _intervalGenerator;
 }
 
 @end
