@@ -528,7 +528,7 @@ extension SBUBaseChannelModule {
                     return
                 }
                 self?.isTableViewReloading = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     self?.isTableViewReloading = false
                     if let needReload = self?.needReload, needReload == true {
                         self?.needReload = false

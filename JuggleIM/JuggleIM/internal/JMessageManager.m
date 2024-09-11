@@ -1886,7 +1886,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
-                    JLogI(@"MSG-rcv", @"receive message is %@", obj.messageId);
+                    JLogI(@"MSG-Rcv", @"receive message is %@", obj.messageId);
                     [dlg messageDidReceive:obj];
                 }
             }];
