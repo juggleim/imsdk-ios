@@ -232,6 +232,7 @@ extension MainChannelTabbarController: JConversationDelegate {
 
 extension MainChannelTabbarController: JConnectionDelegate {
     func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+        SBULog.info("connection status change, status is \(status.rawValue)")
         if (status == .disconnected && code == .userKickedByOtherClient) {
             self.dismiss(animated: true)
         }

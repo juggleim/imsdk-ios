@@ -82,7 +82,7 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
 
 open class SBUBaseChannelViewModel: NSObject {
     // MARK: - Constant
-    let defaultFetchLimit = 20
+    let defaultFetchLimit = 30
     
     // MARK: - Logic properties (Public)
     /// The current channel object. It's `JConversationInfo` type.
@@ -591,7 +591,11 @@ open class SBUBaseChannelViewModel: NSObject {
     ) {
         SBULog.info("First : \(String(describing: messages?.first)), Last : \(String(describing: messages?.last))")
         
-        messages?.forEach { message in
+        guard let messages = messages, messages.count > 0 else {
+            return
+        }
+        
+        messages.forEach { message in
             if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
                 self.messageList.remove(at: index)
             }
