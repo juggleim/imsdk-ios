@@ -132,6 +132,7 @@
                         session:(NSString *)session
                           extra:(NSString *)extra {
     if (error == JErrorCodeInternalNone) {
+        [self.intervalGenerator reset];
         self.core.userId = userId;
         if (!self.core.dbManager.isOpen) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
@@ -388,7 +389,7 @@
 }
 
 - (void)enterForeground {
-    self.intervalGenerator = nil;
+    [self.intervalGenerator reset];
     self.isBackground = NO;
     [self.core.webSocket pushSwitch:NO userId:self.core.userId];
 }

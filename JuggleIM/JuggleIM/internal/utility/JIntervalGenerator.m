@@ -6,6 +6,7 @@
 //
 
 #import "JIntervalGenerator.h"
+#import "JLogger.h"
 
 @interface JIntervalGenerator ()
 @property (nonatomic, assign) int interval;
@@ -22,8 +23,12 @@
     } else {
         self.interval *= 2;
     }
-    NSLog(@"lifei, getNextInterval %d", result);
+    JLogI(@"J-Itvl", @"interval is %d", result);
     return result;
+}
+
+- (void)reset {
+    self.interval = 0;
 }
 
 @end

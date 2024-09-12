@@ -13,6 +13,7 @@
 #import "JDeleteMsgMessage.h"
 #import "JCleanMsgMessage.h"
 #import "JLogger.h"
+#import "JIntervalGenerator.h"
 
 #define kConversationSyncCount 100
 
@@ -23,7 +24,10 @@
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
+
 @property (nonatomic, strong) JMessageManager * messageManager;
+@property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
+@property (nonatomic, strong) NSTimer *syncRetryTimer;
 @end
 
 @implementation JConversationManager
@@ -40,90 +44,7 @@
 
 - (void)syncConversations:(void (^)(void))completeBlock {
     self.syncProcessing = YES;
-    dispatch_async(self.core.sendQueue, ^{
-        JLogI(@"CONV-Sync", @"sync time is %lld", self.core.conversationSyncTime);
-        [self.core.webSocket syncConversations:self.core.conversationSyncTime
-                                         count:kConversationSyncCount
-                                        userId:self.core.userId
-                                       success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
-            JLogI(@"CONV-Sync", @"success conversation count is %lu, delete count is %lu", (unsigned long)conversations.count, (unsigned long)deletedConversations.count);
-            long long syncTime = 0;
-            if (conversations.lastObject) {
-                [self updateUserInfos:conversations];
-                JConcreteConversationInfo *last = conversations.lastObject;
-                if (last.syncTime > syncTime) {
-                    syncTime = last.syncTime;
-                }
-                [self.core.dbManager insertConversations:conversations
-                                              completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
-                    if (insertConversations.count > 0) {
-                        dispatch_async(self.core.delegateQueue, ^{
-                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
-                                    [obj conversationInfoDidAdd:insertConversations];
-                                }
-                            }];
-                        });
-                    }
-                    if (updateConversations.count > 0) {
-                        dispatch_async(self.core.delegateQueue, ^{
-                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                                    [obj conversationInfoDidUpdate:updateConversations];
-                                }
-                            }];
-                        });
-                    }
-                }];
-                [self noticeTotalUnreadCountChange];
-            }
-            if (deletedConversations.lastObject) {
-                [self updateUserInfos:deletedConversations];
-                JConcreteConversationInfo *last = deletedConversations.lastObject;
-                if (last.syncTime > syncTime) {
-                    syncTime = last.syncTime;
-                }
-                [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    [self.core.dbManager deleteConversationInfoBy:obj.conversation];
-                }];
-                //本地没有的给 delete 回调也没事
-                dispatch_async(self.core.delegateQueue, ^{
-                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
-                            [obj conversationInfoDidDelete:deletedConversations];
-                        }
-                    }];
-                });
-            }
-            if (syncTime > 0) {
-                self.core.conversationSyncTime = syncTime;
-            }
-            if (!isFinished) {
-                [self syncConversations:completeBlock];
-            } else {
-                self.syncProcessing = NO;
-                if (self.cachedSyncTime > 0) {
-                    self.core.conversationSyncTime = self.cachedSyncTime;
-                    self.cachedSyncTime = -1;
-                }
-                dispatch_async(self.core.delegateQueue, ^{
-                    [self.syncDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationSyncDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        if ([obj respondsToSelector:@selector(conversationSyncDidComplete)]) {
-                            [obj conversationSyncDidComplete];
-                        }
-                    }];
-                });
-                if (completeBlock) {
-                    completeBlock();
-                }
-            }
-        } error:^(JErrorCodeInternal code) {
-            JLogE(@"CONV-Sync", @"error code is %lu", code);
-            if (completeBlock) {
-                completeBlock();
-            }
-        }];
-    });
+    [self internalSyncConversations:completeBlock];
 }
 
 - (JConversationInfo *)getConversationInfo:(JConversation *)conversation {
@@ -736,6 +657,111 @@
 }
 
 #pragma mark - internal
+- (void)internalSyncConversations:(void (^)(void))completeBlock {
+    dispatch_async(self.core.sendQueue, ^{
+        JLogI(@"CONV-Sync", @"sync time is %lld", self.core.conversationSyncTime);
+        [self.core.webSocket syncConversations:self.core.conversationSyncTime
+                                         count:kConversationSyncCount
+                                        userId:self.core.userId
+                                       success:^(NSArray * _Nonnull conversations, NSArray * _Nonnull deletedConversations, BOOL isFinished) {
+            JLogI(@"CONV-Sync", @"success conversation count is %lu, delete count is %lu", (unsigned long)conversations.count, (unsigned long)deletedConversations.count);
+            [self.intervalGenerator reset];
+            long long syncTime = 0;
+            if (conversations.lastObject) {
+                [self updateUserInfos:conversations];
+                JConcreteConversationInfo *last = conversations.lastObject;
+                if (last.syncTime > syncTime) {
+                    syncTime = last.syncTime;
+                }
+                [self.core.dbManager insertConversations:conversations
+                                              completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
+                    if (insertConversations.count > 0) {
+                        dispatch_async(self.core.delegateQueue, ^{
+                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                if ([obj respondsToSelector:@selector(conversationInfoDidAdd:)]) {
+                                    [obj conversationInfoDidAdd:insertConversations];
+                                }
+                            }];
+                        });
+                    }
+                    if (updateConversations.count > 0) {
+                        dispatch_async(self.core.delegateQueue, ^{
+                            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                                    [obj conversationInfoDidUpdate:updateConversations];
+                                }
+                            }];
+                        });
+                    }
+                }];
+                [self noticeTotalUnreadCountChange];
+            }
+            if (deletedConversations.lastObject) {
+                [self updateUserInfos:deletedConversations];
+                JConcreteConversationInfo *last = deletedConversations.lastObject;
+                if (last.syncTime > syncTime) {
+                    syncTime = last.syncTime;
+                }
+                [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [self.core.dbManager deleteConversationInfoBy:obj.conversation];
+                }];
+                //本地没有的给 delete 回调也没事
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
+                            [obj conversationInfoDidDelete:deletedConversations];
+                        }
+                    }];
+                });
+            }
+            if (syncTime > 0) {
+                self.core.conversationSyncTime = syncTime;
+            }
+            if (!isFinished) {
+                [self internalSyncConversations:completeBlock];
+            } else {
+                self.syncProcessing = NO;
+                if (self.cachedSyncTime > 0) {
+                    self.core.conversationSyncTime = self.cachedSyncTime;
+                    self.cachedSyncTime = -1;
+                }
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.syncDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationSyncDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(conversationSyncDidComplete)]) {
+                            [obj conversationSyncDidComplete];
+                        }
+                    }];
+                });
+                if (completeBlock) {
+                    completeBlock();
+                }
+            }
+        } error:^(JErrorCodeInternal code) {
+            JLogE(@"CONV-Sync", @"error code is %lu", code);
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.syncRetryTimer) {
+                    return;
+                }
+                self.syncRetryTimer = [NSTimer scheduledTimerWithTimeInterval:[self.intervalGenerator getNextInterval] target:self selector:@selector(syncRetryTimerFired) userInfo:completeBlock repeats:NO];
+            });
+        }];
+    });
+}
+
+- (void)syncRetryTimerFired {
+    void (^block)(void) = self.syncRetryTimer.userInfo;
+    [self stopSyncTimer];
+    [self internalSyncConversations:block];
+}
+
+- (void)stopSyncTimer {
+    if (self.syncRetryTimer) {
+        [self.syncRetryTimer invalidate];
+        self.syncRetryTimer = nil;
+    }
+}
+
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];
     [self updateUserInfos:@[conversationInfo]];
@@ -948,6 +974,13 @@
         _syncDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _syncDelegates;
+}
+
+- (JIntervalGenerator *)intervalGenerator {
+    if (!_intervalGenerator) {
+        _intervalGenerator = [[JIntervalGenerator alloc] init];
+    }
+    return _intervalGenerator;
 }
 
 @end

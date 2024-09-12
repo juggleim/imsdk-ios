@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (int)getNextInterval;
 
+- (void)reset;
+
 @end
 
 NS_ASSUME_NONNULL_END

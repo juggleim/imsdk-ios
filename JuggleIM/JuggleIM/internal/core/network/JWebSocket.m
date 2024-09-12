@@ -138,7 +138,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
-                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData;
