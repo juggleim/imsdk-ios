@@ -813,9 +813,13 @@
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
 }
 
--(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *) messages{
+-(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *)messages {
     NSMutableArray * conversations = [NSMutableArray array];
     for (JConcreteMessage * message in messages) {
+        if (message.timestamp <= self.core.conversationSyncTime) {
+            continue;
+        }
+        
         BOOL hasMention = NO;
         //接收的消息才处理 mention
         if (message.direction == JMessageDirectionReceive
@@ -833,7 +837,7 @@
             }
         }
         JConversationMentionInfo * mentionInfo;
-        if(hasMention){
+        if(hasMention) {
             NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
             JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
             msg.senderId = message.senderUserId;
@@ -855,9 +859,9 @@
                 break;
             }
         }
-        if(info == nil){
+        if(info == nil) {
             info = (JConcreteConversationInfo *)[self getConversationInfo:message.conversation];
-            if(info != nil){
+            if(info != nil) {
                 [conversations addObject:info];
             }
         }
