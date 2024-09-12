@@ -1234,9 +1234,10 @@ inConversation:(JConversation *)conversation
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JChatroomObj class]]) {
         JChatroomObj *chatroomObj = (JChatroomObj *)obj;
-        if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:)])  {
+        if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:code:)])  {
             [self.chatroomDelegate attributesDidSync:ack.items
-                                         forChatroom:chatroomObj.chatroomId];
+                                         forChatroom:chatroomObj.chatroomId
+                                                code:ack.code];
         }
     }
 }

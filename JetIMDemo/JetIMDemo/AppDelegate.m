@@ -89,7 +89,7 @@
     NSLog(@"lifei, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
+            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
 //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //                [JIM.shared.chatroomManager getAllAttributesFromChatroom:@"chatroom1001"
 //                                                                                   complete:^(JErrorCode code, NSDictionary<NSString *,NSString *> *attributes) {
