@@ -809,10 +809,10 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         JConcreteMessage *message = localMessages[0];
         __block long long seqNo = message.seqNo;
         if(localMessages.count < count){
-            //本地数据小于需要拉取的数量，并且本地数据第一条 seqNo 不是第一个
+            //本地数据小于需要拉取的数量
             needRemote = YES;
         } else {
-            //本地数据等于需要拉取的数据 或 本地数据第一条 seqNo 是第一个
+            //本地数据等于需要拉取的数据
             //判断是否连续
             [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if (idx > 0 && obj.messageState == JMessageStateSent && obj.seqNo != 0) {

@@ -113,7 +113,7 @@ extension SBUCacheManager {
                 filePath = cacheKey
             }
             
-            if let fileName = fileName {
+            if let fileName = fileName, fileName.count > 0 {
                 return "\(filePath)/\(fileName)"
             } else {
                 return "\(filePath)/File.\(pathExtension)"
