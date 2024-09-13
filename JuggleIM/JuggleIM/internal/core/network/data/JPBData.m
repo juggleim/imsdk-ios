@@ -193,7 +193,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (needPush) {
         body.code = 0;
     } else {
-        body.code = 1;
+        body.code = 11012;
     }
     body.timestamp = [[NSDate date] timeIntervalSince1970]*1000;
     

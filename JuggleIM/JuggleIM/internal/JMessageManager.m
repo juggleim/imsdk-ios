@@ -514,7 +514,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                          progress:progressBlock
                           success:successBlock
                             error:errorBlock
-                           cancel:cancelBlock];;
+                           cancel:cancelBlock];
 }
 
 -(JMessage *)sendMediaMessage:(JMessage *)message
@@ -1608,7 +1608,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
-    if(messageOption.mentionInfo != nil){
+    if(messageOption.mentionInfo != nil) {
         message.mentionInfo = messageOption.mentionInfo;
     }
     if (messageOption.referredMsgId != nil) {
@@ -1616,11 +1616,12 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
         message.referredMsg = referredMsg;
     }
     
-    [self.core.dbManager insertMessages:@[message]];
-    
-    if (conversation.conversationType != JConversationTypeChatroom) {
-        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
-            [self.sendReceiveDelegate messageDidSave:message];
+    if (message.flags & JMessageFlagIsSave) {
+        [self.core.dbManager insertMessages:@[message]];
+        if (conversation.conversationType != JConversationTypeChatroom) {
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSave:)]) {
+                [self.sendReceiveDelegate messageDidSave:message];
+            }
         }
     }
     
