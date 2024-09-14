@@ -101,7 +101,7 @@ open class SBUImageContentView: SBUBaseFileContentView {
                 thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
             }
         } else if let videoMessage = message.content as? JVideoMessage {
-            imageOption = .videoURLToImage
+            imageOption = .imageToThumbnail
             urlString = videoMessage.snapshotUrl
             thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
         } else {
@@ -133,14 +133,23 @@ open class SBUImageContentView: SBUBaseFileContentView {
     }
     
     public func setFileIcon() {
-        self.iconImageView.backgroundColor = nil
-        if self.imageView.image == nil {
-            self.iconImageView.image = SBUIconSetType.iconPhoto.image(
-                with: theme.fileMessagePlaceholderColor,
-                to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
+        if let imageMessage = message.content as? JImageMessage {
+            self.iconImageView.backgroundColor = nil
+            if self.imageView.image == nil {
+                self.iconImageView.image = SBUIconSetType.iconPhoto.image(
+                    with: theme.fileMessagePlaceholderColor,
+                    to: SBUIconSetType.Metric.defaultIconSizeVeryLarge
+                )
+            } else {
+                self.iconImageView.image = nil
+            }
+        } else if let videoMessage = message.content as? JVideoMessage {
+            self.iconImageView.image = SBUIconSetType.iconPlay.image(
+                with: theme.fileImageIconColor,
+                to: SBUIconSetType.Metric.iconGifPlay
             )
-        } else {
-            self.iconImageView.image = nil
+            self.iconImageView.backgroundColor = theme.fileImageBackgroundColor
+            self.iconImageView.layer.cornerRadius = self.iconImageView.frame.height / 2
         }
     }
     

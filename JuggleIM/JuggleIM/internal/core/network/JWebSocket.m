@@ -138,7 +138,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
-                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock{
+                error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData;
@@ -1234,9 +1234,10 @@ inConversation:(JConversation *)conversation
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JChatroomObj class]]) {
         JChatroomObj *chatroomObj = (JChatroomObj *)obj;
-        if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:)])  {
+        if ([self.chatroomDelegate respondsToSelector:@selector(attributesDidSync:forChatroom:code:)])  {
             [self.chatroomDelegate attributesDidSync:ack.items
-                                         forChatroom:chatroomObj.chatroomId];
+                                         forChatroom:chatroomObj.chatroomId
+                                                code:ack.code];
         }
     }
 }

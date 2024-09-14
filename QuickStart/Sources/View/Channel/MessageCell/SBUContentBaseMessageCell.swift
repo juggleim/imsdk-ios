@@ -194,9 +194,6 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                         self.messageSpacing
                     ])
                 ])
-            ]),
-            self.threadHStackView.setHStack([
-                self.threadInfoSpacing
             ])
         ])
 

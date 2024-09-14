@@ -17,6 +17,7 @@
 #import "JLogger.h"
 #import "JDataConverterProtocol.h"
 #import "JSimpleDataConverter.h"
+#import "JuggleIMConstInternal.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -164,7 +165,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                          clientIp:(NSString *)clientIp {
     ConnectMsgBody *connectMsg = [[ConnectMsgBody alloc] init];
     connectMsg.protoId = JProtoId;
-    connectMsg.sdkVersion = JSDKVersion;
+    connectMsg.sdkVersion = JIMVersion;
     connectMsg.appkey = appKey;
     connectMsg.token = token;
     connectMsg.deviceId = deviceId;
@@ -192,7 +193,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (needPush) {
         body.code = 0;
     } else {
-        body.code = 1;
+        body.code = 11012;
     }
     body.timestamp = [[NSDate date] timeIntervalSince1970]*1000;
     

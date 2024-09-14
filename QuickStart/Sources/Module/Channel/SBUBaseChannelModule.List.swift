@@ -387,6 +387,7 @@ extension SBUBaseChannelModule {
         
         var isTransformedList: Bool = true
         var isTableViewReloading = false
+        var needReload = false
         
         // MARK: - LifeCycle
         required public init?(coder: NSCoder) {
@@ -517,17 +518,27 @@ extension SBUBaseChannelModule {
         // MARK: - TableView
         /// Reloads table view. This method corresponds to `UITableView reloadData()`.
         public func reloadTableView(needsToLayout: Bool = true) {
-            if let gropuChannelModuleList = self as? SBUGroupChannelModule.List {
-                gropuChannelModuleList.shouldRedrawTypingBubble = gropuChannelModuleList.decideToRedrawTypingBubble()
+            if let groupChannelModuleList = self as? SBUGroupChannelModule.List {
+                groupChannelModuleList.shouldRedrawTypingBubble = groupChannelModuleList.decideToRedrawTypingBubble()
             }
             
             Thread.executeOnMain { [weak self] in
+                if let isTableViewReloading = self?.isTableViewReloading, isTableViewReloading == true {
+                    self?.needReload = true
+                    return
+                }
                 self?.isTableViewReloading = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self?.isTableViewReloading = false
+                    if let needReload = self?.needReload, needReload == true {
+                        self?.needReload = false
+                        self?.reloadTableView()
+                    }
+                }
                 self?.tableView.reloadData()
                 if needsToLayout {
                     self?.tableView.layoutIfNeeded()
                 }
-                self?.isTableViewReloading = false
             }
         }
         

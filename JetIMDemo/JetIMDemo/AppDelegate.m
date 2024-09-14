@@ -28,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiCpZ8oe-D3FNjlRQl_RwC9Wwxj1Slbal1sxQSHfVoXoKw=="];
+    [JIM.shared.connectionManager connectWithToken:kToken1182];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -109,21 +109,31 @@
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"lifei, chatroomDidJoin, chatroomId is %@", chatroomId);
     
+    JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypeChatroom conversationId:@"chatroom1001"];
+//    JTextMessage *t = [[JTextMessage alloc] initWithContent:@"0904 test chatroom"];
+//    [JIM.shared.messageManager sendMessage:t
+//                            inConversation:c
+//                                   success:^(JMessage *message) {
+//        NSLog(@"lifei, chatroom send message success");
+//    } error:^(JErrorCode errorCode, JMessage *message) {
+//        NSLog(@"lifei, chatroom send message error");
+//    }];
     
-//    NSDictionary <NSString *, NSString *> *attr = @{@"key4":@"value4", @"key5":@"value5"};
+    
+    NSDictionary <NSString *, NSString *> *attr = @{@"key4":@"value4", @"key5":@"value5"};
 //    [JIM.shared.chatroomManager setAttributes:attr
-//                                  forChatroom:@"asdfasdfasf"
+//                                  forChatroom:@"chatroom1001"
 //                                     complete:^(JErrorCode code, NSDictionary<NSString *,NSNumber *> *failedKeys) {
 //        int i = 1;
 //    }];
 //    
-//    NSArray <NSString *> *keys = @[@"key4"];
+    NSArray <NSString *> *keys = @[@"key4"];
     
-//    [JIM.shared.chatroomManager removeAttributes:keys
-//                                     forChatroom:@"chatroom1001"
-//                                        complete:^(JErrorCode code, NSDictionary<NSString *,NSNumber *> *failedKeys) {
-//        int i = 1;
-//    }];
+    [JIM.shared.chatroomManager removeAttributes:keys
+                                     forChatroom:@"chatroom1001"
+                                        complete:^(JErrorCode code, NSDictionary<NSString *,NSNumber *> *failedKeys) {
+        int i = 1;
+    }];
     
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        [JIM.shared.chatroomManager quitChatroom:chatroomId];

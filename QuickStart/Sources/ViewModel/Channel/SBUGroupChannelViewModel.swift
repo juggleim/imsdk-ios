@@ -95,68 +95,6 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     }
     
     // MARK: - Message
-    /// Sends a multiple files message.
-    /// - Parameters:
-    ///    - fileInfoList: A list of `UploadableFileInfo` that contains information about the files to be included in the multiple files message.
-    /// - Since: 3.10.0
-//    open func sendMultipleFilesMessage(fileInfoList: [UploadableFileInfo]) {
-//        if let channel = self.channel as? GroupChannel {
-//            let param = MultipleFilesMessageCreateParams(uploadableFileInfoList: fileInfoList)
-//            SBUGlobalCustomParams.multipleFilesMessageParamsSendBuilder?(param)
-//
-//            let preSendMessage: MultipleFilesMessage?
-//            preSendMessage = channel.sendMultipleFilesMessage(
-//                params: param,
-//                fileUploadHandler: { requestId, index, _, error in
-//                    if let error = error {
-//                        SBULog.error("Multiple files message - failed to upload file at index [\(index)]. \(error.localizedDescription)")
-//                    } else {
-//                        SBULog.info("Multiple files message - file at index [\(index)] upload completed.")
-//                    }
-//
-//                    // Update the multipleFilesMessage collection view cell
-//                    // when the upload is complete.
-//                    self.updateMultipleFilesMessageCell(requestId: requestId, index: index)
-//                },
-//                completionHandler: { [weak self] multipleFilesMessage, error in
-//                    if let error = error {
-//                        SBULog.error(error.localizedDescription)
-//                    }
-//                    self?.sendMultipleFilesMessageCompletionHandler?(multipleFilesMessage, error)
-//                })
-//
-//            // Save each file data to cache.
-//            if let preSendMessage = preSendMessage {
-//                for (index, fileInfo) in param.uploadableFileInfoList.enumerated() {
-//                    SBUCacheManager.Image.preSave(
-//                        multipleFilesMessage: preSendMessage,
-//                        uploadableFileInfo: fileInfo,
-//                        index: index
-//                    )
-//                }
-//            }
-//
-//            // Upsert pending message to fullMessageList.
-//            if let preSendMessage = preSendMessage, self.messageListParams.belongsTo(preSendMessage) {
-//              // Upsert pendingMessage.
-//              self.pendingMessageManager.upsertPendingMessage(
-//                  channelURL: channel.channelURL,
-//                  message: preSendMessage
-//              )
-//            } else {
-//                SBULog.info("A filtered file message has been sent.")
-//            }
-//
-//            self.sortAllMessageList(needReload: true)
-//            let context = MessageContext(source: .eventMessageSent, sendingStatus: .succeeded)
-//            self.baseDelegate?.baseChannelViewModel(
-//                self,
-//                shouldUpdateScrollInMessageList: self.fullMessageList,
-//                forContext: context,
-//                keepsScroll: false
-//            )
-//        }
-//    }
     
     /// Updates a multiple files message cell of the given index of a multiple files message.
     /// - Parameters:
@@ -251,30 +189,45 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         
         let count = self.messageList.count
         let startTime = count > 0 ? self.messageList[count-1].timestamp : 0
-        JIM.shared().messageManager.getLocalAndRemoteMessages(from: self.conversationInfo?.conversation, startTime: startTime, count: Int32(defaultFetchLimit), direction: .older) { localMessageList, needRemote in
+        
+        let option = JGetMessageOptions()
+        option.startTime = startTime
+        option.count = Int32(defaultFetchLimit)
+        JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { localMessageList, errorCode in
+            SBULog.info("[Request] Prev message list local count is \(count)")
             self.upsertMessagesInList(messages: localMessageList, needReload: true)
-            if let count = localMessageList?.count {
-                SBULog.info("[Request] Prev message list local count is \(count), needRemote is \(needRemote)")
-                if count < self.defaultFetchLimit && !needRemote {
-                    self.hasPreviousMessage = false
-                }
-            }
-            if (!needRemote) {
-                self.prevLock.unlock()
-                SBULog.info("Prev message list local unlock")
-            }
-        } remoteMessageBlock: { remoteMessageList in
-            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0)")
-            if let count = remoteMessageList?.count, count < self.defaultFetchLimit {
-                self.hasPreviousMessage = false
-            }
+        } remoteMessageBlock: { remoteMessageList, timestamp, hasMore, errorCode in
+            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0), hasMore is \(hasMore)")
             self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
+            self.hasPreviousMessage = hasMore
             self.prevLock.unlock()
             SBULog.info("Prev message list remote unlock")
-        } error: { errorCode in
-            self.prevLock.unlock()
-            SBULog.info("Prev message list error unlock")
         }
+
+//        JIM.shared().messageManager.getLocalAndRemoteMessages(from: self.conversationInfo?.conversation, startTime: startTime, count: Int32(defaultFetchLimit), direction: .older) { localMessageList, needRemote in
+//            self.upsertMessagesInList(messages: localMessageList, needReload: true)
+//            if let count = localMessageList?.count {
+//                SBULog.info("[Request] Prev message list local count is \(count), needRemote is \(needRemote)")
+//                if count < self.defaultFetchLimit && !needRemote {
+//                    self.hasPreviousMessage = false
+//                }
+//            }
+//            if (!needRemote) {
+//                self.prevLock.unlock()
+//                SBULog.info("Prev message list local unlock")
+//            }
+//        } remoteMessageBlock: { remoteMessageList in
+//            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0)")
+//            if let count = remoteMessageList?.count, count < self.defaultFetchLimit {
+//                self.hasPreviousMessage = false
+//            }
+//            self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
+//            self.prevLock.unlock()
+//            SBULog.info("Prev message list remote unlock")
+//        } error: { errorCode in
+//            self.prevLock.unlock()
+//            SBULog.info("Prev message list error unlock")
+//        }
     }
     
     /// Loads next messages from `lastUpdatedTimestamp`.
@@ -452,11 +405,6 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
             return
         }
-//        self.delegate?.baseChannelViewModel(
-//            self,
-//            shouldUpdateScrollInMessageList: [message],
-//            keepsScroll: true
-//        )
         self.upsertMessagesInList(messages: [message], needReload: true)
         
         JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {

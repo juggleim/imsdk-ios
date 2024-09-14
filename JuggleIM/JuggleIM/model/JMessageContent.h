@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 消息类型
 + (NSString *)contentType;
 
-/// 消息属性，如果不设置则默认为 JMessageFlagIsCountable & JMessageFlagIsSave
+/// 消息属性，如果不设置则默认为 JMessageFlagIsCountable | JMessageFlagIsSave
 + (JMessageFlag)flags;
 
 /// 数据序列化方法

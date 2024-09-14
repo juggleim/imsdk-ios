@@ -7,4 +7,3 @@
 
 #define JProtoId @"jug9le1m"
 #define JuggleIMProtocolVersion 1
-#define JSDKVersion @"1.0.0"

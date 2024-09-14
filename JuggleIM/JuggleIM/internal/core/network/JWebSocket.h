@@ -46,7 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)syncChatroomAttrNotify:(NSString *)chatroomId
                           time:(long long)syncTime;
 - (void)attributesDidSync:(NSArray <JChatroomAttributeItem *> *)items
-              forChatroom:(NSString *)chatroomId;
+              forChatroom:(NSString *)chatroomId
+                     code:(JErrorCodeInternal)code;
 - (void)chatroomDidDestroy:(NSString *)chatroomId;
 - (void)chatroomDidQuit:(NSString *)chatroomId;
 - (void)chatroomDidKick:(NSString *)chatroomId;

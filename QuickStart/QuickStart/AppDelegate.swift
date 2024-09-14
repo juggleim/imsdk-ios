@@ -9,9 +9,7 @@ import UIKit
 import JuggleIM
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -21,7 +19,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         JIM.shared().initWithAppKey(appKey)
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
+        
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .authorized:
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            case .notDetermined:
+                UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .alert, .sound]) { granted, error in
+                    if granted {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
+            default:
+                break
+            }
+        }
+        
         return true
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        JIM.shared().connectionManager.registerDeviceToken(deviceToken)
+        SBULog.info("token did register")
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
+        SBULog.info("fail to register token, error is \(error.localizedDescription)")
     }
 
     // MARK: UISceneSession Lifecycle

@@ -54,7 +54,15 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     public init() {
         super.init(nibName: nil, bundle: nil)
         
-        self.createViewModel()
+        self.createViewModel(conversationTypes:nil)
+        self.headerComponent = SBUModuleSet.GroupChannelListModule.HeaderComponent.init()
+        self.listComponent = SBUModuleSet.GroupChannelListModule.ListComponent.init()
+    }
+    
+    public init(conversationTypes: [NSNumber]?) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.createViewModel(conversationTypes:conversationTypes)
         self.headerComponent = SBUModuleSet.GroupChannelListModule.HeaderComponent.init()
         self.listComponent = SBUModuleSet.GroupChannelListModule.ListComponent.init()
     }
@@ -85,8 +93,9 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
     /// Creates the view model.
     /// - Parameter channelListQuery: Customer's own `GroupChannelListQuery` object
     /// - Since: 3.0.0
-    open func createViewModel() {
+    open func createViewModel(conversationTypes: [NSNumber]?) {
         self.viewModel = SBUGroupChannelListViewModel(
+            conversationTypes: conversationTypes,
             delegate: self
         )
     }

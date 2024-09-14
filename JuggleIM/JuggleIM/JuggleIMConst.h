@@ -60,7 +60,7 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //不是群成员
     JErrorCodeNotGroupMember = 13002,
     
-    //默认错误
+    //聊天室默认错误
     JErrorCodeChatroomUnknownError = 14000,
     //非聊天室成员
     JErrorCodeNotChatroomMember = 14001,

@@ -37,8 +37,7 @@
              progress:(void (^)(int progress))progressBlock
               success:(void (^)(JMessage * jmessage))successBlock
                 error:(void (^)(void))errorBlock
-               cancel:(void (^)(void))cancelBlock{
-    
+               cancel:(void (^)(void))cancelBlock {
     if(self.core.webSocket == nil){
         JLogE(@"J-Uploader", @"uploadMessage fail, webSocket is null, message = %lld", message.clientMsgNo);
         if(errorBlock){

@@ -82,7 +82,7 @@ public protocol SBUBaseChannelViewModelDelegate: SBUCommonViewModelDelegate {
 
 open class SBUBaseChannelViewModel: NSObject {
     // MARK: - Constant
-    let defaultFetchLimit = 20
+    let defaultFetchLimit = 30
     
     // MARK: - Logic properties (Public)
     /// The current channel object. It's `JConversationInfo` type.
@@ -278,38 +278,25 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - mimeType: file's mime type.
     ///   - parentMessage: The parent message. The default value is `nil` when there's no parent message.
     open func sendMediaMessage(fileData: Data?, fileName: String, mimeType: String, parentMessage: JMessage? = nil) {
-//        guard let fileData = fileData else { return }
-//        let messageParams = JMessageCreateParams(file: fileData)
-//        messageParams.fileName = fileName
-//        messageParams.mimeType = mimeType
-//        messageParams.fileSize = UInt(fileData.count)
-//
-//        // Image size
-//        if let image = UIImage(data: fileData) {
-//            let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
-//            messageParams.thumbnailSizes = [thumbnailSize]
-//        }
-//
-//        // Video thumbnail size
-//        else if let asset = fileData.getAVAsset() {
-//            let avAssetImageGenerator = AVAssetImageGenerator(asset: asset)
-//            avAssetImageGenerator.appliesPreferredTrackTransform = true
-//            let cmTime = CMTimeMake(value: 2, timescale: 1)
-//            if let cgImage = try? avAssetImageGenerator.copyCGImage(at: cmTime, actualTime: nil) {
-//                let image = UIImage(cgImage: cgImage)
-//                let thumbnailSize = ThumbnailSize.make(maxSize: image.size)
-//                messageParams.thumbnailSizes = [thumbnailSize]
-//            }
-//        }
-//
-//        SBUGlobalCustomParams.JMessageParamsSendBuilder?(messageParams)
-//
-//        if let parentMessage = parentMessage,
-//           SendbirdUI.config.groupChannel.channel.replyType != .none {
-//            messageParams.parentMessageId = parentMessage.messageId
-//            messageParams.isReplyToChannel = true
-//        }
-//        self.sendJMessage(messageParams: messageParams, parentMessage: parentMessage)
+        guard let fileData = fileData else { return }
+        let videoMessage = JVideoMessage.video(with: fileData)
+        
+        let message = JIM.shared().messageManager.sendMediaMessage(videoMessage, in: conversationInfo?.conversation) { progress, message in
+            
+        } success: { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code, errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        } cancel: { cancelMessage in
+            
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }
     
     /// Sends a voice message with ``SBUVoiceFileInfo`` object that contains essential information of a voice message.
@@ -591,7 +578,11 @@ open class SBUBaseChannelViewModel: NSObject {
     ) {
         SBULog.info("First : \(String(describing: messages?.first)), Last : \(String(describing: messages?.last))")
         
-        messages?.forEach { message in
+        guard let messages = messages, messages.count > 0 else {
+            return
+        }
+        
+        messages.forEach { message in
             if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
                 self.messageList.remove(at: index)
             }

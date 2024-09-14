@@ -314,7 +314,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     open override func showChannelSettings() {
-        guard let conversationInfo = self.conversationInfo else { return }
+//        guard let conversationInfo = self.conversationInfo else { return }
         
 //        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(channel: channel)
 //        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
@@ -331,10 +331,10 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
             return
         }
         
-        var parentMessage: JMessage?
-        if let fullMessageList = self.viewModel?.fullMessageList {
-            parentMessage = fullMessageList.first(where: { $0.clientMsgNo == parentMessageId })
-        }
+//        var parentMessage: JMessage?
+//        if let fullMessageList = self.viewModel?.fullMessageList {
+//            parentMessage = fullMessageList.first(where: { $0.clientMsgNo == parentMessageId })
+//        }
            
 //        let messageThreadVC = SBUViewControllerSet.MessageThreadViewController.init(
 //            channelURL: channelURL,
@@ -609,23 +609,23 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     func updateVoiceMessageInputMode() {
-        let showAlertCompletionHandler: ((String) -> Void) = { title in
-            self.resetVoiceMessageInput()
-            
-            SBUAlertView.show(
-                title: title,
-                confirmButtonItem: SBUAlertButtonItem(
-                    title: SBUStringSet.OK,
-                    completionHandler: { _ in
-                        self.dismissVoiceMessageInput()
-                    }
-                ), cancelButtonItem: nil
-            ) {
-                self.dismissVoiceMessageInput()
-            }
-        }
+//        let showAlertCompletionHandler: ((String) -> Void) = { title in
+//            self.resetVoiceMessageInput()
+//            
+//            SBUAlertView.show(
+//                title: title,
+//                confirmButtonItem: SBUAlertButtonItem(
+//                    title: SBUStringSet.OK,
+//                    completionHandler: { _ in
+//                        self.dismissVoiceMessageInput()
+//                    }
+//                ), cancelButtonItem: nil
+//            ) {
+//                self.dismissVoiceMessageInput()
+//            }
+//        }
         
-        var title = ""
+//        var title = ""
         
         // Frozen
 //        let isOperator = self.channel?.myRole == .operator
@@ -714,8 +714,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     // MARK: - SBUGroupChannelModuleListDelegate
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-        guard let currentUser = SBUGlobals.currentUser,
-              let message = messageCell.message else { return }
+//        guard let currentUser = SBUGlobals.currentUser,
+//              let message = messageCell.message else { return }
         
 //        let shouldSelect = message.reactions.first { $0.key == emojiKey }?
 //            .userIds.contains(currentUser.userId) == false
@@ -723,8 +723,8 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didLongTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-        guard let conversationInfo = self.conversationInfo,
-              let message = messageCell.message else { return }
+//        guard let conversationInfo = self.conversationInfo,
+//              let message = messageCell.message else { return }
         
 //        let reaction = message.reactions.first { $0.key == emojiKey }
 //        let reactionsVC = SBUReactionsViewController(

@@ -299,7 +299,7 @@
                             direction:(JPullDirection)direction
                     localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
                    remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
-                                error:(void (^)(JErrorCode code))errorBlock __deprecated_msg("Please use getMessages:option:localMessageBlock:remoteMessageBlock instead");
+                                error:(void (^)(JErrorCode code))errorBlock __deprecated_msg("Please use getMessages:direction:option:localMessageBlock:remoteMessageBlock instead");
 
 /// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。该接口必定回调两次，先回调本地的缓存消息（有可能存在缺失），再回调远端的消息。
 /// - Parameters:

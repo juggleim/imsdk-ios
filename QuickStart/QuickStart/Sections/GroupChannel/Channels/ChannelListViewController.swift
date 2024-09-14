@@ -13,7 +13,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
 
     lazy var rightBarButton: UIBarButtonItem = {
         let rightItem =  UIBarButtonItem(
-            title: "Menu",
+            image: SBUIconSetType.iconCreate.image(to: SBUIconSetType.Metric.defaultIconSize),
             style: .plain,
             target: self,
             action: #selector(onClickMenu)
@@ -40,7 +40,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     
     @objc func onClickMenu() {
         let searchUserItem = SBUActionSheetItem(
-            title: "Search user by phone number",
+            title: "Add friend",
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
@@ -75,7 +75,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
         SBUAlertView.show(
-            title: "Search user by phone number",
+            title: "Add friend",
             needInputField: true,
             placeHolder: "Enter phone number",
             centerYRatio: 0.75,

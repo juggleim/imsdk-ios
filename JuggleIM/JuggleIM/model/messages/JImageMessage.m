@@ -44,12 +44,14 @@
         NSString *localPath = [mediaPath stringByAppendingPathComponent:fileName];
         [imgData writeToFile:localPath atomically:YES];
         self.localPath = localPath;
-        UIImage *thumbnail = [JUtility generateThumbnail:image targetSize:CGSizeMake(240, 240)];
-        NSData *thumbData = UIImageJPEGRepresentation(thumbnail, 0.3);
+        UIImage *thumbnail = [JUtility generateThumbnail:image targetSize:CGSizeMake(JThumbnailWidth, JThumbnailHeight)];
+        NSData *thumbData = UIImageJPEGRepresentation(thumbnail, jThumbnailQuality);
         NSString *thumbName = [NSString stringWithFormat:@"thumb_%@", fileName];
         NSString *thumbPath = [mediaPath stringByAppendingPathComponent:thumbName];
         [thumbData writeToFile:thumbPath atomically:YES];
         self.thumbnailLocalPath = thumbPath;
+        self.width = image.size.width;
+        self.height = image.size.height;
     }
     return self;
 }

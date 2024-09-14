@@ -7,12 +7,15 @@
 
 #import "JChatroomManager.h"
 #import "JLogger.h"
+#import "JIntervalGenerator.h"
 
 @interface JChatroomManager () <JWebSocketChatroomDelegate>
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JChatroomDelegate>> *delegates;
 @property (nonatomic, strong) NSHashTable <id<JChatroomAttributesDelegate>> *attributesDelegates;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, JCachedChatroom *> *cachedChatroomDic;
+@property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
+@property (nonatomic, strong) NSTimer *attrRetryTimer;
 @end
 
 @implementation JChatroomManager
@@ -49,8 +52,7 @@
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
-        [self.core.webSocket syncChatroomMessagesWithTime:[self getSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
-        [self.core.webSocket syncChatroomAttributesWithTime:[self getAttrSyncTimeForChatroom:chatroomId] chatroomId:chatroomId];
+        [self syncChatroomAttr:chatroomId time:[self getAttrSyncTimeForChatroom:chatroomId]];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomDidJoin:)]) {
@@ -179,14 +181,14 @@
                 }
             }];
             if (resultDic.count == 0) {
-                JLogI(@"CHRM-RemoveAttr", @"success");
+                JLogI(@"CHRM-RmAttr", @"success");
                 dispatch_async(ws.core.delegateQueue, ^{
                     if (completeBlock) {
                         completeBlock(JErrorCodeNone, nil);
                     }
                 });
             } else {
-                JLogE(@"CHRM-RemoveAttr", @"partial fail");
+                JLogE(@"CHRM-RmAttr", @"partial fail");
                 dispatch_async(ws.core.delegateQueue, ^{
                     if (completeBlock) {
                         completeBlock(JErrorCodeChatroomBatchSetAttributeFail, [resultDic copy]);
@@ -194,7 +196,7 @@
                 });
             }
         } else {
-            JLogE(@"CHRM-RemoveAttr", @"fail, code is %ld", code);
+            JLogE(@"CHRM-RmAttr", @"fail, code is %ld", code);
             [keys enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 [resultDic setObject:@(code) forKey:obj];
             }];
@@ -224,13 +226,6 @@
                 completeBlock(JErrorCodeNone, attributes);
             }
         });
-    }
-}
-
-- (JChatroomStatus)getStatusForChatroom:(NSString *)chatroomId {
-    @synchronized (self) {
-        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
-        return cachedChatroom.status;
     }
 }
 
@@ -360,7 +355,20 @@
 }
 
 - (void)attributesDidSync:(NSArray<JChatroomAttributeItem *> *)items
-              forChatroom:(nonnull NSString *)chatroomId {
+              forChatroom:(nonnull NSString *)chatroomId
+                     code:(JErrorCodeInternal)code {
+    JLogI(@"CHRM-AttrSync", @"code is %ld, count is %ld", code, items.count);
+    if (code != JErrorCodeInternalNone) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.attrRetryTimer) {
+                return;
+            }
+            self.attrRetryTimer = [NSTimer scheduledTimerWithTimeInterval:[self.intervalGenerator getNextInterval] target:self selector:@selector(attrRetryTimerFired) userInfo:chatroomId repeats:NO];
+        });
+        return;
+    }
+    
+    [self.intervalGenerator reset];
     if (items.count == 0) {
         return;
     }
@@ -440,6 +448,19 @@
 }
 
 #pragma mark -- internal
+- (void)attrRetryTimerFired {
+    NSString *chatroomId = self.attrRetryTimer.userInfo;
+    [self stopAttrRetryTimer];
+    [self syncChatroomAttr:chatroomId time:[self getAttrSyncTimeForChatroom:chatroomId]];
+}
+
+- (void)stopAttrRetryTimer {
+    if (self.attrRetryTimer) {
+        [self.attrRetryTimer invalidate];
+        self.attrRetryTimer = nil;
+    }
+}
+
 - (void)syncChatroomAttr:(nonnull NSString *)chatroomId time:(long long)syncTime {
     JLogI(@"MSG-ChrmAttrSync", @"id is %@, time is %lld", chatroomId, syncTime);
     [self.core.webSocket syncChatroomAttributesWithTime:syncTime
@@ -465,6 +486,13 @@
         _cachedChatroomDic = [NSMutableDictionary dictionary];
     }
     return _cachedChatroomDic;
+}
+
+- (JIntervalGenerator *)intervalGenerator {
+    if (!_intervalGenerator) {
+        _intervalGenerator = [[JIntervalGenerator alloc] init];
+    }
+    return _intervalGenerator;
 }
 
 @end

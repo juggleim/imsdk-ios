@@ -687,6 +687,18 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             }
         }
         
+        if let videoMessage = message.content as? JVideoMessage {
+            switch message.messageState {
+            case .uploading, .sending, .unknown:
+                break
+            case .fail:
+                //TODO: resend
+                break
+            case .sent:
+                self.openFile(message: message)
+            }
+        }
+        
 //        switch message.content {
 //
 ////        case let textMessage as JTextMessage:
