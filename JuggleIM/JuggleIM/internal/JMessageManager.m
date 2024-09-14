@@ -1258,6 +1258,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 
 - (void)connectSuccess {
     self.syncProcessing = YES;
+    self.syncNotifyTime = 0;
 }
 
 #pragma mark - JChatroomProtocol
