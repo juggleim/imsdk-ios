@@ -10,14 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationMentionMessage : NSObject
-
-@property (nonatomic, copy) NSString * senderId;
-
-@property (nonatomic, copy) NSString * msgId;
-
+@property (nonatomic, copy) NSString *senderId;
+@property (nonatomic, copy) NSString *msgId;
 @property (nonatomic, assign) long long msgTime;
-
-
 @end
 
 
