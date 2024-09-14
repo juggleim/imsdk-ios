@@ -500,7 +500,7 @@
     NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
     NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
     for (JConcreteMessage * removedMessage in removedMessages) {
-        if(removedMessage.messageId == nil){
+        if(removedMessage.messageId == nil) {
             continue;
         }
         JConversationMentionMessage * temp = [[JConversationMentionMessage alloc] init];
