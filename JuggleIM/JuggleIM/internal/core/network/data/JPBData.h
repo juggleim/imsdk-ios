@@ -16,6 +16,7 @@
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
+#import "JPushData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -183,7 +184,8 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
-                    referredMessage:(JConcreteMessage *)referredMessage;
+                    referredMessage:(JConcreteMessage *)referredMessage
+                           pushData:(JPushData *)pushData;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                        extras:(NSDictionary *)extras

@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JMessageMentionInfo.h"
-
+#import "JPushData.h"
 
 @interface JMessageOptions : NSObject
 
@@ -17,7 +17,6 @@
 /// 引用消息
 @property (nonatomic, copy) NSString *referredMsgId;
 
-
+/// 推送信息
+@property (nonatomic, strong) JPushData *pushData;
 @end
-
-

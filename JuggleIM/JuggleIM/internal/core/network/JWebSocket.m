@@ -137,6 +137,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                userId:(NSString *)userId
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
+             pushData:(JPushData *)pushData
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -162,7 +163,8 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                                         conversationType:conversation.conversationType
                                           conversationId:conversation.conversationId
                                              mentionInfo:mentionInfo
-                                         referredMessage:referredMessage];
+                                         referredMessage:referredMessage
+                                                pushData:pushData];
         JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];

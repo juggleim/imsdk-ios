@@ -1517,6 +1517,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                 userId:self.core.userId
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
+                              pushData:message.pushData
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
@@ -1609,12 +1610,15 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
-    if(messageOption.mentionInfo != nil) {
+    if(messageOption.mentionInfo) {
         message.mentionInfo = messageOption.mentionInfo;
     }
-    if (messageOption.referredMsgId != nil) {
+    if (messageOption.referredMsgId) {
         JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId];
         message.referredMsg = referredMsg;
+    }
+    if (messageOption.pushData) {
+        message.pushData = messageOption.pushData;
     }
     
     if (message.flags & JMessageFlagIsSave) {

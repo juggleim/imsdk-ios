@@ -142,9 +142,9 @@ NSString *const jReferMsgId = @"refer_msg_id";
                 obj.clientMsgNo = db.lastInsertRowId;
             }
             
-            if(obj.referredMsg != nil){
+            if(obj.referredMsg != nil) {
                 JConcreteMessage * ref = [self getMessageWithMessageId:obj.referredMsg.messageId inDb:db];
-                if(ref == nil){
+                if (ref == nil) {
                     [self insertMessage:obj.referredMsg inDb:db];
                 }
             }

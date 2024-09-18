@@ -17,6 +17,7 @@
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
+#import "JPushData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -86,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
                userId:(NSString *)userId
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
+             pushData:(JPushData *)pushData
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 

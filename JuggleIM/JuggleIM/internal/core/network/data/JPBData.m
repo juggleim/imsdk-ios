@@ -216,7 +216,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
                    conversationType:(JConversationType)conversationType
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
-                    referredMessage:(JConcreteMessage *)referredMessage{
+                    referredMessage:(JConcreteMessage *)referredMessage
+                           pushData:(nonnull JPushData *)pushData {
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -242,7 +243,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (isBroadcast) {
         upMsg.flags |= JMessageFlagIsBroadcast;
     }
-    if (mentionInfo != nil) {
+    if (mentionInfo) {
         MentionInfo *pbMentionInfo = [[MentionInfo alloc] init];
         pbMentionInfo.mentionType = (int32_t)mentionInfo.type;
         NSMutableArray <UserInfo *> *pbUsers = [NSMutableArray array];
@@ -255,10 +256,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
         upMsg.mentionInfo = pbMentionInfo;
     }
     
-    if(referredMessage != nil){
+    if (referredMessage) {
         DownMsg * referredDownMsg = [self downMsgWithMessage:referredMessage];
         upMsg.referMsg = referredDownMsg;
-        
+    }
+    if (pushData) {
+        PushData *pbPushData = [[PushData alloc] init];
+        pbPushData.pushText = pushData.content;
+        pbPushData.pushExtraData = pushData.extra;
+        upMsg.pushData = pbPushData;
     }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];

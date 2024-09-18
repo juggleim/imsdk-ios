@@ -28,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:kToken1182];
+    [JIM.shared.connectionManager connectWithToken:kToken1181];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -89,7 +89,22 @@
     NSLog(@"lifei, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"NT9cTOPsU"];
+            JMessageOptions *o = [[JMessageOptions alloc] init];
+            JPushData *pushData = [[JPushData alloc] init];
+            pushData.content = @"push content";
+            pushData.extra = @"push extra";
+            o.pushData = pushData;
+            JMessageContent *content = [[JMessageContent alloc] init];
+            JTextMessage *t = [[JTextMessage alloc] initWithContent:@"text message"];
+            [JIM.shared.messageManager sendMessage:content
+                                     messageOption:o
+                                    inConversation:c
+                                           success:^(JMessage *message) {
+                int i = 1;
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                int i = 1;
+            }];
 //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //                [JIM.shared.chatroomManager getAllAttributesFromChatroom:@"chatroom1001"
 //                                                                                   complete:^(JErrorCode code, NSDictionary<NSString *,NSString *> *attributes) {
