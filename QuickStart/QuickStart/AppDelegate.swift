@@ -13,6 +13,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        print("lifei didFinishLaunchingWithOptions")
+        
         JIM.shared().setServer(["https://nav.juggleim.com"])
         let appKey = "nsw3sue72begyv7y"
         JIM.shared().setConsoleLogLevel(.verbose)
@@ -38,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
                 break
             }
         }
+        UNUserNotificationCenter.current().delegate = self
         
         return true
     }
@@ -45,6 +49,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         JIM.shared().connectionManager.registerDeviceToken(deviceToken)
         SBULog.info("token did register")
+    }
+    
+  
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print("userNotificationCenter userInfo is \(response.notification.request.content.userInfo)")
+        completionHandler()
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {

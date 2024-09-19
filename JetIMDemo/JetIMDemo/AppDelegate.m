@@ -93,7 +93,7 @@
             JMessageOptions *o = [[JMessageOptions alloc] init];
             JPushData *pushData = [[JPushData alloc] init];
             pushData.content = @"push content";
-//            pushData.extra = @"push extra";
+            pushData.extra = @"push extra";
             o.pushData = pushData;
             JMessageContent *content = [[JMessageContent alloc] init];
             JTextMessage *t = [[JTextMessage alloc] initWithContent:@"text message"];
