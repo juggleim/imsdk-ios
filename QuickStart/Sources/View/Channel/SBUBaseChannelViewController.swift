@@ -675,7 +675,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
         self.dismissKeyboard()
         
-        if let imageMessage = message.content as? JImageMessage {
+        switch message.content {
+        case is JImageMessage, is JVideoMessage, is JFileMessage:
             switch message.messageState {
             case .uploading, .sending, .unknown:
                 break
@@ -684,33 +685,13 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
                 break
             case .sent:
                 self.openFile(message: message)
+            default:
+                break
             }
+        default:
+            break
         }
-        
-        if let videoMessage = message.content as? JVideoMessage {
-            switch message.messageState {
-            case .uploading, .sending, .unknown:
-                break
-            case .fail:
-                //TODO: resend
-                break
-            case .sent:
-                self.openFile(message: message)
-            }
-        }
-        
-        if let fileMessage = message.content as? JFileMessage {
-            switch message.messageState {
-            case .uploading, .sending, .unknown:
-                break
-            case .fail:
-                //TODO: resend
-                break
-            case .sent:
-                self.openFile(message: message)
-            }
-        }
-        
+                
 //        switch message.content {
 //
 ////        case let textMessage as JTextMessage:
