@@ -417,7 +417,16 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
     }
     
     public func messageDidDelete(_ conversation: JConversation!, clientMsgNos: [NSNumber]!) {
-        
+        if !conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        if clientMsgNos.count > 0 {
+            var int64List: [Int64] = []
+            for clientMsgNo in clientMsgNos {
+                int64List.append(clientMsgNo.int64Value)
+            }
+            self.deleteMessagesInList(clientMsgNos: int64List, needReload: true)
+        }
     }
     
     public func messageDidClear(_ conversation: JConversation!, timestamp: Int64, senderId: String!) {
