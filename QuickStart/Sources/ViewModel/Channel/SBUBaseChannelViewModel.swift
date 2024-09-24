@@ -441,77 +441,20 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Parameter failedMessage: `JMessage` class based failed object
     /// - Since: 1.0.9
     public func resendMessage(failedMessage: JMessage) {
+        self.deleteMessagesInList(clientMsgNos: [failedMessage.clientMsgNo], needReload: true)
         
-//        if let failedMessage = failedMessage as? UserMessage {
-//            SBULog.info("[Request] Resend failed user message")
-//
-//            let pendingMessage = self.channel?.resendUserMessage(
-//                failedMessage
-//            ) { [weak self] message, error in
-//                guard let self = self else { return }
-//                self.handlePendingResendableMessage(message, error)
-//            }
-//
-//            self.pendingMessageManager.upsertPendingMessage(
-//                channelURL: self.channel?.channelURL,
-//                message: pendingMessage,
-//                forMessageThread: self.isThreadMessageMode
-//            )
-//
-//            if let failedMessage = pendingMessage {
-//                self.deleteMessagesInList(
-//                    messageIds: [failedMessage.messageId],
-//                    excludeResendableMessages: true,
-//                    needReload: true
-//                )
-//            }
-//
-//        } else if let failedMessage = failedMessage as? JMessage {
-//            var data: Data?
-//
-//            if let fileInfo = self.pendingMessageManager.getFileInfo(
-//                requestId: failedMessage.requestId,
-//                forMessageThread: self.isThreadMessageMode
-//            ) {
-//                data = fileInfo.file
-//            }
-//
-//            SBULog.info("[Request] Resend failed file message")
-//
-//            let pendingMessage = self.channel?.resendJMessage(
-//                failedMessage,
-//                binaryData: data
-//            ) { (_, _, _, _) in
-//                //// If need reload cell for progress, call reload action in here.
-//                // self.tableView.reloadData()
-//            } completionHandler: { [weak self] message, error in
-//                guard let self = self else { return }
-//                self.handlePendingResendableMessage(message, error)
-//            }
-//
-//            self.pendingMessageManager.upsertPendingMessage(
-//                channelURL: self.channel?.channelURL,
-//                message: pendingMessage,
-//                forMessageThread: self.isThreadMessageMode
-//            )
-//
-//            if let failedMessage = pendingMessage {
-//                self.deleteMessagesInList(
-//                    messageIds: [failedMessage.messageId],
-//                    excludeResendableMessages: true,
-//                    needReload: true
-//                )
-//            }
-//        } else if let failedMessage = failedMessage as? MultipleFilesMessage {
-//            let groupChannel = self.channel as? GroupChannel
-//            groupChannel?.resendMultipleFilesMessage(
-//                failedMessage,
-//                fileUploadHandler: { _, _, _, _ in },
-//                completionHandler: { [weak self] message, error in
-//                    guard let self = self else { return }
-//                    self.handlePendingResendableMessage(message, error)
-//            })
-//        }
+        let message = JIM.shared().messageManager.resend(failedMessage) { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code, errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }    
     
     /// Deletes a message with message object.

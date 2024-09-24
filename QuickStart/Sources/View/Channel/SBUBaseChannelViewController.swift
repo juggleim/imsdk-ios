@@ -676,13 +676,19 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         self.dismissKeyboard()
         
         switch message.content {
+        case is JTextMessage:
+            guard message.messageState == .fail else {
+                return
+            }
+            self.baseViewModel?.resendMessage(failedMessage: message)
+//            self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
         case is JImageMessage, is JVideoMessage, is JFileMessage:
             switch message.messageState {
             case .uploading, .sending, .unknown:
                 break
             case .fail:
-                //TODO: resend
-                break
+                self.baseViewModel?.resendMessage(failedMessage: message)
+//                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
             case .sent:
                 self.openFile(message: message)
             default:
@@ -814,7 +820,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteFailedMessage failedMessage: JMessage) {
-        self.baseViewModel?.deleteResendableMessage(failedMessage, needReload: true)
+        self.baseViewModel?.deleteMessage(message: failedMessage)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapUserProfile user: SBUUser) {
