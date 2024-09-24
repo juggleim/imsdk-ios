@@ -130,8 +130,11 @@ open class SBUCommonContentView: SBUBaseFileContentView {
             attributes = [:]
             highlightTextColor = theme.messageRightHighlightTextColor
         }
-        
-        let attributedText = NSMutableAttributedString(string: "", attributes: attributes)
+        var name = ""
+        if let fileMessage = message.content as? JFileMessage {
+            name = fileMessage.name
+        }
+        let attributedText = NSMutableAttributedString(string: name, attributes: attributes)
         if let keyword = highlightKeyword {
             self.addHighlight(
                 keyword: keyword,

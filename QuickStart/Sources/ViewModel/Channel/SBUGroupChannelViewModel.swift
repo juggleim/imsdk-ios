@@ -194,7 +194,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         option.startTime = startTime
         option.count = Int32(defaultFetchLimit)
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { localMessageList, errorCode in
-            SBULog.info("[Request] Prev message list local count is \(count)")
+            SBULog.info("[Request] Prev message list local count is \(localMessageList?.count ?? 0)")
             self.upsertMessagesInList(messages: localMessageList, needReload: true)
         } remoteMessageBlock: { remoteMessageList, timestamp, hasMore, errorCode in
             SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0), hasMore is \(hasMore)")
