@@ -45,6 +45,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        JIM.shared().connectionManager.add(self)
+        
         signInButton.tag = ButtonType.signIn.rawValue
         signInButton.addTarget(self, action: #selector(onTapButton(_:)), for: .touchUpInside)
         
@@ -57,7 +59,14 @@ class ViewController: UIViewController {
         let uikitVersion: String = JuggleUI.version
         versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
         
-        JIM.shared().connectionManager.add(self)
+        phoneNumberTextField.text = UserDefaults.loadPhoneNumber()
+        verifyCodeTextField.text = UserDefaults.loadVerifyCode()
+        
+        guard phoneNumberTextField.text != nil,
+              verifyCodeTextField.text != nil else {
+            return
+        }
+        signinAction()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -108,6 +117,9 @@ class ViewController: UIViewController {
             return
         }
         
+        UserDefaults.savePhoneNumber(phoneNumber)
+        UserDefaults.saveVerifyCode(verifyCode)
+        
         HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser, token in
             if code == 0 {
                 guard let token = token else {
@@ -127,7 +139,6 @@ class ViewController: UIViewController {
 
 extension ViewController: JConnectionDelegate {
     func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
-
     }
     
     func dbDidOpen() {
@@ -141,7 +152,6 @@ extension ViewController: JConnectionDelegate {
     }
     
     func dbDidClose() {
-        
     }
 }
 

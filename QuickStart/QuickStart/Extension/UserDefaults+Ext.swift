@@ -9,18 +9,18 @@
 import UIKit
 
 extension UserDefaults {
-    static func loadUserID() -> String? {
-        return UserDefaults.standard.string(forKey: "user_id")
+    static func loadPhoneNumber() -> String? {
+        return UserDefaults.standard.string(forKey: "phone_number")
     }
-    static func saveUserID(_ userID: String) {
-        UserDefaults.standard.set(userID, forKey: "user_id")
+    static func savePhoneNumber(_ phoneNumber: String) {
+        UserDefaults.standard.set(phoneNumber, forKey: "phone_number")
     }
     
-    static func loadNickname() -> String? {
-        return UserDefaults.standard.string(forKey: "nickname")
+    static func loadVerifyCode() -> String? {
+        return UserDefaults.standard.string(forKey: "verify_code")
     }
-    static func saveNickname(_ nickname: String) {
-        UserDefaults.standard.set(nickname, forKey: "nickname")
+    static func saveVerifyCode(_ verifyCode: String) {
+        UserDefaults.standard.set(verifyCode, forKey: "verify_code")
     }
     
     static func loadIsLightTheme() -> Bool {
