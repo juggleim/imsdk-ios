@@ -518,8 +518,13 @@ open class SBUBaseChannelViewModel: NSObject {
     /// - Parameter message: `JMessage` based class object
     /// - Since: 1.0.9
     public func deleteMessage(message: JMessage) {
-//        SBULog.info("[Request] Delete message: \(message.description)")
-//        self.channel?.deleteMessage(message, completionHandler: nil)
+        SBULog.info("[Request] Delete message: \(message.description)")
+        let clientMsgNo = NSNumber(value:message.clientMsgNo)
+        JIM.shared().messageManager.deleteMessages(byClientMsgNoList: [clientMsgNo], conversation: message.conversation) {
+            self.deleteMessagesInList(clientMsgNos: [message.clientMsgNo], needReload: true)
+        } error: { code in
+            
+        }
     }
     
     // MARK: - List
@@ -603,9 +608,9 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - messageIds: Message id array to delete
     ///   - needReload: If set to `true`, the tableview will be call reloadData.
     /// - Since: 1.2.5
-    public func deleteMessagesInList(messageIds: [Int64]?, needReload: Bool) {
+    public func deleteMessagesInList(clientMsgNos: [Int64]?, needReload: Bool) {
         self.deleteMessagesInList(
-            messageIds: messageIds,
+            clientMsgNos: clientMsgNos,
             excludeResendableMessages: false,
             needReload: needReload
         )
@@ -617,11 +622,11 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - excludeResendableMessages: If set to `true`, the resendable messages are not deleted.
     ///   - needReload: If set to `true`, the tableview will be call reloadData.
     /// - Since: 2.1.8
-    public func deleteMessagesInList(messageIds: [Int64]?,
+    public func deleteMessagesInList(clientMsgNos: [Int64]?,
                                      excludeResendableMessages: Bool,
                                      needReload: Bool) {
-//        guard let messageIds = messageIds else { return }
-//
+        guard let clientMsgNos = clientMsgNos else { return }
+
 //        // if deleted message contains the currently editing message,
 //        // end edit mode.
 //        if let editMessage = inEditingMessage,
@@ -629,44 +634,24 @@ open class SBUBaseChannelViewModel: NSObject {
 //           let channel = self.channel {
 //            self.baseDelegate?.baseChannelViewModel(self, shouldFinishEditModeForChannel: channel)
 //        }
-//
-//        var toBeDeleteIndexes: [Int] = []
-//        var toBeDeleteRequestIds: [String] = []
-//
-//        for (index, message) in self.messageList.enumerated() {
-//            for messageId in messageIds {
-//                guard message.messageId == messageId,
-//                      message.isMessageIdValid else { continue }
-//                toBeDeleteIndexes.append(index)
-//
-//                guard message.isRequestIdValid else { continue }
-//
-//                switch message {
-//                case let userMessage as UserMessage:
-//                    let requestId = userMessage.requestId
-//                    toBeDeleteRequestIds.append(requestId)
-//
-//                case let JMessage as JMessage:
-//                    let requestId = JMessage.requestId
-//                    toBeDeleteRequestIds.append(requestId)
-//
-//                default: break
-//                }
-//            }
-//        }
-//
-//        // for remove from last
-//        let sortedIndexes = toBeDeleteIndexes.sorted().reversed()
-//
-//        for index in sortedIndexes {
-//            self.messageList.remove(at: index)
-//        }
-//
-//        if excludeResendableMessages {
-//            self.sortAllMessageList(needReload: needReload)
-//        } else {
-//            self.deleteResendableMessages(requestIds: toBeDeleteRequestIds, needReload: needReload)
-//        }
+
+        var toBeDeleteIndexes: [Int] = []
+
+        for (index, message) in self.messageList.enumerated() {
+            for clientMsgNo in clientMsgNos {
+                guard message.clientMsgNo == clientMsgNo else { continue }
+                toBeDeleteIndexes.append(index)
+            }
+        }
+
+        // for remove from last
+        let sortedIndexes = toBeDeleteIndexes.sorted().reversed()
+
+        for index in sortedIndexes {
+            self.messageList.remove(at: index)
+        }
+        
+        self.sortAllMessageList(needReload: needReload)
     }
 
     /// This functions deletes the resendable message.

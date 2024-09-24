@@ -756,9 +756,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapCopyMessage message: JMessage) {
-//        guard let userMessage = message as? UserMessage else { return }
-//        let pasteboard = UIPasteboard.general
-//        pasteboard.string = userMessage.message
+        guard let textMessage = message.content as? JTextMessage else {
+            return
+        }
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = textMessage.content
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage) {

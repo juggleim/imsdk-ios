@@ -559,28 +559,26 @@ extension SBUBaseChannelModule {
         ///    - message: The `JMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
         open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
-            return
-            //TODO: 
-//            switch message.messageState {
-//            case .unknown, .sending, .uploading:
-//                break
-//            case .fail:
-//                // shows failed message menu
-//                showFailedMessageMenu(on: message)
-//            default:
-//                // sent
-//                guard let cell = self.tableView.cellForRow(at: indexPath) else {
-//                    SBULog.error("Couldn't find cell for row at \(indexPath)")
-//                    return
-//                }
-//                cell.isSelected = true
-//                if false {
-//                    // shows menu sheet view controller
-//                    self.showMessageMenuSheet(for: message, cell: cell)
-//                } else {
-//                    self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
-//                }
-//            }
+            switch message.messageState {
+            case .unknown, .sending, .uploading:
+                break
+            case .fail:
+                // shows failed message menu
+                showFailedMessageMenu(on: message)
+            default:
+                // sent
+                guard let cell = self.tableView.cellForRow(at: indexPath) else {
+                    SBULog.error("Couldn't find cell for row at \(indexPath)")
+                    return
+                }
+                cell.isSelected = true
+                if false {
+                    // shows menu sheet view controller
+                    self.showMessageMenuSheet(for: message, cell: cell)
+                } else {
+                    self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
+                }
+            }
         }
         
         /// Displays the menu of a message that failed to send.
@@ -705,10 +703,20 @@ extension SBUBaseChannelModule {
         /// - Parameter message: The `JMessage` object  that refers to the message of the menu to display.
         /// - Returns: The array of ``SBUMenuItem`` objects for a `message`
         open func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
-            let isSentByMe = message.senderUserId == JIM.shared().currentUserId
+            let isSentByMe = message.direction == .send
             var items: [SBUMenuItem] = []
             
-            switch message {
+            switch message.content {
+            case is JTextMessage:
+                let copy = self.createCopyMenuItem(for: message)
+                items.append(copy)
+                
+            case is JImageMessage, is JVideoMessage, is JFileMessage:
+                let save = self.createSaveMenuItem(for: message)
+                items.append(save)
+                
+            
+                
 //            case is UserMessage:
 //                // UserMessage: copy, (edit), (delete)
 //                let copy = self.createCopyMenuItem(for: message)
@@ -737,11 +745,14 @@ extension SBUBaseChannelModule {
 //                }
             default:
                 // UnknownMessage: (delete)
-                if !isSentByMe {
-                    let delete = self.createDeleteMenuItem(for: message)
-                    items.append(delete)
-                }
+                break
+//                if !isSentByMe {
+//                    let delete = self.createDeleteMenuItem(for: message)
+//                    items.append(delete)
+//                }
             }
+            let delete = self.createDeleteMenuItem(for: message)
+            items.append(delete)
             return items
         }
         
@@ -767,21 +778,18 @@ extension SBUBaseChannelModule {
         /// - Parameter message: The `JMessage` object  that corresponds to the message of the menu item to show.
         /// - Returns: The ``SBUMenuItem`` object for a `message`
         open func createDeleteMenuItem(for message: JMessage) -> SBUMenuItem {
-            let isEnabled = false//message.threadInfo.replyCount == 0
             let menuItem = SBUMenuItem(
                 title: SBUStringSet.Delete,
-                color: isEnabled ? theme?.menuTextColor : theme?.menuItemDisabledColor,
+                color: theme?.menuTextColor,
                 image: SBUIconSetType.iconDelete.image(
-                    with: isEnabled
-                    ? SBUTheme.componentTheme.alertButtonColor
-                    : SBUTheme.componentTheme.actionSheetDisabledColor,
+                    with: SBUTheme.componentTheme.alertButtonColor,
                     to: SBUIconSetType.Metric.iconActionSheetItem
                 )
             ) { [weak self, message] in
                 guard let self = self else { return }
                 self.showDeleteMessageAlert(on: message)
             }
-            menuItem.isEnabled = false//message.threadInfo.replyCount == 0
+            menuItem.isEnabled = true//message.threadInfo.replyCount == 0
             return menuItem
         }
         
