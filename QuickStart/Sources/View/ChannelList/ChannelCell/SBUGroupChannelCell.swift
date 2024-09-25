@@ -191,7 +191,11 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     open override func setupStyles() {
         super.setupStyles()
         
+        
         self.backgroundColor = theme.backgroundColor
+        if let isTop = self.conversationInfo?.isTop, isTop {
+            self.backgroundColor = UIColor(red: 240.0 / 255.0, green: 242.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0)
+        }
         
         self.titleLabel.font = theme.titleFont
         self.titleLabel.textColor = theme.titleTextColor
