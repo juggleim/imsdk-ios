@@ -151,6 +151,7 @@ public class SBUStringSet {
     public static var ChannelSettings_Enter_New_Name = "Enter name"
     public static var ChannelSettings_Enter_New_Channel_Name = "Enter channel name"
     public static var ChannelSettings_Notifications = "Notifications"
+    public static var ChannelSettings_Top = "Sticky on Top"
     public static var ChannelSettings_Notifications_On = "On"
     public static var ChannelSettings_Notifications_Off = "Off"
     public static var ChannelSettings_Notifications_Mentiones_Only = "Mentions only"

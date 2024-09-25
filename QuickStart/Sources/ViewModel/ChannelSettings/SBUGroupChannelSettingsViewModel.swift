@@ -127,6 +127,19 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
             }
         }
     }
+    
+    public func setTop(_ isTop: Bool) {
+        self.delegate?.shouldUpdateLoadingState(true)
+        JIM.shared().conversationManager.setTop(isTop, conversation: self.conversationInfo?.conversation) {
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        } error: { code in
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        }
+    }
 }
 
 // MARK: GroupChannelDelegate

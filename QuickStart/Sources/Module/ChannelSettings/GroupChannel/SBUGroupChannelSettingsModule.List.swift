@@ -38,6 +38,8 @@ public protocol SBUGroupChannelSettingsModuleListDelegate: SBUBaseChannelSetting
     func groupChannelSettingsModuleDidSelectLeave(_ listComponent: SBUGroupChannelSettingsModule.List)
     
     func groupChannelSettingsModuleDidSwitchNotification(_ listComponent: SBUGroupChannelSettingsModule.List, isMute: Bool)
+    
+    func groupChannelSettingsModuleDidSwitchTop(_ listComponent: SBUGroupChannelSettingsModule.List, isTop: Bool)
 }
 
 public protocol SBUGroupChannelSettingsModuleListDataSource: SBUBaseChannelSettingsModuleListDataSource { }
@@ -104,8 +106,9 @@ extension SBUGroupChannelSettingsModule {
         /// Sets up items for tableView cell configuration.
         open override func setupItems() {
             let notificationsItem = self.createNotificationItem()
+            let topItem = self.createTopItem()
 
-            var items = [notificationsItem]
+            var items = [notificationsItem, topItem]
             
             self.items = items
         }
@@ -142,6 +145,24 @@ extension SBUGroupChannelSettingsModule {
                 })
             
             return notificationsItem
+        }
+        
+        open func createTopItem() -> SBUChannelSettingItem {
+            let top = conversationInfo?.isTop ?? false
+            let item = SBUChannelSettingItem(
+                title: SBUStringSet.ChannelSettings_Top,
+                icon: SBUIconSetType.iconOperator.image(
+                    with: theme?.cellTypeIconTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                ),
+                isRightSwitchHidden: false,
+                isRightSwitchOn: top,
+                switchAction:  { [weak self] isTop in
+                    guard let self = self else { return }
+                    self.delegate?.groupChannelSettingsModuleDidSwitchTop(self, isTop: isTop)
+                }
+            )
+            return item
         }
         
 //        open func createMembersItem() -> SBUChannelSettingItem {

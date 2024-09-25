@@ -155,6 +155,10 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
         self.viewModel?.mute(isMute)
     }
     
+    open func groupChannelSettingsModuleDidSwitchTop(_ listComponent: SBUGroupChannelSettingsModule.List, isTop: Bool) {
+        self.viewModel?.setTop(isTop)
+    }
+    
     // MARK: - SBUGroupChannelSettingsModuleListDataSource
     open func baseChannelSettingsModule(_ listComponent: SBUBaseChannelSettingsModule.List,
                                         conversationInfoForTableView tableView: UITableView) -> JConversationInfo? {
