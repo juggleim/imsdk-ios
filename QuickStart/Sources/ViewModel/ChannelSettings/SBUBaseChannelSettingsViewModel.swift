@@ -7,31 +7,30 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public protocol SBUBaseChannelSettingsViewModelDelegate: SBUCommonViewModelDelegate {
     /// Called when the context of channel has been changed.
-    func baseChannelSettingsViewModel(
-        _ viewModel: SBUBaseChannelSettingsViewModel,
-        didChangeChannel channel: JConversationInfo?,
-        withContext context: JMessage
-    )
-    
-    /// Called when the channel settings should dismiss
-    /// - Parameters:
-    ///   - viewModel: `SBUBaseChannelSettingsViewModel` object
-    ///   - channel: channel object. If you want to move to the channel view, put the channel object or empty the channel object to go to the channel list.
-    func baseChannelSettingsViewModel(
-        _ viewModel: SBUBaseChannelSettingsViewModel,
-        shouldDismissForChannelSettings channel: JConversationInfo?
-    )
+//    func baseChannelSettingsViewModel(
+//        _ viewModel: SBUBaseChannelSettingsViewModel,
+//        didChangeChannel channel: JConversationInfo?,
+//        withContext context: JMessage
+//    )
+//    
+//    /// Called when the channel settings should dismiss
+//    /// - Parameters:
+//    ///   - viewModel: `SBUBaseChannelSettingsViewModel` object
+//    ///   - channel: channel object. If you want to move to the channel view, put the channel object or empty the channel object to go to the channel list.
+//    func baseChannelSettingsViewModel(
+//        _ viewModel: SBUBaseChannelSettingsViewModel,
+//        shouldDismissForChannelSettings channel: JConversationInfo?
+//    )
 }
 
 open class SBUBaseChannelSettingsViewModel: NSObject {
     
     // MARK: - Logic properties (Public)
-    public internal(set) var channel: JConversationInfo?
-//    public internal(set) var channelURL: String?
+    public internal(set) var conversationInfo: JConversationInfo?
     
     public var isOperator: Bool {
         //TODO:

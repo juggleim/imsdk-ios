@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 public protocol SBUBaseChannelSettingsModuleListDelegate: SBUCommonDelegate { }
 
@@ -18,7 +18,7 @@ public protocol SBUBaseChannelSettingsModuleListDataSource: AnyObject {
     ///    - listComponent: `SBUBaseChannelSettingsModule.List` object.
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: The array of `BaseChannel` object.
-    func baseChannelSettingsModule(_ listComponent: SBUBaseChannelSettingsModule.List, channelForTableView tableView: UITableView) -> JConversationInfo?
+    func baseChannelSettingsModule(_ listComponent: SBUBaseChannelSettingsModule.List, conversationInfoForTableView tableView: UITableView) -> JConversationInfo?
     
     /// Ask the data source to return the operator status
     /// - Parameters:
@@ -49,8 +49,8 @@ extension SBUBaseChannelSettingsModule {
         public weak var baseDelegate: SBUBaseChannelSettingsModuleListDelegate?
         public weak var baseDataSource: SBUBaseChannelSettingsModuleListDataSource?
 
-        public var baseChannel: JConversationInfo? {
-            self.baseDataSource?.baseChannelSettingsModule(self, channelForTableView: self.tableView)
+        public var conversationInfo: JConversationInfo? {
+            self.baseDataSource?.baseChannelSettingsModule(self, conversationInfoForTableView: self.tableView)
         }
         public var isOperator: Bool {
             self.baseDataSource?.baseChannelSettingsModuleIsOperator(self) ?? false
@@ -128,7 +128,7 @@ extension SBUBaseChannelSettingsModule {
         /// This function reloads channelInfoView.
         open func reloadChannelInfoView() {
             if let channelInfoView = self.channelInfoView as? SBUChannelSettingsChannelInfoView {
-                channelInfoView.configure(channel: self.baseChannel)
+                channelInfoView.configure(conversationInfo: self.conversationInfo)
             }
         }
         

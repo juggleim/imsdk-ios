@@ -36,4 +36,12 @@ extension SBUModuleSet {
     /// - Since: 3.6.0
     public static var GroupChannelModule: SBUGroupChannelModule.Type = SBUGroupChannelModule.self
     
+    // MARK: Channel settings
+    
+    /// The module for the settings of group channels. The default is ``SBUGroupChannelSettingsModule`` type.
+    /// ```swift
+    /// SBUModuleSet.GroupChannelSettingsModule = SBUGroupChannelSettingsModule.self
+    /// ```
+    /// - Since: 3.6.0
+    public static var GroupChannelSettingsModule: SBUGroupChannelSettingsModule.Type = SBUGroupChannelSettingsModule.self
 }

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import JetIM
+import JuggleIM
 
 public protocol SBUModerationsViewModelDelegate: SBUCommonViewModelDelegate {
     /// Called when the channel has been changed.

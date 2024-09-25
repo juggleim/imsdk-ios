@@ -9,9 +9,10 @@
 import UIKit
 import PhotosUI
 import MobileCoreServices
+import JuggleIM
 
-open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActionSheetDelegate, PHPickerViewControllerDelegate, UIImagePickerControllerDelegate, SBUSelectablePhotoViewDelegate, SBUCommonViewModelDelegate, SBUBaseChannelSettingsViewModelDelegate, SBUAlertViewDelegate {
-    
+open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActionSheetDelegate, PHPickerViewControllerDelegate, UIImagePickerControllerDelegate, SBUSelectablePhotoViewDelegate, SBUCommonViewModelDelegate, SBUAlertViewDelegate {
+        
     // MARK: - UI Properties (Public)
     public var baseHeaderComponent: SBUBaseChannelSettingsModule.Header?
     public var baseListComponent: SBUBaseChannelSettingsModule.List?
@@ -25,8 +26,7 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
     
     public var channelName: String?
     
-    public var channel: BaseChannel? { baseViewModel?.channel }
-    public var channelURL: String? { baseViewModel?.channelURL }
+    public var conversationInfo: JConversationInfo? { baseViewModel?.conversationInfo }
     
     public var isOperator: Bool { baseViewModel?.isOperator ?? false }
     
@@ -88,22 +88,13 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
     ///     - channel: (opt) channel object
     ///     - channelURL: (opt) channel url
     /// - Since: 3.0.0
-    open func createViewModel(channel: BaseChannel? = nil,
-                              channelURL: String? = nil) { }
+    open func createViewModel(conversationInfo: JConversationInfo? = nil) { }
     
     // MARK: - Common
     /// This function sets right bar button when enable to set.
     /// - Since: 3.0.0
     public func updateRightBarButton() {
-        if let groupChannel = self.channel as? GroupChannel {
-            if !groupChannel.isBroadcast || groupChannel.myRole == .operator {
-                self.navigationItem.rightBarButtonItem = self.baseHeaderComponent?.rightBarButton
-            }
-        } else if self.channel is OpenChannel {
-            if self.isOperator {
-                self.navigationItem.rightBarButtonItem = self.baseHeaderComponent?.rightBarButton
-            }
-        }
+        self.navigationItem.rightBarButtonItem = self.baseHeaderComponent?.rightBarButton
     }
     
     // MARK: - Actions
@@ -284,24 +275,24 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
     // MARK: - Actions
     
     open func showNotifications() {
-        guard let channel = self.channel else { return }
-        if channel is GroupChannel {
-            let pushSettingsVC = SBUViewControllerSet.GroupChannelPushSettingsViewController.init(channel: channel)
-            self.navigationController?.pushViewController(pushSettingsVC, animated: true)
-        }
+//        guard let channel = self.channel else { return }
+//        if channel is GroupChannel {
+//            let pushSettingsVC = SBUViewControllerSet.GroupChannelPushSettingsViewController.init(channel: channel)
+//            self.navigationController?.pushViewController(pushSettingsVC, animated: true)
+//        }
     }
     
     /// If you want to use a custom MessageSearchViewController, override it and implement it.
     /// - Since: 2.1.0
     open func showSearch() {
-        guard let channel = self.channel else { return }
-        self.needRollbackNavigationBarSetting = false
-        let searchVC = SBUViewControllerSet.MessageSearchViewController.init(channel: channel)
-        let nav = UINavigationController(rootViewController: searchVC)
-        nav.modalPresentationStyle = .fullScreen
-        self.present(nav, animated: true) {
-            self.needRollbackNavigationBarSetting = true
-        }
+//        guard let channel = self.channel else { return }
+//        self.needRollbackNavigationBarSetting = false
+//        let searchVC = SBUViewControllerSet.MessageSearchViewController.init(channel: channel)
+//        let nav = UINavigationController(rootViewController: searchVC)
+//        nav.modalPresentationStyle = .fullScreen
+//        self.present(nav, animated: true) {
+//            self.needRollbackNavigationBarSetting = true
+//        }
     }
     
     /// If you want to use a custom moderationsViewController, override it and implement it.
@@ -309,12 +300,8 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
     open func showModerationList() { }
     
     // MARK: - Error handling
-    private func errorHandler(_ error: SBError) {
-        self.errorHandler(error.localizedDescription, error.code)
-    }
-    
-    open override func errorHandler(_ message: String?, _ code: NSInteger? = nil) {
-        SBULog.error("Did receive error: \(message ?? "")")
+    private func errorHandler(_ error: JErrorCode) {
+        SBULog.error("Did receive error: \(error)")
     }
     
     // MARK: SBUActionSheetDelegate
@@ -390,35 +377,35 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
         self.showLoading(isLoading)
     }
     
-    open func didReceiveError(_ error: SBError?, isBlocker: Bool) {
+    open func didReceiveError(_ error: JErrorCode, isBlocker: Bool) {
         self.showLoading(false)
     }
     
     // MARK: - SBUBaseChannelSettingsViewModelDelegate
-    open func baseChannelSettingsViewModel(
-        _ viewModel: SBUBaseChannelSettingsViewModel,
-        didChangeChannel channel: BaseChannel?,
-        withContext context: MessageContext
-    ) { }
-    
-    open func baseChannelSettingsViewModel(_ viewModel: SBUBaseChannelSettingsViewModel, shouldDismissForChannelSettings channel: BaseChannel?) {
-        if channel != nil {
-            guard let channelVC = SendbirdUI.findChannelViewController(
-                rootViewController: self.navigationController
-            ) else { return }
-            
-            self.navigationController?.popToViewController(channelVC, animated: false)
-        } else {
-            guard let channelListVC = SendbirdUI.findChannelListViewController(
-                rootViewController: self.navigationController,
-                channelType: (self.channel is OpenChannel) ? .open : .group
-            ) else { return }
-            
-            if let openChannelListVC = channelListVC as? SBUOpenChannelListViewController {
-                openChannelListVC.reloadChannelList()
-            }
-            
-            self.navigationController?.popToViewController(channelListVC, animated: false)
-        }
-    }
+//    open func baseChannelSettingsViewModel(
+//        _ viewModel: SBUBaseChannelSettingsViewModel,
+//        didChangeChannel channel: BaseChannel?,
+//        withContext context: MessageContext
+//    ) { }
+//    
+//    open func baseChannelSettingsViewModel(_ viewModel: SBUBaseChannelSettingsViewModel, shouldDismissForChannelSettings channel: BaseChannel?) {
+//        if channel != nil {
+//            guard let channelVC = SendbirdUI.findChannelViewController(
+//                rootViewController: self.navigationController
+//            ) else { return }
+//            
+//            self.navigationController?.popToViewController(channelVC, animated: false)
+//        } else {
+//            guard let channelListVC = SendbirdUI.findChannelListViewController(
+//                rootViewController: self.navigationController,
+//                channelType: (self.channel is OpenChannel) ? .open : .group
+//            ) else { return }
+//            
+//            if let openChannelListVC = channelListVC as? SBUOpenChannelListViewController {
+//                openChannelListVC.reloadChannelList()
+//            }
+//            
+//            self.navigationController?.popToViewController(channelListVC, animated: false)
+//        }
+//    }
 }

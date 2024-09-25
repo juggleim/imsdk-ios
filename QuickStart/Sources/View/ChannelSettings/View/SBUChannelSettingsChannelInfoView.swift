@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import JetIM
+import JuggleIM
 
 // TODO: Need improvement
 public class SBUChannelSettingsChannelInfoView: SBUView {
@@ -15,14 +15,11 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
     public lazy var coverImage = SBUCoverImageView()
     public lazy var channelNameField = UITextField()
     public lazy var lineView = UIView()
-    public lazy var urlTitleLabel = UILabel()
-    public lazy var urlLabel = UILabel()
-    public lazy var urlLineView = UIView()
     
     @SBUThemeWrapper(theme: SBUTheme.channelSettingsTheme)
     var theme: SBUChannelSettingsTheme
     
-    var channel: BaseChannel?
+    var conversationInfo: JConversationInfo?
     
     let kCoverImageSize: CGFloat = 64.0
     
@@ -60,15 +57,6 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
         
         self.coverImage.clipsToBounds = true
         
-        self.urlTitleLabel.isUserInteractionEnabled = false
-        self.urlTitleLabel.isHidden = true
-        
-        self.urlLabel.numberOfLines = 0
-        self.urlLabel.lineBreakMode = .byCharWrapping
-        self.urlLabel.isHidden = true
-        
-        self.urlLineView.isHidden = true
-        
         self.stackView.alignment = .center
         self.stackView.axis = .vertical
         self.stackView.spacing = 7
@@ -78,9 +66,6 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
         self.addSubview(stackView)
         self.addSubview(lineView)
         
-        self.addSubview(self.urlTitleLabel)
-        self.addSubview(self.urlLabel)
-        self.addSubview(self.urlLineView)
     }
     
     open override func setupLayouts() {
@@ -112,40 +97,6 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
         
         self.lineViewBottomConstraint?.isActive = false
         self.lineViewBottomConstraint = self.lineView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
-        
-        self.urlTitleLabel
-            .sbu_constraint_equalTo(
-                leftAnchor: self.safeAreaLayoutGuide.leftAnchor,
-                left: 24,
-                rightAnchor: self.safeAreaLayoutGuide.rightAnchor,
-                right: 24,
-                topAnchor: self.lineView.bottomAnchor,
-                top: 15
-            )
-        
-        self.urlLabel
-            .sbu_constraint_equalTo(
-                leftAnchor: self.safeAreaLayoutGuide.leftAnchor,
-                left: 24,
-                rightAnchor: self.safeAreaLayoutGuide.rightAnchor,
-                right: 24,
-                topAnchor: self.urlTitleLabel.bottomAnchor,
-                top: 2
-            )
-        
-        self.urlLineView
-            .sbu_constraint_equalTo(
-                leftAnchor: self.safeAreaLayoutGuide.leftAnchor, 
-                left: 16,
-                rightAnchor: self.safeAreaLayoutGuide.rightAnchor,
-                right: 16,
-                topAnchor: self.urlLabel.bottomAnchor,
-                top: 16
-            )
-            .sbu_constraint(height: 0.5)
-        
-        self.urlLineViewBottomConstraint?.isActive = false
-        self.urlLineViewBottomConstraint = self.urlLineView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0)
     }
     
     open override func setupStyles() {
@@ -157,14 +108,6 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
 
         self.channelNameField.font = theme.userNameFont
         self.channelNameField.textColor = theme.userNameTextColor
-        
-        self.urlTitleLabel.font = theme.urlTitleFont
-        self.urlTitleLabel.textColor = theme.urlTitleColor
-        
-        self.urlLabel.font = theme.urlFont
-        self.urlLabel.textColor = theme.urlColor
-        
-        self.urlLineView.backgroundColor = theme.cellSeparateColor
     }
     
     open override func layoutSubviews() {
@@ -175,55 +118,36 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
         self.coverImage.layer.borderWidth = 1
     }
     
-    open func configure(channel: JConversationInfo?) {
-        self.channel = channel
+    open func configure(conversationInfo: JConversationInfo?) {
+        self.conversationInfo = conversationInfo
         
-        guard let channel = self.channel else {
+        guard let conversationInfo = self.conversationInfo else {
             self.coverImage.setPlaceholder(type: .iconUser)
             return
         }
         
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            if channel is OpenChannel {
-                if let url = channel.coverURL, SBUUtils.isValid(coverURL: url) {
-                    self.coverImage.setImage(withCoverURL: url)
-                } else {
-                    self.coverImage.setPlaceholder(type: .iconChannels)
-                }
-            } else if let channel = channel as? GroupChannel {
-                if let coverURL = channel.coverURL,
-                   SBUUtils.isValid(coverURL: coverURL) {
-                    self.coverImage.setImage(withCoverURL: coverURL)
-                } else if channel.isBroadcast == true {
-                    self.coverImage.setBroadcastIcon()
-                } else if channel.members.count > 0 {
-                    self.coverImage.setImage(withUsers: channel.members)
-                } else {
-                    self.coverImage.setPlaceholder(type: .iconUser)
-                }
+        var url = ""
+        var name = ""
+        if (conversationInfo.conversation.conversationType == .private) {
+            if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId) {
+                url = user.portrait ?? ""
+                name = user.userName ?? ""
+            }
+        } else if (conversationInfo.conversation.conversationType == .group) {
+            if let group = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId) {
+                url = group.portrait ?? ""
+                name = group.groupName ?? ""
             }
         }
-            
-        if SBUUtils.isValid(channelName: channel.name) {
-            self.channelNameField.text = channel.name
+        
+        // Cover image
+        if url.count > 0 {
+            self.coverImage.setImage(withCoverURL: url)
         } else {
-            if let channel = channel as? GroupChannel {
-                self.channelNameField.text = SBUUtils.generateChannelName(channel: channel)
-            } else {
-                self.channelNameField.text = SBUStringSet.Open_Channel_Name_Default
-            }
+            self.coverImage.setPlaceholder(type: .iconUser)
         }
+        self.channelNameField.text = name
         
-        self.urlTitleLabel.text = SBUStringSet.ChannelSettings_URL
-        self.urlLabel.text = channel.channelURL
-        
-        let isOpenChannel =  self.channel is OpenChannel
-        self.urlTitleLabel.isHidden = !isOpenChannel
-        self.urlLabel.isHidden = !isOpenChannel
-        self.urlLineView.isHidden = !isOpenChannel
-        
-        self.urlLineViewBottomConstraint?.isActive = isOpenChannel
-        self.lineViewBottomConstraint?.isActive = !isOpenChannel
+        self.lineViewBottomConstraint?.isActive = true
     }
 }

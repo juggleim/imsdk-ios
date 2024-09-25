@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JuggleIM
 
 // swiftlint:disable type_name
 public protocol SBUGroupChannelSettingsModuleListDelegate: SBUBaseChannelSettingsModuleListDelegate {
@@ -57,8 +58,6 @@ extension SBUGroupChannelSettingsModule {
             get { self.baseDataSource as? SBUGroupChannelSettingsModuleListDataSource }
             set { self.baseDataSource = newValue }
         }
-
-        public weak var channel: GroupChannel? { self.baseChannel as? GroupChannel }
         
         // MARK: - LifeCycle
         @available(*, unavailable, renamed: "SBUGroupChannelSettingsModule.List()")
@@ -104,15 +103,15 @@ extension SBUGroupChannelSettingsModule {
         open override func setupItems() {
             let moderationsItem = self.createModerationsItem()
             let notificationsItem = self.createNotificationItem()
-            let membersItem = self.createMembersItem()
+//            let membersItem = self.createMembersItem()
             let searchItem = self.createSearchItem()
             let leaveItem = self.createLeaveItem()
 
             var items = self.isOperator ? [moderationsItem] : []
-            items += [notificationsItem, membersItem]
-            if SBUAvailable.isSupportMessageSearch() {
-                items += [searchItem]
-            }
+            items += [notificationsItem]
+//            if SBUAvailable.isSupportMessageSearch() {
+//                items += [searchItem]
+//            }
             items += [leaveItem]
             
             self.items = items
@@ -135,12 +134,10 @@ extension SBUGroupChannelSettingsModule {
         
         open func createNotificationItem() -> SBUChannelSettingItem {
             var notificationSubTitle = ""
-            switch channel?.myPushTriggerOption {
-            case .off:
+            
+            if let mute = conversationInfo?.mute, mute {
                 notificationSubTitle = SBUStringSet.ChannelSettings_Notifications_Off
-            case .mentionOnly:
-                notificationSubTitle = SBUStringSet.ChannelSettings_Notifications_Mentiones_Only
-            default:
+            } else {
                 notificationSubTitle = SBUStringSet.ChannelSettings_Notifications_On
             }
             
@@ -159,21 +156,21 @@ extension SBUGroupChannelSettingsModule {
             return notificationsItem
         }
         
-        open func createMembersItem() -> SBUChannelSettingItem {
-            let membersItem = SBUChannelSettingItem(
-                title: SBUStringSet.ChannelSettings_Members_Title,
-                subTitle: channel?.memberCount.unitFormattedString,
-                icon: SBUIconSetType.iconMembers.image(
-                    with: theme?.cellTypeIconTintColor,
-                    to: SBUIconSetType.Metric.defaultIconSize
-                ),
-                isRightButtonHidden: false) { [weak self] in
-                    guard let self = self else { return }
-                    self.delegate?.groupChannelSettingsModuleDidSelectMembers(self)
-                }
-            
-            return membersItem
-        }
+//        open func createMembersItem() -> SBUChannelSettingItem {
+//            let membersItem = SBUChannelSettingItem(
+//                title: SBUStringSet.ChannelSettings_Members_Title,
+//                subTitle: channel?.memberCount.unitFormattedString,
+//                icon: SBUIconSetType.iconMembers.image(
+//                    with: theme?.cellTypeIconTintColor,
+//                    to: SBUIconSetType.Metric.defaultIconSize
+//                ),
+//                isRightButtonHidden: false) { [weak self] in
+//                    guard let self = self else { return }
+//                    self.delegate?.groupChannelSettingsModuleDidSelectMembers(self)
+//                }
+//            
+//            return membersItem
+//        }
         
         open func createSearchItem() -> SBUChannelSettingItem {
             let searchItem = SBUChannelSettingItem(

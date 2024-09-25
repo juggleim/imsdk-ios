@@ -17,6 +17,9 @@ public class SBUViewControllerSet {
     
     /// The view controller for the group channel chat.
     public static var GroupChannelViewController: SBUGroupChannelViewController.Type = SBUGroupChannelViewController.self
+    
+    /// The view controller for the group channel settings.
+    public static var GroupChannelSettingsViewController: SBUGroupChannelSettingsViewController.Type = SBUGroupChannelSettingsViewController.self
 }
 
 // swiftlint:enable identifier_name

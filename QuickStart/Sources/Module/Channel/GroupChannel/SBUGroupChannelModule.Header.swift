@@ -43,9 +43,9 @@ extension SBUGroupChannelModule {
         open override func setupViews() {
             super.setupViews()
             
-//            if self.rightBarButton == nil {
-//                self.rightBarButton = self.defaultRightBarButton
-//            }
+            if self.rightBarButton == nil {
+                self.rightBarButton = self.defaultRightBarButton
+            }
         }
         
         // MARK: - Actions

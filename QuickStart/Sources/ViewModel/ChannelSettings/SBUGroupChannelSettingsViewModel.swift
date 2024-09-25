@@ -8,14 +8,14 @@
 
 import Foundation
 import UIKit
-import JetIM
+import JuggleIM
 
 public protocol SBUGroupChannelSettingsViewModelDelegate: SBUBaseChannelSettingsViewModelDelegate {
     /// Called when the current user has left the channel
-    func groupChannelSettingsViewModel(
-        _ viewModel: SBUGroupChannelSettingsViewModel,
-        didLeaveChannel channel: JConversationInfo
-    )
+//    func groupChannelSettingsViewModel(
+//        _ viewModel: SBUGroupChannelSettingsViewModel,
+//        didLeaveChannel channel: JConversationInfo
+//    )
 }
 
 /// This is a typealias for `SBUGroupChannelSettingsViewModel`. It is deprecated and renamed to `SBUGroupChannelSettingsViewModel`.
@@ -41,27 +41,16 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
     ///   - channelURL: The URL of the channel. Default value is `nil`.
     ///   - delegate: The delegate for the `SBUGroupChannelSettingsViewModel`. Default value is `nil`.
     public init(
-        channel: JConversationInfo? = nil,
-        channelURL: String? = nil,
+        conversationInfo: JConversationInfo? = nil,
         delegate: SBUGroupChannelSettingsViewModelDelegate? = nil
     ) {
         super.init()
         
         self.delegate = delegate
         
-//        SendbirdChat.addChannelDelegate(
-//            self,
-//            identifier: "\(SBUConstant.groupChannelDelegateIdentifier).\(self.description)"
-//        )
-        
-        if let channel = channel {
-            self.channel = channel
-//            self.channelURL = channel.channelURL
-        } else if let channelURL = channelURL {
-            self.channelURL = channelURL
+        if let conversationInfo = conversationInfo {
+            self.conversationInfo = conversationInfo
         }
-        //TODO:
-//        self.loadChannel(channelURL: self.channelURL)
     }
     
     deinit {
@@ -71,26 +60,6 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
     }
     
     // MARK: - Channel related
-    public override func loadChannel(channelURL: String?) {
-        guard let channelURL = channelURL else { return }
-//        self.loadChannel(channelURL: channelURL, type: .group)
-    }
-    
-    public override func updateChannel(channelName: String? = nil, coverImage: UIImage? = nil) {
-//        let channelParams = GroupChannelUpdateParams()
-//
-//        channelParams.name = channelName
-//
-//        if let coverImage = coverImage {
-//            channelParams.coverImage = coverImage.jpegData(compressionQuality: 0.5)
-//        } else {
-//            channelParams.coverURL = self.channel?.coverURL
-//        }
-//
-//        SBUGlobalCustomParams.groupChannelParamsUpdateBuilder?(channelParams)
-//
-//        self.updateChannel(params: channelParams)
-    }
     
     /// Updates the channel with channelParams.
     ///
@@ -125,8 +94,6 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
     
     /// Leaves the channel.
     public func leaveChannel() {
-        guard let groupChannel = self.channel as? JConversationInfo else { return }
-        
         self.delegate?.shouldUpdateLoadingState(true)
         
 //        groupChannel.leave { [weak self] error in
