@@ -103,18 +103,9 @@ extension SBUGroupChannelSettingsModule {
         
         /// Sets up items for tableView cell configuration.
         open override func setupItems() {
-            let moderationsItem = self.createModerationsItem()
             let notificationsItem = self.createNotificationItem()
-//            let membersItem = self.createMembersItem()
-            let searchItem = self.createSearchItem()
-            let leaveItem = self.createLeaveItem()
 
-            var items = self.isOperator ? [moderationsItem] : []
-            items += [notificationsItem]
-//            if SBUAvailable.isSupportMessageSearch() {
-//                items += [searchItem]
-//            }
-            items += [leaveItem]
+            var items = [notificationsItem]
             
             self.items = items
         }

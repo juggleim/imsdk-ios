@@ -174,7 +174,25 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             }
             self.conversationInfoList.insert(conversationInfo, at: 0)
         }
-        self.conversationInfoList.sort { $0.sortTime > $1.sortTime }
+        var topConversationInfoList: [JConversationInfo] = []
+        var notTopConversationInfoList: [JConversationInfo] = []
+        for conversationInfo in self.conversationInfoList {
+            if conversationInfo.isTop {
+                topConversationInfoList.append(conversationInfo)
+            } else {
+                notTopConversationInfoList.append(conversationInfo)
+            }
+        }
+        topConversationInfoList.sort {
+            $0.topTime > $1.topTime
+        }
+        notTopConversationInfoList.sort {
+            $0.sortTime > $1.sortTime
+        }
+        var result: [JConversationInfo] = []
+        result.append(contentsOf: topConversationInfoList)
+        result.append(contentsOf: notTopConversationInfoList)
+        self.conversationInfoList = result
         
         self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
