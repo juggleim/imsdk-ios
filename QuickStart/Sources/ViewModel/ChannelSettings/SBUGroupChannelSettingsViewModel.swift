@@ -114,6 +114,19 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
 //            )
 //        }
     }
+    
+    public func mute(_ isMute: Bool) {
+        self.delegate?.shouldUpdateLoadingState(true)
+        JIM.shared().conversationManager.setMute(isMute, conversation: self.conversationInfo?.conversation) {
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        } error: { code in
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        }
+    }
 }
 
 // MARK: GroupChannelDelegate

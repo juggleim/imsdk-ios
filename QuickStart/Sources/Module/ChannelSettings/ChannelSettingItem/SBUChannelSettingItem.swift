@@ -29,18 +29,27 @@ public struct SBUChannelSettingItem {
     /// The handler for the tap action
     public let tapHandler: (() -> Void)?
     
+    public let switchAction: ((Bool) -> Void)?
+    
+    public let isRightSwitchOn: Bool
+    
     /// Initializer
     public init(title: String,
                 subTitle: String? = nil,
                 icon: UIImage,
                 isRightButtonHidden: Bool = true,
                 isRightSwitchHidden: Bool = true,
-                tapHandler: (() -> Void)? = nil) {
+                isRightSwitchOn: Bool = false,
+                tapHandler: (() -> Void)? = nil,
+                switchAction: ((Bool) -> Void)? = nil
+    ) {
         self.title = title
         self.icon = icon
         self.subTitle = subTitle
         self.isRightButtonHidden = isRightButtonHidden
         self.isRightSwitchHidden = isRightSwitchHidden
+        self.isRightSwitchOn = isRightSwitchOn
         self.tapHandler = tapHandler
+        self.switchAction = switchAction
     }
 }

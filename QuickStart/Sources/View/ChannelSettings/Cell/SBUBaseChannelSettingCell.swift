@@ -150,6 +150,10 @@ open class SBUBaseChannelSettingCell: SBUTableViewCell {
         if item.isRightButtonHidden {
             self.rightSwitch.isHidden = item.isRightSwitchHidden
         }
+        self.rightSwitch.isOn = item.isRightSwitchOn
+        if let switchAction = item.switchAction {
+            self.switchAction = switchAction
+        }
     }
     
     open override func setSelected(_ selected: Bool, animated: Bool) {

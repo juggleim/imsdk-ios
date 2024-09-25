@@ -274,7 +274,7 @@ open class SBUBaseChannelSettingsViewController: SBUBaseViewController, SBUActio
     
     // MARK: - Actions
     
-    open func showNotifications() {
+    open func selectNotification() {
 //        guard let channel = self.channel else { return }
 //        if channel is GroupChannel {
 //            let pushSettingsVC = SBUViewControllerSet.GroupChannelPushSettingsViewController.init(channel: channel)

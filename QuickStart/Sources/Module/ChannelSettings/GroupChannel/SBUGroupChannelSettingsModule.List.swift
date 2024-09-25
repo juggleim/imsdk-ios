@@ -36,6 +36,8 @@ public protocol SBUGroupChannelSettingsModuleListDelegate: SBUBaseChannelSetting
     /// Called when the leave item cell was selected in the `listComponent`.
     /// - Parameter listComponent: `SBUGroupChannelSettingsModule.List` object.
     func groupChannelSettingsModuleDidSelectLeave(_ listComponent: SBUGroupChannelSettingsModule.List)
+    
+    func groupChannelSettingsModuleDidSwitchNotification(_ listComponent: SBUGroupChannelSettingsModule.List, isMute: Bool)
 }
 
 public protocol SBUGroupChannelSettingsModuleListDataSource: SBUBaseChannelSettingsModuleListDataSource { }
@@ -133,25 +135,20 @@ extension SBUGroupChannelSettingsModule {
         }
         
         open func createNotificationItem() -> SBUChannelSettingItem {
-            var notificationSubTitle = ""
-            
-            if let mute = conversationInfo?.mute, mute {
-                notificationSubTitle = SBUStringSet.ChannelSettings_Notifications_Off
-            } else {
-                notificationSubTitle = SBUStringSet.ChannelSettings_Notifications_On
-            }
+            let mute = conversationInfo?.mute ?? false
             
             let notificationsItem = SBUChannelSettingItem(
                 title: SBUStringSet.ChannelSettings_Notifications,
-                subTitle: notificationSubTitle,
                 icon: SBUIconSetType.iconNotifications.image(
                     with: theme?.cellTypeIconTintColor,
                     to: SBUIconSetType.Metric.defaultIconSize
                 ),
-                isRightButtonHidden: false) { [weak self] in
+                isRightSwitchHidden: false,
+                isRightSwitchOn: !mute,
+                switchAction:  { [weak self] notificationOn in
                     guard let self = self else { return }
-                    self.delegate?.groupChannelSettingsModuleDidSelectNotifications(self)
-                }
+                    self.delegate?.groupChannelSettingsModuleDidSwitchNotification(self, isMute: !notificationOn)
+                })
             
             return notificationsItem
         }

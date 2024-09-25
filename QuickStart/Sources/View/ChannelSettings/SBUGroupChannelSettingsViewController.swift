@@ -136,7 +136,7 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
     }
     
     open func groupChannelSettingsModuleDidSelectNotifications(_ listComponent: SBUGroupChannelSettingsModule.List) {
-        self.showNotifications()
+        self.selectNotification()
     }
     
     open func groupChannelSettingsModuleDidSelectMembers(_ listComponent: SBUGroupChannelSettingsModule.List) {
@@ -149,6 +149,10 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
     
     open func groupChannelSettingsModuleDidSelectLeave(_ listComponent: SBUGroupChannelSettingsModule.List) {
         self.viewModel?.leaveChannel()
+    }
+    
+    open func groupChannelSettingsModuleDidSwitchNotification(_ listComponent: SBUGroupChannelSettingsModule.List, isMute: Bool) {
+        self.viewModel?.mute(isMute)
     }
     
     // MARK: - SBUGroupChannelSettingsModuleListDataSource
