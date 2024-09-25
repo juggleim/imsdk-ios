@@ -117,8 +117,41 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     
     // MARK: - SDK Relations
     public func deleteConversationInfo(_ conversationInfo: JConversationInfo) {
+        SBULog.info("[Request] delete conversationInfo")
+        self.setLoading(true, true)
+        
         JIM.shared().conversationManager.deleteConversationInfo(by: conversationInfo.conversation) {
+            DispatchQueue.main.async { [weak self] in
+                self?.setLoading(false, false)
+            }
         } error: { code in
+            DispatchQueue.main.async { [weak self] in
+                self?.setLoading(false, false)
+                if code != .none {
+                    self?.delegate?.didReceiveError(code, isBlocker: false)
+                }
+            }
+        }
+    }
+    
+    /// Changes push trigger option on a channel.
+    /// - Parameters:
+    ///   - option: Push trigger option to change
+    ///   - channel: Channel to change option
+    public func mute(_ conversationInfo:JConversationInfo, isMute: Bool) {
+        SBULog.info("[Request] mute: \(isMute ? "on" : "off")")
+        self.setLoading(true, true)
+        
+        JIM.shared().conversationManager.setMute(isMute, conversation: conversationInfo.conversation) {
+            DispatchQueue.main.async { [weak self] in
+                self?.setLoading(false, false)
+            }
+        } error: { code in
+            DispatchQueue.main.async { [weak self] in
+                if code != .none {
+                    self?.delegate?.didReceiveError(code, isBlocker: false)
+                }
+            }
         }
     }
     

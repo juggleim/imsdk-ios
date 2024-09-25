@@ -16,6 +16,12 @@ public protocol SBUGroupChannelListModuleListDelegate: SBUBaseChannelListModuleL
     ///    - listComponent: `SBUGroupChannelListModule.List` object.
     ///    - channel: The channel that was selected.
     func groupChannelListModule(_ listComponent: SBUGroupChannelListModule.List, didSelectLeave conversationInfo: JConversationInfo)
+    
+    func groupChannelListModule(
+        _ listComponent: SBUGroupChannelListModule.List,
+        didSelectMute isMute:Bool,
+        conversationInfo: JConversationInfo
+    )
 }
 
 /// Methods to get data source for the list component in the group channel list.
@@ -134,6 +140,57 @@ extension SBUGroupChannelListModule {
             
             return leaveAction
         }
+        
+        /// Creates alarm contextual action for a particular swipped cell.
+        /// - Parameter indexPath: An index path representing the `channelCell`
+        /// - Returns: `UIContextualAction` object.
+        public func alarmContextualAction(with indexPath: IndexPath) -> UIContextualAction? {
+            guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return nil }
+            
+            let size = tableView.visibleCells[0].frame.height
+            let itemSize: CGFloat = 40.0
+            
+            let mute = conversationInfo.mute
+            let alarmAction = UIContextualAction(
+                style: .normal,
+                title: ""
+            ) { [weak self] _, _, actionHandler in
+                guard let self = self else { return }
+                self.delegate?.groupChannelListModule(self, didSelectMute: !mute, conversationInfo: conversationInfo)
+                actionHandler(true)
+            }
+            
+            let alarmTypeView = UIImageView(
+                frame: CGRect(
+                    x: (size-itemSize)/2,
+                    y: (size-itemSize)/2,
+                    width: itemSize,
+                    height: itemSize
+                ))
+            let alarmIcon: UIImage
+            
+            if mute {
+                alarmTypeView.backgroundColor = self.theme?.notificationOnBackgroundColor
+                alarmIcon = SBUIconSetType.iconNotificationFilled.image(
+                    with: self.theme?.notificationOnTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                )
+            } else {
+                alarmTypeView.backgroundColor = self.theme?.notificationOffBackgroundColor
+                alarmIcon = SBUIconSetType.iconNotificationOffFilled.image(
+                    with: self.theme?.notificationOffTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                )
+            }
+            alarmTypeView.image = alarmIcon
+            alarmTypeView.contentMode = .center
+            alarmTypeView.layer.cornerRadius = itemSize/2
+            
+            alarmAction.image = alarmTypeView.asImage()
+            alarmAction.backgroundColor = self.theme?.alertBackgroundColor
+            
+            return alarmAction
+        }
     }
 }
 
@@ -215,9 +272,9 @@ extension SBUGroupChannelListModule.List {
         if let leaveAction = leaveContextualAction(with: indexPath) {
             actions.append(leaveAction)
         }
-//        if let alarmAction = alarmContextualAction(with: indexPath) {
-//            actions.append(alarmAction)
-//        }
+        if let alarmAction = alarmContextualAction(with: indexPath) {
+            actions.append(alarmAction)
+        }
         
         return UISwipeActionsConfiguration(actions: actions)
     }

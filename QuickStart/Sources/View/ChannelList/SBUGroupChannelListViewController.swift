@@ -230,6 +230,14 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         self.viewModel?.deleteConversationInfo(conversationInfo)
     }
     
+    open func groupChannelListModule(
+        _ listComponent: SBUGroupChannelListModule.List,
+        didSelectMute isMute:Bool,
+        conversationInfo: JConversationInfo
+    ) {
+        self.viewModel?.mute(conversationInfo, isMute: isMute)
+    }
+    
     // MARK: - SBUGroupChannelListModuleListDataSource
     open func baseChannelListModule(
         _ listComponent: SBUBaseChannelListModule.List,
