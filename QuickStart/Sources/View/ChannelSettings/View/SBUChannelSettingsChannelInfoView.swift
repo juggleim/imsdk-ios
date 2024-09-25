@@ -140,11 +140,12 @@ public class SBUChannelSettingsChannelInfoView: SBUView {
             }
         }
         
-        // Cover image
-        if url.count > 0 {
-            self.coverImage.setImage(withCoverURL: url)
-        } else {
-            self.coverImage.setPlaceholder(type: .iconUser)
+        DispatchQueue.main.async { [weak self] in
+            if url.count > 0 {
+                self?.coverImage.setImage(withCoverURL: url)
+            } else {
+                self?.coverImage.setPlaceholder(type: .iconUser)
+            }
         }
         self.channelNameField.text = name
         

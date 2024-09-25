@@ -145,7 +145,7 @@ public class SBUStringSet {
     public static var Notification_Channel_Name_Default = "Notifications"
 
     // MARK: - Channel Setting
-    public static var ChannelSettings_Header_Title = "Channel information"
+    public static var ChannelSettings_Header_Title = "Conversation information"
     public static var ChannelSettings_Change_Name = "Change name"
     public static var ChannelSettings_Change_Image = "Change channel image"
     public static var ChannelSettings_Enter_New_Name = "Enter name"

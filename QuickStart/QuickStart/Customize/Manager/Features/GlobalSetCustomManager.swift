@@ -203,8 +203,8 @@ extension GlobalSetCustomManager {
     
     /// This is an function of changing the global string set to default.
     static func setDefaultGlobalStringSet() {
-        SBUStringSet.ChannelList_Header_Title = "Channels"
-        SBUStringSet.ChannelSettings_Header_Title = "Channel information"
+        SBUStringSet.ChannelList_Header_Title = "Conversations"
+        SBUStringSet.ChannelSettings_Header_Title = "Conversation information"
         SBUStringSet.CreateChannel_Header_Title = "New Channel"
     }
     
