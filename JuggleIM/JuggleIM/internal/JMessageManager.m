@@ -155,6 +155,11 @@
             if(successBlock){
                 successBlock();
             }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
+                    [dlg messageDidDelete:conversation clientMsgNos:clientMsgNos];
+                }
+            }];
         });
         return;
     }
@@ -172,6 +177,11 @@
             if(successBlock){
                 successBlock();
             }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
+                    [dlg messageDidDelete:conversation clientMsgNos:clientMsgNos];
+                }
+            }];
         });
         
     } error:^(JErrorCodeInternal code) {
@@ -197,12 +207,14 @@
         return;
     }
     
-    NSArray * messages = [self getMessagesByMessageIds:messageIds];
-    NSMutableArray * msgList = [NSMutableArray array];
+    NSArray *messages = [self getMessagesByMessageIds:messageIds];
+    NSMutableArray *msgList = [NSMutableArray array];
+    NSMutableArray <NSNumber *> *clientMsgNos = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if( [message.conversation.conversationId isEqualToString:conversation.conversationId]
-           && message.conversation.conversationType == conversation.conversationType ){
+        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
+           && message.conversation.conversationType == conversation.conversationType){
             [msgList addObject:message];
+            [clientMsgNos addObject:@(message.clientMsgNo)];
         }
     }
     JLogI(@"MSG-Delete", @"by messageId, count is %lu", (unsigned long)msgList.count);
@@ -223,6 +235,11 @@
                 if(successBlock){
                     successBlock();
                 }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([dlg respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
+                        [dlg messageDidDelete:conversation clientMsgNos:clientMsgNos];
+                    }
+                }];
             });
         } error:^(JErrorCodeInternal code) {
             JLogE(@"MSG-Delete", @"websocket error code is %lu", (unsigned long)code);
@@ -292,6 +309,11 @@
                 if (successBlock) {
                     successBlock(m);
                 }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([dlg respondsToSelector:@selector(messageDidRecall:)]) {
+                        [dlg messageDidRecall:m];
+                    }
+                }];
             });
         } error:^(JErrorCodeInternal errorCode) {
             JLogE(@"MSG-Recall", @"error code is %lu", (unsigned long)errorCode);
@@ -331,6 +353,11 @@
             if (successBlock) {
                 successBlock();
             }
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]) {
+                    [dlg messageDidClear:conversation timestamp:startTime senderId:nil];
+                }
+            }];
         });
     } error:^(JErrorCodeInternal code) {
         JLogE(@"MSG-Clear", @"error code is %lu", (unsigned long)code);
@@ -349,7 +376,7 @@
     }
 }
 -(void)notifyMessageCleared:(JConversation *)conversation startTime:(long long)startTime sendUserId:(NSString *)sendUserId{
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]) {
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidClear:startTime:sendUserId:lastMessage:)]) {
         JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation];
         [self.sendReceiveDelegate messageDidClear:conversation startTime:startTime sendUserId:sendUserId lastMessage:lastMessage];
 

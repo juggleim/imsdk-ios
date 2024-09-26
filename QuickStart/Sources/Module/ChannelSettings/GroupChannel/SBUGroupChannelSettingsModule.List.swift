@@ -40,6 +40,8 @@ public protocol SBUGroupChannelSettingsModuleListDelegate: SBUBaseChannelSetting
     func groupChannelSettingsModuleDidSwitchNotification(_ listComponent: SBUGroupChannelSettingsModule.List, isMute: Bool)
     
     func groupChannelSettingsModuleDidSwitchTop(_ listComponent: SBUGroupChannelSettingsModule.List, isTop: Bool)
+    
+    func groupChannelSettingsModuleDidClearMessages(_ listComponent: SBUGroupChannelSettingsModule.List)
 }
 
 public protocol SBUGroupChannelSettingsModuleListDataSource: SBUBaseChannelSettingsModuleListDataSource { }
@@ -107,8 +109,8 @@ extension SBUGroupChannelSettingsModule {
         open override func setupItems() {
             let notificationsItem = self.createNotificationItem()
             let topItem = self.createTopItem()
-
-            var items = [notificationsItem, topItem]
+            let clearItem = self.createClearItem()
+            let items = [notificationsItem, topItem, clearItem]
             
             self.items = items
         }
@@ -162,6 +164,19 @@ extension SBUGroupChannelSettingsModule {
                     self.delegate?.groupChannelSettingsModuleDidSwitchTop(self, isTop: isTop)
                 }
             )
+            return item
+        }
+        
+        open func createClearItem() -> SBUChannelSettingItem {
+            let item = SBUChannelSettingItem(
+                title: SBUStringSet.ChannelSettings_Clear,
+                icon: SBUIconSetType.iconDelete.image(
+                    with: theme?.cellTypeIconTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                )) { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.groupChannelSettingsModuleDidClearMessages(self)
+                }
             return item
         }
         

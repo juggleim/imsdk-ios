@@ -140,6 +140,19 @@ open class SBUGroupChannelSettingsViewModel: SBUBaseChannelSettingsViewModel {
             }
         }
     }
+    
+    public func clearMessages() {
+        self.delegate?.shouldUpdateLoadingState(true)
+        JIM.shared().messageManager.clearMessages(in: self.conversationInfo?.conversation, startTime: 0) {
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        } error: { code in
+            DispatchQueue.main.async {
+                self.delegate?.shouldUpdateLoadingState(false)
+            }
+        }
+    }
 }
 
 // MARK: GroupChannelDelegate

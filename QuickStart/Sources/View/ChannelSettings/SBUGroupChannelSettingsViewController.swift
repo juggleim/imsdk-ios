@@ -159,6 +159,10 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
         self.viewModel?.setTop(isTop)
     }
     
+    open func groupChannelSettingsModuleDidClearMessages(_ listComponent: SBUGroupChannelSettingsModule.List) {
+        self.viewModel?.clearMessages()
+    }
+    
     // MARK: - SBUGroupChannelSettingsModuleListDataSource
     open func baseChannelSettingsModule(_ listComponent: SBUBaseChannelSettingsModule.List,
                                         conversationInfoForTableView tableView: UITableView) -> JConversationInfo? {

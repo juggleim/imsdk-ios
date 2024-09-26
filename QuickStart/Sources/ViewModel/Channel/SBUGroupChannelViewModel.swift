@@ -430,6 +430,11 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
     }
     
     public func messageDidClear(_ conversation: JConversation!, timestamp: Int64, senderId: String!) {
-        
+        if !conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        self.reset()
+        self.clearMessageList()
+        self.sortAllMessageList(needReload: true)
     }
 }

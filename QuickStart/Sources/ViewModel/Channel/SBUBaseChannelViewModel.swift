@@ -464,7 +464,7 @@ open class SBUBaseChannelViewModel: NSObject {
         SBULog.info("[Request] Delete message: \(message.description)")
         let clientMsgNo = NSNumber(value:message.clientMsgNo)
         JIM.shared().messageManager.deleteMessages(byClientMsgNoList: [clientMsgNo], conversation: message.conversation) {
-            self.deleteMessagesInList(clientMsgNos: [message.clientMsgNo], needReload: true)
+//            self.deleteMessagesInList(clientMsgNos: [message.clientMsgNo], needReload: true)
         } error: { code in
             
         }

@@ -287,6 +287,8 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.messageLabel.lineBreakMode = .byTruncatingTail
         if let lastMessage = conversationInfo.lastMessage {
             self.messageLabel.text = lastMessage.content.conversationDigest()
+        } else {
+            self.messageLabel.text = ""
         }
         
         // Unread count

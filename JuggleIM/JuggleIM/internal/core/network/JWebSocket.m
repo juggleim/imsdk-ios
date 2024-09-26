@@ -812,7 +812,7 @@ inConversation:(JConversation *)conversation
             if (webSocket != self.sws) {
                 return;
             }
-            JLogI(@"WS-Connect", @"fail message is %@", error.description);
+            JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@", error.description);
             [self resetSws];
             if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
                 [self.connectDelegate webSocketDidFail];
