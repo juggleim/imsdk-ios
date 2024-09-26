@@ -87,9 +87,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.debouncer = SBUDebouncer(
             debounceTime: SBUGlobals.userMentionConfig?.debounceTime ?? SBUDebouncer.defaultTime
         )
-        JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
-        } error: { errorCode in
-        }
+        self.markAsRead()
         JIM.shared().messageManager.add(self as JMessageDelegate)
         JIM.shared().messageManager.add(self as JMessageReadReceiptDelegate)
         self.loadPrevMessages()
@@ -197,9 +195,15 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { localMessageList, errorCode in
             SBULog.info("[Request] Prev message list local count is \(localMessageList?.count ?? 0)")
             self.upsertMessagesInList(messages: localMessageList, needReload: true)
+            if let localMessageList = localMessageList {
+                self.sendReceipt(localMessageList)
+            }
         } remoteMessageBlock: { remoteMessageList, timestamp, hasMore, errorCode in
             SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0), hasMore is \(hasMore)")
             self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
+            if let remoteMessageList = remoteMessageList {
+                self.sendReceipt(remoteMessageList)
+            }
             self.hasPreviousMessage = hasMore
             self.prevLock.unlock()
             SBULog.info("Prev message list remote unlock")
@@ -272,7 +276,37 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         super.deleteResendableMessage(message, needReload: needReload)
     }
     
-
+    // MARK: - Message related
+    public func markAsRead() {
+        JIM.shared().conversationManager.clearUnreadCount(by: self.conversationInfo?.conversation) {
+        } error: { code in
+            if code != .none {
+                self.delegate?.didReceiveError(code)
+            }
+        }
+    }
+    
+    func sendReceipt(_ messages: [JMessage]) {
+        if self.conversationInfo?.conversation.conversationType != .private {
+            return
+        }
+        var messageIds: [String] = []
+        //只有单聊发，只有收到的消息发，只有没有 hasRead 发
+        for message in messages {
+            if message.direction == .receive && !message.hasRead {
+                messageIds.append(message.messageId)
+            }
+        }
+        if messageIds.count == 0 {
+            return
+        }
+        JIM.shared().messageManager.sendReadReceipt(messageIds, in: self.conversationInfo?.conversation) {
+        } error: { code in
+            if code != .none {
+                self.delegate?.didReceiveError(code)
+            }
+        }
+    }
     
     // MARK: - Typing
 //    public func startTypingMessage() {
@@ -395,7 +429,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     }
     
     override func reset() {
-//        self.markAsRead()
+        self.markAsRead()
         
         super.reset()
     }
@@ -407,10 +441,8 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
             return
         }
         self.upsertMessagesInList(messages: [message], needReload: true)
-        
-        JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
-        } error: { code in
-        }
+        self.sendReceipt([message])
+        self.markAsRead()
     }
     
     public func messageDidRecall(_ message: JMessage!) {
