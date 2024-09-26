@@ -157,7 +157,7 @@
             }
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
-                    [dlg messageDidDelete:conversation clientMsgNos:clientMsgNos];
+                    [dlg messageDidDelete:conversation clientMsgNos:deleteClientMsgNoList];
                 }
             }];
         });
@@ -179,7 +179,7 @@
             }
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
-                    [dlg messageDidDelete:conversation clientMsgNos:clientMsgNos];
+                    [dlg messageDidDelete:conversation clientMsgNos:deleteClientMsgNoList];
                 }
             }];
         });
