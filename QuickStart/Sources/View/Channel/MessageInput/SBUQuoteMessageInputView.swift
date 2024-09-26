@@ -181,8 +181,8 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
     }
     
     open override func setupStyles() {
-        self.JMessagePreview.tintColor = theme.quotedJMessageThumbnailTintColor
-        self.JMessagePreview.backgroundColor = theme.quotedJMessageThumbnailBackgroundColor
+        self.JMessagePreview.tintColor = theme.quotedFileMessageThumbnailTintColor
+        self.JMessagePreview.backgroundColor = theme.quotedFileMessageThumbnailBackgroundColor
         
         self.replyToLabel.font = theme.replyToTextFont
         self.replyToLabel.textColor = theme.replyToTextColor

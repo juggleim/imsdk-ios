@@ -85,6 +85,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         )
     }()
     
+    public lazy var quotedMessageView: (UIView & SBUQuotedMessageViewProtocol)? = SBUQuotedBaseMessageView()
     
     // + ------------------+----------------+
     // | threadInfoSpacing | threadInfoView |
@@ -166,6 +167,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         self.userNameView.isHidden = true
         self.profileView.isHidden = true
         self.profilesStackView.isHidden = true
+        self.quotedMessageView?.isHidden = true
         self.threadHStackView.isHidden = true
         
         // + --------------------------------------------------------------+
@@ -186,6 +188,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 ]),
                 self.profileContentSpacing,
                 self.contentVStackView.setVStack([
+                    self.quotedMessageView,
                     self.messageHStackView.setHStack([
                         self.mainContainerVStackView.setVStack([
                             self.mainContainerView,
@@ -362,6 +365,8 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 joinedAt: configuration.joinedAt,
                 messageOffsetTimestamp: configuration.messageOffsetTimestamp
             )
+        } else {
+            self.quotedMessageView?.isHidden = true
         }
         
         if self.useThreadInfo {
@@ -376,65 +381,43 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     }
     
     public func setupQuotedMessageView(joinedAt: Int64 = 0, messageOffsetTimestamp: Int64 = 0) {
-        return
-        //TODO:
-//        guard self.quotedMessageView != nil,
-//              let message = self.message,
-//              let quotedMessage = self.message?.parentMessage else { return }
-//        let configuration = SBUQuotedJMessageViewParams(
-//            message: message,
-//            position: self.position,
-//            useQuotedMessage: self.useQuotedMessage,
-//            joinedAt: joinedAt,
-//            messageOffsetTimestamp: messageOffsetTimestamp
-//        )
-//        guard self.quotedMessageView is SBUQuotedJMessageView else {
-//            // For customized parent message view.
-//            self.quotedMessageView?.configure(with: configuration)
-//            return
-//        }
-//
-//        let isMessageUnavailable = (
-//            (message.parentMessage?.createdAt ?? 0) < messageOffsetTimestamp
-//            && SendbirdUI.config.groupChannel.channel.replyType == .thread
-//        )
-//
-//        let userMessageBlock = {
-//            if !(self.quotedMessageView is SBUQuotedUserMessageView) {
-//                self.contentVStackView.arrangedSubviews.forEach {
-//                    $0.removeFromSuperview()
-//                }
-//                self.quotedMessageView = SBUQuotedUserMessageView()
-//                self.contentVStackView.setVStack([
-//                    self.quotedMessageView,
-//                    self.messageHStackView
-//                ])
-//            }
-//            (self.quotedMessageView as? SBUQuotedUserMessageView)?.configure(with: configuration)
-//        }
-//
-//        switch quotedMessage {
-//        case is UserMessage:
-//            userMessageBlock()
-//        case is JMessage, is MultipleFilesMessage:
-//            if isMessageUnavailable {
-//                userMessageBlock()
-//            }
-//            if !(self.quotedMessageView is SBUQuotedJMessageView) {
-//                self.contentVStackView.arrangedSubviews.forEach {
-//                    $0.removeFromSuperview()
-//                }
-//                self.quotedMessageView = SBUQuotedJMessageView()
-//                self.contentVStackView.setVStack([
-//                    quotedMessageView,
-//                    messageHStackView
-//                ])
-//            }
-//            (self.quotedMessageView as? SBUQuotedJMessageView)?.configure(with: configuration)
-//        default:
-//            self.quotedMessageView?.removeFromSuperview()
-//        }
-//        self.updateContentsPosition()
+        guard self.quotedMessageView != nil,
+              let message = self.message,
+              let quotedMessage = self.message?.referredMsg else { return }
+        let configuration = SBUQuotedBaseMessageViewParams(
+            message: message,
+            position: self.position,
+            useQuotedMessage: self.useQuotedMessage,
+            joinedAt: joinedAt,
+            messageOffsetTimestamp: messageOffsetTimestamp
+        )
+        guard self.quotedMessageView is SBUQuotedBaseMessageView else {
+            // For customized parent message view.
+            self.quotedMessageView?.configure(with: configuration)
+            return
+        }
+
+        let isMessageUnavailable = false
+
+        let userMessageBlock = {
+            if !(self.quotedMessageView is SBUQuotedUserMessageView) {
+                self.contentVStackView.arrangedSubviews.forEach {
+                    $0.removeFromSuperview()
+                }
+                self.quotedMessageView = SBUQuotedUserMessageView()
+                self.contentVStackView.setVStack([
+                    self.quotedMessageView,
+                    self.messageHStackView
+                ])
+            }
+            (self.quotedMessageView as? SBUQuotedUserMessageView)?.configure(with: configuration)
+        }
+        
+        if quotedMessage.content is JTextMessage {
+            userMessageBlock()
+        }
+
+        self.updateContentsPosition()
     }
     
     /// Set up the thread info view.
@@ -505,6 +488,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 self.messageSpacing
             ])
             self.contentVStackView.setVStack([
+                self.quotedMessageView,
                 self.messageHStackView
             ])
             self.contentHStackView.setHStack([
@@ -527,6 +511,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
                 ]),
             ])
             self.contentVStackView.setVStack([
+                self.quotedMessageView,
                 self.messageHStackView
             ])
             self.contentHStackView.setHStack([
