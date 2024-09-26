@@ -296,10 +296,22 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         case 0:
             self.unreadCount.isHidden = true
         case 1...99:
-            self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
+            if conversationInfo.mute {
+                self.unreadCount.setTitle("", for: .normal)
+                self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
+            } else {
+                self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
+                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+            }
             self.unreadCount.isHidden = false
         case 100...:
-            self.unreadCount.setTitle("99+", for: .normal)
+            if conversationInfo.mute {
+                self.unreadCount.setTitle("", for: .normal)
+                self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
+            } else {
+                self.unreadCount.setTitle("99+", for: .normal)
+                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+            }
             self.unreadCount.isHidden = false
         default:
             break
