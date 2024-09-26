@@ -212,14 +212,10 @@ extension SBUGroupChannelModule {
         open override func createMessageMenuItems(for message: JMessage) -> [SBUMenuItem] {
             var items = super.createMessageMenuItems(for: message)
             
-//            switch message {
-//            case is UserMessage, is JMessage, is MultipleFilesMessage:
-//                if SendbirdUI.config.groupChannel.channel.replyType != .none {
-//                    let reply = self.createReplyMenuItem(for: message)
-//                    items.append(reply)
-//                }
-//            default: break
-//            }
+            if message.content is JTextMessage {
+                let reply = self.createReplyMenuItem(for: message)
+                items.append(reply)
+            }
             
             return items
         }

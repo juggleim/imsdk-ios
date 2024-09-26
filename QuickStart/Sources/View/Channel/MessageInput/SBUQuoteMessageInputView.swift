@@ -201,11 +201,8 @@ open class SBUQuoteMessageInputView: SBUView, SBUQuoteMessageInputViewProtocol {
 
     open func configure(with configuration: SBUQuoteMessageInputViewParams) {
         self.JMessagePreview.isHidden = false
-        if configuration.messageFileType == .voice {
-            self.JMessagePreview.isHidden = true
-            self.userMessagePreview.text = SBUStringSet.VoiceMessage.Preview.quotedMessage
-        } else {
-//            self.userMessagePreview.text = configuration.message.message
+        if let textMessage = configuration.message.content as? JTextMessage {
+            self.userMessagePreview.text = textMessage.content
         }
         
         self.replyToLabel.text = configuration.replyToText

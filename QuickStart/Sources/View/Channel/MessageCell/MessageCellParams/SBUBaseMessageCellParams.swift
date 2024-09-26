@@ -71,7 +71,7 @@ public class SBUBaseMessageCellParams {
         self.receiptState = receiptState
         self.shouldHideFeedback = shouldHideFeedback
         
-        self.useQuotedMessage = false
+        self.useQuotedMessage = message.referredMsg != nil
 //            (SendbirdUI.config.groupChannel.channel.replyType != .none)
 //            && !isThreadMessage
 //            && message.parentMessage != nil

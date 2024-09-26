@@ -13,8 +13,6 @@
 #import <JuggleIM/JUserInfo.h>
 #import <JuggleIM/JMessageOptions.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 /// 消息方向，发送/接收
 typedef NS_ENUM(NSUInteger, JMessageDirection) {
     JMessageDirectionSend = 1,
@@ -62,5 +60,3 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, copy) NSString *localAttribute;
 
 @end
-
-NS_ASSUME_NONNULL_END

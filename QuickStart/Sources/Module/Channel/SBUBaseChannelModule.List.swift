@@ -841,7 +841,7 @@ extension SBUBaseChannelModule {
             ? SBUIconSetType.iconThread
             : SBUIconSetType.iconReply
             
-            let isEnabled = false//message.parentMessage == nil
+            let isEnabled = true//message.parentMessage == nil
             
             let menuItem = SBUMenuItem(
                 title: replyMenuTitle,

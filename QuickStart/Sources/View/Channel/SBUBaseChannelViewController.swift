@@ -758,6 +758,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: JMessage) {
+        self.setMessageInputViewMode(.quoteReply, message: message)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didDismissMenuForCell cell: UITableViewCell) {

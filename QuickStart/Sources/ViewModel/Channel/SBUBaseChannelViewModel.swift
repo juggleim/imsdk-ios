@@ -188,7 +188,9 @@ open class SBUBaseChannelViewModel: NSObject {
     open func sendTextMessage(text: String, parentMessage: JMessage? = nil) {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         let textMessage = JTextMessage(content: text)
-        let message = JIM.shared().messageManager.sendMessage(textMessage, in: conversationInfo?.conversation) { sendMessage in
+        let option = JMessageOptions()
+        option.referredMsgId = parentMessage?.messageId
+        let message = JIM.shared().messageManager.sendMessage(textMessage, messageOption: option, in: conversationInfo?.conversation) { sendMessage in
             if let sendMessage = sendMessage {
                 self.upsertMessagesInList(messages: [sendMessage], needReload: true)
             }
@@ -197,6 +199,7 @@ open class SBUBaseChannelViewModel: NSObject {
                 self.upsertMessagesInList(messages: [errorMessage], needReload: true)
             }
         }
+
         if let message = message {
             self.upsertMessagesInList(messages: [message], needReload: true)
         }

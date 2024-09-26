@@ -477,7 +477,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         
         switch mode {
         case .edit:
-            guard let message = message as? JMessage else { break }
+            guard let message = message else { break }
             self.option = .edit(message)
         case .quoteReply:
             guard let message = message else { break }

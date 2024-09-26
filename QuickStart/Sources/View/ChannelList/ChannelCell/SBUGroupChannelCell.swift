@@ -285,8 +285,8 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         
         // Last message
         self.messageLabel.lineBreakMode = .byTruncatingTail
-        if let lastMessage = conversationInfo.lastMessage {
-            self.messageLabel.text = lastMessage.content.conversationDigest()
+        if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
+            self.messageLabel.text = digest
         } else {
             self.messageLabel.text = ""
         }
