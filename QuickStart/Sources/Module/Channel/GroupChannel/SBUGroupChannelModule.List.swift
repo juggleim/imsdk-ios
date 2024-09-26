@@ -273,7 +273,7 @@ extension SBUGroupChannelModule {
                 currentIndex: indexPath.row,
                 fullMessageList: fullMessageList
             )
-            let receiptState = SBUMessageReceiptState.none//SBUUtils.getReceiptState(of: message, in: channel)
+            let receiptState = SBUUtils.getReceiptState(of: message)
 
             if let textMessageCell = messageCell as? SBUTextMessageCell {
                 let shouldHideSuggestedReplies = false

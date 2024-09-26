@@ -90,7 +90,8 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo?.conversation) {
         } error: { errorCode in
         }
-        JIM.shared().messageManager.add(self)
+        JIM.shared().messageManager.add(self as JMessageDelegate)
+        JIM.shared().messageManager.add(self as JMessageReadReceiptDelegate)
         self.loadPrevMessages()
     }
     
@@ -436,5 +437,21 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
         self.reset()
         self.clearMessageList()
         self.sortAllMessageList(needReload: true)
+    }
+}
+
+extension SBUGroupChannelViewModel: JMessageReadReceiptDelegate {
+    public func messagesDidRead(_ messageIds: [String]!, in conversation: JConversation!) {
+        if !conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        let messages = JIM.shared().messageManager.getMessagesByMessageIds(messageIds)
+        if let messages = messages, messages.count > 0 {
+            self.upsertMessagesInList(messages: messages, needReload: true)
+        }
+    }
+    
+    public func groupMessagesDidRead(_ msgs: [String : JGroupMessageReadInfo]!, in conversation: JConversation!) {
+        
     }
 }

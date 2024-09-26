@@ -152,7 +152,7 @@ public class SBUUtils {
     @available(*, deprecated, renamed: "getReceiptState(of:in:)") // 2.0.5
     public static func getReceiptState(channel: JConversationInfo,
                                        message: JMessage) -> SBUMessageReceiptState {
-        Self.getReceiptState(of: message, in: channel)
+        Self.getReceiptState(of: message)
     }
     
     /// This function gets the receipt state of the message on the channel.
@@ -167,7 +167,7 @@ public class SBUUtils {
     @available(*, unavailable, message: "It returns nil when th channel is super group channel or broadcast channel. Please set the value to `SBUMessageReceitState.notUsed`.", renamed: "getReceiptState(of:in:)") // 2.2.0
     public static func getReceiptStateIfExists(for channel: JConversationInfo,
                                                message: JMessage) -> SBUMessageReceiptState? {
-        let receiptState = Self.getReceiptState(of: message, in: channel)
+        let receiptState = Self.getReceiptState(of: message)
         return receiptState == .notUsed ? nil : receiptState
     }
     
@@ -180,21 +180,20 @@ public class SBUUtils {
     /// - Returns: `SBUMessageReceiptState`. , It returns `.notUsed` when the channel is *super group channel* or *broadcast channel* which doesn't support receipts.
     ///
     /// - Since: 2.2.0
-    public static func getReceiptState(of message: JMessage, in channel: JConversationInfo) -> SBUMessageReceiptState {
-//        if channel.isSuper || channel.isBroadcast {
-//            return .notUsed
-//        }
-//        
-//        let didReadAll = channel.getUnreadMemberCount(message) == 0
-//        let didDeliverAll = channel.getUndeliveredMemberCount(message) == 0
-//        
-//        if didReadAll {
-//            return .read
-//        } else if didDeliverAll {
-//            return .delivered
-//        } else {
-//            return .none
-//        }
+    public static func getReceiptState(of message: JMessage) -> SBUMessageReceiptState {
+        if message.conversation.conversationType != .private {
+            return .notUsed
+        }
+        if message.direction == .receive {
+            return .none
+        }
+        if message.hasRead {
+            return .read
+        }
+        if message.messageState == .sent {
+            return .delivered
+        }
+        
         return .none
     }
     
