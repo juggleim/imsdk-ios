@@ -12,8 +12,24 @@ import JuggleIM
 class FriendListViewController: BaseTableListViewController {
     var users: [JCUser]?
     
+    lazy var rightBarButton: UIBarButtonItem = {
+        let rightItem =  UIBarButtonItem(
+            image: SBUIconSetType.iconCreate.image(to: SBUIconSetType.Metric.defaultIconSize),
+            style: .plain,
+            target: self,
+            action: #selector(onClickMenu)
+        )
+        rightItem.setTitleTextAttributes([.font : SBUFontSet.button2], for: .normal)
+        return rightItem
+    }()
+    
     override func loadView() {
         super.loadView()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +60,31 @@ class FriendListViewController: BaseTableListViewController {
                 }
             }
         }
+    }
+    
+    @objc func onClickMenu() {
+        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] phoneNumber in
+            guard let phoneNumber = phoneNumber as? String else { return }
+            HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
+                DispatchQueue.main.async {
+                    self?.tabBarController?.tabBar.isHidden = true
+                    let addFriendVC = AddFriendViewController()
+                    if let jcUser = jcUser {
+                        addFriendVC.users = [jcUser]
+                    }
+                    self?.navigationController?.pushViewController(addFriendVC, animated: true)
+                }
+            }
+        }
+        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        SBUAlertView.show(
+            title: "Add friend",
+            needInputField: true,
+            placeHolder: "Enter phone number",
+            centerYRatio: 0.75,
+            confirmButtonItem: okButton,
+            cancelButtonItem: cancelButton
+        )
     }
 }
 
