@@ -65,6 +65,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
+                    self?.tabBarController?.tabBar.isHidden = true
                     let addFriendVC = AddFriendViewController()
                     if let jcUser = jcUser {
                         addFriendVC.users = [jcUser]
