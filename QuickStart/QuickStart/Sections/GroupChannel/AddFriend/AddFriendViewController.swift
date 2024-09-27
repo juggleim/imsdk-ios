@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import JuggleIM
 
 class AddFriendViewController: BaseTableListViewController {
     var users: [JCUser]?
@@ -21,8 +22,8 @@ class AddFriendViewController: BaseTableListViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.register(
-            BaseUserCell.self,
-            forCellReuseIdentifier: BaseUserCell.sbu_className
+            AddFriendUserCell.self,
+            forCellReuseIdentifier: AddFriendUserCell.sbu_className
         )
         if let users = users {
             if users.isEmpty {
@@ -59,11 +60,11 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
 
     open func tableView(_ tableView: UITableView,
                         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
+        let cell = tableView.dequeueReusableCell(withIdentifier: AddFriendUserCell.sbu_className)
         
         cell?.selectionStyle = .none
 
-        if let userCell = cell as? BaseUserCell, let user = self.users?[indexPath.row] {
+        if let userCell = cell as? AddFriendUserCell, let user = self.users?[indexPath.row] {
             userCell.configure(
                 type: .addFriend,
                 user: user,
@@ -77,9 +78,16 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let user = self.users?[indexPath.row],
               let defaultCell = self.tableView.cellForRow(at: indexPath)
-                as? BaseUserCell else { return }
+                as? AddFriendUserCell else { return }
         
         if user.isFriend {
+            let conversation = JConversation(conversationType: .private, conversationId: user.userId)
+            let defaultConversationInfo = JConversationInfo()
+            defaultConversationInfo.conversation = conversation
+            let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+            self.tabBarController?.tabBar.isHidden = true
+            let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            self.navigationController?.pushViewController(channelVC, animated: true)
             return
         }
         self.loadingIndicator.startAnimating()
@@ -91,6 +99,7 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
                 if isSuccess {
                     user.isFriend = true
                     defaultCell.selectUser(true)
+                    self.navigationController?.popViewController(animated: true)
                 }
             }
         }

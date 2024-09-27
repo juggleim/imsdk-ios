@@ -14,12 +14,12 @@ class FriendListViewController: BaseTableListViewController {
     
     override func loadView() {
         super.loadView()
-        loadFriends()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        loadFriends()
     }
     
     override func configTableView() {

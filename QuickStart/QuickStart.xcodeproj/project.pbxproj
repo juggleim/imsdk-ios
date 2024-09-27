@@ -33,6 +33,7 @@
 		A06388CC2CA59644006357C7 /* SBUQuotedFileMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388C22CA59644006357C7 /* SBUQuotedFileMessageView.swift */; };
 		A06388CD2CA59644006357C7 /* SBUQuotedUserMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388C32CA59644006357C7 /* SBUQuotedUserMessageView.swift */; };
 		A06388CF2CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388C62CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift */; };
+		A06388D12CA696F5006357C7 /* AddFriendUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */; };
 		A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */; };
 		A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516062C89B28600E3AEC1 /* ChatroomCell.swift */; };
 		A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A076CADF2C611DD200417341 /* ProfileManager.swift */; };
@@ -287,6 +288,7 @@
 		A06388C22CA59644006357C7 /* SBUQuotedFileMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUQuotedFileMessageView.swift; sourceTree = "<group>"; };
 		A06388C32CA59644006357C7 /* SBUQuotedUserMessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUQuotedUserMessageView.swift; sourceTree = "<group>"; };
 		A06388C62CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUQuotedBaseMessageViewParams.swift; sourceTree = "<group>"; };
+		A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendUserCell.swift; sourceTree = "<group>"; };
 		A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomListViewController.swift; sourceTree = "<group>"; };
 		A06516062C89B28600E3AEC1 /* ChatroomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomCell.swift; sourceTree = "<group>"; };
 		A06516082C91D1D500E3AEC1 /* QuickStart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickStart.entitlements; sourceTree = "<group>"; };
@@ -1432,6 +1434,7 @@
 			isa = PBXGroup;
 			children = (
 				A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */,
+				A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */,
 			);
 			path = AddFriend;
 			sourceTree = "<group>";
@@ -1676,6 +1679,7 @@
 				A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */,
 				A090B0B62C3EB48C00FE0E10 /* SBUCommonContentView.swift in Sources */,
 				A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */,
+				A06388D12CA696F5006357C7 /* AddFriendUserCell.swift in Sources */,
 				A06388972CA2E5B4006357C7 /* SBUDownloadManager.swift in Sources */,
 				A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */,
 				A0968C8C2C2B020300E68790 /* SBUMessageStateView.swift in Sources */,
