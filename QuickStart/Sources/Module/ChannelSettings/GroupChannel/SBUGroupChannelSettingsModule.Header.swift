@@ -120,6 +120,7 @@ extension SBUGroupChannelSettingsModule {
             if let titleView = self.titleView as? SBUNavigationTitleView {
                 titleView.text = self.channelName ?? SBUStringSet.ChannelSettings_Header_Title
             }
+            self.rightBarButton = nil
         }
         
         // MARK: - Attach update delegate on view
