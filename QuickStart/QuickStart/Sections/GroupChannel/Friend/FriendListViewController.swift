@@ -23,10 +23,6 @@ class FriendListViewController: BaseTableListViewController {
         return rightItem
     }()
     
-    override func loadView() {
-        super.loadView()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationItem.rightBarButtonItem = rightBarButton

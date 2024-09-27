@@ -12,14 +12,26 @@ import JuggleIM
 class GroupListViewController: BaseTableListViewController {
     var groups: [JGroupInfo]?
     
-    override func loadView() {
-        super.loadView()
-        loadGroups()
+    lazy var rightBarButton: UIBarButtonItem = {
+        let rightItem =  UIBarButtonItem(
+            image: SBUIconSetType.iconCreate.image(to: SBUIconSetType.Metric.defaultIconSize),
+            style: .plain,
+            target: self,
+            action: #selector(onClickMenu)
+        )
+        rightItem.setTitleTextAttributes([.font : SBUFontSet.button2], for: .normal)
+        return rightItem
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tabBarController?.tabBar.isHidden = false
+        loadGroups()
     }
     
     override func configTableView() {
@@ -44,6 +56,11 @@ class GroupListViewController: BaseTableListViewController {
                 }
             }
         })
+    }
+    
+    @objc func onClickMenu() {
+        let createGroupVC = CreateGroupViewController()
+        self.navigationController?.pushViewController(createGroupVC, animated: true)
     }
 }
 
