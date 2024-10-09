@@ -8,11 +8,41 @@
 
 /* Begin PBXBuildFile section */
 		A097272C2CB660A300E08BC4 /* JuggleCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A097272B2CB660A300E08BC4 /* JuggleCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09727342CB66A7C00E08BC4 /* JCall.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727332CB66A7C00E08BC4 /* JCall.m */; };
+		A09727352CB66A7C00E08BC4 /* JCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727322CB66A7C00E08BC4 /* JCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09727382CB66AE600E08BC4 /* JCallSession.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727372CB66AE600E08BC4 /* JCallSession.m */; };
+		A09727392CB66AE600E08BC4 /* JCallSession.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727362CB66AE600E08BC4 /* JCallSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A097273C2CB66E0500E08BC4 /* JCallConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A097273B2CB66D7A00E08BC4 /* JCallConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09727412CB6936B00E08BC4 /* JStateMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727402CB6936B00E08BC4 /* JStateMachine.m */; };
+		A09727422CB6936B00E08BC4 /* JStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = A097273F2CB6936B00E08BC4 /* JStateMachine.h */; };
+		A09727452CB693E500E08BC4 /* JState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727442CB693E500E08BC4 /* JState.m */; };
+		A09727462CB693E500E08BC4 /* JState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727432CB693E500E08BC4 /* JState.h */; };
+		A09727492CB6C03400E08BC4 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A09727482CB6C03400E08BC4 /* JuggleIM.framework */; };
+		A097274C2CB6C15700E08BC4 /* JLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = A097274B2CB6C15700E08BC4 /* JLogger.h */; };
+		A09727582CB6C8CD00E08BC4 /* JCallEventUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727572CB6C8CD00E08BC4 /* JCallEventUtil.m */; };
+		A09727592CB6C8CD00E08BC4 /* JCallEventUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727562CB6C8CD00E08BC4 /* JCallEventUtil.h */; };
+		A097275C2CB6CCE300E08BC4 /* JIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A097275B2CB6CCE300E08BC4 /* JIdleState.m */; };
+		A097275D2CB6CCE300E08BC4 /* JIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A097275A2CB6CCE300E08BC4 /* JIdleState.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A09727282CB660A300E08BC4 /* JuggleCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JuggleCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A097272B2CB660A300E08BC4 /* JuggleCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleCall.h; sourceTree = "<group>"; };
+		A09727322CB66A7C00E08BC4 /* JCall.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCall.h; sourceTree = "<group>"; };
+		A09727332CB66A7C00E08BC4 /* JCall.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCall.m; sourceTree = "<group>"; };
+		A09727362CB66AE600E08BC4 /* JCallSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSession.h; sourceTree = "<group>"; };
+		A09727372CB66AE600E08BC4 /* JCallSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallSession.m; sourceTree = "<group>"; };
+		A097273B2CB66D7A00E08BC4 /* JCallConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallConst.h; sourceTree = "<group>"; };
+		A097273F2CB6936B00E08BC4 /* JStateMachine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JStateMachine.h; sourceTree = "<group>"; };
+		A09727402CB6936B00E08BC4 /* JStateMachine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JStateMachine.m; sourceTree = "<group>"; };
+		A09727432CB693E500E08BC4 /* JState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JState.h; sourceTree = "<group>"; };
+		A09727442CB693E500E08BC4 /* JState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JState.m; sourceTree = "<group>"; };
+		A09727482CB6C03400E08BC4 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A097274B2CB6C15700E08BC4 /* JLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLogger.h; sourceTree = "<group>"; };
+		A09727562CB6C8CD00E08BC4 /* JCallEventUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallEventUtil.h; sourceTree = "<group>"; };
+		A09727572CB6C8CD00E08BC4 /* JCallEventUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallEventUtil.m; sourceTree = "<group>"; };
+		A097275A2CB6CCE300E08BC4 /* JIdleState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIdleState.h; sourceTree = "<group>"; };
+		A097275B2CB6CCE300E08BC4 /* JIdleState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIdleState.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -20,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A09727492CB6C03400E08BC4 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -31,6 +62,7 @@
 			children = (
 				A097272A2CB660A300E08BC4 /* JuggleCall */,
 				A09727292CB660A300E08BC4 /* Products */,
+				A09727472CB6C03400E08BC4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -45,9 +77,71 @@
 		A097272A2CB660A300E08BC4 /* JuggleCall */ = {
 			isa = PBXGroup;
 			children = (
+				A097274A2CB6C0F200E08BC4 /* vendor */,
+				A097273D2CB6934400E08BC4 /* internal */,
+				A097273A2CB66AFC00E08BC4 /* model */,
 				A097272B2CB660A300E08BC4 /* JuggleCall.h */,
+				A09727322CB66A7C00E08BC4 /* JCall.h */,
+				A09727332CB66A7C00E08BC4 /* JCall.m */,
+				A097273B2CB66D7A00E08BC4 /* JCallConst.h */,
 			);
 			path = JuggleCall;
+			sourceTree = "<group>";
+		};
+		A097273A2CB66AFC00E08BC4 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				A09727362CB66AE600E08BC4 /* JCallSession.h */,
+				A09727372CB66AE600E08BC4 /* JCallSession.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		A097273D2CB6934400E08BC4 /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				A09727512CB6C89E00E08BC4 /* utility */,
+				A097273E2CB6935500E08BC4 /* fsm */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
+		A097273E2CB6935500E08BC4 /* fsm */ = {
+			isa = PBXGroup;
+			children = (
+				A097273F2CB6936B00E08BC4 /* JStateMachine.h */,
+				A09727402CB6936B00E08BC4 /* JStateMachine.m */,
+				A09727432CB693E500E08BC4 /* JState.h */,
+				A09727442CB693E500E08BC4 /* JState.m */,
+				A097275A2CB6CCE300E08BC4 /* JIdleState.h */,
+				A097275B2CB6CCE300E08BC4 /* JIdleState.m */,
+			);
+			path = fsm;
+			sourceTree = "<group>";
+		};
+		A09727472CB6C03400E08BC4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A09727482CB6C03400E08BC4 /* JuggleIM.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A097274A2CB6C0F200E08BC4 /* vendor */ = {
+			isa = PBXGroup;
+			children = (
+				A097274B2CB6C15700E08BC4 /* JLogger.h */,
+			);
+			path = vendor;
+			sourceTree = "<group>";
+		};
+		A09727512CB6C89E00E08BC4 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				A09727562CB6C8CD00E08BC4 /* JCallEventUtil.h */,
+				A09727572CB6C8CD00E08BC4 /* JCallEventUtil.m */,
+			);
+			path = utility;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -58,6 +152,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A097272C2CB660A300E08BC4 /* JuggleCall.h in Headers */,
+				A097275D2CB6CCE300E08BC4 /* JIdleState.h in Headers */,
+				A09727462CB693E500E08BC4 /* JState.h in Headers */,
+				A09727392CB66AE600E08BC4 /* JCallSession.h in Headers */,
+				A09727422CB6936B00E08BC4 /* JStateMachine.h in Headers */,
+				A09727592CB6C8CD00E08BC4 /* JCallEventUtil.h in Headers */,
+				A097274C2CB6C15700E08BC4 /* JLogger.h in Headers */,
+				A09727352CB66A7C00E08BC4 /* JCall.h in Headers */,
+				A097273C2CB66E0500E08BC4 /* JCallConst.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +231,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A09727342CB66A7C00E08BC4 /* JCall.m in Sources */,
+				A09727382CB66AE600E08BC4 /* JCallSession.m in Sources */,
+				A097275C2CB6CCE300E08BC4 /* JIdleState.m in Sources */,
+				A09727452CB693E500E08BC4 /* JState.m in Sources */,
+				A09727412CB6936B00E08BC4 /* JStateMachine.m in Sources */,
+				A09727582CB6C8CD00E08BC4 /* JCallEventUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +296,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -246,7 +354,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -271,15 +379,17 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.call.JuggleCall;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.call;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -301,15 +411,17 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.call.JuggleCall;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.call;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;

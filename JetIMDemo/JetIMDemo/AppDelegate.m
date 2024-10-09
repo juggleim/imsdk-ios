@@ -7,6 +7,7 @@
 
 #import "AppDelegate.h"
 #import <JuggleIM/JuggleIM.h>
+#import <JuggleCall/JuggleCall.h>
 
 #define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
 #define kToken2 @"CgZhcHBrZXkaINodQgLnbhTbt0SzC8b/JFwjgUAdIfUZTEFK8DvDLgM1"
@@ -38,6 +39,9 @@
     [JIM.shared.messageManager setMessageUploadProvider:self];
     [JIM.shared.chatroomManager addDelegate:self];
     [JIM.shared.chatroomManager addAttributesDelegate:self];
+    
+    JCall *call = [[JCall alloc] init];
+    [call startCall];
     return YES;
 }
 

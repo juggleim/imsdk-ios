@@ -8,6 +8,8 @@
 #import "JDownloadManager.h"
 #import "JDownloader.h"
 
+#define jDownloadQueue "com.JuggleIM.im.downloadqueue"
+
 @interface JDownloadManager ()
 @property (nonatomic, strong) NSMutableDictionary <NSString *, JDownloader *> *downloadDic;
 @property (nonatomic, strong) dispatch_queue_t downloadQueue;
@@ -68,8 +70,8 @@
 
 - (dispatch_queue_t)downloadQueue {
     if (!_downloadQueue) {
-        _downloadQueue = dispatch_queue_create("com.JuggleIM.im.logqueue", DISPATCH_QUEUE_SERIAL);
+        _downloadQueue = dispatch_queue_create(jDownloadQueue, DISPATCH_QUEUE_SERIAL);
     }
     return _downloadQueue;
 }
-@end
+@end 

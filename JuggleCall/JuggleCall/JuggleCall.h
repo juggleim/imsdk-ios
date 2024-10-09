@@ -16,3 +16,6 @@ FOUNDATION_EXPORT const unsigned char JuggleCallVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <JuggleCall/PublicHeader.h>
 
 
+#import <JuggleCall/JCall.h>
+#import <JuggleCall/JCallConst.h>
+#import <JuggleCall/JCallSession.h>
