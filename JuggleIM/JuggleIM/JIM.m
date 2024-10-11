@@ -28,6 +28,7 @@ static JIM *_instance;
         _instance = [[self alloc] init];
         JIMCore *core = [[JIMCore alloc] init];
         _instance.core = core;
+        JLogger.shared.core = core;
         JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
         _instance.chatroomManager = chatroomManager;
         JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager];

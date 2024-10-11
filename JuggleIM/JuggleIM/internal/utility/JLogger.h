@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JuggleIMConst.h"
+#import "JIMCore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,12 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JLogger : NSObject
 
+@property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, assign) JLogLevel fileLogLevel;
 @property (nonatomic, assign) JLogLevel consoleLogLevel;
 
 + (instancetype)shared;
 
-- (void)uploadLog:(long long)startTime
+- (void)uploadLog:(NSString *)messageId
+        startTime:(long long)startTime
           endTime:(long long)endTime
            appKey:(NSString *)appKey
             token:(NSString *)token;

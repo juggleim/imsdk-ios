@@ -9,26 +9,26 @@
 #import "JLogger.h"
 
 @interface JIntervalGenerator ()
-@property (nonatomic, assign) int interval;
+@property (nonatomic, assign) float interval;
 @end
 
 @implementation JIntervalGenerator
 
-- (int)getNextInterval {
-    int result = self.interval;
-    if (result == 0) {
+- (float)getNextInterval {
+    float result = self.interval;
+    if (result < 1) {
         self.interval = 1;
     } else if (result >= 32) {
         
     } else {
         self.interval *= 2;
     }
-    JLogI(@"J-Itvl", @"interval is %d", result);
+    JLogI(@"J-Itvl", @"interval is %f", result);
     return result;
 }
 
 - (void)reset {
-    self.interval = 0;
+    self.interval = 0.1;
 }
 
 @end

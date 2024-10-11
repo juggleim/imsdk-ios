@@ -15,7 +15,7 @@
 + (JBaseUploader *)getUpload:(NSString *)localPath
                      ossType:(JUploadOssType)ossType
                    qiNiuCred:(JUploadQiNiuCred *)qiNiuCred
-                 preSignCred:(JUploadPreSignCred *)preSignCred{
+                 preSignCred:(JUploadPreSignCred *)preSignCred {
     JBaseUploader * uploader = nil;
     switch (ossType) {
         case JUploadOssType_QiNiu:
@@ -30,9 +30,6 @@
             break;
     }
     return uploader;
-    
-    
-    
 }
 
 @end

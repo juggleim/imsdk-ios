@@ -11,9 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JUploadQiNiuCred : NSObject
 
-@property (nonatomic, copy) NSString * domain;
+@property (nonatomic, copy) NSString *domain;
 
-@property (nonatomic, copy) NSString * token;
+@property (nonatomic, copy) NSString *token;
 
 @end
 

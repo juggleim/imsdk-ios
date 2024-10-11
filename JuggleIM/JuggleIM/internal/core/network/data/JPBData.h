@@ -309,6 +309,12 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
                 userId:(NSString *)userId
                  index:(int)index;
 
+- (NSData *)uploadLogStatus:(int)result
+                     userId:(NSString *)userId
+                  messageId:(NSString *)messageId
+                        url:(NSString *)url
+                      index:(int)index;
+
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
                            index:(int)index;

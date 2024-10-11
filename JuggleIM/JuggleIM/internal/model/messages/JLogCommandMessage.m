@@ -10,6 +10,7 @@
 #define jLogCommandType @"jg:logcmd"
 #define jLogStartTime @"start"
 #define jLogEndTime @"end"
+#define jLogPlatform @"platform"
 
 @implementation JLogCommandMessage
 
@@ -28,6 +29,7 @@
     if ([endTime isKindOfClass:[NSNumber class]]) {
         self.endTime = [(NSNumber *)endTime longLongValue];
     }
+    self.platform = json[jLogPlatform];
 }
 
 + (JMessageFlag)flags {

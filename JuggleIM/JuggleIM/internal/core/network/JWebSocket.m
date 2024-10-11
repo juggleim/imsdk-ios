@@ -705,6 +705,25 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)uploadLogStatus:(int)result
+                 userId:(NSString *)userId
+              messageId:(NSString *)messageId
+                    url:(NSString *)url {
+    dispatch_async(self.sendQueue, ^{
+       NSData *d = [self.pbData uploadLogStatus:result
+                                         userId:userId
+                                      messageId:messageId
+                                            url:url
+                                          index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"upload log status, isSuccess is %d", result);
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"upload log status error, msg is %@", err.description);
+        }
+    });
+}
+
 - (void)syncChatroomMessagesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData syncChatroomMessages:syncTime
@@ -762,12 +781,11 @@ inConversation:(JConversation *)conversation
     });
 }
 
-
 - (void)getUploadFileCred:(NSString *)userId
                  fileType:(JUploadFileType)fileType
                       ext:(NSString *)ext
                   success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * qiNiuCred, JUploadPreSignCred * preSignCred))successBlock
-                    error:(void (^)(JErrorCodeInternal code))errorBlock{
+                    error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"get upload cred");
         NSNumber *key = @(self.cmdIndex);

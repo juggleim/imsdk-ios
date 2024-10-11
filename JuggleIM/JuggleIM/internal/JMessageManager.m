@@ -1672,7 +1672,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     return arr;
 }
 
--(void)saveReferMessages:(JConcreteMessage *)message{
+-(void)saveReferMessages:(JConcreteMessage *)message {
     if(message.referredMsg == nil){
         return;
     }
@@ -1704,7 +1704,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     return nil;
 }
 
-- (void)handleDeleteMsgMessageCmdMessage:(JConcreteMessage *)message{
+- (void)handleDeleteMsgMessageCmdMessage:(JConcreteMessage *)message {
     JDeleteMsgMessage * content = (JDeleteMsgMessage *)message.content;
     
     NSArray * messageList = [self.core.dbManager getMessagesByMessageIds:content.msgIdList];
@@ -1730,7 +1730,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     [self notifyMessageRemoved:message.conversation removedMessages:messageList];
 }
 
-- (void)handleClearHistoryMessageCmdMessage:(JConcreteMessage *)message{
+- (void)handleClearHistoryMessageCmdMessage:(JConcreteMessage *)message {
     JCleanMsgMessage * content = (JCleanMsgMessage *)message.content;
     
     long long starTime = content.cleanTime;
@@ -1754,7 +1754,11 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
 - (void)handleLogCommandMessage:(JConcreteMessage *)message {
     JLogCommandMessage *content = (JLogCommandMessage *)message.content;
     
-    [JLogger.shared uploadLog:content.startTime
+    if (![content.platform isEqualToString:@"iOS"]) {
+        return;
+    }
+    [JLogger.shared uploadLog:message.messageId
+                    startTime:content.startTime
                       endTime:content.endTime
                        appKey:self.core.appKey
                         token:self.core.token];

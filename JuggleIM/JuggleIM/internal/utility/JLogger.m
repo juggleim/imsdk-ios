@@ -7,7 +7,7 @@
 
 #import "JLogger.h"
 #import "JLogFileWriter.h"
-#import "JLogUploader.h"
+#import "JUploadManager.h"
 
 #define jLogQueue "com.JuggleIM.im.logqueue"
 
@@ -36,18 +36,15 @@ static JLogger *_instance;
     return _instance;
 }
 
-- (void)uploadLog:(long long)startTime
+- (void)uploadLog:(NSString *)messageId
+        startTime:(long long)startTime
           endTime:(long long)endTime
            appKey:(nonnull NSString *)appKey
             token:(nonnull NSString *)token {
     dispatch_async(self.logQueue, ^{
         NSString *fileName = [self.fileWriter generateZipFile:startTime endTime:endTime];
-        if (fileName.length == 0) {
-            JLogE(@"J-Logger", @"zip fail");
-            return;
-        }
-        JLogUploader *uploader = [[JLogUploader alloc] init];
-        [uploader upload:fileName appKey:appKey token:token complete:^() {
+        JUploadManager *uploader = [[JUploadManager alloc] initWithCore:self.core];
+        [uploader uploadLog:fileName messageId:messageId complete:^{
             dispatch_async(self.logQueue, ^{
                 [self.fileWriter removeZipFile:fileName];
             });

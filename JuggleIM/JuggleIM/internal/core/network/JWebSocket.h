@@ -249,6 +249,11 @@ inConversation:(JConversation *)conversation
 - (void)pushSwitch:(BOOL)enablePush
             userId:(NSString *)userId;
 
+- (void)uploadLogStatus:(int)result
+                 userId:(NSString *)userId
+              messageId:(NSString *)messageId
+                    url:(NSString *)url;
+
 - (void)sendPing;
 @end
 

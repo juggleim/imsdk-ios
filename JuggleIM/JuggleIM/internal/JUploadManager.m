@@ -18,6 +18,10 @@
 #import "JSnapshotPackedVideoMessage.h"
 #import "JUploaderFactory.h"
 
+#define jLogUploadSuccess 3
+#define jLogUploadFail 4
+#define jLogNotExist 5
+
 @interface JUploadManager ()
 
 @property (nonatomic, strong) JIMCore *core;
@@ -33,12 +37,57 @@
     return self;
 }
 
+- (void)uploadLog:(NSString *)filePath
+        messageId:(NSString *)messageId
+         complete:(void (^)(void))completeBlock {
+    if (self.core.webSocket == nil) {
+        JLogE(@"J-Uploader", @"upload log fail, webSocket is null");
+        if(completeBlock) {
+            completeBlock();
+        }
+        return;
+    }
+    if (filePath.length == 0) {
+        JLogE(@"J-Uploader", @"log zip file not exist");
+        [self notifyLogResult:jLogNotExist messageId:messageId url:nil];
+        if (completeBlock) {
+            completeBlock();
+        }
+        return;
+    }
+    JUploadFileType uploadFileType = JUploadFileType_Log;
+    [self requestUploadFileCred:uploadFileType
+                       filePath:filePath
+                        success:^(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred) {
+        [self uploadFile:filePath
+                 ossType:ossType
+               qiNiuCred:qiNiuCred
+             preSignCred:preSignCred
+                 success:^(NSString *url) {
+            [self notifyLogResult:jLogUploadSuccess messageId:messageId url:url];
+            if (completeBlock) {
+                completeBlock();
+            }
+        } error:^{
+            [self notifyLogResult:jLogUploadFail messageId:messageId url:nil];
+            if (completeBlock) {
+                completeBlock();
+            }
+        }];
+    } error:^(JErrorCodeInternal code) {
+        [self notifyLogResult:jLogUploadFail messageId:messageId url:nil];
+        if (completeBlock) {
+            completeBlock();
+        }
+    }];
+}
+
 - (void)uploadMessage:(JMessage *)message
              progress:(void (^)(int progress))progressBlock
               success:(void (^)(JMessage * jmessage))successBlock
                 error:(void (^)(void))errorBlock
                cancel:(void (^)(void))cancelBlock {
-    if(self.core.webSocket == nil){
+    if(self.core.webSocket == nil) {
         JLogE(@"J-Uploader", @"uploadMessage fail, webSocket is null, message = %lld", message.clientMsgNo);
         if(errorBlock){
             errorBlock();
@@ -89,68 +138,51 @@
     //有缩略图的情况下先上传缩略图
     if (needPreUpload) {
         float preProgressPercent = 0.2f;
-        [self doRequestUploadFileCred:message
-                             fileType:uploadFileType
-                            localPath:preUploadLocalPath
-                          isPreUpload:YES
-                             progress:^(int progress) {
+        [self doUploadMessage:message
+                     fileType:uploadFileType
+                    localPath:preUploadLocalPath
+                  isPreUpload:YES
+                     progress:^(int progress) {
             int realProgress = progress * preProgressPercent;
             progressBlock(realProgress);
         } success:^(JMessage *jmessage) {
-            [self doRequestUploadFileCred:jmessage
-                                 fileType:uploadFileType
-                                localPath:content.localPath
-                              isPreUpload:NO
-                                 progress:^(int progress) {
+            [self doUploadMessage:jmessage
+                         fileType:uploadFileType
+                        localPath:content.localPath
+                      isPreUpload:NO
+                         progress:^(int progress) {
                 int realProgress = (progress * (1 - preProgressPercent)) + (100 * preProgressPercent);
                 progressBlock(realProgress);
-            }
-                                  success:successBlock
-                                    error:errorBlock
-                                   cancel:cancelBlock];
+            } success:successBlock error:errorBlock cancel:cancelBlock];
             
-        }error:errorBlock cancel:cancelBlock];
-    }else{
-        [self doRequestUploadFileCred:message
-                             fileType:uploadFileType
-                            localPath:content.localPath
-                          isPreUpload:NO
-                             progress:progressBlock
-                              success:successBlock
-                                error:errorBlock
-                               cancel:cancelBlock];
+        } error:errorBlock cancel:cancelBlock];
+    } else {
+        [self doUploadMessage:message
+                     fileType:uploadFileType
+                    localPath:content.localPath
+                  isPreUpload:NO
+                     progress:progressBlock
+                      success:successBlock
+                        error:errorBlock
+                       cancel:cancelBlock];
     }
-    
 }
 
--(void)doRequestUploadFileCred:(JMessage *)message
-                      fileType:(JUploadFileType)fileType
-                     localPath:(NSString *)localPath
-                   isPreUpload:(BOOL)isPreUpload
-                      progress:(void (^)(int progress))progressBlock
-                       success:(void (^)(JMessage * jmessage))successBlock
-                         error:(void (^)(void))errorBlock
-                        cancel:(void (^)(void))cancelBlock{
-    NSString * ext = [localPath pathExtension];
-    if(ext == nil || ext.length == 0){
-        JLogE(@"J-Uploader", @"doRequestUploadFileCred fail, ext is null, localPath = %@", localPath);
-        if(errorBlock){
-            errorBlock();
-        }
-        return;
-    }
-    if(self.core.webSocket == nil){
-        JLogE(@"J-Uploader", @"uploadMessage fail, webSocket is null, message = %lld", message.clientMsgNo);
-        if(errorBlock){
-            errorBlock();
-        }
-        return;
-    }
+- (void)doUploadMessage:(JMessage *)message
+               fileType:(JUploadFileType)fileType
+              localPath:(NSString *)localPath
+            isPreUpload:(BOOL)isPreUpload
+               progress:(void (^)(int progress))progressBlock
+                success:(void (^)(JMessage * jmessage))successBlock
+                  error:(void (^)(void))errorBlock
+                 cancel:(void (^)(void))cancelBlock {
     __weak typeof(self) weakSelf = self;
-    [self.core.webSocket getUploadFileCred:self.core.userId fileType:fileType ext:ext success:^(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred) {
+    [self requestUploadFileCred:fileType
+                       filePath:localPath
+                        success:^(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred) {
         [weakSelf realUpload:message localPath:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred progress:progressBlock success:successBlock error:errorBlock cancel:cancelBlock isPreUpload:isPreUpload];
     } error:^(JErrorCodeInternal code) {
-        JLogE(@"J-Uploader", @"getUploadFileCred failed, localPath = %@ ,message = %lld, errorCode = %li ", localPath,message.clientMsgNo,code);
+        JLogE(@"J-Uploader", @"getUploadFileCred failed, localPath = %@ ,message = %lld, errorCode = %li ", localPath, message.clientMsgNo, code);
         if(errorBlock){
             errorBlock();
         }
@@ -166,7 +198,7 @@
            success:(void (^)(JMessage * jmessage))successBlock
              error:(void (^)(void))errorBlock
             cancel:(void (^)(void))cancelBlock
-       isPreUpload:(BOOL)isPreUpload{
+       isPreUpload:(BOOL)isPreUpload {
     JBaseUploader * uploader = [JUploaderFactory getUpload:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred];
     if(uploader == nil){
         JLogE(@"J-Uploader", @"doRealUpload failed, uploader is null, localPath = %@ , message = %lld", localPath,message.clientMsgNo);
@@ -205,5 +237,64 @@
         }
     };
     [uploader start];
+}
+
+#pragma mark - internal
+- (void)uploadFile:(NSString *)localPath
+           ossType:(JUploadOssType)ossType
+         qiNiuCred:(JUploadQiNiuCred *)qiNiuCred
+       preSignCred:(JUploadPreSignCred *)preSignCred
+           success:(void (^)(NSString *url))successBlock
+             error:(void (^)(void))errorBlock {
+    JBaseUploader * uploader = [JUploaderFactory getUpload:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred];
+    if(uploader == nil){
+        JLogE(@"J-Uploader", @"upload file failed, uploader is null, localPath = %@", localPath);
+        if (errorBlock) {
+            errorBlock();
+        }
+    }
+    uploader.JUploadSuccess = successBlock;
+    uploader.JUploadError = errorBlock;
+    [uploader start];
+}
+
+- (void)requestUploadFileCred:(JUploadFileType)fileType
+                     filePath:(NSString *)filePath
+                      success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock {
+    NSString * ext = [filePath pathExtension];
+    if (ext == nil || ext.length == 0) {
+        JLogE(@"J-Uploader", @"requestUploadFileCred fail, ext is null, path = %@", filePath);
+        if (errorBlock) {
+            errorBlock(JErrorCodeInternalInvalidParam);
+        }
+        return;
+    }
+    if (self.core.webSocket == nil) {
+        JLogE(@"J-Uploader", @"requestUploadFileCred fail, webSocket is null, path is %@", filePath);
+        if (errorBlock) {
+            errorBlock(JErrorCodeInternalConnectionUnavailable);
+        }
+        return;
+    }
+    [self.core.webSocket getUploadFileCred:self.core.userId
+                                  fileType:fileType
+                                       ext:ext
+                                   success:successBlock
+                                     error:^(JErrorCodeInternal code) {
+        JLogE(@"J-Uploader", @"getUploadFileCred failed, localPath = %@, errorCode = %ld", filePath, code);
+        if (errorBlock) {
+            errorBlock(code);
+        }
+    }];
+}
+
+- (void)notifyLogResult:(int)result
+              messageId:(NSString *)messageId
+                    url:(NSString *)url {
+    [self.core.webSocket uploadLogStatus:result
+                                  userId:self.core.userId
+                               messageId:messageId
+                                     url:url];
 }
 @end

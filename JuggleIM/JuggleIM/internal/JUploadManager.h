@@ -11,8 +11,11 @@
 
 @interface JUploadManager : NSObject<JMessageUploadProvider>
 
-
 - (instancetype)initWithCore:(JIMCore *)core;
+
+- (void)uploadLog:(NSString *)filePath
+        messageId:(NSString *)messageId
+         complete:(void (^)(void))completeBlock;
 
 @end
 

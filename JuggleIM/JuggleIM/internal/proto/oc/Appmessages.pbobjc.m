@@ -152,6 +152,7 @@ GPBObjCClassDeclaration(UndisturbConverItem);
 GPBObjCClassDeclaration(UndisturbConversReq);
 GPBObjCClassDeclaration(UpMsg);
 GPBObjCClassDeclaration(UpdLatestMsgReq);
+GPBObjCClassDeclaration(UploadLogStatusReq);
 GPBObjCClassDeclaration(UserIdReq);
 GPBObjCClassDeclaration(UserIdsReq);
 GPBObjCClassDeclaration(UserInfo);
@@ -657,15 +658,17 @@ GPBEnumDescriptor *FileType_EnumDescriptor(void) {
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
-        "DefaultFileType\000Image\000Audio\000Video\000File\000";
+        "DefaultFileType\000Image\000Audio\000Video\000File\000L"
+        "og\000";
     static const int32_t values[] = {
         FileType_DefaultFileType,
         FileType_Image,
         FileType_Audio,
         FileType_Video,
         FileType_File,
+        FileType_Log,
     };
-    static const char *extraTextFormatInfo = "\005\000\017\000\001\005\000\002\005\000\003\005\000\004\004\000";
+    static const char *extraTextFormatInfo = "\006\000\017\000\001\005\000\002\005\000\003\005\000\004\004\000\005\003\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(FileType)
                                        valueNames:valueNames
@@ -689,6 +692,7 @@ BOOL FileType_IsValidValue(int32_t value__) {
     case FileType_Audio:
     case FileType_Video:
     case FileType_File:
+    case FileType_Log:
       return YES;
     default:
       return NO;
@@ -10315,6 +10319,79 @@ void QryFileCredResp_ClearOssOfOneOfCase(QryFileCredResp *message) {
   GPBOneofDescriptor *oneof = [descriptor.oneofs objectAtIndex:0];
   GPBClearOneof(message, oneof);
 }
+#pragma mark - UploadLogStatusReq
+
+@implementation UploadLogStatusReq
+
+@dynamic msgId;
+@dynamic logURL;
+@dynamic state;
+
+typedef struct UploadLogStatusReq__storage_ {
+  uint32_t _has_storage_[1];
+  int32_t state;
+  NSString *msgId;
+  NSString *logURL;
+} UploadLogStatusReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "msgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UploadLogStatusReq_FieldNumber_MsgId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(UploadLogStatusReq__storage_, msgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "logURL",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UploadLogStatusReq_FieldNumber_LogURL,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(UploadLogStatusReq__storage_, logURL),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "state",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UploadLogStatusReq_FieldNumber_State,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(UploadLogStatusReq__storage_, state),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(UploadLogStatusReq)
+                                   messageName:@"UploadLogStatusReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(UploadLogStatusReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\005\000\002\004!!\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
 #pragma mark - QiNiuCredResp
 
 @implementation QiNiuCredResp

@@ -336,6 +336,7 @@ typedef GPB_ENUM(FileType) {
   FileType_Audio = 2,
   FileType_Video = 3,
   FileType_File = 4,
+  FileType_Log = 5,
 };
 
 GPBEnumDescriptor *FileType_EnumDescriptor(void);
@@ -3410,6 +3411,24 @@ void SetQryFileCredResp_OssType_RawValue(QryFileCredResp *message, int32_t value
  * Clears whatever value was set for the oneof 'ossOf'.
  **/
 void QryFileCredResp_ClearOssOfOneOfCase(QryFileCredResp *message);
+
+#pragma mark - UploadLogStatusReq
+
+typedef GPB_ENUM(UploadLogStatusReq_FieldNumber) {
+  UploadLogStatusReq_FieldNumber_MsgId = 1,
+  UploadLogStatusReq_FieldNumber_LogURL = 2,
+  UploadLogStatusReq_FieldNumber_State = 3,
+};
+
+GPB_FINAL @interface UploadLogStatusReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *logURL;
+
+@property(nonatomic, readwrite) int32_t state;
+
+@end
 
 #pragma mark - QiNiuCredResp
 

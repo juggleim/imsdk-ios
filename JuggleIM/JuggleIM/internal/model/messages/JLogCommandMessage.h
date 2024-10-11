@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JLogCommandMessage : JMessageContent
 @property (nonatomic, assign) long long startTime;
 @property (nonatomic, assign) long long endTime;
+@property (nonatomic, copy) NSString *platform;
 @end
 
 NS_ASSUME_NONNULL_END

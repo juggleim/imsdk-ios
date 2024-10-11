@@ -67,6 +67,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQuitChatroom @"c_quit"
 #define jMarkUnread @"mark_unread"
 #define jPushSwitch @"push_switch"
+#define jUploadLogStatus @"upd_log_state"
 #define jSyncChatroomMessage @"c_sync_msgs"
 #define jSyncChatroomAtts @"c_sync_atts"
 #define jQryFirstUnreadMsg @"qry_first_unread_msg"
@@ -764,6 +765,28 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.topic = jPushSwitch;
     body.targetId = userId;
     body.data_p = ps.data;
+    
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)uploadLogStatus:(int)result
+                     userId:(NSString *)userId
+                  messageId:(NSString *)messageId
+                        url:(NSString *)url
+                      index:(int)index {
+    UploadLogStatusReq *req = [[UploadLogStatusReq alloc] init];
+    req.msgId = messageId;
+    if (url.length > 0) {
+        req.logURL = url;
+    }
+    req.state = result;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jUploadLogStatus;
+    body.targetId = userId;
+    body.data_p = req.data;
     
     ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
     return m.data;

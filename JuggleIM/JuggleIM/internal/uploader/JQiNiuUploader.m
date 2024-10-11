@@ -11,7 +11,7 @@
 
 
 -(instancetype)initWith:(NSString *)localPath
-              qiNiuCred:(JUploadQiNiuCred *)qiNiuCred{
+              qiNiuCred:(JUploadQiNiuCred *)qiNiuCred {
     if(self = [super init]){
         self.localPath = localPath;
         self.qiNiuCred = qiNiuCred;

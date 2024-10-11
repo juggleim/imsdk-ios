@@ -14,7 +14,8 @@ typedef NS_ENUM(NSInteger, JUploadFileType) {
     JUploadFileType_Image = 1,      //图片
     JUploadFileType_Audio = 2,      //音频
     JUploadFileType_Video = 3,      //视频
-    JUploadFileType_File = 4        //文件
+    JUploadFileType_File = 4,       //文件
+    JUploadFileType_Log = 5         //日志
 };
 
 //上传通道类型
