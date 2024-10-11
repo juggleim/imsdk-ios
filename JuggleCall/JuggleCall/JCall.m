@@ -8,6 +8,7 @@
 #import "JCall.h"
 #import "JStateMachine.h"
 #import "JIdleState.h"
+#import "JCallEventUtil.h"
 #import <JuggleIM/JuggleIM.h>
 
 @implementation JCall
@@ -27,9 +28,7 @@ static JCall *_instance;
 //    JIdleState *idleState = [[JIdleState alloc] initWithName:@"idle" superState:nil];
 //    [stateMachine setInitialState:idleState];
 //    [stateMachine start];
-//    [stateMachine event:0 userInfo:nil];
-    
-    
+//    [stateMachine event:JCallEventAccept userInfo:nil];
 }
 
 @end

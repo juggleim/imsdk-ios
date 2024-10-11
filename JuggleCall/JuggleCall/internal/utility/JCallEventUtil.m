@@ -9,19 +9,27 @@
 
 @implementation JCallEventUtil
 
-static NSDictionary *eventNameMap;
+static NSString *JCallEventNameMap[] = {
+    [JCallEventInvite] = @"invite",
+    [JCallEventAccept] = @"accept",
+    [JCallEventHangUp] = @"hang up",
+    [JCallEventInviteFail] = @"invite fail",
+    [JCallEventInviteTimeOut] = @"invite time out",
+    [JCallEventAcceptDone] = @"accept done",
+    [JCallEventAcceptFail] = @"accept fail",
+    [JCallEventReceiveInvite] = @"receive invite",
+    [JCallEventReceiveAccept] = @"receive accept",
+    [JCallEventReceiveHangUp] = @"receive hang up",
+    [JCallEventJoinChannelDone] = @"join channel done",
+    [JCallEventJoinChannelFail] = @"join channel fail",
+    [JCallEventParticipantJoinChannel] = @"participant join channel",
+    [JCallEventParticipantLeaveChannel] = @"participant leave channel",
+    [JCallEventParticipantEnableCamera] = @"participant enable camera",
+    [JCallEventParticipantEnableMic] = @"participant enable mic"
+};
 
 + (NSString *)nameOfEvent:(NSInteger)event {
-    return [[self getNameMap] objectForKey:@(event)];
-}
-
-+ (NSDictionary *)getNameMap {
-    if (!eventNameMap) {
-        eventNameMap = @{
-            @(0): @"test"
-        };
-    }
-    return eventNameMap;
+    return JCallEventNameMap[event];
 }
 
 @end

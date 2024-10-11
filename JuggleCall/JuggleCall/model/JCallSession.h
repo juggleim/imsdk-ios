@@ -9,7 +9,6 @@
 #import <JuggleCall/JCallConst.h>
 
 @interface JCallSession : NSObject
-
 /// 通话 id
 @property (nonatomic, copy) NSString *callId;
 /// 通话状态
@@ -30,4 +29,6 @@
 @property (nonatomic, copy) NSString *inviter;
 /// 通话结束原因
 @property (nonatomic, assign) JCallFinishReason finishReason;
+/// 通话参与者（除当前用户外的其他参与者）
+@property (nonatomic, copy) NSArray *participants;
 @end

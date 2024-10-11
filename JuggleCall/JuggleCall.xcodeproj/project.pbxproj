@@ -23,6 +23,18 @@
 		A09727592CB6C8CD00E08BC4 /* JCallEventUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727562CB6C8CD00E08BC4 /* JCallEventUtil.h */; };
 		A097275C2CB6CCE300E08BC4 /* JIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A097275B2CB6CCE300E08BC4 /* JIdleState.m */; };
 		A097275D2CB6CCE300E08BC4 /* JIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A097275A2CB6CCE300E08BC4 /* JIdleState.h */; };
+		A09727662CB7F91500E08BC4 /* JBaseState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727652CB7F91500E08BC4 /* JBaseState.m */; };
+		A09727672CB7F91500E08BC4 /* JBaseState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727642CB7F91500E08BC4 /* JBaseState.h */; };
+		A097276A2CB7F9D700E08BC4 /* JOutgoingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727692CB7F9D700E08BC4 /* JOutgoingState.m */; };
+		A097276B2CB7F9D700E08BC4 /* JOutgoingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727682CB7F9D700E08BC4 /* JOutgoingState.h */; };
+		A097276E2CB7F9E600E08BC4 /* JIncomingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A097276D2CB7F9E600E08BC4 /* JIncomingState.m */; };
+		A097276F2CB7F9E600E08BC4 /* JIncomingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A097276C2CB7F9E600E08BC4 /* JIncomingState.h */; };
+		A09727722CB7F9F100E08BC4 /* JConnectingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727712CB7F9F100E08BC4 /* JConnectingState.m */; };
+		A09727732CB7F9F100E08BC4 /* JConnectingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727702CB7F9F100E08BC4 /* JConnectingState.h */; };
+		A09727762CB7F9FF00E08BC4 /* JConnectedState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727752CB7F9FF00E08BC4 /* JConnectedState.m */; };
+		A09727772CB7F9FF00E08BC4 /* JConnectedState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727742CB7F9FF00E08BC4 /* JConnectedState.h */; };
+		A097277A2CB811F100E08BC4 /* JCallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727792CB811F100E08BC4 /* JCallManager.m */; };
+		A097277B2CB811F100E08BC4 /* JCallManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727782CB811F100E08BC4 /* JCallManager.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +55,18 @@
 		A09727572CB6C8CD00E08BC4 /* JCallEventUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallEventUtil.m; sourceTree = "<group>"; };
 		A097275A2CB6CCE300E08BC4 /* JIdleState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIdleState.h; sourceTree = "<group>"; };
 		A097275B2CB6CCE300E08BC4 /* JIdleState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIdleState.m; sourceTree = "<group>"; };
+		A09727642CB7F91500E08BC4 /* JBaseState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JBaseState.h; sourceTree = "<group>"; };
+		A09727652CB7F91500E08BC4 /* JBaseState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JBaseState.m; sourceTree = "<group>"; };
+		A09727682CB7F9D700E08BC4 /* JOutgoingState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JOutgoingState.h; sourceTree = "<group>"; };
+		A09727692CB7F9D700E08BC4 /* JOutgoingState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JOutgoingState.m; sourceTree = "<group>"; };
+		A097276C2CB7F9E600E08BC4 /* JIncomingState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIncomingState.h; sourceTree = "<group>"; };
+		A097276D2CB7F9E600E08BC4 /* JIncomingState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIncomingState.m; sourceTree = "<group>"; };
+		A09727702CB7F9F100E08BC4 /* JConnectingState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnectingState.h; sourceTree = "<group>"; };
+		A09727712CB7F9F100E08BC4 /* JConnectingState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnectingState.m; sourceTree = "<group>"; };
+		A09727742CB7F9FF00E08BC4 /* JConnectedState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnectedState.h; sourceTree = "<group>"; };
+		A09727752CB7F9FF00E08BC4 /* JConnectedState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnectedState.m; sourceTree = "<group>"; };
+		A09727782CB811F100E08BC4 /* JCallManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallManager.h; sourceTree = "<group>"; };
+		A09727792CB811F100E08BC4 /* JCallManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +126,8 @@
 			children = (
 				A09727512CB6C89E00E08BC4 /* utility */,
 				A097273E2CB6935500E08BC4 /* fsm */,
+				A09727782CB811F100E08BC4 /* JCallManager.h */,
+				A09727792CB811F100E08BC4 /* JCallManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -115,6 +141,16 @@
 				A09727442CB693E500E08BC4 /* JState.m */,
 				A097275A2CB6CCE300E08BC4 /* JIdleState.h */,
 				A097275B2CB6CCE300E08BC4 /* JIdleState.m */,
+				A09727642CB7F91500E08BC4 /* JBaseState.h */,
+				A09727652CB7F91500E08BC4 /* JBaseState.m */,
+				A09727682CB7F9D700E08BC4 /* JOutgoingState.h */,
+				A09727692CB7F9D700E08BC4 /* JOutgoingState.m */,
+				A097276C2CB7F9E600E08BC4 /* JIncomingState.h */,
+				A097276D2CB7F9E600E08BC4 /* JIncomingState.m */,
+				A09727702CB7F9F100E08BC4 /* JConnectingState.h */,
+				A09727712CB7F9F100E08BC4 /* JConnectingState.m */,
+				A09727742CB7F9FF00E08BC4 /* JConnectedState.h */,
+				A09727752CB7F9FF00E08BC4 /* JConnectedState.m */,
 			);
 			path = fsm;
 			sourceTree = "<group>";
@@ -152,13 +188,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				A097272C2CB660A300E08BC4 /* JuggleCall.h in Headers */,
+				A09727772CB7F9FF00E08BC4 /* JConnectedState.h in Headers */,
 				A097275D2CB6CCE300E08BC4 /* JIdleState.h in Headers */,
+				A097277B2CB811F100E08BC4 /* JCallManager.h in Headers */,
 				A09727462CB693E500E08BC4 /* JState.h in Headers */,
 				A09727392CB66AE600E08BC4 /* JCallSession.h in Headers */,
 				A09727422CB6936B00E08BC4 /* JStateMachine.h in Headers */,
 				A09727592CB6C8CD00E08BC4 /* JCallEventUtil.h in Headers */,
+				A097276B2CB7F9D700E08BC4 /* JOutgoingState.h in Headers */,
+				A09727672CB7F91500E08BC4 /* JBaseState.h in Headers */,
 				A097274C2CB6C15700E08BC4 /* JLogger.h in Headers */,
+				A097276F2CB7F9E600E08BC4 /* JIncomingState.h in Headers */,
 				A09727352CB66A7C00E08BC4 /* JCall.h in Headers */,
+				A09727732CB7F9F100E08BC4 /* JConnectingState.h in Headers */,
 				A097273C2CB66E0500E08BC4 /* JCallConst.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,11 +273,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A09727662CB7F91500E08BC4 /* JBaseState.m in Sources */,
 				A09727342CB66A7C00E08BC4 /* JCall.m in Sources */,
+				A09727722CB7F9F100E08BC4 /* JConnectingState.m in Sources */,
+				A097276A2CB7F9D700E08BC4 /* JOutgoingState.m in Sources */,
 				A09727382CB66AE600E08BC4 /* JCallSession.m in Sources */,
 				A097275C2CB6CCE300E08BC4 /* JIdleState.m in Sources */,
 				A09727452CB693E500E08BC4 /* JState.m in Sources */,
 				A09727412CB6936B00E08BC4 /* JStateMachine.m in Sources */,
+				A09727762CB7F9FF00E08BC4 /* JConnectedState.m in Sources */,
+				A097276E2CB7F9E600E08BC4 /* JIncomingState.m in Sources */,
+				A097277A2CB811F100E08BC4 /* JCallManager.m in Sources */,
 				A09727582CB6C8CD00E08BC4 /* JCallEventUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

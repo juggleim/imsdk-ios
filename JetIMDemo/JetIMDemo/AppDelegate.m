@@ -40,8 +40,8 @@
     [JIM.shared.chatroomManager addDelegate:self];
     [JIM.shared.chatroomManager addAttributesDelegate:self];
     
-    JCall *call = [[JCall alloc] init];
-    [call startCall];
+//    JCall *call = [[JCall alloc] init];
+//    [call startCall];
     return YES;
 }
 

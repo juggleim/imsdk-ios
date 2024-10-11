@@ -28,6 +28,14 @@
 - (void)event:(NSInteger)event userInfo:(id)userInfo {
     dispatch_async(self.fsmQueue, ^{
         JLogI(@"CALL-Fsm", @"state %@, event %@", self.currentState.name, [JCallEventUtil nameOfEvent:event]);
+        JState *state = self.currentState;
+        while (state) {
+            if ([state event:event userInfo:userInfo]) {
+                break;
+            } else {
+                state = state.superState;
+            }
+        }
     });
 }
 
@@ -47,6 +55,27 @@
 }
 
 - (void)transitionTo:(JState *)state {
+    JLogI(@"CALL-Fsm", @"leave state %@", self.currentState.name);
+    JState *current = self.currentState;
+    while (current) {
+        if ([current stateDidLeave]) {
+            break;
+        } else {
+            current = current.superState;
+        }
+    }
+    
+    self.currentState = state;
+    
+    JLogI(@"CALL-Fsm", @"enter state %@", state.name);
+    current = self.currentState;
+    while (current) {
+        if ([current stateDidEnter]) {
+            break;
+        } else {
+            current = current.superState;
+        }
+    }
 }
 
 @end

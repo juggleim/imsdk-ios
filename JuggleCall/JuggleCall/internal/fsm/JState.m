@@ -23,7 +23,7 @@
 }
 
 - (BOOL)stateDidEnter {
-    JLogI(@"CALL-Fsm", @"enter state %@", self.name);
+//    JLogI(@"CALL-Fsm", @"enter state %@", self.name);
     return NO;
 }
 
