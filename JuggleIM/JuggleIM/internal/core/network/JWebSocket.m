@@ -715,7 +715,7 @@ inConversation:(JConversation *)conversation
                                       messageId:messageId
                                             url:url
                                           index:self.cmdIndex++];
-        JLogI(@"WS-Send", @"upload log status, isSuccess is %d", result);
+        JLogI(@"WS-Send", @"upload log status, result is %d", result);
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {

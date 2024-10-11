@@ -46,7 +46,9 @@ static JLogger *_instance;
         JUploadManager *uploader = [[JUploadManager alloc] initWithCore:self.core];
         [uploader uploadLog:fileName messageId:messageId complete:^{
             dispatch_async(self.logQueue, ^{
-                [self.fileWriter removeZipFile:fileName];
+                if (fileName.length > 0 && [[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+                    [self.fileWriter removeZipFile:fileName];
+                }
             });
         }];
     });
