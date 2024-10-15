@@ -38,9 +38,7 @@ static JLogger *_instance;
 
 - (void)uploadLog:(NSString *)messageId
         startTime:(long long)startTime
-          endTime:(long long)endTime
-           appKey:(nonnull NSString *)appKey
-            token:(nonnull NSString *)token {
+          endTime:(long long)endTime {
     dispatch_async(self.logQueue, ^{
         NSString *fileName = [self.fileWriter generateZipFile:startTime endTime:endTime];
         JUploadManager *uploader = [[JUploadManager alloc] initWithCore:self.core];

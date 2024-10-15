@@ -28,9 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)uploadLog:(NSString *)messageId
         startTime:(long long)startTime
-          endTime:(long long)endTime
-           appKey:(NSString *)appKey
-            token:(NSString *)token;
+          endTime:(long long)endTime;
 
 - (void)removeExpiredLogs;
 

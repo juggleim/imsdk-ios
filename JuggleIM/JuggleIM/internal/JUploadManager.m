@@ -205,6 +205,7 @@
         if (errorBlock) {
             errorBlock();
         }
+        return;
     }
     uploader.JUploadProgress = ^(int progress) {
         if(progressBlock){
@@ -247,11 +248,12 @@
            success:(void (^)(NSString *url))successBlock
              error:(void (^)(void))errorBlock {
     JBaseUploader * uploader = [JUploaderFactory getUpload:localPath ossType:ossType qiNiuCred:qiNiuCred preSignCred:preSignCred];
-    if(uploader == nil){
+    if(uploader == nil) {
         JLogE(@"J-Uploader", @"upload file failed, uploader is null, localPath = %@", localPath);
         if (errorBlock) {
             errorBlock();
         }
+        return;
     }
     uploader.JUploadSuccess = successBlock;
     uploader.JUploadError = errorBlock;

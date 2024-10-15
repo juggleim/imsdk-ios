@@ -1759,9 +1759,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     }
     [JLogger.shared uploadLog:message.messageId
                     startTime:content.startTime
-                      endTime:content.endTime
-                       appKey:self.core.appKey
-                        token:self.core.token];
+                      endTime:content.endTime];
 }
 
 - (void)handleAddConversationMessage:(JConcreteMessage *)message {
