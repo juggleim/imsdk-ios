@@ -89,30 +89,16 @@
     NSLog(@"lifei, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"NT9cTOPsU"];
-            JMessageOptions *o = [[JMessageOptions alloc] init];
-            JPushData *pushData = [[JPushData alloc] init];
-            pushData.content = @"push content";
-            pushData.extra = @"push extra";
-            o.pushData = pushData;
-            JMessageContent *content = [[JMessageContent alloc] init];
-            JTextMessage *t = [[JTextMessage alloc] initWithContent:@"text message"];
-            [JIM.shared.messageManager sendMessage:t
-                                     messageOption:o
-                                    inConversation:c
-                                           success:^(JMessage *message) {
-                int i = 1;
-            } error:^(JErrorCode errorCode, JMessage *message) {
+            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"CYXf6GNeM"];
+            JGetMessageOptions *options = [[JGetMessageOptions alloc] init];
+            options.startTime = 1727350734760;
+            [JIM.shared.messageManager getMessages:c
+                                         direction:JPullDirectionOlder
+                                            option:options
+                                          complete:^(NSArray<JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code) {
                 int i = 1;
             }];
-//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                [JIM.shared.chatroomManager getAllAttributesFromChatroom:@"chatroom1001"
-//                                                                                   complete:^(JErrorCode code, NSDictionary<NSString *,NSString *> *attributes) {
-//                    int i = 1;
-//                }];
-//            });
-            
-            
         });
     }
 }

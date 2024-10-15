@@ -389,6 +389,9 @@
                                direction:(JPullDirection)direction {
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
+    if (count > 100) {
+        count = 100;
+    }
     return [self getMessages:count
                         time:time
                    direction:direction
@@ -403,7 +406,9 @@
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
     options.contentTypes = contentTypes;
-    
+    if (count > 100) {
+        count = 100;
+    }
     return [self getMessages:count
                         time:time
                    direction:direction
@@ -414,14 +419,17 @@
                                 time:(long long)time
                            direction:(JPullDirection)direction
                          queryOption:(JQueryMessageOptions *)option {
-return [self.core.dbManager searchMessagesWithContent:option.searchContent
-                                                count:count
-                                                 time:time
-                                        pullDirection:direction
-                                         contentTypes:option.contentTypes
-                                              senders:option.senderUserIds
-                                               states:option.states
-                                        conversations:option.conversations];
+    if (count > 100) {
+        count = 100;
+    }
+    return [self.core.dbManager searchMessagesWithContent:option.searchContent
+                                                    count:count
+                                                     time:time
+                                            pullDirection:direction
+                                             contentTypes:option.contentTypes
+                                                  senders:option.senderUserIds
+                                                   states:option.states
+                                            conversations:option.conversations];
 }
 
 - (JMessage *)saveMessage:(JMessageContent *)content
@@ -466,6 +474,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (count > 100) {
+        count = 100;
+    }
     return [self.core.dbManager searchMessagesWithContent:searchContent
                                                     count:count
                                                      time:time
@@ -771,6 +782,22 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     if (count > 100) {
         count = 100;
     }
+    [self internalGetRemoteMessagesFrom:conversation
+                              startTime:startTime
+                                  count:count
+                              direction:direction
+                           contentTypes:contentTypes
+                                success:successBlock
+                                  error:errorBlock];
+}
+
+- (void)internalGetRemoteMessagesFrom:(JConversation *)conversation
+                            startTime:(long long)startTime
+                                count:(int)count
+                            direction:(JPullDirection)direction
+                         contentTypes:(NSArray <NSString *> *)contentTypes
+                              success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                                error:(void (^)(JErrorCode code))errorBlock {
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket queryHisMsgsFrom:conversation
                                 startTime:startTime
@@ -795,6 +822,117 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
             }
         });
     }];
+}
+
+- (void)getMessages:(JConversation *)conversation
+          direction:(JPullDirection)direction
+             option:(JGetMessageOptions *)option
+           complete:(void (^)(NSArray<JMessage *> *, long long, BOOL, JErrorCode))completeBlock {
+    if (conversation.conversationId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(nil, 0, NO, JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    if (!option) {
+        option = [[JGetMessageOptions alloc] init];
+    }
+    if (option.count <= 0 || option.count > 100) {
+        option.count = 100;
+    }
+    NSArray *localMessages = [self.core.dbManager searchMessagesWithContent:nil
+                                                                      count:option.count+1
+                                                                       time:option.startTime
+                                                              pullDirection:direction
+                                                               contentTypes:option.contentTypes
+                                                                    senders:nil
+                                                                     states:nil
+                                                              conversations:@[conversation]];
+    
+    __block BOOL needRemote = NO;
+    if (localMessages.count < option.count) {
+        //本地数据小于需要拉取的数量
+        needRemote = YES;
+    } else {
+        //判断是否连续
+        __block long long seqNo = -1;
+        [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (obj.seqNo < 0) {
+                needRemote = YES;
+                *stop = YES;
+                return;
+            }
+            if (obj.messageState == JMessageStateSent && obj.seqNo > 0) {
+                if (seqNo < 0) {
+                    seqNo = obj.seqNo;
+                } else {
+                    if (obj.seqNo != ++seqNo) {
+                        needRemote = YES;
+                        *stop = YES;
+                        return;
+                    }
+                }
+            }
+        }];
+    }
+    
+    if (needRemote) {
+        [self internalGetRemoteMessagesFrom:conversation
+                                  startTime:option.startTime
+                                      count:option.count+1
+                                  direction:direction
+                               contentTypes:option.contentTypes
+                                    success:^(NSArray *messages, BOOL isFinished) {
+            //合并
+            NSMutableArray * messagesArray = [NSMutableArray array];
+            [messagesArray addObjectsFromArray:localMessages];
+            for (JMessage * message in messages) {
+                if(![messagesArray containsObject:message]){
+                    [messagesArray addObject:message];
+                }
+            }
+            //正序排序
+            NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
+                if(msg1.timestamp < msg2.timestamp){
+                    return NSOrderedAscending;
+                }else if(msg1.timestamp > msg2.timestamp){
+                    return NSOrderedDescending;
+                }else{
+                    return NSOrderedSame;
+                }
+            }];
+            [self completeCallbackForGetMessages:completeBlock
+                                        messages:ascArray
+                                           count:option.count
+                                       direction:direction
+                                         hasMore:!isFinished
+                                       errorCode:JErrorCodeNone];
+        } error:^(JErrorCode code) {
+            BOOL hasMore = YES;
+            if (localMessages.count < option.count + 1) {
+                hasMore = NO;
+            }
+            [self completeCallbackForGetMessages:completeBlock
+                                        messages:localMessages
+                                           count:option.count
+                                       direction:direction
+                                         hasMore:hasMore
+                                       errorCode:code];
+        }];
+    } else {
+        BOOL hasMore = YES;
+        if (localMessages.count < option.count + 1) {
+            hasMore = NO;
+        }
+        [self completeCallbackForGetMessages:completeBlock
+                                    messages:localMessages
+                                       count:option.count
+                                   direction:direction
+                                     hasMore:hasMore
+                                   errorCode:JErrorCodeNone];
+    }
 }
 
 - (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
@@ -1077,6 +1215,9 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
                      error:(void (^)(JErrorCode))errorBlock {
+    if (count > 100) {
+        count = 100;
+    }
     JConcreteConversationInfo *conversationInfo = [self.core.dbManager getConversationInfo:conversation];
     [self.core.webSocket getMentionMessages:conversation
                                        time:time
@@ -2030,7 +2171,33 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
     } else {
         self.core.messageSendSyncTime = timestamp;
     }
-    
+}
+
+- (void)completeCallbackForGetMessages:(void (^)(NSArray<JMessage *> *, long long, BOOL, JErrorCode))completeCallback
+                              messages:(NSArray<JMessage *> *)messages
+                                 count:(int)count
+                             direction:(JPullDirection)direction
+                               hasMore:(BOOL)hasMore
+                             errorCode:(JErrorCode)code {
+    if (messages.count > count) {
+        if (direction == JPullDirectionNewer) {
+            messages = [messages subarrayWithRange:NSMakeRange(0, count)];
+        } else {
+            messages = [messages subarrayWithRange:NSMakeRange(messages.count - count, count)];
+        }
+    }
+    JMessage *m;
+    if (direction == JPullDirectionNewer) {
+        m = messages.lastObject;
+    } else {
+        m = messages.firstObject;
+    }
+    long long timestamp = m.timestamp;
+    dispatch_async(self.core.delegateQueue, ^{
+        if (completeCallback) {
+            completeCallback(messages, timestamp, hasMore, code);
+        }
+    });
 }
 
 #pragma mark - getter

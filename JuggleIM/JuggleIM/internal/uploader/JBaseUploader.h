@@ -38,8 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)notifyCancel;
 
-
-
 @end
 
 NS_ASSUME_NONNULL_END

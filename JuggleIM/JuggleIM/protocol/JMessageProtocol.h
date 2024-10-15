@@ -163,7 +163,7 @@
 /// 获取消息列表
 /// - Parameters:
 ///   - conversation: 会话对象
-///   - count: 拉取消息条数
+///   - count: 拉取消息条数，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 表示当前时间
 ///   - direction: 拉取方向
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation 
@@ -174,7 +174,7 @@
 /// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
 /// - Parameters:
 ///   - conversation: 会话对象
-///   - count: 拉取消息条数
+///   - count: 拉取消息条数，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 表示当前时间
 ///   - direction: 拉取方向
 ///   - contentTypes: 拉取的消息类型列表，消息类型获取举例 " [JTextMessage contentType] "
@@ -186,7 +186,7 @@
 
 /// 从本地搜索消息
 /// - Parameters:
-///   - count: 拉取数量
+///   - count: 拉取数量，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 表示当前时间
 ///   - direction: 拉取方向
 ///   - option: 搜索条件
@@ -313,6 +313,18 @@
              option:(JGetMessageOptions *)option
   localMessageBlock:(void (^)(NSArray <JMessage *> *messages, JErrorCode code))localMessageBlock
  remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code))remoteMessageBlock;
+
+/// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。当消息有缺失并且网络有问题的时候，返回本地缓存的消息。
+/// - Parameters:
+///   - conversation: 会话对象
+///   - direction: 拉取方向
+///   - option: 获取消息选项
+///   - completeBlock: messages: 消息列表，timestamp: 消息时间戳，拉下一批消息的时候可以使用，hasMore: 是否还有更多消息，
+///                    code: 错误码（code 不为 0 的时候，如果本地存在缓存消息，则会在 messages 里返回本地消息）
+- (void)getMessages:(JConversation *)conversation
+          direction:(JPullDirection)direction
+             option:(JGetMessageOptions *)option
+           complete:(void (^)(NSArray <JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code))completeBlock;
 
 /// 发送阅读回执
 /// - Parameters:

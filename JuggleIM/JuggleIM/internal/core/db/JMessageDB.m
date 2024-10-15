@@ -386,8 +386,8 @@ NSString *const jReferMsgId = @"refer_msg_id";
     if (time == 0) {
         time = INT64_MAX;
     }
-    if (count > 100) {
-        count = 100;
+    if (count > 200) {
+        count = 200;
     }
     __block NSString *sql = jGetMessagesNotDeleted;
     NSMutableArray *args = [NSMutableArray array];
