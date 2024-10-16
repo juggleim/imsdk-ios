@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateLastMessageState:(JConversation *)conversation
                          state:(JMessageState)state
                withClientMsgNo:(long long)clientMsgNo;
+- (void)setTopConversationOrderType:(JTopConversationsOrderType)type;
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;

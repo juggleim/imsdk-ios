@@ -90,15 +90,12 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"CYXf6GNeM"];
-            JGetMessageOptions *options = [[JGetMessageOptions alloc] init];
-            options.startTime = 1727350734760;
-            [JIM.shared.messageManager getMessages:c
-                                         direction:JPullDirectionOlder
-                                            option:options
-                                          complete:^(NSArray<JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code) {
-                int i = 1;
-            }];
+//            [JIM.shared.conversationManager setTopConversationOrderType:JTopConversationsOrderByMessageTime];
+            NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
+            NSArray *b = [JIM.shared.conversationManager getConversationInfoListByCount:20 timestamp:0 direction:JPullDirectionOlder];
+            NSArray *c = [JIM.shared.conversationManager getConversationInfoListWithTypes:nil count:20 timestamp:0 direction:JPullDirectionOlder];
+            NSArray *d = [JIM.shared.conversationManager getTopConversationInfoListByCount:20 timestamp:0 direction:JPullDirectionOlder];
+            int j = 1;
         });
     }
 }

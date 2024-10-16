@@ -136,3 +136,11 @@ typedef NS_ENUM(NSUInteger, JLogLevel) {
     JLogLevelDebug = 5,
     JLogLevelVerbose = 6
 };
+
+// 置顶会话排序规则
+typedef NS_ENUM(NSUInteger, JTopConversationsOrderType) {
+    // 按照置顶时间排序
+    JTopConversationsOrderByTopTime,
+    // 按照会话的消息时间排序
+    JTopConversationsOrderByMessageTime
+};

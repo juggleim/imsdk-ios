@@ -360,6 +360,10 @@
     }];
 }
 
+- (void)setTopConversationOrderType:(JTopConversationsOrderType)type {
+    [self.core.dbManager setTopConversationOrderType:type];
+}
+
 - (void)addDelegate:(id<JConversationDelegate>)delegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!delegate) {

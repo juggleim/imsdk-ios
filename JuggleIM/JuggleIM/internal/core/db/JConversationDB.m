@@ -55,15 +55,17 @@ NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?
                                        "last_message_content=?, last_message_mention_info=?, last_message_seq_no=?, unread_tag =?  WHERE conversation_type = ? "
                                        "AND conversation_id = ?";
 NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jGetConversations = @"SELECT * FROM conversation_info ORDER BY is_top DESC, top_time DESC, timestamp DESC";
+NSString *const jGetConversations = @"SELECT * FROM conversation_info";
 NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
 NSString *const jIsTopEqualsTrue = @" is_top = 1";
 NSString *const jTimestampGreaterThan = @" timestamp > ?";
 NSString *const jTimestampLessThan = @" timestamp < ?";
 NSString *const jConversationAnd = @" AND ";
 NSString *const jConversationTypeIn = @" conversation_type in ";
-NSString *const jConversationOrderByTopAndTimestamp = @" ORDER BY is_top DESC, top_time DESC, timestamp DESC";
+NSString *const jConversationOrderByTopTopTimeTimestamp = @" ORDER BY is_top DESC, top_time DESC, timestamp DESC";
+NSString *const jConversationOrderByTopTimestamp = @" ORDER BY is_top DESC, timestamp DESC";
 NSString *const jConversationOrderByTopTime = @" ORDER BY top_time DESC";
+NSString *const jConversationOrderByTimestamp = @" ORDER BY timestamp DESC";
 NSString *const jConversationLimit = @" LIMIT ?";
 NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
@@ -210,7 +212,9 @@ NSString *const jHasUnread = @"unread_tag";
 
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
     NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
-    [self.dbHelper executeQuery:jGetConversations
+    NSString *sql = jGetConversations;
+    sql = [self appendOrderSql:sql];
+    [self.dbHelper executeQuery:sql
            withArgumentsInArray:nil
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         while ([resultSet next]) {
@@ -242,7 +246,7 @@ NSString *const jHasUnread = @"unread_tag";
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
         [args addObjectsFromArray:conversationTypes];
     }
-    sql = [sql stringByAppendingString:jConversationOrderByTopAndTimestamp];
+    sql = [self appendOrderSql:sql];
     sql = [sql stringByAppendingString:jConversationLimit];
     [args addObject:@(count)];
     
@@ -281,7 +285,12 @@ NSString *const jHasUnread = @"unread_tag";
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
         [args addObjectsFromArray:conversationTypes];
     }
-    sql = [sql stringByAppendingString:jConversationOrderByTopTime];
+    
+    if (self.topConversationsOrderType == JTopConversationsOrderByTopTime) {
+        sql = [sql stringByAppendingString:jConversationOrderByTopTime];
+    } else {
+        sql = [sql stringByAppendingString:jConversationOrderByTimestamp];
+    }
     sql = [sql stringByAppendingString:jConversationLimit];
     [args addObject:@(count)];
     
@@ -517,6 +526,7 @@ NSString *const jHasUnread = @"unread_tag";
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {
         self.dbHelper = dbHelper;
+        self.topConversationsOrderType = JTopConversationsOrderByTopTime;
     }
     return self;
 }
@@ -562,5 +572,14 @@ NSString *const jHasUnread = @"unread_tag";
     info.lastMessage = lastMessage;
     info.hasUnread = [rs boolForColumn:jHasUnread];
     return info;
+}
+
+- (NSString *)appendOrderSql:(NSString *)originSql {
+    if (self.topConversationsOrderType == JTopConversationsOrderByTopTime) {
+        originSql = [originSql stringByAppendingString:jConversationOrderByTopTopTimeTimestamp];
+    } else {
+        originSql = [originSql stringByAppendingString:jConversationOrderByTopTimestamp];
+    }
+    return originSql;
 }
 @end

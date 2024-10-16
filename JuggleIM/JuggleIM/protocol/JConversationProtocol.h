@@ -127,6 +127,10 @@
           success:(void (^)(void))successBlock
             error:(void (^)(JErrorCode code))errorBlock;
 
+/// 设置置顶会话排序规则
+/// - Parameter type: 排序规则
+- (void)setTopConversationOrderType:(JTopConversationsOrderType)type;
+
 - (void)addDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;

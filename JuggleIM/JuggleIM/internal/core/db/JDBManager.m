@@ -184,6 +184,10 @@
     [self.conversationDb updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
 }
 
+- (void)setTopConversationOrderType:(JTopConversationsOrderType)type {
+    self.conversationDb.topConversationsOrderType = type;
+}
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];

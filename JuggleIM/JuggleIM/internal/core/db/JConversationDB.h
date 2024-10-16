@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationDB : NSObject
 @property (nonatomic, strong) JMessageDB *messageDB;
+@property (nonatomic, assign) JTopConversationsOrderType topConversationsOrderType;
 
 - (void)createTables;
 - (void)updateTables;
