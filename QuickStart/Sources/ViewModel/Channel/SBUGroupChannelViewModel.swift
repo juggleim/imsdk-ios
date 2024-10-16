@@ -192,22 +192,33 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         let option = JGetMessageOptions()
         option.startTime = startTime
         option.count = Int32(defaultFetchLimit)
-        JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { localMessageList, errorCode in
-            SBULog.info("[Request] Prev message list local count is \(localMessageList?.count ?? 0)")
-            self.upsertMessagesInList(messages: localMessageList, needReload: true)
-            if let localMessageList = localMessageList {
-                self.sendReceipt(localMessageList)
-            }
-        } remoteMessageBlock: { remoteMessageList, timestamp, hasMore, errorCode in
-            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0), hasMore is \(hasMore)")
-            self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
-            if let remoteMessageList = remoteMessageList {
-                self.sendReceipt(remoteMessageList)
+        JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { messageList, timestamp, hasMore, errorCode in
+            SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode)")
+            self.upsertMessagesInList(messages: messageList, needReload: true)
+            if let messageList = messageList {
+                self.sendReceipt(messageList)
             }
             self.hasPreviousMessage = hasMore
             self.prevLock.unlock()
-            SBULog.info("Prev message list remote unlock")
+            SBULog.info("Prev message list unlock")
         }
+        
+//        JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { localMessageList, errorCode in
+//            SBULog.info("[Request] Prev message list local count is \(localMessageList?.count ?? 0)")
+//            self.upsertMessagesInList(messages: localMessageList, needReload: true)
+//            if let localMessageList = localMessageList {
+//                self.sendReceipt(localMessageList)
+//            }
+//        } remoteMessageBlock: { remoteMessageList, timestamp, hasMore, errorCode in
+//            SBULog.info("[Request] Prev message list remote count is \(remoteMessageList?.count ?? 0), hasMore is \(hasMore)")
+//            self.upsertMessagesInList(messages: remoteMessageList, needReload: true)
+//            if let remoteMessageList = remoteMessageList {
+//                self.sendReceipt(remoteMessageList)
+//            }
+//            self.hasPreviousMessage = hasMore
+//            self.prevLock.unlock()
+//            SBULog.info("Prev message list remote unlock")
+//        }
 
 //        JIM.shared().messageManager.getLocalAndRemoteMessages(from: self.conversationInfo?.conversation, startTime: startTime, count: Int32(defaultFetchLimit), direction: .older) { localMessageList, needRemote in
 //            self.upsertMessagesInList(messages: localMessageList, needReload: true)

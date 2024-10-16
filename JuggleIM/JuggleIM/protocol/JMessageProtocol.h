@@ -284,36 +284,6 @@
                       success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-/// 先从本地获取消息，如果中间存在缺失，则从远端补齐。如果本地消息已经是完备的，将不会再走 remoteMessageBlock 回调。
-/// - Parameters:
-///   - conversation: 会话对象
-///   - startTime: 消息时间戳，如果传 0 为当前时间
-///   - count: 拉取数量，超过 100 条按 100 返回
-///   - direction: 拉取方向
-///   - localMessageBlock: 本地消息回调
-///   - remoteMessageBlock: 远端消息回调（可能包含已返回的本地消息）
-///   - errorBlock: 失败回调
-- (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
-                            startTime:(long long)startTime
-                                count:(int)count
-                            direction:(JPullDirection)direction
-                    localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
-                   remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
-                                error:(void (^)(JErrorCode code))errorBlock __deprecated_msg("Please use getMessages:direction:option:complete: instead");
-
-/// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。该接口必定回调两次，先回调本地的缓存消息（有可能存在缺失），再回调远端的消息。
-/// - Parameters:
-///   - conversation: 会话对象
-///   - direction: 拉取方向
-///   - option: 获取消息选项
-///   - localMessageBlock: 本地缓存消息回调
-///   - remoteMessageBlock: 远端消息回调，messages: 消息列表，timestamp: 消息时间戳，拉下一批消息的时候可以使用，hasMore: 是否还有更多消息，code: 错误码
-- (void)getMessages:(JConversation *)conversation
-          direction:(JPullDirection)direction
-             option:(JGetMessageOptions *)option
-  localMessageBlock:(void (^)(NSArray <JMessage *> *messages, JErrorCode code))localMessageBlock
- remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code))remoteMessageBlock __deprecated_msg("Please use getMessages:direction:option:complete: instead");
-
 /// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。当消息有缺失并且网络有问题的时候，返回本地缓存的消息。
 /// - Parameters:
 ///   - conversation: 会话对象
