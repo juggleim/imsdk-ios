@@ -129,7 +129,7 @@
 
 /// 设置置顶会话排序规则
 /// - Parameter type: 排序规则
-- (void)setTopConversationOrderType:(JTopConversationsOrderType)type;
+- (void)setTopConversationsOrderType:(JTopConversationsOrderType)type;
 
 - (void)addDelegate:(id<JConversationDelegate>)delegate;
 

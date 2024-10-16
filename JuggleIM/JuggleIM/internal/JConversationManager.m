@@ -360,8 +360,8 @@
     }];
 }
 
-- (void)setTopConversationOrderType:(JTopConversationsOrderType)type {
-    [self.core.dbManager setTopConversationOrderType:type];
+- (void)setTopConversationsOrderType:(JTopConversationsOrderType)type {
+    [self.core.dbManager setTopConversationsOrderType:type];
 }
 
 - (void)addDelegate:(id<JConversationDelegate>)delegate {

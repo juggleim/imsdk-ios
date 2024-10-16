@@ -184,7 +184,7 @@
     [self.conversationDb updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
 }
 
-- (void)setTopConversationOrderType:(JTopConversationsOrderType)type {
+- (void)setTopConversationsOrderType:(JTopConversationsOrderType)type {
     self.conversationDb.topConversationsOrderType = type;
 }
 
