@@ -9,7 +9,7 @@
 #define JNaviURL @"https://nav.juggleim.com"
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
-#define JIMVersion @"1.7.3"
+#define JIMVersion @"1.7.4"
 #define jNaviAppKey @"x-appkey"
 #define jNaviToken @"x-token"
 
