@@ -9,7 +9,7 @@
 #import "JLogger.h"
 #import "JuggleIMConstInternal.h"
 
-#define jUploadUrl @"https://nav.juggleim.com/navigator/upload-log"
+#define jUploadUrl @""
 #define jCode @"code"
 #define jBoundary @"aoangindighy-gne"
 

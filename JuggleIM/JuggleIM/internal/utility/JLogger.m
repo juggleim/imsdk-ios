@@ -9,7 +9,7 @@
 #import "JLogFileWriter.h"
 #import "JUploadManager.h"
 
-#define jLogQueue "com.JuggleIM.im.logqueue"
+#define jLogQueue "com.JIM.im.logqueue"
 
 @interface JLogger ()
 @property (nonatomic, strong) dispatch_queue_t logQueue;

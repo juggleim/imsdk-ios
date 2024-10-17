@@ -68,7 +68,7 @@
 
 - (dispatch_queue_t)downloadQueue {
     if (!_downloadQueue) {
-        _downloadQueue = dispatch_queue_create("com.JuggleIM.im.logqueue", DISPATCH_QUEUE_SERIAL);
+        _downloadQueue = dispatch_queue_create("com.JIM.im.logqueue", DISPATCH_QUEUE_SERIAL);
     }
     return _downloadQueue;
 }

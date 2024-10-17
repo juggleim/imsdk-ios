@@ -8,8 +8,8 @@
 #import "JIMCore.h"
 #import "JuggleIMConstInternal.h"
 
-#define kSendQueue "com.JuggleIM.im.wssendqueue"
-#define kReceiveQueue "com.JuggleIM.im.wsreceivequeue"
+#define kSendQueue "com.JIM.im.wssendqueue"
+#define kReceiveQueue "com.JIM.im.wsreceivequeue"
 
 #define jAppKey @"JetIMAppKey"
 #define jUserId @"JetIMUserId"

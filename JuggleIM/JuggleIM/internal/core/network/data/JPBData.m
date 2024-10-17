@@ -1354,7 +1354,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (ImWebsocketMsg *)createImWebsocketMsg {
     ImWebsocketMsg *m = [[ImWebsocketMsg alloc] init];
-    m.version = JuggleIMProtocolVersion;
+    m.version = JIMProtocolVersion;
     return m;
 }
 
