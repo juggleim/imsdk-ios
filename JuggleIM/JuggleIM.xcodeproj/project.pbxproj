@@ -275,7 +275,6 @@
 		A09716C62BA0004600D1DB24 /* JUserInfoDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716C42BA0004600D1DB24 /* JUserInfoDB.h */; };
 		A09716C72BA0004600D1DB24 /* JUserInfoDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A09716C52BA0004600D1DB24 /* JUserInfoDB.m */; };
 		A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A097277D2CBFE97400E08BC4 /* JuggleIM.podspec in Resources */ = {isa = PBXBuildFile; fileRef = A097277C2CBFE97400E08BC4 /* JuggleIM.podspec */; };
 		A09824402C4FABE8001852A6 /* JDownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A098243E2C4FABE8001852A6 /* JDownloadManager.h */; };
 		A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A098243F2C4FABE8001852A6 /* JDownloadManager.m */; };
 		A0A1B0F72C47B25C00DAD93C /* JDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A1B0F52C47B25C00DAD93C /* JDownloader.h */; };
@@ -1434,7 +1433,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A097277D2CBFE97400E08BC4 /* JuggleIM.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
