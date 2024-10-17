@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        print("lifei didFinishLaunchingWithOptions")
+        print("didFinishLaunchingWithOptions")
         
         JIM.shared().setServer(["https://nav.juggleim.com"])
         let appKey = "nsw3sue72begyv7y"

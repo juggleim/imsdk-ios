@@ -5,8 +5,6 @@
 //  Created by Nathan on 2023/12/1.
 //
 
-#define JWebSocketURL @"ws.juggleim.com"
-#define JNaviURL @"https://nav.juggleim.com"
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
 #define JIMVersion @"1.7.5"

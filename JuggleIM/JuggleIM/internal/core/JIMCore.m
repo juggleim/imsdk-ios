@@ -86,14 +86,14 @@
 
 - (NSArray<NSString *> *)naviUrls {
     if (!_naviUrls) {
-        _naviUrls = @[JNaviURL];
+        _naviUrls = @[];
     }
     return _naviUrls;
 }
 
 - (NSArray *)servers {
     if (!_servers) {
-        _servers = @[JWebSocketURL];
+        _servers = @[];
     }
     return _servers;
 }

@@ -66,7 +66,7 @@ static JLogger *_instance;
 
     //控制台
     if (level <= self.consoleLogLevel) {
-        NSLog(@"[Juggle:%@]%@", tag, logStr);
+        NSLog(@"[JLogger:%@]%@", tag, logStr);
     }
 
     //写文件
