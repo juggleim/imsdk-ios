@@ -8,9 +8,6 @@
       location = "group:JetIMDemo/JetIMDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:JuggleCall/JuggleCall.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:JuggleIM/JuggleIM.xcodeproj">
    </FileRef>
 </Workspace>
