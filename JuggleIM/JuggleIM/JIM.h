@@ -11,6 +11,7 @@
 #import <JuggleIM/JConversationProtocol.h>
 #import <JuggleIM/JUserInfoProtocol.h>
 #import <JuggleIM/JChatroomProtocol.h>
+#import <JuggleIM/JCallProtocol.h>
 
 @protocol JConnectionProtocol;
 @protocol JMessageProtocol;
@@ -48,24 +49,31 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSString *)getSDKVersion;
 
+- (NSString *)getDeviceId;
+
+/// 激活通话功能（默认不激活，请在 initWithAppKey: 之前调用）
+- (void)enableCall;
+
 /// 连接管理类
-@property(nonatomic, strong) id<JConnectionProtocol> connectionManager;
+@property (nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类
-@property(nonatomic, strong) id<JMessageProtocol> messageManager;
+@property (nonatomic, strong) id<JMessageProtocol> messageManager;
 /// 会话管理类
-@property(nonatomic, strong) id<JConversationProtocol> conversationManager;
+@property (nonatomic, strong) id<JConversationProtocol> conversationManager;
 /// 用户管理类
 @property(nonatomic, strong) id<JUserInfoProtocol> userInfoManager;
 /// 聊天室管理类
-@property(nonatomic, strong) id<JChatroomProtocol> chatroomManager;
+@property (nonatomic, strong) id<JChatroomProtocol> chatroomManager;
 /// SDK 中所有代理的回调线程，如果不指定则默认使用主线程回调
-@property(nonatomic, strong) dispatch_queue_t delegateQueue;
+@property (nonatomic, strong) dispatch_queue_t delegateQueue;
+/// 当前 app key
+@property (nonatomic, copy, readonly) NSString *appKey;
+/// 当前用户 id
+@property (nonatomic, copy, readonly) NSString *currentUserId;
+/// 通话管理类
+@property (nonatomic, strong) id<JCallProtocol> callManager;
 
-@property(nonatomic, copy) NSString *appKey;
 
-@property(nonatomic, copy) NSString *currentUserId;
-
--(NSString *)getDeviceId;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -9,6 +9,7 @@
 #import "Connect.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "Pushtoken.pbobjc.h"
+#import "Rtcroom.pbobjc.h"
 #import "JuggleIMPBConst.h"
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
@@ -72,6 +73,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryFirstUnreadMsg @"qry_first_unread_msg"
 #define jBatchAddAtt @"c_batch_add_att"
 #define jBatchDelAtt @"c_batch_del_att"
+#define jRtcInvite @"rtc_invite"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -1071,6 +1073,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)startSingleCall:(NSString *)callId
+                   targetId:(NSString *)userId
+                      index:(int)index {
+    RtcInviteReq *req = [[RtcInviteReq alloc] init];
+    req.inviteType = InviteType_RtcInvite;
+    NSMutableArray *targetIds = [NSMutableArray array];
+    [targetIds addObject:userId];
+    req.targetIdsArray = targetIds;
+    req.roomType = RtcRoomType_OneOne;
+    req.roomId = callId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcInvite;
+    body.targetId = callId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1971,7 +1996,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryFirstUnreadMsg:@(JPBRcvTypeQryFirstUnreadMsgAck),
              jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck),
              jSyncChatroomAtts:@(JPBRcvTypeSyncChatroomAttrsAck),
-             jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck)
+             jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck),
+             jRtcInvite:@(JPBRcvTypeCallInviteAck)
     };
 }
 @end

@@ -6,11 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JCallProtocol.h"
+#import "JIMCore.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JCallManager : NSObject
-
+@interface JCallManager : NSObject <JCallProtocol>
+- (instancetype)initWithCore:(JIMCore *)core;
 @end
 
 NS_ASSUME_NONNULL_END

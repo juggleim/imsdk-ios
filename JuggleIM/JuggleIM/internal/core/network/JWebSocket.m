@@ -782,6 +782,27 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)startSingleCall:(NSString *)callId
+               targetId:(NSString *)userId
+               complete:(void (^)(JErrorCodeInternal, JCallSession * _Nonnull))completeBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"start single call, userId is %@", userId);
+        NSNumber *key = @(self.cmdIndex);
+//        NSData *d = [self.pbData ]
+//        
+//        
+//        
+//        NSData *d = [self.pbData getUploadFileCred:userId fileType:fileType ext:ext index:self.cmdIndex++];
+//        JUploadFileCredBlockObj *obj = [[JUploadFileCredBlockObj alloc] init];
+//        obj.successBlock = successBlock;
+//        obj.errorBlock = errorBlock;
+//        [self sendData:d
+//                   key:key
+//                   obj:obj
+//                 error:errorBlock];
+    });
+}
+
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {

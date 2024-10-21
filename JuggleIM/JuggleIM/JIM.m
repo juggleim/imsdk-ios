@@ -14,6 +14,8 @@
 #import "JIMCore.h"
 #import "JLogger.h"
 #import "JUtility.h"
+#import "JCallManager.h"
+
 @interface JIM ()
 @property (nonatomic, strong) JIMCore *core;
 @end
@@ -79,8 +81,14 @@ static JIM *_instance;
 - (NSString *)currentUserId {
     return self.core.userId;
 }
+
 -(NSString *)getDeviceId{
     return [JUtility getDeviceId];
+}
+
+- (void)enableCall {
+    self.core.enableCall = YES;
+    self.callManager = [[JCallManager alloc] initWithCore:self.core];
 }
 
 @end
