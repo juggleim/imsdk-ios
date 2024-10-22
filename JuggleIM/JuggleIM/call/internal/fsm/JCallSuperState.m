@@ -5,8 +5,8 @@
 //  Created by Fei Li on 2024/10/10.
 //
 
-#import "JBaseState.h"
+#import "JCallSuperState.h"
 
-@implementation JBaseState
+@implementation JCallSuperState
 
 @end

@@ -6,10 +6,11 @@
 //
 
 #import "JState.h"
+#import "JCallState.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JConnectedState : JState
+@interface JConnectedState : JCallState
 
 @end
 

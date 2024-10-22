@@ -20,6 +20,4 @@
 
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate;
 
-@property (nonatomic, strong) JCallSession *currentCallSession;
-
 @end

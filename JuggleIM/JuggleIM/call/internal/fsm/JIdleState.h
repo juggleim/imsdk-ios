@@ -6,7 +6,8 @@
 //
 
 #import "JState.h"
+#import "JCallState.h"
 
-@interface JIdleState : JState
+@interface JIdleState : JCallState
 
 @end
