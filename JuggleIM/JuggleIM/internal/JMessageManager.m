@@ -886,9 +886,10 @@
         }
     }
     
+    long long startTime = option.startTime;
     if (needRemote) {
         [self internalGetRemoteMessagesFrom:conversation
-                                  startTime:option.startTime
+                                  startTime:startTime
                                       count:option.count+1
                                   direction:direction
                                contentTypes:option.contentTypes
@@ -916,7 +917,8 @@
                                            count:option.count
                                        direction:direction
                                          hasMore:!isFinished
-                                       errorCode:JErrorCodeNone];
+                                       errorCode:JErrorCodeNone
+                                  getMessageTime:startTime];
         } error:^(JErrorCode code) {
             BOOL hasMore = YES;
             if (localMessages.count < option.count + 1) {
@@ -927,7 +929,8 @@
                                            count:option.count
                                        direction:direction
                                          hasMore:hasMore
-                                       errorCode:code];
+                                       errorCode:code
+                                  getMessageTime:startTime];
         }];
     } else {
         BOOL hasMore = YES;
@@ -939,7 +942,8 @@
                                        count:option.count
                                    direction:direction
                                      hasMore:hasMore
-                                   errorCode:JErrorCodeNone];
+                                   errorCode:JErrorCodeNone
+                              getMessageTime:startTime];
     }
 }
 
@@ -2186,13 +2190,21 @@
                                  count:(int)count
                              direction:(JPullDirection)direction
                                hasMore:(BOOL)hasMore
-                             errorCode:(JErrorCode)code {
+                             errorCode:(JErrorCode)code
+                        getMessageTime:(long long)getMessageTime {
     if (messages.count > count) {
         if (direction == JPullDirectionNewer) {
             messages = [messages subarrayWithRange:NSMakeRange(0, count)];
         } else {
             messages = [messages subarrayWithRange:NSMakeRange(messages.count - count, count)];
         }
+    }
+    if (messages.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeCallback) {
+                completeCallback(messages, getMessageTime, hasMore, code);
+            }
+        });
     }
     JMessage *m;
     if (direction == JPullDirectionNewer) {
