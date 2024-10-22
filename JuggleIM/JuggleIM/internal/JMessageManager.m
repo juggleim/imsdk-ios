@@ -876,6 +876,14 @@
                 }
             }
         }];
+        if (!needRemote && option.startTime == 0 && direction == JPullDirectionOlder) {
+            JConversationInfo *conversationInfo = [self.core.dbManager getConversationInfo:conversation];
+            JConcreteMessage *conversationLastMessage = (JConcreteMessage *)conversationInfo.lastMessage;
+            JConcreteMessage *localListLastMessage = localMessages.lastObject;
+            if (conversationLastMessage.seqNo > localListLastMessage.seqNo) {
+                needRemote = YES;
+            }
+        }
     }
     
     if (needRemote) {
