@@ -8,7 +8,7 @@
 #import "JHeartBeatManager.h"
 #import "JLogger.h"
 
-#define jPingInterval 30
+#define jPingInterval 15
 #define jDetectInterval 10
 #define jTimeOutInterval (jPingInterval*3)
 
