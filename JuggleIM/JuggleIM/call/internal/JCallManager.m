@@ -6,29 +6,14 @@
 //
 
 #import "JCallManager.h"
-#import "JCallSignalManager.h"
-#import "JCallMediaEngine.h"
-#import "JStateMachine.h"
-#import "JCallSuperState.h"
-#import "JConnectedState.h"
-#import "JConnectingState.h"
-#import "JIdleState.h"
-#import "JIncomingState.h"
-#import "JOutgoingState.h"
+#import "JUtility.h"
+#import "JCallEvent.h"
+#import "JCallSessionImpl.h"
 
-@interface JCallManager ()
+@interface JCallManager () <JCallSessionLifeCycleDelegate>
 @property (nonatomic, strong) JIMCore *core;
-@property (nonatomic, strong) JCallSignalManager *signalManager;
-@property (nonatomic, strong) JCallMediaEngine *mediaEngine;
-@property (nonatomic, strong) NSArray <JCallSession *> *callSessionList;
+@property (nonatomic, strong) NSMutableArray <JCallSessionImpl *> *callSessionList;
 @property (nonatomic, strong) NSHashTable <id<JCallReceiveDelegate>> *callReceiveDelegates;
-@property (nonatomic, strong) JStateMachine *stateMachine;
-@property (nonatomic, strong) JCallSuperState *superState;
-@property (nonatomic, strong) JConnectedState *connectedState;
-@property (nonatomic, strong) JConnectingState *connectingState;
-@property (nonatomic, strong) JIdleState *idleState;
-@property (nonatomic, strong) JIncomingState *incomingState;
-@property (nonatomic, strong) JOutgoingState *outgoingState;
 @end
 
 @implementation JCallManager
@@ -48,11 +33,58 @@
     });
 }
 
-//- (JCallSession *)startSingleCall:(NSString *)userId delegate:(id<JCallSessionDelegate>)delegate { 
-//    <#code#>
-//}
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                         delegate:(id<JCallSessionDelegate>)delegate {
+    @synchronized (self) {
+        if (self.callSessionList.count > 0) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                    [delegate errorDidOccur:JCallErrorCodeCallExist];
+                }
+            });
+            return nil;
+        }
+    }
+    
+    NSString *callId = [JUtility getUUID];
+    JCallSessionImpl *callSession = [[JCallSessionImpl alloc] init];
+    callSession.callId = callId;
+    callSession.isMultiCall = NO;
+    callSession.cameraEnable = NO;
+    callSession.microphoneEnable = YES;
+    callSession.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+    callSession.owner = JIM.shared.currentUserId;
+    callSession.core = self.core;
+    NSMutableArray *participants = [NSMutableArray array];
+    JCallMember *member = [[JCallMember alloc] init];
+    member.userId = userId;
+    member.callStatus = JCallStatusIncoming;
+    [participants addObject:member];
+    callSession.participants = participants;
+    [callSession addDelegate:delegate];
+    callSession.sessionLifeCycleDelegate = self;
+    [callSession event:JCallEventInvite userInfo:nil];
+    
+    [self addCallSession:callSession];
+    return callSession;
+}
+
+#pragma mark - JCallSessionLifeCycleDelegate
+- (void)sessionDidfinish:(JCallSessionImpl *)session {
+    @synchronized (self) {
+        if (session) {
+            [self.callSessionList removeObject:session];
+        }
+    }
+}
 
 #pragma mark - internal
+- (void)addCallSession:(JCallSessionImpl *)callSession {
+    @synchronized (self) {
+        [self.callSessionList addObject:callSession];
+    }
+}
+
 - (NSHashTable<id<JCallReceiveDelegate>> *)callReceiveDelegates {
     if (!_callReceiveDelegates) {
         _callReceiveDelegates = [NSHashTable weakObjectsHashTable];
@@ -60,67 +92,11 @@
     return _callReceiveDelegates;
 }
 
-- (JCallSignalManager *)signalManager {
-    if (!_signalManager) {
-        _signalManager = [[JCallSignalManager alloc] initWithCore:self.core];
+- (NSMutableArray<JCallSessionImpl *> *)callSessionList {
+    if (!_callSessionList) {
+        _callSessionList = [NSMutableArray array];
     }
-    return _signalManager;
-}
-
-- (JStateMachine *)stateMachine {
-    if (!_stateMachine) {
-        _stateMachine = [[JStateMachine alloc] initWithName:@"j_call"];
-        [_stateMachine setInitialState:self.idleState];
-    }
-    return _stateMachine;
-}
-
-- (JCallSuperState *)superState {
-    if (!_superState) {
-        _superState = [[JCallSuperState alloc] init];
-        _superState.callManager = self;
-    }
-    return _superState;
-}
-
-- (JConnectedState *)connectedState {
-    if (!_connectedState) {
-        _connectedState = [[JConnectedState alloc] initWithName:@"connected" superState:self.superState];
-        _connectedState.callManager = self;
-    }
-    return _connectedState;
-}
-
-- (JConnectingState *)connectingState {
-    if (!_connectingState) {
-        _connectingState = [[JConnectingState alloc] initWithName:@"connecting" superState:self.superState];
-        _connectingState.callManager = self;
-    }
-    return _connectingState;
-}
-
-- (JIdleState *)idleState {
-    if (!_idleState) {
-        _idleState = [[JIdleState alloc] initWithName:@"idle" superState:self.superState];
-        _idleState.callManager = self;
-    }
-    return _idleState;
-}
-
-- (JIncomingState *)incomingState {
-    if (!_incomingState) {
-        _incomingState = [[JIncomingState alloc] initWithName:@"incoming" superState:self.superState];
-        _incomingState.callManager = self;
-    }
-    return _incomingState;
-}
-
-- (JOutgoingState *)outgoingState {
-    if (!_outgoingState) {
-        _outgoingState = [[JOutgoingState alloc] initWithName:@"outgoing" superState:self.superState];
-        _outgoingState.callManager = self;
-    }
-    return _outgoingState;
+    return _callSessionList;
 }
 
 @end

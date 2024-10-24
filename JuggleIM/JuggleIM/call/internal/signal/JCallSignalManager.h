@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithCore:(JIMCore *)core;
 
-- (JCallSession *)startSingleCall:(NSString *)userId
-                          success:(void (^)(JCallSession *callSession))successBlock
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                          success:(void (^)(id<JCallSession>))successBlock
                             error:(void (^)(JErrorCode code))errorBlock;
 
 @end

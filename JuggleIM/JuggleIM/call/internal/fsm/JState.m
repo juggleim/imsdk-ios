@@ -28,10 +28,12 @@
 }
 
 - (BOOL)stateDidLeave {
+//    JLogI(@"CALL-Fsm", @"leave state %@", self.name);
     return NO;
 }
 
 - (BOOL)event:(NSInteger)event userInfo:(nonnull id)userInfo {
+//    JLogI(@"CALL-Fsm", @"%@ handle event %ld", self.name, event);
     return NO;
 }
 

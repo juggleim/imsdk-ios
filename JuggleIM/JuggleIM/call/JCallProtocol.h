@@ -9,13 +9,13 @@
 
 @protocol JCallReceiveDelegate <NSObject>
 
-- (void)callDidReceive:(JCallSession *)callSession;
+- (void)callDidReceive:(id<JCallSession>)callSession;
 
 @end
 
 @protocol JCallProtocol <NSObject>
 
-- (JCallSession *)startSingleCall:(NSString *)userId
+- (id<JCallSession>)startSingleCall:(NSString *)userId
                          delegate:(id<JCallSessionDelegate>)delegate;
 
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate;

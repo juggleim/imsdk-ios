@@ -9,4 +9,19 @@
 
 @implementation JConnectedState
 
+- (BOOL)stateDidEnter {
+    self.callSessionImpl.callStatus = JCallStatusConnected;
+    return YES;
+}
+
+- (BOOL)stateDidLeave {
+    return YES;
+}
+
+- (BOOL)event:(NSInteger)event
+     userInfo:(id)userInfo {
+    BOOL result = NO;
+    return result;
+}
+
 @end

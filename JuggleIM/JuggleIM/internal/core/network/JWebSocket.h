@@ -18,7 +18,6 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
-#import "JCallSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -253,9 +252,11 @@ inConversation:(JConversation *)conversation
 - (void)sendPing;
 
 #pragma mark - Call
-- (void)startSingleCall:(NSString *)callId
-               targetId:(NSString *)userId
-               complete:(void (^)(JErrorCodeInternal code, JCallSession *callSession))completeBlock;
+- (void)callInvite:(NSString *)callId
+       isMultiCall:(BOOL)isMultiCall
+      targetIdList:(NSArray <NSString *>*)userIdList
+           success:(void (^)(void))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "JCallConst.h"
 #import "JuggleIMConst.h"
+#import "JCallMember.h"
 
 @protocol JCallSessionDelegate <NSObject>
 
@@ -49,11 +50,11 @@
 
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
-- (void)errorDidOccur:(JErrorCode)errorCode;
+- (void)errorDidOccur:(JCallErrorCode)errorCode;
 
 @end
 
-@interface JCallSession : NSObject
+@protocol JCallSession <NSObject>
 /// 通话 id
 @property (nonatomic, copy) NSString *callId;
 /// 是否多人通话，NO 表示一对一通话
@@ -77,7 +78,7 @@
 /// 通话结束原因
 @property (nonatomic, assign) JCallFinishReason finishReason;
 /// 通话参与者（除当前用户外的其他参与者）
-@property (nonatomic, copy) NSArray *participants;
+@property (nonatomic, copy) NSArray <JCallMember *> *participants;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 

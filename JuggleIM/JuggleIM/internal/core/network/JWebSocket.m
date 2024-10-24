@@ -782,27 +782,24 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)startSingleCall:(NSString *)callId
-               targetId:(NSString *)userId
-               complete:(void (^)(JErrorCodeInternal, JCallSession * _Nonnull))completeBlock {
+- (void)callInvite:(NSString *)callId
+       isMultiCall:(BOOL)isMultiCall
+      targetIdList:(NSArray<NSString *> *)userIdList
+           success:(nonnull void (^)(void))successBlock
+             error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        JLogI(@"WS-Send", @"start single call, userId is %@", userId);
+        JLogI(@"WS-Send", @"call invite, isMultiCall is %d", isMultiCall);
         NSNumber *key = @(self.cmdIndex);
-//        NSData *d = [self.pbData ]
-//        
-//        
-//        
-//        NSData *d = [self.pbData getUploadFileCred:userId fileType:fileType ext:ext index:self.cmdIndex++];
-//        JUploadFileCredBlockObj *obj = [[JUploadFileCredBlockObj alloc] init];
-//        obj.successBlock = successBlock;
-//        obj.errorBlock = errorBlock;
-//        [self sendData:d
-//                   key:key
-//                   obj:obj
-//                 error:errorBlock];
+        NSData *d = [self.pbData callInvite:callId
+                                isMultiCall:isMultiCall
+                               targetIdList:userIdList
+                                      index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
 }
-
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
@@ -980,6 +977,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeChatroomEventNtf:
             JLogI(@"WS-Receive", @"JPBRcvTypeChatroomEventNtf");
             [self handleChatroomEventNtf:obj.publishMsgNtf];
+            break;
+        case JPBRcvTypeRtcInviteEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
+            [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1281,6 +1282,35 @@ inConversation:(JConversation *)conversation
             [self.chatroomDelegate chatroomDidKick:ntf.chatroomId];
         }
     }
+}
+
+- (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {
+    switch (ntf.inviteType) {
+        case JPBRtcInviteTypeInvite:
+            
+            break;
+            
+        //TODO:
+        case JPBRtcInviteTypeAccept:
+            
+            break;
+            
+        case JPBRtcInviteTypeDecline:
+            
+            break;
+            
+        case JPBRtcInviteTypeHangup:
+            
+            break;
+            
+        case JPBRtcInviteTypeTimeout:
+            
+            break;
+            
+        default:
+            break;
+    }
+    
 }
 
 - (void)simpleSendData:(NSData *)data

@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^completeBlock)(JErrorCodeInternal code,  NSArray<JChatroomAttributeItem *> * _Nullable items);
 @end
 
-@interface JChatroomObj: JBlockObj
+@interface JChatroomObj : JBlockObj
 @property (nonatomic, copy) NSString *chatroomId;
 @end
 

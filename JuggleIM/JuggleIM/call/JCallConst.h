@@ -24,29 +24,38 @@ typedef NS_ENUM(NSInteger, JCallStatus) {
 
 /// 通话结束原因
 typedef NS_ENUM(NSInteger, JCallFinishReason) {
+    /// 未知原因
+    JCallFinishReasonUnknown = 0,
     /// 当前用户挂断已接通的来电
-    JCallFinishReasonHangUp,
+    JCallFinishReasonHangUp = 1,
     /// 当前用户拒接来电
-    JCallFinishReasonDecline,
+    JCallFinishReasonDecline = 2,
     /// 当前用户忙线
-    JCallFinishReasonBusy,
+    JCallFinishReasonBusy = 3,
     /// 当前用户未接听
-    JCallFinishReasonNoResponse,
+    JCallFinishReasonNoResponse = 4,
     /// 当前用户取消呼叫
-    JCallFinishReasonCancel,
+    JCallFinishReasonCancel = 5,
     /// 对端用户挂断已接通的来电
-    JCallFinishReasonOtherSideHangUp,
+    JCallFinishReasonOtherSideHangUp = 6,
     /// 对端用户拒接来电
-    JCallFinishReasonOtherSideDecline,
+    JCallFinishReasonOtherSideDecline = 7,
     /// 对端用户忙线
-    JCallFinishReasonOtherSideBusy,
+    JCallFinishReasonOtherSideBusy = 8,
     /// 对端用户未接听
-    JCallFinishReasonOtherSideNoResponse,
+    JCallFinishReasonOtherSideNoResponse = 9,
     /// 对端用户取消呼叫
-    JCallFinishReasonOtherSideCancel,
+    JCallFinishReasonOtherSideCancel = 10,
     /// 网络出错
-    JCallFinishReasonNetworkError
+    JCallFinishReasonNetworkError = 11
     
+};
+
+typedef NS_ENUM(NSInteger, JCallErrorCode) {
+    /// 成功
+    JCallSuccess = 0,
+    /// 已在通话中
+    JCallErrorCodeCallExist = 1
 };
 
 #endif /* JCallConst_h */

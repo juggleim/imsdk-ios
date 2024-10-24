@@ -31,6 +31,7 @@
 CF_EXTERN_C_BEGIN
 
 @class RtcMember;
+@class RtcMemberRoom;
 @class RtcRoom;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -116,7 +117,7 @@ typedef GPB_ENUM(InviteType) {
   InviteType_DefaultInviteType = 0,
   InviteType_RtcInvite = 1,
   InviteType_RtcAccept = 2,
-  InviteType_RtcReject = 3,
+  InviteType_RtcDecline = 3,
   InviteType_RtcCancel = 4,
   InviteType_RtcTimeout = 5,
 };
@@ -213,31 +214,15 @@ int32_t RtcRoom_RoomType_RawValue(RtcRoom *message);
  **/
 void SetRtcRoom_RoomType_RawValue(RtcRoom *message, int32_t value);
 
-#pragma mark - RtcRooms
-
-typedef GPB_ENUM(RtcRooms_FieldNumber) {
-  RtcRooms_FieldNumber_RoomsArray = 1,
-};
-
-GPB_FINAL @interface RtcRooms : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcRoom*> *roomsArray;
-/** The number of items in @c roomsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger roomsArray_Count;
-
-@end
-
 #pragma mark - RtcMember
 
 typedef GPB_ENUM(RtcMember_FieldNumber) {
   RtcMember_FieldNumber_Member = 1,
   RtcMember_FieldNumber_RtcState = 2,
-  RtcMember_FieldNumber_CameraEnable = 3,
-  RtcMember_FieldNumber_MicEnable = 4,
-  RtcMember_FieldNumber_CallTime = 5,
-  RtcMember_FieldNumber_ConnectTime = 6,
-  RtcMember_FieldNumber_HangupTime = 7,
-  RtcMember_FieldNumber_Inviter = 8,
+  RtcMember_FieldNumber_CallTime = 3,
+  RtcMember_FieldNumber_ConnectTime = 4,
+  RtcMember_FieldNumber_HangupTime = 5,
+  RtcMember_FieldNumber_Inviter = 6,
 };
 
 GPB_FINAL @interface RtcMember : GPBMessage
@@ -247,10 +232,6 @@ GPB_FINAL @interface RtcMember : GPBMessage
 @property(nonatomic, readwrite) BOOL hasMember;
 
 @property(nonatomic, readwrite) RtcState rtcState;
-
-@property(nonatomic, readwrite) int32_t cameraEnable;
-
-@property(nonatomic, readwrite) int32_t micEnable;
 
 @property(nonatomic, readwrite) int64_t callTime;
 
@@ -308,15 +289,12 @@ void SetRtcRoomEvent_RoomEventType_RawValue(RtcRoomEvent *message, int32_t value
 #pragma mark - RtcInviteReq
 
 typedef GPB_ENUM(RtcInviteReq_FieldNumber) {
-  RtcInviteReq_FieldNumber_InviteType = 1,
-  RtcInviteReq_FieldNumber_TargetIdsArray = 2,
-  RtcInviteReq_FieldNumber_RoomType = 3,
-  RtcInviteReq_FieldNumber_RoomId = 4,
+  RtcInviteReq_FieldNumber_TargetIdsArray = 1,
+  RtcInviteReq_FieldNumber_RoomType = 2,
+  RtcInviteReq_FieldNumber_RoomId = 3,
 };
 
 GPB_FINAL @interface RtcInviteReq : GPBMessage
-
-@property(nonatomic, readwrite) InviteType inviteType;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *targetIdsArray;
 /** The number of items in @c targetIdsArray without causing the container to be created. */
@@ -329,18 +307,6 @@ GPB_FINAL @interface RtcInviteReq : GPBMessage
 @end
 
 /**
- * Fetches the raw value of a @c RtcInviteReq's @c inviteType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t RtcInviteReq_InviteType_RawValue(RtcInviteReq *message);
-/**
- * Sets the raw value of an @c RtcInviteReq's @c inviteType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetRtcInviteReq_InviteType_RawValue(RtcInviteReq *message, int32_t value);
-
-/**
  * Fetches the raw value of a @c RtcInviteReq's @c roomType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
@@ -351,6 +317,21 @@ int32_t RtcInviteReq_RoomType_RawValue(RtcInviteReq *message);
  * was generated.
  **/
 void SetRtcInviteReq_RoomType_RawValue(RtcInviteReq *message, int32_t value);
+
+#pragma mark - RtcAnswerReq
+
+typedef GPB_ENUM(RtcAnswerReq_FieldNumber) {
+  RtcAnswerReq_FieldNumber_TargetId = 1,
+  RtcAnswerReq_FieldNumber_RoomId = 2,
+};
+
+GPB_FINAL @interface RtcAnswerReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@end
 
 #pragma mark - RtcInviteEvent
 
@@ -385,6 +366,67 @@ int32_t RtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message);
  * was generated.
  **/
 void SetRtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message, int32_t value);
+
+#pragma mark - RtcMemberRooms
+
+typedef GPB_ENUM(RtcMemberRooms_FieldNumber) {
+  RtcMemberRooms_FieldNumber_RoomsArray = 1,
+};
+
+GPB_FINAL @interface RtcMemberRooms : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMemberRoom*> *roomsArray;
+/** The number of items in @c roomsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger roomsArray_Count;
+
+@end
+
+#pragma mark - RtcMemberRoom
+
+typedef GPB_ENUM(RtcMemberRoom_FieldNumber) {
+  RtcMemberRoom_FieldNumber_RoomType = 1,
+  RtcMemberRoom_FieldNumber_RoomId = 2,
+  RtcMemberRoom_FieldNumber_Owner = 3,
+  RtcMemberRoom_FieldNumber_RtcState = 4,
+};
+
+GPB_FINAL @interface RtcMemberRoom : GPBMessage
+
+@property(nonatomic, readwrite) RtcRoomType roomType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *owner;
+/** Test to see if @c owner has been set. */
+@property(nonatomic, readwrite) BOOL hasOwner;
+
+@property(nonatomic, readwrite) RtcState rtcState;
+
+@end
+
+/**
+ * Fetches the raw value of a @c RtcMemberRoom's @c roomType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcMemberRoom_RoomType_RawValue(RtcMemberRoom *message);
+/**
+ * Sets the raw value of an @c RtcMemberRoom's @c roomType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcMemberRoom_RoomType_RawValue(RtcMemberRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcMemberRoom's @c rtcState property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcMemberRoom_RtcState_RawValue(RtcMemberRoom *message);
+/**
+ * Sets the raw value of an @c RtcMemberRoom's @c rtcState property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcMemberRoom_RtcState_RawValue(RtcMemberRoom *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

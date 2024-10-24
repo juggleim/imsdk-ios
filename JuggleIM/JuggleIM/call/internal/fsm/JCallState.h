@@ -6,12 +6,12 @@
 //
 
 #import "JState.h"
-#import "JCallManager.h"
+#import "JCallSessionImpl.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JCallState : JState
-@property (nonatomic, weak) JCallManager *callManager;
+@property (nonatomic, weak) JCallSessionImpl *callSessionImpl;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -48,7 +48,7 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRemoveChatroomAttrAck,
     JPBRcvTypeChatroomDestroyNtf,
     JPBRcvTypeChatroomEventNtf,
-    JPBRcvTypeCallInviteAck
+    JPBRcvTypeRtcInviteEventNtf
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -57,6 +57,20 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
     JPBChrmEventTypeKick = 2,
     JPBChrmEventTypeFallout = 3
 };
+
+typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
+    JPBRtcInviteTypeDefault = 0,
+    JPBRtcInviteTypeInvite = 1,
+    JPBRtcInviteTypeAccept = 2,
+    JPBRtcInviteTypeDecline = 3,
+    JPBRtcInviteTypeHangup = 4,
+    JPBRtcInviteTypeTimeout = 5
+};
+
+@interface JPBRtcRoom : NSObject
+@property (nonatomic, copy) NSString *roomId;
+@property (nonatomic, strong) JUserInfo *owner;
+@end
 
 @interface JConnectAck : NSObject
 @property (nonatomic, assign) int code;
@@ -118,6 +132,12 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, assign) JPBChrmEventType type;
 @end
 
+@interface JRtcInviteEventNtf : NSObject
+@property (nonatomic, assign) JPBRtcInviteType inviteType;
+@property (nonatomic, strong) JUserInfo *targetUser;
+@property (nonatomic, strong) JPBRtcRoom *room;
+@end
+
 @interface JDisconnectMsg : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, assign) long long timestamp;
@@ -156,6 +176,7 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, strong) JQryFileCredAck *qryFileCredAck;
 @property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
 @property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
+@property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
 @end
 
 @interface JPBData : NSObject
@@ -334,9 +355,10 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 - (NSData *)publishAckData:(int)index;
 
 #pragma mark - Call
-- (NSData *)startSingleCall:(NSString *)callId
-                   targetId:(NSString *)userId
-                      index:(int)index;
+- (NSData *)callInvite:(NSString *)callId
+           isMultiCall:(BOOL)isMultiCall
+          targetIdList:(NSArray <NSString *>*)userIdList
+                 index:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;
 @end
