@@ -2994,7 +2994,7 @@ void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message,
 typedef GPB_ENUM(SyncChatroomReq_FieldNumber) {
   SyncChatroomReq_FieldNumber_ChatroomId = 1,
   SyncChatroomReq_FieldNumber_SyncTime = 2,
-  SyncChatroomReq_FieldNumber_AttSyncTime = 3,
+  SyncChatroomReq_FieldNumber_Count = 3,
 };
 
 /**
@@ -3006,7 +3006,7 @@ GPB_FINAL @interface SyncChatroomReq : GPBMessage
 
 @property(nonatomic, readwrite) int64_t syncTime;
 
-@property(nonatomic, readwrite) int64_t attSyncTime;
+@property(nonatomic, readwrite) int32_t count;
 
 @end
 

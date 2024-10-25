@@ -8997,13 +8997,13 @@ void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message,
 
 @dynamic chatroomId;
 @dynamic syncTime;
-@dynamic attSyncTime;
+@dynamic count;
 
 typedef struct SyncChatroomReq__storage_ {
   uint32_t _has_storage_[1];
+  int32_t count;
   NSString *chatroomId;
   int64_t syncTime;
-  int64_t attSyncTime;
 } SyncChatroomReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -9032,13 +9032,13 @@ typedef struct SyncChatroomReq__storage_ {
         .dataType = GPBDataTypeInt64,
       },
       {
-        .name = "attSyncTime",
+        .name = "count",
         .dataTypeSpecific.clazz = Nil,
-        .number = SyncChatroomReq_FieldNumber_AttSyncTime,
+        .number = SyncChatroomReq_FieldNumber_Count,
         .hasIndex = 2,
-        .offset = (uint32_t)offsetof(SyncChatroomReq__storage_, attSyncTime),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeInt64,
+        .offset = (uint32_t)offsetof(SyncChatroomReq__storage_, count),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
       },
     };
     GPBDescriptor *localDescriptor =
@@ -9051,7 +9051,7 @@ typedef struct SyncChatroomReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\n\000\002\010\000\003\013\000";
+        "\002\001\n\000\002\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

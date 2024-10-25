@@ -317,6 +317,7 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
+                prevMessageCount:(int)count
                            index:(int)index;
 
 - (NSData *)syncChatroomAttributes:(long long)syncTime

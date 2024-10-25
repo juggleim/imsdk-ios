@@ -229,7 +229,8 @@ inConversation:(JConversation *)conversation
             error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
-                          chatroomId:(NSString *)chatroomId;
+                          chatroomId:(NSString *)chatroomId
+                    prevMessageCount:(int)count;
 
 - (void)syncChatroomAttributesWithTime:(long long)syncTime
                             chatroomId:(NSString *)chatroomId;

@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setAttrSyncTime:(long long)syncTime
             forChatroom:(NSString *)chatroomId;
 - (BOOL)isChatroomAvailable:(NSString *)chatroomId;
+- (int)getPrevMessageCountForChatroom:(NSString *)chatroomId;
 @end
 
 NS_ASSUME_NONNULL_END

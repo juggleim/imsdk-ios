@@ -1443,6 +1443,7 @@
 
 #pragma mark - JChatroomProtocol
 - (void)chatroomDidJoin:(NSString *)chatroomId {
+    //确保后面会走 sync 逻辑
     long long time = [self.chatroomManager getSyncTimeForChatroom:chatroomId] + 1;
     [self syncChatroomNotify:chatroomId time:time];
 }
@@ -1576,8 +1577,10 @@
     }
     long long cachedSyncTime = [self.chatroomManager getSyncTimeForChatroom:chatroomId];
     if (time > cachedSyncTime) {
+        int prevMessageCount = [self.chatroomManager getPrevMessageCountForChatroom:chatroomId];
         [self webSocketSyncChatroomMessages:chatroomId
-                                       time:cachedSyncTime];
+                                       time:cachedSyncTime
+                           prevMessageCount:prevMessageCount];
     } else {
         [self checkChatroomSyncDic];
     }
@@ -2111,11 +2114,13 @@
 }
 
 - (void)webSocketSyncChatroomMessages:(NSString *)chatroomId
-                        time:(long long)syncTime {
-    JLogI(@"MSG-ChrmSync", @"id is %@, time is %lld", chatroomId, syncTime);
+                        time:(long long)syncTime
+                     prevMessageCount:(int)count {
+    JLogI(@"MSG-ChrmSync", @"id is %@, time is %lld, count is %d", chatroomId, syncTime, count);
     self.chatroomSyncProcessing = YES;
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
-                                           chatroomId:chatroomId];
+                                           chatroomId:chatroomId
+                                     prevMessageCount:count];
 }
 
 - (NSString *)createClientUid {

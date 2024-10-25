@@ -68,6 +68,13 @@
 ///   - chatroomId: 聊天室 id
 - (void)joinChatroom:(NSString *)chatroomId;
 
+/// 加入聊天室
+/// - Parameters:
+///   - chatroomId: 聊天室 id
+///   - count: 加入聊天室时获取的历史消息数量
+- (void)joinChatroom:(NSString *)chatroomId
+    prevMessageCount:(int)count;
+
 /// 退出聊天室
 /// - Parameter chatroomId: 聊天室 id
 - (void)quitChatroom:(NSString *)chatroomId;

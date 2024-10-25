@@ -724,12 +724,15 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)syncChatroomMessagesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
+- (void)syncChatroomMessagesWithTime:(long long)syncTime
+                          chatroomId:(NSString *)chatroomId
+                    prevMessageCount:(int)count {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData syncChatroomMessages:syncTime
                                            chatroomId:chatroomId
+                                     prevMessageCount:count
                                                 index:self.cmdIndex++];
-        JLogI(@"WS-Send", @"sync chatroom messages, id is %@, time is %lld", chatroomId, syncTime);
+        JLogI(@"WS-Send", @"sync chatroom messages, id is %@, time is %lld, prevMessageCount is %d", chatroomId, syncTime, count);
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {

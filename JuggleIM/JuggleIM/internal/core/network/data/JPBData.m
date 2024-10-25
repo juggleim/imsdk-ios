@@ -794,10 +794,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
+                prevMessageCount:(int)count
                            index:(int)index {
     SyncChatroomReq *req = [[SyncChatroomReq alloc] init];
     req.chatroomId = chatroomId;
     req.syncTime = syncTime;
+    req.count = count;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;

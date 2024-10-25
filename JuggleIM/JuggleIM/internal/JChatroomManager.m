@@ -48,10 +48,20 @@
 }
 
 - (void)joinChatroom:(NSString *)chatroomId {
+    [self joinChatroom:chatroomId prevMessageCount:-1];
+}
+
+- (void)joinChatroom:(NSString *)chatroomId prevMessageCount:(int)count {
+    [self changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
+    [self setPrevMessageCount:count forChatroom:chatroomId];
     [self.core.webSocket joinChatroom:chatroomId
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
+        //count 为 0，timestamp 也为 0，服务端永远同步不下来消息
+        if (count == 0) {
+            [self setSyncTime:timestamp forChatroom:chatroomId];
+        }
         [self syncChatroomAttr:chatroomId time:[self getAttrSyncTimeForChatroom:chatroomId]];
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -72,7 +82,6 @@
             }];
         });
     }];
-    [self changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
 }
 
 - (void)getChatroomInfo:(NSString *)chatroomId option:(JChatroomInfoOptions *)option success:(void (^)(JChatroomInfo *))successBlock error:(void (^)(JErrorCode))errorBlock { 
@@ -282,6 +291,24 @@
             cachedChatroom.attrSyncTime = syncTime;
             [self.cachedChatroomDic setObject:cachedChatroom forKey:chatroomId];
         }
+    }
+}
+
+- (int)getPrevMessageCountForChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        return cachedChatroom.prevMessageCount;
+    }
+}
+
+- (void)setPrevMessageCount:(int)count forChatroom:(NSString *)chatroomId {
+    @synchronized (self) {
+        JCachedChatroom *cachedChatroom = [self.cachedChatroomDic objectForKey:chatroomId];
+        if (!cachedChatroom) {
+            return;
+        }
+        cachedChatroom.prevMessageCount = count;
+        [self.cachedChatroomDic setObject:cachedChatroom forKey:chatroomId];
     }
 }
 
