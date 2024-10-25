@@ -74,15 +74,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jBatchAddAtt @"c_batch_add_att"
 #define jBatchDelAtt @"c_batch_del_att"
 #define jRtcInvite @"rtc_invite"
+#define jRtcQuit @"rtc_quit"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 #define jCUserNtf @"c_user_ntf"
 #define jRtcInviteEvent @"rtc_invite_event"
-
-@implementation JPBRtcRoom
-@end
 
 @implementation JConnectAck
 @end
@@ -1105,6 +1103,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)callHangup:(NSString *)callId
+                userId:(NSString *)userId
+                 index:(int)index {
+    RtcRoomReq *req = [[RtcRoomReq alloc] init];
+    req.roomId = callId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcQuit;
+    body.targetId = userId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1522,13 +1538,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return userInfo;
 }
 
-- (JPBRtcRoom *)rtcRoomWithPBRtcRoom:(RtcRoom *)pbRoom {
+- (JRtcRoom *)rtcRoomWithPBRtcRoom:(RtcRoom *)pbRoom {
     if (pbRoom == nil) {
         return nil;
     }
-    JPBRtcRoom *result = [[JPBRtcRoom alloc] init];
+    JRtcRoom *result = [[JRtcRoom alloc] init];
     result.roomId = pbRoom.roomId;
     result.owner = [self userInfoWithPBUserInfo:pbRoom.owner];
+    result.isMultiCall = pbRoom.roomType == RtcRoomType_OneMore;
     return result;
 }
 
@@ -2029,7 +2046,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck),
              jSyncChatroomAtts:@(JPBRcvTypeSyncChatroomAttrsAck),
              jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck),
-             jRtcInvite:@(JPBRcvTypeSimpleQryAck)
+             jRtcInvite:@(JPBRcvTypeSimpleQryAck),
+             jRtcQuit:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

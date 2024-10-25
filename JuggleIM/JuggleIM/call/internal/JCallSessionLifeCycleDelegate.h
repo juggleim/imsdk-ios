@@ -9,6 +9,7 @@
 
 @protocol JCallSessionLifeCycleDelegate <NSObject>
 - (void)sessionDidfinish:(JCallSessionImpl *)session;
+- (void)callDidReceive:(JCallSessionImpl *)session;
 @end
 
 

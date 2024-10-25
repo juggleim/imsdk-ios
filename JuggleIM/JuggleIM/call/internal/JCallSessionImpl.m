@@ -48,8 +48,8 @@
 }
 
 
-- (void)hangUp { 
-    
+- (void)hangup { 
+    [self.stateMachine event:JCallEventHangup userInfo:nil];
 }
 
 
@@ -69,10 +69,6 @@
 
 
 #pragma mark - JCallSessionImpl
-- (void)event:(NSInteger)event userInfo:(id)userInfo {
-    [self.stateMachine event:event userInfo:userInfo];
-}
-
 - (void)error:(JCallErrorCode)code {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -83,6 +79,21 @@
     });
 }
 
+- (void)inviteFail {
+    self.callStatus = JCallStatusIdle;
+    self.finishTime = [[NSDate date] timeIntervalSince1970];
+    self.finishReason = JCallFinishReasonNetworkError;
+}
+
+- (void)startOutgoingTimer {
+    //TODO:
+}
+
+- (void)notifyReceiveCall {
+    [self.sessionLifeCycleDelegate callDidReceive:self];
+}
+
+#pragma mark - signal
 - (void)signalSingleInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
     for (JCallMember *member in self.participants) {
@@ -99,17 +110,25 @@
     }];
 }
 
-- (void)inviteFail {
-    self.callStatus = JCallStatusIdle;
-    self.finishTime = [[NSDate date] timeIntervalSince1970];
-    self.finishReason = JCallFinishReasonNetworkError;
+- (void)signalHangup {
+    [self.core.webSocket callHangup:self.callId
+                             userId:self.core.userId
+                            success:^{
+        JLogI(@"Call-Signal", @"send hangup success");
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Signal", @"send hangup error, code is %ld", code);
+    }];
 }
 
-- (void)startOutgoingTimer {
+#pragma mark - media
+- (void)mediaQuit {
     //TODO: 
 }
 
-#pragma mark - state machine
+#pragma mark - fsm
+- (void)event:(NSInteger)event userInfo:(id)userInfo {
+    [self.stateMachine event:event userInfo:userInfo];
+}
 
 - (void)transitionToConnectedState {
     [self.stateMachine transitionTo:self.connectedState];

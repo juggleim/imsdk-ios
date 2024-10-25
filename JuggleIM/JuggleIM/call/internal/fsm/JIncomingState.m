@@ -11,6 +11,7 @@
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusIncoming;
+    [self.callSessionImpl notifyReceiveCall];
     return YES;
 }
 

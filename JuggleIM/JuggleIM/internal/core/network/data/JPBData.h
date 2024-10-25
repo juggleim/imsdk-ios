@@ -17,6 +17,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
+#import "JRtcRoom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -66,11 +67,6 @@ typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
     JPBRtcInviteTypeHangup = 4,
     JPBRtcInviteTypeTimeout = 5
 };
-
-@interface JPBRtcRoom : NSObject
-@property (nonatomic, copy) NSString *roomId;
-@property (nonatomic, strong) JUserInfo *owner;
-@end
 
 @interface JConnectAck : NSObject
 @property (nonatomic, assign) int code;
@@ -135,7 +131,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
 @interface JRtcInviteEventNtf : NSObject
 @property (nonatomic, assign) JPBRtcInviteType inviteType;
 @property (nonatomic, strong) JUserInfo *targetUser;
-@property (nonatomic, strong) JPBRtcRoom *room;
+@property (nonatomic, strong) JRtcRoom *room;
 @end
 
 @interface JDisconnectMsg : NSObject
@@ -358,6 +354,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
           targetIdList:(NSArray <NSString *>*)userIdList
+                 index:(int)index;
+
+- (NSData *)callHangup:(NSString *)callId
+                userId:(NSString *)userId
                  index:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;

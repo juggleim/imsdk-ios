@@ -28,6 +28,11 @@
             result = YES;
             break;
             
+        case JCallEventReceiveInvite:
+            [self.callSessionImpl transitionToIncomingState];
+            result = YES;
+            break;
+            
         default:
             break;
     }

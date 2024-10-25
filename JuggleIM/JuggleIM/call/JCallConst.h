@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, JCallFinishReason) {
     /// 未知原因
     JCallFinishReasonUnknown = 0,
     /// 当前用户挂断已接通的来电
-    JCallFinishReasonHangUp = 1,
+    JCallFinishReasonHangup = 1,
     /// 当前用户拒接来电
     JCallFinishReasonDecline = 2,
     /// 当前用户忙线
@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, JCallFinishReason) {
     /// 当前用户取消呼叫
     JCallFinishReasonCancel = 5,
     /// 对端用户挂断已接通的来电
-    JCallFinishReasonOtherSideHangUp = 6,
+    JCallFinishReasonOtherSideHangup = 6,
     /// 对端用户拒接来电
     JCallFinishReasonOtherSideDecline = 7,
     /// 对端用户忙线

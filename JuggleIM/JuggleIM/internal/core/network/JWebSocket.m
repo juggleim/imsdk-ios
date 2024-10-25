@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, weak) id<JWebSocketChatroomDelegate> chatroomDelegate;
+@property (nonatomic, weak) id<JWebSocketCallDelegate> callDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
@@ -125,6 +126,10 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 
 - (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate {
     _chatroomDelegate = delegate;
+}
+
+- (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate {
+    _callDelegate = delegate;
 }
 
 #pragma mark - send pb
@@ -788,11 +793,28 @@ inConversation:(JConversation *)conversation
            success:(nonnull void (^)(void))successBlock
              error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
-        JLogI(@"WS-Send", @"call invite, isMultiCall is %d", isMultiCall);
+        JLogI(@"WS-Send", @"call invite, callId is %@, isMultiCall is %d", callId, isMultiCall);
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callInvite:callId
                                 isMultiCall:isMultiCall
                                targetIdList:userIdList
+                                      index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)callHangup:(NSString *)callId
+            userId:(NSString *)userId
+           success:(void (^)(void))successBlock
+             error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call hangup, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callHangup:callId
+                                     userId:userId
                                       index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
@@ -1287,7 +1309,10 @@ inConversation:(JConversation *)conversation
 - (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {
     switch (ntf.inviteType) {
         case JPBRtcInviteTypeInvite:
-            
+            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
+                [self.callDelegate callDidInvite:ntf.targetUser
+                                            room:ntf.room];
+            }
             break;
             
         //TODO:

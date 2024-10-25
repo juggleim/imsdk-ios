@@ -86,7 +86,7 @@
 - (void)accept;
 
 /// 挂断电话
-- (void)hangUp;
+- (void)hangup;
 
 /// 设置麦克风静音
 /// - Parameter isMute: 是否静音

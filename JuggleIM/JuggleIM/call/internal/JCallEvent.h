@@ -12,7 +12,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     /// Signal outgoing
     JCallEventInvite,
     JCallEventAccept,
-    JCallEventHangUp, //失败暂不处理，对端会收到 media 的退出或者超时
+    JCallEventHangup, //失败暂不处理，对端会收到 media 的退出或者超时
     //JCallEventAddParticipants,
     
     /// Signal outgoing callback
@@ -26,7 +26,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventReceiveInvite,
     JCallEventReceiveAccept,
     //JCallEventReceiveAddParticipants,
-    JCallEventReceiveHangUp,
+    JCallEventReceiveHangup,
     
     /// Media outgoing
     

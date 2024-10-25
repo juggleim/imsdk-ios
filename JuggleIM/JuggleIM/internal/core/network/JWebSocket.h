@@ -18,6 +18,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
+#import "JRtcRoom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,6 +55,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)chatroomDidKick:(NSString *)chatroomId;
 @end
 
+@protocol JWebSocketCallDelegate <NSObject>
+- (void)callDidInvite:(JUserInfo *)inviter
+                 room:(JRtcRoom *)room;
+@end
+
 @interface JWebSocket : NSObject
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
@@ -77,6 +83,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
 
 - (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate;
+
+- (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate;
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
@@ -257,6 +265,12 @@ inConversation:(JConversation *)conversation
       targetIdList:(NSArray <NSString *>*)userIdList
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callHangup:(NSString *)callId
+            userId:(NSString *)userId
+           success:(void (^)(void))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 @end
 
 NS_ASSUME_NONNULL_END

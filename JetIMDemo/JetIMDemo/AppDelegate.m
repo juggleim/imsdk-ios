@@ -16,7 +16,7 @@
 #define kToken1181 @"ChBuc3czc3VlNzJiZWd5djd5GiB3vwQOFxILM02aHvzk0yXsSWIyWy-vkA4CLovMyoelAQ=="
 #define kToken1182 @"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="
 
-@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate, JChatroomAttributesDelegate, JCallSessionDelegate>
+@interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate, JChatroomAttributesDelegate, JCallSessionDelegate, JCallReceiveDelegate>
 
 @end
 
@@ -25,6 +25,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    [JIM.shared enableCall];
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
@@ -39,7 +40,26 @@
     [JIM.shared.chatroomManager addDelegate:self];
     [JIM.shared.chatroomManager addAttributesDelegate:self];
     
+    [JIM.shared.callManager addReceiveDelegate:self];
+    
     return YES;
+}
+
+#pragma mark - JConnectionDelegate
+- (void)connectionStatusDidChange:(JConnectionStatus)status
+                        errorCode:(JErrorCode)code
+                            extra:(NSString *)extra {
+    NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
+    if (JConnectionStatusConnected == status) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            [JIM.shared.callManager startSingleCall:@"nkXFkybGA" delegate:self];
+        });
+    }
+}
+
+- (void)dbDidOpen {
+    NSLog(@"AppDelegate, dbDidOpen");
 }
 
 - (void)uploadMessage:(JMessage *)message
@@ -76,31 +96,13 @@
     }];
 }
 
-- (void)dbDidOpen {
-    NSLog(@"AppDelegate, dbDidOpen");
-}
+
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [JIM.shared.connectionManager registerDeviceToken:deviceToken];
 }
 
-- (void)connectionStatusDidChange:(JConnectionStatus)status
-                        errorCode:(JErrorCode)code
-                            extra:(NSString *)extra {
-    NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
-    if (JConnectionStatusConnected == status) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [JIM.shared enableCall];
-            [JIM.shared.callManager startSingleCall:@"user1" delegate:self];
-            
-            
-        });
-    }
-}
 
-- (void)dbDidClose {
-    
-}
 
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"AppDelegate, chatroomDidJoin, chatroomId is %@", chatroomId);
@@ -290,6 +292,13 @@
     NSLog(@"AppDelegate, attributesDidUpdate, count is %ld, chatroom is %@", attributes.count, chatroomId);
 }
 
+#pragma mark - JCallReceiveDelegate
+- (void)callDidReceive:(id<JCallSession>)callSession {
+    NSLog(@"AppDelegate, callDidReceive, callId is %@", callSession.callId);
+    [callSession addDelegate:self];
+    [callSession hangup];
+}
+
 #pragma mark - JCallSessionDelegate
 - (void)callDidConnect {
     NSLog(@"AppDelegate, callDidConnect");
@@ -318,7 +327,6 @@
     // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
     // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
 }
-
 
 @end
 

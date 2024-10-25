@@ -18,9 +18,17 @@
 
 - (void)error:(JCallErrorCode)code;
 - (void)startOutgoingTimer;
-- (void)signalSingleInvite;
 - (void)inviteFail;
+- (void)notifyReceiveCall;
 
+#pragma mark - signal
+- (void)signalSingleInvite;
+- (void)signalHangup;
+
+#pragma mark - media
+- (void)mediaQuit;
+
+#pragma mark - fsm
 - (void)event:(NSInteger)event
      userInfo:(id)userInfo;
 - (void)transitionToConnectedState;
