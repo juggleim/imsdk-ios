@@ -545,11 +545,13 @@ void SetRtcMember_RtcState_RawValue(RtcMember *message, int32_t value) {
 
 @dynamic roomEventType;
 @dynamic hasMember, member;
+@dynamic hasRoom, room;
 
 typedef struct RtcRoomEvent__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomEventType roomEventType;
   RtcMember *member;
+  RtcRoom *room;
 } RtcRoomEvent__storage_;
 
 // This method is threadsafe because it is initially called
@@ -574,6 +576,15 @@ typedef struct RtcRoomEvent__storage_ {
         .number = RtcRoomEvent_FieldNumber_Member,
         .hasIndex = 1,
         .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, member),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "room",
+        .dataTypeSpecific.clazz = GPBObjCClass(RtcRoom),
+        .number = RtcRoomEvent_FieldNumber_Room,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, room),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },

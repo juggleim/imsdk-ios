@@ -7,12 +7,13 @@
 
 #import <Foundation/Foundation.h>
 #import "JCallConst.h"
-
-NS_ASSUME_NONNULL_BEGIN
+#import "JUserInfo.h"
 
 @interface JCallMember : NSObject
-@property (nonatomic, copy) NSString *userId;
+@property (nonatomic, strong) JUserInfo *userInfo;
 @property (nonatomic, assign) JCallStatus callStatus;
+@property (nonatomic, assign) long long startTime;
+@property (nonatomic, assign) long long connectTime;
+@property (nonatomic, assign) long long finishTime;
+@property (nonatomic, strong) JUserInfo *inviter;
 @end
-
-NS_ASSUME_NONNULL_END

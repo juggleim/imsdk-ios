@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRemoveChatroomAttrAck,
     JPBRcvTypeChatroomDestroyNtf,
     JPBRcvTypeChatroomEventNtf,
-    JPBRcvTypeRtcInviteEventNtf
+    JPBRcvTypeRtcRoomEventNtf
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -59,13 +59,12 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
     JPBChrmEventTypeFallout = 3
 };
 
-typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
-    JPBRtcInviteTypeDefault = 0,
-    JPBRtcInviteTypeInvite = 1,
-    JPBRtcInviteTypeAccept = 2,
-    JPBRtcInviteTypeDecline = 3,
-    JPBRtcInviteTypeHangup = 4,
-    JPBRtcInviteTypeTimeout = 5
+typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
+    JPBRtcRoomEventTypeDefault = 0,
+    JPBRtcRoomEventTypeJoin = 1,
+    JPBRtcRoomEventTypeQuit = 2,
+    JPBRtcRoomEventTypeDestroy = 3,
+    JPBRtcInviteTypeStateChange = 4,
 };
 
 @interface JConnectAck : NSObject
@@ -128,9 +127,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
 @property (nonatomic, assign) JPBChrmEventType type;
 @end
 
-@interface JRtcInviteEventNtf : NSObject
-@property (nonatomic, assign) JPBRtcInviteType inviteType;
-@property (nonatomic, strong) JUserInfo *targetUser;
+@interface JRtcRoomEventNtf : NSObject
+@property (nonatomic, assign) JPBRtcRoomEventType eventType;
+@property (nonatomic, strong) JCallMember *member;
 @property (nonatomic, strong) JRtcRoom *room;
 @end
 
@@ -172,7 +171,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
 @property (nonatomic, strong) JQryFileCredAck *qryFileCredAck;
 @property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
 @property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
-@property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
+@property (nonatomic, strong) JRtcRoomEventNtf *rtcRoomEventNtf;
 @end
 
 @interface JPBData : NSObject

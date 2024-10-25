@@ -262,6 +262,7 @@ void SetRtcMember_RtcState_RawValue(RtcMember *message, int32_t value);
 typedef GPB_ENUM(RtcRoomEvent_FieldNumber) {
   RtcRoomEvent_FieldNumber_RoomEventType = 1,
   RtcRoomEvent_FieldNumber_Member = 2,
+  RtcRoomEvent_FieldNumber_Room = 3,
 };
 
 GPB_FINAL @interface RtcRoomEvent : GPBMessage
@@ -271,6 +272,10 @@ GPB_FINAL @interface RtcRoomEvent : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) RtcMember *member;
 /** Test to see if @c member has been set. */
 @property(nonatomic, readwrite) BOOL hasMember;
+
+@property(nonatomic, readwrite, strong, null_resettable) RtcRoom *room;
+/** Test to see if @c room has been set. */
+@property(nonatomic, readwrite) BOOL hasRoom;
 
 @end
 

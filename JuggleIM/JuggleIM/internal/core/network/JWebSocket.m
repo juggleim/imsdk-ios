@@ -1000,9 +1000,9 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeChatroomEventNtf");
             [self handleChatroomEventNtf:obj.publishMsgNtf];
             break;
-        case JPBRcvTypeRtcInviteEventNtf:
-            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
-            [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
+        case JPBRcvTypeRtcRoomEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcRoomEventNtf");
+            [self handleRtcRoomEventNtf:obj.rtcRoomEventNtf];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1306,31 +1306,16 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {
-    switch (ntf.inviteType) {
-        case JPBRtcInviteTypeInvite:
+- (void)handleRtcRoomEventNtf:(JRtcRoomEventNtf *)ntf {
+    switch (ntf.eventType) {
+        case JPBRtcRoomEventTypeJoin:
             if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
-                [self.callDelegate callDidInvite:ntf.targetUser
+                [self.callDelegate callDidInvite:ntf.member.userInfo
                                             room:ntf.room];
             }
             break;
             
         //TODO:
-        case JPBRtcInviteTypeAccept:
-            
-            break;
-            
-        case JPBRtcInviteTypeDecline:
-            
-            break;
-            
-        case JPBRtcInviteTypeHangup:
-            
-            break;
-            
-        case JPBRtcInviteTypeTimeout:
-            
-            break;
             
         default:
             break;

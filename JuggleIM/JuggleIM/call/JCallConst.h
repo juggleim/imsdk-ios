@@ -11,15 +11,15 @@
 /// 通话状态
 typedef NS_ENUM(NSInteger, JCallStatus) {
     /// 无通话
-    JCallStatusIdle,
-    /// 呼出
-    JCallStatusOutgoing,
+    JCallStatusIdle = 0,
     /// 被呼叫
-    JCallStatusIncoming,
+    JCallStatusIncoming = 1,
+    /// 呼出
+    JCallStatusOutgoing = 2,
     /// 连接中
-    JCallStatusConnecting,
+    JCallStatusConnecting = 3,
     /// 连接成功
-    JCallStatusConnected
+    JCallStatusConnected = 4
 };
 
 /// 通话结束原因

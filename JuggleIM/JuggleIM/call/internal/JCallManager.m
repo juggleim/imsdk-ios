@@ -53,7 +53,9 @@
     callSession.owner = JIM.shared.currentUserId;
     NSMutableArray *participants = [NSMutableArray array];
     JCallMember *member = [[JCallMember alloc] init];
-    member.userId = userId;
+    JUserInfo *userInfo = [[JUserInfo alloc] init];
+    userInfo.userId = userId;
+    member.userInfo = userInfo;
     member.callStatus = JCallStatusIncoming;
     [participants addObject:member];
     callSession.participants = participants;

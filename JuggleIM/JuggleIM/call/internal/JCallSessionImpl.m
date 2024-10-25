@@ -97,7 +97,7 @@
 - (void)signalSingleInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
     for (JCallMember *member in self.participants) {
-        [targetIds addObject:member.userId];
+        [targetIds addObject:member.userInfo.userId];
     }
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:NO

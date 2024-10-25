@@ -42,6 +42,7 @@ enum RtcState{
 message RtcRoomEvent{
     RtcRoomEventType roomEventType = 1;
     RtcMember member = 2;
+    RtcRoom room = 3;
 }
 
 enum RtcRoomEventType{
