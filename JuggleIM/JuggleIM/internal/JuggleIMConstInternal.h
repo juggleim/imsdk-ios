@@ -7,7 +7,7 @@
 
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
-#define JIMVersion @"1.7.5.2"
+#define JIMVersion @"1.7.6"
 #define jNaviAppKey @"x-appkey"
 #define jNaviToken @"x-token"
 
