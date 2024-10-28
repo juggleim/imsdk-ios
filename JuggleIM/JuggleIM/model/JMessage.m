@@ -13,7 +13,7 @@
     if ([object isKindOfClass:self.class]) {
         JMessage * it = (JMessage *)object;
         return (self.clientMsgNo == it.clientMsgNo);
-    }else{
+    } else {
         return [super isEqual:object];
     }
 }

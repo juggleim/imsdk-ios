@@ -820,7 +820,7 @@
                              contentTypes:contentTypes
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-Get", @"success");
-        //TODO: 拉取的历史消息，重复的本地消息直接覆盖，clientMsgNo 不变，其它字段覆盖
+        //TODO: 拉取的历史消息，重复的本地消息直接覆盖，clientMsgNo 不变，MediaMessageContent 的 localPath 不变，其它字段覆盖
         //远端消息中间有断档的情况下，表示远端删了而本地没跟进，需要把本地对应的范围删掉
         [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
@@ -909,10 +909,23 @@
                                     success:^(NSArray *messages, BOOL isFinished) {
             //合并
             NSMutableArray * messagesArray = [NSMutableArray array];
-            [messagesArray addObjectsFromArray:localMessages];
-            for (JMessage * message in messages) {
-                if(![messagesArray containsObject:message]){
-                    [messagesArray addObject:message];
+            [messagesArray addObjectsFromArray:messages];
+            for (JMessage *localMessage in localMessages) {
+                BOOL isContain = NO;
+                for (JMessage *remoteMessage in messagesArray) {
+                    if (localMessage.clientMsgNo == remoteMessage.clientMsgNo) {
+                        if ([localMessage.content isKindOfClass:[JMediaMessageContent class]]
+                            && [remoteMessage.content isKindOfClass:[JMediaMessageContent class]]) {
+                            JMediaMessageContent *localContent = (JMediaMessageContent *)localMessage.content;
+                            JMediaMessageContent *remoteContent = (JMediaMessageContent *)remoteMessage.content;
+                            remoteContent.localPath = localContent.localPath;
+                        }
+                        isContain = YES;
+                        break;
+                    }
+                }
+                if (!isContain) {
+                    [messagesArray addObject:localMessage];
                 }
             }
             //正序排序
