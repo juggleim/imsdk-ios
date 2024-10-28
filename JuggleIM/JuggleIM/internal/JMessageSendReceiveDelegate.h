@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
               startTime:(long long)startTime
              sendUserId:(NSString *)sendUserId
             lastMessage:(JConcreteMessage *)lastMessage;
+- (void)messageDidUpdate:(JConcreteMessage *)message;
 - (void)conversationsDidClearTotalUnread:(long long)clearTime;
 - (void)messageStateDidChange:(JMessageState)state
                 conversation:(JConversation *)conversation

@@ -28,7 +28,7 @@
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:kToken1181];
+    [JIM.shared.connectionManager connectWithToken:kToken1182];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -276,17 +276,17 @@
         NSLog(@"demo, voice messageDidReceive, url is %@, duration is %ld, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
     }
     
-////    if ([content isKindOfClass:[JMediaMessageContent class]]) {
-////        [JIM.shared.messageManager downloadMediaMessage:message.messageId
-////                                               progress:^(JMessage *message, int progress) {
-////            NSLog(@"demo, download progress %d", progress);
-//////            [JIM.shared.messageManager cancelDownloadMediaMessage:message.messageId];
-////        } success:^(JMessage *message) {
-////            NSLog(@"demo, download success");
-////        } error:^(JErrorCode errorCode) {
-////            NSLog(@"demo, download error code is %d", errorCode);
-////        }];
-//    }
+    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+        [JIM.shared.messageManager downloadMediaMessage:message.messageId
+                                               progress:^(JMessage *message, int progress) {
+            NSLog(@"demo, download progress %d", progress);
+//            [JIM.shared.messageManager cancelDownloadMediaMessage:message.messageId];
+        } success:^(JMessage *message) {
+            NSLog(@"demo, download success");
+        } error:^(JErrorCode errorCode) {
+            NSLog(@"demo, download error code is %d", errorCode);
+        }];
+    }
 }
 
 - (void)messageDidRecall:(JMessage *)message {

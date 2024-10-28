@@ -496,9 +496,8 @@
 - (void)messageDidRemove:(JConversation *)conversation
          removedMessages:(NSArray <JConcreteMessage *> *)removedMessages
              lastMessage:(JConcreteMessage *)lastMessage{
-    
     JConcreteConversationInfo * info = [self getConversationAfterCommonResolved:conversation lastMessage:lastMessage];
-    if(info == nil){
+    if(info == nil) {
         return;
     }
     NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:info.mentionInfo.mentionMsgList];
@@ -523,6 +522,7 @@
     
     [self updateConversationLastMessage:info lastMessage:lastMessage isUpdateMention:isUpdateMention];
 }
+
 - (void)messageDidClear:(JConversation *)conversation
               startTime:(long long)startTime
              sendUserId:(NSString *)sendUserId
@@ -554,6 +554,21 @@
     [self updateConversationLastMessage:info lastMessage:lastMessage isUpdateMention:isUpdateMention];
 }
 
+- (void)messageDidUpdate:(JConcreteMessage *)message {
+    JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:message.conversation];
+    if (lastMessage.clientMsgNo == message.clientMsgNo) {
+        [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
+        JConversationInfo *info = [self.core.dbManager getConversationInfo:message.conversation];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[info]];
+                }
+            }];
+        });
+    }
+}
+
 - (void)conversationsDidClearTotalUnread:(long long)clearTime { 
     [self.core.dbManager clearTotalUnreadCount];
     [self.core.dbManager clearMentionInfo];
@@ -561,15 +576,68 @@
     [self noticeTotalUnreadCountChange];
 }
 
--(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
+-(void)messageStateDidChange:(JMessageState)state conversation:(JConversation *)conversation clientMsgNo:(long long)clientMsgNo{
     if(conversation == nil){
+        return;
+    }
+    if(clientMsgNo< 0 || state == 0){
+        return;
+    }
+    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
+    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
+        return;
+    }
+    if(clientMsgNo == conversationInfo.lastMessage.clientMsgNo){
+        conversationInfo.lastMessage.messageState = state;
+        [self.core.dbManager updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
+        });
+    }
+}
+
+-(void)messageDidRead:(JConversation *)conversation messageIds:(NSArray<NSString *> *)messageIds{
+    if(conversation == nil){
+        return;
+    }
+    if(messageIds == nil || messageIds.count == 0){
+        return;
+    }
+    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
+    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
+        return;
+    }
+    if([messageIds containsObject:conversationInfo.lastMessage.messageId]){
+        conversationInfo.lastMessage.hasRead = YES;
+        [self.core.dbManager setLastMessageHasRead:conversation];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                    [obj conversationInfoDidUpdate:@[conversationInfo]];
+                }
+            }];
+        });
+    }
+}
+
+- (void)conversationDidSetUnread:(JConversation *)conversation {
+    [self setDBUnreadAndNotice:conversation];
+}
+
+#pragma mark - internal
+-(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
+    if(conversation == nil) {
         return nil;
     }
     JConcreteConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
-    if(info == nil){
+    if(info == nil) {
         return nil;
     }
-    if(lastMessage != nil){
+    if(lastMessage != nil) {
         return info;
     }
     [self clearConversationLastMessage:info];
@@ -607,60 +675,6 @@
     }
 }
 
--(void)messageStateDidChange:(JMessageState)state conversation:(JConversation *)conversation clientMsgNo:(long long)clientMsgNo{
-    if(conversation == nil){
-        return;
-    }
-    if(clientMsgNo< 0 || state == 0){
-        return;
-    }
-    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
-    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
-        return;
-    }
-    if(clientMsgNo == conversationInfo.lastMessage.clientMsgNo){
-        conversationInfo.lastMessage.messageState = state;
-        [self.core.dbManager updateLastMessageState:conversation state:state withClientMsgNo:clientMsgNo];
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [obj conversationInfoDidUpdate:@[conversationInfo]];
-                }
-            }];
-        });
-    }
-    
-}
-
--(void)messageDidRead:(JConversation *)conversation messageIds:(NSArray<NSString *> *)messageIds{
-    if(conversation == nil){
-        return;
-    }
-    if(messageIds == nil || messageIds.count == 0){
-        return;
-    }
-    JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
-    if(conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0){
-        return;
-    }
-    if([messageIds containsObject:conversationInfo.lastMessage.messageId]){
-        conversationInfo.lastMessage.hasRead = YES;
-        [self.core.dbManager setLastMessageHasRead:conversation];
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [obj conversationInfoDidUpdate:@[conversationInfo]];
-                }
-            }];
-        });
-    }
-}
-
-- (void)conversationDidSetUnread:(JConversation *)conversation {
-    [self setDBUnreadAndNotice:conversation];
-}
-
-#pragma mark - internal
 - (void)internalSyncConversations:(void (^)(void))completeBlock {
     dispatch_async(self.core.sendQueue, ^{
         JLogI(@"CONV-Sync", @"sync time is %lld", self.core.conversationSyncTime);

@@ -455,7 +455,7 @@ NSString *const jHasUnread = @"unread_tag";
 }
 
 
--(void)setMentionInfo:(JConversation *)conversation
+- (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson{
     if (conversation.conversationId.length == 0) {
         return;
@@ -463,7 +463,7 @@ NSString *const jHasUnread = @"unread_tag";
     [self.dbHelper executeUpdate:jUpdateConversationMentionInfo withArgumentsInArray:@[mentionInfoJson, @(conversation.conversationType), conversation.conversationId]];
 }
 
--(void)clearMentionInfo{
+- (void)clearMentionInfo{
     [self.dbHelper executeUpdate:jClearConversationMentionInfo withArgumentsInArray:nil];
 }
 

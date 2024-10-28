@@ -1339,6 +1339,9 @@
     } success:^(NSString * _Nonnull localPath) {
         mediaContent.localPath = localPath;
         [self.core.dbManager updateMessageContent:mediaContent contentType:message.contentType withMessageId:messageId];
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
+            [self.sendReceiveDelegate messageDidUpdate:(JConcreteMessage *)message];
+        }
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(message);
