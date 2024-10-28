@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
                                             states:(NSArray<NSNumber *> *)messageStates
                                      conversations:(NSArray<JConversation *> *)conversations
                                  conversationTypes:(NSArray<NSNumber *> *)conversationtypes;
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option;
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;

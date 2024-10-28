@@ -9,6 +9,7 @@
 #import "JConcreteConversationInfo.h"
 #import "JConcreteMessage.h"
 #import "JGroupMessageReadInfo.h"
+#import "JSearchConversationsResult.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -115,6 +116,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
 - (void)clearChatroomMessageExclude:(NSArray <NSString *> *)chatroomIds;
 - (void)clearChatroomMessage:(NSString *)chatroomId;
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option;
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;

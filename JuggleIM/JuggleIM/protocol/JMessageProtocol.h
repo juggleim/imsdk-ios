@@ -13,6 +13,7 @@
 #import <JuggleIM/JTimePeriod.h>
 #import <JuggleIM/JGetMessageOptions.h>
 #import <JuggleIM/JQueryMessageOptions.h>
+#import <JuggleIM/JSearchConversationsResult.h>
 
 @class JMergeMessage;
 
@@ -342,8 +343,12 @@
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
 
-//- (void)searchConversations:(JQueryMessageOptions *)option
-//                   complete:(void (^)(NSArray< *> *result))completeBlock;
+/// 根据消息中的关键字搜索会话
+/// - Parameters:
+///   - option: 搜索条件
+///   - completeBlock: 结果回调
+- (void)searchMessageInConversations:(JQueryMessageOptions *)option
+                            complete:(void (^)(NSArray<JSearchConversationsResult*> *result))completeBlock;
 
 /// 获取指定会话中未读的 @ 消息
 /// - Parameters:

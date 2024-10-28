@@ -51,3 +51,4 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JGetMessageOptions.h>
 #import <JuggleIM/JQueryMessageOptions.h>
 #import <JuggleIM/JPushData.h>
+#import <JuggleIM/JSearchConversationsResult.h>

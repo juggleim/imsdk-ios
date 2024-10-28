@@ -296,6 +296,15 @@
                                    conversationTypes:conversationtypes];
 }
 
+- (NSArray<JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option {
+    NSArray <JSearchConversationsResult *> *resultList = [self.messageDb searchMessageInConversations:option];
+    [resultList enumerateObjectsUsingBlock:^(JSearchConversationsResult * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JConversationInfo *info = [self.conversationDb getConversationInfo:obj.conversationInfo.conversation];
+        obj.conversationInfo = info;
+    }];
+    return resultList;
+}
+
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{
     return [self.messageDb getLocalAttributeByMessageId:messageId];
 }

@@ -81,7 +81,8 @@ NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM messag
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
-
+NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0";
+NSString *const jGroupByConversationTypeAndId = @" GROUP BY conversation_type, conversation_id";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
 NSString *const jMessageId = @"id";
@@ -103,6 +104,7 @@ NSString *const jIsDeleted = @"is_deleted";
 NSString *const jLocalAttribute = @"local_attribute";
 NSString *const jMessageMentionInfo = @"mention_info";
 NSString *const jReferMsgId = @"refer_msg_id";
+NSString *const jMatchCount = @"match_count";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -373,7 +375,78 @@ NSString *const jReferMsgId = @"refer_msg_id";
     return [messages copy];
 }
 
-- (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option {
+    __block NSString *sql = jSearchMessageInConversations;
+    NSMutableArray *args = [NSMutableArray array];
+    
+    if (option) {
+        if (option.searchContent.length > 0) {
+            sql = [sql stringByAppendingString:jAndSearchContentIs];
+            NSString *searchString = [NSString stringWithFormat:@"%%%@%%", option.searchContent];
+            [args addObject:searchString];
+        }
+        if (option.senderUserIds.count > 0) {
+            sql = [sql stringByAppendingString:jAndSenderIn];
+            sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:option.senderUserIds.count]];
+            [args addObjectsFromArray:option.senderUserIds];
+        }
+        if (option.contentTypes.count > 0) {
+            sql = [sql stringByAppendingString:jAndTypeIn];
+            sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:option.contentTypes.count]];
+            [args addObjectsFromArray:option.contentTypes];
+        }
+        if (option.conversations.count > 0) {
+            sql = [sql stringByAppendingString:jAnd];
+            sql = [sql stringByAppendingString:jLeftBracket];
+            [option.conversations enumerateObjectsUsingBlock:^(JConversation * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                sql = [sql stringByAppendingString:jLeftBracket];
+                sql = [sql stringByAppendingString:jConversationIs];
+                sql = [sql stringByAppendingString:jRightBracket];
+                [args addObject:@(obj.conversationType)];
+                [args addObject:obj.conversationId];
+                if (idx < option.conversations.count - 1) {
+                    sql = [sql stringByAppendingString:jOr];
+                }
+            }];
+            sql = [sql stringByAppendingString:jRightBracket];
+        }
+        if (option.states.count > 0) {
+            sql = [sql stringByAppendingString:jAndStateIn];
+            sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:option.states.count]];
+            [args addObjectsFromArray:option.states];
+        }
+        if (option.conversationTypes.count > 0) {
+            sql = [sql stringByAppendingString:jAndConversationTypeIn];
+            sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:option.conversationTypes.count]];
+            [args addObjectsFromArray:option.conversationTypes];
+        }
+    }
+    
+    
+    sql = [sql stringByAppendingString:jGroupByConversationTypeAndId];
+    sql = [sql stringByAppendingString:jOrderByTimestamp];
+    sql = [sql stringByAppendingString:jDESC];
+    
+    NSMutableArray *resultList = [NSMutableArray array];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:args
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JSearchConversationsResult *result = [[JSearchConversationsResult alloc] init];
+            JConversation *c = [[JConversation alloc] init];
+            c.conversationType = [resultSet intForColumn:jMessageConversationType];
+            c.conversationId = [resultSet stringForColumn:jMessageConversationId];
+            JConversationInfo *conversationInfo = [[JConversationInfo alloc] init];
+            conversationInfo.conversation = c;
+            result.conversationInfo = conversationInfo;
+            result.matchedCount = [resultSet intForColumn:jMatchCount];
+            [resultList addObject:result];
+        }
+    }];
+    return [resultList copy];
+}
+
+- (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                              count:(int)count
                                               time:(long long)time
                                      pullDirection:(JPullDirection)pullDirection

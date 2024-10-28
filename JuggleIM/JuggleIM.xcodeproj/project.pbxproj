@@ -49,6 +49,8 @@
 		A017F9392C3BD80A00D527B0 /* JChatroomInfoOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
+		A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
 		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
 		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
@@ -355,6 +357,8 @@
 		A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfoOptions.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
+		A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSearchConversationsResult.h; sourceTree = "<group>"; };
+		A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSearchConversationsResult.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
 		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
 		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
@@ -827,6 +831,8 @@
 				A08F4BB62C7767D500791C52 /* JQueryMessageOptions.m */,
 				A06516152C9A866400E3AEC1 /* JPushData.h */,
 				A06516162C9A866400E3AEC1 /* JPushData.m */,
+				A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */,
+				A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1202,6 +1208,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */,
 				A06516182C9A866400E3AEC1 /* JPushData.h in Headers */,
 				A08F4BB72C7767D500791C52 /* JQueryMessageOptions.h in Headers */,
 				A0E3DDD02C6F4FA600FE9D3B /* JGetMessageOptions.h in Headers */,
@@ -1540,6 +1547,7 @@
 				A06516172C9A866400E3AEC1 /* JPushData.m in Sources */,
 				A08AA3B72B19DF75008B114C /* JIMCore.m in Sources */,
 				A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */,
+				A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */,
 				A08AA26F2B162A11008B114C /* JFMDatabaseAdditions.m in Sources */,
 				A08AA3812B19CB78008B114C /* GPBApi.pbobjc.m in Sources */,
 				A07D0E2F2BFCD0B200B9035B /* JLogFileWriter.m in Sources */,

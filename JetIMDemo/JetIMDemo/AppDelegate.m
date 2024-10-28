@@ -90,14 +90,41 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
-            options.searchContent = @"a";
+            JQueryMessageOptions *option = [[JQueryMessageOptions alloc] init];
+            option.searchContent = @"a";
+            NSMutableArray *senderIdList = [[NSMutableArray alloc] init];
+            [senderIdList addObject:@"CYXf6GNeM"];
+            [senderIdList addObject:@"nkXFkybGA"];
+//            option.senderUserIds = senderIdList;
+            NSMutableArray *contentTypes = [NSMutableArray array];
+            [contentTypes addObject:@"jg:text"];
+            option.contentTypes = contentTypes;
+            JConversation *c1 = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"NT9cTOPsU"];
+            NSMutableArray *conversations = [NSMutableArray array];
+            [conversations addObject:c1];
+//            option.conversations = conversations;
+            NSMutableArray *states = [NSMutableArray array];
+            [states addObject:@(2)];
+//            option.states = states;
             NSMutableArray *conversationTypes = [NSMutableArray array];
 //            [conversationTypes addObject:@(1)];
-            [conversationTypes addObject:@(2)];
-//            options.conversationTypes = conversationTypes;
-            NSArray *results = [JIM.shared.messageManager getMessages:100 time:0 direction:JPullDirectionOlder queryOption:options];
-            int i = 1;
+//            [conversationTypes addObject:@(2)];
+            option.conversationTypes = conversationTypes;
+            
+            [JIM.shared.messageManager searchMessageInConversations:option
+                                                           complete:^(NSArray<JSearchConversationsResult *> *result) {
+                int i = 1;
+            }];
+            
+//            
+//            JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
+//            options.searchContent = @"a";
+//            NSMutableArray *conversationTypes = [NSMutableArray array];
+////            [conversationTypes addObject:@(1)];
+//            [conversationTypes addObject:@(2)];
+////            options.conversationTypes = conversationTypes;
+//            NSArray *results = [JIM.shared.messageManager getMessages:100 time:0 direction:JPullDirectionOlder queryOption:options];
+//            int i = 1;
         });
     }
 }
