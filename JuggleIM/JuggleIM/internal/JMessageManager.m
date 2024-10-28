@@ -429,7 +429,8 @@
                                              contentTypes:option.contentTypes
                                                   senders:option.senderUserIds
                                                    states:option.states
-                                            conversations:option.conversations];
+                                            conversations:option.conversations
+                                        conversationTypes:option.conversationTypes];
 }
 
 - (JMessage *)saveMessage:(JMessageContent *)content
@@ -484,7 +485,8 @@
                                              contentTypes:contentTypes
                                                   senders:nil
                                                    states:nil
-                                            conversations:@[conversation]];
+                                            conversations:@[conversation]
+                                        conversationTypes:nil];
 }
 
 - (JMessage *)sendMessage:(JMessageContent *)content
@@ -849,7 +851,8 @@
                                                                contentTypes:option.contentTypes
                                                                     senders:nil
                                                                      states:nil
-                                                              conversations:@[conversation]];
+                                                              conversations:@[conversation]
+                                                          conversationTypes:nil];
     
     __block BOOL needRemote = NO;
     if (localMessages.count < option.count) {

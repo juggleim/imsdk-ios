@@ -283,7 +283,8 @@
                                       contentTypes:(NSArray<NSString *> *)contentTypes
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
-                                     conversations:(NSArray<JConversation *> *)conversations {
+                                     conversations:(NSArray<JConversation *> *)conversations
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes {
     return [self.messageDb searchMessagesWithContent:searchContent
                                                count:count
                                                 time:time
@@ -291,7 +292,8 @@
                                         contentTypes:contentTypes
                                              senders:senderUserIds
                                               states:messageStates
-                                       conversations:conversations];
+                                       conversations:conversations
+                                   conversationTypes:conversationtypes];
 }
 
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId{

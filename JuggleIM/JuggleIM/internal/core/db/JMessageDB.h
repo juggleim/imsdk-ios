@@ -60,7 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
                                       contentTypes:(NSArray<NSString *> *)contentTypes
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
-                                     conversations:(NSArray<JConversation *> *)conversations;
+                                     conversations:(NSArray<JConversation *> *)conversations
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes;
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;

@@ -342,6 +342,9 @@
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
 
+//- (void)searchConversations:(JQueryMessageOptions *)option
+//                   complete:(void (^)(NSArray< *> *result))completeBlock;
+
 /// 获取指定会话中未读的 @ 消息
 /// - Parameters:
 ///   - conversation: 会话标识

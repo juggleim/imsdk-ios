@@ -90,12 +90,14 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-//            [JIM.shared.conversationManager setTopConversationOrderType:JTopConversationsOrderByMessageTime];
-            NSArray *a = [JIM.shared.conversationManager getConversationInfoList];
-            NSArray *b = [JIM.shared.conversationManager getConversationInfoListByCount:20 timestamp:0 direction:JPullDirectionOlder];
-            NSArray *c = [JIM.shared.conversationManager getConversationInfoListWithTypes:nil count:20 timestamp:0 direction:JPullDirectionOlder];
-            NSArray *d = [JIM.shared.conversationManager getTopConversationInfoListByCount:20 timestamp:0 direction:JPullDirectionOlder];
-            int j = 1;
+            JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
+            options.searchContent = @"a";
+            NSMutableArray *conversationTypes = [NSMutableArray array];
+//            [conversationTypes addObject:@(1)];
+            [conversationTypes addObject:@(2)];
+//            options.conversationTypes = conversationTypes;
+            NSArray *results = [JIM.shared.messageManager getMessages:100 time:0 direction:JPullDirectionOlder queryOption:options];
+            int i = 1;
         });
     }
 }

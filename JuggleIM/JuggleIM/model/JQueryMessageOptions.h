@@ -16,5 +16,6 @@
 @property (nonatomic, copy) NSArray <NSString *> *contentTypes;
 @property (nonatomic, copy) NSArray <JConversation *> *conversations;
 @property (nonatomic, copy) NSArray <NSNumber *> *states;
+@property (nonatomic, copy) NSArray <NSNumber *> *conversationTypes;
 
 @end

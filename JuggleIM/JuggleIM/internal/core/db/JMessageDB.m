@@ -45,6 +45,7 @@ NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jAndTypeIn = @" AND type IN ";
 NSString *const jAndSenderIn = @" AND sender IN ";
 NSString *const jAndStateIn = @" AND state IN ";
+NSString *const jAndConversationTypeIn = @" AND conversation_type IN ";
 NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jAnd = @" AND";
 NSString *const jLeftBracket = @" (";
@@ -379,7 +380,8 @@ NSString *const jReferMsgId = @"refer_msg_id";
                                       contentTypes:(NSArray<NSString *> *)contentTypes
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
-                                     conversations:(NSArray<JConversation *> *)conversations {
+                                     conversations:(NSArray<JConversation *> *)conversations
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
     if (count < 1) {
         return [NSArray array];
     }
@@ -431,6 +433,11 @@ NSString *const jReferMsgId = @"refer_msg_id";
             }
         }];
         sql = [sql stringByAppendingString:jRightBracket];
+    }
+    if (conversationTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndConversationTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+        [args addObjectsFromArray:conversationTypes];
     }
     
     sql = [sql stringByAppendingString:jOrderByTimestamp];
