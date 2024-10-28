@@ -875,8 +875,6 @@
         __block long long seqNo = -1;
         [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.seqNo < 0) {
-                needRemote = YES;
-                *stop = YES;
                 return;
             }
             if (obj.messageState == JMessageStateSent && obj.seqNo > 0) {
