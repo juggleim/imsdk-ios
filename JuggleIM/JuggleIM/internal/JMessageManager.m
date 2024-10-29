@@ -489,8 +489,8 @@
                                         conversationTypes:nil];
 }
 
-- (void)searchMessageInConversations:(JQueryMessageOptions *)option
-                            complete:(void (^)(NSArray<JSearchConversationsResult *> *))completeBlock {
+- (void)searchConversationsWithMessageContent:(JQueryMessageOptions *)option
+                                     complete:(void (^)(NSArray<JSearchConversationsResult *> *))completeBlock {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         NSArray *result = [self.core.dbManager searchMessageInConversations:option];
         dispatch_async(self.core.delegateQueue, ^{

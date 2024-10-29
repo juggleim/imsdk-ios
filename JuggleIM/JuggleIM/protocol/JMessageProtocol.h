@@ -347,8 +347,8 @@
 /// - Parameters:
 ///   - option: 搜索条件
 ///   - completeBlock: 结果回调
-- (void)searchMessageInConversations:(JQueryMessageOptions *)option
-                            complete:(void (^)(NSArray<JSearchConversationsResult*> *result))completeBlock;
+- (void)searchConversationsWithMessageContent:(JQueryMessageOptions *)option
+                                     complete:(void (^)(NSArray<JSearchConversationsResult*> *result))completeBlock;
 
 /// 获取指定会话中未读的 @ 消息
 /// - Parameters:

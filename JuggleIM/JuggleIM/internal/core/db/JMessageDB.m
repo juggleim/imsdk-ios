@@ -422,7 +422,6 @@ NSString *const jMatchCount = @"match_count";
         }
     }
     
-    
     sql = [sql stringByAppendingString:jGroupByConversationTypeAndId];
     sql = [sql stringByAppendingString:jOrderByTimestamp];
     sql = [sql stringByAppendingString:jDESC];
