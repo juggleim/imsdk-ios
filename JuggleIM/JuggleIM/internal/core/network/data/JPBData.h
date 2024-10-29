@@ -300,6 +300,7 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
                     index:(int)index;
 
 - (NSData *)joinChatroom:(NSString *)chatroomId
+            isAutoCreate:(BOOL)isAutoCreate
                    index:(int)index;
 
 - (NSData *)quitChatroom:(NSString *)chatroomId

@@ -51,6 +51,8 @@
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
 		A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */; };
+		A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */; };
+		A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
 		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
 		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
@@ -359,6 +361,8 @@
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
 		A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSearchConversationsResult.h; sourceTree = "<group>"; };
 		A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSearchConversationsResult.m; sourceTree = "<group>"; };
+		A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chatroom.pbobjc.h; sourceTree = "<group>"; };
+		A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chatroom.pbobjc.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
 		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
 		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
@@ -1146,6 +1150,8 @@
 		A08AA4202B1B78FE008B114C /* oc */ = {
 			isa = PBXGroup;
 			children = (
+				A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */,
+				A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */,
 				A08AA42D2B1B78FE008B114C /* Appmessages.pbobjc.h */,
 				A08AA4272B1B78FE008B114C /* Appmessages.pbobjc.m */,
 				A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */,
@@ -1258,6 +1264,7 @@
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
 				A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */,
+				A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */,
 				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
 				A0D3AD2D2B6D1B9C00D170D7 /* JRecallCmdMessage.h in Headers */,
@@ -1517,6 +1524,7 @@
 				A08AA2742B162A11008B114C /* JFMDatabase.m in Sources */,
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
 				A065160C2C91DEBE00E3AEC1 /* JIntervalGenerator.m in Sources */,
+				A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */,
 				A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */,
 				A0D3AD2A2B6973D600D170D7 /* Connect.pbobjc.m in Sources */,
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,

@@ -52,9 +52,14 @@
 }
 
 - (void)joinChatroom:(NSString *)chatroomId prevMessageCount:(int)count {
+    [self joinChatroom:chatroomId prevMessageCount:count isAutoCreate:NO];
+}
+
+- (void)joinChatroom:(NSString *)chatroomId prevMessageCount:(int)count isAutoCreate:(BOOL)isAutoCreate {
     [self changeStatus:JChatroomStatusJoining forChatroom:chatroomId];
     [self setPrevMessageCount:count forChatroom:chatroomId];
     [self.core.webSocket joinChatroom:chatroomId
+                         isAutoCreate:isAutoCreate
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];

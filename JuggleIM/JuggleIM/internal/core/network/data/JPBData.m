@@ -9,6 +9,7 @@
 #import "Connect.pbobjc.h"
 #import "Appmessages.pbobjc.h"
 #import "Pushtoken.pbobjc.h"
+#import "Chatroom.pbobjc.h"
 #import "JuggleIMPBConst.h"
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
@@ -1064,15 +1065,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (NSData *)joinChatroom:(NSString *)chatroomId
+            isAutoCreate:(BOOL)isAutoCreate
                    index:(int)index {
-    ChatroomInfo *info = [[ChatroomInfo alloc] init];
-    info.chatId = chatroomId;
+    
+    ChatroomReq *req = [[ChatroomReq alloc] init];
+    req.chatId = chatroomId;
+    req.isAutoCreate = isAutoCreate;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jJoinChatroom;
     body.targetId = chatroomId;
-    body.data_p = [info data];
+    body.data_p = [req data];
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }

@@ -216,6 +216,7 @@ inConversation:(JConversation *)conversation
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)joinChatroom:(NSString *)chatroomId
+        isAutoCreate:(BOOL)isAutoCreate
              success:(void (^)(long long timestamp))successBlock
                error:(void (^)(JErrorCodeInternal code))errorBlock;
 

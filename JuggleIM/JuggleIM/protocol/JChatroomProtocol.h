@@ -75,6 +75,15 @@
 - (void)joinChatroom:(NSString *)chatroomId
     prevMessageCount:(int)count;
 
+/// 加入聊天室
+/// - Parameters:
+///   - chatroomId: 聊天室 id
+///   - count: 加入聊天室时获取的历史消息数量
+///   - isAutoCreate: 当聊天室不存在时是否自动创建（默认不创建）
+- (void)joinChatroom:(NSString *)chatroomId
+    prevMessageCount:(int)count
+        isAutoCreate:(BOOL)isAutoCreate;
+
 /// 退出聊天室
 /// - Parameter chatroomId: 聊天室 id
 - (void)quitChatroom:(NSString *)chatroomId;

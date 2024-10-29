@@ -31,18 +31,10 @@ CF_EXTERN_C_BEGIN
 
 @class BanUser;
 @class BlockUser;
-@class BusinessLog;
-@class ChatAttItem;
-@class ChatAttReq;
-@class ChatAttResp;
-@class ChatAtts;
-@class ChatroomMember;
-@class ConnectionLog;
 @class ConverFilter;
+@class ConverTag;
 @class Conversation;
-@class DisconnectionLog;
 @class DownMsg;
-@class DownMsgSet;
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
@@ -53,16 +45,16 @@ CF_EXTERN_C_BEGIN
 @class MentionMsg;
 @class Mentions;
 @class MergedMsgs;
+@class MsgExtItem;
 @class PreSignResp;
 @class PushData;
 @class QiNiuCredResp;
 @class ReadInfoItem;
-@class SdkRequestLog;
-@class SdkResponseLog;
 @class SimpleConversation;
 @class SimpleMsg;
+@class StreamMsgItem;
+@class SubMsg;
 @class UndisturbConverItem;
-@class UpMsg;
 @class UserInfo;
 @class UserOnlineItem;
 @class UserUndisturbItem;
@@ -118,6 +110,28 @@ GPBEnumDescriptor *MentionType_EnumDescriptor(void);
  **/
 BOOL MentionType_IsValidValue(int32_t value);
 
+#pragma mark - Enum StreamEvent
+
+typedef GPB_ENUM(StreamEvent) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  StreamEvent_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  StreamEvent_DefaultStreamEvent = 0,
+  StreamEvent_StreamMessage = 1,
+  StreamEvent_StreamComplete = 2,
+};
+
+GPBEnumDescriptor *StreamEvent_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL StreamEvent_IsValidValue(int32_t value);
+
 #pragma mark - Enum ChannelType
 
 typedef GPB_ENUM(ChannelType) {
@@ -157,11 +171,7 @@ typedef GPB_ENUM(NotifyType) {
   NotifyType_Msg = 1,
   NotifyType_ChatroomMsg = 2,
   NotifyType_ChatroomAtt = 3,
-
-  /** 聊天室事件通知，如有人加入/退出 */
   NotifyType_ChatroomEvent = 4,
-
-  /** 聊天室销毁 */
   NotifyType_ChatroomDestroy = 5,
 };
 
@@ -194,6 +204,49 @@ GPBEnumDescriptor *UpdLatestMsgAction_EnumDescriptor(void);
  **/
 BOOL UpdLatestMsgAction_IsValidValue(int32_t value);
 
+#pragma mark - Enum TopConverSortType
+
+typedef GPB_ENUM(TopConverSortType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  TopConverSortType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  TopConverSortType_ByTopTime = 0,
+  TopConverSortType_BySortTime = 1,
+};
+
+GPBEnumDescriptor *TopConverSortType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL TopConverSortType_IsValidValue(int32_t value);
+
+#pragma mark - Enum ConverTagType
+
+typedef GPB_ENUM(ConverTagType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  ConverTagType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  ConverTagType_UserConverTag = 0,
+  ConverTagType_SystemConverTag = 1,
+  ConverTagType_GlobalConverTag = 2,
+};
+
+GPBEnumDescriptor *ConverTagType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL ConverTagType_IsValidValue(int32_t value);
+
 #pragma mark - Enum UserType
 
 typedef GPB_ENUM(UserType) {
@@ -215,27 +268,6 @@ GPBEnumDescriptor *UserType_EnumDescriptor(void);
  **/
 BOOL UserType_IsValidValue(int32_t value);
 
-#pragma mark - Enum BanType
-
-typedef GPB_ENUM(BanType) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  BanType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  BanType_Permanent = 0,
-  BanType_Temporary = 1,
-};
-
-GPBEnumDescriptor *BanType_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL BanType_IsValidValue(int32_t value);
-
 #pragma mark - Enum OnlineType
 
 typedef GPB_ENUM(OnlineType) {
@@ -256,71 +288,6 @@ GPBEnumDescriptor *OnlineType_EnumDescriptor(void);
  * the time this source was generated.
  **/
 BOOL OnlineType_IsValidValue(int32_t value);
-
-#pragma mark - Enum ChrmDispatchType
-
-typedef GPB_ENUM(ChrmDispatchType) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  ChrmDispatchType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  ChrmDispatchType_CreateChatroom = 0,
-  ChrmDispatchType_DestroyChatroom = 1,
-};
-
-GPBEnumDescriptor *ChrmDispatchType_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL ChrmDispatchType_IsValidValue(int32_t value);
-
-#pragma mark - Enum ChatMembersDispatchType
-
-typedef GPB_ENUM(ChatMembersDispatchType) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  ChatMembersDispatchType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  ChatMembersDispatchType_DispatchDefault = 0,
-  ChatMembersDispatchType_JoinChatroom = 1,
-  ChatMembersDispatchType_QuitChatroom = 2,
-};
-
-GPBEnumDescriptor *ChatMembersDispatchType_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL ChatMembersDispatchType_IsValidValue(int32_t value);
-
-#pragma mark - Enum ChatAttOptType
-
-typedef GPB_ENUM(ChatAttOptType) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  ChatAttOptType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  ChatAttOptType_ChatAttOptDefault = 0,
-  ChatAttOptType_ChatAttOptAdd = 1,
-  ChatAttOptType_ChatAttOptDel = 2,
-};
-
-GPBEnumDescriptor *ChatAttOptType_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL ChatAttOptType_IsValidValue(int32_t value);
 
 #pragma mark - Enum FileType
 
@@ -371,36 +338,6 @@ GPBEnumDescriptor *OssType_EnumDescriptor(void);
  **/
 BOOL OssType_IsValidValue(int32_t value);
 
-#pragma mark - Enum ChrmEventType
-
-typedef GPB_ENUM(ChrmEventType) {
-  /**
-   * Value used if any message's field encounters a value that is not defined
-   * by this enum. The message will also have C functions to get/set the rawValue
-   * of the field.
-   **/
-  ChrmEventType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  /** 加入聊天室通知 */
-  ChrmEventType_Join = 0,
-
-  /** 主动退出聊天室通知 */
-  ChrmEventType_Quit = 1,
-
-  /** 踢出聊天室通知 */
-  ChrmEventType_Kick = 2,
-
-  /** 自动掉出聊天室通知 */
-  ChrmEventType_Fallout = 3,
-};
-
-GPBEnumDescriptor *ChrmEventType_EnumDescriptor(void);
-
-/**
- * Checks to see if the given value is defined by the enum or was not known at
- * the time this source was generated.
- **/
-BOOL ChrmEventType_IsValidValue(int32_t value);
-
 #pragma mark - AppmessagesRoot
 
 /**
@@ -440,10 +377,14 @@ typedef GPB_ENUM(RpcMessageWraper_FieldNumber) {
   RpcMessageWraper_FieldNumber_TerminalNum = 13,
   RpcMessageWraper_FieldNumber_NoSendbox = 14,
   RpcMessageWraper_FieldNumber_OnlySendbox = 15,
+  RpcMessageWraper_FieldNumber_DeviceId = 16,
+  RpcMessageWraper_FieldNumber_InstanceId = 17,
+  RpcMessageWraper_FieldNumber_Platform = 18,
   RpcMessageWraper_FieldNumber_ResultCode = 21,
   RpcMessageWraper_FieldNumber_MsgSendTime = 22,
   RpcMessageWraper_FieldNumber_MsgId = 23,
   RpcMessageWraper_FieldNumber_MsgSeqNo = 24,
+  RpcMessageWraper_FieldNumber_MemberCount = 25,
   RpcMessageWraper_FieldNumber_GroupId = 31,
   RpcMessageWraper_FieldNumber_TargetIdsArray = 32,
   RpcMessageWraper_FieldNumber_AppDataBytes = 50,
@@ -484,6 +425,12 @@ GPB_FINAL @interface RpcMessageWraper : GPBMessage
 
 @property(nonatomic, readwrite) BOOL onlySendbox;
 
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *instanceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *platform;
+
 @property(nonatomic, readwrite) int32_t resultCode;
 
 @property(nonatomic, readwrite) int64_t msgSendTime;
@@ -491,6 +438,8 @@ GPB_FINAL @interface RpcMessageWraper : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
 
 @property(nonatomic, readwrite) int64_t msgSeqNo;
+
+@property(nonatomic, readwrite) int32_t memberCount;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *groupId;
 
@@ -530,6 +479,7 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
   UpMsg_FieldNumber_ReferMsg = 7,
   UpMsg_FieldNumber_ToUserIdsArray = 8,
   UpMsg_FieldNumber_MergedMsgs = 9,
+  UpMsg_FieldNumber_MsgTime = 51,
 };
 
 /**
@@ -572,6 +522,8 @@ GPB_FINAL @interface UpMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) MergedMsgs *mergedMsgs;
 /** Test to see if @c mergedMsgs has been set. */
 @property(nonatomic, readwrite) BOOL hasMergedMsgs;
+
+@property(nonatomic, readwrite) int64_t msgTime;
 
 @end
 
@@ -647,6 +599,11 @@ typedef GPB_ENUM(PushData_FieldNumber) {
   PushData_FieldNumber_PushId = 2,
   PushData_FieldNumber_PushText = 3,
   PushData_FieldNumber_PushExtraData = 4,
+  PushData_FieldNumber_Badge = 50,
+  PushData_FieldNumber_MsgId = 51,
+  PushData_FieldNumber_SenderId = 52,
+  PushData_FieldNumber_ConverId = 53,
+  PushData_FieldNumber_ChannelType = 54,
 };
 
 GPB_FINAL @interface PushData : GPBMessage
@@ -659,7 +616,30 @@ GPB_FINAL @interface PushData : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *pushExtraData;
 
+/** internal fields */
+@property(nonatomic, readwrite) int32_t badge;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *converId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
 @end
+
+/**
+ * Fetches the raw value of a @c PushData's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t PushData_ChannelType_RawValue(PushData *message);
+/**
+ * Sets the raw value of an @c PushData's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetPushData_ChannelType_RawValue(PushData *message, int32_t value);
 
 #pragma mark - DownMsg
 
@@ -687,6 +667,10 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_MemberCount = 21,
   DownMsg_FieldNumber_ReadCount = 22,
   DownMsg_FieldNumber_UnreadIndex = 23,
+  DownMsg_FieldNumber_MsgItemsArray = 24,
+  DownMsg_FieldNumber_MsgExSetArray = 25,
+  DownMsg_FieldNumber_MsgExtsArray = 26,
+  DownMsg_FieldNumber_ConverTagsArray = 27,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -749,6 +733,22 @@ GPB_FINAL @interface DownMsg : GPBMessage
 
 @property(nonatomic, readwrite) int64_t unreadIndex;
 
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<StreamMsgItem*> *msgItemsArray;
+/** The number of items in @c msgItemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgItemsArray_Count;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MsgExtItem*> *msgExSetArray;
+/** The number of items in @c msgExSetArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgExSetArray_Count;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MsgExtItem*> *msgExtsArray;
+/** The number of items in @c msgExtsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgExtsArray_Count;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ConverTag*> *converTagsArray;
+/** The number of items in @c converTagsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger converTagsArray_Count;
+
 @end
 
 /**
@@ -762,6 +762,86 @@ int32_t DownMsg_ChannelType_RawValue(DownMsg *message);
  * was generated.
  **/
 void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
+
+#pragma mark - MsgAck
+
+typedef GPB_ENUM(MsgAck_FieldNumber) {
+  MsgAck_FieldNumber_MsgId = 1,
+  MsgAck_FieldNumber_MsgTime = 2,
+};
+
+GPB_FINAL @interface MsgAck : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite) int64_t msgTime;
+
+@end
+
+#pragma mark - StreamMsgItem
+
+typedef GPB_ENUM(StreamMsgItem_FieldNumber) {
+  StreamMsgItem_FieldNumber_Event = 1,
+  StreamMsgItem_FieldNumber_SubSeq = 2,
+  StreamMsgItem_FieldNumber_PartialContent = 3,
+};
+
+GPB_FINAL @interface StreamMsgItem : GPBMessage
+
+@property(nonatomic, readwrite) StreamEvent event;
+
+@property(nonatomic, readwrite) int64_t subSeq;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *partialContent;
+
+@end
+
+/**
+ * Fetches the raw value of a @c StreamMsgItem's @c event property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t StreamMsgItem_Event_RawValue(StreamMsgItem *message);
+/**
+ * Sets the raw value of an @c StreamMsgItem's @c event property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetStreamMsgItem_Event_RawValue(StreamMsgItem *message, int32_t value);
+
+#pragma mark - StreamDownMsg
+
+typedef GPB_ENUM(StreamDownMsg_FieldNumber) {
+  StreamDownMsg_FieldNumber_TargetId = 1,
+  StreamDownMsg_FieldNumber_ChannelType = 2,
+  StreamDownMsg_FieldNumber_MsgId = 3,
+  StreamDownMsg_FieldNumber_MsgItemsArray = 4,
+};
+
+GPB_FINAL @interface StreamDownMsg : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<StreamMsgItem*> *msgItemsArray;
+/** The number of items in @c msgItemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgItemsArray_Count;
+
+@end
+
+/**
+ * Fetches the raw value of a @c StreamDownMsg's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t StreamDownMsg_ChannelType_RawValue(StreamDownMsg *message);
+/**
+ * Sets the raw value of an @c StreamDownMsg's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetStreamDownMsg_ChannelType_RawValue(StreamDownMsg *message, int32_t value);
 
 #pragma mark - Notify
 
@@ -859,6 +939,18 @@ GPB_FINAL @interface KvItem : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *value;
 
 @property(nonatomic, readwrite) int64_t updTime;
+
+@end
+
+#pragma mark - PushSwitch
+
+typedef GPB_ENUM(PushSwitch_FieldNumber) {
+  PushSwitch_FieldNumber_Switch_p = 1,
+};
+
+GPB_FINAL @interface PushSwitch : GPBMessage
+
+@property(nonatomic, readwrite) int32_t switch_p;
 
 @end
 
@@ -1121,6 +1213,37 @@ int32_t QryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message);
  * was generated.
  **/
 void SetQryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message, int32_t value);
+
+#pragma mark - QryFirstUnreadMsgReq
+
+typedef GPB_ENUM(QryFirstUnreadMsgReq_FieldNumber) {
+  QryFirstUnreadMsgReq_FieldNumber_TargetId = 1,
+  QryFirstUnreadMsgReq_FieldNumber_ChannelType = 2,
+};
+
+GPB_FINAL @interface QryFirstUnreadMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+/**
+ * int64 startTime = 3;
+ * int32 count = 4;
+ **/
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryFirstUnreadMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message);
+/**
+ * Sets the raw value of an @c QryFirstUnreadMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message, int32_t value);
 
 #pragma mark - QryHisMsgByIdsReq
 
@@ -1410,17 +1533,16 @@ GPB_FINAL @interface QryMergedMsgsReq : GPBMessage
 
 @end
 
-#pragma mark - MsgExtItem
+#pragma mark - MsgExt
 
-typedef GPB_ENUM(MsgExtItem_FieldNumber) {
-  MsgExtItem_FieldNumber_TargetId = 1,
-  MsgExtItem_FieldNumber_ChannelType = 2,
-  MsgExtItem_FieldNumber_MsgId = 3,
-  MsgExtItem_FieldNumber_Key = 4,
-  MsgExtItem_FieldNumber_Value = 5,
+typedef GPB_ENUM(MsgExt_FieldNumber) {
+  MsgExt_FieldNumber_TargetId = 1,
+  MsgExt_FieldNumber_ChannelType = 2,
+  MsgExt_FieldNumber_MsgId = 3,
+  MsgExt_FieldNumber_Ext = 4,
 };
 
-GPB_FINAL @interface MsgExtItem : GPBMessage
+GPB_FINAL @interface MsgExt : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
@@ -1428,23 +1550,46 @@ GPB_FINAL @interface MsgExtItem : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
+@property(nonatomic, readwrite, strong, null_resettable) MsgExtItem *ext;
+/** Test to see if @c ext has been set. */
+@property(nonatomic, readwrite) BOOL hasExt;
 
 @end
 
 /**
- * Fetches the raw value of a @c MsgExtItem's @c channelType property, even
+ * Fetches the raw value of a @c MsgExt's @c channelType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t MsgExtItem_ChannelType_RawValue(MsgExtItem *message);
+int32_t MsgExt_ChannelType_RawValue(MsgExt *message);
 /**
- * Sets the raw value of an @c MsgExtItem's @c channelType property, allowing
+ * Sets the raw value of an @c MsgExt's @c channelType property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetMsgExtItem_ChannelType_RawValue(MsgExtItem *message, int32_t value);
+void SetMsgExt_ChannelType_RawValue(MsgExt *message, int32_t value);
+
+#pragma mark - MsgExtItem
+
+typedef GPB_ENUM(MsgExtItem_FieldNumber) {
+  MsgExtItem_FieldNumber_Key = 1,
+  MsgExtItem_FieldNumber_Value = 2,
+  MsgExtItem_FieldNumber_Timestamp = 3,
+  MsgExtItem_FieldNumber_UserInfo = 4,
+};
+
+GPB_FINAL @interface MsgExtItem : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
+
+@property(nonatomic, readwrite) int64_t timestamp;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *userInfo;
+/** Test to see if @c userInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasUserInfo;
+
+@end
 
 #pragma mark - QryGlobalConversReq
 
@@ -1554,6 +1699,7 @@ typedef GPB_ENUM(QryConversationsReq_FieldNumber) {
   QryConversationsReq_FieldNumber_Order = 3,
   QryConversationsReq_FieldNumber_TargetId = 5,
   QryConversationsReq_FieldNumber_ChannelType = 6,
+  QryConversationsReq_FieldNumber_Tag = 7,
 };
 
 GPB_FINAL @interface QryConversationsReq : GPBMessage
@@ -1568,6 +1714,8 @@ GPB_FINAL @interface QryConversationsReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
 @property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tag;
 
 @end
 
@@ -1622,6 +1770,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_UnreadTag = 17,
   Conversation_FieldNumber_LatestReadMsgId = 18,
   Conversation_FieldNumber_LatestReadMsgTime = 19,
+  Conversation_FieldNumber_ConverTagsArray = 20,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -1671,6 +1820,10 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *latestReadMsgId;
 
 @property(nonatomic, readwrite) int64_t latestReadMsgTime;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ConverTag*> *converTagsArray;
+/** The number of items in @c converTagsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger converTagsArray_Count;
 
 @end
 
@@ -1876,6 +2029,7 @@ typedef GPB_ENUM(ConverFilter_FieldNumber) {
   ConverFilter_FieldNumber_ChannelTypesArray = 1,
   ConverFilter_FieldNumber_ExcludeConversArray = 2,
   ConverFilter_FieldNumber_IncludeConversArray = 3,
+  ConverFilter_FieldNumber_Tag = 4,
 };
 
 GPB_FINAL @interface ConverFilter : GPBMessage
@@ -1892,6 +2046,8 @@ GPB_FINAL @interface ConverFilter : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleConversation*> *includeConversArray;
 /** The number of items in @c includeConversArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger includeConversArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tag;
 
 @end
 
@@ -1987,13 +2143,31 @@ void SetUndisturbConverItem_ChannelType_RawValue(UndisturbConverItem *message, i
 
 typedef GPB_ENUM(QryTopConversReq_FieldNumber) {
   QryTopConversReq_FieldNumber_StartTime = 1,
+  QryTopConversReq_FieldNumber_SortType = 2,
+  QryTopConversReq_FieldNumber_Order = 3,
 };
 
 GPB_FINAL @interface QryTopConversReq : GPBMessage
 
 @property(nonatomic, readwrite) int64_t startTime;
 
+@property(nonatomic, readwrite) TopConverSortType sortType;
+
+@property(nonatomic, readwrite) int32_t order;
+
 @end
+
+/**
+ * Fetches the raw value of a @c QryTopConversReq's @c sortType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryTopConversReq_SortType_RawValue(QryTopConversReq *message);
+/**
+ * Sets the raw value of an @c QryTopConversReq's @c sortType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryTopConversReq_SortType_RawValue(QryTopConversReq *message, int32_t value);
 
 #pragma mark - TopConversResp
 
@@ -2149,6 +2323,7 @@ typedef GPB_ENUM(QryConverReq_FieldNumber) {
   QryConverReq_FieldNumber_TargetId = 1,
   QryConverReq_FieldNumber_ChannelType = 2,
   QryConverReq_FieldNumber_IsInner = 3,
+  QryConverReq_FieldNumber_UserIdsArray = 4,
 };
 
 GPB_FINAL @interface QryConverReq : GPBMessage
@@ -2158,6 +2333,10 @@ GPB_FINAL @interface QryConverReq : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite) BOOL isInner;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *userIdsArray;
+/** The number of items in @c userIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger userIdsArray_Count;
 
 @end
 
@@ -2173,38 +2352,69 @@ int32_t QryConverReq_ChannelType_RawValue(QryConverReq *message);
  **/
 void SetQryConverReq_ChannelType_RawValue(QryConverReq *message, int32_t value);
 
-#pragma mark - QryConverResp
+#pragma mark - TagConvers
 
-typedef GPB_ENUM(QryConverResp_FieldNumber) {
-  QryConverResp_FieldNumber_TargetId = 1,
-  QryConverResp_FieldNumber_ChannelType = 2,
-  QryConverResp_FieldNumber_UnreadIndex = 3,
-  QryConverResp_FieldNumber_UndisturbType = 4,
+typedef GPB_ENUM(TagConvers_FieldNumber) {
+  TagConvers_FieldNumber_Tag = 1,
+  TagConvers_FieldNumber_TagName = 2,
+  TagConvers_FieldNumber_ConversArray = 11,
 };
 
-GPB_FINAL @interface QryConverResp : GPBMessage
+GPB_FINAL @interface TagConvers : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tag;
 
-@property(nonatomic, readwrite) ChannelType channelType;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tagName;
 
-@property(nonatomic, readwrite) int64_t unreadIndex;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleConversation*> *conversArray;
+/** The number of items in @c conversArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger conversArray_Count;
 
-@property(nonatomic, readwrite) int32_t undisturbType;
+@end
+
+#pragma mark - UserConverTags
+
+typedef GPB_ENUM(UserConverTags_FieldNumber) {
+  UserConverTags_FieldNumber_TagsArray = 1,
+};
+
+GPB_FINAL @interface UserConverTags : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ConverTag*> *tagsArray;
+/** The number of items in @c tagsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger tagsArray_Count;
+
+@end
+
+#pragma mark - ConverTag
+
+typedef GPB_ENUM(ConverTag_FieldNumber) {
+  ConverTag_FieldNumber_Tag = 1,
+  ConverTag_FieldNumber_TagName = 2,
+  ConverTag_FieldNumber_TagType = 3,
+};
+
+GPB_FINAL @interface ConverTag : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tag;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *tagName;
+
+@property(nonatomic, readwrite) ConverTagType tagType;
 
 @end
 
 /**
- * Fetches the raw value of a @c QryConverResp's @c channelType property, even
+ * Fetches the raw value of a @c ConverTag's @c tagType property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t QryConverResp_ChannelType_RawValue(QryConverResp *message);
+int32_t ConverTag_TagType_RawValue(ConverTag *message);
 /**
- * Sets the raw value of an @c QryConverResp's @c channelType property, allowing
+ * Sets the raw value of an @c ConverTag's @c tagType property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetQryConverResp_ChannelType_RawValue(QryConverResp *message, int32_t value);
+void SetConverTag_TagType_RawValue(ConverTag *message, int32_t value);
 
 #pragma mark - UserInfo
 
@@ -2406,19 +2616,16 @@ GPB_FINAL @interface BanUsersReq : GPBMessage
 
 typedef GPB_ENUM(BanUser_FieldNumber) {
   BanUser_FieldNumber_UserId = 1,
-  BanUser_FieldNumber_BanType = 2,
-  BanUser_FieldNumber_EndTime = 3,
-  BanUser_FieldNumber_CreatedTime = 4,
-  BanUser_FieldNumber_ScopeKey = 5,
-  BanUser_FieldNumber_ScopeValue = 6,
-  BanUser_FieldNumber_Ext = 7,
+  BanUser_FieldNumber_EndTime = 2,
+  BanUser_FieldNumber_CreatedTime = 3,
+  BanUser_FieldNumber_ScopeKey = 4,
+  BanUser_FieldNumber_ScopeValue = 5,
+  BanUser_FieldNumber_Ext = 6,
 };
 
 GPB_FINAL @interface BanUser : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite) BanType banType;
 
 @property(nonatomic, readwrite) int64_t endTime;
 
@@ -2431,18 +2638,6 @@ GPB_FINAL @interface BanUser : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @end
-
-/**
- * Fetches the raw value of a @c BanUser's @c banType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t BanUser_BanType_RawValue(BanUser *message);
-/**
- * Sets the raw value of an @c BanUser's @c banType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetBanUser_BanType_RawValue(BanUser *message, int32_t value);
 
 #pragma mark - QryBanUsersReq
 
@@ -2547,14 +2742,22 @@ GPB_FINAL @interface QryBlockUsersResp : GPBMessage
 
 typedef GPB_ENUM(OnlineStatus_FieldNumber) {
   OnlineStatus_FieldNumber_Type = 1,
-  OnlineStatus_FieldNumber_ExtraData = 11,
+  OnlineStatus_FieldNumber_TargetSession = 2,
+  OnlineStatus_FieldNumber_TargetIndex = 3,
+  OnlineStatus_FieldNumber_PlatformsArray = 4,
 };
 
 GPB_FINAL @interface OnlineStatus : GPBMessage
 
 @property(nonatomic, readwrite) OnlineType type;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSData *extraData;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetSession;
+
+@property(nonatomic, readwrite) int32_t targetIndex;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *platformsArray;
+/** The number of items in @c platformsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger platformsArray_Count;
 
 @end
 
@@ -2632,6 +2835,18 @@ GPB_FINAL @interface UserUndisturbItem : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *start;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *end;
+
+@end
+
+#pragma mark - UserPushStatus
+
+typedef GPB_ENUM(UserPushStatus_FieldNumber) {
+  UserPushStatus_FieldNumber_CanPush = 1,
+};
+
+GPB_FINAL @interface UserPushStatus : GPBMessage
+
+@property(nonatomic, readwrite) BOOL canPush;
 
 @end
 
@@ -2962,383 +3177,6 @@ GPB_FINAL @interface QryGrpMemberSettingsResp : GPBMessage
 
 @end
 
-#pragma mark - QryFirstUnreadMsgReq
-
-typedef GPB_ENUM(QryFirstUnreadMsgReq_FieldNumber) {
-  QryFirstUnreadMsgReq_FieldNumber_TargetId = 1,
-  QryFirstUnreadMsgReq_FieldNumber_ChannelType = 2,
-};
-
-GPB_FINAL @interface QryFirstUnreadMsgReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
-
-@property(nonatomic, readwrite) ChannelType channelType;
-
-@end
-
-/**
- * Fetches the raw value of a @c QryFirstUnreadMsgReq's @c channelType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t QryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message);
-/**
- * Sets the raw value of an @c QryFirstUnreadMsgReq's @c channelType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetQryFirstUnreadMsgReq_ChannelType_RawValue(QryFirstUnreadMsgReq *message, int32_t value);
-
-#pragma mark - SyncChatroomReq
-
-typedef GPB_ENUM(SyncChatroomReq_FieldNumber) {
-  SyncChatroomReq_FieldNumber_ChatroomId = 1,
-  SyncChatroomReq_FieldNumber_SyncTime = 2,
-  SyncChatroomReq_FieldNumber_Count = 3,
-};
-
-/**
- * chatroom
- **/
-GPB_FINAL @interface SyncChatroomReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatroomId;
-
-@property(nonatomic, readwrite) int64_t syncTime;
-
-@property(nonatomic, readwrite) int32_t count;
-
-@end
-
-#pragma mark - SyncChatroomMsgResp
-
-typedef GPB_ENUM(SyncChatroomMsgResp_FieldNumber) {
-  SyncChatroomMsgResp_FieldNumber_MsgsArray = 1,
-};
-
-GPB_FINAL @interface SyncChatroomMsgResp : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<DownMsg*> *msgsArray;
-/** The number of items in @c msgsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger msgsArray_Count;
-
-@end
-
-#pragma mark - SyncChatroomResp
-
-typedef GPB_ENUM(SyncChatroomResp_FieldNumber) {
-  SyncChatroomResp_FieldNumber_Msgs = 1,
-  SyncChatroomResp_FieldNumber_Atts = 2,
-  SyncChatroomResp_FieldNumber_IsFinished = 3,
-};
-
-GPB_FINAL @interface SyncChatroomResp : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) DownMsgSet *msgs;
-/** Test to see if @c msgs has been set. */
-@property(nonatomic, readwrite) BOOL hasMsgs;
-
-@property(nonatomic, readwrite, strong, null_resettable) ChatAtts *atts;
-/** Test to see if @c atts has been set. */
-@property(nonatomic, readwrite) BOOL hasAtts;
-
-@property(nonatomic, readwrite) BOOL isFinished;
-
-@end
-
-#pragma mark - ChatroomInfo
-
-typedef GPB_ENUM(ChatroomInfo_FieldNumber) {
-  ChatroomInfo_FieldNumber_ChatId = 1,
-  ChatroomInfo_FieldNumber_ChatName = 2,
-  ChatroomInfo_FieldNumber_MembersArray = 3,
-};
-
-GPB_FINAL @interface ChatroomInfo : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatName;
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatroomMember*> *membersArray;
-/** The number of items in @c membersArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger membersArray_Count;
-
-@end
-
-#pragma mark - ChatMsgNode
-
-typedef GPB_ENUM(ChatMsgNode_FieldNumber) {
-  ChatMsgNode_FieldNumber_NodeName = 1,
-  ChatMsgNode_FieldNumber_Method = 2,
-};
-
-GPB_FINAL @interface ChatMsgNode : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *nodeName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *method;
-
-@end
-
-#pragma mark - ChatroomMember
-
-typedef GPB_ENUM(ChatroomMember_FieldNumber) {
-  ChatroomMember_FieldNumber_MemberId = 1,
-  ChatroomMember_FieldNumber_MemberName = 2,
-  ChatroomMember_FieldNumber_AddedTime = 3,
-};
-
-GPB_FINAL @interface ChatroomMember : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *memberId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *memberName;
-
-@property(nonatomic, readwrite) int64_t addedTime;
-
-@end
-
-#pragma mark - ChrmDispatchReq
-
-typedef GPB_ENUM(ChrmDispatchReq_FieldNumber) {
-  ChrmDispatchReq_FieldNumber_ChatId = 1,
-  ChrmDispatchReq_FieldNumber_DispatchType = 2,
-};
-
-GPB_FINAL @interface ChrmDispatchReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@property(nonatomic, readwrite) ChrmDispatchType dispatchType;
-
-@end
-
-/**
- * Fetches the raw value of a @c ChrmDispatchReq's @c dispatchType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t ChrmDispatchReq_DispatchType_RawValue(ChrmDispatchReq *message);
-/**
- * Sets the raw value of an @c ChrmDispatchReq's @c dispatchType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetChrmDispatchReq_DispatchType_RawValue(ChrmDispatchReq *message, int32_t value);
-
-#pragma mark - ChatMembersDispatchReq
-
-typedef GPB_ENUM(ChatMembersDispatchReq_FieldNumber) {
-  ChatMembersDispatchReq_FieldNumber_ChatId = 1,
-  ChatMembersDispatchReq_FieldNumber_MemberIdsArray = 2,
-  ChatMembersDispatchReq_FieldNumber_DispatchType = 3,
-};
-
-GPB_FINAL @interface ChatMembersDispatchReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *memberIdsArray;
-/** The number of items in @c memberIdsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger memberIdsArray_Count;
-
-@property(nonatomic, readwrite) ChatMembersDispatchType dispatchType;
-
-@end
-
-/**
- * Fetches the raw value of a @c ChatMembersDispatchReq's @c dispatchType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t ChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *message);
-/**
- * Sets the raw value of an @c ChatMembersDispatchReq's @c dispatchType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetChatMembersDispatchReq_DispatchType_RawValue(ChatMembersDispatchReq *message, int32_t value);
-
-#pragma mark - ChatAttBatchReq
-
-typedef GPB_ENUM(ChatAttBatchReq_FieldNumber) {
-  ChatAttBatchReq_FieldNumber_AttsArray = 1,
-};
-
-GPB_FINAL @interface ChatAttBatchReq : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttReq*> *attsArray;
-/** The number of items in @c attsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger attsArray_Count;
-
-@end
-
-#pragma mark - ChatAttReq
-
-typedef GPB_ENUM(ChatAttReq_FieldNumber) {
-  ChatAttReq_FieldNumber_Key = 1,
-  ChatAttReq_FieldNumber_Value = 2,
-  ChatAttReq_FieldNumber_IsForce = 3,
-  ChatAttReq_FieldNumber_IsAutoDel = 4,
-  ChatAttReq_FieldNumber_Msg = 5,
-};
-
-GPB_FINAL @interface ChatAttReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
-
-/** 是否强制覆盖，否：则该key已有值时，不覆盖 */
-@property(nonatomic, readwrite) BOOL isForce;
-
-/** 是否在该属性所有者离开房间时自动删除；否：则不自动删除； */
-@property(nonatomic, readwrite) BOOL isAutoDel;
-
-/** 设置属性时，同时发送一条聊天室消息； */
-@property(nonatomic, readwrite, strong, null_resettable) UpMsg *msg;
-/** Test to see if @c msg has been set. */
-@property(nonatomic, readwrite) BOOL hasMsg;
-
-@end
-
-#pragma mark - ChatAttBatchResp
-
-typedef GPB_ENUM(ChatAttBatchResp_FieldNumber) {
-  ChatAttBatchResp_FieldNumber_AttRespsArray = 1,
-};
-
-GPB_FINAL @interface ChatAttBatchResp : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttResp*> *attRespsArray;
-/** The number of items in @c attRespsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger attRespsArray_Count;
-
-@end
-
-#pragma mark - ChatAttResp
-
-typedef GPB_ENUM(ChatAttResp_FieldNumber) {
-  ChatAttResp_FieldNumber_Key = 1,
-  ChatAttResp_FieldNumber_Code = 2,
-  ChatAttResp_FieldNumber_AttTime = 3,
-  ChatAttResp_FieldNumber_MsgCode = 11,
-  ChatAttResp_FieldNumber_MsgId = 12,
-  ChatAttResp_FieldNumber_MsgTime = 13,
-  ChatAttResp_FieldNumber_MsgSeq = 14,
-};
-
-GPB_FINAL @interface ChatAttResp : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
-
-/** 设置属性时的返回码 */
-@property(nonatomic, readwrite) int32_t code;
-
-/** 属性的设置时间 */
-@property(nonatomic, readwrite) int64_t attTime;
-
-/** 当设置属性时，附带发送消息时，下列属性有效 */
-@property(nonatomic, readwrite) int32_t msgCode;
-
-/** 消息的id */
-@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
-
-/** 消息的时间戳 */
-@property(nonatomic, readwrite) int64_t msgTime;
-
-/** 消息的序号 */
-@property(nonatomic, readwrite) int64_t msgSeq;
-
-@end
-
-#pragma mark - SyncChatroomAttResp
-
-typedef GPB_ENUM(SyncChatroomAttResp_FieldNumber) {
-  SyncChatroomAttResp_FieldNumber_AttsArray = 1,
-};
-
-GPB_FINAL @interface SyncChatroomAttResp : GPBMessage
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttItem*> *attsArray;
-/** The number of items in @c attsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger attsArray_Count;
-
-@end
-
-#pragma mark - ChatAttItem
-
-typedef GPB_ENUM(ChatAttItem_FieldNumber) {
-  ChatAttItem_FieldNumber_Key = 1,
-  ChatAttItem_FieldNumber_Value = 2,
-  ChatAttItem_FieldNumber_AttTime = 3,
-  ChatAttItem_FieldNumber_UserId = 4,
-  ChatAttItem_FieldNumber_OptType = 5,
-};
-
-GPB_FINAL @interface ChatAttItem : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *key;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
-
-@property(nonatomic, readwrite) int64_t attTime;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite) ChatAttOptType optType;
-
-@end
-
-/**
- * Fetches the raw value of a @c ChatAttItem's @c optType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t ChatAttItem_OptType_RawValue(ChatAttItem *message);
-/**
- * Sets the raw value of an @c ChatAttItem's @c optType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetChatAttItem_OptType_RawValue(ChatAttItem *message, int32_t value);
-
-#pragma mark - ChatAtts
-
-typedef GPB_ENUM(ChatAtts_FieldNumber) {
-  ChatAtts_FieldNumber_ChatId = 1,
-  ChatAtts_FieldNumber_AttsArray = 2,
-  ChatAtts_FieldNumber_IsComplete = 3,
-  ChatAtts_FieldNumber_IsFinished = 4,
-};
-
-GPB_FINAL @interface ChatAtts : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ChatAttItem*> *attsArray;
-/** The number of items in @c attsArray without causing the container to be created. */
-@property(nonatomic, readonly) NSUInteger attsArray_Count;
-
-@property(nonatomic, readwrite) BOOL isComplete;
-
-@property(nonatomic, readwrite) BOOL isFinished;
-
-@end
-
-#pragma mark - QryChatroomMembersReq
-
-typedef GPB_ENUM(QryChatroomMembersReq_FieldNumber) {
-  QryChatroomMembersReq_FieldNumber_Count = 1,
-  QryChatroomMembersReq_FieldNumber_Order = 2,
-};
-
-GPB_FINAL @interface QryChatroomMembersReq : GPBMessage
-
-@property(nonatomic, readwrite) int32_t count;
-
-@property(nonatomic, readwrite) int32_t order;
-
-@end
-
 #pragma mark - QryFileCredReq
 
 typedef GPB_ENUM(QryFileCredReq_FieldNumber) {
@@ -3412,24 +3250,6 @@ void SetQryFileCredResp_OssType_RawValue(QryFileCredResp *message, int32_t value
  **/
 void QryFileCredResp_ClearOssOfOneOfCase(QryFileCredResp *message);
 
-#pragma mark - UploadLogStatusReq
-
-typedef GPB_ENUM(UploadLogStatusReq_FieldNumber) {
-  UploadLogStatusReq_FieldNumber_MsgId = 1,
-  UploadLogStatusReq_FieldNumber_LogURL = 2,
-  UploadLogStatusReq_FieldNumber_State = 3,
-};
-
-GPB_FINAL @interface UploadLogStatusReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *logURL;
-
-@property(nonatomic, readwrite) int32_t state;
-
-@end
-
 #pragma mark - QiNiuCredResp
 
 typedef GPB_ENUM(QiNiuCredResp_FieldNumber) {
@@ -3457,6 +3277,58 @@ GPB_FINAL @interface PreSignResp : GPBMessage
 
 @end
 
+#pragma mark - UploadLogStatusReq
+
+typedef GPB_ENUM(UploadLogStatusReq_FieldNumber) {
+  UploadLogStatusReq_FieldNumber_MsgId = 1,
+  UploadLogStatusReq_FieldNumber_LogURL = 2,
+  UploadLogStatusReq_FieldNumber_State = 3,
+};
+
+GPB_FINAL @interface UploadLogStatusReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *logURL;
+
+@property(nonatomic, readwrite) int32_t state;
+
+@end
+
+#pragma mark - SubMsgs
+
+typedef GPB_ENUM(SubMsgs_FieldNumber) {
+  SubMsgs_FieldNumber_SubMsgsArray = 1,
+};
+
+/**
+ * others
+ **/
+GPB_FINAL @interface SubMsgs : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SubMsg*> *subMsgsArray;
+/** The number of items in @c subMsgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger subMsgsArray_Count;
+
+@end
+
+#pragma mark - SubMsg
+
+typedef GPB_ENUM(SubMsg_FieldNumber) {
+  SubMsg_FieldNumber_Msg = 1,
+  SubMsg_FieldNumber_Platform = 2,
+};
+
+GPB_FINAL @interface SubMsg : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *platform;
+
+@end
+
 #pragma mark - OnlineOfflineMsg
 
 typedef GPB_ENUM(OnlineOfflineMsg_FieldNumber) {
@@ -3468,6 +3340,7 @@ typedef GPB_ENUM(OnlineOfflineMsg_FieldNumber) {
   OnlineOfflineMsg_FieldNumber_SessionId = 6,
   OnlineOfflineMsg_FieldNumber_Timestamp = 7,
   OnlineOfflineMsg_FieldNumber_ConnectionExt = 8,
+  OnlineOfflineMsg_FieldNumber_InstanceId = 9,
 };
 
 GPB_FINAL @interface OnlineOfflineMsg : GPBMessage
@@ -3488,6 +3361,8 @@ GPB_FINAL @interface OnlineOfflineMsg : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *connectionExt;
 
+@property(nonatomic, readwrite, copy, null_resettable) NSString *instanceId;
+
 @end
 
 /**
@@ -3501,263 +3376,6 @@ int32_t OnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message);
  * was generated.
  **/
 void SetOnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message, int32_t value);
-
-#pragma mark - LogEntity
-
-typedef GPB_ENUM(LogEntity_FieldNumber) {
-  LogEntity_FieldNumber_ConnectionLog = 11,
-  LogEntity_FieldNumber_DisconnectionLog = 12,
-  LogEntity_FieldNumber_SdkRequestLog = 13,
-  LogEntity_FieldNumber_SdkResponseLog = 14,
-  LogEntity_FieldNumber_BusinessLog = 15,
-};
-
-typedef GPB_ENUM(LogEntity_LogOf_OneOfCase) {
-  LogEntity_LogOf_OneOfCase_GPBUnsetOneOfCase = 0,
-  LogEntity_LogOf_OneOfCase_ConnectionLog = 11,
-  LogEntity_LogOf_OneOfCase_DisconnectionLog = 12,
-  LogEntity_LogOf_OneOfCase_SdkRequestLog = 13,
-  LogEntity_LogOf_OneOfCase_SdkResponseLog = 14,
-  LogEntity_LogOf_OneOfCase_BusinessLog = 15,
-};
-
-GPB_FINAL @interface LogEntity : GPBMessage
-
-@property(nonatomic, readonly) LogEntity_LogOf_OneOfCase logOfOneOfCase;
-
-@property(nonatomic, readwrite, strong, null_resettable) ConnectionLog *connectionLog;
-
-@property(nonatomic, readwrite, strong, null_resettable) DisconnectionLog *disconnectionLog;
-
-@property(nonatomic, readwrite, strong, null_resettable) SdkRequestLog *sdkRequestLog;
-
-@property(nonatomic, readwrite, strong, null_resettable) SdkResponseLog *sdkResponseLog;
-
-@property(nonatomic, readwrite, strong, null_resettable) BusinessLog *businessLog;
-
-@end
-
-/**
- * Clears whatever value was set for the oneof 'logOf'.
- **/
-void LogEntity_ClearLogOfOneOfCase(LogEntity *message);
-
-#pragma mark - ConnectionLog
-
-typedef GPB_ENUM(ConnectionLog_FieldNumber) {
-  ConnectionLog_FieldNumber_Timestamp = 1,
-  ConnectionLog_FieldNumber_ServiceName = 2,
-  ConnectionLog_FieldNumber_Session = 3,
-  ConnectionLog_FieldNumber_Action = 4,
-  ConnectionLog_FieldNumber_AppKey = 5,
-  ConnectionLog_FieldNumber_UserId = 6,
-  ConnectionLog_FieldNumber_Platform = 7,
-  ConnectionLog_FieldNumber_PushToken = 8,
-  ConnectionLog_FieldNumber_PushChannel = 9,
-  ConnectionLog_FieldNumber_ClientIp = 10,
-};
-
-GPB_FINAL @interface ConnectionLog : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *timestamp;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *session;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *action;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *appKey;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *platform;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *pushToken;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *pushChannel;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *clientIp;
-
-@end
-
-#pragma mark - DisconnectionLog
-
-typedef GPB_ENUM(DisconnectionLog_FieldNumber) {
-  DisconnectionLog_FieldNumber_Timestamp = 1,
-  DisconnectionLog_FieldNumber_ServiceName = 2,
-  DisconnectionLog_FieldNumber_Session = 3,
-  DisconnectionLog_FieldNumber_Action = 4,
-  DisconnectionLog_FieldNumber_AppKey = 5,
-  DisconnectionLog_FieldNumber_UserId = 6,
-  DisconnectionLog_FieldNumber_Code = 7,
-  DisconnectionLog_FieldNumber_Err = 8,
-};
-
-GPB_FINAL @interface DisconnectionLog : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *timestamp;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *session;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *action;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *appKey;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite) uint32_t code;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *err;
-
-@end
-
-#pragma mark - SdkRequestLog
-
-typedef GPB_ENUM(SdkRequestLog_FieldNumber) {
-  SdkRequestLog_FieldNumber_Timestamp = 1,
-  SdkRequestLog_FieldNumber_ServiceName = 2,
-  SdkRequestLog_FieldNumber_Session = 3,
-  SdkRequestLog_FieldNumber_Index = 4,
-  SdkRequestLog_FieldNumber_Action = 5,
-  SdkRequestLog_FieldNumber_Method = 6,
-  SdkRequestLog_FieldNumber_TargetId = 7,
-  SdkRequestLog_FieldNumber_Len = 8,
-  SdkRequestLog_FieldNumber_AppKey = 9,
-};
-
-GPB_FINAL @interface SdkRequestLog : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *timestamp;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *session;
-
-@property(nonatomic, readwrite) uint32_t index;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *action;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *method;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
-
-@property(nonatomic, readwrite) uint32_t len;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *appKey;
-
-@end
-
-#pragma mark - SdkResponseLog
-
-typedef GPB_ENUM(SdkResponseLog_FieldNumber) {
-  SdkResponseLog_FieldNumber_Timestamp = 1,
-  SdkResponseLog_FieldNumber_ServiceName = 2,
-  SdkResponseLog_FieldNumber_Session = 3,
-  SdkResponseLog_FieldNumber_Index = 4,
-  SdkResponseLog_FieldNumber_Action = 5,
-  SdkResponseLog_FieldNumber_Code = 6,
-  SdkResponseLog_FieldNumber_Len = 7,
-  SdkResponseLog_FieldNumber_AppKey = 9,
-};
-
-GPB_FINAL @interface SdkResponseLog : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *timestamp;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *session;
-
-@property(nonatomic, readwrite) uint32_t index;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *action;
-
-@property(nonatomic, readwrite) uint32_t code;
-
-@property(nonatomic, readwrite) uint32_t len;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *appKey;
-
-@end
-
-#pragma mark - BusinessLog
-
-typedef GPB_ENUM(BusinessLog_FieldNumber) {
-  BusinessLog_FieldNumber_Timestamp = 1,
-  BusinessLog_FieldNumber_Session = 2,
-  BusinessLog_FieldNumber_Index = 3,
-  BusinessLog_FieldNumber_ServiceName = 4,
-  BusinessLog_FieldNumber_Method = 5,
-  BusinessLog_FieldNumber_Message = 6,
-  BusinessLog_FieldNumber_AppKey = 9,
-};
-
-GPB_FINAL @interface BusinessLog : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *timestamp;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *session;
-
-@property(nonatomic, readwrite) uint32_t index;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *method;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *message;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *appKey;
-
-@end
-
-#pragma mark - PushSwitch
-
-typedef GPB_ENUM(PushSwitch_FieldNumber) {
-  PushSwitch_FieldNumber_Switch_p = 1,
-};
-
-GPB_FINAL @interface PushSwitch : GPBMessage
-
-/** 0：关闭；1：开启； */
-@property(nonatomic, readwrite) int32_t switch_p;
-
-@end
-
-#pragma mark - ChrmEvent
-
-typedef GPB_ENUM(ChrmEvent_FieldNumber) {
-  ChrmEvent_FieldNumber_EventType = 1,
-  ChrmEvent_FieldNumber_ChatId = 2,
-  ChrmEvent_FieldNumber_UserId = 3,
-  ChrmEvent_FieldNumber_EventTime = 4,
-};
-
-GPB_FINAL @interface ChrmEvent : GPBMessage
-
-@property(nonatomic, readwrite) ChrmEventType eventType;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *chatId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
-
-@property(nonatomic, readwrite) int64_t eventTime;
-
-@end
-
-/**
- * Fetches the raw value of a @c ChrmEvent's @c eventType property, even
- * if the value was not defined by the enum at the time the code was generated.
- **/
-int32_t ChrmEvent_EventType_RawValue(ChrmEvent *message);
-/**
- * Sets the raw value of an @c ChrmEvent's @c eventType property, allowing
- * it to be set to a value that was not defined by the enum at the time the code
- * was generated.
- **/
-void SetChrmEvent_EventType_RawValue(ChrmEvent *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

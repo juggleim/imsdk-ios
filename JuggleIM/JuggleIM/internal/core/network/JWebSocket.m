@@ -664,11 +664,14 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)joinChatroom:(NSString *)chatroomId
+        isAutoCreate:(BOOL)isAutoCreate
              success:(void (^)(long long))successBlock
                error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
-        NSData *d = [self.pbData joinChatroom:chatroomId index:self.cmdIndex++];
+        NSData *d = [self.pbData joinChatroom:chatroomId
+                                 isAutoCreate:isAutoCreate
+                                        index:self.cmdIndex++];
         JLogI(@"WS-Send", @"join chatroom, id is %@", chatroomId);
         [self timestampSendData:d
                             key:key
