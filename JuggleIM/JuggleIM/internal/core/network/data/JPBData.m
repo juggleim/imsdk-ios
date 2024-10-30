@@ -1161,6 +1161,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.msgId = body.msgId;
             a.timestamp = body.timestamp;
             a.seqNo = body.msgSeqNo;
+            a.clientUid = body.clientMsgId;
             obj.publishMsgAck = a;
         }
             break;

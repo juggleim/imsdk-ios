@@ -41,6 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)syncNotify:(long long)syncTime;
 - (void)syncChatroomNotify:(NSString *)chatroomId
                       time:(long long)syncTime;
+- (void)messageDidSend:(NSString *)messageId
+                  time:(long long)timestamp
+                 seqNo:(long long)seqNo
+             clientUid:(NSString *)clientUid;
 @end
 
 @protocol JWebSocketChatroomDelegate <NSObject>

@@ -1075,6 +1075,14 @@ inConversation:(JConversation *)conversation
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    //超时回调之后拿不到 obj，通知 message 更新状态
+    if (!obj && ack.code == 0) {
+        [self.messageDelegate messageDidSend:ack.msgId
+                                        time:ack.timestamp
+                                       seqNo:ack.seqNo
+                                   clientUid:ack.clientUid];
+        return;
+    }
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
         JSendMessageObj *sendMessageObj = (JSendMessageObj *)obj;
         if (ack.code != 0) {

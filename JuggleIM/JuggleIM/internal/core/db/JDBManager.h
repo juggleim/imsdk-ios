@@ -78,7 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
-                  seqNo:(long long)messageIndex;
+                         seqNo:(long long)seqNo;
+- (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
+                                  messageId:(NSString *)messageId
+                                  timestamp:(long long)timestamp
+                                      seqNo:(long long)seqNo;
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
                withMessageId:(NSString *)messageId;

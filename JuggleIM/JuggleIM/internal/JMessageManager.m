@@ -1584,6 +1584,19 @@
     [self syncChatroomMessages:chatroomId time:syncTime];
 }
 
+- (void)messageDidSend:(NSString *)messageId
+                  time:(long long)timestamp
+                 seqNo:(long long)seqNo
+             clientUid:(NSString *)clientUid {
+    if (clientUid.length == 0) {
+        return;
+    }
+    [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
+                                                   messageId:messageId
+                                                   timestamp:timestamp
+                                                       seqNo:seqNo];
+}
+
 #pragma mark - internal
 - (void)checkChatroomSyncDic {
     if (self.chatroomSyncDic.count > 0) {

@@ -70,6 +70,7 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, copy) NSString *msgId;
 @property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) long long seqNo;
+@property (nonatomic, copy) NSString *clientUid;
 @end
 
 @interface JPublishMsgBody : NSObject

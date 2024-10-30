@@ -59,6 +59,7 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info ,refer_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
+NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE ";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
@@ -172,6 +173,17 @@ NSString *const jMatchCount = @"match_count";
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
             withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(clientMsgNo)]];
+}
+
+- (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
+                                  messageId:(NSString *)messageId
+                                  timestamp:(long long)timestamp
+                                      seqNo:(long long)seqNo {
+    if (messageId.length == 0) {
+        return;
+    }
+    [self.dbHelper executeUpdate:jUpdateMessageAfterSendWithClientUid
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), clientUid]];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content

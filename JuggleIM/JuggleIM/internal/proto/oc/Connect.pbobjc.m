@@ -531,12 +531,16 @@ typedef struct PublishMsgBody__storage_ {
 @dynamic msgId;
 @dynamic timestamp;
 @dynamic msgSeqNo;
+@dynamic memberCount;
+@dynamic clientMsgId;
 
 typedef struct PublishAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
   int32_t index;
   int32_t code;
+  int32_t memberCount;
   NSString *msgId;
+  NSString *clientMsgId;
   int64_t timestamp;
   int64_t msgSeqNo;
 } PublishAckMsgBody__storage_;
@@ -593,6 +597,24 @@ typedef struct PublishAckMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },
+      {
+        .name = "memberCount",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PublishAckMsgBody_FieldNumber_MemberCount,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, memberCount),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "clientMsgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PublishAckMsgBody_FieldNumber_ClientMsgId,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, clientMsgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(PublishAckMsgBody)
@@ -604,7 +626,7 @@ typedef struct PublishAckMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\002\003\005\000\005\010\000";
+        "\004\003\005\000\005\010\000\006\013\000\007\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

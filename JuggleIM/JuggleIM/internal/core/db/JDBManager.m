@@ -206,6 +206,16 @@
                                      seqNo:seqNo];
 }
 
+- (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
+                                  messageId:(NSString *)messageId
+                                  timestamp:(long long)timestamp
+                                      seqNo:(long long)seqNo {
+    [self.messageDb updateMessageAfterSendWithClientUid:clientUid
+                                              messageId:messageId
+                                              timestamp:timestamp
+                                                  seqNo:seqNo];
+}
+
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(nonnull NSString *)type
                withMessageId:(NSString *)messageId {

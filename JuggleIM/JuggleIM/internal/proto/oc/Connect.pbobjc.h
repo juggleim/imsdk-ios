@@ -192,6 +192,8 @@ typedef GPB_ENUM(PublishAckMsgBody_FieldNumber) {
   PublishAckMsgBody_FieldNumber_MsgId = 3,
   PublishAckMsgBody_FieldNumber_Timestamp = 4,
   PublishAckMsgBody_FieldNumber_MsgSeqNo = 5,
+  PublishAckMsgBody_FieldNumber_MemberCount = 6,
+  PublishAckMsgBody_FieldNumber_ClientMsgId = 7,
 };
 
 GPB_FINAL @interface PublishAckMsgBody : GPBMessage
@@ -205,6 +207,10 @@ GPB_FINAL @interface PublishAckMsgBody : GPBMessage
 @property(nonatomic, readwrite) int64_t timestamp;
 
 @property(nonatomic, readwrite) int64_t msgSeqNo;
+
+@property(nonatomic, readwrite) int32_t memberCount;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *clientMsgId;
 
 @end
 
