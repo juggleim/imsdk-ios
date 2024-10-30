@@ -117,7 +117,7 @@
                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                         cancel:(void (^)(JMessage *message))cancelBlock;
 
-/// 重发消息，用于发送失败后进行重发
+/// 重发消息，用于发送失败后进行重发（如果消息已经发送成功则直接返回成功回调）
 /// - Parameters:
 ///   - messsage: 消息对象
 ///   - successBlock: 成功回调
@@ -126,8 +126,7 @@
              success:(void (^)(JMessage *message))successBlock
                error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-
-/// 重发消息，用于媒体类型消息重发
+/// 重发消息，用于媒体类型消息发送失败后重发（如果消息已经发送成功则直接返回成功回调）
 /// - Parameters:
 ///   - message: 消息对象
 ///   - progressBlock: 上传进度回调

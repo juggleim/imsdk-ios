@@ -188,25 +188,30 @@
     }
     [self changeStatus:JConnectionStatusInternalConnecting errorCode:JErrorCodeInternalNone extra:@""];
     
-    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
-                                       appKey:self.core.appKey
-                                        token:token
-                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
-        JLogI(@"CON-Navi", @"success");
-        self.core.servers = servers;
-        [self.core.webSocket connect:self.core.appKey
-                               token:token
-                           pushToken:self.pushToken
-                             servers:self.core.servers];
-    } failure:^(JErrorCodeInternal errorCode) {
-        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
-        if ([self checkConnectionFailure:errorCode]) {
-            [self changeStatus:JConnectionStatusInternalFailure errorCode:errorCode extra:@""];
-        } else {
-            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
-        }
-    }];
-    [task start];
+    [self.core.webSocket connect:self.core.appKey
+                           token:token
+                       pushToken:self.pushToken
+                         servers:self.core.servers];
+    
+//    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
+//                                       appKey:self.core.appKey
+//                                        token:token
+//                                      success:^(NSString * _Nonnull userId, NSArray<NSString *> * _Nonnull servers) {
+//        JLogI(@"CON-Navi", @"success");
+//        self.core.servers = servers;
+//        [self.core.webSocket connect:self.core.appKey
+//                               token:token
+//                           pushToken:self.pushToken
+//                             servers:self.core.servers];
+//    } failure:^(JErrorCodeInternal errorCode) {
+//        JLogI(@"CON-Navi", @"error code is %lu", (long unsigned)errorCode);
+//        if ([self checkConnectionFailure:errorCode]) {
+//            [self changeStatus:JConnectionStatusInternalFailure errorCode:errorCode extra:@""];
+//        } else {
+//            [self changeStatus:JConnectionStatusInternalWaitingForConnecting errorCode:errorCode extra:@""];
+//        }
+//    }];
+//    [task start];
 }
 
 - (void)internalDisconnect:(BOOL)receivePush {

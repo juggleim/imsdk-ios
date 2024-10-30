@@ -25,7 +25,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
+    [JIM.shared setServerUrls:@[@"wss://ws.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
     [JIM.shared.connectionManager connectWithToken:kToken1182];
@@ -90,9 +90,9 @@
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             
-            [JIM.shared.chatroomManager joinChatroom:@"chatroom10012erere"
-                                    prevMessageCount:2
-                                        isAutoCreate:YES];
+//            [JIM.shared.chatroomManager joinChatroom:@"chatroom10012erere"
+//                                    prevMessageCount:2
+//                                        isAutoCreate:YES];
         });
     }
 }

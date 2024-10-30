@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param serverUrls  服务器地址
  */
-- (void)setServer:(NSArray <NSString *> *)serverUrls;
+- (void)setServerUrls:(NSArray <NSString *> *)serverUrls;
 
 /// 设置控制台日志输出等级
 /// @param level 日志等级
