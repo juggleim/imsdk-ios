@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
-#define jMessageTableVersion 1
+#define jMessageTableVersion 2
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -38,7 +38,9 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "refer_msg_id VARCHAR (64)"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
+NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
+NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
@@ -134,8 +136,13 @@ NSString *const jMatchCount = @"match_count";
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteMessage *m = nil;
+            //messageId 排重
             if (obj.messageId.length > 0) {
                 m = [self getMessageWithMessageId:obj.messageId inDb:db];
+            }
+            //clientUid 排重
+            if (!m && obj.clientUid.length > 0) {
+                m = [self getMessageWithClientUid:obj.clientUid inDb:db];
             }
             if (m) {
                 obj.clientMsgNo = m.clientMsgNo;
@@ -663,13 +670,19 @@ NSString *const jMatchCount = @"match_count";
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
 - (void)updateTables {
-    NSNumber *existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jMessageTableVersionKey];
-    if (jMessageTableVersion > existedVersion.intValue) {
+    NSNumber *existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jMessageTableVersionKey];
+    int existedVersion = existedVersionNumber.intValue;
+    if (jMessageTableVersion > existedVersion) {
         //update table
+        if (existedVersion == 1 && jMessageTableVersion >= 2) {
+            [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
+            existedVersion = 2;
+        }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
     }
@@ -746,6 +759,19 @@ NSString *const jMatchCount = @"match_count";
 }
 
 #pragma mark - internal
+- (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid
+                                         inDb:(JFMDatabase *)db {
+    if (clientUid.length == 0) {
+        return nil;
+    }
+    JConcreteMessage *message = nil;
+    JFMResultSet *resultSet = [db executeQuery:kGetMessageWithClientUid, clientUid];
+    if ([resultSet next]) {
+        message = [self messageWith:resultSet];
+    }
+    return message;
+}
+
 - (JConcreteMessage *)messageWith:(JFMResultSet *)rs {
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     JConversation *c = [[JConversation alloc] init];
