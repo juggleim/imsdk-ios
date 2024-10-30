@@ -718,6 +718,14 @@
         return message;
     }
     if (message.clientMsgNo > 0) {
+        if (message.messageState == JMessageStateSent) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (successBlock) {
+                    successBlock(message);
+                }
+            });
+            return message;
+        }
         if (message.messageState != JMessageStateSending) {
             message.messageState = JMessageStateSending;
             [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
@@ -739,6 +747,7 @@
                            error:errorBlock];
     }
 }
+
 - (JMessage *)resendMediaMessage:(JMessage *)message
                         progress:(void (^)(int progress, JMessage *message))progressBlock
                          success:(void (^)(JMessage *message))successBlock
@@ -753,6 +762,15 @@
         if(errorBlock){
             errorBlock(JErrorCodeInvalidParam,message);
         }
+        return message;
+    }
+    
+    if (message.messageState == JMessageStateSent) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(message);
+            }
+        });
         return message;
     }
     
