@@ -346,7 +346,6 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return path;
 }
 
-#pragma mark - private
 + (NSString *)getUUID {
     CFUUIDRef uuidRef = CFUUIDCreate(kCFAllocatorDefault);
     NSString *UUID = (NSString *)CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, uuidRef));
@@ -359,6 +358,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return [UUID_temp copy];
 }
 
+#pragma mark - private
 + (NSString *)md5EncryptStr:(NSString *)str bateNum:(NSInteger)bateNum isLowercaseStr:(BOOL)isLowercaseStr {
     NSString *md5Str = nil;
     const char *input = [str UTF8String]; // UTF8转码

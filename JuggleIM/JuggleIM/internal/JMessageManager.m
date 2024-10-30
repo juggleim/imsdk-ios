@@ -44,7 +44,6 @@
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
-@property (nonatomic, assign) int increaseId;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
@@ -2153,9 +2152,7 @@
 }
 
 - (NSString *)createClientUid {
-    long long ts = [[NSDate date] timeIntervalSince1970];
-    ts = ts % 1000000;
-    return [NSString stringWithFormat:@"%06lld%03d", ts, self.increaseId++];
+    return [JUtility getUUID];
 }
 
 - (void)updateUserInfos:(NSArray <JConcreteMessage *> *)messages {
