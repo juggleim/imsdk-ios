@@ -33,6 +33,12 @@
             result = YES;
             break;
             
+        case JCallEventReceiveAccept:
+            //TODO: 更新 callSession 的 member 状态，userInfo 里面带用户信息
+            [self.callSessionImpl transitionToConnectingState];
+            result = YES;
+            break;
+            
         default:
             break;
     }

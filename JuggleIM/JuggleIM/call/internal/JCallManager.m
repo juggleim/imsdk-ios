@@ -58,7 +58,7 @@
     member.userInfo = userInfo;
     member.callStatus = JCallStatusIncoming;
     [participants addObject:member];
-    callSession.participants = participants;
+    callSession.members = participants;
     [callSession addDelegate:delegate];
     [callSession event:JCallEventInvite userInfo:nil];
     
@@ -71,7 +71,7 @@
     JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
     if (!callSession) {
         callSession = [self createCallSessionImpl:room.roomId
-                                                        isMultiCall:room.isMultiCall];
+                                      isMultiCall:room.isMultiCall];
         callSession.owner = room.owner.userId;
         callSession.inviter = inviter.userId;
         [self addCallSession:callSession];

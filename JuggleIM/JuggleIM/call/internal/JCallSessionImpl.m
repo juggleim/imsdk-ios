@@ -44,7 +44,7 @@
 }
 
 - (void)accept { 
-    
+    [self.stateMachine event:JCallEventAccept userInfo:nil];
 }
 
 
@@ -96,7 +96,7 @@
 #pragma mark - signal
 - (void)signalSingleInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
-    for (JCallMember *member in self.participants) {
+    for (JCallMember *member in self.members) {
         [targetIds addObject:member.userInfo.userId];
     }
     [self.core.webSocket callInvite:self.callId
@@ -120,8 +120,17 @@
     }];
 }
 
+- (void)signalAccept {
+    //TODO: 
+//    [self.core.webSocket callAccept:self.callId]
+}
+
 #pragma mark - media
 - (void)mediaQuit {
+    //TODO: 
+}
+
+- (void)mediaJoin {
     //TODO: 
 }
 
@@ -254,7 +263,7 @@
 @synthesize isMultiCall;
 @synthesize microphoneEnable;
 @synthesize owner;
-@synthesize participants;
+@synthesize members;
 @synthesize startTime;
 
 @end

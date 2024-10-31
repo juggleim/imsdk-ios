@@ -715,6 +715,7 @@ return [self.core.dbManager searchMessagesWithContent:option.searchContent
                            error:errorBlock];
     }
 }
+
 - (JMessage *)resendMediaMessage:(JMessage *)message
                         progress:(void (^)(int progress, JMessage *message))progressBlock
                          success:(void (^)(JMessage *message))successBlock

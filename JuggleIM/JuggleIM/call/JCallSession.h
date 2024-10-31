@@ -78,7 +78,7 @@
 /// 通话结束原因
 @property (nonatomic, assign) JCallFinishReason finishReason;
 /// 通话参与者（除当前用户外的其他参与者）
-@property (nonatomic, copy) NSArray <JCallMember *> *participants;
+@property (nonatomic, copy) NSArray <JCallMember *> *members;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 

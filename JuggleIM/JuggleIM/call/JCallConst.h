@@ -55,7 +55,11 @@ typedef NS_ENUM(NSInteger, JCallErrorCode) {
     /// 成功
     JCallSuccess = 0,
     /// 已在通话中
-    JCallErrorCodeCallExist = 1
+    JCallErrorCodeCallExist = 1,
+    /// 没被邀请时不能接听通话
+    JCallErrorCodeCantAcceptWhileNotInvited = 2,
+    /// 接听失败
+    JCallErrorCodeAcceptFail = 3,
 };
 
 #endif /* JCallConst_h */

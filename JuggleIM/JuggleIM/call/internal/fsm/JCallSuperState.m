@@ -46,6 +46,57 @@
             [self.callSessionImpl signalHangup];
             [self.callSessionImpl mediaQuit];
             [self.callSessionImpl transitionToIdleState];
+            break;
+            
+        case JCallEventAccept:
+            [self.callSessionImpl error:JCallErrorCodeCantAcceptWhileNotInvited];
+            break;
+            
+        case JCallEventAcceptDone:
+            // do nothing
+            // incoming 状态处理
+            // 其它状态忽略
+            break;
+            
+        case JCallEventAcceptFail:
+            // do nothing
+            // incoming 状态处理
+            // 其它状态忽略
+            break;
+            
+        case JCallEventReceiveAccept:
+            // TODO: 更新 member 状态
+            // outgoing 状态处理
+            // 其它状态忽略
+            break;
+            
+        case JCallEventReceiveHangup:
+            //TODO: 看 server 怎么发事件，是不是只要更新成员状态就行，否则应该是退出房间
+            break;
+            
+        case JCallEventJoinChannelDone:
+            // do nothing
+            // connecting 状态处理
+            // 其它状态忽略
+            break;
+            
+        case JCallEventJoinChannelFail:
+            // do nothing
+            // connecting 状态处理
+            // 其它状态忽略
+            break;
+            
+        case JCallEventParticipantJoinChannel:
+            break;
+            
+        case JCallEventParticipantLeaveChannel:
+            break;
+            
+        case JCallEventParticipantEnableCamera:
+            break;
+            
+        case JCallEventParticipantEnableMic:
+            break;
             
         default:
             break;

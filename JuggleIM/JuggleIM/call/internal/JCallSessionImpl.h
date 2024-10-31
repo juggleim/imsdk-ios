@@ -24,9 +24,11 @@
 #pragma mark - signal
 - (void)signalSingleInvite;
 - (void)signalHangup;
+- (void)signalAccept;
 
 #pragma mark - media
 - (void)mediaQuit;
+- (void)mediaJoin;
 
 #pragma mark - fsm
 - (void)event:(NSInteger)event

@@ -56,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol JWebSocketCallDelegate <NSObject>
+//- (void)
+
 - (void)callDidInvite:(JUserInfo *)inviter
                  room:(JRtcRoom *)room;
 @end
@@ -270,6 +272,8 @@ inConversation:(JConversation *)conversation
             userId:(NSString *)userId
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+//- (void)callAccept:
 
 @end
 
