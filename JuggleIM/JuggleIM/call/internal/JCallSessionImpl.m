@@ -13,13 +13,11 @@
 #import "JIdleState.h"
 #import "JIncomingState.h"
 #import "JOutgoingState.h"
-#import "JCallSignalManager.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
 #import "JCallMediaManager.h"
 
 @interface JCallSessionImpl ()
-@property (nonatomic, strong) JCallSignalManager *signalManager;
 @property (nonatomic, strong) JCallMediaManager *mediaManager;
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JCallSuperState *superState;
@@ -194,13 +192,6 @@
         _delegates = [NSHashTable weakObjectsHashTable];
     }
     return _delegates;
-}
-
-- (JCallSignalManager *)signalManager {
-    if (!_signalManager) {
-        _signalManager = [[JCallSignalManager alloc] initWithCore:self.core];
-    }
-    return _signalManager;
 }
 
 - (JStateMachine *)stateMachine {

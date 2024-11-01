@@ -304,8 +304,6 @@
 		A09727F32CC6346B00E08BC4 /* JCallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727D42CC6346B00E08BC4 /* JCallManager.m */; };
 		A09727F42CC6346B00E08BC4 /* JCallSession.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727D62CC6346B00E08BC4 /* JCallSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09727F92CC6346B00E08BC4 /* JCallConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727DD2CC6346B00E08BC4 /* JCallConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A09727FD2CC63A0E00E08BC4 /* JCallSignalManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727FB2CC63A0E00E08BC4 /* JCallSignalManager.h */; };
-		A09727FE2CC63A0E00E08BC4 /* JCallSignalManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727FC2CC63A0E00E08BC4 /* JCallSignalManager.m */; };
 		A09728022CC63AF000E08BC4 /* JCallMediaEngineProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09728002CC63AF000E08BC4 /* JCallMediaEngineProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09728052CC6438700E08BC4 /* JCallProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09728042CC641B100E08BC4 /* JCallProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A097280D2CC6676E00E08BC4 /* Rtcroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A097280B2CC6676E00E08BC4 /* Rtcroom.pbobjc.h */; };
@@ -660,8 +658,6 @@
 		A09727D42CC6346B00E08BC4 /* JCallManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallManager.m; sourceTree = "<group>"; };
 		A09727D62CC6346B00E08BC4 /* JCallSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallSession.h; sourceTree = "<group>"; };
 		A09727DD2CC6346B00E08BC4 /* JCallConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallConst.h; sourceTree = "<group>"; };
-		A09727FB2CC63A0E00E08BC4 /* JCallSignalManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSignalManager.h; sourceTree = "<group>"; };
-		A09727FC2CC63A0E00E08BC4 /* JCallSignalManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallSignalManager.m; sourceTree = "<group>"; };
 		A09728002CC63AF000E08BC4 /* JCallMediaEngineProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaEngineProtocol.h; sourceTree = "<group>"; };
 		A09728042CC641B100E08BC4 /* JCallProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallProtocol.h; sourceTree = "<group>"; };
 		A097280B2CC6676E00E08BC4 /* Rtcroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rtcroom.pbobjc.h; sourceTree = "<group>"; };
@@ -1301,7 +1297,6 @@
 			isa = PBXGroup;
 			children = (
 				A03B39FA2CC8EC7C003D150A /* model */,
-				A097280A2CC6481500E08BC4 /* signal */,
 				A09727FF2CC63A7600E08BC4 /* media */,
 				A09727CF2CC6346B00E08BC4 /* fsm */,
 				A09727D22CC6346B00E08BC4 /* utility */,
@@ -1358,15 +1353,6 @@
 				A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */,
 			);
 			path = media;
-			sourceTree = "<group>";
-		};
-		A097280A2CC6481500E08BC4 /* signal */ = {
-			isa = PBXGroup;
-			children = (
-				A09727FB2CC63A0E00E08BC4 /* JCallSignalManager.h */,
-				A09727FC2CC63A0E00E08BC4 /* JCallSignalManager.m */,
-			);
-			path = signal;
 			sourceTree = "<group>";
 		};
 		A0D3AD2F2B6D1BAE00D170D7 /* messages */ = {
@@ -1573,7 +1559,6 @@
 				A08AA3A62B19CB78008B114C /* GPBUnknownField_PackagePrivate.h in Headers */,
 				5B7C06232C3D3F3700E91783 /* JUploadPreSignCred.h in Headers */,
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
-				A09727FD2CC63A0E00E08BC4 /* JCallSignalManager.h in Headers */,
 				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
 				A0AF4A2A2C1065B000D97694 /* JLogUploader.h in Headers */,
 				A08AA25B2B14C4C0008B114C /* JuggleIMConst.h in Headers */,
@@ -1687,7 +1672,6 @@
 				A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */,
 				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
-				A09727FE2CC63A0E00E08BC4 /* JCallSignalManager.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */,
