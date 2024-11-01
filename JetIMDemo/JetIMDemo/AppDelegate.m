@@ -7,6 +7,7 @@
 
 #import "AppDelegate.h"
 #import <JuggleIM/JuggleIM.h>
+#import <ZegoExpressEngine/ZegoExpressEngine.h>
 
 #define kToken1 @"CgZhcHBrZXkaIDAr072n8uOcw5YBeKCcQ+QCw4m6YWhgt99U787/dEJS"
 #define kToken2 @"CgZhcHBrZXkaINodQgLnbhTbt0SzC8b/JFwjgUAdIfUZTEFK8DvDLgM1"
@@ -25,7 +26,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared enableCall];
     [JIM.shared setServer:@[@"https://nav.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
@@ -41,6 +41,10 @@
     [JIM.shared.chatroomManager addAttributesDelegate:self];
     
     [JIM.shared.callManager addReceiveDelegate:self];
+    
+    [JIM.shared.callManager initZegoEngineWith:1881186044 appSign:@"fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f"];
+    
+    
     
     return YES;
 }

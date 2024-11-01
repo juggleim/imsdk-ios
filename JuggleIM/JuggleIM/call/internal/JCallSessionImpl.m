@@ -14,13 +14,13 @@
 #import "JIncomingState.h"
 #import "JOutgoingState.h"
 #import "JCallSignalManager.h"
-#import "JCallMediaEngine.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
+#import "JCallMediaManager.h"
 
 @interface JCallSessionImpl ()
 @property (nonatomic, strong) JCallSignalManager *signalManager;
-@property (nonatomic, strong) JCallMediaEngine *mediaEngine;
+@property (nonatomic, strong) JCallMediaManager *mediaManager;
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JCallSuperState *superState;
 @property (nonatomic, strong) JConnectedState *connectedState;
@@ -131,7 +131,10 @@
 }
 
 - (void)mediaJoin {
-    //TODO: 
+    [JCallMediaManager.shared joinRoom:self
+                              complete:^(int errorCode, NSDictionary *data) {
+        int i = 1;
+    }];
 }
 
 #pragma mark - fsm

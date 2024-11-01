@@ -306,8 +306,7 @@
 		A09727F92CC6346B00E08BC4 /* JCallConst.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727DD2CC6346B00E08BC4 /* JCallConst.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09727FD2CC63A0E00E08BC4 /* JCallSignalManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727FB2CC63A0E00E08BC4 /* JCallSignalManager.h */; };
 		A09727FE2CC63A0E00E08BC4 /* JCallSignalManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727FC2CC63A0E00E08BC4 /* JCallSignalManager.m */; };
-		A09728022CC63AF000E08BC4 /* JCallMediaEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = A09728002CC63AF000E08BC4 /* JCallMediaEngine.h */; };
-		A09728032CC63AF000E08BC4 /* JCallMediaEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A09728012CC63AF000E08BC4 /* JCallMediaEngine.m */; };
+		A09728022CC63AF000E08BC4 /* JCallMediaEngineProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09728002CC63AF000E08BC4 /* JCallMediaEngineProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09728052CC6438700E08BC4 /* JCallProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09728042CC641B100E08BC4 /* JCallProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A097280D2CC6676E00E08BC4 /* Rtcroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A097280B2CC6676E00E08BC4 /* Rtcroom.pbobjc.h */; };
 		A097280E2CC6676E00E08BC4 /* Rtcroom.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A097280C2CC6676E00E08BC4 /* Rtcroom.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -325,6 +324,14 @@
 		A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = A0AF4A292C1065B000D97694 /* JLogUploader.m */; };
 		A0CC37332C661A9D009AF2CC /* JTimePeriod.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CC37312C661A9D009AF2CC /* JTimePeriod.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CC37342C661A9D009AF2CC /* JTimePeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CC37322C661A9D009AF2CC /* JTimePeriod.m */; };
+		A0CE99EC2CD384A8008B405C /* JCallMediaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE99EA2CD384A8008B405C /* JCallMediaManager.h */; };
+		A0CE99ED2CD384A8008B405C /* JCallMediaManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE99EB2CD384A8008B405C /* JCallMediaManager.m */; };
+		A0CE9A292CD4BDC5008B405C /* JCallMediaRoom.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9A272CD4BDC5008B405C /* JCallMediaRoom.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0CE9A2A2CD4BDC5008B405C /* JCallMediaRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A282CD4BDC5008B405C /* JCallMediaRoom.m */; };
+		A0CE9A2D2CD4BDF4008B405C /* JCallMediaUser.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9A2B2CD4BDF4008B405C /* JCallMediaUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0CE9A2E2CD4BDF4008B405C /* JCallMediaUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */; };
+		A0CE9A312CD4BE19008B405C /* JCallMediaRoomConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0CE9A322CD4BE19008B405C /* JCallMediaRoomConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */; };
 		A0CEA8F72B6292FC0016FC88 /* JVideoMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */; };
 		A0D3AD292B6973D600D170D7 /* Connect.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */; };
@@ -655,8 +662,7 @@
 		A09727DD2CC6346B00E08BC4 /* JCallConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallConst.h; sourceTree = "<group>"; };
 		A09727FB2CC63A0E00E08BC4 /* JCallSignalManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSignalManager.h; sourceTree = "<group>"; };
 		A09727FC2CC63A0E00E08BC4 /* JCallSignalManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallSignalManager.m; sourceTree = "<group>"; };
-		A09728002CC63AF000E08BC4 /* JCallMediaEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaEngine.h; sourceTree = "<group>"; };
-		A09728012CC63AF000E08BC4 /* JCallMediaEngine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaEngine.m; sourceTree = "<group>"; };
+		A09728002CC63AF000E08BC4 /* JCallMediaEngineProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaEngineProtocol.h; sourceTree = "<group>"; };
 		A09728042CC641B100E08BC4 /* JCallProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallProtocol.h; sourceTree = "<group>"; };
 		A097280B2CC6676E00E08BC4 /* Rtcroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rtcroom.pbobjc.h; sourceTree = "<group>"; };
 		A097280C2CC6676E00E08BC4 /* Rtcroom.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Rtcroom.pbobjc.m; sourceTree = "<group>"; };
@@ -674,6 +680,14 @@
 		A0AF4A292C1065B000D97694 /* JLogUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLogUploader.m; sourceTree = "<group>"; };
 		A0CC37312C661A9D009AF2CC /* JTimePeriod.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTimePeriod.h; sourceTree = "<group>"; };
 		A0CC37322C661A9D009AF2CC /* JTimePeriod.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTimePeriod.m; sourceTree = "<group>"; };
+		A0CE99EA2CD384A8008B405C /* JCallMediaManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaManager.h; sourceTree = "<group>"; };
+		A0CE99EB2CD384A8008B405C /* JCallMediaManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaManager.m; sourceTree = "<group>"; };
+		A0CE9A272CD4BDC5008B405C /* JCallMediaRoom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaRoom.h; sourceTree = "<group>"; };
+		A0CE9A282CD4BDC5008B405C /* JCallMediaRoom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaRoom.m; sourceTree = "<group>"; };
+		A0CE9A2B2CD4BDF4008B405C /* JCallMediaUser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaUser.h; sourceTree = "<group>"; };
+		A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaUser.m; sourceTree = "<group>"; };
+		A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaRoomConfig.h; sourceTree = "<group>"; };
+		A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaRoomConfig.m; sourceTree = "<group>"; };
 		A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVideoMessage.h; sourceTree = "<group>"; };
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
@@ -1333,8 +1347,15 @@
 		A09727FF2CC63A7600E08BC4 /* media */ = {
 			isa = PBXGroup;
 			children = (
-				A09728002CC63AF000E08BC4 /* JCallMediaEngine.h */,
-				A09728012CC63AF000E08BC4 /* JCallMediaEngine.m */,
+				A09728002CC63AF000E08BC4 /* JCallMediaEngineProtocol.h */,
+				A0CE99EA2CD384A8008B405C /* JCallMediaManager.h */,
+				A0CE99EB2CD384A8008B405C /* JCallMediaManager.m */,
+				A0CE9A272CD4BDC5008B405C /* JCallMediaRoom.h */,
+				A0CE9A282CD4BDC5008B405C /* JCallMediaRoom.m */,
+				A0CE9A2B2CD4BDF4008B405C /* JCallMediaUser.h */,
+				A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */,
+				A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */,
+				A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */,
 			);
 			path = media;
 			sourceTree = "<group>";
@@ -1388,6 +1409,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0CE9A292CD4BDC5008B405C /* JCallMediaRoom.h in Headers */,
+				A0CE9A312CD4BE19008B405C /* JCallMediaRoomConfig.h in Headers */,
+				A0CE9A2D2CD4BDF4008B405C /* JCallMediaUser.h in Headers */,
+				A09728022CC63AF000E08BC4 /* JCallMediaEngineProtocol.h in Headers */,
 				A03B3A062CC914CE003D150A /* JCallMember.h in Headers */,
 				A09728052CC6438700E08BC4 /* JCallProtocol.h in Headers */,
 				A09727F92CC6346B00E08BC4 /* JCallConst.h in Headers */,
@@ -1398,6 +1423,7 @@
 				A0CC37332C661A9D009AF2CC /* JTimePeriod.h in Headers */,
 				A017F9382C3BD80A00D527B0 /* JChatroomInfoOptions.h in Headers */,
 				A017F9352C3BD66000D527B0 /* JChatroomProtocol.h in Headers */,
+				A0CE99EC2CD384A8008B405C /* JCallMediaManager.h in Headers */,
 				A03B3A0D2CCA4044003D150A /* JRtcRoom.h in Headers */,
 				A017F92F2C3BD47D00D527B0 /* JChatroomInfo.h in Headers */,
 				A017F9332C3BD57600D527B0 /* JChatroomMember.h in Headers */,
@@ -1569,7 +1595,6 @@
 				A08AA2852B1756E3008B114C /* JMessageManager.h in Headers */,
 				A08AA3FF2B19EEDB008B114C /* SRRandom.h in Headers */,
 				A08AA38F2B19CB78008B114C /* GPBUtilities.h in Headers */,
-				A09728022CC63AF000E08BC4 /* JCallMediaEngine.h in Headers */,
 				A05EED632B20826B00809F13 /* JReachability.h in Headers */,
 				A0A702042C09AB700032D9F1 /* JBlockObj.h in Headers */,
 				A09716C22B9FFF1F00D1DB24 /* JUserInfoManager.h in Headers */,
@@ -1651,6 +1676,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A09727E12CC6346B00E08BC4 /* JCallSuperState.m in Sources */,
+				A0CE99ED2CD384A8008B405C /* JCallMediaManager.m in Sources */,
 				5B4CAF592C2E648A00FF9D51 /* JClearTotalUnreadMessage.m in Sources */,
 				A03B3A052CC914CE003D150A /* JCallMember.m in Sources */,
 				A09727EF2CC6346B00E08BC4 /* JStateMachine.m in Sources */,
@@ -1666,7 +1692,6 @@
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
-				A09728032CC63AF000E08BC4 /* JCallMediaEngine.m in Sources */,
 				A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */,
 				A08F4BB82C7767D500791C52 /* JQueryMessageOptions.m in Sources */,
 				5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */,
@@ -1708,6 +1733,7 @@
 				A0E3DDCD2C6B3DCD00FE9D3B /* JChatroomManager.m in Sources */,
 				A08AA3EC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m in Sources */,
 				A07F3CBA2BFC928E0087920B /* JLogCommandMessage.m in Sources */,
+				A0CE9A2A2CD4BDC5008B405C /* JCallMediaRoom.m in Sources */,
 				A08AA3652B19CB77008B114C /* GPBDescriptor.m in Sources */,
 				A0CC37342C661A9D009AF2CC /* JTimePeriod.m in Sources */,
 				A06A2F0A2B20B2B6009B9588 /* JPBData.m in Sources */,
@@ -1741,6 +1767,7 @@
 				A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */,
 				A07CE41D2B3AF131006E3F4D /* JContentTypeCenter.m in Sources */,
 				A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */,
+				A0CE9A2E2CD4BDF4008B405C /* JCallMediaUser.m in Sources */,
 				A09727E92CC6346B00E08BC4 /* JIncomingState.m in Sources */,
 				A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */,
 				A09727F12CC6346B00E08BC4 /* JCallEventUtil.m in Sources */,
@@ -1794,6 +1821,7 @@
 				A08AA4032B19EEDB008B114C /* SRHash.m in Sources */,
 				5B4DB6932BFC3BF700DD18B6 /* JDeleteMsgMessage.m in Sources */,
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
+				A0CE9A322CD4BE19008B405C /* JCallMediaRoomConfig.m in Sources */,
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,
 				A03B3A0C2CCA4044003D150A /* JRtcRoom.m in Sources */,
 				A08AA3902B19CB78008B114C /* GPBDuration.pbobjc.m in Sources */,

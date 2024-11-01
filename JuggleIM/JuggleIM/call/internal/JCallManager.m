@@ -9,6 +9,7 @@
 #import "JUtility.h"
 #import "JCallEvent.h"
 #import "JCallSessionImpl.h"
+#import "JCallMediaManager.h"
 
 @interface JCallManager () <JCallSessionLifeCycleDelegate, JWebSocketCallDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -17,12 +18,8 @@
 @end
 
 @implementation JCallManager
-- (instancetype)initWithCore:(JIMCore *)core {
-    if (self = [super init]) {
-        self.core = core;
-        [self.core.webSocket setCallDelegate:self];
-    }
-    return self;
+- (void)initZegoEngineWith:(int)appId appSign:(NSString *)appSign {
+    [JCallMediaManager.shared initZegoEngineWith:appId appSign:appSign];
 }
 
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate {
@@ -64,6 +61,14 @@
     
     [self addCallSession:callSession];
     return callSession;
+}
+
+- (instancetype)initWithCore:(JIMCore *)core {
+    if (self = [super init]) {
+        self.core = core;
+        [self.core.webSocket setCallDelegate:self];
+    }
+    return self;
 }
 
 #pragma mark - JWebSocketCallDelegate

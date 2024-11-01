@@ -17,6 +17,19 @@
 		A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A0596E0C2CD3806200914FEA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		A08AA1F62B148B9C008B114C /* JetIMDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JetIMDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F92B148B9C008B114C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -100,6 +113,7 @@
 				A08AA1F22B148B9C008B114C /* Sources */,
 				A08AA1F32B148B9C008B114C /* Frameworks */,
 				A08AA1F42B148B9C008B114C /* Resources */,
+				A0596E0C2CD3806200914FEA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -311,6 +325,8 @@
 				DEVELOPMENT_TEAM = TH4V3Y8FTM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -342,6 +358,8 @@
 				DEVELOPMENT_TEAM = TH4V3Y8FTM;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

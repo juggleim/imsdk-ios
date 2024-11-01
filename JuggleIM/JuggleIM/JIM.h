@@ -51,9 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)getDeviceId;
 
-/// 激活通话功能（默认不激活，请在 initWithAppKey: 之前调用）
-- (void)enableCall;
-
 /// 连接管理类
 @property (nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类
@@ -72,7 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *currentUserId;
 /// 通话管理类
 @property (nonatomic, strong) id<JCallProtocol> callManager;
-
 
 @end
 

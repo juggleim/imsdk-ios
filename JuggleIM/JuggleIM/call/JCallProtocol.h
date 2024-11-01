@@ -15,6 +15,13 @@
 
 @protocol JCallProtocol <NSObject>
 
+/// 提供 Zego 初始化必需的参数
+/// - Parameters:
+///   - appId: Zego AppId
+///   - appSign: Zego AppSign
+- (void)initZegoEngineWith:(int)appId
+                   appSign:(NSString *)appSign;
+
 - (id<JCallSession>)startSingleCall:(NSString *)userId
                          delegate:(id<JCallSessionDelegate>)delegate;
 

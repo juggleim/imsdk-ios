@@ -43,6 +43,7 @@ static JIM *_instance;
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager
                                                                chatroomManager:chatroomManager];
+        _instance.callManager = [[JCallManager alloc] initWithCore:core];
     });
     return _instance;
 }
@@ -84,11 +85,6 @@ static JIM *_instance;
 
 -(NSString *)getDeviceId{
     return [JUtility getDeviceId];
-}
-
-- (void)enableCall {
-    self.core.enableCall = YES;
-    self.callManager = [[JCallManager alloc] initWithCore:self.core];
 }
 
 @end
