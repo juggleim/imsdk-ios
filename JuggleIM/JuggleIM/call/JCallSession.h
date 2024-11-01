@@ -7,9 +7,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "JCallConst.h"
-#import "JuggleIMConst.h"
-#import "JCallMember.h"
+#import <JuggleIM/JCallConst.h>
+#import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JCallMember.h>
 
 @protocol JCallSessionDelegate <NSObject>
 

@@ -26,7 +26,7 @@
     
     switch (event) {
         case JCallEventJoinChannelDone:
-            //TODO: 更新 callSession 状态
+            self.callSessionImpl.connectTime = [[NSDate date] timeIntervalSince1970] * 1000;
             //TODO:
             //[self.callSessionImpl signalChangeState];
             [self.callSessionImpl transitionToConnectedState];
@@ -35,9 +35,11 @@
             
         case JCallEventJoinChannelFail:
             //TODO: 更新 callSession 状态
+            self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
+            self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
             //TODO:
             //[self.callSessionImpl signalChangeState];
-            self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
+            [self.callSessionImpl error:JCallErrorCodeJoinMediaRoomFail];
             [self.callSessionImpl transitionToIdleState];
             result = YES;
             break;

@@ -14,6 +14,7 @@
 		A08AA2062B148B9E008B114C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2052B148B9E008B114C /* Assets.xcassets */; };
 		A08AA2092B148B9E008B114C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2072B148B9E008B114C /* LaunchScreen.storyboard */; };
 		A08AA20C2B148B9E008B114C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA20B2B148B9E008B114C /* main.m */; };
+		A0CE9A342CD4C103008B405C /* JZegoCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CE9A332CD4C103008B405C /* JZegoCall.framework */; };
 		A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 		A08AA20A2B148B9E008B114C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08AA20B2B148B9E008B114C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A09727622CB6EC0400E08BC4 /* JuggleCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0CE9A332CD4C103008B405C /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0CE9A342CD4C103008B405C /* JZegoCall.framework in Frameworks */,
 				A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -97,6 +100,7 @@
 		A08AA2182B148BD9008B114C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A0CE9A332CD4C103008B405C /* JZegoCall.framework */,
 				A09727622CB6EC0400E08BC4 /* JuggleCall.framework */,
 				A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */,
 			);

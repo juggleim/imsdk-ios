@@ -133,7 +133,11 @@
 - (void)mediaJoin {
     [JCallMediaManager.shared joinRoom:self
                               complete:^(int errorCode, NSDictionary *data) {
-        int i = 1;
+        if (errorCode == 0) {
+            [self.stateMachine event:JCallEventJoinChannelDone userInfo:nil];
+        } else {
+            [self.stateMachine event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
+        }
     }];
 }
 

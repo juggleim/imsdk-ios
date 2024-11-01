@@ -60,6 +60,8 @@ typedef NS_ENUM(NSInteger, JCallErrorCode) {
     JCallErrorCodeCantAcceptWhileNotInvited = 2,
     /// 接听失败
     JCallErrorCodeAcceptFail = 3,
+    /// 加入 Media 房间失败
+    JCallErrorCodeJoinMediaRoomFail = 4
 };
 
 #endif /* JCallConst_h */
