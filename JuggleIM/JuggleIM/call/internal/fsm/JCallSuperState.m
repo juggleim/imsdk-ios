@@ -7,6 +7,7 @@
 
 #import "JCallSuperState.h"
 #import "JCallEvent.h"
+#import "JUserInfo.h"
 
 @implementation JCallSuperState
 
@@ -19,7 +20,7 @@
 }
 
 - (BOOL)event:(NSInteger)event
-     userInfo:(id)userInfo {
+     userInfo:(NSDictionary *)userInfo {
     
     switch (event) {
         case JCallEventInvite:
@@ -71,7 +72,14 @@
             break;
             
         case JCallEventReceiveHangup:
-            //TODO: 看 server 怎么发事件，是不是只要更新成员状态就行，否则应该是退出房间
+        {
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl memberHangup:userId];
+            [self.callSessionImpl mediaQuit];
+            if (!self.callSessionImpl.isMultiCall) {
+                [self.callSessionImpl transitionToIdleState];
+            }
+        }
             break;
             
         case JCallEventJoinChannelDone:

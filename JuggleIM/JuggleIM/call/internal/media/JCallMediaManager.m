@@ -49,7 +49,8 @@ static JCallMediaManager *_instance;
     
     [self.engine joinRoom:room
                      user:user
-                   config:config complete:completeBlock];
+                   config:config
+                 complete:completeBlock];
 }
 
 @end

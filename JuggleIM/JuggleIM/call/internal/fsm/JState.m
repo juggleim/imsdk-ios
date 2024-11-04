@@ -32,7 +32,7 @@
     return NO;
 }
 
-- (BOOL)event:(NSInteger)event userInfo:(nonnull id)userInfo {
+- (BOOL)event:(NSInteger)event userInfo:(NSDictionary *)userInfo {
 //    JLogI(@"CALL-Fsm", @"%@ handle event %ld", self.name, event);
     return NO;
 }

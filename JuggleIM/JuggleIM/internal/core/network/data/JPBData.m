@@ -74,6 +74,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jBatchAddAtt @"c_batch_add_att"
 #define jBatchDelAtt @"c_batch_del_att"
 #define jRtcInvite @"rtc_invite"
+#define jRtcHangUp @"rtc_hangup"
 #define jRtcQuit @"rtc_quit"
 
 #define jApns @"Apns"
@@ -81,6 +82,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jMsg @"msg"
 #define jCUserNtf @"c_user_ntf"
 #define jRtcRoomEvent @"rtc_room_event"
+#define jRtcInviteEvent @"rtc_invite_event"
 
 @implementation JConnectAck
 @end
@@ -119,6 +121,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JRtcRoomEventNtf
+@end
+
+@implementation JRtcInviteEventNtf
 @end
 
 @implementation JQryAck
@@ -1081,6 +1086,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
           targetIdList:(nonnull NSArray<NSString *> *)userIdList
+            engineType:(NSUInteger)engineType
                  index:(int)index {
     RtcInviteReq *req = [[RtcInviteReq alloc] init];
     req.targetIdsArray = [userIdList mutableCopy];
@@ -1090,6 +1096,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         req.roomType = RtcRoomType_OneOne;
     }
     req.roomId = callId;
+    if (engineType == 0) {
+        req.rtcChannel = RtcChannel_Zego;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -1104,16 +1113,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (NSData *)callHangup:(NSString *)callId
-                userId:(NSString *)userId
                  index:(int)index {
-    RtcRoomReq *req = [[RtcRoomReq alloc] init];
-    req.roomId = callId;
-    
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
-    body.topic = jRtcQuit;
+    body.topic = jRtcHangUp;
     body.targetId = callId;
-    body.data_p = [req data];
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -1344,6 +1348,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 n.member = [self callMemberWithPBRtcMember:event.member];
                 n.room = [self rtcRoomWithPBRtcRoom:event.room];
                 obj.rtcRoomEventNtf = n;
+            } else if ([body.topic isEqualToString:jRtcInviteEvent]) {
+                RtcInviteEvent *event = [[RtcInviteEvent alloc] initWithData:body.data_p error:&err];
+                if (err != nil) {
+                    JLogE(@"PB-Parse", @"publish rtc_invite_event parse error, msg is %@",err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                obj.rcvType = JPBRcvTypeRtcInviteEventNtf;
+                JRtcInviteEventNtf *n = [[JRtcInviteEventNtf alloc] init];
+                n.type = (NSUInteger)event.inviteType;
+                n.user = [self userInfoWithPBUserInfo:event.user];
+                n.room = [self rtcRoomWithPBRtcRoom:event.room];
+                NSMutableArray *targetUserList = [NSMutableArray array];
+                for (UserInfo *pbUserInfo in event.targetUsersArray) {
+                    JUserInfo *u = [self userInfoWithPBUserInfo:pbUserInfo];
+                    [targetUserList addObject:u];
+                }
+                n.targetUsers = [targetUserList copy];
+                obj.rtcInviteEventNtf = n;
             }
         }
             break;

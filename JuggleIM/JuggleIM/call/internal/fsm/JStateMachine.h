@@ -14,7 +14,7 @@
 - (void)setInitialState:(JState *)state;
 - (void)start;
 - (void)event:(NSInteger)event
-     userInfo:(id)userInfo;
+     userInfo:(NSDictionary *)userInfo;
 - (void)transitionTo:(JState *)state;
 
 @end

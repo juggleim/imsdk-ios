@@ -14,7 +14,7 @@
 - (BOOL)stateDidEnter;
 - (BOOL)stateDidLeave;
 - (BOOL)event:(NSInteger)event
-     userInfo:(id)userInfo;
+     userInfo:(NSDictionary *)userInfo;
 
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) JState *superState;

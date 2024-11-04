@@ -56,10 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol JWebSocketCallDelegate <NSObject>
-//- (void)
-
-- (void)callDidInvite:(JUserInfo *)inviter
-                 room:(JRtcRoom *)room;
+- (void)callDidInvite:(JRtcRoom *)room
+              inviter:(JUserInfo *)inviter
+          targetUsers:(NSArray <JUserInfo *> *)targetUsers;
+- (void)callDidHangup:(JRtcRoom *)room
+                 user:(JUserInfo *)user;
 @end
 
 @interface JWebSocket : NSObject
@@ -265,11 +266,11 @@ inConversation:(JConversation *)conversation
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
       targetIdList:(NSArray <NSString *>*)userIdList
+        engineType:(NSUInteger)engineType
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callHangup:(NSString *)callId
-            userId:(NSString *)userId
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 

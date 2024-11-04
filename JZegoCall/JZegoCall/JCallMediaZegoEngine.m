@@ -24,7 +24,11 @@
     [[ZegoExpressEngine sharedEngine] loginRoom:room.roomId
                                            user:zegoUser
                                          config:zegoConfig
-                                       callback:completeBlock];
+                                       callback:^(int errorCode, NSDictionary * _Nonnull extendedData) {
+        if (errorCode == 0) {
+            [[ZegoExpressEngine sharedEngine] startPublishingStream:<#(nonnull NSString *)#>]
+        }
+    }];
 }
 
 #pragma mark - ZegoEventHandler

@@ -26,6 +26,12 @@ static CallCenter *_instance;
     return _instance;
 }
 
+- (void)initZegoEngineWith:(int)appId
+                   appSign:(NSString *)appSign {
+    [JIM.shared.callManager initZegoEngineWith:appId
+                                       appSign:appSign];
+}
+
 - (void)startSingleCall:(id<JCallSession>)callSession {
     SingleCallViewController *vc = [[SingleCallViewController alloc] initWithOutgoingCall:callSession];
     [self presentCallViewController:vc];

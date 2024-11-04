@@ -30,11 +30,33 @@
 
 CF_EXTERN_C_BEGIN
 
+@class MemberState;
 @class RtcMember;
 @class RtcMemberRoom;
 @class RtcRoom;
+@class ZegoAuth;
 
 NS_ASSUME_NONNULL_BEGIN
+
+#pragma mark - Enum RtcChannel
+
+typedef GPB_ENUM(RtcChannel) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RtcChannel_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  RtcChannel_Zego = 0,
+};
+
+GPBEnumDescriptor *RtcChannel_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RtcChannel_IsValidValue(int32_t value);
 
 #pragma mark - Enum RtcRoomType
 
@@ -105,6 +127,28 @@ GPBEnumDescriptor *RtcRoomEventType_EnumDescriptor(void);
  **/
 BOOL RtcRoomEventType_IsValidValue(int32_t value);
 
+#pragma mark - Enum RtcRoomQuitReason
+
+typedef GPB_ENUM(RtcRoomQuitReason) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RtcRoomQuitReason_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  RtcRoomQuitReason_Active = 0,
+  RtcRoomQuitReason_CallTimeout = 1,
+  RtcRoomQuitReason_PingTimeout = 2,
+};
+
+GPBEnumDescriptor *RtcRoomQuitReason_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RtcRoomQuitReason_IsValidValue(int32_t value);
+
 #pragma mark - Enum InviteType
 
 typedef GPB_ENUM(InviteType) {
@@ -114,12 +158,9 @@ typedef GPB_ENUM(InviteType) {
    * of the field.
    **/
   InviteType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  InviteType_DefaultInviteType = 0,
-  InviteType_RtcInvite = 1,
-  InviteType_RtcAccept = 2,
-  InviteType_RtcDecline = 3,
-  InviteType_RtcCancel = 4,
-  InviteType_RtcTimeout = 5,
+  InviteType_RtcInvite = 0,
+  InviteType_RtcAccept = 1,
+  InviteType_RtcHangup = 2,
 };
 
 GPBEnumDescriptor *InviteType_EnumDescriptor(void);
@@ -151,6 +192,7 @@ typedef GPB_ENUM(RtcRoomReq_FieldNumber) {
   RtcRoomReq_FieldNumber_RoomType = 1,
   RtcRoomReq_FieldNumber_RoomId = 2,
   RtcRoomReq_FieldNumber_JoinMember = 3,
+  RtcRoomReq_FieldNumber_RtcChannel = 4,
 };
 
 GPB_FINAL @interface RtcRoomReq : GPBMessage
@@ -162,6 +204,8 @@ GPB_FINAL @interface RtcRoomReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) RtcMember *joinMember;
 /** Test to see if @c joinMember has been set. */
 @property(nonatomic, readwrite) BOOL hasJoinMember;
+
+@property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @end
 
@@ -176,6 +220,18 @@ int32_t RtcRoomReq_RoomType_RawValue(RtcRoomReq *message);
  * was generated.
  **/
 void SetRtcRoomReq_RoomType_RawValue(RtcRoomReq *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcRoomReq's @c rtcChannel property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message);
+/**
+ * Sets the raw value of an @c RtcRoomReq's @c rtcChannel property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message, int32_t value);
 
 #pragma mark - RtcRoom
 
@@ -257,12 +313,78 @@ int32_t RtcMember_RtcState_RawValue(RtcMember *message);
  **/
 void SetRtcMember_RtcState_RawValue(RtcMember *message, int32_t value);
 
+#pragma mark - MemberState
+
+typedef GPB_ENUM(MemberState_FieldNumber) {
+  MemberState_FieldNumber_RoomId = 1,
+  MemberState_FieldNumber_RoomType = 2,
+  MemberState_FieldNumber_MemberId = 3,
+  MemberState_FieldNumber_DeviceId = 4,
+  MemberState_FieldNumber_RtcState = 5,
+};
+
+GPB_FINAL @interface MemberState : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@property(nonatomic, readwrite) RtcRoomType roomType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *memberId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite) RtcState rtcState;
+
+@end
+
+/**
+ * Fetches the raw value of a @c MemberState's @c roomType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t MemberState_RoomType_RawValue(MemberState *message);
+/**
+ * Sets the raw value of an @c MemberState's @c roomType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetMemberState_RoomType_RawValue(MemberState *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c MemberState's @c rtcState property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t MemberState_RtcState_RawValue(MemberState *message);
+/**
+ * Sets the raw value of an @c MemberState's @c rtcState property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetMemberState_RtcState_RawValue(MemberState *message, int32_t value);
+
+#pragma mark - SyncMemberStateReq
+
+typedef GPB_ENUM(SyncMemberStateReq_FieldNumber) {
+  SyncMemberStateReq_FieldNumber_IsDelete = 1,
+  SyncMemberStateReq_FieldNumber_Member = 2,
+};
+
+GPB_FINAL @interface SyncMemberStateReq : GPBMessage
+
+@property(nonatomic, readwrite) BOOL isDelete;
+
+@property(nonatomic, readwrite, strong, null_resettable) MemberState *member;
+/** Test to see if @c member has been set. */
+@property(nonatomic, readwrite) BOOL hasMember;
+
+@end
+
 #pragma mark - RtcRoomEvent
 
 typedef GPB_ENUM(RtcRoomEvent_FieldNumber) {
   RtcRoomEvent_FieldNumber_RoomEventType = 1,
   RtcRoomEvent_FieldNumber_Member = 2,
   RtcRoomEvent_FieldNumber_Room = 3,
+  RtcRoomEvent_FieldNumber_Reason = 4,
 };
 
 GPB_FINAL @interface RtcRoomEvent : GPBMessage
@@ -276,6 +398,8 @@ GPB_FINAL @interface RtcRoomEvent : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) RtcRoom *room;
 /** Test to see if @c room has been set. */
 @property(nonatomic, readwrite) BOOL hasRoom;
+
+@property(nonatomic, readwrite) RtcRoomQuitReason reason;
 
 @end
 
@@ -291,12 +415,25 @@ int32_t RtcRoomEvent_RoomEventType_RawValue(RtcRoomEvent *message);
  **/
 void SetRtcRoomEvent_RoomEventType_RawValue(RtcRoomEvent *message, int32_t value);
 
+/**
+ * Fetches the raw value of a @c RtcRoomEvent's @c reason property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcRoomEvent_Reason_RawValue(RtcRoomEvent *message);
+/**
+ * Sets the raw value of an @c RtcRoomEvent's @c reason property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcRoomEvent_Reason_RawValue(RtcRoomEvent *message, int32_t value);
+
 #pragma mark - RtcInviteReq
 
 typedef GPB_ENUM(RtcInviteReq_FieldNumber) {
   RtcInviteReq_FieldNumber_TargetIdsArray = 1,
   RtcInviteReq_FieldNumber_RoomType = 2,
   RtcInviteReq_FieldNumber_RoomId = 3,
+  RtcInviteReq_FieldNumber_RtcChannel = 4,
 };
 
 GPB_FINAL @interface RtcInviteReq : GPBMessage
@@ -308,6 +445,8 @@ GPB_FINAL @interface RtcInviteReq : GPBMessage
 @property(nonatomic, readwrite) RtcRoomType roomType;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @end
 
@@ -323,54 +462,17 @@ int32_t RtcInviteReq_RoomType_RawValue(RtcInviteReq *message);
  **/
 void SetRtcInviteReq_RoomType_RawValue(RtcInviteReq *message, int32_t value);
 
-#pragma mark - RtcAnswerReq
-
-typedef GPB_ENUM(RtcAnswerReq_FieldNumber) {
-  RtcAnswerReq_FieldNumber_TargetId = 1,
-  RtcAnswerReq_FieldNumber_RoomId = 2,
-};
-
-GPB_FINAL @interface RtcAnswerReq : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
-
-@end
-
-#pragma mark - RtcInviteEvent
-
-typedef GPB_ENUM(RtcInviteEvent_FieldNumber) {
-  RtcInviteEvent_FieldNumber_InviteType = 1,
-  RtcInviteEvent_FieldNumber_TargetUser = 2,
-  RtcInviteEvent_FieldNumber_Room = 3,
-};
-
-GPB_FINAL @interface RtcInviteEvent : GPBMessage
-
-@property(nonatomic, readwrite) InviteType inviteType;
-
-@property(nonatomic, readwrite, strong, null_resettable) UserInfo *targetUser;
-/** Test to see if @c targetUser has been set. */
-@property(nonatomic, readwrite) BOOL hasTargetUser;
-
-@property(nonatomic, readwrite, strong, null_resettable) RtcRoom *room;
-/** Test to see if @c room has been set. */
-@property(nonatomic, readwrite) BOOL hasRoom;
-
-@end
-
 /**
- * Fetches the raw value of a @c RtcInviteEvent's @c inviteType property, even
+ * Fetches the raw value of a @c RtcInviteReq's @c rtcChannel property, even
  * if the value was not defined by the enum at the time the code was generated.
  **/
-int32_t RtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message);
+int32_t RtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message);
 /**
- * Sets the raw value of an @c RtcInviteEvent's @c inviteType property, allowing
+ * Sets the raw value of an @c RtcInviteReq's @c rtcChannel property, allowing
  * it to be set to a value that was not defined by the enum at the time the code
  * was generated.
  **/
-void SetRtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message, int32_t value);
+void SetRtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message, int32_t value);
 
 #pragma mark - RtcMemberRooms
 
@@ -393,6 +495,7 @@ typedef GPB_ENUM(RtcMemberRoom_FieldNumber) {
   RtcMemberRoom_FieldNumber_RoomId = 2,
   RtcMemberRoom_FieldNumber_Owner = 3,
   RtcMemberRoom_FieldNumber_RtcState = 4,
+  RtcMemberRoom_FieldNumber_RtcChannel = 5,
 };
 
 GPB_FINAL @interface RtcMemberRoom : GPBMessage
@@ -406,6 +509,8 @@ GPB_FINAL @interface RtcMemberRoom : GPBMessage
 @property(nonatomic, readwrite) BOOL hasOwner;
 
 @property(nonatomic, readwrite) RtcState rtcState;
+
+@property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @end
 
@@ -432,6 +537,95 @@ int32_t RtcMemberRoom_RtcState_RawValue(RtcMemberRoom *message);
  * was generated.
  **/
 void SetRtcMemberRoom_RtcState_RawValue(RtcMemberRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcMemberRoom's @c rtcChannel property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message);
+/**
+ * Sets the raw value of an @c RtcMemberRoom's @c rtcChannel property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message, int32_t value);
+
+#pragma mark - RtcAuth
+
+typedef GPB_ENUM(RtcAuth_FieldNumber) {
+  RtcAuth_FieldNumber_ZegoAuth = 1,
+};
+
+GPB_FINAL @interface RtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) ZegoAuth *zegoAuth;
+/** Test to see if @c zegoAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasZegoAuth;
+
+@end
+
+#pragma mark - ZegoAuth
+
+typedef GPB_ENUM(ZegoAuth_FieldNumber) {
+  ZegoAuth_FieldNumber_Token = 1,
+};
+
+GPB_FINAL @interface ZegoAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@end
+
+#pragma mark - RtcInviteEvent
+
+typedef GPB_ENUM(RtcInviteEvent_FieldNumber) {
+  RtcInviteEvent_FieldNumber_InviteType = 1,
+  RtcInviteEvent_FieldNumber_User = 2,
+  RtcInviteEvent_FieldNumber_Room = 3,
+  RtcInviteEvent_FieldNumber_TargetUsersArray = 4,
+};
+
+GPB_FINAL @interface RtcInviteEvent : GPBMessage
+
+@property(nonatomic, readwrite) InviteType inviteType;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *user;
+/** Test to see if @c user has been set. */
+@property(nonatomic, readwrite) BOOL hasUser;
+
+@property(nonatomic, readwrite, strong, null_resettable) RtcRoom *room;
+/** Test to see if @c room has been set. */
+@property(nonatomic, readwrite) BOOL hasRoom;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<UserInfo*> *targetUsersArray;
+/** The number of items in @c targetUsersArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger targetUsersArray_Count;
+
+@end
+
+/**
+ * Fetches the raw value of a @c RtcInviteEvent's @c inviteType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message);
+/**
+ * Sets the raw value of an @c RtcInviteEvent's @c inviteType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message, int32_t value);
+
+#pragma mark - RtcAnswer
+
+typedef GPB_ENUM(RtcAnswer_FieldNumber) {
+  RtcAnswer_FieldNumber_RoomId = 1,
+};
+
+GPB_FINAL @interface RtcAnswer : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@end
 
 NS_ASSUME_NONNULL_END
 

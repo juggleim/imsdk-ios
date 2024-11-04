@@ -27,6 +27,7 @@
 @property (nonatomic, strong) JIncomingState *incomingState;
 @property (nonatomic, strong) JOutgoingState *outgoingState;
 @property (nonatomic, strong) NSHashTable <id<JCallSessionDelegate>> *delegates;
+@property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
 @end
 
 @implementation JCallSessionImpl
@@ -91,6 +92,31 @@
     [self.sessionLifeCycleDelegate callDidReceive:self];
 }
 
+- (void)memberHangup:(NSString *)userId {
+    [self removeMember:userId];
+    if (!self.isMultiCall) {
+        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        if (self.callStatus == JCallStatusOutgoing) {
+            self.finishReason = JCallFinishReasonOtherSideDecline;
+        } else {
+            self.finishReason = JCallFinishReasonOtherSideHangup;
+        }
+    }
+}
+
+- (void)addMember:(JCallMember *)member {
+    [self.members addObject:member];
+}
+
+- (void)removeMember:(NSString *)userId {
+    for (JCallMember *member in self.members) {
+        if ([member.userInfo.userId isEqualToString:userId]) {
+            [self.members removeObject:member];
+            return;
+        }
+    }
+}
+
 #pragma mark - signal
 - (void)signalSingleInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
@@ -100,6 +126,7 @@
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:NO
                        targetIdList:targetIds
+                         engineType:(NSUInteger)self.engineType
                             success:^{
         JLogI(@"Call-Signal", @"send invite success");
     } error:^(JErrorCodeInternal code) {
@@ -110,7 +137,6 @@
 
 - (void)signalHangup {
     [self.core.webSocket callHangup:self.callId
-                             userId:self.core.userId
                             success:^{
         JLogI(@"Call-Signal", @"send hangup success");
     } error:^(JErrorCodeInternal code) {

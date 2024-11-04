@@ -49,7 +49,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRemoveChatroomAttrAck,
     JPBRcvTypeChatroomDestroyNtf,
     JPBRcvTypeChatroomEventNtf,
-    JPBRcvTypeRtcRoomEventNtf
+    JPBRcvTypeRtcRoomEventNtf,
+    JPBRcvTypeRtcInviteEventNtf
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -57,6 +58,12 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
     JPBChrmEventTypeQuit = 1,
     JPBChrmEventTypeKick = 2,
     JPBChrmEventTypeFallout = 3
+};
+
+typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
+    JPBRtcInviteTypeInvite = 0,
+    JPBRtcInviteTypeAccept = 1,
+    JPBRtcInviteTypeHangup = 2
 };
 
 typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
@@ -127,6 +134,13 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, assign) JPBChrmEventType type;
 @end
 
+@interface JRtcInviteEventNtf : NSObject
+@property (nonatomic, assign) JPBRtcInviteType type;
+@property (nonatomic, strong) JUserInfo *user;
+@property (nonatomic, strong) JRtcRoom *room;
+@property (nonatomic, strong) NSArray <JUserInfo *> *targetUsers;
+@end
+
 @interface JRtcRoomEventNtf : NSObject
 @property (nonatomic, assign) JPBRtcRoomEventType eventType;
 @property (nonatomic, strong) JCallMember *member;
@@ -172,6 +186,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
 @property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
 @property (nonatomic, strong) JRtcRoomEventNtf *rtcRoomEventNtf;
+@property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
 @end
 
 @interface JPBData : NSObject
@@ -353,10 +368,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
           targetIdList:(NSArray <NSString *>*)userIdList
+            engineType:(NSUInteger)engineType
                  index:(int)index;
 
 - (NSData *)callHangup:(NSString *)callId
-                userId:(NSString *)userId
                  index:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;

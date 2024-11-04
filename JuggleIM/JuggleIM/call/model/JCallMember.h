@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JCallConst.h"
-#import "JUserInfo.h"
+#import <JuggleIM/JCallConst.h>
+#import <JuggleIM/JUserInfo.h>
 
 @interface JCallMember : NSObject
 @property (nonatomic, strong) JUserInfo *userInfo;

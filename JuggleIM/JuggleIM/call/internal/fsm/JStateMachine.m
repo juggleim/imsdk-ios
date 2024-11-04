@@ -25,7 +25,7 @@
     return self;
 }
 
-- (void)event:(NSInteger)event userInfo:(id)userInfo {
+- (void)event:(NSInteger)event userInfo:(NSDictionary *)userInfo {
     dispatch_async(self.fsmQueue, ^{
         JLogI(@"CALL-Fsm", @"state %@, event %@", self.currentState.name, [JCallEventUtil nameOfEvent:event]);
         JState *state = self.currentState;

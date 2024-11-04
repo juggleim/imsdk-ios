@@ -12,6 +12,9 @@
 
 + (instancetype)shared;
 
+- (void)initZegoEngineWith:(int)appId
+                   appSign:(NSString *)appSign;
+
 - (void)startSingleCall:(id<JCallSession>)callSession;
 
 - (void)dismissCallViewController:(UIViewController *)vc;

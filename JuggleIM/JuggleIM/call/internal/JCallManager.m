@@ -10,16 +10,19 @@
 #import "JCallEvent.h"
 #import "JCallSessionImpl.h"
 #import "JCallMediaManager.h"
+#import "JCallInternalConst.h"
 
 @interface JCallManager () <JCallSessionLifeCycleDelegate, JWebSocketCallDelegate>
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSMutableArray <JCallSessionImpl *> *callSessionList;
 @property (nonatomic, strong) NSHashTable <id<JCallReceiveDelegate>> *callReceiveDelegates;
+@property (nonatomic, assign) JCallEngineType engineType;
 @end
 
 @implementation JCallManager
 - (void)initZegoEngineWith:(int)appId appSign:(NSString *)appSign {
     [JCallMediaManager.shared initZegoEngineWith:appId appSign:appSign];
+    self.engineType = JCallEngineTypeZego;
 }
 
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate {
@@ -48,14 +51,12 @@
     JCallSessionImpl *callSession = [self createCallSessionImpl:callId
                                                     isMultiCall:NO];
     callSession.owner = JIM.shared.currentUserId;
-    NSMutableArray *participants = [NSMutableArray array];
     JCallMember *member = [[JCallMember alloc] init];
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = userId;
     member.userInfo = userInfo;
     member.callStatus = JCallStatusIncoming;
-    [participants addObject:member];
-    callSession.members = participants;
+    [callSession addMember:member];
     [callSession addDelegate:delegate];
     [callSession event:JCallEventInvite userInfo:nil];
     
@@ -72,21 +73,52 @@
 }
 
 #pragma mark - JWebSocketCallDelegate
-- (void)callDidInvite:(JUserInfo *)inviter room:(JRtcRoom *)room {
-    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
-    if (!callSession) {
-        callSession = [self createCallSessionImpl:room.roomId
-                                      isMultiCall:room.isMultiCall];
-        callSession.owner = room.owner.userId;
-        callSession.inviter = inviter.userId;
-        [self addCallSession:callSession];
-    }
+- (void)callDidInvite:(JRtcRoom *)room
+              inviter:(JUserInfo *)inviter
+          targetUsers:(NSArray<JUserInfo *> *)targetUsers {
+    //TODO: 多人通话的 callSession 更新
     
-    [callSession event:JCallEventReceiveInvite userInfo:nil];
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [userDic setObject:inviter forKey:inviter.userId];
     [userDic setObject:room.owner forKey:room.owner.userId];
+    BOOL isInvite = NO;
+    for (JUserInfo *userInfo in targetUsers) {
+        [userDic setObject:userInfo forKey:userInfo.userId];
+        if ([userInfo.userId isEqualToString:self.core.userId]) {
+            isInvite = YES;
+        }
+    }
     [self.core.dbManager insertUserInfos:userDic.allValues];
+    if (isInvite) {
+        JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+        if (!callSession) {
+            callSession = [self createCallSessionImpl:room.roomId
+                                          isMultiCall:room.isMultiCall];
+            callSession.owner = room.owner.userId;
+            callSession.inviter = inviter.userId;
+            JCallMember *member = [[JCallMember alloc] init];
+            member.userInfo = inviter;
+            member.callStatus = JCallStatusOutgoing;
+            [callSession addMember:member];
+            [self addCallSession:callSession];
+        }
+        
+        [callSession event:JCallEventReceiveInvite userInfo:nil];
+    }
+}
+
+- (void)callDidHangup:(JRtcRoom *)room
+                 user:(JUserInfo *)user {
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+    [userDic setObject:user forKey:user.userId];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
+    
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (!callSession) {
+        return;
+    }
+    NSDictionary *userInfo = @{@"userId" : user.userId};
+    [callSession event:JCallEventReceiveHangup userInfo:userInfo];
 }
 
 #pragma mark - JCallSessionLifeCycleDelegate
@@ -114,6 +146,7 @@
     JCallSessionImpl *callSession = [[JCallSessionImpl alloc] init];
     callSession.callId = callId;
     callSession.isMultiCall = isMultiCall;
+    callSession.engineType = self.engineType;
     callSession.cameraEnable = NO;
     callSession.microphoneEnable = YES;
     callSession.startTime = [[NSDate date] timeIntervalSince1970] * 1000;

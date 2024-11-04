@@ -790,6 +790,7 @@ inConversation:(JConversation *)conversation
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
       targetIdList:(NSArray<NSString *> *)userIdList
+        engineType:(NSUInteger)engineType
            success:(nonnull void (^)(void))successBlock
              error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -798,6 +799,7 @@ inConversation:(JConversation *)conversation
         NSData *d = [self.pbData callInvite:callId
                                 isMultiCall:isMultiCall
                                targetIdList:userIdList
+                                 engineType:engineType
                                       index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
@@ -807,14 +809,12 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)callHangup:(NSString *)callId
-            userId:(NSString *)userId
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"call hangup, callId is %@", callId);
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callHangup:callId
-                                     userId:userId
                                       index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
@@ -1003,6 +1003,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeRtcRoomEventNtf:
             JLogI(@"WS-Receive", @"JPBRcvTypeRtcRoomEventNtf");
             [self handleRtcRoomEventNtf:obj.rtcRoomEventNtf];
+            break;
+        case JPBRcvTypeRtcInviteEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
+            [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1308,11 +1312,15 @@ inConversation:(JConversation *)conversation
 
 - (void)handleRtcRoomEventNtf:(JRtcRoomEventNtf *)ntf {
     switch (ntf.eventType) {
-        case JPBRtcRoomEventTypeJoin:
-            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
-                [self.callDelegate callDidInvite:ntf.member.userInfo
-                                            room:ntf.room];
-            }
+//        case JPBRtcRoomEventTypeJoin:
+//            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
+//                [self.callDelegate callDidInvite:ntf.member.userInfo
+//                                            room:ntf.room];
+//            }
+//            break;
+            
+        case JPBRtcRoomEventTypeDestroy:
+            
             break;
             
         //TODO:
@@ -1321,6 +1329,28 @@ inConversation:(JConversation *)conversation
             break;
     }
     
+}
+
+- (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {
+    switch (ntf.type) {
+        case JPBRtcInviteTypeInvite:
+            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:inviter:targetUsers:)]) {
+                [self.callDelegate callDidInvite:ntf.room
+                                         inviter:ntf.user
+                                     targetUsers:ntf.targetUsers];
+            }
+            break;
+            
+        case JPBRtcInviteTypeHangup:
+            if ([self.callDelegate respondsToSelector:@selector(callDidHangup:user:)]) {
+                [self.callDelegate callDidHangup:ntf.room
+                                            user:ntf.user];
+            }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 - (void)simpleSendData:(NSData *)data

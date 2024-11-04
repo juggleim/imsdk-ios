@@ -684,6 +684,7 @@
 		A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaUser.m; sourceTree = "<group>"; };
 		A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaRoomConfig.h; sourceTree = "<group>"; };
 		A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallMediaRoomConfig.m; sourceTree = "<group>"; };
+		A0CE9A412CD8C89B008B405C /* JCallInternalConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallInternalConst.h; sourceTree = "<group>"; };
 		A0CEA8F52B6292FC0016FC88 /* JVideoMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVideoMessage.h; sourceTree = "<group>"; };
 		A0CEA8F62B6292FC0016FC88 /* JVideoMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVideoMessage.m; sourceTree = "<group>"; };
 		A0D3AD272B6973D600D170D7 /* Connect.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Connect.pbobjc.h; sourceTree = "<group>"; };
@@ -1306,6 +1307,7 @@
 				A03B39FB2CC8EC86003D150A /* JCallSessionImpl.h */,
 				A03B39FC2CC8EC86003D150A /* JCallSessionImpl.m */,
 				A03B3A072CC93BDA003D150A /* JCallSessionLifeCycleDelegate.h */,
+				A0CE9A412CD8C89B008B405C /* JCallInternalConst.h */,
 			);
 			path = internal;
 			sourceTree = "<group>";

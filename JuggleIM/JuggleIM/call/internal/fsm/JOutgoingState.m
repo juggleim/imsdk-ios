@@ -23,7 +23,7 @@
 }
 
 - (BOOL)event:(NSInteger)event
-     userInfo:(id)userInfo {
+     userInfo:(NSDictionary *)userInfo {
     BOOL result = NO;
     
     switch (event) {

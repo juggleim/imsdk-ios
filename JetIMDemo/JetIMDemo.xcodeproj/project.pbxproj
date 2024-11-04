@@ -326,7 +326,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
@@ -359,7 +359,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";

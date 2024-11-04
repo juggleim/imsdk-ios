@@ -35,7 +35,9 @@
 // Forward declarations of Objective-C classes that we can use as
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
-GPBObjCClassDeclaration(RtcAnswerReq);
+GPBObjCClassDeclaration(MemberState);
+GPBObjCClassDeclaration(RtcAnswer);
+GPBObjCClassDeclaration(RtcAuth);
 GPBObjCClassDeclaration(RtcInviteEvent);
 GPBObjCClassDeclaration(RtcInviteReq);
 GPBObjCClassDeclaration(RtcMember);
@@ -44,7 +46,9 @@ GPBObjCClassDeclaration(RtcMemberRooms);
 GPBObjCClassDeclaration(RtcRoom);
 GPBObjCClassDeclaration(RtcRoomEvent);
 GPBObjCClassDeclaration(RtcRoomReq);
+GPBObjCClassDeclaration(SyncMemberStateReq);
 GPBObjCClassDeclaration(UserInfo);
+GPBObjCClassDeclaration(ZegoAuth);
 
 #pragma mark - RtcroomRoot
 
@@ -60,6 +64,43 @@ static GPBFileDescription RtcroomRoot_FileDescription = {
   .prefix = NULL,
   .syntax = GPBFileSyntaxProto3
 };
+
+#pragma mark - Enum RtcChannel
+
+GPBEnumDescriptor *RtcChannel_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static const char *valueNames =
+        "Zego\000";
+    static const int32_t values[] = {
+        RtcChannel_Zego,
+    };
+    static const char *extraTextFormatInfo = "\001\000\004\000";
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RtcChannel)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RtcChannel_IsValidValue
+                                            flags:GPBEnumDescriptorInitializationFlag_None
+                              extraTextFormatInfo:extraTextFormatInfo];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RtcChannel_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RtcChannel_Zego:
+      return YES;
+    default:
+      return NO;
+  }
+}
 
 #pragma mark - Enum RtcRoomType
 
@@ -192,6 +233,47 @@ BOOL RtcRoomEventType_IsValidValue(int32_t value__) {
   }
 }
 
+#pragma mark - Enum RtcRoomQuitReason
+
+GPBEnumDescriptor *RtcRoomQuitReason_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static const char *valueNames =
+        "Active\000CallTimeout\000PingTimeout\000";
+    static const int32_t values[] = {
+        RtcRoomQuitReason_Active,
+        RtcRoomQuitReason_CallTimeout,
+        RtcRoomQuitReason_PingTimeout,
+    };
+    static const char *extraTextFormatInfo = "\003\000\006\000\001\013\000\002\013\000";
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RtcRoomQuitReason)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RtcRoomQuitReason_IsValidValue
+                                            flags:GPBEnumDescriptorInitializationFlag_None
+                              extraTextFormatInfo:extraTextFormatInfo];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RtcRoomQuitReason_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RtcRoomQuitReason_Active:
+    case RtcRoomQuitReason_CallTimeout:
+    case RtcRoomQuitReason_PingTimeout:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
 #pragma mark - Enum InviteType
 
 GPBEnumDescriptor *InviteType_EnumDescriptor(void) {
@@ -199,17 +281,13 @@ GPBEnumDescriptor *InviteType_EnumDescriptor(void) {
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
-        "DefaultInviteType\000RtcInvite\000RtcAccept\000Rt"
-        "cDecline\000RtcCancel\000RtcTimeout\000";
+        "RtcInvite\000RtcAccept\000RtcHangup\000";
     static const int32_t values[] = {
-        InviteType_DefaultInviteType,
         InviteType_RtcInvite,
         InviteType_RtcAccept,
-        InviteType_RtcDecline,
-        InviteType_RtcCancel,
-        InviteType_RtcTimeout,
+        InviteType_RtcHangup,
     };
-    static const char *extraTextFormatInfo = "\006\000\021\000\001\t\000\002\t\000\003\n\000\004\t\000\005\n\000";
+    static const char *extraTextFormatInfo = "\003\000\t\000\001\t\000\002\t\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(InviteType)
                                        valueNames:valueNames
@@ -228,12 +306,9 @@ GPBEnumDescriptor *InviteType_EnumDescriptor(void) {
 
 BOOL InviteType_IsValidValue(int32_t value__) {
   switch (value__) {
-    case InviteType_DefaultInviteType:
     case InviteType_RtcInvite:
     case InviteType_RtcAccept:
-    case InviteType_RtcDecline:
-    case InviteType_RtcCancel:
-    case InviteType_RtcTimeout:
+    case InviteType_RtcHangup:
       return YES;
     default:
       return NO;
@@ -247,10 +322,12 @@ BOOL InviteType_IsValidValue(int32_t value__) {
 @dynamic roomType;
 @dynamic roomId;
 @dynamic hasJoinMember, joinMember;
+@dynamic rtcChannel;
 
 typedef struct RtcRoomReq__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
+  RtcChannel rtcChannel;
   NSString *roomId;
   RtcMember *joinMember;
 } RtcRoomReq__storage_;
@@ -289,6 +366,15 @@ typedef struct RtcRoomReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "rtcChannel",
+        .dataTypeSpecific.enumDescFunc = RtcChannel_EnumDescriptor,
+        .number = RtcRoomReq_FieldNumber_RtcChannel,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RtcRoomReq__storage_, rtcChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcRoomReq)
@@ -300,7 +386,7 @@ typedef struct RtcRoomReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\006\000\003\n\000";
+        "\004\001\010\000\002\006\000\003\n\000\004\n\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -322,6 +408,18 @@ int32_t RtcRoomReq_RoomType_RawValue(RtcRoomReq *message) {
 void SetRtcRoomReq_RoomType_RawValue(RtcRoomReq *message, int32_t value) {
   GPBDescriptor *descriptor = [RtcRoomReq descriptor];
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomReq_FieldNumber_RoomType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t RtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message) {
+  GPBDescriptor *descriptor = [RtcRoomReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomReq_FieldNumber_RtcChannel];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcRoomReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomReq_FieldNumber_RtcChannel];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -539,6 +637,186 @@ void SetRtcMember_RtcState_RawValue(RtcMember *message, int32_t value) {
   GPBSetMessageRawEnumField(message, field, value);
 }
 
+#pragma mark - MemberState
+
+@implementation MemberState
+
+@dynamic roomId;
+@dynamic roomType;
+@dynamic memberId;
+@dynamic deviceId;
+@dynamic rtcState;
+
+typedef struct MemberState__storage_ {
+  uint32_t _has_storage_[1];
+  RtcRoomType roomType;
+  RtcState rtcState;
+  NSString *roomId;
+  NSString *memberId;
+  NSString *deviceId;
+} MemberState__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "roomId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MemberState_FieldNumber_RoomId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(MemberState__storage_, roomId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "roomType",
+        .dataTypeSpecific.enumDescFunc = RtcRoomType_EnumDescriptor,
+        .number = MemberState_FieldNumber_RoomType,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(MemberState__storage_, roomType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "memberId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MemberState_FieldNumber_MemberId,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(MemberState__storage_, memberId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "deviceId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = MemberState_FieldNumber_DeviceId,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(MemberState__storage_, deviceId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "rtcState",
+        .dataTypeSpecific.enumDescFunc = RtcState_EnumDescriptor,
+        .number = MemberState_FieldNumber_RtcState,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(MemberState__storage_, rtcState),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MemberState)
+                                   messageName:@"MemberState"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(MemberState__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\005\001\006\000\002\010\000\003\010\000\004\010\000\005\010\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t MemberState_RoomType_RawValue(MemberState *message) {
+  GPBDescriptor *descriptor = [MemberState descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MemberState_FieldNumber_RoomType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetMemberState_RoomType_RawValue(MemberState *message, int32_t value) {
+  GPBDescriptor *descriptor = [MemberState descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MemberState_FieldNumber_RoomType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t MemberState_RtcState_RawValue(MemberState *message) {
+  GPBDescriptor *descriptor = [MemberState descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MemberState_FieldNumber_RtcState];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetMemberState_RtcState_RawValue(MemberState *message, int32_t value) {
+  GPBDescriptor *descriptor = [MemberState descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MemberState_FieldNumber_RtcState];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - SyncMemberStateReq
+
+@implementation SyncMemberStateReq
+
+@dynamic isDelete;
+@dynamic hasMember, member;
+
+typedef struct SyncMemberStateReq__storage_ {
+  uint32_t _has_storage_[1];
+  MemberState *member;
+} SyncMemberStateReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "isDelete",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SyncMemberStateReq_FieldNumber_IsDelete,
+        .hasIndex = 0,
+        .offset = 1,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "member",
+        .dataTypeSpecific.clazz = GPBObjCClass(MemberState),
+        .number = SyncMemberStateReq_FieldNumber_Member,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(SyncMemberStateReq__storage_, member),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SyncMemberStateReq)
+                                   messageName:@"SyncMemberStateReq"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SyncMemberStateReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\010\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
 #pragma mark - RtcRoomEvent
 
 @implementation RtcRoomEvent
@@ -546,10 +824,12 @@ void SetRtcMember_RtcState_RawValue(RtcMember *message, int32_t value) {
 @dynamic roomEventType;
 @dynamic hasMember, member;
 @dynamic hasRoom, room;
+@dynamic reason;
 
 typedef struct RtcRoomEvent__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomEventType roomEventType;
+  RtcRoomQuitReason reason;
   RtcMember *member;
   RtcRoom *room;
 } RtcRoomEvent__storage_;
@@ -588,6 +868,15 @@ typedef struct RtcRoomEvent__storage_ {
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "reason",
+        .dataTypeSpecific.enumDescFunc = RtcRoomQuitReason_EnumDescriptor,
+        .number = RtcRoomEvent_FieldNumber_Reason,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, reason),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcRoomEvent)
@@ -624,6 +913,18 @@ void SetRtcRoomEvent_RoomEventType_RawValue(RtcRoomEvent *message, int32_t value
   GPBSetMessageRawEnumField(message, field, value);
 }
 
+int32_t RtcRoomEvent_Reason_RawValue(RtcRoomEvent *message) {
+  GPBDescriptor *descriptor = [RtcRoomEvent descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomEvent_FieldNumber_Reason];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcRoomEvent_Reason_RawValue(RtcRoomEvent *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcRoomEvent descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomEvent_FieldNumber_Reason];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
 #pragma mark - RtcInviteReq
 
 @implementation RtcInviteReq
@@ -631,10 +932,12 @@ void SetRtcRoomEvent_RoomEventType_RawValue(RtcRoomEvent *message, int32_t value
 @dynamic targetIdsArray, targetIdsArray_Count;
 @dynamic roomType;
 @dynamic roomId;
+@dynamic rtcChannel;
 
 typedef struct RtcInviteReq__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
+  RtcChannel rtcChannel;
   NSMutableArray *targetIdsArray;
   NSString *roomId;
 } RtcInviteReq__storage_;
@@ -673,6 +976,15 @@ typedef struct RtcInviteReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "rtcChannel",
+        .dataTypeSpecific.enumDescFunc = RtcChannel_EnumDescriptor,
+        .number = RtcInviteReq_FieldNumber_RtcChannel,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RtcInviteReq__storage_, rtcChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcInviteReq)
@@ -684,7 +996,7 @@ typedef struct RtcInviteReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\000targetIds\000\002\010\000\003\006\000";
+        "\004\001\000targetIds\000\002\010\000\003\006\000\004\n\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -709,150 +1021,15 @@ void SetRtcInviteReq_RoomType_RawValue(RtcInviteReq *message, int32_t value) {
   GPBSetMessageRawEnumField(message, field, value);
 }
 
-#pragma mark - RtcAnswerReq
-
-@implementation RtcAnswerReq
-
-@dynamic targetId;
-@dynamic roomId;
-
-typedef struct RtcAnswerReq__storage_ {
-  uint32_t _has_storage_[1];
-  NSString *targetId;
-  NSString *roomId;
-} RtcAnswerReq__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "targetId",
-        .dataTypeSpecific.clazz = Nil,
-        .number = RtcAnswerReq_FieldNumber_TargetId,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(RtcAnswerReq__storage_, targetId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "roomId",
-        .dataTypeSpecific.clazz = Nil,
-        .number = RtcAnswerReq_FieldNumber_RoomId,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(RtcAnswerReq__storage_, roomId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeString,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcAnswerReq)
-                                   messageName:@"RtcAnswerReq"
-                               fileDescription:&RtcroomRoot_FileDescription
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(RtcAnswerReq__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-      static const char *extraTextFormatInfo =
-        "\002\001\010\000\002\006\000";
-      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - RtcInviteEvent
-
-@implementation RtcInviteEvent
-
-@dynamic inviteType;
-@dynamic hasTargetUser, targetUser;
-@dynamic hasRoom, room;
-
-typedef struct RtcInviteEvent__storage_ {
-  uint32_t _has_storage_[1];
-  InviteType inviteType;
-  UserInfo *targetUser;
-  RtcRoom *room;
-} RtcInviteEvent__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "inviteType",
-        .dataTypeSpecific.enumDescFunc = InviteType_EnumDescriptor,
-        .number = RtcInviteEvent_FieldNumber_InviteType,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, inviteType),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
-        .dataType = GPBDataTypeEnum,
-      },
-      {
-        .name = "targetUser",
-        .dataTypeSpecific.clazz = GPBObjCClass(UserInfo),
-        .number = RtcInviteEvent_FieldNumber_TargetUser,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, targetUser),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeMessage,
-      },
-      {
-        .name = "room",
-        .dataTypeSpecific.clazz = GPBObjCClass(RtcRoom),
-        .number = RtcInviteEvent_FieldNumber_Room,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, room),
-        .flags = GPBFieldOptional,
-        .dataType = GPBDataTypeMessage,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcInviteEvent)
-                                   messageName:@"RtcInviteEvent"
-                               fileDescription:&RtcroomRoot_FileDescription
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(RtcInviteEvent__storage_)
-                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
-    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-      static const char *extraTextFormatInfo =
-        "\002\001\n\000\002\n\000";
-      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    #if defined(DEBUG) && DEBUG
-      NSAssert(descriptor == nil, @"Startup recursed!");
-    #endif  // DEBUG
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-int32_t RtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message) {
-  GPBDescriptor *descriptor = [RtcInviteEvent descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteEvent_FieldNumber_InviteType];
+int32_t RtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message) {
+  GPBDescriptor *descriptor = [RtcInviteReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteReq_FieldNumber_RtcChannel];
   return GPBGetMessageRawEnumField(message, field);
 }
 
-void SetRtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message, int32_t value) {
-  GPBDescriptor *descriptor = [RtcInviteEvent descriptor];
-  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteEvent_FieldNumber_InviteType];
+void SetRtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcInviteReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteReq_FieldNumber_RtcChannel];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -910,11 +1087,13 @@ typedef struct RtcMemberRooms__storage_ {
 @dynamic roomId;
 @dynamic hasOwner, owner;
 @dynamic rtcState;
+@dynamic rtcChannel;
 
 typedef struct RtcMemberRoom__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
   RtcState rtcState;
+  RtcChannel rtcChannel;
   NSString *roomId;
   UserInfo *owner;
 } RtcMemberRoom__storage_;
@@ -962,6 +1141,15 @@ typedef struct RtcMemberRoom__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
+      {
+        .name = "rtcChannel",
+        .dataTypeSpecific.enumDescFunc = RtcChannel_EnumDescriptor,
+        .number = RtcMemberRoom_FieldNumber_RtcChannel,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RtcMemberRoom__storage_, rtcChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcMemberRoom)
@@ -973,7 +1161,7 @@ typedef struct RtcMemberRoom__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\006\000\004\010\000";
+        "\004\001\010\000\002\006\000\004\010\000\005\n\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1009,6 +1197,262 @@ void SetRtcMemberRoom_RtcState_RawValue(RtcMemberRoom *message, int32_t value) {
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcState];
   GPBSetMessageRawEnumField(message, field, value);
 }
+
+int32_t RtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message) {
+  GPBDescriptor *descriptor = [RtcMemberRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcChannel];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcMemberRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcChannel];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - RtcAuth
+
+@implementation RtcAuth
+
+@dynamic hasZegoAuth, zegoAuth;
+
+typedef struct RtcAuth__storage_ {
+  uint32_t _has_storage_[1];
+  ZegoAuth *zegoAuth;
+} RtcAuth__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "zegoAuth",
+        .dataTypeSpecific.clazz = GPBObjCClass(ZegoAuth),
+        .number = RtcAuth_FieldNumber_ZegoAuth,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(RtcAuth__storage_, zegoAuth),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcAuth)
+                                   messageName:@"RtcAuth"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(RtcAuth__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\010\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - ZegoAuth
+
+@implementation ZegoAuth
+
+@dynamic token;
+
+typedef struct ZegoAuth__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *token;
+} ZegoAuth__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "token",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ZegoAuth_FieldNumber_Token,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(ZegoAuth__storage_, token),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ZegoAuth)
+                                   messageName:@"ZegoAuth"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(ZegoAuth__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - RtcInviteEvent
+
+@implementation RtcInviteEvent
+
+@dynamic inviteType;
+@dynamic hasUser, user;
+@dynamic hasRoom, room;
+@dynamic targetUsersArray, targetUsersArray_Count;
+
+typedef struct RtcInviteEvent__storage_ {
+  uint32_t _has_storage_[1];
+  InviteType inviteType;
+  UserInfo *user;
+  RtcRoom *room;
+  NSMutableArray *targetUsersArray;
+} RtcInviteEvent__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "inviteType",
+        .dataTypeSpecific.enumDescFunc = InviteType_EnumDescriptor,
+        .number = RtcInviteEvent_FieldNumber_InviteType,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, inviteType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "user",
+        .dataTypeSpecific.clazz = GPBObjCClass(UserInfo),
+        .number = RtcInviteEvent_FieldNumber_User,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, user),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "room",
+        .dataTypeSpecific.clazz = GPBObjCClass(RtcRoom),
+        .number = RtcInviteEvent_FieldNumber_Room,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, room),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "targetUsersArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(UserInfo),
+        .number = RtcInviteEvent_FieldNumber_TargetUsersArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(RtcInviteEvent__storage_, targetUsersArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcInviteEvent)
+                                   messageName:@"RtcInviteEvent"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(RtcInviteEvent__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\n\000\004\000targetUsers\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t RtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message) {
+  GPBDescriptor *descriptor = [RtcInviteEvent descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteEvent_FieldNumber_InviteType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcInviteEvent_InviteType_RawValue(RtcInviteEvent *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcInviteEvent descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteEvent_FieldNumber_InviteType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+#pragma mark - RtcAnswer
+
+@implementation RtcAnswer
+
+@dynamic roomId;
+
+typedef struct RtcAnswer__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *roomId;
+} RtcAnswer__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "roomId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RtcAnswer_FieldNumber_RoomId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(RtcAnswer__storage_, roomId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcAnswer)
+                                   messageName:@"RtcAnswer"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(RtcAnswer__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\006\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
 
 
 #pragma clang diagnostic pop
