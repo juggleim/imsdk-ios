@@ -258,6 +258,8 @@
 		A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D302C60C23200E55080 /* BaseUserCell.swift */; };
 		A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D322C60ECC800E55080 /* GroupListViewController.swift */; };
 		A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D342C60F5C000E55080 /* GroupCell.swift */; };
+		A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */; };
+		A0CE9A402CD8A465008B405C /* CallCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -517,6 +519,12 @@
 		A0C80D302C60C23200E55080 /* BaseUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserCell.swift; sourceTree = "<group>"; };
 		A0C80D322C60ECC800E55080 /* GroupListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupListViewController.swift; sourceTree = "<group>"; };
 		A0C80D342C60F5C000E55080 /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
+		A0CE9A362CD4D45F008B405C /* QuickStart-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QuickStart-Bridging-Header.h"; sourceTree = "<group>"; };
+		A0CE9A372CD4D45F008B405C /* SingleCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SingleCallViewController.h; sourceTree = "<group>"; };
+		A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SingleCallViewController.m; sourceTree = "<group>"; };
+		A0CE9A3A2CD4DB40008B405C /* CallTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTheme.h; sourceTree = "<group>"; };
+		A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallCenter.h; sourceTree = "<group>"; };
+		A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CallCenter.m; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1178,6 +1186,7 @@
 		A09645DD2BF36BF700290775 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				A0CE9A352CD4CCC9008B405C /* Call */,
 				A08CC14F2C1AE59B0082EA08 /* SBUModuleSet.Deprecated.swift */,
 				A07F39C12BF4A2240087920B /* Configuration */,
 				A07F3A5F2BF4A2250087920B /* Configurations */,
@@ -1466,6 +1475,19 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
+		A0CE9A352CD4CCC9008B405C /* Call */ = {
+			isa = PBXGroup;
+			children = (
+				A0CE9A372CD4D45F008B405C /* SingleCallViewController.h */,
+				A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */,
+				A0CE9A362CD4D45F008B405C /* QuickStart-Bridging-Header.h */,
+				A0CE9A3A2CD4DB40008B405C /* CallTheme.h */,
+				A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */,
+				A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */,
+			);
+			path = Call;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1498,6 +1520,7 @@
 				TargetAttributes = {
 					A09645C52BF36BD000290775 = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1540;
 					};
 				};
 			};
@@ -1543,6 +1566,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0CE9A402CD8A465008B405C /* CallCenter.m in Sources */,
 				A07F3B6C2BF4A2270087920B /* MessageTemplateRenderer.swift in Sources */,
 				A07F3B4D2BF4A2260087920B /* Array+SBUIKit.swift in Sources */,
 				A07F3B6E2BF4A2270087920B /* SBUToastType.swift in Sources */,
@@ -1561,6 +1585,7 @@
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
 				A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */,
 				A07F3CAC2BF4A2290087920B /* SBUStringSet.Deprecated.swift in Sources */,
+				A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */,
 				A07F3B692BF4A2270087920B /* MessageTemplateTestViewController.swift in Sources */,
 				A09645CE2BF36BD000290775 /* ViewController.swift in Sources */,
 				A07F3C9A2BF4A2290087920B /* SBUTableViewCell.swift in Sources */,
@@ -1929,6 +1954,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = QuickStart/QuickStart.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -1962,6 +1988,8 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Call/QuickStart-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1972,6 +2000,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = QuickStart/QuickStart.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -2005,6 +2034,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Call/QuickStart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

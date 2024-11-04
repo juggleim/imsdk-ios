@@ -187,6 +187,7 @@ public enum MediaResourceType: Int {
     case camera
     case library
     case document
+    case voiceCall
     case unknown
     case delete
 }
