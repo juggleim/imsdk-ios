@@ -335,11 +335,13 @@
 }
 
 - (void)reconnectTimerFired {
-    JLogI(@"CON-Reconnect", @"timer fire");
+    JLogI(@"CON-Reconnect", @"timer fire, connection status is %ld", self.core.connectionStatus);
     [self stopReconnectTimer];
-    if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
-        [self internalConnectWithToken:self.core.token];
-    }
+    dispatch_async(self.core.sendQueue, ^{
+        if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
+            [self internalConnectWithToken:self.core.token];
+        }
+    });
 }
 
 - (void)handleWebSocketFail {
