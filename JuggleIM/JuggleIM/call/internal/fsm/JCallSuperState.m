@@ -45,7 +45,6 @@
         case JCallEventHangup:
             self.callSessionImpl.finishReason = JCallFinishReasonHangup;
             [self.callSessionImpl signalHangup];
-            [self.callSessionImpl mediaQuit];
             [self.callSessionImpl transitionToIdleState];
             break;
             
@@ -75,7 +74,6 @@
         {
             NSString *userId = userInfo[@"userId"];
             [self.callSessionImpl memberHangup:userId];
-            [self.callSessionImpl mediaQuit];
             if (!self.callSessionImpl.isMultiCall) {
                 [self.callSessionImpl transitionToIdleState];
             }

@@ -24,6 +24,7 @@
 - (void)inviteFail;
 - (void)notifyReceiveCall;
 - (void)memberHangup:(NSString *)userId;
+- (void)memberAccept:(NSString *)userId;
 - (void)addMember:(JCallMember *)member;
 - (void)removeMember:(NSString *)userId;
 
@@ -31,6 +32,7 @@
 - (void)signalSingleInvite;
 - (void)signalHangup;
 - (void)signalAccept;
+- (void)signalConnected;
 
 #pragma mark - media
 - (void)mediaQuit;

@@ -104,6 +104,18 @@
     }
 }
 
+- (void)memberAccept:(NSString *)userId {
+    if (!self.isMultiCall) {
+        for (JCallMember *member in self.members) {
+            if ([member.userInfo.userId isEqualToString:userId]) {
+                member.callStatus = JCallStatusConnecting;
+            }
+        }
+    } else {
+        
+    }
+}
+
 - (void)addMember:(JCallMember *)member {
     [self.members addObject:member];
 }
@@ -146,21 +158,40 @@
 }
 
 - (void)signalAccept {
-    //TODO: 
-//    [self.core.webSocket callAccept:self.callId]
+    [self.core.webSocket callAccept:self.callId
+                            success:^(NSString * _Nonnull zegoToken) {
+        JLogI(@"Call-Signal", @"send accept success");
+        self.zegoToken = zegoToken;
+        [self.stateMachine event:JCallEventAcceptDone userInfo:nil];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
+        [self.stateMachine event:JCallEventAcceptFail userInfo:nil];
+    }];
+}
+
+- (void)signalConnected {
+    [self.core.webSocket callConnected:self.callId
+                               success:^{
+        JLogI(@"Call-Signal", @"call connected success");
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Signal", @"call connected error, code is %ld", code);
+    }];
 }
 
 #pragma mark - media
 - (void)mediaQuit {
-    //TODO: 
+    JLogI(@"Call-Media", @"media quit");
+    [JCallMediaManager.shared leaveRoom:self.callId];
 }
 
 - (void)mediaJoin {
     [JCallMediaManager.shared joinRoom:self
                               complete:^(int errorCode, NSDictionary *data) {
         if (errorCode == 0) {
+            JLogI(@"Call-Media", @"join room success");
             [self.stateMachine event:JCallEventJoinChannelDone userInfo:nil];
         } else {
+            JLogE(@"Call-Media", @"join room error, code is %d", errorCode);
             [self.stateMachine event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
         }
     }];
@@ -173,6 +204,7 @@
 
 - (void)transitionToConnectedState {
     [self.stateMachine transitionTo:self.connectedState];
+    [self signalConnected];
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(callDidConnect)]) {
@@ -188,6 +220,7 @@
 
 - (void)transitionToIdleState {
     [self.stateMachine transitionTo:self.idleState];
+    [self mediaQuit];
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(callDidFinish:)]) {

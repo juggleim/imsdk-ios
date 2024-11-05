@@ -75,7 +75,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jBatchDelAtt @"c_batch_del_att"
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
+#define jRtcAccept @"rtc_accept"
 #define jRtcQuit @"rtc_quit"
+#define jRtcUpdState @"rtc_upd_state"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -126,7 +128,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JRtcInviteEventNtf
 @end
 
-@implementation JCallInviteAck
+@implementation JCallAuthAck
 @end
 
 @implementation JQryAck
@@ -1128,6 +1130,36 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)callAccept:(NSString *)callId
+                 index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcAccept;
+    body.targetId = callId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callConnected:(NSString *)callId
+                    index:(int)index {
+    RtcMember *member = [[RtcMember alloc] init];
+    member.rtcState = RtcState_RtcConnected;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcUpdState;
+    body.targetId = callId;
+    body.data_p = [member data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1267,7 +1299,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeSyncChatroomAttrsAck:
                     obj = [self syncChatroomAttrsAckWithImWebsocketMsg:body];
                     break;
-                case JPBRcvTypeRtcInviteAck:
+                case JPBRcvTypeCallAuthAck:
                     obj = [self callInviteAckWithImWebsocketMsg:body];
                     break;
                 default:
@@ -1794,8 +1826,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
     }
-    obj.rcvType = JPBRcvTypeRtcInviteAck;
-    JCallInviteAck *a = [[JCallInviteAck alloc] init];
+    obj.rcvType = JPBRcvTypeCallAuthAck;
+    JCallAuthAck *a = [[JCallAuthAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
     a.zegoToken = zegoAuth.token;
@@ -2107,8 +2139,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck),
              jSyncChatroomAtts:@(JPBRcvTypeSyncChatroomAttrsAck),
              jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck),
-             jRtcInvite:@(JPBRcvTypeRtcInviteAck),
-             jRtcQuit:@(JPBRcvTypeSimpleQryAck)
+             jRtcInvite:@(JPBRcvTypeCallAuthAck),
+             jRtcHangUp:@(JPBRcvTypeSimpleQryAck),
+             jRtcAccept:@(JPBRcvTypeCallAuthAck),
+             jRtcUpdState:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

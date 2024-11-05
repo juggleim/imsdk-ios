@@ -121,6 +121,20 @@
     [callSession event:JCallEventReceiveHangup userInfo:userInfo];
 }
 
+- (void)callDidAccept:(JRtcRoom *)room
+                 user:(JUserInfo *)user {
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+    [userDic setObject:user forKey:user.userId];
+    [self.core.dbManager insertUserInfos:userDic.allValues];
+    
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (!callSession) {
+        return;
+    }
+    NSDictionary *userInfo = @{@"userId" : user.userId};
+    [callSession event:JCallEventReceiveAccept userInfo:userInfo];
+}
+
 #pragma mark - JCallSessionLifeCycleDelegate
 - (void)sessionDidfinish:(JCallSessionImpl *)session {
     @synchronized (self) {

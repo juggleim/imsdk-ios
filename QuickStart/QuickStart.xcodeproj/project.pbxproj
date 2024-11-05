@@ -12,6 +12,9 @@
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
 		A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */; };
 		A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */; };
+		A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */; };
+		A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; };
+		A05661C72CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A06388972CA2E5B4006357C7 /* SBUDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */; };
 		A06388A12CA41298006357C7 /* SBUBaseChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */; };
 		A06388A22CA41298006357C7 /* SBUGroupChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */; };
@@ -263,12 +266,28 @@
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A05661C82CDA0C180070EBC2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A05661C72CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
 		A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsViewController.swift; sourceTree = "<group>"; };
 		A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
+		A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZegoExpressEngine.xcframework; path = ../JZegoCall/framework/ZegoExpressEngine.xcframework; sourceTree = "<group>"; };
 		A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUDownloadManager.swift; sourceTree = "<group>"; };
 		A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelSettingCell.swift; sourceTree = "<group>"; };
 		A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUGroupChannelSettingCell.swift; sourceTree = "<group>"; };
@@ -533,6 +552,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
+				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
 				A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1125,6 +1146,8 @@
 		A07F3CB02BF74F3E0087920B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */,
+				A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */,
 				A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */,
 				A07F3CB12BF74F3E0087920B /* JetIM.framework */,
 			);
@@ -1498,6 +1521,7 @@
 				A09645C22BF36BD000290775 /* Sources */,
 				A09645C32BF36BD000290775 /* Frameworks */,
 				A09645C42BF36BD000290775 /* Resources */,
+				A05661C82CDA0C180070EBC2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1979,6 +2003,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.7.2;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2025,6 +2050,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.7.2;
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -61,6 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
           targetUsers:(NSArray <JUserInfo *> *)targetUsers;
 - (void)callDidHangup:(JRtcRoom *)room
                  user:(JUserInfo *)user;
+- (void)callDidAccept:(JRtcRoom *)room
+                 user:(JUserInfo *)user;
 @end
 
 @interface JWebSocket : NSObject
@@ -274,7 +276,13 @@ inConversation:(JConversation *)conversation
            success:(void (^)(void))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-//- (void)callAccept:
+- (void)callAccept:(NSString *)callId
+           success:(void (^)(NSString * zegoToken))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callConnected:(NSString *)callId
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 @end
 

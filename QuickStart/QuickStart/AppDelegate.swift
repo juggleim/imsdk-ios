@@ -19,7 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
-        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f")
+//        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f")
+        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         
         UNUserNotificationCenter.current().getNotificationSettings { settings in

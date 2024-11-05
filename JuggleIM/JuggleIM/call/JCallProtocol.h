@@ -5,7 +5,7 @@
 //  Created by Fei Li on 2024/10/21.
 //
 
-#import "JCallSession.h"
+#import <JuggleIM/JCallSession.h>
 
 @protocol JCallReceiveDelegate <NSObject>
 

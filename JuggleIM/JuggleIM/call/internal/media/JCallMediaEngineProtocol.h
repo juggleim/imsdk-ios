@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JCallMediaRoom.h"
-#import "JCallMediaUser.h"
-#import "JCallMediaRoomConfig.h"
+#import <JuggleIM/JCallMediaRoom.h>
+#import <JuggleIM/JCallMediaUser.h>
+#import <JuggleIM/JCallMediaRoomConfig.h>
 
 @protocol JCallMediaRoomConfig <NSObject>
 @property (nonatomic, assign) BOOL isUserStatusNotify;
@@ -20,6 +20,8 @@
             user:(JCallMediaUser *)user
           config:(JCallMediaRoomConfig *)config
         complete:(void (^)(int errorCode, NSDictionary *data))completeBlock;
+
+- (void)leaveRoom:(NSString *)roomId;
 
 @end
 

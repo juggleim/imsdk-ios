@@ -21,17 +21,44 @@
     ZegoUser *zegoUser = [ZegoUser userWithUserID:user.userId];
     ZegoRoomConfig *zegoConfig = [[ZegoRoomConfig alloc] init];
     zegoConfig.isUserStatusNotify = config.isUserStatusNotify;
+    zegoConfig.token = config.zegoToken;
     [[ZegoExpressEngine sharedEngine] loginRoom:room.roomId
                                            user:zegoUser
                                          config:zegoConfig
                                        callback:^(int errorCode, NSDictionary * _Nonnull extendedData) {
         if (errorCode == 0) {
-//            [[ZegoExpressEngine sharedEngine] startPublishingStream:<#(nonnull NSString *)#>]
+            NSString *streamId = [room.roomId stringByAppendingString:@"+++"];
+            streamId = [streamId stringByAppendingString:user.userId];
+            [[ZegoExpressEngine sharedEngine] startPublishingStream:streamId];
+        }
+        if (completeBlock) {
+            completeBlock(errorCode, extendedData);
         }
     }];
 }
 
+- (void)leaveRoom:(NSString *)roomId {
+    [[ZegoExpressEngine sharedEngine] logoutRoom];
+}
+
 #pragma mark - ZegoEventHandler
+- (void)onRoomStreamUpdate:(ZegoUpdateType)updateType
+                streamList:(NSArray<ZegoStream *> *)streamList
+              extendedData:(NSDictionary *)extendedData
+                    roomID:(NSString *)roomID {
+    if (updateType == ZegoUpdateTypeAdd) {
+        for (ZegoStream *stream in streamList) {
+            NSString *streamId = stream.streamID;
+            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId];
+        }
+    }
+}
+
+- (void)onRoomUserUpdate:(ZegoUpdateType)updateType
+                userList:(NSArray<ZegoUser *> *)userList
+                  roomID:(NSString *)roomID {
+    
+}
 
 #pragma mark -
 - (void)createEngineWith:(NSNumber *)appId appSign:(NSString *)appSign {
@@ -40,6 +67,7 @@
     profile.appSign = appSign;
     profile.scenario = ZegoScenarioStandardVoiceCall;
     [ZegoExpressEngine createEngineWithProfile:profile eventHandler:self];
+    [[ZegoExpressEngine sharedEngine] enableCamera:NO];
 }
 
 @end

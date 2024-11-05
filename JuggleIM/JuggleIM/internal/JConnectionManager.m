@@ -330,7 +330,7 @@
 }
 
 - (void)reconnectTimerFired {
-    JLogI(@"CON-Reconnect", @"timer fire");
+    JLogI(@"CON-Reconnect", @"timer fire, status is %ld", self.core.connectionStatus);
     [self stopReconnectTimer];
     if (self.core.connectionStatus == JConnectionStatusInternalWaitingForConnecting) {
         [self internalConnectWithToken:self.core.token];

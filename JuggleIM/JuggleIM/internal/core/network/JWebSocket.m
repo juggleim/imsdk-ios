@@ -801,7 +801,7 @@ inConversation:(JConversation *)conversation
                                targetIdList:userIdList
                                  engineType:engineType
                                       index:self.cmdIndex++];
-        JCallInviteObj *obj = [[JCallInviteObj alloc] init];
+        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -819,6 +819,38 @@ inConversation:(JConversation *)conversation
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callHangup:callId
                                       index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)callAccept:(NSString *)callId
+           success:(void (^)(NSString * _Nonnull))successBlock
+             error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call accept, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callAccept:callId
+                                      index:self.cmdIndex++];
+        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)callConnected:(NSString *)callId
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call connected, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callConnected:callId index:self.cmdIndex++];
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -1011,8 +1043,8 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
             [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
             break;
-        case JPBRcvTypeRtcInviteAck:
-            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteAck");
+        case JPBRcvTypeCallAuthAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeCallAuthAck");
             [self handleRtcInviteAck:obj.callInviteAck];
             break;
         default:
@@ -1061,8 +1093,8 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
         JUpdateChatroomAttrObj *s = (JUpdateChatroomAttrObj *)obj;
         s.completeBlock(code, nil);
-    } else if ([obj isKindOfClass:[JCallInviteObj class]]) {
-        JCallInviteObj *s = (JCallInviteObj *)obj;
+    } else if ([obj isKindOfClass:[JCallAuthObj class]]) {
+        JCallAuthObj *s = (JCallAuthObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1358,15 +1390,22 @@ inConversation:(JConversation *)conversation
             }
             break;
             
+        case JPBRtcInviteTypeAccept:
+            if ([self.callDelegate respondsToSelector:@selector(callDidAccept:user:)]) {
+                [self.callDelegate callDidAccept:ntf.room
+                                            user:ntf.user];
+            }
+            break;
+            
         default:
             break;
     }
 }
 
-- (void)handleRtcInviteAck:(JCallInviteAck *)ack {
+- (void)handleRtcInviteAck:(JCallAuthAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JCallInviteObj class]]) {
-        JCallInviteObj *inviteObj = (JCallInviteObj *)obj;
+    if ([obj isKindOfClass:[JCallAuthObj class]]) {
+        JCallAuthObj *inviteObj = (JCallAuthObj *)obj;
         if (ack.code != 0) {
             inviteObj.errorBlock(ack.code);
         } else {

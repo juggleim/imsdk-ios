@@ -18,5 +18,7 @@
 - (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock;
 
+- (void)leaveRoom:(NSString *)callId;
+
 @end
 

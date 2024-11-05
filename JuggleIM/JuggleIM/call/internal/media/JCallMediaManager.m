@@ -54,4 +54,8 @@ static JCallMediaManager *_instance;
                  complete:completeBlock];
 }
 
+- (void)leaveRoom:(NSString *)callId {
+    [self.engine leaveRoom:callId];
+}
+
 @end

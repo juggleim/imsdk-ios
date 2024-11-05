@@ -126,6 +126,10 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    [self resetLayout];
+}
+
+- (void)resetLayout {
     self.backgroundView.backgroundColor = ColorFromRGB(0x262e42);
     self.backgroundView.hidden = NO;
     self.topGradientView.hidden = YES;
@@ -243,10 +247,6 @@
     self.cameraCloseButton.hidden = YES;
     self.cameraSwitchButton.hidden = YES;
     
-    
-    
-    
-    
     self.remoteNameLabel.frame =
     CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
                self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
@@ -268,6 +268,9 @@
 }
 
 - (void)resetRemoteUserInfoIfNeed {
+    if (self.callSession.members.count == 0) {
+        return;
+    }
     JCallMember *member = self.callSession.members[0];
     if (member.userInfo.userName.length > 0) {
         [self.remoteNameLabel setText:member.userInfo.userName];
@@ -290,7 +293,7 @@
 #pragma mark - JCallSessionDelegate
 /// 通话已接通
 - (void)callDidConnect {
-    
+    [self resetLayout];
 }
 
 /// 通话已结束
@@ -586,14 +589,7 @@
 
 
 - (void)acceptButtonClicked {
-//    [self didTapAcceptButton];
-//
-//
-//    if (!self.callSession) {
-//        [self callDidDisconnect];
-//    } else {
-//        [self.callSession accept:self.callSession.mediaType];
-//    }
+    [self.callSession accept];
 }
 
 

@@ -5,9 +5,9 @@
 //  Created by Nathan on 2024/7/8.
 //
 
-#import "JuggleIMConst.h"
-#import "JChatroomInfoOptions.h"
-#import "JChatroomInfo.h"
+#import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JChatroomInfoOptions.h>
+#import <JuggleIM/JChatroomInfo.h>
 
 @protocol JChatroomDelegate <NSObject>
 

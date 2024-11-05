@@ -34,9 +34,14 @@
             break;
             
         case JCallEventReceiveAccept:
-            //TODO: 更新 callSession 的 member 状态，userInfo 里面带用户信息
-            [self.callSessionImpl transitionToConnectingState];
+        {
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl memberAccept:userId];
+            if (!self.callSessionImpl.isMultiCall) {
+                [self.callSessionImpl transitionToConnectingState];
+            }
             result = YES;
+        }
             break;
             
         default:
