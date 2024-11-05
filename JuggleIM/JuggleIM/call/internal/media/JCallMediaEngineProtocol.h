@@ -23,5 +23,9 @@
 
 - (void)leaveRoom:(NSString *)roomId;
 
+- (void)muteMicrophone:(BOOL)isMute;
+
+- (void)muteSpeaker:(BOOL)isMute;
+
 @end
 

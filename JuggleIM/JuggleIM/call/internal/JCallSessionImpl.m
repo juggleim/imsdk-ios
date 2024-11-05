@@ -18,7 +18,6 @@
 #import "JCallMediaManager.h"
 
 @interface JCallSessionImpl ()
-@property (nonatomic, strong) JCallMediaManager *mediaManager;
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JCallSuperState *superState;
 @property (nonatomic, strong) JConnectedState *connectedState;
@@ -56,9 +55,12 @@
     
 }
 
+- (void)muteMicrophone:(BOOL)isMute {
+    [[JCallMediaManager shared] muteMicrophone:isMute];
+}
 
-- (void)setMicrophoneMute:(BOOL)isMute { 
-    
+- (void)muteSpeaker:(BOOL)isMute {
+    [[JCallMediaManager shared] muteSpeaker:isMute];
 }
 
 
@@ -185,6 +187,7 @@
 }
 
 - (void)mediaJoin {
+    JLogI(@"Call-Media", @"media join");
     [JCallMediaManager.shared joinRoom:self
                               complete:^(int errorCode, NSDictionary *data) {
         if (errorCode == 0) {

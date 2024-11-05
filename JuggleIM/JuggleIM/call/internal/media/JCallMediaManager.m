@@ -58,4 +58,12 @@ static JCallMediaManager *_instance;
     [self.engine leaveRoom:callId];
 }
 
+- (void)muteMicrophone:(BOOL)isMute {
+    [self.engine muteMicrophone:isMute];
+}
+
+- (void)muteSpeaker:(BOOL)isMute {
+    [self.engine muteSpeaker:isMute];
+}
+
 @end

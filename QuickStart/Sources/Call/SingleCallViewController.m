@@ -299,6 +299,7 @@
 /// 通话已结束
 /// - Parameter finishReason: 结束原因
 - (void)callDidFinish:(JCallFinishReason)finishReason {
+    NSLog(@"call finish, reason is %ld", finishReason);
     [CallCenter.shared dismissCallViewController:self];
 }
 
@@ -510,8 +511,9 @@
 //                     forState:UIControlStateSelected];
         [_muteButton setTitle:@"Mute"
                      forState:UIControlStateNormal];
+        [_muteButton setTitle:@"Unmute" forState:UIControlStateSelected];
 //        [_muteButton setSelected:self.callSession.isMuted];
-        [_muteButton addTarget:self action:@selector(muteButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+        [_muteButton addTarget:self action:@selector(muteButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
 
 
         [self.view addSubview:_muteButton];
@@ -521,7 +523,10 @@
 }
 
 
-- (void)muteButtonClicked {
+- (void)muteButtonClicked:(UIButton *)sender {
+    [self.callSession muteMicrophone:!sender.selected];
+    [self.muteButton setSelected:!sender.selected];
+    
 //    [self didTapMuteButton];
 //
 //
@@ -539,13 +544,15 @@
 //                        forState:UIControlStateHighlighted];
 //        [_speakerButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/handfree_hover.png"]
 //                        forState:UIControlStateSelected];
-        [_speakerButton setTitle:@"Speaker"
+        [_speakerButton setTitle:@"MuteSpeaker"
                         forState:UIControlStateNormal];
+        [_speakerButton setTitle:@"UnmuteSpeaker"
+                        forState:UIControlStateSelected];
 //        [_speakerButton setSelected:self.callSession.speakerEnabled];
 
 
         [_speakerButton addTarget:self
-                           action:@selector(speakerButtonClicked)
+                           action:@selector(speakerButtonClicked:)
                  forControlEvents:UIControlEventTouchUpInside];
 
 
@@ -556,7 +563,9 @@
 }
 
 
-- (void)speakerButtonClicked {
+- (void)speakerButtonClicked:(UIButton *)sender {
+    [self.callSession muteSpeaker:!sender.selected];
+    [self.speakerButton setSelected:!sender.selected];
 //    [self didTapSpeakerButton];
 //
 //

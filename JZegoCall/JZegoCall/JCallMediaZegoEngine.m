@@ -41,6 +41,14 @@
     [[ZegoExpressEngine sharedEngine] logoutRoom];
 }
 
+- (void)muteMicrophone:(BOOL)isMute {
+    [[ZegoExpressEngine sharedEngine] muteMicrophone:isMute];
+}
+
+- (void)muteSpeaker:(BOOL)isMute {
+    [[ZegoExpressEngine sharedEngine] muteSpeaker:isMute];
+}
+
 #pragma mark - ZegoEventHandler
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType
                 streamList:(NSArray<ZegoStream *> *)streamList
@@ -57,7 +65,9 @@
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType
                 userList:(NSArray<ZegoUser *> *)userList
                   roomID:(NSString *)roomID {
-    
+    if (updateType == ZegoUpdateTypeAdd) {
+        
+    }
 }
 
 #pragma mark -

@@ -20,5 +20,9 @@
 
 - (void)leaveRoom:(NSString *)callId;
 
+- (void)muteMicrophone:(BOOL)isMute;
+
+- (void)muteSpeaker:(BOOL)isMute;
+
 @end
 
