@@ -127,8 +127,9 @@
                         isMultiCall:NO
                        targetIdList:targetIds
                          engineType:(NSUInteger)self.engineType
-                            success:^{
+                            success:^(NSString *zegoToken){
         JLogI(@"Call-Signal", @"send invite success");
+        self.zegoToken = zegoToken;
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
         [self.stateMachine event:JCallEventInviteFail userInfo:nil];
@@ -277,6 +278,13 @@
     return _outgoingState;
 }
 
+- (NSMutableArray<JCallMember *> *)members {
+    if (!_members) {
+        _members = [NSMutableArray array];
+    }
+    return _members;
+}
+
 @synthesize callId;
 @synthesize callStatus;
 @synthesize cameraEnable;
@@ -287,7 +295,7 @@
 @synthesize isMultiCall;
 @synthesize microphoneEnable;
 @synthesize owner;
-@synthesize members;
+@synthesize members = _members;
 @synthesize startTime;
 
 @end

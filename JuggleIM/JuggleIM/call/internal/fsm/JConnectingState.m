@@ -34,7 +34,6 @@
             break;
             
         case JCallEventJoinChannelFail:
-            //TODO: 更新 callSession 状态
             self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
             self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
             //TODO:

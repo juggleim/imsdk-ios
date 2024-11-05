@@ -42,3 +42,6 @@
 
 @implementation JChatroomObj
 @end
+
+@implementation JCallInviteObj
+@end

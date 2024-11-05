@@ -26,7 +26,7 @@
                                          config:zegoConfig
                                        callback:^(int errorCode, NSDictionary * _Nonnull extendedData) {
         if (errorCode == 0) {
-            [[ZegoExpressEngine sharedEngine] startPublishingStream:<#(nonnull NSString *)#>]
+//            [[ZegoExpressEngine sharedEngine] startPublishingStream:<#(nonnull NSString *)#>]
         }
     }];
 }

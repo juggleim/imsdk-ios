@@ -267,7 +267,7 @@ inConversation:(JConversation *)conversation
        isMultiCall:(BOOL)isMultiCall
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
-           success:(void (^)(void))successBlock
+           success:(void (^)(NSString * zegoToken))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callHangup:(NSString *)callId

@@ -38,7 +38,7 @@ static JCallMediaManager *_instance;
     }
 }
 
-- (void)joinRoom:(id<JCallSession>)callSession
+- (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock {
     JCallMediaRoom *room = [[JCallMediaRoom alloc] init];
     room.roomId = callSession.callId;
@@ -46,6 +46,7 @@ static JCallMediaManager *_instance;
     user.userId = JIM.shared.currentUserId;
     JCallMediaRoomConfig *config = [[JCallMediaRoomConfig alloc] init];
     config.isUserStatusNotify = YES;
+    config.zegoToken = callSession.zegoToken;
     
     [self.engine joinRoom:room
                      user:user

@@ -791,7 +791,7 @@ inConversation:(JConversation *)conversation
        isMultiCall:(BOOL)isMultiCall
       targetIdList:(NSArray<NSString *> *)userIdList
         engineType:(NSUInteger)engineType
-           success:(nonnull void (^)(void))successBlock
+           success:(nonnull void (^)(NSString *))successBlock
              error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"call invite, callId is %@, isMultiCall is %d", callId, isMultiCall);
@@ -801,10 +801,13 @@ inConversation:(JConversation *)conversation
                                targetIdList:userIdList
                                  engineType:engineType
                                       index:self.cmdIndex++];
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        JCallInviteObj *obj = [[JCallInviteObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -1008,6 +1011,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
             [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
             break;
+        case JPBRcvTypeRtcInviteAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteAck");
+            [self handleRtcInviteAck:obj.callInviteAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1054,6 +1061,9 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
         JUpdateChatroomAttrObj *s = (JUpdateChatroomAttrObj *)obj;
         s.completeBlock(code, nil);
+    } else if ([obj isKindOfClass:[JCallInviteObj class]]) {
+        JCallInviteObj *s = (JCallInviteObj *)obj;
+        s.errorBlock(code);
     }
 }
 
@@ -1350,6 +1360,18 @@ inConversation:(JConversation *)conversation
             
         default:
             break;
+    }
+}
+
+- (void)handleRtcInviteAck:(JCallInviteAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JCallInviteObj class]]) {
+        JCallInviteObj *inviteObj = (JCallInviteObj *)obj;
+        if (ack.code != 0) {
+            inviteObj.errorBlock(ack.code);
+        } else {
+            inviteObj.successBlock(ack.zegoToken);
+        }
     }
 }
 

@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JCallSession.h"
+#import "JCallSessionImpl.h"
 
 @interface JCallMediaManager : NSObject
 
@@ -15,7 +15,7 @@
 - (void)initZegoEngineWith:(int)appId
                    appSign:(NSString *)appSign;
 
-- (void)joinRoom:(id<JCallSession>)callSession
+- (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock;
 
 @end

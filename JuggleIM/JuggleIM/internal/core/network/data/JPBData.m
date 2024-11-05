@@ -126,6 +126,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JRtcInviteEventNtf
 @end
 
+@implementation JCallInviteAck
+@end
+
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
     self.index = body.index;
@@ -1264,6 +1267,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeSyncChatroomAttrsAck:
                     obj = [self syncChatroomAttrsAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeRtcInviteAck:
+                    obj = [self callInviteAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -1779,6 +1785,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)callInviteAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcAuth *rtcAuth = [[RtcAuth alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"call invite ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeRtcInviteAck;
+    JCallInviteAck *a = [[JCallInviteAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
+    a.zegoToken = zegoAuth.token;
+    obj.callInviteAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
@@ -2083,7 +2107,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck),
              jSyncChatroomAtts:@(JPBRcvTypeSyncChatroomAttrsAck),
              jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck),
-             jRtcInvite:@(JPBRcvTypeSimpleQryAck),
+             jRtcInvite:@(JPBRcvTypeRtcInviteAck),
              jRtcQuit:@(JPBRcvTypeSimpleQryAck)
     };
 }
