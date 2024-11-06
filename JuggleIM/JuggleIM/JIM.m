@@ -36,14 +36,16 @@ static JIM *_instance;
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager];
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
         messageManager.sendReceiveDelegate = conversationManager;
+        JCallManager *callManager = [[JCallManager alloc] initWithCore:core];
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
         _instance.userInfoManager = userInfoManager;
+        _instance.callManager = callManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager
-                                                               chatroomManager:chatroomManager];
-        _instance.callManager = [[JCallManager alloc] initWithCore:core];
+                                                               chatroomManager:chatroomManager
+                                                                   callManager:callManager];
     });
     return _instance;
 }

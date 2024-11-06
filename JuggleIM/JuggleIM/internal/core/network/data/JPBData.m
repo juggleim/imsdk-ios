@@ -78,6 +78,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcAccept @"rtc_accept"
 #define jRtcQuit @"rtc_quit"
 #define jRtcUpdState @"rtc_upd_state"
+#define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcPing @"rtc_ping"
 
 #define jApns @"Apns"
@@ -130,6 +131,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JCallAuthAck
+@end
+
+@implementation JRtcQryCallRoomsAck
 @end
 
 @implementation JQryAck
@@ -1161,6 +1165,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)queryCallRooms:(NSString *)userId index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcMemberRooms;
+    body.targetId = userId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -1264,31 +1280,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeQryHisMsgsAck:
                     obj = [self queryHistoryMessagesAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSyncConvsAck:
                     obj = [self syncConversationsAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSyncMsgsAck:
                     obj = [self syncMsgsAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeQryReadDetailAck:
                     obj = [self qryReadDetailAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSimpleQryAck:
                     obj = [self simpleQryAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSimpleQryAckCallbackTimestamp:
                     obj = [self simpleQryAckCallbackTimestampWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeConversationSetTopAck:
                     obj = [self conversationSetTopAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeAddConversation:
                     obj = [self addConversationWithImWebsocketMsg:body];
                     break;
@@ -1318,6 +1327,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeRtcPingAck:
                     obj.rcvType = JPBRcvTypeRtcPingAck;
+                    break;
+                case JPBRcvTypeQryCallRoomsAck:
+                    obj = [self qryCallRoomsAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1852,6 +1864,31 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)qryCallRoomsAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcMemberRooms *rooms = [[RtcMemberRooms alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry call rooms ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryCallRoomsAck;
+    NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
+    
+    for (RtcMemberRoom *room in rooms.roomsArray) {
+        JRtcRoom *outRoom = [[JRtcRoom alloc] init];
+        outRoom.roomId = room.roomId;
+        outRoom.deviceId = room.deviceId;
+        [outRooms addObject:outRoom];
+    }
+    JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.rooms = outRooms;
+    obj.rtcQryCallRoomsAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
@@ -2160,7 +2197,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcHangUp:@(JPBRcvTypeSimpleQryAck),
              jRtcAccept:@(JPBRcvTypeCallAuthAck),
              jRtcUpdState:@(JPBRcvTypeSimpleQryAck),
-             jRtcPing:@(JPBRcvTypeRtcPingAck)
+             jRtcPing:@(JPBRcvTypeRtcPingAck),
+             jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck)
     };
 }
 @end

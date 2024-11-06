@@ -45,3 +45,6 @@
 
 @implementation JCallAuthObj
 @end
+
+@implementation JRtcRoomArrayObj
+@end

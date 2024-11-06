@@ -496,6 +496,7 @@ typedef GPB_ENUM(RtcMemberRoom_FieldNumber) {
   RtcMemberRoom_FieldNumber_Owner = 3,
   RtcMemberRoom_FieldNumber_RtcState = 4,
   RtcMemberRoom_FieldNumber_RtcChannel = 5,
+  RtcMemberRoom_FieldNumber_DeviceId = 6,
 };
 
 GPB_FINAL @interface RtcMemberRoom : GPBMessage
@@ -511,6 +512,8 @@ GPB_FINAL @interface RtcMemberRoom : GPBMessage
 @property(nonatomic, readwrite) RtcState rtcState;
 
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
 
 @end
 

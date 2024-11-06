@@ -11,6 +11,7 @@
 #import "JCallSessionImpl.h"
 #import "JCallMediaManager.h"
 #import "JCallInternalConst.h"
+#import "JLogger.h"
 
 @interface JCallManager () <JCallSessionLifeCycleDelegate, JWebSocketCallDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -70,6 +71,21 @@
         [self.core.webSocket setCallDelegate:self];
     }
     return self;
+}
+
+- (void)connectSuccess {
+    [self.core.webSocket queryCallRooms:self.core.userId
+                                success:^(NSArray<JRtcRoom *> * _Nonnull rooms) {
+        JLogI(@"Call-Qry", @"query call rooms, count is %lu", (unsigned long)rooms.count);
+        for (JRtcRoom *room in rooms) {
+            if ([room.deviceId isEqualToString:[JUtility getDeviceId]]) {
+                
+                break;
+            }
+        }
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Qry", @"query call rooms error, code is %ld", code);
+    }];
 }
 
 #pragma mark - JWebSocketCallDelegate

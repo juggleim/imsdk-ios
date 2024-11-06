@@ -52,7 +52,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRtcRoomEventNtf,
     JPBRcvTypeRtcInviteEventNtf,
     JPBRcvTypeCallAuthAck,
-    JPBRcvTypeRtcPingAck
+    JPBRcvTypeRtcPingAck,
+    JPBRcvTypeQryCallRoomsAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -175,6 +176,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *zegoToken;
 @end
 
+@interface JRtcQryCallRoomsAck : JQryAck
+@property (nonatomic, copy) NSArray <JRtcRoom *> *rooms;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -194,6 +199,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JRtcRoomEventNtf *rtcRoomEventNtf;
 @property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
 @property (nonatomic, strong) JCallAuthAck *callInviteAck;
+@property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @end
 
 @interface JPBData : NSObject
@@ -386,6 +392,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)callConnected:(NSString *)callId
                     index:(int)index;
+
+- (NSData *)queryCallRooms:(NSString *)userId
+                     index:(int)index;
 
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index;

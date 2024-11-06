@@ -11,6 +11,7 @@
 #import "JConversationManager.h"
 #import "JMessageManager.h"
 #import "JChatroomManager.h"
+#import "JCallManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCore:(JIMCore *)core
          conversationManager:(JConversationManager *)conversationManager
               messageManager:(JMessageManager *)messageManager
-             chatroomManager:(JChatroomManager *)chatroomManager;
+             chatroomManager:(JChatroomManager *)chatroomManager
+                 callManager:(JCallManager *)callManager;
 
 @end
 

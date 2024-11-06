@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *roomId;
 @property (nonatomic, strong) JUserInfo *owner;
 @property (nonatomic, assign) BOOL isMultiCall;
+@property (nonatomic, copy) NSString *deviceId;
 @end
 
 NS_ASSUME_NONNULL_END

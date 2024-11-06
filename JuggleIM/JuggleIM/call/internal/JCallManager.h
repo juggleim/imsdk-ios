@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JCallManager : NSObject <JCallProtocol>
 - (instancetype)initWithCore:(JIMCore *)core;
+- (void)connectSuccess;
 @end
 
 NS_ASSUME_NONNULL_END

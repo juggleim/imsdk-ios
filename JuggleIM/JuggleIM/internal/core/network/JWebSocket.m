@@ -858,6 +858,23 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)queryCallRooms:(NSString *)userId
+               success:(void (^)(NSArray <JRtcRoom *> *))successBlock
+                 error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"query call rooms");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData queryCallRooms:userId index:self.cmdIndex++];
+        JRtcRoomArrayObj *obj = [[JRtcRoomArrayObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1059,6 +1076,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeCallAuthAck");
             [self handleRtcInviteAck:obj.callInviteAck];
             break;
+        case JPBRcvTypeQryCallRoomsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomsAck");
+            [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1107,6 +1128,9 @@ inConversation:(JConversation *)conversation
         s.completeBlock(code, nil);
     } else if ([obj isKindOfClass:[JCallAuthObj class]]) {
         JCallAuthObj *s = (JCallAuthObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
+        JRtcRoomArrayObj *s = (JRtcRoomArrayObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1425,6 +1449,18 @@ inConversation:(JConversation *)conversation
             inviteObj.errorBlock(ack.code);
         } else {
             inviteObj.successBlock(ack.zegoToken);
+        }
+    }
+}
+
+- (void)handleRtcQryCallRoomsAck:(JRtcQryCallRoomsAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
+        JRtcRoomArrayObj *roomsObj = (JRtcRoomArrayObj *)obj;
+        if (ack.code != 0) {
+            roomsObj.errorBlock(ack.code);
+        } else {
+            roomsObj.successBlock(ack.rooms);
         }
     }
 }
