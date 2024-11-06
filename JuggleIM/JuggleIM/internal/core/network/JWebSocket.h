@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
                  user:(JUserInfo *)user;
 - (void)callDidAccept:(JRtcRoom *)room
                  user:(JUserInfo *)user;
+- (void)roomDidDestroy:(JRtcRoom *)room;
 @end
 
 @interface JWebSocket : NSObject
@@ -283,6 +284,10 @@ inConversation:(JConversation *)conversation
 - (void)callConnected:(NSString *)callId
               success:(void (^)(void))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+//- (void)queryCallRooms
+
+- (void)rtcPing:(NSString *)callId;
 
 @end
 

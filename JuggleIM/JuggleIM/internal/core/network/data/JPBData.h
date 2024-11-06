@@ -51,7 +51,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeChatroomEventNtf,
     JPBRcvTypeRtcRoomEventNtf,
     JPBRcvTypeRtcInviteEventNtf,
-    JPBRcvTypeCallAuthAck
+    JPBRcvTypeCallAuthAck,
+    JPBRcvTypeRtcPingAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -385,6 +386,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)callConnected:(NSString *)callId
                     index:(int)index;
+
+- (NSData *)rtcPingData:(NSString *)callId
+                  index:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;
 @end

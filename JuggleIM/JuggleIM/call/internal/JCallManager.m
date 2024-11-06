@@ -135,6 +135,14 @@
     [callSession event:JCallEventReceiveAccept userInfo:userInfo];
 }
 
+- (void)roomDidDestroy:(JRtcRoom *)room {
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (!callSession) {
+        return;
+    }
+    [callSession event:JCallEventRoomDestroy userInfo:nil];
+}
+
 #pragma mark - JCallSessionLifeCycleDelegate
 - (void)sessionDidfinish:(JCallSessionImpl *)session {
     @synchronized (self) {
@@ -161,8 +169,6 @@
     callSession.callId = callId;
     callSession.isMultiCall = isMultiCall;
     callSession.engineType = self.engineType;
-    callSession.cameraEnable = NO;
-    callSession.microphoneEnable = YES;
     callSession.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
     callSession.core = self.core;
     callSession.sessionLifeCycleDelegate = self;

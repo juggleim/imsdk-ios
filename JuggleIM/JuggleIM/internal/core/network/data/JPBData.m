@@ -78,6 +78,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcAccept @"rtc_accept"
 #define jRtcQuit @"rtc_quit"
 #define jRtcUpdState @"rtc_upd_state"
+#define jRtcPing @"rtc_ping"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
@@ -1160,6 +1161,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)rtcPingData:(NSString *)callId
+                  index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcPing;
+    body.targetId = callId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1301,6 +1315,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeCallAuthAck:
                     obj = [self callInviteAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeRtcPingAck:
+                    obj.rcvType = JPBRcvTypeRtcPingAck;
                     break;
                 default:
                     break;
@@ -2142,7 +2159,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcInvite:@(JPBRcvTypeCallAuthAck),
              jRtcHangUp:@(JPBRcvTypeSimpleQryAck),
              jRtcAccept:@(JPBRcvTypeCallAuthAck),
-             jRtcUpdState:@(JPBRcvTypeSimpleQryAck)
+             jRtcUpdState:@(JPBRcvTypeSimpleQryAck),
+             jRtcPing:@(JPBRcvTypeRtcPingAck)
     };
 }
 @end

@@ -33,6 +33,7 @@
 - (void)signalHangup;
 - (void)signalAccept;
 - (void)signalConnected;
+- (void)ping;
 
 #pragma mark - media
 - (void)mediaQuit;

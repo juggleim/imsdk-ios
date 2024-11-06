@@ -46,8 +46,10 @@ typedef NS_ENUM(NSInteger, JCallFinishReason) {
     JCallFinishReasonOtherSideNoResponse = 9,
     /// 对端用户取消呼叫
     JCallFinishReasonOtherSideCancel = 10,
+    /// 房间被销毁
+    JCallFinishReasonRoomDestroy = 11,
     /// 网络出错
-    JCallFinishReasonNetworkError = 11
+    JCallFinishReasonNetworkError = 12
     
 };
 

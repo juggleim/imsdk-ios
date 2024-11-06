@@ -22,15 +22,15 @@
 /// - Parameter finishReason: 结束原因
 - (void)callDidFinish:(JCallFinishReason)finishReason;
 
-/// 用户被邀请
+/// 用户被邀请（多人通话中使用）
 /// - Parameter userId: 被邀请的用户 id
 - (void)userDidInvite:(NSString *)userId;
 
-/// 用户加入通话
+/// 用户加入通话（多人通话中使用）
 /// - Parameter userId: 用户 id
 - (void)userDidConnect:(NSString *)userId;
 
-/// 用户退出通话
+/// 用户退出通话（多人通话中使用）
 /// - Parameter userId: 用户 id
 - (void)userDidLeave:(NSString *)userId;
 
@@ -61,10 +61,6 @@
 @property (nonatomic, assign) BOOL isMultiCall;
 /// 通话状态
 @property (nonatomic, assign) JCallStatus callStatus;
-/// 是否开启视频，默认 NO 关闭
-@property (nonatomic, assign) BOOL cameraEnable;
-/// 是否开启麦克风，默认 YES 开启
-@property (nonatomic, assign) BOOL microphoneEnable;
 /// 呼叫开始时间（多人会话中当前用户被呼叫的时间，不一定等于整个通话开始的时间）
 @property (nonatomic, assign) long long startTime;
 /// 当前用户加入通话的时间

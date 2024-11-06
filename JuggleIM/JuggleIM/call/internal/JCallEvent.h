@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventReceiveAccept,
     //JCallEventReceiveAddParticipants,
     JCallEventReceiveHangup,
+    JCallEventRoomDestroy,
     
     /// Media outgoing
     

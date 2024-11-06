@@ -48,6 +48,11 @@
             [self.callSessionImpl transitionToIdleState];
             break;
             
+        case JCallEventRoomDestroy:
+            self.callSessionImpl.finishReason = JCallFinishReasonRoomDestroy;
+            [self.callSessionImpl transitionToIdleState];
+            break;
+            
         case JCallEventAccept:
             [self.callSessionImpl error:JCallErrorCodeCantAcceptWhileNotInvited];
             break;

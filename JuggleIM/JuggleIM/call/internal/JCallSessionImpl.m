@@ -27,6 +27,8 @@
 @property (nonatomic, strong) JOutgoingState *outgoingState;
 @property (nonatomic, strong) NSHashTable <id<JCallSessionDelegate>> *delegates;
 @property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
+//@property (nonatomic, assign) BOOL cameraEnable;
+//@property (nonatomic, assign) BOOL microphoneEnable;
 @end
 
 @implementation JCallSessionImpl
@@ -180,6 +182,10 @@
     }];
 }
 
+- (void)ping {
+    [self.core.webSocket rtcPing:self.callId];
+}
+
 #pragma mark - media
 - (void)mediaQuit {
     JLogI(@"Call-Media", @"media quit");
@@ -323,13 +329,11 @@
 
 @synthesize callId;
 @synthesize callStatus;
-@synthesize cameraEnable;
 @synthesize connectTime;
 @synthesize finishReason;
 @synthesize finishTime;
 @synthesize inviter;
 @synthesize isMultiCall;
-@synthesize microphoneEnable;
 @synthesize owner;
 @synthesize members = _members;
 @synthesize startTime;

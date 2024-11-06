@@ -858,6 +858,18 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)rtcPing:(NSString *)callId {
+    dispatch_async(self.sendQueue, ^{
+        JLogV(@"WS-Send", @"rtc ping");
+        NSData *d = [self.pbData rtcPingData:callId index:self.cmdIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"rtc ping error, msg is %@", err.description);
+        }
+    });
+}
+
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
@@ -1353,6 +1365,7 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleRtcRoomEventNtf:(JRtcRoomEventNtf *)ntf {
+    JLogI(@"Call-RmEvent", @"type is %ld", ntf.eventType);
     switch (ntf.eventType) {
 //        case JPBRtcRoomEventTypeJoin:
 //            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
@@ -1362,7 +1375,9 @@ inConversation:(JConversation *)conversation
 //            break;
             
         case JPBRtcRoomEventTypeDestroy:
-            
+            if ([self.callDelegate respondsToSelector:@selector(roomDidDestroy:)]) {
+                [self.callDelegate roomDidDestroy:ntf.room];
+            }
             break;
             
         //TODO:
