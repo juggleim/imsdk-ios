@@ -518,6 +518,10 @@ NSString *const jMatchCount = @"match_count";
             sql = [sql stringByAppendingString:jConversationIs];
             sql = [sql stringByAppendingString:jRightBracket];
             [args addObject:@(obj.conversationType)];
+            NSString *conversationId = @"";
+            if (obj.conversationId.length > 0) {
+                conversationId = obj.conversationId;
+            }
             [args addObject:obj.conversationId];
             if (idx < conversations.count - 1) {
                 sql = [sql stringByAppendingString:jOr];
