@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JuggleIM'
-  s.version          = '1.7.7.1'
+  s.version          = '1.7.7.2'
   s.summary          = 'Juggle IM SDK.'
 
 # This description is used to generate tags and improve search results.
