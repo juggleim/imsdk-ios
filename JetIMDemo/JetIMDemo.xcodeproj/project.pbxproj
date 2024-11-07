@@ -14,11 +14,24 @@
 		A08AA2062B148B9E008B114C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2052B148B9E008B114C /* Assets.xcassets */; };
 		A08AA2092B148B9E008B114C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2072B148B9E008B114C /* LaunchScreen.storyboard */; };
 		A08AA20C2B148B9E008B114C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA20B2B148B9E008B114C /* main.m */; };
+		A0CE9A342CD4C103008B405C /* JZegoCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CE9A332CD4C103008B405C /* JZegoCall.framework */; };
 		A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A0596E0C2CD3806200914FEA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		A07CE4222B45C38C006E3F4D /* JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F62B148B9C008B114C /* JetIMDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JetIMDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F92B148B9C008B114C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A08AA1FA2B148B9C008B114C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -31,6 +44,8 @@
 		A08AA2082B148B9E008B114C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A08AA20A2B148B9E008B114C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A08AA20B2B148B9E008B114C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A09727622CB6EC0400E08BC4 /* JuggleCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0CE9A332CD4C103008B405C /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -39,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0CE9A342CD4C103008B405C /* JZegoCall.framework in Frameworks */,
 				A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,8 +100,9 @@
 		A08AA2182B148BD9008B114C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A0CE9A332CD4C103008B405C /* JZegoCall.framework */,
+				A09727622CB6EC0400E08BC4 /* JuggleCall.framework */,
 				A0F3DED92C4A6BAC006F2D58 /* JuggleIM.framework */,
-				A07CE4222B45C38C006E3F4D /* JetIM.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -100,6 +117,7 @@
 				A08AA1F22B148B9C008B114C /* Sources */,
 				A08AA1F32B148B9C008B114C /* Frameworks */,
 				A08AA1F42B148B9C008B114C /* Resources */,
+				A0596E0C2CD3806200914FEA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -308,9 +326,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -339,9 +359,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TH4V3Y8FTM;
+				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

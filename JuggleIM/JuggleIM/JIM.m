@@ -14,6 +14,8 @@
 #import "JIMCore.h"
 #import "JLogger.h"
 #import "JUtility.h"
+#import "JCallManager.h"
+
 @interface JIM ()
 @property (nonatomic, strong) JIMCore *core;
 @end
@@ -35,13 +37,16 @@ static JIM *_instance;
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager];
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
         messageManager.sendReceiveDelegate = conversationManager;
+        JCallManager *callManager = [[JCallManager alloc] initWithCore:core];
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
         _instance.userInfoManager = userInfoManager;
+        _instance.callManager = callManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager
-                                                               chatroomManager:chatroomManager];
+                                                               chatroomManager:chatroomManager
+                                                                   callManager:callManager];
     });
     return _instance;
 }
@@ -80,6 +85,7 @@ static JIM *_instance;
 - (NSString *)currentUserId {
     return self.core.userId;
 }
+
 -(NSString *)getDeviceId{
     return [JUtility getDeviceId];
 }

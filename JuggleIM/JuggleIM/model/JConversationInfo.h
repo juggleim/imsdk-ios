@@ -9,7 +9,7 @@
 
 #import <JuggleIM/JConversation.h>
 #import <JuggleIM/JMessage.h>
-#import "JConversationMentionInfo.h"
+#import <JuggleIM/JConversationMentionInfo.h>
 
 
 @interface JConversationInfo : NSObject

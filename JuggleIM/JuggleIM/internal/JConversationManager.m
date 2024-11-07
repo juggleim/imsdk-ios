@@ -425,6 +425,7 @@
         }];
     });
 }
+
 - (void)conversationsDidUpdate:(JConcreteMessage *)message{
     if([message.contentType isEqualToString:[JUnDisturbConvMessage contentType]]){
         JUnDisturbConvMessage * content = (JUnDisturbConvMessage *)message.content;

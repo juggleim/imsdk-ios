@@ -8,7 +8,7 @@
       location = "group:JetIMDemo/JetIMDemo.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:JuggleCall/JuggleCall.xcodeproj">
+      location = "group:JZegoCall/JZegoCall.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:JuggleIM/JuggleIM.xcodeproj">

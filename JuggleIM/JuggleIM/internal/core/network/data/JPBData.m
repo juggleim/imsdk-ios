@@ -10,6 +10,7 @@
 #import "Appmessages.pbobjc.h"
 #import "Pushtoken.pbobjc.h"
 #import "Chatroom.pbobjc.h"
+#import "Rtcroom.pbobjc.h"
 #import "JuggleIMPBConst.h"
 #import "JConcreteMessage.h"
 #import "JContentTypeCenter.h"
@@ -74,11 +75,21 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryFirstUnreadMsg @"qry_first_unread_msg"
 #define jBatchAddAtt @"c_batch_add_att"
 #define jBatchDelAtt @"c_batch_del_att"
+#define jRtcInvite @"rtc_invite"
+#define jRtcHangUp @"rtc_hangup"
+#define jRtcAccept @"rtc_accept"
+#define jRtcQuit @"rtc_quit"
+#define jRtcUpdState @"rtc_upd_state"
+#define jRtcMemberRooms @"rtc_member_rooms"
+#define jRtcQry @"rtc_qry"
+#define jRtcPing @"rtc_ping"
 
 #define jApns @"Apns"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 #define jCUserNtf @"c_user_ntf"
+#define jRtcRoomEvent @"rtc_room_event"
+#define jRtcInviteEvent @"rtc_invite_event"
 
 @implementation JConnectAck
 @end
@@ -114,6 +125,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JChatroomAttrsAck
+@end
+
+@implementation JRtcRoomEventNtf
+@end
+
+@implementation JRtcInviteEventNtf
+@end
+
+@implementation JCallAuthAck
+@end
+
+@implementation JRtcQryCallRoomsAck
 @end
 
 @implementation JQryAck
@@ -1100,6 +1123,115 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)callInvite:(NSString *)callId
+           isMultiCall:(BOOL)isMultiCall
+          targetIdList:(nonnull NSArray<NSString *> *)userIdList
+            engineType:(NSUInteger)engineType
+                 index:(int)index {
+    RtcInviteReq *req = [[RtcInviteReq alloc] init];
+    req.targetIdsArray = [userIdList mutableCopy];
+    if (isMultiCall) {
+        req.roomType = RtcRoomType_OneMore;
+    } else {
+        req.roomType = RtcRoomType_OneOne;
+    }
+    req.roomId = callId;
+    if (engineType == 0) {
+        req.rtcChannel = RtcChannel_Zego;
+    }
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcInvite;
+    body.targetId = callId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callHangup:(NSString *)callId
+                 index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcHangUp;
+    body.targetId = callId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callAccept:(NSString *)callId
+                 index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcAccept;
+    body.targetId = callId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callConnected:(NSString *)callId
+                    index:(int)index {
+    RtcMember *member = [[RtcMember alloc] init];
+    member.rtcState = RtcState_RtcConnected;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcUpdState;
+    body.targetId = callId;
+    body.data_p = [member data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)queryCallRooms:(NSString *)userId index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcMemberRooms;
+    body.targetId = userId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)queryCallRoom:(NSString *)roomId index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcQry;
+    body.targetId = roomId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)rtcPingData:(NSString *)callId
+                  index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcPing;
+    body.targetId = callId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     
@@ -1191,31 +1323,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeQryHisMsgsAck:
                     obj = [self queryHistoryMessagesAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSyncConvsAck:
                     obj = [self syncConversationsAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSyncMsgsAck:
                     obj = [self syncMsgsAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeQryReadDetailAck:
                     obj = [self qryReadDetailAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSimpleQryAck:
                     obj = [self simpleQryAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeSimpleQryAckCallbackTimestamp:
                     obj = [self simpleQryAckCallbackTimestampWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeConversationSetTopAck:
                     obj = [self conversationSetTopAckWithImWebsocketMsg:body];
                     break;
-                    
                 case JPBRcvTypeAddConversation:
                     obj = [self addConversationWithImWebsocketMsg:body];
                     break;
@@ -1239,6 +1364,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeSyncChatroomAttrsAck:
                     obj = [self syncChatroomAttrsAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeCallAuthAck:
+                    obj = [self callInviteAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeRtcPingAck:
+                    obj.rcvType = JPBRcvTypeRtcPingAck;
+                    break;
+                case JPBRcvTypeQryCallRoomsAck:
+                    obj = [self qryCallRoomsAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeQryCallRoomAck:
+                    obj = [self qryCallRoomAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1311,6 +1448,38 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 n.chatroomId = event.chatId;
                 n.type = (NSUInteger)event.eventType;
                 obj.publishMsgNtf = n;
+            } else if ([body.topic isEqualToString:jRtcRoomEvent]) {
+                RtcRoomEvent *event = [[RtcRoomEvent alloc] initWithData:body.data_p error:&err];
+                if (err != nil) {
+                    JLogE(@"PB-Parse", @"publish rtc_room_event parse error, msg is %@",err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                obj.rcvType = JPBRcvTypeRtcRoomEventNtf;
+                JRtcRoomEventNtf *n = [[JRtcRoomEventNtf alloc] init];
+                n.eventType = (NSUInteger)event.roomEventType;
+                n.member = [self callMemberWithPBRtcMember:event.member];
+                n.room = [self rtcRoomWithPBRtcRoom:event.room];
+                obj.rtcRoomEventNtf = n;
+            } else if ([body.topic isEqualToString:jRtcInviteEvent]) {
+                RtcInviteEvent *event = [[RtcInviteEvent alloc] initWithData:body.data_p error:&err];
+                if (err != nil) {
+                    JLogE(@"PB-Parse", @"publish rtc_invite_event parse error, msg is %@",err.description);
+                    obj.rcvType = JPBRcvTypeParseError;
+                    return obj;
+                }
+                obj.rcvType = JPBRcvTypeRtcInviteEventNtf;
+                JRtcInviteEventNtf *n = [[JRtcInviteEventNtf alloc] init];
+                n.type = (NSUInteger)event.inviteType;
+                n.user = [self userInfoWithPBUserInfo:event.user];
+                n.room = [self rtcRoomWithPBRtcRoom:event.room];
+                NSMutableArray *targetUserList = [NSMutableArray array];
+                for (UserInfo *pbUserInfo in event.targetUsersArray) {
+                    JUserInfo *u = [self userInfoWithPBUserInfo:pbUserInfo];
+                    [targetUserList addObject:u];
+                }
+                n.targetUsers = [targetUserList copy];
+                obj.rtcInviteEventNtf = n;
             }
         }
             break;
@@ -1490,6 +1659,20 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return result;
 }
 
+- (JCallMember *)callMemberWithPBRtcMember:(RtcMember *)pbMember {
+    if (pbMember == nil) {
+        return nil;
+    }
+    JCallMember *result = [[JCallMember alloc] init];
+    result.userInfo = [self userInfoWithPBUserInfo:pbMember.member];
+    result.callStatus = (NSInteger)pbMember.rtcState;
+    result.startTime = pbMember.callTime;
+    result.connectTime = pbMember.connectTime;
+    result.finishTime = pbMember.hangupTime;
+    result.inviter = [self userInfoWithPBUserInfo:pbMember.inviter];
+    return result;
+}
+
 - (JUserInfo *)userInfoWithMemberReadDetailItem:(MemberReadDetailItem *)item {
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = item.member.userId;
@@ -1503,6 +1686,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
         userInfo.extraDic = [dic copy];
     }
     return userInfo;
+}
+
+- (JRtcRoom *)rtcRoomWithPBRtcRoom:(RtcRoom *)pbRoom {
+    if (pbRoom == nil) {
+        return nil;
+    }
+    JRtcRoom *result = [[JRtcRoom alloc] init];
+    result.roomId = pbRoom.roomId;
+    result.owner = [self userInfoWithPBUserInfo:pbRoom.owner];
+    result.isMultiCall = pbRoom.roomType == RtcRoomType_OneMore;
+    return result;
 }
 
 - (JConcreteConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
@@ -1695,6 +1889,85 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     a.items = arr;
     obj.chatroomAttrsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)callInviteAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcAuth *rtcAuth = [[RtcAuth alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"call invite ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeCallAuthAck;
+    JCallAuthAck *a = [[JCallAuthAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
+    a.zegoToken = zegoAuth.token;
+    obj.callInviteAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)qryCallRoomsAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcMemberRooms *rooms = [[RtcMemberRooms alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry call rooms ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryCallRoomsAck;
+    NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
+    for (RtcMemberRoom *room in rooms.roomsArray) {
+        JRtcRoom *outRoom = [[JRtcRoom alloc] init];
+        outRoom.roomId = room.roomId;
+        outRoom.deviceId = room.deviceId;
+        outRoom.callStatus = (int)room.rtcState;
+        [outRooms addObject:outRoom];
+    }
+    JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.rooms = outRooms;
+    obj.rtcQryCallRoomsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)qryCallRoomAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcRoom *room = [[RtcRoom alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry call room ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryCallRoomAck;
+    NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
+    JRtcRoom *outRoom = [[JRtcRoom alloc] init];
+    outRoom.isMultiCall = room.roomType == RtcRoomType_OneMore ? YES : NO;
+    outRoom.roomId = room.roomId;
+    outRoom.owner = [self userInfoWithPBUserInfo:room.owner];
+    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
+    for (RtcMember *member in room.membersArray) {
+        JCallMember *outMember = [[JCallMember alloc] init];
+        outMember.userInfo = [self userInfoWithPBUserInfo:member.member];
+        outMember.callStatus = (int)member.rtcState;
+        outMember.startTime = member.callTime;
+        outMember.connectTime = member.connectTime;
+        outMember.finishTime = member.hangupTime;
+        outMember.inviter = [self userInfoWithPBUserInfo:member.inviter];
+        [members addObject:outMember];
+    }
+    outRoom.members = members;
+    [outRooms addObject:outRoom];
+    //共用 JRtcQryCallRoomsAck
+    JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.rooms = outRooms;
+    obj.rtcQryCallRoomsAck = a;
     return obj;
 }
 
@@ -2001,7 +2274,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryFirstUnreadMsg:@(JPBRcvTypeQryFirstUnreadMsgAck),
              jBatchAddAtt:@(JPBRcvTypeSetChatroomAttrAck),
              jSyncChatroomAtts:@(JPBRcvTypeSyncChatroomAttrsAck),
-             jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck)
+             jBatchDelAtt:@(JPBRcvTypeRemoveChatroomAttrAck),
+             jRtcInvite:@(JPBRcvTypeCallAuthAck),
+             jRtcHangUp:@(JPBRcvTypeSimpleQryAck),
+             jRtcAccept:@(JPBRcvTypeCallAuthAck),
+             jRtcUpdState:@(JPBRcvTypeSimpleQryAck),
+             jRtcPing:@(JPBRcvTypeRtcPingAck),
+             jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
+             jRtcQry:@(JPBRcvTypeQryCallRoomAck)
     };
 }
 @end

@@ -161,7 +161,6 @@ NSString *const jMatchCount = @"match_count";
             }
         }];
     }];
-    
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo

@@ -5,7 +5,7 @@
 //  Created by Nathan on 2024/5/9.
 //
 
-#import "JMessageContent.h"
+#import <JuggleIM/JMessageContent.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

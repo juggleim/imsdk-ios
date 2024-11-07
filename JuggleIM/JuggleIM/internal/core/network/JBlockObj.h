@@ -13,6 +13,7 @@
 #import "JUploadQiNiuCred.h"
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
+#import "JRtcRoom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -69,8 +70,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^completeBlock)(JErrorCodeInternal code,  NSArray<JChatroomAttributeItem *> * _Nullable items);
 @end
 
-@interface JChatroomObj: JBlockObj
+@interface JChatroomObj : JBlockObj
 @property (nonatomic, copy) NSString *chatroomId;
+@end
+
+@interface JCallAuthObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSString *zegoToken);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JRtcRoomArrayObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray <JRtcRoom *> *);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
 NS_ASSUME_NONNULL_END

@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JChatroomMember.h"
-#import "JuggleIMConst.h"
+#import <JuggleIM/JChatroomMember.h>
+#import <JuggleIM/JuggleIMConst.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

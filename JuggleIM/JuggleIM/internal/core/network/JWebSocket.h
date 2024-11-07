@@ -18,6 +18,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
+#import "JRtcRoom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,6 +59,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)chatroomDidKick:(NSString *)chatroomId;
 @end
 
+@protocol JWebSocketCallDelegate <NSObject>
+- (void)callDidInvite:(JRtcRoom *)room
+              inviter:(JUserInfo *)inviter
+          targetUsers:(NSArray <JUserInfo *> *)targetUsers;
+- (void)callDidHangup:(JRtcRoom *)room
+                 user:(JUserInfo *)user;
+- (void)callDidAccept:(JRtcRoom *)room
+                 user:(JUserInfo *)user;
+- (void)roomDidDestroy:(JRtcRoom *)room;
+@end
+
 @interface JWebSocket : NSObject
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
@@ -81,6 +93,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setMessageDelegate:(id<JWebSocketMessageDelegate>)delegate;
 
 - (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate;
+
+- (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate;
 
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
@@ -261,6 +275,37 @@ inConversation:(JConversation *)conversation
                     url:(NSString *)url;
 
 - (void)sendPing;
+
+#pragma mark - Call
+- (void)callInvite:(NSString *)callId
+       isMultiCall:(BOOL)isMultiCall
+      targetIdList:(NSArray <NSString *>*)userIdList
+        engineType:(NSUInteger)engineType
+           success:(void (^)(NSString * zegoToken))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callHangup:(NSString *)callId
+           success:(void (^)(void))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callAccept:(NSString *)callId
+           success:(void (^)(NSString * zegoToken))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callConnected:(NSString *)callId
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)queryCallRooms:(NSString *)userId
+               success:(void (^)(NSArray <JRtcRoom *>*))successBlock
+                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)queryCallRoom:(NSString *)roomId
+              success:(void (^)(NSArray <JRtcRoom *>*))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)rtcPing:(NSString *)callId;
+
 @end
 
 NS_ASSUME_NONNULL_END

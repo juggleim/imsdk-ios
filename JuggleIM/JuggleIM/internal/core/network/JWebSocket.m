@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, weak) id<JWebSocketConnectDelegate> connectDelegate;
 @property (nonatomic, weak) id<JWebSocketMessageDelegate> messageDelegate;
 @property (nonatomic, weak) id<JWebSocketChatroomDelegate> chatroomDelegate;
+@property (nonatomic, weak) id<JWebSocketCallDelegate> callDelegate;
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
@@ -125,6 +126,10 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 
 - (void)setChatroomDelegate:(id<JWebSocketChatroomDelegate>)delegate {
     _chatroomDelegate = delegate;
+}
+
+- (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate {
+    _callDelegate = delegate;
 }
 
 #pragma mark - send pb
@@ -806,6 +811,122 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)callInvite:(NSString *)callId
+       isMultiCall:(BOOL)isMultiCall
+      targetIdList:(NSArray<NSString *> *)userIdList
+        engineType:(NSUInteger)engineType
+           success:(nonnull void (^)(NSString *))successBlock
+             error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call invite, callId is %@, isMultiCall is %d", callId, isMultiCall);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callInvite:callId
+                                isMultiCall:isMultiCall
+                               targetIdList:userIdList
+                                 engineType:engineType
+                                      index:self.cmdIndex++];
+        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)callHangup:(NSString *)callId
+           success:(void (^)(void))successBlock
+             error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call hangup, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callHangup:callId
+                                      index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)callAccept:(NSString *)callId
+           success:(void (^)(NSString * _Nonnull))successBlock
+             error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call accept, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callAccept:callId
+                                      index:self.cmdIndex++];
+        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)callConnected:(NSString *)callId
+              success:(void (^)(void))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call connected, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callConnected:callId index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)queryCallRooms:(NSString *)userId
+               success:(void (^)(NSArray <JRtcRoom *> *))successBlock
+                 error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"query call rooms");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData queryCallRooms:userId index:self.cmdIndex++];
+        JRtcRoomArrayObj *obj = [[JRtcRoomArrayObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)queryCallRoom:(NSString *)roomId
+              success:(void (^)(NSArray<JRtcRoom *> * _Nonnull))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"query call room");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData queryCallRoom:roomId index:self.cmdIndex++];
+        JRtcRoomArrayObj *obj = [[JRtcRoomArrayObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)rtcPing:(NSString *)callId {
+    dispatch_async(self.sendQueue, ^{
+        JLogV(@"WS-Send", @"rtc ping");
+        NSData *d = [self.pbData rtcPingData:callId index:self.cmdIndex++];
+        NSError *err = nil;
+        [self.sws sendData:d error:&err];
+        if (err != nil) {
+            JLogE(@"WS-Send", @"rtc ping error, msg is %@", err.description);
+        }
+    });
+}
 
 #pragma mark - SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
@@ -984,6 +1105,27 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeChatroomEventNtf");
             [self handleChatroomEventNtf:obj.publishMsgNtf];
             break;
+        case JPBRcvTypeRtcRoomEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcRoomEventNtf");
+            [self handleRtcRoomEventNtf:obj.rtcRoomEventNtf];
+            break;
+        case JPBRcvTypeRtcInviteEventNtf:
+            JLogI(@"WS-Receive", @"JPBRcvTypeRtcInviteEventNtf");
+            [self handleRtcInviteEventNtf:obj.rtcInviteEventNtf];
+            break;
+        case JPBRcvTypeCallAuthAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeCallAuthAck");
+            [self handleRtcInviteAck:obj.callInviteAck];
+            break;
+        case JPBRcvTypeQryCallRoomsAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomsAck");
+            [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
+            break;
+        case JPBRcvTypeQryCallRoomAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomAck");
+            //复用 rtcQryCallRoomsAck
+            [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1030,6 +1172,12 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
         JUpdateChatroomAttrObj *s = (JUpdateChatroomAttrObj *)obj;
         s.completeBlock(code, nil);
+    } else if ([obj isKindOfClass:[JCallAuthObj class]]) {
+        JCallAuthObj *s = (JCallAuthObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
+        JRtcRoomArrayObj *s = (JRtcRoomArrayObj *)obj;
+        s.errorBlock(code);
     }
 }
 
@@ -1290,6 +1438,83 @@ inConversation:(JConversation *)conversation
     } else if (ntf.type == JPBChrmEventTypeKick) {
         if ([self.chatroomDelegate respondsToSelector:@selector(chatroomDidKick:)]) {
             [self.chatroomDelegate chatroomDidKick:ntf.chatroomId];
+        }
+    }
+}
+
+- (void)handleRtcRoomEventNtf:(JRtcRoomEventNtf *)ntf {
+    JLogI(@"Call-RmEvent", @"type is %ld", ntf.eventType);
+    switch (ntf.eventType) {
+//        case JPBRtcRoomEventTypeJoin:
+//            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
+//                [self.callDelegate callDidInvite:ntf.member.userInfo
+//                                            room:ntf.room];
+//            }
+//            break;
+            
+        case JPBRtcRoomEventTypeDestroy:
+            if ([self.callDelegate respondsToSelector:@selector(roomDidDestroy:)]) {
+                [self.callDelegate roomDidDestroy:ntf.room];
+            }
+            break;
+            
+        //TODO:
+            
+        default:
+            break;
+    }
+    
+}
+
+- (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {
+    switch (ntf.type) {
+        case JPBRtcInviteTypeInvite:
+            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:inviter:targetUsers:)]) {
+                [self.callDelegate callDidInvite:ntf.room
+                                         inviter:ntf.user
+                                     targetUsers:ntf.targetUsers];
+            }
+            break;
+            
+        case JPBRtcInviteTypeHangup:
+            if ([self.callDelegate respondsToSelector:@selector(callDidHangup:user:)]) {
+                [self.callDelegate callDidHangup:ntf.room
+                                            user:ntf.user];
+            }
+            break;
+            
+        case JPBRtcInviteTypeAccept:
+            if ([self.callDelegate respondsToSelector:@selector(callDidAccept:user:)]) {
+                [self.callDelegate callDidAccept:ntf.room
+                                            user:ntf.user];
+            }
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)handleRtcInviteAck:(JCallAuthAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JCallAuthObj class]]) {
+        JCallAuthObj *inviteObj = (JCallAuthObj *)obj;
+        if (ack.code != 0) {
+            inviteObj.errorBlock(ack.code);
+        } else {
+            inviteObj.successBlock(ack.zegoToken);
+        }
+    }
+}
+
+- (void)handleRtcQryCallRoomsAck:(JRtcQryCallRoomsAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
+        JRtcRoomArrayObj *roomsObj = (JRtcRoomArrayObj *)obj;
+        if (ack.code != 0) {
+            roomsObj.errorBlock(ack.code);
+        } else {
+            roomsObj.successBlock(ack.rooms);
         }
     }
 }

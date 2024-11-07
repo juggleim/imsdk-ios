@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JMessageMentionInfo.h"
-#import "JPushData.h"
+#import <JuggleIM/JMessageMentionInfo.h>
+#import <JuggleIM/JPushData.h>
 
 @interface JMessageOptions : NSObject
 

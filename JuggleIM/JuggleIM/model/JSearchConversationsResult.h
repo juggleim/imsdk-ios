@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JConversationInfo.h"
+#import <JuggleIM/JConversationInfo.h>
 
 @interface JSearchConversationsResult : NSObject
 @property (nonatomic, strong) JConversationInfo *conversationInfo;

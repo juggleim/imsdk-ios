@@ -17,6 +17,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
+#import "JRtcRoom.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,7 +48,13 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeSyncChatroomAttrsAck,
     JPBRcvTypeRemoveChatroomAttrAck,
     JPBRcvTypeChatroomDestroyNtf,
-    JPBRcvTypeChatroomEventNtf
+    JPBRcvTypeChatroomEventNtf,
+    JPBRcvTypeRtcRoomEventNtf,
+    JPBRcvTypeRtcInviteEventNtf,
+    JPBRcvTypeCallAuthAck,
+    JPBRcvTypeRtcPingAck,
+    JPBRcvTypeQryCallRoomsAck,
+    JPBRcvTypeQryCallRoomAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -55,6 +62,20 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
     JPBChrmEventTypeQuit = 1,
     JPBChrmEventTypeKick = 2,
     JPBChrmEventTypeFallout = 3
+};
+
+typedef NS_ENUM(NSUInteger, JPBRtcInviteType) {
+    JPBRtcInviteTypeInvite = 0,
+    JPBRtcInviteTypeAccept = 1,
+    JPBRtcInviteTypeHangup = 2
+};
+
+typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
+    JPBRtcRoomEventTypeDefault = 0,
+    JPBRtcRoomEventTypeJoin = 1,
+    JPBRtcRoomEventTypeQuit = 2,
+    JPBRtcRoomEventTypeDestroy = 3,
+    JPBRtcInviteTypeStateChange = 4,
 };
 
 @interface JConnectAck : NSObject
@@ -118,6 +139,19 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, assign) JPBChrmEventType type;
 @end
 
+@interface JRtcInviteEventNtf : NSObject
+@property (nonatomic, assign) JPBRtcInviteType type;
+@property (nonatomic, strong) JUserInfo *user;
+@property (nonatomic, strong) JRtcRoom *room;
+@property (nonatomic, strong) NSArray <JUserInfo *> *targetUsers;
+@end
+
+@interface JRtcRoomEventNtf : NSObject
+@property (nonatomic, assign) JPBRtcRoomEventType eventType;
+@property (nonatomic, strong) JCallMember *member;
+@property (nonatomic, strong) JRtcRoom *room;
+@end
+
 @interface JDisconnectMsg : NSObject
 @property (nonatomic, assign) int code;
 @property (nonatomic, assign) long long timestamp;
@@ -140,6 +174,14 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, copy) NSArray <JChatroomAttributeItem *> *items;
 @end
 
+@interface JCallAuthAck : JQryAck
+@property (nonatomic, copy) NSString *zegoToken;
+@end
+
+@interface JRtcQryCallRoomsAck : JQryAck
+@property (nonatomic, copy) NSArray <JRtcRoom *> *rooms;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -156,6 +198,10 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 @property (nonatomic, strong) JQryFileCredAck *qryFileCredAck;
 @property (nonatomic, strong) JGlobalMuteAck *globalMuteAck;
 @property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
+@property (nonatomic, strong) JRtcRoomEventNtf *rtcRoomEventNtf;
+@property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
+@property (nonatomic, strong) JCallAuthAck *callInviteAck;
+@property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @end
 
 @interface JPBData : NSObject
@@ -340,6 +386,31 @@ typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
 - (NSData *)pingData;
 
 - (NSData *)publishAckData:(int)index;
+
+#pragma mark - Call
+- (NSData *)callInvite:(NSString *)callId
+           isMultiCall:(BOOL)isMultiCall
+          targetIdList:(NSArray <NSString *>*)userIdList
+            engineType:(NSUInteger)engineType
+                 index:(int)index;
+
+- (NSData *)callHangup:(NSString *)callId
+                 index:(int)index;
+
+- (NSData *)callAccept:(NSString *)callId
+                 index:(int)index;
+
+- (NSData *)callConnected:(NSString *)callId
+                    index:(int)index;
+
+- (NSData *)queryCallRooms:(NSString *)userId
+                     index:(int)index;
+
+- (NSData *)queryCallRoom:(NSString *)roomId
+                    index:(int)index;
+
+- (NSData *)rtcPingData:(NSString *)callId
+                  index:(int)index;
 
 - (JPBRcvObj *)rcvObjWithData:(NSData *)data;
 @end

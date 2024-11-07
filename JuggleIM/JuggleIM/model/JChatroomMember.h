@@ -6,7 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "JUserInfo.h"
+#import <JuggleIM/JUserInfo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
