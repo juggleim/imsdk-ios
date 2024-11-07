@@ -82,18 +82,12 @@
     });
 }
 
-- (void)inviteFail {
-    self.callStatus = JCallStatusIdle;
-    self.finishTime = [[NSDate date] timeIntervalSince1970];
-    self.finishReason = JCallFinishReasonNetworkError;
-}
-
-- (void)startOutgoingTimer {
-    //TODO:
-}
-
 - (void)notifyReceiveCall {
     [self.sessionLifeCycleDelegate callDidReceive:self];
+}
+
+- (BOOL)notifyAcceptCall {
+    return [self.sessionLifeCycleDelegate callDidAccept:self];
 }
 
 - (void)memberHangup:(NSString *)userId {
@@ -102,21 +96,11 @@
         self.finishTime = [[NSDate date] timeIntervalSince1970];
         if (self.callStatus == JCallStatusOutgoing) {
             self.finishReason = JCallFinishReasonOtherSideDecline;
+        } else if (self.callStatus == JCallStatusIncoming) {
+            self.finishReason = JCallFinishReasonOtherSideCancel;
         } else {
             self.finishReason = JCallFinishReasonOtherSideHangup;
         }
-    }
-}
-
-- (void)memberAccept:(NSString *)userId {
-    if (!self.isMultiCall) {
-        for (JCallMember *member in self.members) {
-            if ([member.userInfo.userId isEqualToString:userId]) {
-                member.callStatus = JCallStatusConnecting;
-            }
-        }
-    } else {
-        
     }
 }
 
@@ -168,7 +152,7 @@
         self.zegoToken = zegoToken;
         [self.stateMachine event:JCallEventAcceptDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
-        JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
+        JLogE(@"Call-Signal", @"send accept error, code is %ld", code);
         [self.stateMachine event:JCallEventAcceptFail userInfo:nil];
     }];
 }

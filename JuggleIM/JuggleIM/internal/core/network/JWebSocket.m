@@ -875,6 +875,23 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)queryCallRoom:(NSString *)roomId
+              success:(void (^)(NSArray<JRtcRoom *> * _Nonnull))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"query call room");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData queryCallRoom:roomId index:self.cmdIndex++];
+        JRtcRoomArrayObj *obj = [[JRtcRoomArrayObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1078,6 +1095,11 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeQryCallRoomsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomsAck");
+            [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
+            break;
+        case JPBRcvTypeQryCallRoomAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomAck");
+            //复用 rtcQryCallRoomsAck
             [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
             break;
         default:

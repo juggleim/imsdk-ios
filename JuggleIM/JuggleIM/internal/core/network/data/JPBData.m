@@ -79,6 +79,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcQuit @"rtc_quit"
 #define jRtcUpdState @"rtc_upd_state"
 #define jRtcMemberRooms @"rtc_member_rooms"
+#define jRtcQry @"rtc_qry"
 #define jRtcPing @"rtc_ping"
 
 #define jApns @"Apns"
@@ -1177,6 +1178,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)queryCallRoom:(NSString *)roomId index:(int)index {
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcQry;
+    body.targetId = roomId;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -1330,6 +1343,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeQryCallRoomsAck:
                     obj = [self qryCallRoomsAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeQryCallRoomAck:
+                    obj = [self qryCallRoomAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1875,13 +1891,49 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     obj.rcvType = JPBRcvTypeQryCallRoomsAck;
     NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
-    
     for (RtcMemberRoom *room in rooms.roomsArray) {
         JRtcRoom *outRoom = [[JRtcRoom alloc] init];
         outRoom.roomId = room.roomId;
         outRoom.deviceId = room.deviceId;
+        outRoom.callStatus = (int)room.rtcState;
         [outRooms addObject:outRoom];
     }
+    JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.rooms = outRooms;
+    obj.rtcQryCallRoomsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)qryCallRoomAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    RtcRoom *room = [[RtcRoom alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry call room ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryCallRoomAck;
+    NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
+    JRtcRoom *outRoom = [[JRtcRoom alloc] init];
+    outRoom.isMultiCall = room.roomType == RtcRoomType_OneMore ? YES : NO;
+    outRoom.roomId = room.roomId;
+    outRoom.owner = [self userInfoWithPBUserInfo:room.owner];
+    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
+    for (RtcMember *member in room.membersArray) {
+        JCallMember *outMember = [[JCallMember alloc] init];
+        outMember.userInfo = [self userInfoWithPBUserInfo:member.member];
+        outMember.callStatus = (int)member.rtcState;
+        outMember.startTime = member.callTime;
+        outMember.connectTime = member.connectTime;
+        outMember.finishTime = member.hangupTime;
+        outMember.inviter = [self userInfoWithPBUserInfo:member.inviter];
+        [members addObject:outMember];
+    }
+    outRoom.members = members;
+    [outRooms addObject:outRoom];
+    //共用 JRtcQryCallRoomsAck
     JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     a.rooms = outRooms;
@@ -2198,7 +2250,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcAccept:@(JPBRcvTypeCallAuthAck),
              jRtcUpdState:@(JPBRcvTypeSimpleQryAck),
              jRtcPing:@(JPBRcvTypeRtcPingAck),
-             jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck)
+             jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
+             jRtcQry:@(JPBRcvTypeQryCallRoomAck)
     };
 }
 @end

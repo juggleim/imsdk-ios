@@ -78,8 +78,32 @@
                                 success:^(NSArray<JRtcRoom *> * _Nonnull rooms) {
         JLogI(@"Call-Qry", @"query call rooms, count is %lu", (unsigned long)rooms.count);
         for (JRtcRoom *room in rooms) {
-            if ([room.deviceId isEqualToString:[JUtility getDeviceId]]) {
-                
+            if (room.deviceId.length == 0
+                || [room.deviceId isEqualToString:[JUtility getDeviceId]]) {
+                JCallStatus callStatus = room.callStatus;
+                [self.core.webSocket queryCallRoom:room.roomId
+                                           success:^(NSArray<JRtcRoom *> * _Nonnull singleRooms) {
+                    JLogI(@"Call-Qry", @"query call room success");
+                    if (singleRooms.count == 0) {
+                        JLogW(@"Call-Qry", @"query call room count is 0");
+                        return;
+                    }
+                    JRtcRoom *singleRoom = singleRooms[0];
+                    JCallSessionImpl *callSession = [self createCallSessionImpl:singleRoom.roomId isMultiCall:singleRoom.isMultiCall];
+                    callSession.owner = singleRoom.owner.userId;
+                    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+                    for (JCallMember *member in singleRoom.members) {
+                        [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+                        if (member.userInfo.userId != self.core.userId) {
+                            [callSession addMember:member];
+                        }
+                    }
+                    [self.core.dbManager insertUserInfos:userDic.allValues];
+                    [self initCallSession:callSession
+                           withCallStatus:callStatus];
+                } error:^(JErrorCodeInternal code) {
+                    JLogE(@"Call-Qry", @"query call room error, code is %ld", code);
+                }];
                 break;
             }
         }
@@ -178,7 +202,28 @@
     });
 }
 
+- (BOOL)callDidAccept:(JCallSessionImpl *)session {
+    __block BOOL needHangupOther = NO;
+    @synchronized (self) {
+        for (JCallSessionImpl *loopSession in self.callSessionList) {
+            if (![loopSession.callId isEqualToString:session.callId]) {
+                [loopSession event:JCallEventHangup userInfo:nil];
+                needHangupOther = YES;
+            }
+        }
+    }
+    return needHangupOther;
+}
+
 #pragma mark - internal
+- (void)initCallSession:(JCallSessionImpl *)callSession
+         withCallStatus:(JCallStatus)callStatus {
+    if (callStatus == JCallStatusIncoming) {
+        [self addCallSession:callSession];
+        [callSession event:JCallEventReceiveInvite userInfo:nil];
+    }
+}
+
 - (JCallSessionImpl *)createCallSessionImpl:(NSString *)callId
                                 isMultiCall:(BOOL)isMultiCall {
     JCallSessionImpl *callSession = [[JCallSessionImpl alloc] init];

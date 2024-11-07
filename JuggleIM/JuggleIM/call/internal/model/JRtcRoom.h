@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JUserInfo.h"
+#import "JCallMember.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JUserInfo *owner;
 @property (nonatomic, assign) BOOL isMultiCall;
 @property (nonatomic, copy) NSString *deviceId;
+@property (nonatomic, assign) JCallStatus callStatus;
+@property (nonatomic, copy) NSArray <JCallMember *> *members;
 @end
 
 NS_ASSUME_NONNULL_END

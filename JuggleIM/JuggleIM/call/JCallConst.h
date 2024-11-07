@@ -50,7 +50,6 @@ typedef NS_ENUM(NSInteger, JCallFinishReason) {
     JCallFinishReasonRoomDestroy = 11,
     /// 网络出错
     JCallFinishReasonNetworkError = 12
-    
 };
 
 typedef NS_ENUM(NSInteger, JCallErrorCode) {

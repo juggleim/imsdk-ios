@@ -26,7 +26,9 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventParticipantLeaveChannel] = @"participant leave channel",
     [JCallEventParticipantEnableCamera] = @"participant enable camera",
     [JCallEventParticipantEnableMic] = @"participant enable mic",
-    [JCallEventRoomDestroy] = @"room destroy"
+    [JCallEventRoomDestroy] = @"room destroy",
+    [JCallEventAcceptAfterHangupOther] = @"accept after hangup other",
+    [JCallEventIncomingTimeOut] = @"incoming time out"
 };
 
 + (NSString *)nameOfEvent:(NSInteger)event {

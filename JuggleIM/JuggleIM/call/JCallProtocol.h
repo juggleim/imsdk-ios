@@ -9,6 +9,8 @@
 
 @protocol JCallReceiveDelegate <NSObject>
 
+/// 接听到通话
+/// - Parameter callSession: 通话实例
 - (void)callDidReceive:(id<JCallSession>)callSession;
 
 @end

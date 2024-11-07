@@ -289,6 +289,10 @@ inConversation:(JConversation *)conversation
                success:(void (^)(NSArray <JRtcRoom *>*))successBlock
                  error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)queryCallRoom:(NSString *)roomId
+              success:(void (^)(NSArray <JRtcRoom *>*))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)rtcPing:(NSString *)callId;
 
 @end

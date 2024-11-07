@@ -20,11 +20,9 @@
 @property (nonatomic, copy) NSString *zegoToken;
 
 - (void)error:(JCallErrorCode)code;
-- (void)startOutgoingTimer;
-- (void)inviteFail;
 - (void)notifyReceiveCall;
+- (BOOL)notifyAcceptCall;
 - (void)memberHangup:(NSString *)userId;
-- (void)memberAccept:(NSString *)userId;
 - (void)addMember:(JCallMember *)member;
 - (void)removeMember:(NSString *)userId;
 

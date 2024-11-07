@@ -43,7 +43,13 @@
             break;
             
         case JCallEventHangup:
-            self.callSessionImpl.finishReason = JCallFinishReasonHangup;
+            if (self.callSessionImpl.callStatus == JCallStatusIncoming) {
+                self.callSessionImpl.finishReason = JCallFinishReasonDecline;
+            } else if (self.callSessionImpl.callStatus == JCallStatusOutgoing) {
+                self.callSessionImpl.finishReason = JCallFinishReasonCancel;
+            } else {
+                self.callSessionImpl.finishReason = JCallFinishReasonHangup;
+            }
             [self.callSessionImpl signalHangup];
             [self.callSessionImpl transitionToIdleState];
             break;

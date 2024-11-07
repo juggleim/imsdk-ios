@@ -51,28 +51,31 @@ static CallCenter *_instance;
 
 
 - (void)presentCallViewController:(UIViewController *)viewController {
-    UIWindowScene *scene = nil;
-    for (UIWindowScene *s in UIApplication.sharedApplication.connectedScenes) {
-        if (s.activationState == UISceneActivationStateForegroundActive) {
-            scene = s;
-            break;
+    //后台回前台的瞬间 activationState 是 UISceneActivationStateForegroundInactive
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        UIWindowScene *scene = nil;
+        for (UIWindowScene *s in UIApplication.sharedApplication.connectedScenes) {
+            if (s.activationState == UISceneActivationStateForegroundActive) {
+                scene = s;
+                break;
+            }
         }
-    }
-    if (!scene) {
-        return;
-    }
-    
-    UIWindow *activityWindow = [[UIWindow alloc] initWithWindowScene:scene];
-    activityWindow.frame = [[UIScreen mainScreen] bounds];
-    activityWindow.windowLevel = UIWindowLevelAlert + 1;
-    activityWindow.rootViewController = viewController;
-    [activityWindow makeKeyAndVisible];
-    CATransition *animation = [CATransition animation];
-    [animation setDuration:0.3];
-    animation.type = kCATransitionMoveIn;     //可更改为其他方式
-    animation.subtype = kCATransitionFromTop; //可更改为其他方式
-    [[activityWindow layer] addAnimation:animation forKey:nil];
-    [self.callWindows addObject:activityWindow];
+        if (!scene) {
+            return;
+        }
+        
+        UIWindow *activityWindow = [[UIWindow alloc] initWithWindowScene:scene];
+        activityWindow.frame = [[UIScreen mainScreen] bounds];
+        activityWindow.windowLevel = UIWindowLevelAlert + 1;
+        activityWindow.rootViewController = viewController;
+        [activityWindow makeKeyAndVisible];
+        CATransition *animation = [CATransition animation];
+        [animation setDuration:0.3];
+        animation.type = kCATransitionMoveIn;     //可更改为其他方式
+        animation.subtype = kCATransitionFromTop; //可更改为其他方式
+        [[activityWindow layer] addAnimation:animation forKey:nil];
+        [self.callWindows addObject:activityWindow];
+    });
 }
 
 #pragma mark - JCallReceiveDelegate
