@@ -150,7 +150,6 @@ NSString *const jReferMsgId = @"refer_msg_id";
             }
         }];
     }];
-    
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo
