@@ -395,6 +395,9 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction {
+    if (!conversation) {
+        return [NSArray array];
+    }
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
     if (count > 100) {
@@ -411,6 +414,9 @@
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (!conversation) {
+        return [NSArray array];
+    }
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
     options.contentTypes = contentTypes;
@@ -483,6 +489,9 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (!conversation) {
+        return [NSArray array];
+    }
     if (count > 100) {
         count = 100;
     }
