@@ -262,6 +262,15 @@
                extras:(NSDictionary *)extras
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0) {
+        JLogE(@"MSG-Recall", @"messageId length is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
     __block BOOL isAllString = YES;
     [extras enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         if (![key isKindOfClass:[NSString class]] || ![obj isKindOfClass:[NSString class]]) {
