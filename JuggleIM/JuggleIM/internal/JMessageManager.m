@@ -262,6 +262,16 @@
                extras:(NSDictionary *)extras
               success:(void (^)(JMessage *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0) {
+        JLogE(@"MSG-Recall", @"messageId length is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+
     __block BOOL isAllString = YES;
     [extras enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         if (![key isKindOfClass:[NSString class]] || ![obj isKindOfClass:[NSString class]]) {
@@ -386,6 +396,9 @@
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction {
+    if (!conversation) {
+        return [NSArray array];
+    }
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
     if (count > 100) {
@@ -402,6 +415,9 @@
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (!conversation) {
+        return [NSArray array];
+    }
     JQueryMessageOptions *options = [[JQueryMessageOptions alloc] init];
     options.conversations = @[conversation];
     options.contentTypes = contentTypes;
@@ -474,6 +490,9 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes {
+    if (!conversation) {
+        return [NSArray array];
+    }
     if (count > 100) {
         count = 100;
     }
