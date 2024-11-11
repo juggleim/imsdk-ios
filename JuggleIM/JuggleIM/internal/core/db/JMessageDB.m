@@ -521,7 +521,7 @@ NSString *const jMatchCount = @"match_count";
             if (obj.conversationId.length > 0) {
                 conversationId = obj.conversationId;
             }
-            [args addObject:obj.conversationId];
+            [args addObject:conversationId];
             if (idx < conversations.count - 1) {
                 sql = [sql stringByAppendingString:jOr];
             }

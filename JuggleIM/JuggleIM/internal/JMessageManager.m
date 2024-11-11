@@ -490,7 +490,7 @@
                                               time:(long long)time
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes {
-    if (!conversation) {
+    if (!conversation || conversation.conversationId.length == 0) {
         return [NSArray array];
     }
     if (count > 100) {
