@@ -49,10 +49,6 @@
 		A017F9392C3BD80A00D527B0 /* JChatroomInfoOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
-		A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */; };
-		A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */; };
-		A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A03B39FD2CC8EC86003D150A /* JCallSessionImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B39FC2CC8EC86003D150A /* JCallSessionImpl.m */; };
 		A03B39FE2CC8EC86003D150A /* JCallSessionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B39FB2CC8EC86003D150A /* JCallSessionImpl.h */; };
 		A03B3A052CC914CE003D150A /* JCallMember.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A042CC914CE003D150A /* JCallMember.m */; };
@@ -60,6 +56,10 @@
 		A03B3A082CC93D89003D150A /* JCallSessionLifeCycleDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A072CC93BDA003D150A /* JCallSessionLifeCycleDelegate.h */; };
 		A03B3A0C2CCA4044003D150A /* JRtcRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A0B2CCA4044003D150A /* JRtcRoom.m */; };
 		A03B3A0D2CCA4044003D150A /* JRtcRoom.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A0A2CCA4044003D150A /* JRtcRoom.h */; };
+		A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */; };
+		A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */; };
+		A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		A05EED5E2B207D5200809F13 /* JUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED5C2B207D5200809F13 /* JUtility.h */; };
 		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
 		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
@@ -288,16 +288,16 @@
 		A09716C82BA004E800D1DB24 /* JUserInfoProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A09727E02CC6346B00E08BC4 /* JCallSuperState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727BF2CC6346B00E08BC4 /* JCallSuperState.h */; };
 		A09727E12CC6346B00E08BC4 /* JCallSuperState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C02CC6346B00E08BC4 /* JCallSuperState.m */; };
-		A09727E22CC6346B00E08BC4 /* JConnectedState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C12CC6346B00E08BC4 /* JConnectedState.h */; };
-		A09727E32CC6346B00E08BC4 /* JConnectedState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C22CC6346B00E08BC4 /* JConnectedState.m */; };
-		A09727E42CC6346B00E08BC4 /* JConnectingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C32CC6346B00E08BC4 /* JConnectingState.h */; };
-		A09727E52CC6346B00E08BC4 /* JConnectingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C42CC6346B00E08BC4 /* JConnectingState.m */; };
-		A09727E62CC6346B00E08BC4 /* JIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C52CC6346B00E08BC4 /* JIdleState.h */; };
-		A09727E72CC6346B00E08BC4 /* JIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C62CC6346B00E08BC4 /* JIdleState.m */; };
-		A09727E82CC6346B00E08BC4 /* JIncomingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C72CC6346B00E08BC4 /* JIncomingState.h */; };
-		A09727E92CC6346B00E08BC4 /* JIncomingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C82CC6346B00E08BC4 /* JIncomingState.m */; };
-		A09727EA2CC6346B00E08BC4 /* JOutgoingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C92CC6346B00E08BC4 /* JOutgoingState.h */; };
-		A09727EB2CC6346B00E08BC4 /* JOutgoingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727CA2CC6346B00E08BC4 /* JOutgoingState.m */; };
+		A09727E22CC6346B00E08BC4 /* JCallConnectedState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C12CC6346B00E08BC4 /* JCallConnectedState.h */; };
+		A09727E32CC6346B00E08BC4 /* JCallConnectedState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C22CC6346B00E08BC4 /* JCallConnectedState.m */; };
+		A09727E42CC6346B00E08BC4 /* JCallConnectingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C32CC6346B00E08BC4 /* JCallConnectingState.h */; };
+		A09727E52CC6346B00E08BC4 /* JCallConnectingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C42CC6346B00E08BC4 /* JCallConnectingState.m */; };
+		A09727E62CC6346B00E08BC4 /* JCallIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C52CC6346B00E08BC4 /* JCallIdleState.h */; };
+		A09727E72CC6346B00E08BC4 /* JCallIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C62CC6346B00E08BC4 /* JCallIdleState.m */; };
+		A09727E82CC6346B00E08BC4 /* JCallIncomingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C72CC6346B00E08BC4 /* JCallIncomingState.h */; };
+		A09727E92CC6346B00E08BC4 /* JCallIncomingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727C82CC6346B00E08BC4 /* JCallIncomingState.m */; };
+		A09727EA2CC6346B00E08BC4 /* JCallOutgoingState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727C92CC6346B00E08BC4 /* JCallOutgoingState.h */; };
+		A09727EB2CC6346B00E08BC4 /* JCallOutgoingState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727CA2CC6346B00E08BC4 /* JCallOutgoingState.m */; };
 		A09727EC2CC6346B00E08BC4 /* JState.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727CB2CC6346B00E08BC4 /* JState.h */; };
 		A09727ED2CC6346B00E08BC4 /* JState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09727CC2CC6346B00E08BC4 /* JState.m */; };
 		A09727EE2CC6346B00E08BC4 /* JStateMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = A09727CD2CC6346B00E08BC4 /* JStateMachine.h */; };
@@ -402,10 +402,6 @@
 		A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfoOptions.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
-		A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSearchConversationsResult.h; sourceTree = "<group>"; };
-		A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSearchConversationsResult.m; sourceTree = "<group>"; };
-		A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chatroom.pbobjc.h; sourceTree = "<group>"; };
-		A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chatroom.pbobjc.m; sourceTree = "<group>"; };
 		A03B39F92CC8E81F003D150A /* JCallEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallEvent.h; sourceTree = "<group>"; };
 		A03B39FB2CC8EC86003D150A /* JCallSessionImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSessionImpl.h; sourceTree = "<group>"; };
 		A03B39FC2CC8EC86003D150A /* JCallSessionImpl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallSessionImpl.m; sourceTree = "<group>"; };
@@ -414,6 +410,10 @@
 		A03B3A072CC93BDA003D150A /* JCallSessionLifeCycleDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSessionLifeCycleDelegate.h; sourceTree = "<group>"; };
 		A03B3A0A2CCA4044003D150A /* JRtcRoom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JRtcRoom.h; sourceTree = "<group>"; };
 		A03B3A0B2CCA4044003D150A /* JRtcRoom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRtcRoom.m; sourceTree = "<group>"; };
+		A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSearchConversationsResult.h; sourceTree = "<group>"; };
+		A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSearchConversationsResult.m; sourceTree = "<group>"; };
+		A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chatroom.pbobjc.h; sourceTree = "<group>"; };
+		A0596E052CD12F1000914FEA /* Chatroom.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chatroom.pbobjc.m; sourceTree = "<group>"; };
 		A05EED5C2B207D5200809F13 /* JUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUtility.h; sourceTree = "<group>"; };
 		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
 		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
@@ -647,16 +647,16 @@
 		A097277C2CBFE97400E08BC4 /* JuggleIM.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JuggleIM.podspec; sourceTree = "<group>"; };
 		A09727BF2CC6346B00E08BC4 /* JCallSuperState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallSuperState.h; sourceTree = "<group>"; };
 		A09727C02CC6346B00E08BC4 /* JCallSuperState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallSuperState.m; sourceTree = "<group>"; };
-		A09727C12CC6346B00E08BC4 /* JConnectedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JConnectedState.h; sourceTree = "<group>"; };
-		A09727C22CC6346B00E08BC4 /* JConnectedState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JConnectedState.m; sourceTree = "<group>"; };
-		A09727C32CC6346B00E08BC4 /* JConnectingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JConnectingState.h; sourceTree = "<group>"; };
-		A09727C42CC6346B00E08BC4 /* JConnectingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JConnectingState.m; sourceTree = "<group>"; };
-		A09727C52CC6346B00E08BC4 /* JIdleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIdleState.h; sourceTree = "<group>"; };
-		A09727C62CC6346B00E08BC4 /* JIdleState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIdleState.m; sourceTree = "<group>"; };
-		A09727C72CC6346B00E08BC4 /* JIncomingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIncomingState.h; sourceTree = "<group>"; };
-		A09727C82CC6346B00E08BC4 /* JIncomingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIncomingState.m; sourceTree = "<group>"; };
-		A09727C92CC6346B00E08BC4 /* JOutgoingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOutgoingState.h; sourceTree = "<group>"; };
-		A09727CA2CC6346B00E08BC4 /* JOutgoingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOutgoingState.m; sourceTree = "<group>"; };
+		A09727C12CC6346B00E08BC4 /* JCallConnectedState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallConnectedState.h; sourceTree = "<group>"; };
+		A09727C22CC6346B00E08BC4 /* JCallConnectedState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallConnectedState.m; sourceTree = "<group>"; };
+		A09727C32CC6346B00E08BC4 /* JCallConnectingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallConnectingState.h; sourceTree = "<group>"; };
+		A09727C42CC6346B00E08BC4 /* JCallConnectingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallConnectingState.m; sourceTree = "<group>"; };
+		A09727C52CC6346B00E08BC4 /* JCallIdleState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallIdleState.h; sourceTree = "<group>"; };
+		A09727C62CC6346B00E08BC4 /* JCallIdleState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallIdleState.m; sourceTree = "<group>"; };
+		A09727C72CC6346B00E08BC4 /* JCallIncomingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallIncomingState.h; sourceTree = "<group>"; };
+		A09727C82CC6346B00E08BC4 /* JCallIncomingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallIncomingState.m; sourceTree = "<group>"; };
+		A09727C92CC6346B00E08BC4 /* JCallOutgoingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCallOutgoingState.h; sourceTree = "<group>"; };
+		A09727CA2CC6346B00E08BC4 /* JCallOutgoingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCallOutgoingState.m; sourceTree = "<group>"; };
 		A09727CB2CC6346B00E08BC4 /* JState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JState.h; sourceTree = "<group>"; };
 		A09727CC2CC6346B00E08BC4 /* JState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JState.m; sourceTree = "<group>"; };
 		A09727CD2CC6346B00E08BC4 /* JStateMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JStateMachine.h; sourceTree = "<group>"; };
@@ -776,6 +776,7 @@
 		A05EED642B20827300809F13 /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				A079E8612CE3542300A1008F /* fsm */,
 				A05EED5C2B207D5200809F13 /* JUtility.h */,
 				A05EED5D2B207D5200809F13 /* JUtility.m */,
 				A05EED612B20826A00809F13 /* JReachability.h */,
@@ -844,6 +845,17 @@
 				A06A2F122B233351009B9588 /* JDBHelper.m */,
 			);
 			path = db;
+			sourceTree = "<group>";
+		};
+		A079E8612CE3542300A1008F /* fsm */ = {
+			isa = PBXGroup;
+			children = (
+				A09727CB2CC6346B00E08BC4 /* JState.h */,
+				A09727CC2CC6346B00E08BC4 /* JState.m */,
+				A09727CD2CC6346B00E08BC4 /* JStateMachine.h */,
+				A09727CE2CC6346B00E08BC4 /* JStateMachine.m */,
+			);
+			path = fsm;
 			sourceTree = "<group>";
 		};
 		A08AA1D92B148B68008B114C = {
@@ -1279,20 +1291,16 @@
 			children = (
 				A09727BF2CC6346B00E08BC4 /* JCallSuperState.h */,
 				A09727C02CC6346B00E08BC4 /* JCallSuperState.m */,
-				A09727C12CC6346B00E08BC4 /* JConnectedState.h */,
-				A09727C22CC6346B00E08BC4 /* JConnectedState.m */,
-				A09727C32CC6346B00E08BC4 /* JConnectingState.h */,
-				A09727C42CC6346B00E08BC4 /* JConnectingState.m */,
-				A09727C52CC6346B00E08BC4 /* JIdleState.h */,
-				A09727C62CC6346B00E08BC4 /* JIdleState.m */,
-				A09727C72CC6346B00E08BC4 /* JIncomingState.h */,
-				A09727C82CC6346B00E08BC4 /* JIncomingState.m */,
-				A09727C92CC6346B00E08BC4 /* JOutgoingState.h */,
-				A09727CA2CC6346B00E08BC4 /* JOutgoingState.m */,
-				A09727CB2CC6346B00E08BC4 /* JState.h */,
-				A09727CC2CC6346B00E08BC4 /* JState.m */,
-				A09727CD2CC6346B00E08BC4 /* JStateMachine.h */,
-				A09727CE2CC6346B00E08BC4 /* JStateMachine.m */,
+				A09727C12CC6346B00E08BC4 /* JCallConnectedState.h */,
+				A09727C22CC6346B00E08BC4 /* JCallConnectedState.m */,
+				A09727C32CC6346B00E08BC4 /* JCallConnectingState.h */,
+				A09727C42CC6346B00E08BC4 /* JCallConnectingState.m */,
+				A09727C52CC6346B00E08BC4 /* JCallIdleState.h */,
+				A09727C62CC6346B00E08BC4 /* JCallIdleState.m */,
+				A09727C72CC6346B00E08BC4 /* JCallIncomingState.h */,
+				A09727C82CC6346B00E08BC4 /* JCallIncomingState.m */,
+				A09727C92CC6346B00E08BC4 /* JCallOutgoingState.h */,
+				A09727CA2CC6346B00E08BC4 /* JCallOutgoingState.m */,
 				A097280F2CC7783B00E08BC4 /* JCallState.h */,
 				A09728102CC7783B00E08BC4 /* JCallState.m */,
 			);
@@ -1466,7 +1474,7 @@
 				5B4DB6962BFC3C0D00DD18B6 /* JCleanMsgMessage.h in Headers */,
 				A08AA4082B19EEDB008B114C /* SRURLUtilities.h in Headers */,
 				A08AA3A22B19CB78008B114C /* GPBSourceContext.pbobjc.h in Headers */,
-				A09727E22CC6346B00E08BC4 /* JConnectedState.h in Headers */,
+				A09727E22CC6346B00E08BC4 /* JCallConnectedState.h in Headers */,
 				5B4DB6862BFC340700DD18B6 /* JUnDisturbConvMessage.h in Headers */,
 				A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */,
 				A08AA2812B175646008B114C /* JConnectionManager.h in Headers */,
@@ -1484,10 +1492,10 @@
 				A08AA3F82B19EEDB008B114C /* SRDelegateController.h in Headers */,
 				A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */,
 				A06A2F132B233351009B9588 /* JDBHelper.h in Headers */,
-				A09727E82CC6346B00E08BC4 /* JIncomingState.h in Headers */,
+				A09727E82CC6346B00E08BC4 /* JCallIncomingState.h in Headers */,
 				A06516012C8092C400E3AEC1 /* JChatroomAttributeItem.h in Headers */,
 				A08AA3942B19CB78008B114C /* GPBArray_PackagePrivate.h in Headers */,
-				A09727EA2CC6346B00E08BC4 /* JOutgoingState.h in Headers */,
+				A09727EA2CC6346B00E08BC4 /* JCallOutgoingState.h in Headers */,
 				A08AA37D2B19CB78008B114C /* GPBUtilities_PackagePrivate.h in Headers */,
 				A08AA36C2B19CB77008B114C /* GPBDuration.pbobjc.h in Headers */,
 				A08AA36A2B19CB77008B114C /* GPBFieldMask.pbobjc.h in Headers */,
@@ -1563,7 +1571,7 @@
 				A07D0E342C0083FD00B9035B /* JNaviTask.h in Headers */,
 				A09727E02CC6346B00E08BC4 /* JCallSuperState.h in Headers */,
 				A08AA39A2B19CB78008B114C /* GPBCodedInputStream.h in Headers */,
-				A09727E62CC6346B00E08BC4 /* JIdleState.h in Headers */,
+				A09727E62CC6346B00E08BC4 /* JCallIdleState.h in Headers */,
 				A07F3CB52BFC791E0087920B /* JLogger.h in Headers */,
 				A05EED5E2B207D5200809F13 /* JUtility.h in Headers */,
 				A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */,
@@ -1571,7 +1579,7 @@
 				A097280D2CC6676E00E08BC4 /* Rtcroom.pbobjc.h in Headers */,
 				A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */,
 				A0E3DDCC2C6B3DCD00FE9D3B /* JChatroomManager.h in Headers */,
-				A09727E42CC6346B00E08BC4 /* JConnectingState.h in Headers */,
+				A09727E42CC6346B00E08BC4 /* JCallConnectingState.h in Headers */,
 				A08AA3A12B19CB78008B114C /* GPBExtensionInternals.h in Headers */,
 				A03B39FE2CC8EC86003D150A /* JCallSessionImpl.h in Headers */,
 				A08AA3A62B19CB78008B114C /* GPBUnknownField_PackagePrivate.h in Headers */,
@@ -1714,7 +1722,7 @@
 				A0A1B0F82C47B25C00DAD93C /* JDownloader.m in Sources */,
 				A08AA40D2B19EEDB008B114C /* SRIOConsumerPool.m in Sources */,
 				A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */,
-				A09727E72CC6346B00E08BC4 /* JIdleState.m in Sources */,
+				A09727E72CC6346B00E08BC4 /* JCallIdleState.m in Sources */,
 				5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */,
 				A08AA4062B19EEDB008B114C /* SRError.m in Sources */,
 				A08AA3662B19CB77008B114C /* GPBMessage.m in Sources */,
@@ -1771,7 +1779,7 @@
 				A07CE41D2B3AF131006E3F4D /* JContentTypeCenter.m in Sources */,
 				A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */,
 				A0CE9A2E2CD4BDF4008B405C /* JCallMediaUser.m in Sources */,
-				A09727E92CC6346B00E08BC4 /* JIncomingState.m in Sources */,
+				A09727E92CC6346B00E08BC4 /* JCallIncomingState.m in Sources */,
 				A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */,
 				A09727F12CC6346B00E08BC4 /* JCallEventUtil.m in Sources */,
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
@@ -1783,7 +1791,7 @@
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
 				5B4DB6872BFC340700DD18B6 /* JUnDisturbConvMessage.m in Sources */,
-				A09727E52CC6346B00E08BC4 /* JConnectingState.m in Sources */,
+				A09727E52CC6346B00E08BC4 /* JCallConnectingState.m in Sources */,
 				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
 				A09645912BF339EA00290775 /* JSnapshotPackedVideoMessage.m in Sources */,
 				A08AA39E2B19CB78008B114C /* GPBCodedOutputStream.m in Sources */,
@@ -1795,7 +1803,7 @@
 				A08AA3812B19CB78008B114C /* GPBApi.pbobjc.m in Sources */,
 				A07D0E2F2BFCD0B200B9035B /* JLogFileWriter.m in Sources */,
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,
-				A09727E32CC6346B00E08BC4 /* JConnectedState.m in Sources */,
+				A09727E32CC6346B00E08BC4 /* JCallConnectedState.m in Sources */,
 				A0E3DDD12C6F4FA600FE9D3B /* JGetMessageOptions.m in Sources */,
 				A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */,
 				A097280E2CC6676E00E08BC4 /* Rtcroom.pbobjc.m in Sources */,
@@ -1817,7 +1825,7 @@
 				A096457E2BECE42200290775 /* JMediaMessageContent.m in Sources */,
 				A08AA3672B19CB77008B114C /* GPBEmpty.pbobjc.m in Sources */,
 				A08AA39F2B19CB78008B114C /* GPBDictionary.m in Sources */,
-				A09727EB2CC6346B00E08BC4 /* JOutgoingState.m in Sources */,
+				A09727EB2CC6346B00E08BC4 /* JCallOutgoingState.m in Sources */,
 				A06CF0F72B96080B00B5CD89 /* JReadNtfMessage.m in Sources */,
 				A08AA38A2B19CB78008B114C /* GPBArray.m in Sources */,
 				A017F9342C3BD57600D527B0 /* JChatroomMember.m in Sources */,

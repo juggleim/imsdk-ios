@@ -5,10 +5,10 @@
 //  Created by Fei Li on 2024/10/9.
 //
 
-#import "JIdleState.h"
+#import "JCallIdleState.h"
 #import "JCallEvent.h"
 
-@implementation JIdleState
+@implementation JCallIdleState
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusIdle;

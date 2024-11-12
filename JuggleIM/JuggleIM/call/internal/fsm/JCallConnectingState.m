@@ -5,10 +5,10 @@
 //  Created by Fei Li on 2024/10/10.
 //
 
-#import "JConnectingState.h"
+#import "JCallConnectingState.h"
 #import "JCallEvent.h"
 
-@implementation JConnectingState
+@implementation JCallConnectingState
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusConnecting;

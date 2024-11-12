@@ -12,6 +12,7 @@
 #import <UIKit/UIKit.h>
 #import "JLogger.h"
 #import "JIntervalGenerator.h"
+#import "JReachability.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -23,8 +24,8 @@
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, assign) BOOL isBackground;
-@property (nonatomic, assign) UIBackgroundTaskIdentifier bgTask;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
+@property (nonatomic, strong) JReachability *reachability;
 @end
 
 @implementation JConnectionManager
@@ -43,7 +44,6 @@
         self.messageManager = messageManager;
         self.chatroomManager = chatroomManager;
         self.callManager = callManager;
-        self.bgTask = UIBackgroundTaskInvalid;
         [self addObserver];
     }
     return self;
@@ -393,6 +393,12 @@
     } else {
         self.isBackground = NO;
     }
+    self.reachability = [JReachability reachabilityForInternetConnection];
+    [self.reachability startNotifier];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(networkChanged:)
+                                                 name:kJReachabilityChangedNotification
+                                               object:nil];
 }
 
 - (void)enterBackground {
@@ -408,6 +414,20 @@
 
 - (void)appTerminate {
     
+}
+
+- (void)networkChanged:(NSNotification *)ntf {
+    JReachability *curReachability = [ntf object];
+    JNetworkStatus status = JNetworkStatusReachableViaWiFi;
+    if (![curReachability respondsToSelector:@selector(currentReachabilityStatus)]) {
+        JLogV(@"CON-Reach", @"networkChanged: unknown reachability obj");
+    } else {
+        status = [curReachability currentReachabilityStatus];
+    }
+    JLogI(@"CON-Network", @"network:%ld", status);
+
+
+    //TODO: 可以连接的状态下进行重连（先断开？stopRetry？reconnect）
 }
 
 - (NSHashTable<id<JConnectionDelegate>> *)delegates {
