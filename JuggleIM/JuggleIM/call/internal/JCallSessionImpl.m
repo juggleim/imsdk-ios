@@ -16,6 +16,7 @@
 #import "JLogger.h"
 #import "JCallEvent.h"
 #import "JCallMediaManager.h"
+#import "JCallEventUtil.h"
 
 @interface JCallSessionImpl ()
 @property (nonatomic, strong) JStateMachine *stateMachine;
@@ -43,13 +44,13 @@
     });
 }
 
-- (void)accept { 
-    [self.stateMachine event:JCallEventAccept userInfo:nil];
+- (void)accept {
+    [self event:JCallEventAccept userInfo:nil];
 }
 
 
 - (void)hangup { 
-    [self.stateMachine event:JCallEventHangup userInfo:nil];
+    [self event:JCallEventHangup userInfo:nil];
 }
 
 
@@ -132,7 +133,7 @@
         self.zegoToken = zegoToken;
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
-        [self.stateMachine event:JCallEventInviteFail userInfo:nil];
+        [self event:JCallEventInviteFail userInfo:nil];
     }];
 }
 
@@ -150,10 +151,10 @@
                             success:^(NSString * _Nonnull zegoToken) {
         JLogI(@"Call-Signal", @"send accept success");
         self.zegoToken = zegoToken;
-        [self.stateMachine event:JCallEventAcceptDone userInfo:nil];
+        [self event:JCallEventAcceptDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send accept error, code is %ld", code);
-        [self.stateMachine event:JCallEventAcceptFail userInfo:nil];
+        [self event:JCallEventAcceptFail userInfo:nil];
     }];
 }
 
@@ -182,17 +183,19 @@
                               complete:^(int errorCode, NSDictionary *data) {
         if (errorCode == 0) {
             JLogI(@"Call-Media", @"join room success");
-            [self.stateMachine event:JCallEventJoinChannelDone userInfo:nil];
+            [self event:JCallEventJoinChannelDone userInfo:nil];
         } else {
             JLogE(@"Call-Media", @"join room error, code is %d", errorCode);
-            [self.stateMachine event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
+            [self event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
         }
     }];
 }
 
 #pragma mark - fsm
 - (void)event:(NSInteger)event userInfo:(id)userInfo {
-    [self.stateMachine event:event userInfo:userInfo];
+    [self.stateMachine event:event
+                        name:[JCallEventUtil nameOfEvent:event]
+                    userInfo:userInfo];
 }
 
 - (void)transitionToConnectedState {
@@ -231,8 +234,6 @@
 - (void)transitionToOutgoingState {
     [self.stateMachine transitionTo:self.outgoingState];
 }
-
-
 
 #pragma mark - private
 - (void)destroy {

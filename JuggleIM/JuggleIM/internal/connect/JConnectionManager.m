@@ -13,6 +13,14 @@
 #import "JLogger.h"
 #import "JIntervalGenerator.h"
 #import "JReachability.h"
+#import "JStateMachine.h"
+#import "JConnIdleState.h"
+#import "JConnConnectedState.h"
+#import "JConnDisconnectedState.h"
+#import "JConnConnectingState.h"
+#import "JConnFailureState.h"
+#import "JConnWaitingForConnectState.h"
+#import "JConnEventUtil.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -26,6 +34,14 @@
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) JReachability *reachability;
+
+@property (nonatomic, strong) JStateMachine *stateMachine;
+@property (nonatomic, strong) JConnIdleState *idleState;
+@property (nonatomic, strong) JConnConnectedState *connectedState;
+@property (nonatomic, strong) JConnDisconnectedState *disconnectedState;
+@property (nonatomic, strong) JConnConnectingState *connectingState;
+@property (nonatomic, strong) JConnFailureState *failureState;
+@property (nonatomic, strong) JConnWaitingForConnectState *waitingState;
 @end
 
 @implementation JConnectionManager
@@ -45,6 +61,7 @@
         self.chatroomManager = chatroomManager;
         self.callManager = callManager;
         [self addObserver];
+        [self stateMachine];
     }
     return self;
 }
@@ -179,6 +196,14 @@
 
 - (void)webSocketDidTimeOut {
     [self handleWebSocketFail];
+}
+
+#pragma mark -- fsm
+- (void)event:(NSInteger)event
+     userInfo:(NSDictionary *)userInfo {
+    [self.stateMachine event:event
+                        name:[JConnEventUtil nameOfEvent:event]
+                    userInfo:userInfo];
 }
 
 #pragma mark -- internal
@@ -442,6 +467,15 @@
         _intervalGenerator = [[JIntervalGenerator alloc] init];
     }
     return _intervalGenerator;
+}
+
+- (JStateMachine *)stateMachine {
+    if (!_stateMachine) {
+        _stateMachine = [[JStateMachine alloc] initWithName:@"j_connect"];
+        [_stateMachine setInitialState:self.idleState];
+        [_stateMachine start];
+    }
+    return _stateMachine;
 }
 
 @end
