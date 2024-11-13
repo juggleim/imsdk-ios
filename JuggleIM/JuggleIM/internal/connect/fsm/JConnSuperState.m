@@ -27,6 +27,11 @@
             // 其它状态下忽略
             break;
             
+        case JConnEventNetworkChange:
+            // do nothing
+            // waiting 和 connecting 状态处理
+            // 其它状态忽略（connected 状态会自动触发 websocketFail）
+            break;
         default:
             break;
     }

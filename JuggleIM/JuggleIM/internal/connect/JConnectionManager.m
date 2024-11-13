@@ -392,6 +392,7 @@
     [self.intervalGenerator reset];
     self.isBackground = NO;
     [self.core.webSocket pushSwitch:NO userId:self.core.userId];
+    [self event:JConnEventEnterForground userInfo:nil];
 }
 
 - (void)appTerminate {
@@ -407,9 +408,11 @@
         status = [curReachability currentReachabilityStatus];
     }
     JLogI(@"CON-Network", @"network:%ld", status);
-
-
-    //TODO: 可以连接的状态下进行重连（先断开？stopRetry？reconnect）
+    
+    if (status != JNetworkStatusNotReachable) {
+        [self.intervalGenerator reset];
+        [self event:JConnEventNetworkChange userInfo:nil];
+    }
 }
 
 - (NSHashTable<id<JConnectionDelegate>> *)delegates {

@@ -54,6 +54,16 @@
             result = YES;
             break;
             
+        case JConnEventEnterForground:
+            [self.connectionManager transitionToConnectingState];
+            result = YES;
+            break;
+            
+        case JConnEventNetworkChange:
+            [self.connectionManager transitionToConnectingState];
+            result = YES;
+            break;
+            
         default:
             break;
     }
