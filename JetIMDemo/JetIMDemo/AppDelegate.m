@@ -17,7 +17,7 @@
 #define kToken1182 @"ChBuc3czc3VlNzJiZWd5djd5GiDuv7mgMhk4e9roYlO9WeWer6_KZGn-hpJGuiMKsCI7Yw=="
 
 @interface AppDelegate () <JConnectionDelegate, JMessageDelegate, JMessageSyncDelegate, JConversationSyncDelegate, JConversationDelegate, JMessageReadReceiptDelegate, JMessageUploadProvider, JChatroomDelegate, JChatroomAttributesDelegate, JCallSessionDelegate, JCallReceiveDelegate>
-
+@property (nonatomic, assign) int count;
 @end
 
 @implementation AppDelegate
@@ -43,8 +43,6 @@
     
     [JIM.shared.callManager initZegoEngineWith:1881186044 appSign:@"fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f"];
     
-    
-    
     return YES;
 }
 
@@ -55,8 +53,6 @@
     NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
-            [JIM.shared.callManager startSingleCall:@"nkXFkybGA" delegate:self];
         });
     }
 }

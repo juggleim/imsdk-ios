@@ -28,7 +28,7 @@
 }
 
 - (void)reset {
-    self.interval = 0.1;
+    self.interval = 0.3;
 }
 
 @end

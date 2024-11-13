@@ -13,12 +13,17 @@ typedef NS_ENUM(NSInteger, JConnEvent) {
     JConnEventUserConnect,
     JConnEventUserDisconnect,
     
+    //callback
+    JConnEventConnectDone,
+    JConnEventConnectFailure,
+    
     //
     JConnEventReconnectTimerFire,
     JConnEventNetworkChange,
     JConnEventEnterForground,
     JConnEventEnterBackground,
-    JConnEventWebsocketFail
+    JConnEventWebsocketFail,
+    JConnEventRemoteDisconnect
 };
 
 #endif /* JConnEvent_h */

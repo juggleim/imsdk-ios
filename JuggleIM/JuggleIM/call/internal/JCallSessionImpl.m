@@ -267,7 +267,7 @@
 
 - (JCallConnectedState *)connectedState {
     if (!_connectedState) {
-        _connectedState = [[JCallConnectedState alloc] initWithName:@"connected" superState:self.superState];
+        _connectedState = [[JCallConnectedState alloc] initWithName:@"callConnected" superState:self.superState];
         _connectedState.callSessionImpl = self;
     }
     return _connectedState;
@@ -275,7 +275,7 @@
 
 - (JCallConnectingState *)connectingState {
     if (!_connectingState) {
-        _connectingState = [[JCallConnectingState alloc] initWithName:@"connecting" superState:self.superState];
+        _connectingState = [[JCallConnectingState alloc] initWithName:@"callConnecting" superState:self.superState];
         _connectingState.callSessionImpl = self;
     }
     return _connectingState;
@@ -283,7 +283,7 @@
 
 - (JCallIdleState *)idleState {
     if (!_idleState) {
-        _idleState = [[JCallIdleState alloc] initWithName:@"idle" superState:self.superState];
+        _idleState = [[JCallIdleState alloc] initWithName:@"callIdle" superState:self.superState];
         _idleState.callSessionImpl = self;
     }
     return _idleState;
@@ -291,7 +291,7 @@
 
 - (JCallIncomingState *)incomingState {
     if (!_incomingState) {
-        _incomingState = [[JCallIncomingState alloc] initWithName:@"incoming" superState:self.superState];
+        _incomingState = [[JCallIncomingState alloc] initWithName:@"callIncoming" superState:self.superState];
         _incomingState.callSessionImpl = self;
     }
     return _incomingState;
@@ -299,7 +299,7 @@
 
 - (JCallOutgoingState *)outgoingState {
     if (!_outgoingState) {
-        _outgoingState = [[JCallOutgoingState alloc] initWithName:@"outgoing" superState:self.superState];
+        _outgoingState = [[JCallOutgoingState alloc] initWithName:@"callOutgoing" superState:self.superState];
         _outgoingState.callSessionImpl = self;
     }
     return _outgoingState;

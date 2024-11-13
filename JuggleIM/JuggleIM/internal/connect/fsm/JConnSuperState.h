@@ -1,5 +1,5 @@
 //
-//  JConnFailureState.h
+//  JConnSuperState.h
 //  JuggleIM
 //
 //  Created by Fei Li on 2024/11/12.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JConnFailureState : JConnBaseState
+@interface JConnSuperState : JConnBaseState
 
 @end
 
