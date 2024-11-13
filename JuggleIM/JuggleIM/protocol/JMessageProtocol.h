@@ -434,8 +434,5 @@
 /// - Parameter completeBlock: 结果回调 [errorCode: 错误码，0 为成功; isMute: 是否免打扰; timezone: 时区; periods: 免打扰的时间段, 为空视为全天免打扰]
 - (void)getMuteStatus:(void (^)(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))completeBlock;
 
-// TODO: 上传做完后删除
-- (void)setMessageState:(JMessageState)state
-        withClientMsgNo:(long long)clientMsgNo;
 
 @end
