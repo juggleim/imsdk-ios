@@ -8,23 +8,24 @@
 #import "JCallSessionImpl.h"
 #import "JStateMachine.h"
 #import "JCallSuperState.h"
-#import "JConnectedState.h"
-#import "JConnectingState.h"
-#import "JIdleState.h"
-#import "JIncomingState.h"
-#import "JOutgoingState.h"
+#import "JCallConnectedState.h"
+#import "JCallConnectingState.h"
+#import "JCallIdleState.h"
+#import "JCallIncomingState.h"
+#import "JCallOutgoingState.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
 #import "JCallMediaManager.h"
+#import "JCallEventUtil.h"
 
 @interface JCallSessionImpl ()
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JCallSuperState *superState;
-@property (nonatomic, strong) JConnectedState *connectedState;
-@property (nonatomic, strong) JConnectingState *connectingState;
-@property (nonatomic, strong) JIdleState *idleState;
-@property (nonatomic, strong) JIncomingState *incomingState;
-@property (nonatomic, strong) JOutgoingState *outgoingState;
+@property (nonatomic, strong) JCallConnectedState *connectedState;
+@property (nonatomic, strong) JCallConnectingState *connectingState;
+@property (nonatomic, strong) JCallIdleState *idleState;
+@property (nonatomic, strong) JCallIncomingState *incomingState;
+@property (nonatomic, strong) JCallOutgoingState *outgoingState;
 @property (nonatomic, strong) NSHashTable <id<JCallSessionDelegate>> *delegates;
 @property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
 //@property (nonatomic, assign) BOOL cameraEnable;
@@ -43,13 +44,13 @@
     });
 }
 
-- (void)accept { 
-    [self.stateMachine event:JCallEventAccept userInfo:nil];
+- (void)accept {
+    [self event:JCallEventAccept userInfo:nil];
 }
 
 
 - (void)hangup { 
-    [self.stateMachine event:JCallEventHangup userInfo:nil];
+    [self event:JCallEventHangup userInfo:nil];
 }
 
 
@@ -132,7 +133,7 @@
         self.zegoToken = zegoToken;
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
-        [self.stateMachine event:JCallEventInviteFail userInfo:nil];
+        [self event:JCallEventInviteFail userInfo:nil];
     }];
 }
 
@@ -150,10 +151,10 @@
                             success:^(NSString * _Nonnull zegoToken) {
         JLogI(@"Call-Signal", @"send accept success");
         self.zegoToken = zegoToken;
-        [self.stateMachine event:JCallEventAcceptDone userInfo:nil];
+        [self event:JCallEventAcceptDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send accept error, code is %ld", code);
-        [self.stateMachine event:JCallEventAcceptFail userInfo:nil];
+        [self event:JCallEventAcceptFail userInfo:nil];
     }];
 }
 
@@ -182,17 +183,19 @@
                               complete:^(int errorCode, NSDictionary *data) {
         if (errorCode == 0) {
             JLogI(@"Call-Media", @"join room success");
-            [self.stateMachine event:JCallEventJoinChannelDone userInfo:nil];
+            [self event:JCallEventJoinChannelDone userInfo:nil];
         } else {
             JLogE(@"Call-Media", @"join room error, code is %d", errorCode);
-            [self.stateMachine event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
+            [self event:JCallEventJoinChannelFail userInfo:@{@"code":@(errorCode)}];
         }
     }];
 }
 
 #pragma mark - fsm
 - (void)event:(NSInteger)event userInfo:(id)userInfo {
-    [self.stateMachine event:event userInfo:userInfo];
+    [self.stateMachine event:event
+                        name:[JCallEventUtil nameOfEvent:event]
+                    userInfo:userInfo];
 }
 
 - (void)transitionToConnectedState {
@@ -232,8 +235,6 @@
     [self.stateMachine transitionTo:self.outgoingState];
 }
 
-
-
 #pragma mark - private
 - (void)destroy {
     [self.sessionLifeCycleDelegate sessionDidfinish:self];
@@ -264,41 +265,41 @@
     return _superState;
 }
 
-- (JConnectedState *)connectedState {
+- (JCallConnectedState *)connectedState {
     if (!_connectedState) {
-        _connectedState = [[JConnectedState alloc] initWithName:@"connected" superState:self.superState];
+        _connectedState = [[JCallConnectedState alloc] initWithName:@"callConnected" superState:self.superState];
         _connectedState.callSessionImpl = self;
     }
     return _connectedState;
 }
 
-- (JConnectingState *)connectingState {
+- (JCallConnectingState *)connectingState {
     if (!_connectingState) {
-        _connectingState = [[JConnectingState alloc] initWithName:@"connecting" superState:self.superState];
+        _connectingState = [[JCallConnectingState alloc] initWithName:@"callConnecting" superState:self.superState];
         _connectingState.callSessionImpl = self;
     }
     return _connectingState;
 }
 
-- (JIdleState *)idleState {
+- (JCallIdleState *)idleState {
     if (!_idleState) {
-        _idleState = [[JIdleState alloc] initWithName:@"idle" superState:self.superState];
+        _idleState = [[JCallIdleState alloc] initWithName:@"callIdle" superState:self.superState];
         _idleState.callSessionImpl = self;
     }
     return _idleState;
 }
 
-- (JIncomingState *)incomingState {
+- (JCallIncomingState *)incomingState {
     if (!_incomingState) {
-        _incomingState = [[JIncomingState alloc] initWithName:@"incoming" superState:self.superState];
+        _incomingState = [[JCallIncomingState alloc] initWithName:@"callIncoming" superState:self.superState];
         _incomingState.callSessionImpl = self;
     }
     return _incomingState;
 }
 
-- (JOutgoingState *)outgoingState {
+- (JCallOutgoingState *)outgoingState {
     if (!_outgoingState) {
-        _outgoingState = [[JOutgoingState alloc] initWithName:@"outgoing" superState:self.superState];
+        _outgoingState = [[JCallOutgoingState alloc] initWithName:@"callOutgoing" superState:self.superState];
         _outgoingState.callSessionImpl = self;
     }
     return _outgoingState;

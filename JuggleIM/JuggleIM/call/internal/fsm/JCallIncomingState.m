@@ -5,18 +5,18 @@
 //  Created by Fei Li on 2024/10/10.
 //
 
-#import "JIncomingState.h"
+#import "JCallIncomingState.h"
 #import "JCallEvent.h"
 #import "JLogger.h"
 
 #define JRtcHangupInterval 0.5
 #define JIncomingInterval 60
 
-@interface JIncomingState ()
+@interface JCallIncomingState ()
 @property (nonatomic, strong) NSTimer *incomingTimer;
 @end
 
-@implementation JIncomingState
+@implementation JCallIncomingState
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusIncoming;

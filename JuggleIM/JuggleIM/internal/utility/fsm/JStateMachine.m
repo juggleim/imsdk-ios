@@ -8,7 +8,6 @@
 #import "JStateMachine.h"
 #import "JState.h"
 #import "JLogger.h"
-#import "JCallEventUtil.h"
 
 @interface JStateMachine ()
 @property (nonatomic, strong) JState *currentState;
@@ -25,9 +24,11 @@
     return self;
 }
 
-- (void)event:(NSInteger)event userInfo:(NSDictionary *)userInfo {
+- (void)event:(NSInteger)event
+         name:(NSString *)eventName
+     userInfo:(NSDictionary *)userInfo {
     dispatch_async(self.fsmQueue, ^{
-        JLogI(@"CALL-Fsm", @"state %@, event %@", self.currentState.name, [JCallEventUtil nameOfEvent:event]);
+        JLogI(@"FSM-Sm", @"state %@, event %@", self.currentState.name, eventName);
         JState *state = self.currentState;
         while (state) {
             if ([state event:event userInfo:userInfo]) {
@@ -55,7 +56,7 @@
 }
 
 - (void)transitionTo:(JState *)state {
-    JLogI(@"CALL-Fsm", @"leave state %@", self.currentState.name);
+    JLogI(@"FSM-Sm", @"leave state %@", self.currentState.name);
     JState *current = self.currentState;
     while (current) {
         if ([current stateDidLeave]) {
@@ -67,7 +68,7 @@
     
     self.currentState = state;
     
-    JLogI(@"CALL-Fsm", @"enter state %@", state.name);
+    JLogI(@"FSM-Sm", @"enter state %@", state.name);
     current = self.currentState;
     while (current) {
         if ([current stateDidEnter]) {

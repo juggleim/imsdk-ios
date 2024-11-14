@@ -1,5 +1,5 @@
 //
-//  JConnectingState.h
+//  JIncomingState.h
 //  JuggleCall
 //
 //  Created by Fei Li on 2024/10/10.
@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JConnectingState : JCallState
+@interface JCallIncomingState : JCallState
 
 @end
 

@@ -1463,7 +1463,6 @@ inConversation:(JConversation *)conversation
         default:
             break;
     }
-    
 }
 
 - (void)handleRtcInviteEventNtf:(JRtcInviteEventNtf *)ntf {

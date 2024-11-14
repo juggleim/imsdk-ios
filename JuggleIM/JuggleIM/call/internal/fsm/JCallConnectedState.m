@@ -5,16 +5,16 @@
 //  Created by Fei Li on 2024/10/10.
 //
 
-#import "JConnectedState.h"
+#import "JCallConnectedState.h"
 #import "JLogger.h"
 
 #define JRtcPingInterval 5
 
-@interface JConnectedState ()
+@interface JCallConnectedState ()
 @property (nonatomic, strong) NSTimer *pingTimer;
 @end
 
-@implementation JConnectedState
+@implementation JCallConnectedState
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusConnected;

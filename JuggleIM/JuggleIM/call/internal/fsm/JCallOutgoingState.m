@@ -5,18 +5,18 @@
 //  Created by Fei Li on 2024/10/10.
 //
 
-#import "JOutgoingState.h"
+#import "JCallOutgoingState.h"
 #import "JCallEvent.h"
 #import "JCallSessionImpl.h"
 #import "JLogger.h"
 
 #define JOutgoingInterval 60
 
-@interface JOutgoingState ()
+@interface JCallOutgoingState ()
 @property (nonatomic, strong) NSTimer *outgoingTimer;
 @end
 
-@implementation JOutgoingState
+@implementation JCallOutgoingState
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusOutgoing;

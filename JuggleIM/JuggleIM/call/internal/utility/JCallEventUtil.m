@@ -13,22 +13,28 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventInvite] = @"invite",
     [JCallEventAccept] = @"accept",
     [JCallEventHangup] = @"hang up",
+    [JCallEventAcceptAfterHangupOther] = @"accept after hangup other",
+    
     [JCallEventInviteFail] = @"invite fail",
     [JCallEventInviteTimeOut] = @"invite time out",
     [JCallEventAcceptDone] = @"accept done",
     [JCallEventAcceptFail] = @"accept fail",
+    [JCallEventIncomingTimeOut] = @"incoming time out",
+    
     [JCallEventReceiveInvite] = @"receive invite",
     [JCallEventReceiveAccept] = @"receive accept",
     [JCallEventReceiveHangup] = @"receive hang up",
+    [JCallEventRoomDestroy] = @"room destroy",
+    
     [JCallEventJoinChannelDone] = @"join channel done",
     [JCallEventJoinChannelFail] = @"join channel fail",
+    
     [JCallEventParticipantJoinChannel] = @"participant join channel",
     [JCallEventParticipantLeaveChannel] = @"participant leave channel",
     [JCallEventParticipantEnableCamera] = @"participant enable camera",
     [JCallEventParticipantEnableMic] = @"participant enable mic",
-    [JCallEventRoomDestroy] = @"room destroy",
-    [JCallEventAcceptAfterHangupOther] = @"accept after hangup other",
-    [JCallEventIncomingTimeOut] = @"incoming time out"
+    
+    [30] = @"unknown"
 };
 
 + (NSString *)nameOfEvent:(NSInteger)event {

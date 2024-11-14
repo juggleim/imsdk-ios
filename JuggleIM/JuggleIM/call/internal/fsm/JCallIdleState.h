@@ -7,6 +7,6 @@
 
 #import "JCallState.h"
 
-@interface JIdleState : JCallState
+@interface JCallIdleState : JCallState
 
 @end
