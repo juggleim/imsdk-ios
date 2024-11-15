@@ -528,6 +528,10 @@
               startTime:(long long)startTime
              sendUserId:(NSString *)sendUserId
             lastMessage:(JConcreteMessage *)lastMessage{
+    if (startTime <= self.core.conversationSyncTime) {
+        return;
+    }
+    
     JConcreteConversationInfo * info = [self getConversationAfterCommonResolved:conversation lastMessage:lastMessage];
     if(info == nil){
         return;
