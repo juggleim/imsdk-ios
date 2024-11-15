@@ -1403,19 +1403,11 @@
 			path = model;
 			sourceTree = "<group>";
 		};
-		A09727DA2CC6346B00E08BC4 /* vendor */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = vendor;
-			sourceTree = "<group>";
-		};
 		A09727DF2CC6346B00E08BC4 /* call */ = {
 			isa = PBXGroup;
 			children = (
 				A09727D52CC6346B00E08BC4 /* internal */,
 				A09727D82CC6346B00E08BC4 /* model */,
-				A09727DA2CC6346B00E08BC4 /* vendor */,
 				A09728042CC641B100E08BC4 /* JCallProtocol.h */,
 				A09727DD2CC6346B00E08BC4 /* JCallConst.h */,
 				A09727D62CC6346B00E08BC4 /* JCallSession.h */,
