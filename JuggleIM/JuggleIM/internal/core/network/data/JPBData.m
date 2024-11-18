@@ -1952,13 +1952,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     outRoom.owner = [self userInfoWithPBUserInfo:room.owner];
     NSMutableArray <JCallMember *> *members = [NSMutableArray array];
     for (RtcMember *member in room.membersArray) {
-        JCallMember *outMember = [[JCallMember alloc] init];
-        outMember.userInfo = [self userInfoWithPBUserInfo:member.member];
-        outMember.callStatus = (int)member.rtcState;
-        outMember.startTime = member.callTime;
-        outMember.connectTime = member.connectTime;
-        outMember.finishTime = member.hangupTime;
-        outMember.inviter = [self userInfoWithPBUserInfo:member.inviter];
+        JCallMember *outMember = [self callMemberWithPBRtcMember:member];
         [members addObject:outMember];
     }
     outRoom.members = members;
