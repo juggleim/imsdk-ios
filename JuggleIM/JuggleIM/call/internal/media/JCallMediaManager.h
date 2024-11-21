@@ -24,5 +24,7 @@
 
 - (void)muteSpeaker:(BOOL)isMute;
 
+- (void)setSpeakerEnable:(BOOL)isEnable;
+
 @end
 

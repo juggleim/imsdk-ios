@@ -66,4 +66,8 @@ static JCallMediaManager *_instance;
     [self.engine muteSpeaker:isMute];
 }
 
+- (void)setSpeakerEnable:(BOOL)isEnable {
+    [self.engine setSpeakerEnable:isEnable];
+}
+
 @end

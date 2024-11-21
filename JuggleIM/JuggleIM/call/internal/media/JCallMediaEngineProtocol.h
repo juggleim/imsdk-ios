@@ -10,10 +10,6 @@
 #import <JuggleIM/JCallMediaUser.h>
 #import <JuggleIM/JCallMediaRoomConfig.h>
 
-@protocol JCallMediaRoomConfig <NSObject>
-@property (nonatomic, assign) BOOL isUserStatusNotify;
-@end
-
 @protocol JCallMediaEngineProtocol <NSObject>
 
 - (void)joinRoom:(JCallMediaRoom *)room
@@ -26,6 +22,8 @@
 - (void)muteMicrophone:(BOOL)isMute;
 
 - (void)muteSpeaker:(BOOL)isMute;
+
+- (void)setSpeakerEnable:(BOOL)isEnable;
 
 @end
 

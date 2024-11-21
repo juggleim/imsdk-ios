@@ -49,6 +49,10 @@
     [[ZegoExpressEngine sharedEngine] muteSpeaker:isMute];
 }
 
+- (void)setSpeakerEnable:(BOOL)isEnable {
+    [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:isEnable];
+}
+
 #pragma mark - ZegoEventHandler
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType
                 streamList:(NSArray<ZegoStream *> *)streamList

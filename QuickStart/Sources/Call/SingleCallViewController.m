@@ -564,7 +564,8 @@
 
 
 - (void)speakerButtonClicked:(UIButton *)sender {
-    [self.callSession muteSpeaker:!sender.selected];
+    [self.callSession setSpeakerEnable:sender.isSelected];
+//    [self.callSession muteSpeaker:!sender.selected];
     [self.speakerButton setSelected:!sender.selected];
 //    [self didTapSpeakerButton];
 //

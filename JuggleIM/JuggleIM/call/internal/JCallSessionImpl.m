@@ -66,6 +66,9 @@
     [[JCallMediaManager shared] muteSpeaker:isMute];
 }
 
+- (void)setSpeakerEnable:(BOOL)isEnable {
+    [[JCallMediaManager shared] setSpeakerEnable:isEnable];
+}
 
 - (void)setVideoView:(UIView *)view forUserId:(NSString *)userId { 
     
