@@ -18,7 +18,7 @@ static NSString *JConnEventNameMap[] = {
     [JConnEventConnectFailure] = @"connect failure",
     
     [JConnEventReconnectTimerFire] = @"reconnect timer fire",
-    [JConnEventNetworkChange] = @"network change",
+    [JConnEventNetworkAvailable] = @"network available",
     [JConnEventEnterForground] = @"enter foreground",
     [JConnEventEnterBackground] = @"enter background",
     [JConnEventWebsocketFail] = @"websocket fail",

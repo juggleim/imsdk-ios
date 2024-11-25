@@ -59,7 +59,7 @@
             result = YES;
             break;
             
-        case JConnEventNetworkChange:
+        case JConnEventNetworkAvailable:
             [self.connectionManager transitionToConnectingState];
             result = YES;
             break;

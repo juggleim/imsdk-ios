@@ -19,7 +19,7 @@ typedef NS_ENUM(NSInteger, JConnEvent) {
     
     //
     JConnEventReconnectTimerFire,
-    JConnEventNetworkChange,
+    JConnEventNetworkAvailable,
     JConnEventEnterForground,
     JConnEventEnterBackground,
     JConnEventWebsocketFail,

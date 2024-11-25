@@ -411,7 +411,7 @@
     
     if (status != JNetworkStatusNotReachable) {
         [self.intervalGenerator reset];
-        [self event:JConnEventNetworkChange userInfo:nil];
+        [self event:JConnEventNetworkAvailable userInfo:nil];
     }
 }
 
