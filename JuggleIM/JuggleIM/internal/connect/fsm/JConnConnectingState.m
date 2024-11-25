@@ -19,6 +19,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
 @property (nonatomic, copy) NSString *userToken;
 //连接过程中保存的状态
 @property (nonatomic, assign) JConnectingStoreStatus storeStatus;
+@property (nonatomic, assign) BOOL receivePush;
 @end
 
 @implementation JConnConnectingState
@@ -63,7 +64,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
                     [self.connectionManager event:JConnEventUserConnect userInfo:@{@"token":self.userToken}];
                 }
             } else if (self.storeStatus == JConnectingStoreStatusDisconnect) {
-                [self.connectionManager event:JConnEventUserDisconnect userInfo:nil];
+                [self.connectionManager event:JConnEventUserDisconnect userInfo:@{@"receivePush":@(self.receivePush)}];
             }
             result = YES;
             break;
@@ -82,7 +83,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
                     [self.connectionManager event:JConnEventUserConnect userInfo:@{@"token":self.userToken}];
                 }
             } else if (self.storeStatus == JConnectingStoreStatusDisconnect) {
-                [self.connectionManager event:JConnEventUserDisconnect userInfo:nil];
+                [self.connectionManager event:JConnEventUserDisconnect userInfo:@{@"receivePush":@(self.receivePush)}];
             }
             
             result = YES;
@@ -96,16 +97,21 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
                     [self.connectionManager event:JConnEventUserConnect userInfo:@{@"token":self.userToken}];
                 }
             } else if (self.storeStatus == JConnectingStoreStatusDisconnect) {
-                [self.connectionManager event:JConnEventUserDisconnect userInfo:nil];
+                [self.connectionManager event:JConnEventUserDisconnect userInfo:@{@"receivePush":@(self.receivePush)}];
             }
             result = YES;
             break;
             
         case JConnEventUserDisconnect:
+        {
             self.userToken = nil;
             self.storeStatus = JConnectingStoreStatusDisconnect;
+            NSNumber *num = userInfo[@"receivePush"];
+            BOOL receivePush = num.boolValue;
+            self.receivePush = receivePush;
             result = YES;
             break;
+        }
         
         default:
             break;
