@@ -45,6 +45,7 @@
             
         case JConnEventUserDisconnect:
             [self.connectionManager disconnectWithoutWS];
+            [self.connectionManager notifyDisconnected:JErrorCodeNone extra:nil];
             [self.connectionManager transitionToIdleState];
             result = YES;
             break;

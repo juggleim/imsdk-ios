@@ -25,6 +25,9 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
 @implementation JConnConnectingState
 
 - (BOOL)stateDidEnter {
+    self.userToken = nil;
+    self.storeStatus = JConnectingStoreStatusNone;
+    self.receivePush = NO;
     [self.connectionManager setConnectionStatus:JConnectionStatusInternalConnecting];
     [self.connectionManager connect];
     return YES;
