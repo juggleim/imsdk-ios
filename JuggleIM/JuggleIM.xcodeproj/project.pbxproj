@@ -64,6 +64,8 @@
 		A05EED5F2B207D5200809F13 /* JUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED5D2B207D5200809F13 /* JUtility.m */; };
 		A05EED622B20826B00809F13 /* JReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EED602B20826A00809F13 /* JReachability.m */; };
 		A05EED632B20826B00809F13 /* JReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED612B20826A00809F13 /* JReachability.h */; };
+		A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0606F712CF6FB1700FBD652 /* JCallFinishNotifyMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0606F742CF6FB1700FBD652 /* JCallFinishNotifyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0606F722CF6FB1700FBD652 /* JCallFinishNotifyMessage.m */; };
 		A06515FD2C7C717D00E3AEC1 /* JCachedChatroom.h in Headers */ = {isa = PBXBuildFile; fileRef = A06515FB2C7C717D00E3AEC1 /* JCachedChatroom.h */; };
 		A06515FE2C7C717D00E3AEC1 /* JCachedChatroom.m in Sources */ = {isa = PBXBuildFile; fileRef = A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */; };
 		A06516012C8092C400E3AEC1 /* JChatroomAttributeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */; };
@@ -432,6 +434,8 @@
 		A05EED5D2B207D5200809F13 /* JUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUtility.m; sourceTree = "<group>"; };
 		A05EED602B20826A00809F13 /* JReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JReachability.m; sourceTree = "<group>"; };
 		A05EED612B20826A00809F13 /* JReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JReachability.h; sourceTree = "<group>"; };
+		A0606F712CF6FB1700FBD652 /* JCallFinishNotifyMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallFinishNotifyMessage.h; sourceTree = "<group>"; };
+		A0606F722CF6FB1700FBD652 /* JCallFinishNotifyMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallFinishNotifyMessage.m; sourceTree = "<group>"; };
 		A06515FB2C7C717D00E3AEC1 /* JCachedChatroom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCachedChatroom.h; sourceTree = "<group>"; };
 		A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCachedChatroom.m; sourceTree = "<group>"; };
 		A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomAttributeItem.h; sourceTree = "<group>"; };
@@ -1399,6 +1403,8 @@
 			children = (
 				A03B3A032CC914CE003D150A /* JCallMember.h */,
 				A03B3A042CC914CE003D150A /* JCallMember.m */,
+				A0606F712CF6FB1700FBD652 /* JCallFinishNotifyMessage.h */,
+				A0606F722CF6FB1700FBD652 /* JCallFinishNotifyMessage.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1471,6 +1477,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */,
 				A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */,
 				A079E8882CE395CC00A1008F /* JConnSuperState.h in Headers */,
 				A0CE9A292CD4BDC5008B405C /* JCallMediaRoom.h in Headers */,
@@ -1854,6 +1861,7 @@
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
 				5B4DB6872BFC340700DD18B6 /* JUnDisturbConvMessage.m in Sources */,
+				A0606F742CF6FB1700FBD652 /* JCallFinishNotifyMessage.m in Sources */,
 				A09727E52CC6346B00E08BC4 /* JCallConnectingState.m in Sources */,
 				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
 				A09645912BF339EA00290775 /* JSnapshotPackedVideoMessage.m in Sources */,

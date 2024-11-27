@@ -57,3 +57,4 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JCallMediaEngineProtocol.h>
 #import <JuggleIM/JCallMediaRoomConfig.h>
 #import <JuggleIM/JCallSession.h>
+#import <JuggleIM/JCallFinishNotifyMessage.h>

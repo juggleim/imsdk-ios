@@ -1687,6 +1687,7 @@
     [self registerContentType:[JAddConvMessage class]];
     [self registerContentType:[JClearTotalUnreadMessage class]];
     [self registerContentType:[JMarkUnreadMessage class]];
+    [self registerContentType:[JCallFinishNotifyMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content

@@ -80,7 +80,7 @@
 }
 
 - (void)decode:(NSData *)data{
-    NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     
     //相对路径转换成绝对路径
 
