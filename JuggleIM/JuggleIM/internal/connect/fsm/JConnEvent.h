@@ -23,7 +23,8 @@ typedef NS_ENUM(NSInteger, JConnEvent) {
     JConnEventEnterForground,
     JConnEventEnterBackground,
     JConnEventWebsocketFail,
-    JConnEventRemoteDisconnect
+    JConnEventRemoteDisconnect,
+    JConnEventConnectingTimeOut
 };
 
 #endif /* JConnEvent_h */

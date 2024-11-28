@@ -9,6 +9,8 @@
 #import "JConnEvent.h"
 #import "JLogger.h"
 
+#define JConnectTimeOutInterval 10
+
 typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
     JConnectingStoreStatusNone,
     JConnectingStoreStatusConnect,
@@ -20,6 +22,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
 //连接过程中保存的状态
 @property (nonatomic, assign) JConnectingStoreStatus storeStatus;
 @property (nonatomic, assign) BOOL receivePush;
+@property (nonatomic, strong) NSTimer *connectTimer;
 @end
 
 @implementation JConnConnectingState
@@ -30,10 +33,12 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
     self.receivePush = NO;
     [self.connectionManager setConnectionStatus:JConnectionStatusInternalConnecting];
     [self.connectionManager connect];
+    [self startTimer];
     return YES;
 }
 
 - (BOOL)stateDidLeave {
+    [self stopTimer];
     return YES;
 }
 
@@ -94,6 +99,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
         }
             
         case JConnEventWebsocketFail:
+        case JConnEventConnectingTimeOut:
             [self.connectionManager transitionToWaitingForConnectState];
             if (self.storeStatus == JConnectingStoreStatusConnect) {
                 if (self.userToken.length > 0) {
@@ -120,6 +126,30 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
             break;
     }
     return result;
+}
+
+- (void)startTimer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.connectTimer) {
+            return;
+        }
+        JLogI(@"CON-Connect", @"connecting timer start");
+        self.connectTimer = [NSTimer scheduledTimerWithTimeInterval:JConnectTimeOutInterval target:self selector:@selector(timerFire) userInfo:nil repeats:NO];
+    });
+}
+
+- (void)stopTimer {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        JLogI(@"CON-Connect", @"connecting timer stop");
+        if (self.connectTimer) {
+            [self.connectTimer invalidate];
+            self.connectTimer = nil;
+        }
+    });
+}
+
+- (void)timerFire {
+    [self.connectionManager event:JConnEventConnectingTimeOut userInfo:nil];
 }
 
 @end

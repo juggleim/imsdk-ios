@@ -23,6 +23,7 @@ static NSString *JConnEventNameMap[] = {
     [JConnEventEnterBackground] = @"enter background",
     [JConnEventWebsocketFail] = @"websocket fail",
     [JConnEventRemoteDisconnect] = @"remote disconnect",
+    [JConnEventConnectingTimeOut] = @"connecting time out",
     
     [20] = @"unknown"
 };
