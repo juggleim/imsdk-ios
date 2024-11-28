@@ -32,13 +32,22 @@
 /// 获取全部会话信息列表，按照从新到旧的顺序排列
 - (NSArray<JConversationInfo *> *)getConversationInfoList;
 
-/// 分页获取会话信息列表
+/// 分页获取会话信息列表，结果按照会话时间倒序排列（新的在前，旧的在后）
+/// - Parameters:
+///   - conversationTypes: 会话类型列表
+///   - count: 拉取数量
+///   - ts: 拉取时间戳（传 0 表示当前时间）
+///   - direction: 拉取方向
 - (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
                                                              count:(int)count
                                                          timestamp:(long long)ts
                                                          direction:(JPullDirection)direction;
 
-/// 分页获取会话信息列表
+/// 分页获取会话信息列表，结果按照会话时间倒序排列（新的在前，旧的在后）
+/// - Parameters:
+///   - count: 拉取数量
+///   - ts: 拉取时间戳（传 0 表示当前时间）
+///   - direction: 拉取方向
 - (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
                                                        timestamp:(long long)ts
                                                        direction:(JPullDirection)direction;

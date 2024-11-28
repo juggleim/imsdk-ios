@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A0606F762CF71E8B00FBD652 /* JZegoCall.podspec in Resources */ = {isa = PBXBuildFile; fileRef = A0606F752CF71E8B00FBD652 /* JZegoCall.podspec */; };
 		A0CE9A182CD38C81008B405C /* JZegoCall.h in Headers */ = {isa = PBXBuildFile; fileRef = A0CE9A172CD38C81008B405C /* JZegoCall.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0CE9A202CD38CC6008B405C /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CE9A1F2CD38CC6008B405C /* JuggleIM.framework */; };
 		A0CE9A222CD38EE7008B405C /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CE9A212CD38EE7008B405C /* ZegoExpressEngine.xcframework */; };
@@ -145,7 +144,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0606F762CF71E8B00FBD652 /* JZegoCall.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
