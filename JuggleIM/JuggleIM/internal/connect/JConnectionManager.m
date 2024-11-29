@@ -158,6 +158,7 @@
                 JLogE(@"CON-Db", @"open fail");
             }
         }
+        [self.core.webSocket pushSwitch:self.isBackground userId:userId];
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];
         [self.chatroomManager connectSuccess];
