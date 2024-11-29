@@ -66,7 +66,7 @@ static JLogger *_instance;
 
     //控制台
     if (level <= self.consoleLogLevel) {
-        NSLog(@"[JLogger:%@]%@", tag, logStr);
+        NSLog(@"[JLogger:%@]%@, session : %@", tag, logStr, self.core.session);
     }
 
     //写文件
@@ -74,7 +74,7 @@ static JLogger *_instance;
         dispatch_async(self.logQueue, ^{
             NSDate *date = [NSDate date];
             NSString *time = [self.dateFormatter stringFromDate:date];
-            logStr = [NSString stringWithFormat:@"%@ [%@] %@\n", time, tag, logStr];
+            logStr = [NSString stringWithFormat:@"%@ [%@] %@, session : %@\n", time, tag, logStr, self.core.session];
             [self.fileWriter write:logStr date:date];
         });
     }

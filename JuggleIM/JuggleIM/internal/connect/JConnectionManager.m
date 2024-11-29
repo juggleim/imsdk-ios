@@ -151,6 +151,7 @@
     if (error == JErrorCodeInternalNone) {
         [self.intervalGenerator reset];
         self.core.userId = userId;
+        self.core.session = session;
         if (!self.core.dbManager.isOpen) {
             if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
                 [self dbOpenNotice:YES];
