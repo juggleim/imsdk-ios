@@ -28,6 +28,13 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData;
 
+/// 设置语言（主要影响内置消息的推送语言，目前支持中/英文）
+/// - Parameters:
+///   - language: 语言，例 “en-US”
+///   - completeBlock: 结果回调，返回 JErrorCodeNone 表示成功
+- (void)setLanguage:(NSString *)language
+           complete:(void (^)(JErrorCode code))completeBlock;
+
 - (JConnectionStatus)getConnectionStatus;
 
 - (void)addDelegate:(id<JConnectionDelegate>) delegate;

@@ -916,6 +916,23 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)setLanguage:(NSString *)language
+             userId:(NSString *)userId
+            success:(void (^)(void))successBlock
+              error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"set language");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData setLanguage:language
+                                      userId:userId
+                                       index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");

@@ -410,6 +410,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)queryCallRoom:(NSString *)roomId
                     index:(int)index;
 
+- (NSData *)setLanguage:(NSString *)language
+                 userId:(NSString *)userId
+                  index:(int)index;
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index;
 

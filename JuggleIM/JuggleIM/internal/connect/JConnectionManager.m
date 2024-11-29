@@ -99,6 +99,37 @@
     }];
 }
 
+- (void)setLanguage:(NSString *)language complete:(void (^)(JErrorCode))completeBlock {
+    JLogI(@"CON-Lang", @"language is %@", language);
+    if (language.length == 0) {
+        JLogW(@"CON-Lang", @"language is empty");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket setLanguage:language
+                              userId:self.core.userId
+                             success:^{
+        JLogI(@"CON-Lang", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CON-Lang", @"error code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (completeBlock) {
+                completeBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (JConnectionStatus)getConnectionStatus {
     return (JConnectionStatus)self.core.connectionStatus;
 }

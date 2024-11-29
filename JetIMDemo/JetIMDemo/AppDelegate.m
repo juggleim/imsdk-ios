@@ -52,7 +52,10 @@
                             extra:(NSString *)extra {
     NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [JIM.shared.connectionManager setLanguage:@"asdfasdf" complete:^(JErrorCode code) {
+                int i = 1;
+            }];
         });
     }
 }

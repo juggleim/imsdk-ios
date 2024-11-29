@@ -82,6 +82,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcUpdState @"rtc_upd_state"
 #define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcQry @"rtc_qry"
+#define jSetUserSettings @"set_user_settings"
+#define jLanguage @"language"
 #define jRtcPing @"rtc_ping"
 
 #define jApns @"Apns"
@@ -1221,6 +1223,29 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)setLanguage:(NSString *)language
+                 userId:(NSString *)userId
+                  index:(int)index {
+    NSMutableArray *arr = [NSMutableArray array];
+    KvItem *item = [[KvItem alloc] init];
+    item.key = jLanguage;
+    item.value = language;
+    [arr addObject:item];
+    UserInfo *userInfo = [[UserInfo alloc] init];
+    userInfo.settingsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jSetUserSettings;
+    body.targetId = userId;
+    body.data_p = [userInfo data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -2277,7 +2302,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcUpdState:@(JPBRcvTypeSimpleQryAck),
              jRtcPing:@(JPBRcvTypeRtcPingAck),
              jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
-             jRtcQry:@(JPBRcvTypeQryCallRoomAck)
+             jRtcQry:@(JPBRcvTypeQryCallRoomAck),
+             jSetUserSettings:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

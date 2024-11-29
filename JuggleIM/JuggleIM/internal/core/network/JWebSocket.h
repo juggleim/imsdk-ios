@@ -274,6 +274,11 @@ inConversation:(JConversation *)conversation
               messageId:(NSString *)messageId
                     url:(NSString *)url;
 
+- (void)setLanguage:(NSString *)language
+             userId:(NSString *)userId
+            success:(void (^)(void))successBlock
+              error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call
