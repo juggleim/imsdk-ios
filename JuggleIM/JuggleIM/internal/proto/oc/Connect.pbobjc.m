@@ -78,6 +78,10 @@ static GPBFileDescription ConnectRoot_FileDescription = {
 @dynamic clientIp;
 @dynamic packageName;
 @dynamic pushChannel;
+@dynamic ext;
+@dynamic instanceId;
+@dynamic language;
+@dynamic isBackend;
 
 typedef struct ConnectMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -96,6 +100,9 @@ typedef struct ConnectMsgBody__storage_ {
   NSString *clientIp;
   NSString *packageName;
   NSString *pushChannel;
+  NSString *ext;
+  NSString *instanceId;
+  NSString *language;
 } ConnectMsgBody__storage_;
 
 // This method is threadsafe because it is initially called
@@ -240,6 +247,42 @@ typedef struct ConnectMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "ext",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_Ext,
+        .hasIndex = 15,
+        .offset = (uint32_t)offsetof(ConnectMsgBody__storage_, ext),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "instanceId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_InstanceId,
+        .hasIndex = 16,
+        .offset = (uint32_t)offsetof(ConnectMsgBody__storage_, instanceId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "language",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_Language,
+        .hasIndex = 17,
+        .offset = (uint32_t)offsetof(ConnectMsgBody__storage_, language),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "isBackend",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_IsBackend,
+        .hasIndex = 18,
+        .offset = 19,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ConnectMsgBody)
@@ -251,7 +294,7 @@ typedef struct ConnectMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\013\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000\017\013\000";
+        "\r\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000\017\013\000\021\n\000\023\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

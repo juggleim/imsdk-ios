@@ -73,6 +73,10 @@ typedef GPB_ENUM(ConnectMsgBody_FieldNumber) {
   ConnectMsgBody_FieldNumber_ClientIp = 13,
   ConnectMsgBody_FieldNumber_PackageName = 14,
   ConnectMsgBody_FieldNumber_PushChannel = 15,
+  ConnectMsgBody_FieldNumber_Ext = 16,
+  ConnectMsgBody_FieldNumber_InstanceId = 17,
+  ConnectMsgBody_FieldNumber_Language = 18,
+  ConnectMsgBody_FieldNumber_IsBackend = 19,
 };
 
 GPB_FINAL @interface ConnectMsgBody : GPBMessage
@@ -115,6 +119,17 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *packageName;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *pushChannel;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+/** 客户端实例标识,用于多开时识别不同的实例，clientSession */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *instanceId;
+
+/** 语言设置 */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *language;
+
+/** app是否在后台 */
+@property(nonatomic, readwrite) BOOL isBackend;
 
 @end
 

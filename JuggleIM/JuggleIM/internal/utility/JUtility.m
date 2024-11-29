@@ -378,4 +378,8 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     }
     return md5Str;
 }
+
++ (NSString *)getSystemLanguage {
+    return [[NSLocale preferredLanguages] firstObject];
+}
 @end

@@ -187,7 +187,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
                         pushToken:(NSString *)pushToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
-                         clientIp:(NSString *)clientIp {
+                         clientIp:(NSString *)clientIp
+                         language:(nonnull NSString *)language {
     ConnectMsgBody *connectMsg = [[ConnectMsgBody alloc] init];
     connectMsg.protoId = JProtoId;
     connectMsg.sdkVersion = JIMVersion;
@@ -204,6 +205,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.clientIp = clientIp;
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApns;
+    connectMsg.language = language;
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];

@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)rootPath;
 + (NSString *)mediaPath:(JMediaType)type;
 + (NSString *)getUUID;
++ (NSString *)getSystemLanguage;
 
 @end
 

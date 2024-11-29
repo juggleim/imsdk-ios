@@ -1194,7 +1194,8 @@ inConversation:(JConversation *)conversation
                                          pushToken:self.pushToken
                                          networkId:[JUtility currentNetWork]
                                             ispNum:[JUtility currentCarrier]
-                                          clientIp:@""];
+                                          clientIp:@""
+                                          language:[JUtility getSystemLanguage]];
     NSError *err = nil;
     [sws sendData:d error:&err];
     if (err != nil) {

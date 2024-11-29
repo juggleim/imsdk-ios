@@ -218,7 +218,8 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                         pushToken:(NSString *)pushToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
-                         clientIp:(NSString *)clientIp;
+                         clientIp:(NSString *)clientIp
+                         language:(NSString *)language;
 
 - (NSData *)sendMessageDataWithType:(NSString *)contentType
                             msgData:(NSData *)msgData
