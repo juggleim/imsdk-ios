@@ -159,7 +159,6 @@
                 JLogE(@"CON-Db", @"open fail");
             }
         }
-        [self.core.webSocket pushSwitch:self.isBackground userId:userId];
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];
         [self.chatroomManager connectSuccess];
@@ -251,6 +250,7 @@
 - (void)enterConnected {
     [[JLogger shared] removeExpiredLogs];
     [self.core.webSocket startHeartbeat];
+    [self.core.webSocket pushSwitch:self.isBackground userId:self.core.userId];
 }
 
 - (void)leaveConnected {
@@ -271,6 +271,10 @@
 
 - (void)handleRemoteDisconnect {
     [self closeDB];
+}
+
+- (void)pushSwitch:(BOOL)isBackground {
+    [self.core.webSocket pushSwitch:isBackground userId:self.core.userId];
 }
 
 - (float)getReconnectInterval {
@@ -418,13 +422,12 @@
 
 - (void)enterBackground {
     self.isBackground = YES;
-    [self.core.webSocket pushSwitch:YES userId:self.core.userId];
+    [self event:JConnEventEnterBackground userInfo:nil];
 }
 
 - (void)enterForeground {
     [self.intervalGenerator reset];
     self.isBackground = NO;
-    [self.core.webSocket pushSwitch:NO userId:self.core.userId];
     [self event:JConnEventEnterForground userInfo:nil];
 }
 

@@ -70,6 +70,16 @@
             break;
         }
             
+        case JConnEventEnterForground:
+            [self.connectionManager pushSwitch:NO];
+            result = YES;
+            break;
+            
+        case JConnEventEnterBackground:
+            [self.connectionManager pushSwitch:YES];
+            result = YES;
+            break;
+            
         default:
             break;
     }

@@ -31,6 +31,7 @@
 - (void)disconnectWithoutWS;
 - (float)getReconnectInterval;
 - (void)handleRemoteDisconnect;
+- (void)pushSwitch:(BOOL)isBackground;
 
 - (void)notifyConnecting;
 - (void)notifyConnected:(NSString *)extra;
