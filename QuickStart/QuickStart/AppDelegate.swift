@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         JIM.shared().setServerUrls(["wss://ws.juggleim.com"])
         let appKey = "nsw3sue72begyv7y"
+        HttpManager.shared.setAppKey(appKey)
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)

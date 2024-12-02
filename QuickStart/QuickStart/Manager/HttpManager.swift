@@ -11,7 +11,7 @@ import JuggleIM
 class HttpManager: NSObject {
     static let shared = HttpManager()
     
-    static let domain = "https://appserver.jugglechat.com"
+    static let domain = "https://ws.juggleim.com/jim"
     
     static let smsLoginString = "/sms_login"
     static let phoneString = "phone"
@@ -20,6 +20,7 @@ class HttpManager: NSObject {
     static let dataString = "data"
     static let userIdString = "user_id"
     static let authorizationString = "authorization"
+    static let appKey = "appkey"
     static let nickNameString = "nickname"
     static let avatarString = "avatar"
     static let statusString = "status"
@@ -56,6 +57,11 @@ class HttpManager: NSObject {
     
     var currentUserId = ""
     var currentAuthorization = ""
+    var currentAppKey = ""
+    
+    func setAppKey(_ appKey : String) {
+        currentAppKey = appKey;
+    }
     
     func login(
         phoneNumber: String,
@@ -411,6 +417,7 @@ class HttpManager: NSObject {
             return (false, nil)
         }
         request.setValue(self.currentAuthorization, forHTTPHeaderField: Self.authorizationString)
+        request.setValue(self.currentAppKey, forHTTPHeaderField: Self.appKey)
         if method == .post, let params = params, !params.isEmpty {
             request.httpBody = try? JSONSerialization.data(withJSONObject: params)
         }
