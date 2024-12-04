@@ -54,6 +54,10 @@
     [[ZegoExpressEngine sharedEngine] enableCamera:isEnable];
 }
 
+- (void)useFrontCamera:(BOOL)isEnable {
+    [[ZegoExpressEngine sharedEngine] useFrontCamera:isEnable];
+}
+
 - (void)setVideoView:(UIView *)view
               roomId:(NSString *)roomId
               userId:(NSString *)userId {

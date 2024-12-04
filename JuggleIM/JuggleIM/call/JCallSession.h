@@ -113,6 +113,10 @@
 /// - Parameter isEnable: YES 使用外放扬声器；NO 使用听筒
 - (void)setSpeakerEnable:(BOOL)isEnable;
 
+/// 切换摄像头，默认 YES 使用前置摄像头
+/// - Parameter isEnable: YES 使用前置摄像头；NO 使用后置摄像头
+- (void)useFrontCamera:(BOOL)isEnable;
+
 #pragma mark - TODO:
 /// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
 /// - Parameter userIdList: 呼叫的用户 id 列表

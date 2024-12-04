@@ -39,6 +39,8 @@
 
 - (void)setSpeakerEnable:(BOOL)isEnable;
 
+- (void)useFrontCamera:(BOOL)isEnable;
+
 // 当前 active 的 CallSession
 - (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
 

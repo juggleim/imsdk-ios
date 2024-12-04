@@ -93,6 +93,10 @@
     [[JCallMediaManager shared] setSpeakerEnable:isEnable];
 }
 
+- (void)useFrontCamera:(BOOL)isEnable {
+    [[JCallMediaManager shared] useFrontCamera:isEnable];
+}
+
 #pragma mark - JCallSessionImpl
 - (void)error:(JCallErrorCode)code {
     dispatch_async(self.core.delegateQueue, ^{

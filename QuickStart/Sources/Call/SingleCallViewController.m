@@ -927,7 +927,7 @@
 
 //        [_cameraCloseButton setSelected:!self.callSession.cameraEnabled];
         [_cameraCloseButton addTarget:self
-                               action:@selector(cameraCloseButtonClicked)
+                               action:@selector(cameraCloseButtonClicked:)
                      forControlEvents:UIControlEventTouchUpInside];
 
 
@@ -938,7 +938,10 @@
 }
 
 
-- (void)cameraCloseButtonClicked {
+- (void)cameraCloseButtonClicked:(UIButton *)sender {
+    [self.callSession enableCamera:sender.isSelected];
+    [self.cameraCloseButton setSelected:!sender.selected];
+
 //    [self didTapCameraCloseButton];
 //
 //
@@ -991,7 +994,7 @@
 
 
         [_cameraSwitchButton addTarget:self
-                                action:@selector(cameraSwitchButtonClicked)
+                                action:@selector(cameraSwitchButtonClicked:)
                       forControlEvents:UIControlEventTouchUpInside];
 
 
@@ -1002,7 +1005,10 @@
 }
 
 
-- (void)cameraSwitchButtonClicked {
+- (void)cameraSwitchButtonClicked:(UIButton *)sender {
+    [self.callSession useFrontCamera:sender.isSelected];
+    [self.cameraSwitchButton setSelected:!sender.selected];
+
 //    [self didTapCameraSwitchButton];
 //
 //

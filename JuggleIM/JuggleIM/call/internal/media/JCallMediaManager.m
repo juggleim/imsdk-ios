@@ -92,6 +92,10 @@ static JCallMediaManager *_instance;
     [self.engine setSpeakerEnable:isEnable];
 }
 
+- (void)useFrontCamera:(BOOL)isEnable {
+    [self.engine useFrontCamera:isEnable];
+}
+
 #pragma mark - JCallMediaEngineDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {

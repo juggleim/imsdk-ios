@@ -35,5 +35,7 @@
 
 - (void)setSpeakerEnable:(BOOL)isEnable;
 
+- (void)useFrontCamera:(BOOL)isEnable;
+
 @end
 
