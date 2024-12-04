@@ -284,6 +284,7 @@ inConversation:(JConversation *)conversation
 #pragma mark - Call
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
+         mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
            success:(void (^)(NSString * zegoToken))successBlock

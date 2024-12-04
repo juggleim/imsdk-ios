@@ -11,8 +11,9 @@
 #import "JCallSession.h"
 #import "JCallSessionLifeCycleDelegate.h"
 #import "JCallInternalConst.h"
+#import "JCallMediaDelegate.h"
 
-@interface JCallSessionImpl : NSObject <JCallSession>
+@interface JCallSessionImpl : NSObject <JCallSession, JCallMediaDelegate>
 
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, assign) JCallEngineType engineType;

@@ -980,10 +980,19 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         case .voiceCall:
             switch SBUPermissionManager.shared.currentRecordAccessStatus {
             case .granted:
-                self.startSingleCall()
+                self.startSingleVoiceCall()
             default:
                 self.showPermissionAlert(forType: .record)
             }
+        case .videoCall:
+            if SBUPermissionManager.shared.currentRecordAccessStatus != .granted {
+                self.showPermissionAlert(forType: .record)
+            } else if SBUPermissionManager.shared.currentCameraAccessStatus != .authorized {
+                self.showPermissionAlert(forType: .camera)
+            } else {
+                self.startSingleVideoCall()
+            }
+            
         default:
             self.showPhotoLibraryPicker()
         }
@@ -1057,8 +1066,13 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         }
     }
     
-    open func startSingleCall() {
+    open func startSingleVoiceCall() {
         let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, delegate: nil)
+        CallCenter.shared().startSingleCall(callSession)
+    }
+    
+    open func startSingleVideoCall() {
+        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, delegate: nil)
         CallCenter.shared().startSingleCall(callSession)
     }
     

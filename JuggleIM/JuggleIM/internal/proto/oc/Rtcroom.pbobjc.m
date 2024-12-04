@@ -274,6 +274,45 @@ BOOL RtcRoomQuitReason_IsValidValue(int32_t value__) {
   }
 }
 
+#pragma mark - Enum RtcMediaType
+
+GPBEnumDescriptor *RtcMediaType_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static const char *valueNames =
+        "RtcAudio\000RtcVideo\000";
+    static const int32_t values[] = {
+        RtcMediaType_RtcAudio,
+        RtcMediaType_RtcVideo,
+    };
+    static const char *extraTextFormatInfo = "\002\000\010\000\001\010\000";
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RtcMediaType)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RtcMediaType_IsValidValue
+                                            flags:GPBEnumDescriptorInitializationFlag_None
+                              extraTextFormatInfo:extraTextFormatInfo];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RtcMediaType_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RtcMediaType_RtcAudio:
+    case RtcMediaType_RtcVideo:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
 #pragma mark - Enum InviteType
 
 GPBEnumDescriptor *InviteType_EnumDescriptor(void) {
@@ -323,11 +362,13 @@ BOOL InviteType_IsValidValue(int32_t value__) {
 @dynamic roomId;
 @dynamic hasJoinMember, joinMember;
 @dynamic rtcChannel;
+@dynamic rtcMediaType;
 
 typedef struct RtcRoomReq__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
   RtcChannel rtcChannel;
+  RtcMediaType rtcMediaType;
   NSString *roomId;
   RtcMember *joinMember;
 } RtcRoomReq__storage_;
@@ -375,6 +416,15 @@ typedef struct RtcRoomReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
+      {
+        .name = "rtcMediaType",
+        .dataTypeSpecific.enumDescFunc = RtcMediaType_EnumDescriptor,
+        .number = RtcRoomReq_FieldNumber_RtcMediaType,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RtcRoomReq__storage_, rtcMediaType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcRoomReq)
@@ -386,7 +436,7 @@ typedef struct RtcRoomReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\001\010\000\002\006\000\003\n\000\004\n\000";
+        "\005\001\010\000\002\006\000\003\n\000\004\n\000\005\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -423,6 +473,18 @@ void SetRtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message, int32_t value) {
   GPBSetMessageRawEnumField(message, field, value);
 }
 
+int32_t RtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message) {
+  GPBDescriptor *descriptor = [RtcRoomReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomReq_FieldNumber_RtcMediaType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcRoomReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoomReq_FieldNumber_RtcMediaType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
 #pragma mark - RtcRoom
 
 @implementation RtcRoom
@@ -430,11 +492,15 @@ void SetRtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message, int32_t value) {
 @dynamic roomType;
 @dynamic roomId;
 @dynamic hasOwner, owner;
+@dynamic rtcChannel;
+@dynamic rtcMediaType;
 @dynamic membersArray, membersArray_Count;
 
 typedef struct RtcRoom__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
+  RtcChannel rtcChannel;
+  RtcMediaType rtcMediaType;
   NSString *roomId;
   UserInfo *owner;
   NSMutableArray *membersArray;
@@ -475,6 +541,24 @@ typedef struct RtcRoom__storage_ {
         .dataType = GPBDataTypeMessage,
       },
       {
+        .name = "rtcChannel",
+        .dataTypeSpecific.enumDescFunc = RtcChannel_EnumDescriptor,
+        .number = RtcRoom_FieldNumber_RtcChannel,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RtcRoom__storage_, rtcChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "rtcMediaType",
+        .dataTypeSpecific.enumDescFunc = RtcMediaType_EnumDescriptor,
+        .number = RtcRoom_FieldNumber_RtcMediaType,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RtcRoom__storage_, rtcMediaType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
         .name = "membersArray",
         .dataTypeSpecific.clazz = GPBObjCClass(RtcMember),
         .number = RtcRoom_FieldNumber_MembersArray,
@@ -494,7 +578,7 @@ typedef struct RtcRoom__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\002\001\010\000\002\006\000";
+        "\004\001\010\000\002\006\000\004\n\000\005\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -516,6 +600,30 @@ int32_t RtcRoom_RoomType_RawValue(RtcRoom *message) {
 void SetRtcRoom_RoomType_RawValue(RtcRoom *message, int32_t value) {
   GPBDescriptor *descriptor = [RtcRoom descriptor];
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoom_FieldNumber_RoomType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t RtcRoom_RtcChannel_RawValue(RtcRoom *message) {
+  GPBDescriptor *descriptor = [RtcRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoom_FieldNumber_RtcChannel];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcRoom_RtcChannel_RawValue(RtcRoom *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoom_FieldNumber_RtcChannel];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t RtcRoom_RtcMediaType_RawValue(RtcRoom *message) {
+  GPBDescriptor *descriptor = [RtcRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoom_FieldNumber_RtcMediaType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcRoom_RtcMediaType_RawValue(RtcRoom *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcRoom_FieldNumber_RtcMediaType];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -933,11 +1041,13 @@ void SetRtcRoomEvent_Reason_RawValue(RtcRoomEvent *message, int32_t value) {
 @dynamic roomType;
 @dynamic roomId;
 @dynamic rtcChannel;
+@dynamic rtcMediaType;
 
 typedef struct RtcInviteReq__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
   RtcChannel rtcChannel;
+  RtcMediaType rtcMediaType;
   NSMutableArray *targetIdsArray;
   NSString *roomId;
 } RtcInviteReq__storage_;
@@ -985,6 +1095,15 @@ typedef struct RtcInviteReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
       },
+      {
+        .name = "rtcMediaType",
+        .dataTypeSpecific.enumDescFunc = RtcMediaType_EnumDescriptor,
+        .number = RtcInviteReq_FieldNumber_RtcMediaType,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RtcInviteReq__storage_, rtcMediaType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcInviteReq)
@@ -996,7 +1115,7 @@ typedef struct RtcInviteReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\001\000targetIds\000\002\010\000\003\006\000\004\n\000";
+        "\005\001\000targetIds\000\002\010\000\003\006\000\004\n\000\005\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1030,6 +1149,18 @@ int32_t RtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message) {
 void SetRtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message, int32_t value) {
   GPBDescriptor *descriptor = [RtcInviteReq descriptor];
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteReq_FieldNumber_RtcChannel];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t RtcInviteReq_RtcMediaType_RawValue(RtcInviteReq *message) {
+  GPBDescriptor *descriptor = [RtcInviteReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteReq_FieldNumber_RtcMediaType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcInviteReq_RtcMediaType_RawValue(RtcInviteReq *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcInviteReq descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcInviteReq_FieldNumber_RtcMediaType];
   GPBSetMessageRawEnumField(message, field, value);
 }
 
@@ -1089,12 +1220,14 @@ typedef struct RtcMemberRooms__storage_ {
 @dynamic rtcState;
 @dynamic rtcChannel;
 @dynamic deviceId;
+@dynamic rtcMediaType;
 
 typedef struct RtcMemberRoom__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomType roomType;
   RtcState rtcState;
   RtcChannel rtcChannel;
+  RtcMediaType rtcMediaType;
   NSString *roomId;
   UserInfo *owner;
   NSString *deviceId;
@@ -1161,6 +1294,15 @@ typedef struct RtcMemberRoom__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "rtcMediaType",
+        .dataTypeSpecific.enumDescFunc = RtcMediaType_EnumDescriptor,
+        .number = RtcMemberRoom_FieldNumber_RtcMediaType,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(RtcMemberRoom__storage_, rtcMediaType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcMemberRoom)
@@ -1172,7 +1314,7 @@ typedef struct RtcMemberRoom__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\005\001\010\000\002\006\000\004\010\000\005\n\000\006\010\000";
+        "\006\001\010\000\002\006\000\004\010\000\005\n\000\006\010\000\007\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1218,6 +1360,18 @@ int32_t RtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message) {
 void SetRtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message, int32_t value) {
   GPBDescriptor *descriptor = [RtcMemberRoom descriptor];
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcChannel];
+  GPBSetMessageRawEnumField(message, field, value);
+}
+
+int32_t RtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message) {
+  GPBDescriptor *descriptor = [RtcMemberRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcMediaType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t value) {
+  GPBDescriptor *descriptor = [RtcMemberRoom descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RtcMemberRoom_FieldNumber_RtcMediaType];
   GPBSetMessageRawEnumField(message, field, value);
 }
 

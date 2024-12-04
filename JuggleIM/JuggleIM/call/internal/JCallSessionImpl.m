@@ -15,8 +15,8 @@
 #import "JCallOutgoingState.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
-#import "JCallMediaManager.h"
 #import "JCallEventUtil.h"
+#import "JCallMediaManager.h"
 
 @interface JCallSessionImpl ()
 @property (nonatomic, strong) JStateMachine *stateMachine;
@@ -30,6 +30,7 @@
 @property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
 //@property (nonatomic, assign) BOOL cameraEnable;
 //@property (nonatomic, assign) BOOL microphoneEnable;
+@property (nonatomic, copy) NSMutableDictionary <NSString *, UIView *> *viewDic;
 @end
 
 @implementation JCallSessionImpl
@@ -58,6 +59,28 @@
     
 }
 
+- (void)enableCamera:(BOOL)isEnable {
+    [[JCallMediaManager shared] enableCamera:isEnable];
+}
+
+- (void)setVideoView:(UIView *)view forUserId:(NSString *)userId {
+    if (userId.length == 0 || !view) {
+        return;
+    }
+    if ([userId isEqualToString:JIM.shared.currentUserId]) {
+        [[JCallMediaManager shared] startPreview:view];
+    } else {
+        [self.viewDic setObject:view forKey:userId];
+        if (self.callStatus == JCallStatusConnected) {
+            [[JCallMediaManager shared] setVideoView:view roomId:self.callId userId:userId];
+        }
+    }
+}
+
+- (void)startPreview:(UIView *)view {
+    [[JCallMediaManager shared] startPreview:view];
+}
+
 - (void)muteMicrophone:(BOOL)isMute {
     [[JCallMediaManager shared] muteMicrophone:isMute];
 }
@@ -69,11 +92,6 @@
 - (void)setSpeakerEnable:(BOOL)isEnable {
     [[JCallMediaManager shared] setSpeakerEnable:isEnable];
 }
-
-- (void)setVideoView:(UIView *)view forUserId:(NSString *)userId { 
-    
-}
-
 
 #pragma mark - JCallSessionImpl
 - (void)error:(JCallErrorCode)code {
@@ -129,6 +147,7 @@
     }
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:NO
+                          mediaType:self.mediaType
                        targetIdList:targetIds
                          engineType:(NSUInteger)self.engineType
                             success:^(NSString *zegoToken){
@@ -238,6 +257,11 @@
     [self.stateMachine transitionTo:self.outgoingState];
 }
 
+#pragma mark - JCallMediaDelegate
+- (UIView *)viewForUserId:(NSString *)userId {
+    return self.viewDic[userId];
+}
+
 #pragma mark - private
 - (void)destroy {
     [self.sessionLifeCycleDelegate sessionDidfinish:self];
@@ -315,6 +339,13 @@
     return _members;
 }
 
+- (NSMutableDictionary<NSString *,UIView *> *)viewDic {
+    if (!_viewDic) {
+        _viewDic = [NSMutableDictionary dictionary];
+    }
+    return _viewDic;
+}
+
 @synthesize callId;
 @synthesize callStatus;
 @synthesize connectTime;
@@ -325,5 +356,6 @@
 @synthesize owner;
 @synthesize members = _members;
 @synthesize startTime;
+@synthesize mediaType;
 
 @end

@@ -710,6 +710,7 @@
 		A098243F2C4FABE8001852A6 /* JDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloadManager.m; sourceTree = "<group>"; };
 		A0A1B0F52C47B25C00DAD93C /* JDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDownloader.h; sourceTree = "<group>"; };
 		A0A1B0F62C47B25C00DAD93C /* JDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloader.m; sourceTree = "<group>"; };
+		A0A3A5232CFF2703009AD7C3 /* JCallMediaDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaDelegate.h; sourceTree = "<group>"; };
 		A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JWebSocketCommandManager.h; sourceTree = "<group>"; };
 		A0A701FE2C09A91B0032D9F1 /* JWebSocketCommandManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JWebSocketCommandManager.m; sourceTree = "<group>"; };
 		A0A702022C09AB700032D9F1 /* JBlockObj.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JBlockObj.h; sourceTree = "<group>"; };
@@ -1433,6 +1434,7 @@
 				A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */,
 				A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */,
 				A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */,
+				A0A3A5232CFF2703009AD7C3 /* JCallMediaDelegate.h */,
 			);
 			path = media;
 			sourceTree = "<group>";

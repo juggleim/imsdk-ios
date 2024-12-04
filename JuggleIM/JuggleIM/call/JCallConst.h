@@ -22,6 +22,13 @@ typedef NS_ENUM(NSInteger, JCallStatus) {
     JCallStatusConnected = 4
 };
 
+typedef NS_ENUM(NSInteger, JCallMediaType) {
+    /// 语音通话
+    JCallMediaTypeVoice = 0,
+    /// 视频通话
+    JCallMediaTypeVideo = 1
+};
+
 /// 通话结束原因
 typedef NS_ENUM(NSInteger, JCallFinishReason) {
     /// 未知原因

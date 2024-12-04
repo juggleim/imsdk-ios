@@ -813,6 +813,7 @@ inConversation:(JConversation *)conversation
 
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
+         mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray<NSString *> *)userIdList
         engineType:(NSUInteger)engineType
            success:(nonnull void (^)(NSString *))successBlock
@@ -822,6 +823,7 @@ inConversation:(JConversation *)conversation
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callInvite:callId
                                 isMultiCall:isMultiCall
+                                  mediaType:mediaType
                                targetIdList:userIdList
                                  engineType:engineType
                                       index:self.cmdIndex++];

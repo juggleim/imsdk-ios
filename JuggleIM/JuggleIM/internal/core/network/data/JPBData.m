@@ -1129,6 +1129,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
+             mediaType:(JCallMediaType)mediaType
           targetIdList:(nonnull NSArray<NSString *> *)userIdList
             engineType:(NSUInteger)engineType
                  index:(int)index {
@@ -1143,6 +1144,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (engineType == 0) {
         req.rtcChannel = RtcChannel_Zego;
     }
+    req.rtcMediaType = (int32_t)mediaType;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -1723,6 +1725,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.roomId = pbRoom.roomId;
     result.owner = [self userInfoWithPBUserInfo:pbRoom.owner];
     result.isMultiCall = pbRoom.roomType == RtcRoomType_OneMore;
+    result.mediaType = (int)pbRoom.rtcMediaType;
+    
+    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
+    for (RtcMember *member in pbRoom.membersArray) {
+        JCallMember *outMember = [self callMemberWithPBRtcMember:member];
+        [members addObject:outMember];
+    }
+    result.members = members;
     return result;
 }
 
@@ -1973,16 +1983,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     obj.rcvType = JPBRcvTypeQryCallRoomAck;
     NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
-    JRtcRoom *outRoom = [[JRtcRoom alloc] init];
-    outRoom.isMultiCall = room.roomType == RtcRoomType_OneMore ? YES : NO;
-    outRoom.roomId = room.roomId;
-    outRoom.owner = [self userInfoWithPBUserInfo:room.owner];
-    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
-    for (RtcMember *member in room.membersArray) {
-        JCallMember *outMember = [self callMemberWithPBRtcMember:member];
-        [members addObject:outMember];
-    }
-    outRoom.members = members;
+    JRtcRoom *outRoom = [self rtcRoomWithPBRtcRoom:room];
     [outRooms addObject:outRoom];
     //共用 JRtcQryCallRoomsAck
     JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];

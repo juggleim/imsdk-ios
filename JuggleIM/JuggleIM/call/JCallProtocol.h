@@ -24,8 +24,21 @@
 - (void)initZegoEngineWith:(int)appId
                    appSign:(NSString *)appSign;
 
+/// 发起 1v1 语音通话
+/// - Parameters:
+///   - userId: 对方的 userId
+///   - delegate: 设置代理
 - (id<JCallSession>)startSingleCall:(NSString *)userId
-                         delegate:(id<JCallSessionDelegate>)delegate;
+                           delegate:(id<JCallSessionDelegate>)delegate;
+
+/// 发起 1v1 通话
+/// - Parameters:
+///   - userId: 对方的 userId
+///   - mediaType: 语音/视频
+///   - delegate: 设置代理
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                          mediaType:(JCallMediaType)mediaType
+                           delegate:(id<JCallSessionDelegate>)delegate;
 
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate;
 

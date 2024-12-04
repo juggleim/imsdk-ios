@@ -19,9 +19,14 @@
 @property(nonatomic, strong) UIVisualEffectView *blurView;
 
 /*!
+ 对端的头像View
+ */
+@property(nonatomic, strong) UIImageView *remotePortraitView;
+
+/*!
  对端的名字Label
  */
-@property(nonatomic, strong) UILabel *remoteNameLabel;
+@property(nonatomic, strong) UILabel *mainNameLabel;
 
 /*!
  用户状态的view
@@ -78,19 +83,22 @@
  */
 @property(nonatomic, strong) UIButton *cameraSwitchButton;
 
-///*!
-// 全屏的视频View
-// */
-//@property(nonatomic, strong) UIView *mainVideoView;
-//
-///*!
-// 通话接通后，界面右上角的视频View
-// */
-//@property(nonatomic, strong) UIView *subVideoView;
+/*!
+ 全屏的视频View
+ */
+@property(nonatomic, strong) UIView *mainVideoView;
+
+/*!
+ 通话接通后，界面右上角的视频View
+ */
+@property(nonatomic, strong) UIView *subVideoView;
 
 @property(nonatomic, strong) UIView *topGradientView;
 @property(nonatomic, strong) UIView *bottomGradientView;
 
+@property(nonatomic, strong) JUserInfo *remoteUserInfo;
+/// 是否切换了自己和对方的视频 view（默认对方为 mainView，自己为 subView）
+@property(nonatomic, assign) BOOL switchMainSubVideo;
 @end
 
 @implementation SingleCallViewController
@@ -100,6 +108,10 @@
     if (self) {
         self.callSession = callSession;
         [self.callSession addDelegate:self];
+        if (self.callSession.mediaType == JCallMediaTypeVideo) {
+            [self.callSession startPreview:self.mainVideoView];
+            self.mainVideoView.hidden = NO;
+        }
     }
     return self;
 }
@@ -109,6 +121,10 @@
     if (self) {
         self.callSession = callSession;
         [self.callSession addDelegate:self];
+        if (self.callSession.mediaType == JCallMediaTypeVideo) {
+            [self.callSession startPreview:self.mainVideoView];
+            self.mainVideoView.hidden = NO;
+        }
     }
     return self;
 }
@@ -116,11 +132,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    self.backgroundView = [[UIView alloc] initWithFrame:self.view.bounds];
-    self.backgroundView.backgroundColor = ColorFromRGB(0x262e42);
-    [self.view addSubview:self.backgroundView];
-    self.backgroundView.hidden = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -130,141 +141,373 @@
 }
 
 - (void)resetLayout {
-    self.backgroundView.backgroundColor = ColorFromRGB(0x262e42);
-    self.backgroundView.hidden = NO;
-    self.topGradientView.hidden = YES;
-    self.bottomGradientView.hidden = YES;
-
-
-    self.blurView.hidden = NO;
-
-
-    if (self.callSession.callStatus == JCallStatusConnected) {
-        self.minimizeButton.frame = CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin + CallStatusBarHeight,
-                                               CallButtonLength / 2, CallButtonLength / 2);
-        self.minimizeButton.hidden = NO;
-    } else if (self.callSession.callStatus != JCallStatusIdle) {
-        self.minimizeButton.hidden = YES;
-    }
-
-
-//    self.inviteUserButton.hidden = YES;
-
-
-    // header orgin y = RCCallVerticalMargin * 3
-    if (self.callSession.callStatus == JCallStatusConnected) {
-        self.timeLabel.frame =
+    UIImage *remoteHeaderImage = self.remotePortraitView.image;
+    if (self.callSession.mediaType == JCallMediaTypeVoice) {
+        
+        self.backgroundView.backgroundColor = ColorFromRGB(0x262e42);
+        self.backgroundView.hidden = NO;
+        self.topGradientView.hidden = YES;
+        self.bottomGradientView.hidden = YES;
+        
+        
+        self.blurView.hidden = NO;
+        
+        
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.minimizeButton.frame = CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin + CallStatusBarHeight,
+                                                   CallButtonLength / 2, CallButtonLength / 2);
+            self.minimizeButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.minimizeButton.hidden = YES;
+        }
+        
+        
+        //    self.inviteUserButton.hidden = YES;
+        
+        
+        // header orgin y = RCCallVerticalMargin * 3
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.timeLabel.frame =
             CGRectMake(CallHorizontalMargin,
                        CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
                        self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
-        self.timeLabel.hidden = NO;
-    } else if (self.callSession.callStatus != JCallStatusIdle) {
-        self.timeLabel.hidden = YES;
-    }
-
-
-    if (self.callSession.callStatus == JCallStatusIdle) {
-        self.tipsLabel.frame =
+            self.timeLabel.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.timeLabel.hidden = YES;
+        }
+        
+        
+        if (self.callSession.callStatus == JCallStatusIdle) {
+            self.tipsLabel.frame =
             CGRectMake(CallHorizontalMargin,
                        self.view.frame.size.height - CallVerticalMargin - CallButtonLength -
-                           CallInsideMargin * 3 - CallLabelHeight - CallExtraSpace,
+                       CallInsideMargin * 3 - CallLabelHeight - CallExtraSpace,
                        self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
-    } else if (self.callSession.callStatus == JCallStatusConnected) {
-        self.tipsLabel.frame = CGRectMake(
-            CallHorizontalMargin,
-            MAX((self.view.frame.size.height - CallLabelHeight) / 2,
-                CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 3 + CallLabelHeight * 2),
-            self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
-    } else {
-        self.tipsLabel.frame =
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.tipsLabel.frame = CGRectMake(
+                                              CallHorizontalMargin,
+                                              MAX((self.view.frame.size.height - CallLabelHeight) / 2,
+                                                  CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 3 + CallLabelHeight * 2),
+                                              self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else {
+            self.tipsLabel.frame =
             CGRectMake(CallHorizontalMargin,
                        CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
                        self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
-    }
-    self.tipsLabel.hidden = NO;
-
-    if (self.callSession.callStatus == JCallStatusConnected) {
-        self.muteButton.frame = CGRectMake(CallHorizontalMargin,
-                                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
-                                           CallButtonLength, CallButtonLength);
-        [self layoutTextUnderImageButton:self.muteButton];
-        self.muteButton.hidden = NO;
-    } else if (self.callSession.callStatus != JCallStatusIdle) {
-        self.muteButton.hidden = YES;
-    }
-
-
-    if (self.callSession.callStatus == JCallStatusConnected) {
-        self.speakerButton.frame =
+        }
+        self.tipsLabel.hidden = NO;
+        
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.muteButton.frame = CGRectMake(CallHorizontalMargin,
+                                               self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                                               CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.muteButton];
+            self.muteButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.muteButton.hidden = YES;
+        }
+        
+        
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.speakerButton.frame =
             CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
                        self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
                        CallButtonLength);
-        [self layoutTextUnderImageButton:self.speakerButton];
-        self.speakerButton.hidden = NO;
-//        [self.speakerButton setSelected:self.callSession.speakerEnabled];
-    } else if (self.callSession.callStatus != JCallStatusIdle) {
-        self.speakerButton.hidden = YES;
-    }
-
-
-    if (self.callSession.callStatus == JCallStatusOutgoing) {
-        self.hangupButton.frame =
+            [self layoutTextUnderImageButton:self.speakerButton];
+            self.speakerButton.hidden = NO;
+            //        [self.speakerButton setSelected:self.callSession.speakerEnabled];
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.speakerButton.hidden = YES;
+        }
+        
+        
+        if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.hangupButton.frame =
             CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                        self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
                        CallButtonLength);
-        [self layoutTextUnderImageButton:self.hangupButton];
-        self.hangupButton.hidden = NO;
-
-
-        self.acceptButton.hidden = YES;
-    } else if (self.callSession.callStatus == JCallStatusIncoming) {
-        self.hangupButton.frame = CGRectMake(
-            CallHorizontalMargin, self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
-            CallButtonLength, CallButtonLength);
-        [self layoutTextUnderImageButton:self.hangupButton];
-        self.hangupButton.hidden = NO;
-
-
-        self.acceptButton.frame =
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+            
+            
+            self.acceptButton.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.hangupButton.frame = CGRectMake(
+                                                 CallHorizontalMargin, self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                                                 CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+            
+            
+            self.acceptButton.frame =
             CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
                        self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
                        CallButtonLength);
-        [self layoutTextUnderImageButton:self.acceptButton];
-        self.acceptButton.hidden = NO;
-    } else if (self.callSession.callStatus == JCallStatusConnected) {
-        self.hangupButton.frame =
+            [self layoutTextUnderImageButton:self.acceptButton];
+            self.acceptButton.hidden = NO;
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.hangupButton.frame =
             CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                        self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
                        CallButtonLength);
-        [self layoutTextUnderImageButton:self.hangupButton];
-        self.hangupButton.hidden = NO;
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+            
+            
+            self.acceptButton.hidden = YES;
+        }
+        
+        
+        self.cameraCloseButton.hidden = YES;
+        self.cameraSwitchButton.hidden = YES;
+        
+        self.mainNameLabel.frame =
+        CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
+                   self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        self.mainNameLabel.hidden = NO;
+        
+        self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        self.tipsLabel.textAlignment = NSTextAlignmentCenter;
+        
+        self.statusView.frame = CGRectMake((self.view.frame.size.width - 17) / 2,
+                                           CallVerticalMargin * 3 + (CallHeaderLength - 4) / 2, 17, 4);
+        
+        if (self.callSession.callStatus == JCallStatusOutgoing
+            || self.callSession.callStatus == JCallStatusIncoming) {
+            self.statusView.hidden = NO;
+        } else {
+            self.statusView.hidden = YES;
+        }
+        [self resetRemoteUserInfoIfNeed];
+        
+        self.remotePortraitView.frame = CGRectMake((self.view.frame.size.width - CallHeaderLength) / 2,
+                                                   CallVerticalMargin * 3, CallHeaderLength, CallHeaderLength);
+        self.remotePortraitView.image = remoteHeaderImage;
+        self.remotePortraitView.hidden = NO;
 
 
-        self.acceptButton.hidden = YES;
-    }
+        self.mainNameLabel.frame =
+            CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
+                       self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        self.mainNameLabel.hidden = NO;
 
 
-    self.cameraCloseButton.hidden = YES;
-    self.cameraSwitchButton.hidden = YES;
-    
-    self.remoteNameLabel.frame =
-    CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
-               self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
-    self.remoteNameLabel.hidden = NO;
-    
-    self.remoteNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.tipsLabel.textAlignment = NSTextAlignmentCenter;
-    
-    self.statusView.frame = CGRectMake((self.view.frame.size.width - 17) / 2,
-                                       CallVerticalMargin * 3 + (CallHeaderLength - 4) / 2, 17, 4);
-    
-    if (self.callSession.callStatus == JCallStatusOutgoing
-        || self.callSession.callStatus == JCallStatusIncoming) {
-        self.statusView.hidden = NO;
+        self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        self.tipsLabel.textAlignment = NSTextAlignmentCenter;
+
+
+        self.statusView.frame = CGRectMake((self.view.frame.size.width - 17) / 2,
+                                           CallVerticalMargin * 3 + (CallHeaderLength - 4) / 2, 17, 4);
+
+        if (self.callSession.callStatus == JCallStatusOutgoing
+            || self.callSession.callStatus == JCallStatusIncoming) {
+            self.remotePortraitView.alpha = 0.5;
+            self.statusView.hidden = NO;
+        } else {
+            self.statusView.hidden = YES;
+            self.remotePortraitView.alpha = 1.0;
+        }
+
+        self.mainVideoView.hidden = YES;
+        self.subVideoView.hidden = YES;
+        [self resetRemoteUserInfoIfNeed];
     } else {
-        self.statusView.hidden = YES;
+        self.backgroundView.hidden = NO;
+
+        self.blurView.hidden = YES;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.minimizeButton.frame = CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin + CallStatusBarHeight,
+                                                   CallButtonLength / 2, CallButtonLength / 2);
+            self.minimizeButton.hidden = NO;
+            self.topGradientView.hidden = NO;
+            self.bottomGradientView.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.minimizeButton.hidden = YES;
+            self.topGradientView.hidden = YES;
+            self.bottomGradientView.hidden = YES;
+        }
+
+//        self.inviteUserButton.hidden = YES;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.timeLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallInsideMargin + CallLabelHeight + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.timeLabel.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.timeLabel.hidden = YES;
+        }
+
+        // header orgin y = RCCallVerticalMargin * 3
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           MAX((self.view.frame.size.height - CallLabelHeight) / 2,
+                               CallVerticalMargin + CallHeaderLength * 1.5 + CallInsideMargin * 3),
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusIdle) {
+            self.tipsLabel.frame = CGRectMake(
+                CallHorizontalMargin,
+                self.view.frame.size.height - CallVerticalMargin - CallButtonLength * 2 - CallInsideMargin * 8 - CallExtraSpace,
+                self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        }
+        self.tipsLabel.hidden = NO;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.muteButton.frame = CGRectMake(CallHorizontalMargin,
+                                               self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                                               CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.muteButton];
+            self.muteButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.muteButton.hidden = YES;
+        }
+
+        self.speakerButton.hidden = YES;
+
+        if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.hangupButton.frame = CGRectMake(
+                CallHorizontalMargin, self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.acceptButton];
+            self.acceptButton.hidden = NO;
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.cameraSwitchButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.cameraSwitchButton];
+            self.cameraSwitchButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.cameraSwitchButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.cameraCloseButton.frame = CGRectMake(
+                self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                self.view.frame.size.height - CallVerticalMargin - CallButtonLength * 2 - CallInsideMargin * 5 - CallExtraSpace,
+                CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.cameraCloseButton];
+            self.cameraCloseButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.cameraCloseButton.hidden = YES;
+        }
+    
+        if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.mainVideoView.hidden = NO;
+            [self.callSession setVideoView:self.mainVideoView forUserId:JIM.shared.currentUserId];
+            self.blurView.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.mainVideoView.hidden = NO;
+            if (self.callSession.members.count > 0) {
+                JCallMember *member = self.callSession.members[0];
+                [self.callSession setVideoView:self.mainVideoView forUserId:member.userInfo.userId];
+            }
+            self.blurView.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.remotePortraitView.hidden = YES;
+
+            self.mainNameLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.mainNameLabel.hidden = NO;
+            self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        } else if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.remotePortraitView.frame =
+                CGRectMake((self.view.frame.size.width - CallHeaderLength) / 2, CallVerticalMargin * 3,
+                           CallHeaderLength, CallHeaderLength);
+            self.remotePortraitView.image = remoteHeaderImage;
+            self.remotePortraitView.hidden = NO;
+
+            self.mainNameLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.mainNameLabel.hidden = NO;
+            self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.remotePortraitView.frame =
+                CGRectMake((self.view.frame.size.width - CallHeaderLength) / 2, CallVerticalMargin * 3,
+                           CallHeaderLength, CallHeaderLength);
+            self.remotePortraitView.image = remoteHeaderImage;
+            self.remotePortraitView.hidden = NO;
+
+            self.mainNameLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin * 3 + CallHeaderLength + CallInsideMargin,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.mainNameLabel.hidden = NO;
+            self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+//            if ([RCCallKitUtility isLandscape] && [self isSupportOrientation:(UIInterfaceOrientation)[UIDevice currentDevice].orientation]) {
+//                self.subVideoView.frame =
+//                    CGRectMake(self.view.frame.size.width - RCCallHeaderLength - RCCallHorizontalMargin / 2,
+//                               RCCallVerticalMargin, RCCallHeaderLength * 1.5, RCCallHeaderLength);
+//            } else 
+            {
+                self.subVideoView.frame =
+                    CGRectMake(self.view.frame.size.width - CallHeaderLength - CallHorizontalMargin / 2,
+                               CallVerticalMargin + CallStatusBarHeight, CallHeaderLength, CallHeaderLength * 1.5);
+            }
+            [self.callSession setVideoView:self.subVideoView forUserId:JIM.shared.currentUserId];
+            self.subVideoView.hidden = NO;
+        } else {
+            self.subVideoView.hidden = YES;
+        }
+
+        self.mainNameLabel.textAlignment = NSTextAlignmentCenter;
+        self.statusView.frame = CGRectMake((self.view.frame.size.width - 17) / 2,
+                                           CallVerticalMargin * 3 + (CallHeaderLength - 4) / 2, 17, 4);
+
+        if (self.callSession.callStatus == JCallStatusOutgoing
+            || self.callSession.callStatus == JCallStatusIncoming) {
+            self.remotePortraitView.alpha = 0.5;
+            self.statusView.hidden = NO;
+        } else {
+            self.statusView.hidden = YES;
+            self.remotePortraitView.alpha = 1.0;
+        }
     }
-    [self resetRemoteUserInfoIfNeed];
 }
 
 - (void)resetRemoteUserInfoIfNeed {
@@ -273,9 +516,9 @@
     }
     JCallMember *member = self.callSession.members[0];
     if (member.userInfo.userName.length > 0) {
-        [self.remoteNameLabel setText:member.userInfo.userName];
+        [self.mainNameLabel setText:member.userInfo.userName];
     } else {
-        [self.remoteNameLabel setText:member.userInfo.userId];
+        [self.mainNameLabel setText:member.userInfo.userId];
     }
 }
 
@@ -346,18 +589,32 @@
 }
 
 #pragma mark - getter
-- (UILabel *)remoteNameLabel {
-    if (!_remoteNameLabel) {
-        _remoteNameLabel = [[UILabel alloc] init];
-        _remoteNameLabel.backgroundColor = [UIColor clearColor];
-        _remoteNameLabel.textColor = [UIColor whiteColor];
-        _remoteNameLabel.font = [UIFont systemFontOfSize:18];
-        _remoteNameLabel.textAlignment = NSTextAlignmentCenter;
+- (UILabel *)mainNameLabel {
+    if (!_mainNameLabel) {
+        _mainNameLabel = [[UILabel alloc] init];
+        _mainNameLabel.backgroundColor = [UIColor clearColor];
+        _mainNameLabel.textColor = [UIColor whiteColor];
+        _mainNameLabel.font = [UIFont systemFontOfSize:18];
+        _mainNameLabel.textAlignment = NSTextAlignmentCenter;
 
-        [self.view addSubview:_remoteNameLabel];
-        _remoteNameLabel.hidden = YES;
+        [self.view addSubview:_mainNameLabel];
+        _mainNameLabel.hidden = YES;
     }
-    return _remoteNameLabel;
+    return _mainNameLabel;
+}
+
+- (UIImageView *)remotePortraitView {
+    if (!_remotePortraitView) {
+        _remotePortraitView = [[UIImageView alloc] init];
+
+
+        [self.view addSubview:_remotePortraitView];
+        _remotePortraitView.hidden = YES;
+//        [_remotePortraitView setPlaceholderImage:[RCCallKitUtility getDefaultPortraitImage]];
+        _remotePortraitView.layer.cornerRadius = 4;
+        _remotePortraitView.layer.masksToBounds = YES;
+    }
+    return _remotePortraitView;
 }
 
 - (UILabel *)statusView {
@@ -388,33 +645,43 @@
     return _tipsLabel;
 }
 
-//- (UIView *)mainVideoView {
-//    if (!_mainVideoView) {
-//        _mainVideoView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
-//        _mainVideoView.backgroundColor = RongVoIPUIColorFromRGB(0x262e42);
-//
-//        [self.backgroundView addSubview:_mainVideoView];
-//        _mainVideoView.hidden = YES;
-//    }
-//    return _mainVideoView;
-//}
-//
-//- (UIView *)subVideoView {
-//    if (!_subVideoView) {
-//        _subVideoView = [[UIView alloc] init];
-//        _subVideoView.backgroundColor = [UIColor blackColor];
-//        _subVideoView.layer.borderWidth = 1;
-//        _subVideoView.layer.borderColor = [[UIColor whiteColor] CGColor];
-//
-//        [self.view addSubview:_subVideoView];
-//        _subVideoView.hidden = YES;
-//
-//        UITapGestureRecognizer *tap =
-//            [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(subVideoViewClicked)];
-//        [_subVideoView addGestureRecognizer:tap];
-//    }
-//    return _subVideoView;
-//}
+- (UIView *)backgroundView {
+    if (!_backgroundView) {
+        _backgroundView = [[UIView alloc] initWithFrame:self.view.bounds];
+        _backgroundView.backgroundColor = ColorFromRGB(0x262e42);
+        [self.view addSubview:_backgroundView];
+        _backgroundView.hidden = NO;
+    }
+    return _backgroundView;
+}
+
+- (UIView *)mainVideoView {
+    if (!_mainVideoView) {
+        _mainVideoView = [[UIView alloc] initWithFrame:self.backgroundView.frame];
+        _mainVideoView.backgroundColor = ColorFromRGB(0x262e42);
+
+        [self.backgroundView addSubview:_mainVideoView];
+        _mainVideoView.hidden = YES;
+    }
+    return _mainVideoView;
+}
+
+- (UIView *)subVideoView {
+    if (!_subVideoView) {
+        _subVideoView = [[UIView alloc] init];
+        _subVideoView.backgroundColor = [UIColor blackColor];
+        _subVideoView.layer.borderWidth = 1;
+        _subVideoView.layer.borderColor = [[UIColor whiteColor] CGColor];
+
+        [self.view addSubview:_subVideoView];
+        _subVideoView.hidden = YES;
+
+        UITapGestureRecognizer *tap =
+            [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(subVideoViewClicked)];
+        [_subVideoView addGestureRecognizer:tap];
+    }
+    return _subVideoView;
+}
 
 
 - (UIView *)topGradientView {
@@ -740,6 +1007,34 @@
 //
 //
 //    [self.callSession switchCameraMode];
+}
+
+- (void)subVideoViewClicked {
+    NSString *currentId = JIM.shared.currentUserId;
+    JUserInfo *currentUserInfo = [JIM.shared.userInfoManager getUserInfo:currentId];
+    JCallMember *member = self.callSession.members[0];
+    JUserInfo *remoteUserInfo = member.userInfo;
+    
+    JUserInfo *mainUser;
+    JUserInfo *subUser;
+    if (self.switchMainSubVideo) {
+        mainUser = remoteUserInfo;
+        subUser = currentUserInfo;
+    } else {
+        mainUser = currentUserInfo;
+        subUser = remoteUserInfo;
+    }
+    self.switchMainSubVideo = !self.switchMainSubVideo;
+    
+    NSString *name = mainUser.userName;
+    if (name.length == 0) {
+        name = mainUser.userId;
+    }
+    [self.mainNameLabel setText:name];
+//    [self.remotePortraitView setImageURL:[NSURL URLWithString:mainUser.portrait]];
+    
+    [self.callSession setVideoView:self.mainVideoView forUserId:mainUser.userId];
+    [self.callSession setVideoView:self.subVideoView forUserId:subUser.userId];
 }
 
 @end

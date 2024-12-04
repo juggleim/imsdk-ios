@@ -414,6 +414,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         tag: MediaResourceType.voiceCall.rawValue,
         completionHandler: nil
     )
+    let videoCallItem = SBUActionSheetItem(
+        title: SBUStringSet.VideoCall,
+        tag: MediaResourceType.videoCall.rawValue,
+        completionHandler: nil
+    )
     let cancelItem = SBUActionSheetItem(title: SBUStringSet.Cancel, completionHandler: nil)
 
     @SBUThemeWrapper(theme: SBUTheme.messageInputTheme)
@@ -778,6 +783,10 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             with: theme.buttonTintColor,
             to: SBUIconSetType.Metric.iconActionSheetItem
         )
+        self.videoCallItem.image = SBUIconSetType.iconCamera.image(
+            with: theme.buttonTintColor,
+            to: SBUIconSetType.Metric.iconActionSheetItem
+        )
         self.cancelItem.color = theme.buttonTintColor
         
         self.divider.backgroundColor = theme.channelViewDividerColor
@@ -977,6 +986,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         items.append(self.libraryItem)
         items.append(self.documentItem)       
         items.append(self.voiceCallItem)
+        items.append(self.videoCallItem)
         return items
     }
     
@@ -1095,7 +1105,37 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
                     guard let self = self else { return }
                     self.delegate?.messageInputView(self, didSelectResource: type)
                 }
-            } onDenied: {
+            } onDenied: { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.messageInputView(self, didSelectResource: type)
+                }
+            }
+        case .videoCall:
+            SBUPermissionManager.shared.requestCameraAccess(for: .video) {
+                SBUPermissionManager.shared.requestRecordAcess() { [weak self] in
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.messageInputView(self, didSelectResource: type)
+                    }
+                } onDenied: {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.messageInputView(self, didSelectResource: type)
+                    }
+                }
+            } onDenied: { [weak self] in
+                SBUPermissionManager.shared.requestRecordAcess() { [weak self] in
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.messageInputView(self, didSelectResource: type)
+                    }
+                } onDenied: {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+                        self.delegate?.messageInputView(self, didSelectResource: type)
+                    }
+                }
             }
         default:
             DispatchQueue.main.async { [weak self] in

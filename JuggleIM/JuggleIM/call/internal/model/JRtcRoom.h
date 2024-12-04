@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *deviceId;
 @property (nonatomic, assign) JCallStatus callStatus;
 @property (nonatomic, copy) NSArray <JCallMember *> *members;
+@property (nonatomic, assign) JCallMediaType mediaType;
 @end
 
 NS_ASSUME_NONNULL_END

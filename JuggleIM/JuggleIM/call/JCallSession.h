@@ -59,6 +59,8 @@
 @property (nonatomic, copy) NSString *callId;
 /// 是否多人通话，NO 表示一对一通话
 @property (nonatomic, assign) BOOL isMultiCall;
+/// 媒体类型（语音/视频）
+@property (nonatomic, assign) JCallMediaType mediaType;
 /// 通话状态
 @property (nonatomic, assign) JCallStatus callStatus;
 /// 呼叫开始时间（多人会话中当前用户被呼叫的时间，不一定等于整个通话开始的时间）
@@ -84,6 +86,21 @@
 /// 挂断电话
 - (void)hangup;
 
+/// 开启摄像头
+/// - Parameter isEnable: 是否开启
+- (void)enableCamera:(BOOL)isEnable;
+
+/// 设置用户的视频 view
+/// - Parameters:
+///   - view: 视频 view
+///   - userId: 用户 id（当前用户或者会话中的其他用户）
+- (void)setVideoView:(UIView *)view
+           forUserId:(NSString *)userId;
+
+/// 开始预览
+/// - Parameter view: 预览的视频 view
+- (void)startPreview:(UIView *)view;
+
 /// 设置麦克风静音
 /// - Parameter isMute: 是否静音
 - (void)muteMicrophone:(BOOL)isMute;
@@ -100,12 +117,5 @@
 /// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
 /// - Parameter userIdList: 呼叫的用户 id 列表
 - (void)inviteUsers:(NSArray <NSString *> *)userIdList;
-
-/// 设置用户对应的视频 view
-/// - Parameters:
-///   - view: 视频 view
-///   - userId: 用户 id
-- (void)setVideoView:(UIView *)view
-           forUserId:(NSString *)userId;
 
 @end

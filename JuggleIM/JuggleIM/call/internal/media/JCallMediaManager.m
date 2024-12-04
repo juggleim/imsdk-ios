@@ -9,8 +9,9 @@
 #import "JCallMediaEngineProtocol.h"
 #import "JIM.h"
 
-@interface JCallMediaManager ()
+@interface JCallMediaManager () <JCallMediaEngineDelegate>
 @property (nonatomic, strong) id<JCallMediaEngineProtocol> engine;
+@property (nonatomic, weak) id<JCallMediaDelegate> delegate;
 @end
 
 @implementation JCallMediaManager
@@ -36,6 +37,7 @@ static JCallMediaManager *_instance;
     if ([self.engine respondsToSelector:@selector(createEngineWith:appSign:)]) {
         [self.engine performSelector:@selector(createEngineWith:appSign:) withObject:@(appId) withObject:appSign];
     }
+    [self.engine setDelegate:self];
 }
 
 - (void)joinRoom:(JCallSessionImpl *)callSession
@@ -51,11 +53,31 @@ static JCallMediaManager *_instance;
     [self.engine joinRoom:room
                      user:user
                    config:config
-                 complete:completeBlock];
+                 complete:^(int errorCode, NSDictionary *data) {
+        if (errorCode == 0) {
+            self.delegate = callSession;
+        }
+        if (completeBlock) {
+            completeBlock(errorCode, data);
+        }
+    }];
 }
 
 - (void)leaveRoom:(NSString *)callId {
+    self.delegate = nil;
     [self.engine leaveRoom:callId];
+}
+
+- (void)enableCamera:(BOOL)isEnable {
+    [self.engine enableCamera:isEnable];
+}
+
+- (void)startPreview:(UIView *)view {
+    [self.engine startPreview:view];
+}
+
+- (void)setVideoView:(UIView *)view roomId:(NSString *)roomId userId:(NSString *)userId {
+    [self.engine setVideoView:view roomId:roomId userId:userId];
 }
 
 - (void)muteMicrophone:(BOOL)isMute {
@@ -68,6 +90,14 @@ static JCallMediaManager *_instance;
 
 - (void)setSpeakerEnable:(BOOL)isEnable {
     [self.engine setSpeakerEnable:isEnable];
+}
+
+#pragma mark - JCallMediaEngineDelegate
+- (UIView *)viewForUserId:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
+        return [self.delegate viewForUserId:userId];
+    }
+    return nil;
 }
 
 @end

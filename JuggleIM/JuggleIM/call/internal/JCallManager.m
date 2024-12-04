@@ -37,6 +37,14 @@
 
 - (id<JCallSession>)startSingleCall:(NSString *)userId
                            delegate:(id<JCallSessionDelegate>)delegate {
+    return [self startSingleCall:userId
+                       mediaType:JCallMediaTypeVoice
+                        delegate:delegate];
+}
+
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                          mediaType:(JCallMediaType)mediaType
+                           delegate:(id<JCallSessionDelegate>)delegate {
     @synchronized (self) {
         if (self.callSessionList.count > 0) {
             dispatch_async(self.core.delegateQueue, ^{
@@ -52,6 +60,12 @@
     JCallSessionImpl *callSession = [self createCallSessionImpl:callId
                                                     isMultiCall:NO];
     callSession.owner = JIM.shared.currentUserId;
+    callSession.mediaType = mediaType;
+    if (callSession.mediaType == JCallMediaTypeVideo) {
+        [[JCallMediaManager shared] enableCamera:YES];
+    } else {
+        [[JCallMediaManager shared] enableCamera:NO];
+    }
     JCallMember *member = [[JCallMember alloc] init];
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = userId;
@@ -136,6 +150,7 @@
                                           isMultiCall:room.isMultiCall];
             callSession.owner = room.owner.userId;
             callSession.inviter = inviter.userId;
+            callSession.mediaType = room.mediaType;
             JCallMember *member = [[JCallMember alloc] init];
             member.userInfo = inviter;
             member.callStatus = JCallStatusOutgoing;

@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JCallSessionImpl.h"
+#import "JCallMediaDelegate.h"
 
 @interface JCallMediaManager : NSObject
 
@@ -19,6 +20,14 @@
         complete:(void (^)(int, NSDictionary *))completeBlock;
 
 - (void)leaveRoom:(NSString *)callId;
+
+- (void)enableCamera:(BOOL)isEnable;
+
+- (void)startPreview:(UIView *)view;
+
+- (void)setVideoView:(UIView *)view
+              roomId:(NSString *)roomId
+              userId:(NSString *)userId;
 
 - (void)muteMicrophone:(BOOL)isMute;
 

@@ -25,6 +25,7 @@ public class SBUStringSet {
     public static var PhotoVideoLibrary = "Photo library"
     public static var Document = "Files"
     public static var VoiceCall = "Voice call"
+    public static var VideoCall = "Video call"
     public static var Loading = "Loading..."
     public static var Invite = "Invite"
     public static var TakePhoto = "Take photo"

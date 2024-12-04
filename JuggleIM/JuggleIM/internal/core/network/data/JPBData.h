@@ -391,6 +391,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 #pragma mark - Call
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
+             mediaType:(JCallMediaType)mediaType
           targetIdList:(NSArray <NSString *>*)userIdList
             engineType:(NSUInteger)engineType
                  index:(int)index;

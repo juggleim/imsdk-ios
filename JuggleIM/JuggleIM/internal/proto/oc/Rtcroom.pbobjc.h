@@ -149,6 +149,27 @@ GPBEnumDescriptor *RtcRoomQuitReason_EnumDescriptor(void);
  **/
 BOOL RtcRoomQuitReason_IsValidValue(int32_t value);
 
+#pragma mark - Enum RtcMediaType
+
+typedef GPB_ENUM(RtcMediaType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RtcMediaType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  RtcMediaType_RtcAudio = 0,
+  RtcMediaType_RtcVideo = 1,
+};
+
+GPBEnumDescriptor *RtcMediaType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RtcMediaType_IsValidValue(int32_t value);
+
 #pragma mark - Enum InviteType
 
 typedef GPB_ENUM(InviteType) {
@@ -193,6 +214,7 @@ typedef GPB_ENUM(RtcRoomReq_FieldNumber) {
   RtcRoomReq_FieldNumber_RoomId = 2,
   RtcRoomReq_FieldNumber_JoinMember = 3,
   RtcRoomReq_FieldNumber_RtcChannel = 4,
+  RtcRoomReq_FieldNumber_RtcMediaType = 5,
 };
 
 GPB_FINAL @interface RtcRoomReq : GPBMessage
@@ -206,6 +228,8 @@ GPB_FINAL @interface RtcRoomReq : GPBMessage
 @property(nonatomic, readwrite) BOOL hasJoinMember;
 
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
+
+@property(nonatomic, readwrite) RtcMediaType rtcMediaType;
 
 @end
 
@@ -233,12 +257,26 @@ int32_t RtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message);
  **/
 void SetRtcRoomReq_RtcChannel_RawValue(RtcRoomReq *message, int32_t value);
 
+/**
+ * Fetches the raw value of a @c RtcRoomReq's @c rtcMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message);
+/**
+ * Sets the raw value of an @c RtcRoomReq's @c rtcMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message, int32_t value);
+
 #pragma mark - RtcRoom
 
 typedef GPB_ENUM(RtcRoom_FieldNumber) {
   RtcRoom_FieldNumber_RoomType = 1,
   RtcRoom_FieldNumber_RoomId = 2,
   RtcRoom_FieldNumber_Owner = 3,
+  RtcRoom_FieldNumber_RtcChannel = 4,
+  RtcRoom_FieldNumber_RtcMediaType = 5,
   RtcRoom_FieldNumber_MembersArray = 51,
 };
 
@@ -251,6 +289,10 @@ GPB_FINAL @interface RtcRoom : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) UserInfo *owner;
 /** Test to see if @c owner has been set. */
 @property(nonatomic, readwrite) BOOL hasOwner;
+
+@property(nonatomic, readwrite) RtcChannel rtcChannel;
+
+@property(nonatomic, readwrite) RtcMediaType rtcMediaType;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
@@ -269,6 +311,30 @@ int32_t RtcRoom_RoomType_RawValue(RtcRoom *message);
  * was generated.
  **/
 void SetRtcRoom_RoomType_RawValue(RtcRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcRoom's @c rtcChannel property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcRoom_RtcChannel_RawValue(RtcRoom *message);
+/**
+ * Sets the raw value of an @c RtcRoom's @c rtcChannel property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcRoom_RtcChannel_RawValue(RtcRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcRoom's @c rtcMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcRoom_RtcMediaType_RawValue(RtcRoom *message);
+/**
+ * Sets the raw value of an @c RtcRoom's @c rtcMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcRoom_RtcMediaType_RawValue(RtcRoom *message, int32_t value);
 
 #pragma mark - RtcMember
 
@@ -434,6 +500,7 @@ typedef GPB_ENUM(RtcInviteReq_FieldNumber) {
   RtcInviteReq_FieldNumber_RoomType = 2,
   RtcInviteReq_FieldNumber_RoomId = 3,
   RtcInviteReq_FieldNumber_RtcChannel = 4,
+  RtcInviteReq_FieldNumber_RtcMediaType = 5,
 };
 
 GPB_FINAL @interface RtcInviteReq : GPBMessage
@@ -447,6 +514,8 @@ GPB_FINAL @interface RtcInviteReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
 
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
+
+@property(nonatomic, readwrite) RtcMediaType rtcMediaType;
 
 @end
 
@@ -474,6 +543,18 @@ int32_t RtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message);
  **/
 void SetRtcInviteReq_RtcChannel_RawValue(RtcInviteReq *message, int32_t value);
 
+/**
+ * Fetches the raw value of a @c RtcInviteReq's @c rtcMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcInviteReq_RtcMediaType_RawValue(RtcInviteReq *message);
+/**
+ * Sets the raw value of an @c RtcInviteReq's @c rtcMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcInviteReq_RtcMediaType_RawValue(RtcInviteReq *message, int32_t value);
+
 #pragma mark - RtcMemberRooms
 
 typedef GPB_ENUM(RtcMemberRooms_FieldNumber) {
@@ -497,6 +578,7 @@ typedef GPB_ENUM(RtcMemberRoom_FieldNumber) {
   RtcMemberRoom_FieldNumber_RtcState = 4,
   RtcMemberRoom_FieldNumber_RtcChannel = 5,
   RtcMemberRoom_FieldNumber_DeviceId = 6,
+  RtcMemberRoom_FieldNumber_RtcMediaType = 7,
 };
 
 GPB_FINAL @interface RtcMemberRoom : GPBMessage
@@ -514,6 +596,8 @@ GPB_FINAL @interface RtcMemberRoom : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite) RtcMediaType rtcMediaType;
 
 @end
 
@@ -552,6 +636,18 @@ int32_t RtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message);
  * was generated.
  **/
 void SetRtcMemberRoom_RtcChannel_RawValue(RtcMemberRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RtcMemberRoom's @c rtcMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message);
+/**
+ * Sets the raw value of an @c RtcMemberRoom's @c rtcMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t value);
 
 #pragma mark - RtcAuth
 
