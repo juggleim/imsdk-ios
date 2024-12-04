@@ -151,6 +151,11 @@
             callSession.owner = room.owner.userId;
             callSession.inviter = inviter.userId;
             callSession.mediaType = room.mediaType;
+            if (callSession.mediaType == JCallMediaTypeVideo) {
+                [[JCallMediaManager shared] enableCamera:YES];
+            } else {
+                [[JCallMediaManager shared] enableCamera:NO];
+            }
             JCallMember *member = [[JCallMember alloc] init];
             member.userInfo = inviter;
             member.callStatus = JCallStatusOutgoing;
