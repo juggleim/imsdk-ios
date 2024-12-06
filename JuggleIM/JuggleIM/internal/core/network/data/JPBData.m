@@ -1487,7 +1487,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 obj.rcvType = JPBRcvTypeRtcRoomEventNtf;
                 JRtcRoomEventNtf *n = [[JRtcRoomEventNtf alloc] init];
                 n.eventType = (NSUInteger)event.roomEventType;
-                n.member = [self callMemberWithPBRtcMember:event.member];
+                NSMutableArray *membersArray = [NSMutableArray array];
+                for (RtcMember *pbMember in event.membersArray) {
+                    JCallMember *callMember = [self callMemberWithPBRtcMember:pbMember];
+                    [membersArray addObject:callMember];
+                }
+                n.members = membersArray;
                 n.room = [self rtcRoomWithPBRtcRoom:event.room];
                 obj.rtcRoomEventNtf = n;
             } else if ([body.topic isEqualToString:jRtcInviteEvent]) {

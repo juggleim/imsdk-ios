@@ -12,6 +12,8 @@
 
 - (UIView *)viewForUserId:(NSString *)userId;
 
+- (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
+
 @end
 
 #endif /* JCallMediaDelegate_h */

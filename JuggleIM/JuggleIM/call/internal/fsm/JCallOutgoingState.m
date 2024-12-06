@@ -21,7 +21,7 @@
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusOutgoing;
     [self startOutgoingTimer];
-    [self.callSessionImpl signalSingleInvite];
+    [self.callSessionImpl signalInvite];
     return YES;
 }
 
@@ -35,6 +35,13 @@
     BOOL result = NO;
     
     switch (event) {
+        case JCallEventInviteDone:
+            if (self.callSessionImpl.isMultiCall) {
+                [self.callSessionImpl transitionToConnectingState];
+            }
+            result = YES;
+            break;
+            
         case JCallEventInviteFail:
             [self inviteFail];
             [self.callSessionImpl transitionToIdleState];
@@ -50,13 +57,13 @@
         case JCallEventReceiveAccept:
         {
             NSString *userId = userInfo[@"userId"];
-            [self memberAccept:userId];
+            [self.callSessionImpl memberAccept:userId];
             if (!self.callSessionImpl.isMultiCall) {
                 [self.callSessionImpl transitionToConnectingState];
             }
             result = YES;
-        }
             break;
+        }
             
         default:
             break;
@@ -97,18 +104,6 @@
 - (void)inviteTimeOut {
     self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970];
     self.callSessionImpl.finishReason = JCallFinishReasonOtherSideNoResponse;
-}
-
-- (void)memberAccept:(NSString *)userId {
-    if (!self.callSessionImpl.isMultiCall) {
-        for (JCallMember *member in self.callSessionImpl.members) {
-            if ([member.userInfo.userId isEqualToString:userId]) {
-                member.callStatus = JCallStatusConnecting;
-            }
-        }
-    } else {
-        
-    }
 }
 
 @end

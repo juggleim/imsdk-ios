@@ -930,16 +930,18 @@ typedef struct SyncMemberStateReq__storage_ {
 @implementation RtcRoomEvent
 
 @dynamic roomEventType;
-@dynamic hasMember, member;
+@dynamic membersArray, membersArray_Count;
 @dynamic hasRoom, room;
 @dynamic reason;
+@dynamic eventTime;
 
 typedef struct RtcRoomEvent__storage_ {
   uint32_t _has_storage_[1];
   RtcRoomEventType roomEventType;
   RtcRoomQuitReason reason;
-  RtcMember *member;
+  NSMutableArray *membersArray;
   RtcRoom *room;
+  int64_t eventTime;
 } RtcRoomEvent__storage_;
 
 // This method is threadsafe because it is initially called
@@ -959,19 +961,19 @@ typedef struct RtcRoomEvent__storage_ {
         .dataType = GPBDataTypeEnum,
       },
       {
-        .name = "member",
+        .name = "membersArray",
         .dataTypeSpecific.clazz = GPBObjCClass(RtcMember),
-        .number = RtcRoomEvent_FieldNumber_Member,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, member),
-        .flags = GPBFieldOptional,
+        .number = RtcRoomEvent_FieldNumber_MembersArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, membersArray),
+        .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
       },
       {
         .name = "room",
         .dataTypeSpecific.clazz = GPBObjCClass(RtcRoom),
         .number = RtcRoomEvent_FieldNumber_Room,
-        .hasIndex = 2,
+        .hasIndex = 1,
         .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, room),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeMessage,
@@ -980,10 +982,19 @@ typedef struct RtcRoomEvent__storage_ {
         .name = "reason",
         .dataTypeSpecific.enumDescFunc = RtcRoomQuitReason_EnumDescriptor,
         .number = RtcRoomEvent_FieldNumber_Reason,
-        .hasIndex = 3,
+        .hasIndex = 2,
         .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, reason),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "eventTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RtcRoomEvent_FieldNumber_EventTime,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RtcRoomEvent__storage_, eventTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
       },
     };
     GPBDescriptor *localDescriptor =
@@ -996,7 +1007,7 @@ typedef struct RtcRoomEvent__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\001\r\000";
+        "\002\001\r\000\005\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

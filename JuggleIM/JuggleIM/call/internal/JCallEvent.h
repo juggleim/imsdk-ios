@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     //JCallEventAddParticipants,
     
     /// Signal outgoing callback
+    JCallEventInviteDone,
     JCallEventInviteFail,
     JCallEventInviteTimeOut,
     //JCallEventAddParticipantsFail,
@@ -29,6 +30,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventReceiveAccept,
     //JCallEventReceiveAddParticipants,
     JCallEventReceiveHangup,
+    JCallEventReceiveQuit,
     JCallEventRoomDestroy,
     
     /// Media outgoing

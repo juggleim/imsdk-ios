@@ -448,24 +448,28 @@ GPB_FINAL @interface SyncMemberStateReq : GPBMessage
 
 typedef GPB_ENUM(RtcRoomEvent_FieldNumber) {
   RtcRoomEvent_FieldNumber_RoomEventType = 1,
-  RtcRoomEvent_FieldNumber_Member = 2,
+  RtcRoomEvent_FieldNumber_MembersArray = 2,
   RtcRoomEvent_FieldNumber_Room = 3,
   RtcRoomEvent_FieldNumber_Reason = 4,
+  RtcRoomEvent_FieldNumber_EventTime = 5,
 };
 
 GPB_FINAL @interface RtcRoomEvent : GPBMessage
 
 @property(nonatomic, readwrite) RtcRoomEventType roomEventType;
 
-@property(nonatomic, readwrite, strong, null_resettable) RtcMember *member;
-/** Test to see if @c member has been set. */
-@property(nonatomic, readwrite) BOOL hasMember;
+/** 事件相关人的列表 */
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
+/** The number of items in @c membersArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger membersArray_Count;
 
 @property(nonatomic, readwrite, strong, null_resettable) RtcRoom *room;
 /** Test to see if @c room has been set. */
 @property(nonatomic, readwrite) BOOL hasRoom;
 
 @property(nonatomic, readwrite) RtcRoomQuitReason reason;
+
+@property(nonatomic, readwrite) int64_t eventTime;
 
 @end
 

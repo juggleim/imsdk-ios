@@ -62,9 +62,10 @@ enum RtcState{
 
 message RtcRoomEvent{
     RtcRoomEventType roomEventType = 1;
-    RtcMember member = 2;
+    repeated RtcMember members = 2; //事件相关人的列表
     RtcRoom room = 3;
     RtcRoomQuitReason reason = 4;
+    int64 eventTime = 5;
 }
 
 enum RtcRoomEventType{

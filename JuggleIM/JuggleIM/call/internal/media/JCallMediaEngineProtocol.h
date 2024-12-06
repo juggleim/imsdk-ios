@@ -14,6 +14,12 @@
 
 - (UIView *)viewForUserId:(NSString *)userId;
 
+- (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
+
+@optional
+//暂不处理
+- (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
+
 @end
 
 @protocol JCallMediaEngineProtocol <NSObject>

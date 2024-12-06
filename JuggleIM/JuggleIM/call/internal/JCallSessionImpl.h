@@ -24,11 +24,14 @@
 - (void)notifyReceiveCall;
 - (BOOL)notifyAcceptCall;
 - (void)memberHangup:(NSString *)userId;
+- (void)membersQuit:(NSArray <NSString *> *)userIdList;
+- (void)memberAccept:(NSString *)userId;
 - (void)addMember:(JCallMember *)member;
 - (void)removeMember:(NSString *)userId;
+- (void)membersConnected:(NSArray <NSString *> *)userIdList;
 
 #pragma mark - signal
-- (void)signalSingleInvite;
+- (void)signalInvite;
 - (void)signalHangup;
 - (void)signalAccept;
 - (void)signalConnected;

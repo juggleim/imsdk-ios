@@ -1465,12 +1465,11 @@ inConversation:(JConversation *)conversation
 - (void)handleRtcRoomEventNtf:(JRtcRoomEventNtf *)ntf {
     JLogI(@"Call-RmEvent", @"type is %ld", ntf.eventType);
     switch (ntf.eventType) {
-//        case JPBRtcRoomEventTypeJoin:
-//            if ([self.callDelegate respondsToSelector:@selector(callDidInvite:room:)]) {
-//                [self.callDelegate callDidInvite:ntf.member.userInfo
-//                                            room:ntf.room];
-//            }
-//            break;
+        case JPBRtcRoomEventTypeQuit:
+            if ([self.callDelegate respondsToSelector:@selector(callDidQuit:members:)]) {
+                [self.callDelegate callDidQuit:ntf.room members:ntf.members];
+            }
+            break;
             
         case JPBRtcRoomEventTypeDestroy:
             if ([self.callDelegate respondsToSelector:@selector(roomDidDestroy:)]) {
@@ -1478,7 +1477,7 @@ inConversation:(JConversation *)conversation
             }
             break;
             
-        //TODO:
+        //TODO: join 只在用户主动加入房间时触发，暂未开发；statechange 只在用户 connecting 变成 connected 时触发，暂不处理
             
         default:
             break;

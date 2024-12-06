@@ -56,7 +56,11 @@ typedef NS_ENUM(NSInteger, JCallFinishReason) {
     /// 房间被销毁
     JCallFinishReasonRoomDestroy = 11,
     /// 网络出错
-    JCallFinishReasonNetworkError = 12
+    JCallFinishReasonNetworkError = 12,
+    /// 当前用户在其它端接听来电
+    JCallFinishReasonAcceptOnOtherClient = 13,
+    /// 当前用户在其它端挂断来电
+    JCallFinishReasonHangupOnOtherClient = 14
 };
 
 typedef NS_ENUM(NSInteger, JCallErrorCode) {
@@ -69,7 +73,9 @@ typedef NS_ENUM(NSInteger, JCallErrorCode) {
     /// 接听失败
     JCallErrorCodeAcceptFail = 3,
     /// 加入 Media 房间失败
-    JCallErrorCodeJoinMediaRoomFail = 4
+    JCallErrorCodeJoinMediaRoomFail = 4,
+    /// 参数错误
+    JCallErrorCodeInvalidParameter = 5
 };
 
 #endif /* JCallConst_h */

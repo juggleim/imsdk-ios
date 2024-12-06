@@ -46,6 +46,30 @@
         }
             break;
             
+        case JCallEventReceiveAccept:
+        {
+            NSString *userId = userInfo[@"userId"];
+            // 当前用户在其它端 accept，else 走 super
+            if ([self.callSessionImpl.core.userId isEqualToString:userId]) {
+                self.callSessionImpl.finishReason = JCallFinishReasonAcceptOnOtherClient;
+                [self.callSessionImpl transitionToIdleState];
+                result = YES;
+            }
+            break;
+        }
+            
+        case JCallEventReceiveHangup:
+        {
+            NSString *userId = userInfo[@"userId"];
+            // 当前用户在其它端 hangup，else 走 super
+            if ([self.callSessionImpl.core.userId isEqualToString:userId]) {
+                self.callSessionImpl.finishReason = JCallFinishReasonHangupOnOtherClient;
+                [self.callSessionImpl transitionToIdleState];
+                result = YES;
+            }
+            break;
+        }
+            
         case JCallEventIncomingTimeOut:
             [self incomingTimeOut];
             [self.callSessionImpl transitionToIdleState];

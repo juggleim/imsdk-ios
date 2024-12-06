@@ -148,7 +148,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 @interface JRtcRoomEventNtf : NSObject
 @property (nonatomic, assign) JPBRtcRoomEventType eventType;
-@property (nonatomic, strong) JCallMember *member;
+@property (nonatomic, strong) NSArray <JCallMember *> *members;
 @property (nonatomic, strong) JRtcRoom *room;
 @end
 

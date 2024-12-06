@@ -24,15 +24,15 @@
 
 /// 用户被邀请（多人通话中使用）
 /// - Parameter userId: 被邀请的用户 id
-- (void)userDidInvite:(NSString *)userId;
+- (void)usersDidInvite:(NSArray <NSString *> *)userIdList;
 
 /// 用户加入通话（多人通话中使用）
 /// - Parameter userId: 用户 id
-- (void)userDidConnect:(NSString *)userId;
+- (void)usersDidConnect:(NSArray <NSString *> *)userIdList;
 
 /// 用户退出通话（多人通话中使用）
 /// - Parameter userId: 用户 id
-- (void)userDidLeave:(NSString *)userId;
+- (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
 
 /// 用户开启/关闭摄像头
 /// - Parameters:

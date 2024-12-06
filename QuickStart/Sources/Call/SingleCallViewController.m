@@ -548,19 +548,19 @@
 
 /// 用户被邀请
 /// - Parameter userId: 被邀请的用户 id
-- (void)userDidInvite:(NSString *)userId {
+- (void)usersDidInvite:(NSString *)userId {
     
 }
 
 /// 用户加入通话
 /// - Parameter userId: 用户 id
-- (void)userDidConnect:(NSString *)userId {
+- (void)usersDidConnect:(NSString *)userId {
     
 }
 
 /// 用户退出通话
 /// - Parameter userId: 用户 id
-- (void)userDidLeave:(NSString *)userId {
+- (void)usersDidLeave:(NSString *)userId {
     
 }
 

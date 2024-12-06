@@ -45,38 +45,35 @@
 - (id<JCallSession>)startSingleCall:(NSString *)userId
                           mediaType:(JCallMediaType)mediaType
                            delegate:(id<JCallSessionDelegate>)delegate {
-    @synchronized (self) {
-        if (self.callSessionList.count > 0) {
-            dispatch_async(self.core.delegateQueue, ^{
-                if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
-                    [delegate errorDidOccur:JCallErrorCodeCallExist];
-                }
-            });
-            return nil;
-        }
+    if (userId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                [delegate errorDidOccur:JCallErrorCodeInvalidParameter];
+            }
+        });
+        return nil;
     }
-    
-    NSString *callId = [JUtility getUUID];
-    JCallSessionImpl *callSession = [self createCallSessionImpl:callId
-                                                    isMultiCall:NO];
-    callSession.owner = JIM.shared.currentUserId;
-    callSession.mediaType = mediaType;
-    if (callSession.mediaType == JCallMediaTypeVideo) {
-        [[JCallMediaManager shared] enableCamera:YES];
-    } else {
-        [[JCallMediaManager shared] enableCamera:NO];
+    return [self startCall:@[userId]
+                   isMulti:NO
+                 mediaType:mediaType
+                  delegate:delegate];
+}
+
+- (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
+                         mediaType:(JCallMediaType)mediaType
+                          delegate:(id<JCallSessionDelegate>)delegate {
+    if (userIdList.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                [delegate errorDidOccur:JCallErrorCodeInvalidParameter];
+            }
+        });
+        return nil;
     }
-    JCallMember *member = [[JCallMember alloc] init];
-    JUserInfo *userInfo = [[JUserInfo alloc] init];
-    userInfo.userId = userId;
-    member.userInfo = userInfo;
-    member.callStatus = JCallStatusIncoming;
-    [callSession addMember:member];
-    [callSession addDelegate:delegate];
-    [callSession event:JCallEventInvite userInfo:nil];
-    
-    [self addCallSession:callSession];
-    return callSession;
+    return [self startCall:userIdList
+                   isMulti:YES
+                 mediaType:mediaType
+                  delegate:delegate];
 }
 
 - (instancetype)initWithCore:(JIMCore *)core {
@@ -181,6 +178,21 @@
     [callSession event:JCallEventReceiveHangup userInfo:userInfo];
 }
 
+- (void)callDidQuit:(JRtcRoom *)room members:(NSArray<JCallMember *> *)members {
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+    for (JCallMember *member in members) {
+        [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+    }
+    [self.core.dbManager insertUserInfos:userDic.allValues];
+    
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (!callSession) {
+        return;
+    }
+    NSDictionary *userInfo = @{@"userIdList" : userDic.allKeys};
+    [callSession event:JCallEventReceiveQuit userInfo:userInfo];
+}
+
 - (void)callDidAccept:(JRtcRoom *)room
                  user:(JUserInfo *)user {
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
@@ -236,6 +248,57 @@
 }
 
 #pragma mark - internal
+- (id<JCallSession>)startCall:(NSArray<NSString *> *)userIdList
+                      isMulti:(BOOL)isMulti
+                    mediaType:(JCallMediaType)mediaType
+                     delegate:(id<JCallSessionDelegate>)delegate {
+    @synchronized (self) {
+        if (self.callSessionList.count > 0) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                    [delegate errorDidOccur:JCallErrorCodeCallExist];
+                }
+            });
+            return nil;
+        }
+    }
+    
+    if (userIdList.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                [delegate errorDidOccur:JCallErrorCodeInvalidParameter];
+            }
+        });
+        return nil;
+    }
+    
+    NSString *callId = [JUtility getUUID];
+    JCallSessionImpl *callSession = [self createCallSessionImpl:callId
+                                                    isMultiCall:isMulti];
+    callSession.owner = JIM.shared.currentUserId;
+    callSession.mediaType = mediaType;
+    if (callSession.mediaType == JCallMediaTypeVideo) {
+        [[JCallMediaManager shared] enableCamera:YES];
+    } else {
+        [[JCallMediaManager shared] enableCamera:NO];
+    }
+    [userIdList enumerateObjectsUsingBlock:^(NSString * _Nonnull userId, NSUInteger idx, BOOL * _Nonnull stop) {
+        JCallMember *member = [[JCallMember alloc] init];
+        JUserInfo *userInfo = [[JUserInfo alloc] init];
+        userInfo.userId = userId;
+        member.userInfo = userInfo;
+        member.callStatus = JCallStatusIncoming;
+        [callSession addMember:member];
+    }];
+    
+    [callSession addDelegate:delegate];
+    [callSession event:JCallEventInvite userInfo:nil];
+    
+    [self addCallSession:callSession];
+    return callSession;
+}
+
+
 - (void)initCallSession:(JCallSessionImpl *)callSession
          withCallStatus:(JCallStatus)callStatus {
     if (callStatus == JCallStatusIncoming) {

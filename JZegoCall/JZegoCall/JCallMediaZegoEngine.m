@@ -108,7 +108,15 @@
                 userList:(NSArray<ZegoUser *> *)userList
                   roomID:(NSString *)roomID {
     if (updateType == ZegoUpdateTypeAdd) {
-        
+        NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
+        [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
+            [userIdList addObject:zegoUser.userID];
+        }];
+        if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
+            [self.delegate usersDidJoin:userIdList];
+        }
+    } else if (updateType == ZegoUpdateTypeDelete) {
+        //暂不处理
     }
 }
 

@@ -15,6 +15,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventHangup] = @"hang up",
     [JCallEventAcceptAfterHangupOther] = @"accept after hangup other",
     
+    [JCallEventInviteDone] = @"invite done",
     [JCallEventInviteFail] = @"invite fail",
     [JCallEventInviteTimeOut] = @"invite time out",
     [JCallEventAcceptDone] = @"accept done",
@@ -24,6 +25,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventReceiveInvite] = @"receive invite",
     [JCallEventReceiveAccept] = @"receive accept",
     [JCallEventReceiveHangup] = @"receive hang up",
+    [JCallEventReceiveQuit] = @"receive quit",
     [JCallEventRoomDestroy] = @"room destroy",
     
     [JCallEventJoinChannelDone] = @"join channel done",

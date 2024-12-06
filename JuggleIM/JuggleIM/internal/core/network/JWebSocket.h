@@ -63,8 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)callDidInvite:(JRtcRoom *)room
               inviter:(JUserInfo *)inviter
           targetUsers:(NSArray <JUserInfo *> *)targetUsers;
+// 用户主动挂断
 - (void)callDidHangup:(JRtcRoom *)room
                  user:(JUserInfo *)user;
+// 用户掉线或者被踢出通话
+- (void)callDidQuit:(JRtcRoom *)room
+            members:(NSArray <JCallMember *> *)members;
 - (void)callDidAccept:(JRtcRoom *)room
                  user:(JUserInfo *)user;
 - (void)roomDidDestroy:(JRtcRoom *)room;

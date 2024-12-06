@@ -40,6 +40,15 @@
                           mediaType:(JCallMediaType)mediaType
                            delegate:(id<JCallSessionDelegate>)delegate;
 
+/// 发起多人通话
+/// - Parameters:
+///   - userIdList: userId 列表
+///   - mediaType: 语音/视频
+///   - delegate: 设置代理
+- (id<JCallSession>)startMultiCall:(NSArray <NSString *> *)userIdList
+                         mediaType:(JCallMediaType)mediaType
+                          delegate:(id<JCallSessionDelegate>)delegate;
+
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate;
 
 @end

@@ -127,6 +127,40 @@
         } else {
             self.finishReason = JCallFinishReasonOtherSideHangup;
         }
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(usersDidLeave:)]) {
+                    [obj usersDidLeave:@[userId]];
+                }
+            }];
+        });
+    }
+}
+
+- (void)membersQuit:(NSArray<NSString *> *)userIdList {
+    for (NSString *userId in userIdList) {
+        [self removeMember:userId];
+    }
+    if (!self.isMultiCall) {
+        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        self.finishReason = JCallFinishReasonOtherSideNoResponse;
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(usersDidLeave:)]) {
+                    [obj usersDidLeave:userIdList];
+                }
+            }];
+        });
+    }
+}
+
+- (void)memberAccept:(NSString *)userId {
+    for (JCallMember *member in self.members) {
+        if ([member.userInfo.userId isEqualToString:userId]) {
+            member.callStatus = JCallStatusConnecting;
+        }
     }
 }
 
@@ -143,20 +177,39 @@
     }
 }
 
+- (void)membersConnected:(NSArray<NSString *> *)userIdList {
+    for (NSString *userId in userIdList) {
+        for (JCallMember *member in self.members) {
+            if ([member.userInfo.userId isEqualToString:userId]) {
+                member.callStatus = JCallStatusConnected;
+                break;
+            }
+        }
+    }
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(usersDidConnect:)]) {
+                [obj usersDidConnect:userIdList];
+            }
+        }];
+    });
+}
+
 #pragma mark - signal
-- (void)signalSingleInvite {
+- (void)signalInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
     for (JCallMember *member in self.members) {
         [targetIds addObject:member.userInfo.userId];
     }
     [self.core.webSocket callInvite:self.callId
-                        isMultiCall:NO
+                        isMultiCall:self.isMultiCall
                           mediaType:self.mediaType
                        targetIdList:targetIds
                          engineType:(NSUInteger)self.engineType
                             success:^(NSString *zegoToken){
         JLogI(@"Call-Signal", @"send invite success");
         self.zegoToken = zegoToken;
+        [self event:JCallEventInviteDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
         [self event:JCallEventInviteFail userInfo:nil];
@@ -264,6 +317,10 @@
 #pragma mark - JCallMediaDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     return self.viewDic[userId];
+}
+
+- (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
+    [self event:JCallEventParticipantJoinChannel userInfo:@{@"userIdList":userIdList}];
 }
 
 #pragma mark - private
