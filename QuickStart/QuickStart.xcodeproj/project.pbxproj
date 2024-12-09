@@ -247,6 +247,7 @@
 		A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */; };
 		A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */; };
 		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
+		A0A3A5262D06D30E009AD7C3 /* BaseCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */; };
 		A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */; };
 		A0B4C3AA2C636188005AFCEC /* GroupNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */; };
 		A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */; };
@@ -524,6 +525,8 @@
 		A0968CB62C2B045A00E68790 /* SBUVoiceMessageInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUVoiceMessageInputView.swift; sourceTree = "<group>"; };
 		A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUTextMessageCell.swift; sourceTree = "<group>"; };
 		A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCell.swift; sourceTree = "<group>"; };
+		A0A3A5242D06D30E009AD7C3 /* BaseCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseCallViewController.h; sourceTree = "<group>"; };
+		A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseCallViewController.m; sourceTree = "<group>"; };
 		A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
 		A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessage.swift; sourceTree = "<group>"; };
 		A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
@@ -1507,6 +1510,8 @@
 				A0CE9A3A2CD4DB40008B405C /* CallTheme.h */,
 				A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */,
 				A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */,
+				A0A3A5242D06D30E009AD7C3 /* BaseCallViewController.h */,
+				A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */,
 			);
 			path = Call;
 			sourceTree = "<group>";
@@ -1695,6 +1700,7 @@
 				A06388BC2CA41A0C006357C7 /* SBUBaseChannelSettingsViewModel.swift in Sources */,
 				A0968C842C2B020300E68790 /* SBUGroupChannelViewController.swift in Sources */,
 				A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */,
+				A0A3A5262D06D30E009AD7C3 /* BaseCallViewController.m in Sources */,
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
 				A090B0B52C3EB48C00FE0E10 /* SBUImageContentView.swift in Sources */,

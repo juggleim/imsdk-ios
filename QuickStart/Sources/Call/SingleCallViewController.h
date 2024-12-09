@@ -7,12 +7,9 @@
 
 #import <UIKit/UIKit.h>
 #import <JuggleIM/JuggleIM.h>
+#import "BaseCallViewController.h"
 
-@interface SingleCallViewController : UIViewController
-
-- (instancetype)initWithOutgoingCall:(id<JCallSession>)callSession;
-
-- (instancetype)initWithIncomingCall:(id<JCallSession>)callSession;
+@interface SingleCallViewController : BaseCallViewController
 
 @end
 
