@@ -423,10 +423,9 @@
         _inviteUserButton =
             [[UIButton alloc] initWithFrame:CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin / 2,
                                                        CallButtonLength, CallButtonLength)];
-//        [_inviteUserButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/add.png"]
-//                           forState:UIControlStateNormal];
-//        [_inviteUserButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/add.png"]
-//                           forState:UIControlStateHighlighted];
+        [_inviteUserButton setImage:[UIImage imageNamed:@"callAdd"] forState:UIControlStateNormal];
+        [_inviteUserButton setImage:[UIImage imageNamed:@"callAdd"]
+                           forState:UIControlStateHighlighted];
 
         [_inviteUserButton addTarget:self
                               action:@selector(inviteUserButtonClicked)
@@ -443,10 +442,10 @@
         _minimizeButton =
             [[UIButton alloc] initWithFrame:CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin / 2,
                                                        CallButtonLength, CallButtonLength)];
-//        [_minimizeButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/minimize.png"]
-//                         forState:UIControlStateNormal];
-//        [_minimizeButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/minimize.png"]
-//                         forState:UIControlStateHighlighted];
+        [_minimizeButton setImage:[UIImage imageNamed:@"callMinimize"]
+                         forState:UIControlStateNormal];
+        [_minimizeButton setImage:[UIImage imageNamed:@"callMinimize"]
+                         forState:UIControlStateHighlighted];
         [_minimizeButton setTitle:@"Minimize" forState:UIControlStateNormal];
 
 
@@ -479,11 +478,10 @@
 - (UIButton *)muteButton {
     if (!_muteButton) {
         _muteButton = [[UIButton alloc] init];
-//        [_muteButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/mute.png"] forState:UIControlStateNormal];
-//        [_muteButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/mute_hover.png"]
-//                     forState:UIControlStateHighlighted];
-//        [_muteButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/mute_hover.png"]
-//                     forState:UIControlStateSelected];
+        
+        [_muteButton setImage:[UIImage imageNamed:@"callMute"] forState:UIControlStateNormal];
+        [_muteButton setImage:[UIImage imageNamed:@"callMuteHover"] forState:UIControlStateHighlighted];
+        [_muteButton setImage:[UIImage imageNamed:@"callMuteHover"] forState:UIControlStateSelected];
         [_muteButton setTitle:@"Mute"
                      forState:UIControlStateNormal];
         [_muteButton setTitle:@"Unmute" forState:UIControlStateSelected];
@@ -513,12 +511,12 @@
 - (UIButton *)speakerButton {
     if (!_speakerButton) {
         _speakerButton = [[UIButton alloc] init];
-//        [_speakerButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/handfree.png"]
-//                        forState:UIControlStateNormal];
-//        [_speakerButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/handfree_hover.png"]
-//                        forState:UIControlStateHighlighted];
-//        [_speakerButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/handfree_hover.png"]
-//                        forState:UIControlStateSelected];
+        [_speakerButton setImage:[UIImage imageNamed:@"callHandFree"]
+                        forState:UIControlStateNormal];
+        [_speakerButton setImage:[UIImage imageNamed:@"callHandFreeHover"]
+                        forState:UIControlStateHighlighted];
+        [_speakerButton setImage:[UIImage imageNamed:@"callHandFreeHover"]
+                        forState:UIControlStateSelected];
         [_speakerButton setTitle:@"MuteSpeaker"
                         forState:UIControlStateNormal];
         [_speakerButton setTitle:@"UnmuteSpeaker"
@@ -553,10 +551,10 @@
 - (UIButton *)acceptButton {
     if (!_acceptButton) {
         _acceptButton = [[UIButton alloc] init];
-//        [_acceptButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/answer.png"]
-//                       forState:UIControlStateNormal];
-//        [_acceptButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/answer_hover.png"]
-//                       forState:UIControlStateHighlighted];
+        [_acceptButton setImage:[UIImage imageNamed:@"callAnswer"]
+                       forState:UIControlStateNormal];
+        [_acceptButton setImage:[UIImage imageNamed:@"callAnswerHover"]
+                       forState:UIControlStateHighlighted];
         [_acceptButton setTitle:@"Accept"
                        forState:UIControlStateNormal];
 
@@ -581,10 +579,10 @@
 - (UIButton *)hangupButton {
     if (!_hangupButton) {
         _hangupButton = [[UIButton alloc] init];
-//        [_hangupButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/hang_up.png"]
-//                       forState:UIControlStateNormal];
-//        [_hangupButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/hang_up_hover.png"]
-//                       forState:UIControlStateHighlighted];
+        [_hangupButton setImage:[UIImage imageNamed:@"callHangup"]
+                       forState:UIControlStateNormal];
+        [_hangupButton setImage:[UIImage imageNamed:@"callHangupHover"]
+                       forState:UIControlStateHighlighted];
         [_hangupButton setTitle:@"Hang Up"
                        forState:UIControlStateNormal];
 
@@ -612,13 +610,17 @@
 
 
         if (!self.callSession.isMultiCall) {
-//            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/audio.png"]
-//                                forState:UIControlStateNormal];
-//            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/audio.png"]
-//                                forState:UIControlStateHighlighted];
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraClose"]
+                                forState:UIControlStateNormal];
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraCloseHover"]
+                                forState:UIControlStateHighlighted];
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraCloseHover"] forState:UIControlStateSelected];
             [_cameraCloseButton
-                setTitle:@"Switch to voice"
+                setTitle:@"Camera close"
                 forState:UIControlStateNormal];
+            [_cameraCloseButton
+                setTitle:@"Camera open"
+             forState:UIControlStateSelected];
         } else {
 //            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/video.png"]
 //                                forState:UIControlStateNormal];
@@ -681,12 +683,12 @@
 
 
         if (!self.callSession.isMultiCall) {
-//            [_cameraSwitchButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/camera.png"]
-//                                 forState:UIControlStateNormal];
-//            [_cameraSwitchButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/camera_hover.png"]
-//                                 forState:UIControlStateHighlighted];
-//            [_cameraSwitchButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/camera_hover.png"]
-//                                 forState:UIControlStateSelected];
+            [_cameraSwitchButton setImage:[UIImage imageNamed:@"callCameraSwitch"]
+                                 forState:UIControlStateNormal];
+            [_cameraSwitchButton setImage:[UIImage imageNamed:@"callCameraSwitchHover"]
+                                 forState:UIControlStateHighlighted];
+            [_cameraSwitchButton setImage:[UIImage imageNamed:@"callCameraSwitchHover"]
+                                 forState:UIControlStateSelected];
             [_cameraSwitchButton setTitle:@"Camera"
                                  forState:UIControlStateNormal];
             [_cameraSwitchButton setTitle:@"Camera"

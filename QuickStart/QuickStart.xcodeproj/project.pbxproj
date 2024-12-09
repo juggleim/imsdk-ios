@@ -248,6 +248,7 @@
 		A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */; };
 		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
 		A0A3A5262D06D30E009AD7C3 /* BaseCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */; };
+		A0A3A5282D06E48E009AD7C3 /* Call.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0A3A5272D06E48E009AD7C3 /* Call.xcassets */; };
 		A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */; };
 		A0B4C3AA2C636188005AFCEC /* GroupNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */; };
 		A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */; };
@@ -527,6 +528,7 @@
 		A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUUnknownMessageCell.swift; sourceTree = "<group>"; };
 		A0A3A5242D06D30E009AD7C3 /* BaseCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseCallViewController.h; sourceTree = "<group>"; };
 		A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseCallViewController.m; sourceTree = "<group>"; };
+		A0A3A5272D06E48E009AD7C3 /* Call.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Call.xcassets; sourceTree = "<group>"; };
 		A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
 		A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessage.swift; sourceTree = "<group>"; };
 		A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
@@ -952,6 +954,7 @@
 			isa = PBXGroup;
 			children = (
 				A07F39FE2BF4A2240087920B /* Assets.xcassets */,
+				A0A3A5272D06E48E009AD7C3 /* Call.xcassets */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -1579,6 +1582,7 @@
 				A07F3C092BF4A2280087920B /* Release.xcconfig in Resources */,
 				A07F3BBF2BF4A2270087920B /* Assets.xcassets in Resources */,
 				A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */,
+				A0A3A5282D06E48E009AD7C3 /* Call.xcassets in Resources */,
 				A09645D32BF36BD300290775 /* Assets.xcassets in Resources */,
 				A0C45D692C5914DA00B68B96 /* ConnectView.xib in Resources */,
 				A07F3C082BF4A2280087920B /* Debug.xcconfig in Resources */,
