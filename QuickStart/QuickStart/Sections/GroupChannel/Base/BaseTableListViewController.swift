@@ -8,13 +8,13 @@
 import Foundation
 import UIKit
 
-class BaseTableListViewController: UIViewController {
+public class BaseTableListViewController: UIViewController {
     let titleView = SBUNavigationTitleView()
     let tableView = UITableView()
     let emptyView = SBUEmptyView()
     lazy var loadingIndicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 37, 37))
     
-    override func loadView() {
+    public override func loadView() {
         super.loadView()
         configNavigationItem()
         configTableView()

@@ -72,11 +72,13 @@
 /// 通话的发起人 id
 @property (nonatomic, copy) NSString *owner;
 /// 邀请当前用户加入通话的用户 id
-@property (nonatomic, copy) NSString *inviter;
+@property (nonatomic, copy) NSString *inviterId;
 /// 通话结束原因
 @property (nonatomic, assign) JCallFinishReason finishReason;
 /// 通话参与者（除当前用户外的其他参与者）
 @property (nonatomic, copy, readonly) NSArray <JCallMember *> *members;
+/// 当前用户
+@property (nonatomic, strong, readonly) JCallMember *currentCallMember;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 

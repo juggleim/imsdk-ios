@@ -17,6 +17,9 @@
 
 - (void)startSingleCall:(id<JCallSession>)callSession;
 
+- (void)startMultiCall:(id<JCallSession>)callSession
+               groupId:(NSString *)groupId;
+
 - (void)dismissCallViewController:(UIViewController *)vc;
 
 @end

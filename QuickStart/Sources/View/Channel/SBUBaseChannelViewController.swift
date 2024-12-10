@@ -980,7 +980,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         case .voiceCall:
             switch SBUPermissionManager.shared.currentRecordAccessStatus {
             case .granted:
-                self.startSingleVoiceCall()
+                if self.baseViewModel?.conversationInfo?.conversation.conversationType == .private {
+                    self.startSingleVoiceCall()
+                } else {
+                    self.selectCallMembers(type: .voiceCall)
+                }
             default:
                 self.showPermissionAlert(forType: .record)
             }
@@ -990,7 +994,11 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             } else if SBUPermissionManager.shared.currentCameraAccessStatus != .authorized {
                 self.showPermissionAlert(forType: .camera)
             } else {
-                self.startSingleVideoCall()
+                if self.baseViewModel?.conversationInfo?.conversation.conversationType == .private {
+                    self.startSingleVideoCall()
+                } else {
+                    self.selectCallMembers(type: .videoCall)
+                }
             }
             
         default:
@@ -1074,6 +1082,14 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func startSingleVideoCall() {
         let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, delegate: nil)
         CallCenter.shared().startSingleCall(callSession)
+    }
+    
+    open func selectCallMembers(type: GroupMemberSelectType) {
+        let selectMemberVC = GroupMemberSelectViewController()
+        selectMemberVC.type = type
+        selectMemberVC.groupId = self.baseViewModel?.conversationInfo?.conversation.conversationId ?? ""
+        selectMemberVC.delegate = self
+        self.navigationController?.pushViewController(selectMemberVC, animated: true)
     }
     
     // Shows permission request alert.
@@ -1422,5 +1438,20 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     public func showDeleteMessageMenu(message: JMessage,
                                       oneTimetheme: SBUComponentTheme? = nil) {
         self.baseListComponent?.showDeleteMessageAlert(on: message, oneTimeTheme: oneTimetheme)
+    }
+}
+
+extension SBUBaseChannelViewController: GroupMemberSelectVCDelegate {
+    public func membersDidSelect(type: GroupMemberSelectType, members: [JUserInfo]) {
+        var userIds: [String] = []
+        for member in members {
+            userIds.append(member.userId)
+        }
+        var mediaType: JCallMediaType = .voice
+        if type == .videoCall {
+            mediaType = .video
+        }
+        let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, delegate: nil)
+        CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
     }
 }

@@ -46,6 +46,10 @@ class HttpManager: NSObject {
     static let groupsAddString = "/groups/add"
     static let membersString = "members"
     
+    static let groupsMembersListString = "/groups/members/list"
+    static let limitString = "limit"
+    static let offsetString = "offset"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -330,6 +334,64 @@ class HttpManager: NSObject {
                     return
                 }
                 completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    func getGroupMembers(
+        groupId: String,
+        count: Int,
+        offset: String? = nil,
+        completion: @escaping ((Int, String, [JUserInfo]?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsMembersListString)
+        
+        let dict: [String: Any] = [Self.groupIdString: groupId, Self.limitString: count]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, "", nil)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, "", nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get group members error, data is not available")
+                    completion(Self.unknownError, "", nil)
+                    return
+                }
+                guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
+                    print("get group members error, items is not available")
+                    completion(Self.unknownError, "", nil)
+                    return
+                }
+                if items.isEmpty {
+                    completion(Self.emptyCode, "", nil)
+                    return
+                }
+                var users: [JUserInfo] = []
+                for item in items {
+                    let user = JUserInfo()
+                    if let userId = item[Self.userIdString] as? String {
+                        user.userId = userId
+                    }
+                    if let name = item[Self.nickNameString] as? String {
+                        user.userName = name
+                    }
+                    if let portrait = item[Self.avatarString] as? String {
+                        user.portrait = portrait
+                    }
+                    users.append(user)
+                }
+                guard let resultOffset = responseData[Self.offsetString] as? String else {
+                    completion(Self.success, "", users)
+                    return
+                }
+                completion(Self.success, resultOffset, users)
             })
         }
         task.resume()

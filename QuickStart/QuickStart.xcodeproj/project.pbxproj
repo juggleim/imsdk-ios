@@ -249,6 +249,12 @@
 		A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */; };
 		A0A3A5262D06D30E009AD7C3 /* BaseCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */; };
 		A0A3A5282D06E48E009AD7C3 /* Call.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A0A3A5272D06E48E009AD7C3 /* Call.xcassets */; };
+		A0A3A52A2D06F93D009AD7C3 /* GroupMemberSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5292D06F93D009AD7C3 /* GroupMemberSelectViewController.swift */; };
+		A0A3A52D2D072F0C009AD7C3 /* MultiAudioCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A52C2D072F0C009AD7C3 /* MultiAudioCallViewController.m */; };
+		A0A3A5302D072F1A009AD7C3 /* MultiVideoCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A52F2D072F1A009AD7C3 /* MultiVideoCallViewController.m */; };
+		A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5322D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m */; };
+		A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */; };
+		A0A3A5392D082037009AD7C3 /* MultiCallUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */; };
 		A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */; };
 		A0B4C3AA2C636188005AFCEC /* GroupNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */; };
 		A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */; };
@@ -529,6 +535,17 @@
 		A0A3A5242D06D30E009AD7C3 /* BaseCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseCallViewController.h; sourceTree = "<group>"; };
 		A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseCallViewController.m; sourceTree = "<group>"; };
 		A0A3A5272D06E48E009AD7C3 /* Call.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Call.xcassets; sourceTree = "<group>"; };
+		A0A3A5292D06F93D009AD7C3 /* GroupMemberSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberSelectViewController.swift; sourceTree = "<group>"; };
+		A0A3A52B2D072F0C009AD7C3 /* MultiAudioCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiAudioCallViewController.h; sourceTree = "<group>"; };
+		A0A3A52C2D072F0C009AD7C3 /* MultiAudioCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiAudioCallViewController.m; sourceTree = "<group>"; };
+		A0A3A52E2D072F1A009AD7C3 /* MultiVideoCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiVideoCallViewController.h; sourceTree = "<group>"; };
+		A0A3A52F2D072F1A009AD7C3 /* MultiVideoCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiVideoCallViewController.m; sourceTree = "<group>"; };
+		A0A3A5312D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiAudioCallUserCollectionLayout.h; sourceTree = "<group>"; };
+		A0A3A5322D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiAudioCallUserCollectionLayout.m; sourceTree = "<group>"; };
+		A0A3A5342D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiVideoCallUserCollectionLayout.h; sourceTree = "<group>"; };
+		A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiVideoCallUserCollectionLayout.m; sourceTree = "<group>"; };
+		A0A3A5372D082037009AD7C3 /* MultiCallUserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiCallUserCell.h; sourceTree = "<group>"; };
+		A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiCallUserCell.m; sourceTree = "<group>"; };
 		A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
 		A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessage.swift; sourceTree = "<group>"; };
 		A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
@@ -1491,6 +1508,7 @@
 				A0C80D322C60ECC800E55080 /* GroupListViewController.swift */,
 				A0C80D342C60F5C000E55080 /* GroupCell.swift */,
 				A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */,
+				A0A3A5292D06F93D009AD7C3 /* GroupMemberSelectViewController.swift */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1515,6 +1533,16 @@
 				A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */,
 				A0A3A5242D06D30E009AD7C3 /* BaseCallViewController.h */,
 				A0A3A5252D06D30E009AD7C3 /* BaseCallViewController.m */,
+				A0A3A52B2D072F0C009AD7C3 /* MultiAudioCallViewController.h */,
+				A0A3A52C2D072F0C009AD7C3 /* MultiAudioCallViewController.m */,
+				A0A3A52E2D072F1A009AD7C3 /* MultiVideoCallViewController.h */,
+				A0A3A52F2D072F1A009AD7C3 /* MultiVideoCallViewController.m */,
+				A0A3A5312D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.h */,
+				A0A3A5322D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m */,
+				A0A3A5342D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.h */,
+				A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */,
+				A0A3A5372D082037009AD7C3 /* MultiCallUserCell.h */,
+				A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */,
 			);
 			path = Call;
 			sourceTree = "<group>";
@@ -1613,6 +1641,7 @@
 				A09645F32BF3A98000290775 /* Float+SBUKit.swift in Sources */,
 				A07F3C902BF4A2290087920B /* SBUTemplateLabel.swift in Sources */,
 				A06388CB2CA59644006357C7 /* SBUQuotedBaseMessageView.swift in Sources */,
+				A0A3A5302D072F1A009AD7C3 /* MultiVideoCallViewController.m in Sources */,
 				A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
@@ -1641,6 +1670,7 @@
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
+				A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */,
 				A07F3C9D2BF4A2290087920B /* SBUMessageCellProtocol.swift in Sources */,
 				A07F3B5C2BF4A2260087920B /* StringProtocol+SBUIKit.swift in Sources */,
 				A07F3B6F2BF4A2270087920B /* SBUCacheManager.Config.swift in Sources */,
@@ -1777,6 +1807,7 @@
 				A0968C872C2B020300E68790 /* SBUQuoteMessageInputView.swift in Sources */,
 				A09645E52BF39EA300290775 /* NibCustomView.swift in Sources */,
 				A07F3B3E2BF4A2260087920B /* SBUIconSetType.swift in Sources */,
+				A0A3A52A2D06F93D009AD7C3 /* GroupMemberSelectViewController.swift in Sources */,
 				A07F3B672BF4A2270087920B /* SBUMentionManager.swift in Sources */,
 				A07F3BEE2BF4A2270087920B /* SBUModuleSet.swift in Sources */,
 				A07F3B422BF4A2260087920B /* SBUMention.swift in Sources */,
@@ -1790,6 +1821,7 @@
 				A090B0B22C3EB48C00FE0E10 /* SBUBaseFileContentView.swift in Sources */,
 				A06388CC2CA59644006357C7 /* SBUQuotedFileMessageView.swift in Sources */,
 				A0968C8F2C2B020300E68790 /* SBUUserNameView.swift in Sources */,
+				A0A3A5392D082037009AD7C3 /* MultiCallUserCell.m in Sources */,
 				A07F3C7A2BF4A2290087920B /* SBUEmptyView.swift in Sources */,
 				A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */,
 				A07F3C9F2BF4A2290087920B /* SBUQuotedMessageViewProtocol.swift in Sources */,
@@ -1817,6 +1849,7 @@
 				A0968CAE2C2B03DA00E68790 /* SBUGroupChannelModule.List.swift in Sources */,
 				A07F3C932BF4A2290087920B /* SBUCommonViewControllerSet.swift in Sources */,
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
+				A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */,
 				A09645CA2BF36BD000290775 /* AppDelegate.swift in Sources */,
 				A0968C662C2B020300E68790 /* SBUAdminMessageCellParams.swift in Sources */,
 				A07F3B722BF4A2270087920B /* SBUCacheManager.Template.swift in Sources */,
@@ -1831,6 +1864,7 @@
 				A07F3B962BF4A2270087920B /* SBUMessageCellConfiguration.swift in Sources */,
 				A0968C972C2B020300E68790 /* SBUNewNotificationInfo.swift in Sources */,
 				A0968C862C2B020300E68790 /* SBUSuggestedMentionList.swift in Sources */,
+				A0A3A52D2D072F0C009AD7C3 /* MultiAudioCallViewController.m in Sources */,
 				A0968CB32C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift in Sources */,
 				A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */,
 				A07F35EB2BF49B400087920B /* SBUGlobals.swift in Sources */,

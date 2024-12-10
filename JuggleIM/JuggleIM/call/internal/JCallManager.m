@@ -146,7 +146,7 @@
             callSession = [self createCallSessionImpl:room.roomId
                                           isMultiCall:room.isMultiCall];
             callSession.owner = room.owner.userId;
-            callSession.inviter = inviter.userId;
+            callSession.inviterId = inviter.userId;
             callSession.mediaType = room.mediaType;
             if (callSession.mediaType == JCallMediaTypeVideo) {
                 [[JCallMediaManager shared] enableCamera:YES];

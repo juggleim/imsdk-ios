@@ -161,7 +161,7 @@
         
         self.cameraCloseButton.hidden = YES;
         self.cameraSwitchButton.hidden = YES;
-    } else if (self.callSession.mediaType == JCallMediaTypeVideo && !self.callSession.isMultiCall){
+    } else if (self.callSession.mediaType == JCallMediaTypeVideo && !self.callSession.isMultiCall) {
         self.backgroundView.hidden = NO;
         
         self.blurView.hidden = YES;
@@ -279,6 +279,245 @@
         } else if (self.callSession.callStatus != JCallStatusIdle) {
             self.cameraCloseButton.hidden = YES;
         }
+    } else if (self.callSession.mediaType == JCallMediaTypeVoice && self.callSession.isMultiCall) {
+        self.backgroundView.backgroundColor = ColorFromRGB(0x262e42);
+        self.backgroundView.hidden = NO;
+        self.topGradientView.hidden = YES;
+        self.bottomGradientView.hidden = YES;
+
+        self.blurView.hidden = NO;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.minimizeButton.frame = CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin + CallStatusBarHeight,
+                                                   CallButtonLength / 2, CallButtonLength / 2);
+            self.minimizeButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.minimizeButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.inviteUserButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin / 2 - CallButtonLength / 2,
+                           CallVerticalMargin + CallStatusBarHeight, CallButtonLength / 2, CallButtonLength / 2);
+            self.inviteUserButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.inviteUserButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.timeLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.timeLabel.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.timeLabel.hidden = YES;
+        }
+
+        // header orgin y = RCCallVerticalMargin * 2
+        if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           CallVerticalMargin * 2 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusIdle) {
+            self.tipsLabel.frame =
+            CGRectMake(CallHorizontalMargin,
+                       self.view.frame.size.height - CallVerticalMargin - CallButtonLength -
+                       CallInsideMargin * 3 - CallLabelHeight - CallExtraSpace,
+                       self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength -
+                               CallInsideMargin * 3 - CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        }
+        self.tipsLabel.hidden = NO;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.muteButton.frame = CGRectMake(CallHorizontalMargin,
+                                               self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                                               CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.muteButton];
+            self.muteButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.muteButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.speakerButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.speakerButton];
+            self.speakerButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.speakerButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.hangupButton.frame = CGRectMake(
+                CallHorizontalMargin, self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.acceptButton];
+            self.acceptButton.hidden = NO;
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        }
+
+        self.cameraCloseButton.hidden = YES;
+        self.cameraSwitchButton.hidden = YES;
+
+    } else if (self.callSession.mediaType == JCallMediaTypeVideo && self.callSession.isMultiCall) {
+        self.backgroundView.hidden = NO;
+
+        self.blurView.hidden = YES;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.minimizeButton.frame = CGRectMake(CallHorizontalMargin / 2, CallVerticalMargin + CallStatusBarHeight,
+                                                   CallButtonLength / 2, CallButtonLength / 2);
+            self.minimizeButton.hidden = NO;
+            self.topGradientView.hidden = NO;
+            self.bottomGradientView.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.minimizeButton.hidden = YES;
+            self.topGradientView.hidden = YES;
+            self.bottomGradientView.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.cameraSwitchButton.frame = CGRectMake(
+                self.view.frame.size.width - CallHorizontalMargin / 2 - CallButtonLength - CallInsideMargin,
+                CallVerticalMargin + CallStatusBarHeight, CallButtonLength / 2, CallButtonLength / 2);
+            self.cameraSwitchButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.cameraSwitchButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.inviteUserButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin / 2 - CallButtonLength / 2,
+                           CallVerticalMargin + CallStatusBarHeight, CallButtonLength / 2, CallButtonLength / 2);
+            self.inviteUserButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.inviteUserButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.timeLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallInsideMargin + CallLabelHeight + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+            self.timeLabel.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.timeLabel.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           CallVerticalMargin * 2 + CallHeaderLength + CallInsideMargin * 2 + CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin, CallVerticalMargin + CallStatusBarHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        } else if (self.callSession.callStatus == JCallStatusIdle) {
+            self.tipsLabel.frame =
+            CGRectMake(CallHorizontalMargin,
+                       self.view.frame.size.height - CallVerticalMargin - CallButtonLength * 3.5 -
+                       CallInsideMargin * 5 - CallLabelHeight - CallExtraSpace,
+                       self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        }  else {
+            self.tipsLabel.frame =
+                CGRectMake(CallHorizontalMargin,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength * 3.5 -
+                               CallInsideMargin * 5 - CallLabelHeight,
+                           self.view.frame.size.width - CallHorizontalMargin * 2, CallLabelHeight);
+        }
+        self.tipsLabel.hidden = NO;
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.muteButton.frame = CGRectMake(CallHorizontalMargin,
+                                               self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                                               CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.muteButton];
+            self.muteButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.muteButton.hidden = YES;
+        }
+
+        self.speakerButton.hidden = YES;
+
+        if (self.callSession.callStatus == JCallStatusOutgoing) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            self.hangupButton.frame = CGRectMake(
+                CallHorizontalMargin, self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace,
+                CallButtonLength, CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.acceptButton];
+            self.acceptButton.hidden = NO;
+        } else if (self.callSession.callStatus == JCallStatusConnected) {
+            self.hangupButton.frame =
+                CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.hangupButton];
+            self.hangupButton.hidden = NO;
+
+            self.acceptButton.hidden = YES;
+        }
+
+        if (self.callSession.callStatus == JCallStatusConnected) {
+            self.cameraCloseButton.frame =
+                CGRectMake(self.view.frame.size.width - CallHorizontalMargin - CallButtonLength,
+                           self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
+                           CallButtonLength);
+            [self layoutTextUnderImageButton:self.cameraCloseButton];
+            self.cameraCloseButton.hidden = NO;
+        } else if (self.callSession.callStatus != JCallStatusIdle) {
+            self.cameraCloseButton.hidden = YES;
+        }
     }
 }
 
@@ -307,19 +546,19 @@
 
 /// 用户被邀请
 /// - Parameter userId: 被邀请的用户 id
-- (void)usersDidInvite:(NSString *)userId {
+- (void)usersDidInvite:(NSArray<NSString *> *)userIdList {
     
 }
 
 /// 用户加入通话
 /// - Parameter userId: 用户 id
-- (void)usersDidConnect:(NSString *)userId {
+- (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
     
 }
 
 /// 用户退出通话
 /// - Parameter userId: 用户 id
-- (void)usersDidLeave:(NSString *)userId {
+- (void)usersDidLeave:(NSArray<NSString *> *)userIdList {
     
 }
 
@@ -435,6 +674,9 @@
         _inviteUserButton.hidden = YES;
     }
     return _inviteUserButton;
+}
+
+- (void)inviteUserButtonClicked {
 }
 
 - (UIButton *)minimizeButton {

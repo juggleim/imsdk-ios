@@ -56,7 +56,7 @@
 
 
 - (void)inviteUsers:(NSArray<NSString *> *)userIdList { 
-    
+    // TODO: 
 }
 
 - (void)enableCamera:(BOOL)isEnable {
@@ -407,12 +407,24 @@
     return _viewDic;
 }
 
+- (JCallMember *)currentCallMember {
+    JCallMember *current = [[JCallMember alloc] init];
+    JUserInfo *userInfo = [JIM.shared.userInfoManager getUserInfo:JIM.shared.currentUserId];
+    current.userInfo = userInfo;
+    current.callStatus = self.callStatus;
+    current.startTime = self.startTime;
+    current.connectTime = self.connectTime;
+    current.finishTime = self.finishTime;
+    current.inviter = [JIM.shared.userInfoManager getUserInfo:self.inviterId];
+    return current;
+}
+
 @synthesize callId;
 @synthesize callStatus;
 @synthesize connectTime;
 @synthesize finishReason;
 @synthesize finishTime;
-@synthesize inviter;
+@synthesize inviterId;
 @synthesize isMultiCall;
 @synthesize owner;
 @synthesize members = _members;

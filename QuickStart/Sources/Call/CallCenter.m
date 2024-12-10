@@ -7,6 +7,8 @@
 
 #import "CallCenter.h"
 #import "SingleCallViewController.h"
+#import "MultiAudioCallViewController.h"
+#import "MultiVideoCallViewController.h"
 
 @interface CallCenter () <JCallReceiveDelegate>
 @property(nonatomic, strong) NSMutableArray *callWindows;
@@ -35,6 +37,17 @@ static CallCenter *_instance;
 - (void)startSingleCall:(id<JCallSession>)callSession {
     SingleCallViewController *vc = [[SingleCallViewController alloc] initWithOutgoingCall:callSession];
     [self presentCallViewController:vc];
+}
+
+- (void)startMultiCall:(id<JCallSession>)callSession
+               groupId:(NSString *)groupId {
+    if (callSession.mediaType == JCallMediaTypeVideo) {
+        MultiVideoCallViewController *vc = [[MultiVideoCallViewController alloc] initWithOutgoingCall:callSession groupId:groupId];
+        [self presentCallViewController:vc];
+    } else if (callSession.mediaType == JCallMediaTypeVoice) {
+        MultiAudioCallViewController *vc = [[MultiAudioCallViewController alloc] initWithOutgoingCall:callSession groupId:groupId];
+        [self presentCallViewController:vc];
+    }
 }
 
 - (void)dismissCallViewController:(UIViewController *)vc {
@@ -80,8 +93,18 @@ static CallCenter *_instance;
 
 #pragma mark - JCallReceiveDelegate
 - (void)callDidReceive:(id<JCallSession>)callSession {
-    SingleCallViewController *vc = [[SingleCallViewController alloc] initWithIncomingCall:callSession];
-    [self presentCallViewController:vc];
+    if (callSession.isMultiCall) {
+        if (callSession.mediaType == JCallMediaTypeVoice) {
+            MultiAudioCallViewController *vc = [[MultiAudioCallViewController alloc] initWithIncomingCall:callSession groupId:@""];
+            [self presentCallViewController:vc];
+        } else if (callSession.mediaType == JCallMediaTypeVideo) {
+            MultiVideoCallViewController *vc = [[MultiVideoCallViewController alloc] initWithIncomingCall:callSession groupId:@""];
+            [self presentCallViewController:vc];
+        }
+    } else {
+        SingleCallViewController *vc = [[SingleCallViewController alloc] initWithIncomingCall:callSession];
+        [self presentCallViewController:vc];
+    }
 }
 
 @end
