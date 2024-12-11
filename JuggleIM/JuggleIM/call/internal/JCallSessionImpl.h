@@ -29,6 +29,7 @@
 - (void)addMember:(JCallMember *)member;
 - (void)addInviteMembers:(NSArray<JUserInfo *> *)targetUsers
                  inviter:(JUserInfo *)inviter;
+- (void)membersInviteBySelf:(NSArray <NSString *> *)userIdList;
 - (void)removeMember:(NSString *)userId;
 - (void)membersConnected:(NSArray <NSString *> *)userIdList;
 - (void)cameraEnable:(BOOL)enable
@@ -36,6 +37,7 @@
 
 #pragma mark - signal
 - (void)signalInvite;
+- (void)signalInvite:(NSArray <NSString *> *)userIdList;
 - (void)signalHangup;
 - (void)signalAccept;
 - (void)signalConnected;

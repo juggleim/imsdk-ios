@@ -75,7 +75,9 @@ typedef NS_ENUM(NSInteger, JCallErrorCode) {
     /// 加入 Media 房间失败
     JCallErrorCodeJoinMediaRoomFail = 4,
     /// 参数错误
-    JCallErrorCodeInvalidParameter = 5
+    JCallErrorCodeInvalidParameter = 5,
+    /// 邀请失败
+    JCallErrorCodeInviteFail = 6
 };
 
 #endif /* JCallConst_h */

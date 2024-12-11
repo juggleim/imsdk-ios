@@ -54,9 +54,8 @@
     [self event:JCallEventHangup userInfo:nil];
 }
 
-
 - (void)inviteUsers:(NSArray<NSString *> *)userIdList { 
-    // TODO: 
+    [self event:JCallEventInvite userInfo:@{@"userIdList":userIdList}];
 }
 
 - (void)enableCamera:(BOOL)isEnable {
@@ -173,6 +172,42 @@
     [self.members addObject:member];
 }
 
+- (void)membersInviteBySelf:(NSArray<NSString *> *)userIdList {
+    NSMutableArray *resultList = [NSMutableArray array];
+    for (NSString *userId in userIdList) {
+        BOOL isExist = NO;
+        for (JCallMember *member in self.members) {
+            if ([userId isEqualToString:member.userInfo.userId]) {
+                isExist = YES;
+                break;
+            }
+        }
+        if (!isExist) {
+            JCallMember *newMember = [[JCallMember alloc] init];
+            JUserInfo *userInfo = [JIM.shared.userInfoManager getUserInfo:userId];
+            if (!userInfo) {
+                userInfo = [[JUserInfo alloc] init];
+                userInfo.userId = userId;
+            }
+            newMember.userInfo = userInfo;
+            newMember.callStatus = JCallStatusIncoming;
+            newMember.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+            newMember.inviter = [JIM.shared.userInfoManager getUserInfo:self.core.userId];
+            [self.members addObject:newMember];
+            [resultList addObject:userId];
+        }
+    }
+    if (resultList.count > 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(usersDidInvite:inviterId:)]) {
+                    [obj usersDidInvite:resultList inviterId:self.core.userId];
+                }
+            }];
+        });
+    }
+}
+
 - (void)addInviteMembers:(NSArray<JUserInfo *> *)targetUsers
                  inviter:(JUserInfo *)inviter {
     NSMutableArray *userIdList = [NSMutableArray array];
@@ -251,15 +286,19 @@
     for (JCallMember *member in self.members) {
         [targetIds addObject:member.userInfo.userId];
     }
+    [self signalInvite:targetIds];
+}
+
+- (void)signalInvite:(NSArray<NSString *> *)userIdList {
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:self.isMultiCall
                           mediaType:self.mediaType
-                       targetIdList:targetIds
+                       targetIdList:userIdList
                          engineType:(NSUInteger)self.engineType
                             success:^(NSString *zegoToken){
         JLogI(@"Call-Signal", @"send invite success");
         self.zegoToken = zegoToken;
-        [self event:JCallEventInviteDone userInfo:nil];
+        [self event:JCallEventInviteDone userInfo:@{@"userIdList":userIdList}];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
         [self event:JCallEventInviteFail userInfo:nil];

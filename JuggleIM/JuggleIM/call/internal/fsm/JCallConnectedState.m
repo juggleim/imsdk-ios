@@ -7,6 +7,7 @@
 
 #import "JCallConnectedState.h"
 #import "JLogger.h"
+#import "JCallEvent.h"
 
 #define JRtcPingInterval 5
 
@@ -30,6 +31,35 @@
 - (BOOL)event:(NSInteger)event
      userInfo:(NSDictionary *)userInfo {
     BOOL result = NO;
+    switch (event) {
+        case JCallEventInvite:
+        {
+            NSArray <NSString *> *userIdList = userInfo[@"userIdList"];
+            [self.callSessionImpl signalInvite:userIdList];
+            result = YES;
+            break;
+        }
+            
+        case JCallEventInviteDone:
+        {
+            NSArray <NSString *> *userIdList = userInfo[@"userIdList"];
+            [self.callSessionImpl membersInviteBySelf:userIdList];
+            result = YES;
+            break;
+        }
+            
+        case JCallEventInviteFail:
+        {
+            [self.callSessionImpl error:JCallErrorCodeInviteFail];
+            result = YES;
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+    
     return result;
 }
 

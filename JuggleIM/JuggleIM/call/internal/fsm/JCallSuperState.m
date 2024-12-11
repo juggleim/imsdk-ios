@@ -27,18 +27,21 @@
 //            [self.callSessionImpl error:JCallErrorCodeCallExist];
             // do nothing
             // idle 状态处理
+            // connected 状态处理
             // 其它状态下 invite 两次不会是同一个 callSession
             break;
             
         case JCallEventInviteDone:
             // do nothing
             // outgoing 状态处理
+            // connected 状态处理
             // 其它状态下忽略
             break;
             
         case JCallEventInviteFail:
             // do nothing
             // outgoing 状态处理
+            // connected 状态处理
             // 其它状态下忽略
             break;
             
