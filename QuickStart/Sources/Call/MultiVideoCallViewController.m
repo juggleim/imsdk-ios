@@ -293,6 +293,7 @@
         [existUserIdList addObject:member.userInfo.userId];
     }
     
+//    UINavigationController *root = [[UINavigationController alloc] ]
     GroupMemberSelectViewController *vc = [[GroupMemberSelectViewController alloc] init];
     vc.type = GroupMemberSelectTypeVideoCall;
     vc.groupId = self.groupId;

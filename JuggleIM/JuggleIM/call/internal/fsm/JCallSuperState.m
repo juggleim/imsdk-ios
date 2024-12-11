@@ -70,6 +70,15 @@
             [self.callSessionImpl transitionToIdleState];
             break;
             
+        case JCallEventReceiveSelfQuit:
+            if (self.callSessionImpl.callStatus == JCallStatusConnected) {
+                self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
+            } else if (self.callSessionImpl.callStatus == JCallStatusIncoming) {
+                self.callSessionImpl.finishReason = JCallFinishReasonNoResponse;
+            }
+            [self.callSessionImpl transitionToIdleState];
+            break;
+            
         case JCallEventRoomDestroy:
             self.callSessionImpl.finishReason = JCallFinishReasonRoomDestroy;
             [self.callSessionImpl transitionToIdleState];

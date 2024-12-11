@@ -29,8 +29,8 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventReceiveInvite,
     JCallEventReceiveInviteOthers,
     JCallEventReceiveAccept,
-    //JCallEventReceiveAddParticipants,
     JCallEventReceiveHangup,
+    JCallEventReceiveSelfQuit,
     JCallEventReceiveQuit,
     JCallEventRoomDestroy,
     

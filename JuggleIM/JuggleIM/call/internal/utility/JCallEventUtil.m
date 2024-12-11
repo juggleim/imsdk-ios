@@ -26,6 +26,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventReceiveInviteOthers] = @"receive invite others",
     [JCallEventReceiveAccept] = @"receive accept",
     [JCallEventReceiveHangup] = @"receive hang up",
+    [JCallEventReceiveSelfQuit] = @"receive self quit",
     [JCallEventReceiveQuit] = @"receive quit",
     [JCallEventRoomDestroy] = @"room destroy",
     

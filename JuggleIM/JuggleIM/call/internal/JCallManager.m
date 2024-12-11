@@ -126,7 +126,7 @@
 #pragma mark - JWebSocketCallDelegate
 - (void)callDidInvite:(JRtcRoom *)room
               inviter:(JUserInfo *)inviter
-          targetUsers:(NSArray<JUserInfo *> *)targetUsers {    
+          targetUsers:(NSArray<JUserInfo *> *)targetUsers {
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     for (JCallMember *member in room.members) {
         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
@@ -183,8 +183,12 @@
 
 - (void)callDidQuit:(JRtcRoom *)room members:(NSArray<JCallMember *> *)members {
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+    BOOL includeCurrent = NO;
     for (JCallMember *member in members) {
         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+        if ([self.core.userId isEqualToString:member.userInfo.userId]) {
+            includeCurrent = YES;
+        }
     }
     [self.core.dbManager insertUserInfos:userDic.allValues];
     
@@ -192,8 +196,12 @@
     if (!callSession) {
         return;
     }
-    NSDictionary *userInfo = @{@"userIdList" : userDic.allKeys};
-    [callSession event:JCallEventReceiveQuit userInfo:userInfo];
+    if (includeCurrent) {
+        [callSession event:JCallEventReceiveSelfQuit userInfo:nil];
+    } else {
+        NSDictionary *userInfo = @{@"userIdList" : userDic.allKeys};
+        [callSession event:JCallEventReceiveQuit userInfo:userInfo];
+    }
 }
 
 - (void)callDidAccept:(JRtcRoom *)room
