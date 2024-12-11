@@ -325,16 +325,16 @@
 
 #pragma mark - JCallSessionDelegate
 - (void)callDidConnect {
-    [self.userCollectionView removeFromSuperview];
-    _userCollectionView = nil;
-    if (![self.callSession.owner isEqualToString:JIM.shared.currentUserId]) {
-        [self.subUserModelList removeObject:[self getModelInSubUserModelList:JIM.shared.currentUserId]];
-        [self.subUserModelList addObject:self.mainModel];
-        self.mainModel = nil;
-    }
-    [self userCollectionView];
-    [self updateAllSubUserLayout];
-    [self resetLayout];
+//    [self.userCollectionView removeFromSuperview];
+//    _userCollectionView = nil;
+//    if (![self.callSession.owner isEqualToString:JIM.shared.currentUserId]) {
+//        [self.subUserModelList removeObject:[self getModelInSubUserModelList:JIM.shared.currentUserId]];
+//        [self.subUserModelList addObject:self.mainModel];
+//        self.mainModel = nil;
+//    }
+//    [self userCollectionView];
+//    [self updateAllSubUserLayout];
+//    [self resetLayout];
 }
 
 - (void)usersDidInvite:(NSArray<NSString *> *)userIdList

@@ -295,8 +295,11 @@
     }
     [userIdList enumerateObjectsUsingBlock:^(NSString * _Nonnull userId, NSUInteger idx, BOOL * _Nonnull stop) {
         JCallMember *member = [[JCallMember alloc] init];
-        JUserInfo *userInfo = [[JUserInfo alloc] init];
-        userInfo.userId = userId;
+        JUserInfo *userInfo = [JIM.shared.userInfoManager getUserInfo:userId];
+        if (!userInfo) {
+            userInfo = [[JUserInfo alloc] init];
+            userInfo.userId = userId;
+        }
         member.userInfo = userInfo;
         member.callStatus = JCallStatusIncoming;
         member.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
