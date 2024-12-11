@@ -1089,7 +1089,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         selectMemberVC.type = type
         selectMemberVC.groupId = self.baseViewModel?.conversationInfo?.conversation.conversationId ?? ""
         selectMemberVC.delegate = self
-        self.navigationController?.pushViewController(selectMemberVC, animated: true)
+        let root = UINavigationController(rootViewController: selectMemberVC)
+        self.present(root, animated: true)
     }
     
     // Shows permission request alert.

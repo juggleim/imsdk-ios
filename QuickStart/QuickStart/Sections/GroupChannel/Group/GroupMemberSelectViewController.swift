@@ -58,7 +58,7 @@ import JuggleIM
     }
     
     @objc func onClickMenu() {
-        self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true)
         self.delegate?.membersDidSelect(type: self.type, members: Array(selectedUsers))
     }
     

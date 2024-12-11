@@ -260,7 +260,8 @@
     vc.existedUsers = existUserIdList;
     vc.delegate = self;
     
-    [self presentViewController:vc animated:true completion:nil];
+    UINavigationController *root = [[UINavigationController alloc] initWithRootViewController:vc];
+    [self presentViewController:root animated:true completion:nil];
 }
 
 - (void)resetLayout {
@@ -416,8 +417,8 @@
 #pragma mark - GroupMemberSelectVCDelegate
 - (void)membersDidSelectWithType:(enum GroupMemberSelectType)type members:(NSArray<JUserInfo *> * _Nonnull)members {
     NSMutableArray *userIdList = [[NSMutableArray alloc] init];
-    for (JCallMember *member in members) {
-        [userIdList addObject:member.userInfo.userId];
+    for (JUserInfo *userInfo in members) {
+        [userIdList addObject:userInfo.userId];
     }
     
     [self.callSession inviteUsers:userIdList];
