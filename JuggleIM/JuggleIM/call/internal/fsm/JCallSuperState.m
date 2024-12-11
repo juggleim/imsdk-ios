@@ -43,11 +43,20 @@
             break;
             
         case JCallEventReceiveInvite:
-            // TODO: 多人通话的处理
             // do nothing
             // idle 状态处理
             // 其它状态下忽略（服务端不会给已在房间内的用户发送同一个 callId 的 invite）
             break;
+            
+        case JCallEventReceiveInviteOthers:
+            // idle 状态 do nothing
+            // 其它状态统一由这里处理
+        {
+            JUserInfo *inviter = userInfo[@"inviter"];
+            NSArray<JUserInfo *> *targetUsers = userInfo[@"targetUsers"];
+            [self.callSessionImpl addInviteMembers:targetUsers inviter:inviter];
+            break;
+        }
             
         case JCallEventHangup:
             if (self.callSessionImpl.callStatus == JCallStatusIncoming) {
@@ -136,7 +145,12 @@
             break;
             
         case JCallEventParticipantEnableCamera:
+        {
+            BOOL enable = [(NSNumber *)userInfo[@"enable"] boolValue];
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl cameraEnable:enable userId:userId];
             break;
+        }
             
         case JCallEventParticipantEnableMic:
             break;

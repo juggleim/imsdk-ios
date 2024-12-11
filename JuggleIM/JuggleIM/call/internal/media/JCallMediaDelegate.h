@@ -14,6 +14,9 @@
 
 - (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
 
+- (void)userCamaraDidChange:(BOOL)enable
+                     userId:(NSString *)userId;
+
 @end
 
 #endif /* JCallMediaDelegate_h */

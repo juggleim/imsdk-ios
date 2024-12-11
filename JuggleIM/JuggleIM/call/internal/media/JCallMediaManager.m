@@ -110,4 +110,10 @@ static JCallMediaManager *_instance;
     }
 }
 
+- (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
+        [self.delegate userCamaraDidChange:enable userId:userId];
+    }
+}
+
 @end

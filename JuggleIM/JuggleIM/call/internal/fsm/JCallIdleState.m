@@ -33,6 +33,11 @@
             result = YES;
             break;
             
+        case JCallEventReceiveInviteOthers:
+            // do nothing
+            result = YES;
+            break;
+            
         default:
             break;
     }

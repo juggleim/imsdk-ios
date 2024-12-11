@@ -126,23 +126,26 @@
 #pragma mark - JWebSocketCallDelegate
 - (void)callDidInvite:(JRtcRoom *)room
               inviter:(JUserInfo *)inviter
-          targetUsers:(NSArray<JUserInfo *> *)targetUsers {
-    //TODO: 多人通话的 callSession 更新
-    
+          targetUsers:(NSArray<JUserInfo *> *)targetUsers {    
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
-    [userDic setObject:inviter forKey:inviter.userId];
-    [userDic setObject:room.owner forKey:room.owner.userId];
-    BOOL isInvite = NO;
-    for (JUserInfo *userInfo in targetUsers) {
-        [userDic setObject:userInfo forKey:userInfo.userId];
-        if ([userInfo.userId isEqualToString:self.core.userId]) {
-            isInvite = YES;
-        }
+    for (JCallMember *member in room.members) {
+        [userDic setObject:member.userInfo forKey:member.userInfo.userId];
     }
     [self.core.dbManager insertUserInfos:userDic.allValues];
-    if (isInvite) {
-        JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
-        if (!callSession) {
+    
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (callSession) {
+        [callSession event:JCallEventReceiveInviteOthers userInfo:@{@"inviter":inviter, @"targetUsers":targetUsers}];
+    } else {
+        BOOL isInvite = NO;
+        for (JUserInfo *userInfo in targetUsers) {
+            [userDic setObject:userInfo forKey:userInfo.userId];
+            if ([userInfo.userId isEqualToString:self.core.userId]) {
+                isInvite = YES;
+            }
+        }
+        
+        if (isInvite) {
             callSession = [self createCallSessionImpl:room.roomId
                                           isMultiCall:room.isMultiCall];
             callSession.owner = room.owner.userId;
@@ -153,14 +156,14 @@
             } else {
                 [[JCallMediaManager shared] enableCamera:NO];
             }
-            JCallMember *member = [[JCallMember alloc] init];
-            member.userInfo = inviter;
-            member.callStatus = JCallStatusOutgoing;
-            [callSession addMember:member];
+            for (JCallMember *member in room.members) {
+                if (![member.userInfo.userId isEqualToString:self.core.userId]) {
+                    [callSession addMember:member];
+                }
+            }
             [self addCallSession:callSession];
+            [callSession event:JCallEventReceiveInvite userInfo:nil];
         }
-        
-        [callSession event:JCallEventReceiveInvite userInfo:nil];
     }
 }
 
@@ -288,6 +291,9 @@
         userInfo.userId = userId;
         member.userInfo = userInfo;
         member.callStatus = JCallStatusIncoming;
+        member.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+        JUserInfo *inviter = [JIM.shared.userInfoManager getUserInfo:self.core.userId];
+        member.inviter = inviter;
         [callSession addMember:member];
     }];
     
@@ -297,7 +303,6 @@
     [self addCallSession:callSession];
     return callSession;
 }
-
 
 - (void)initCallSession:(JCallSessionImpl *)callSession
          withCallStatus:(JCallStatus)callStatus {

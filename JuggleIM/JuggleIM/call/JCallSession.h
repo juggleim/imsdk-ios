@@ -24,7 +24,8 @@
 
 /// 用户被邀请（多人通话中使用）
 /// - Parameter userId: 被邀请的用户 id
-- (void)usersDidInvite:(NSArray <NSString *> *)userIdList;
+- (void)usersDidInvite:(NSArray <NSString *> *)userIdList
+             inviterId:(NSString *)inviterId;
 
 /// 用户加入通话（多人通话中使用）
 /// - Parameter userId: 用户 id

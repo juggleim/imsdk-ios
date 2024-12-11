@@ -16,6 +16,9 @@
 
 - (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
 
+- (void)userCamaraDidChange:(BOOL)enable
+                     userId:(NSString *)userId;
+
 @optional
 //暂不处理
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;

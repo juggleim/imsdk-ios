@@ -546,8 +546,9 @@
 
 /// 用户被邀请
 /// - Parameter userId: 被邀请的用户 id
-- (void)usersDidInvite:(NSArray<NSString *> *)userIdList {
-    
+- (void)usersDidInvite:(NSArray<NSString *> *)userIdList
+             inviterId:(NSString *)inviterId {
+    [self resetLayout];
 }
 
 /// 用户加入通话
@@ -568,7 +569,7 @@
 ///   - userId: 用户 id
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId {
-    
+    [self resetLayout];
 }
 
 /// 用户开启/关闭麦克风
@@ -858,21 +859,26 @@
                                 forState:UIControlStateHighlighted];
             [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraCloseHover"] forState:UIControlStateSelected];
             [_cameraCloseButton
-                setTitle:@"Camera close"
+                setTitle:@"Off"
                 forState:UIControlStateNormal];
             [_cameraCloseButton
-                setTitle:@"Camera open"
+                setTitle:@"On"
              forState:UIControlStateSelected];
         } else {
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraClose"]
+                                forState:UIControlStateNormal];
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraCloseHover"]
+                                forState:UIControlStateHighlighted];
+            [_cameraCloseButton setImage:[UIImage imageNamed:@"callCameraCloseHover"] forState:UIControlStateSelected];
 //            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/video.png"]
 //                                forState:UIControlStateNormal];
 //            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/video.png"]
 //                                forState:UIControlStateHighlighted];
 //            [_cameraCloseButton setImage:[RCCallKitUtility imageFromVoIPBundle:@"voip/video_hover_.png"]
 //                                forState:UIControlStateSelected];
-            [_cameraCloseButton setTitle:@"Turn off camera"
+            [_cameraCloseButton setTitle:@"Off"
                                 forState:UIControlStateNormal];
-            [_cameraCloseButton setTitle:@"Turn on camera"
+            [_cameraCloseButton setTitle:@"On"
                                 forState:UIControlStateSelected];
         }
 

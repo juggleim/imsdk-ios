@@ -64,13 +64,17 @@
 }
 
 - (void)setVideoView:(UIView *)view forUserId:(NSString *)userId {
-    if (userId.length == 0 || !view) {
+    if (userId.length == 0) {
         return;
     }
     if ([userId isEqualToString:JIM.shared.currentUserId]) {
         [[JCallMediaManager shared] startPreview:view];
     } else {
-        [self.viewDic setObject:view forKey:userId];
+        if (view) {
+            [self.viewDic setObject:view forKey:userId];
+        } else {
+            [self.viewDic removeObjectForKey:userId];
+        }
         if (self.callStatus == JCallStatusConnected) {
             [[JCallMediaManager shared] setVideoView:view roomId:self.callId userId:userId];
         }
@@ -98,6 +102,7 @@
 }
 
 #pragma mark - JCallSessionImpl
+/// 下面方法都在状态机中调用
 - (void)error:(JCallErrorCode)code {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -168,6 +173,41 @@
     [self.members addObject:member];
 }
 
+- (void)addInviteMembers:(NSArray<JUserInfo *> *)targetUsers
+                 inviter:(JUserInfo *)inviter {
+    NSMutableArray *userIdList = [NSMutableArray array];
+    for (JUserInfo *userInfo in targetUsers) {
+        if ([userInfo.userId isEqualToString:self.core.userId]) {
+            continue;
+        }
+        BOOL isExist = NO;
+        for (JCallMember *member in self.members) {
+            if ([userInfo.userId isEqualToString:member.userInfo.userId]) {
+                isExist = YES;
+                break;
+            }
+        }
+        if (!isExist) {
+            JCallMember *newMember = [[JCallMember alloc] init];
+            newMember.userInfo = userInfo;
+            newMember.callStatus = JCallStatusIncoming;
+            newMember.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+            newMember.inviter = inviter;
+            [self.members addObject:newMember];
+            [userIdList addObject:userInfo.userId];
+        }
+    }
+    if (userIdList.count > 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(usersDidInvite:inviterId:)]) {
+                    [obj usersDidInvite:userIdList inviterId:inviter.userId];
+                }
+            }];
+        });
+    }
+}
+
 - (void)removeMember:(NSString *)userId {
     for (JCallMember *member in self.members) {
         if ([member.userInfo.userId isEqualToString:userId]) {
@@ -190,6 +230,16 @@
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(usersDidConnect:)]) {
                 [obj usersDidConnect:userIdList];
+            }
+        }];
+    });
+}
+
+- (void)cameraEnable:(BOOL)enable userId:(NSString *)userId {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
+                [obj userCamaraDidChange:enable userId:userId];
             }
         }];
     });
@@ -321,6 +371,10 @@
 
 - (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
     [self event:JCallEventParticipantJoinChannel userInfo:@{@"userIdList":userIdList}];
+}
+
+- (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
+    [self event:JCallEventParticipantEnableCamera userInfo:@{@"enable":@(enable), @"userId":userId}];
 }
 
 #pragma mark - private

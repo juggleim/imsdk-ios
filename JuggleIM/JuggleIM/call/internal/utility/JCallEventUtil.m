@@ -23,6 +23,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventIncomingTimeOut] = @"incoming time out",
     
     [JCallEventReceiveInvite] = @"receive invite",
+    [JCallEventReceiveInviteOthers] = @"receive invite others",
     [JCallEventReceiveAccept] = @"receive accept",
     [JCallEventReceiveHangup] = @"receive hang up",
     [JCallEventReceiveQuit] = @"receive quit",

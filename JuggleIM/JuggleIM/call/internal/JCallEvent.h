@@ -27,6 +27,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     
     /// Signal incoming
     JCallEventReceiveInvite,
+    JCallEventReceiveInviteOthers,
     JCallEventReceiveAccept,
     //JCallEventReceiveAddParticipants,
     JCallEventReceiveHangup,

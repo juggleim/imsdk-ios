@@ -336,7 +336,8 @@
     [self resetLayout];
 }
 
-- (void)usersDidInvite:(NSArray<NSString *> *)userIdList {
+- (void)usersDidInvite:(NSArray<NSString *> *)userIdList
+             inviterId:(NSString *)inviterId {
     for (NSString *userId in userIdList) {
         JCallMember *model = [self getCallMember:userId];
         if (!model) {

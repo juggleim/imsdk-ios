@@ -12,7 +12,7 @@
 #import "QuickStart-Swift.h"
 #import "CallTheme.h"
 
-@interface MultiVideoCallViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface MultiVideoCallViewController () <GroupMemberSelectVCDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, copy) NSString *groupId;
 
 @property(nonatomic, strong) JCallMember *mainModel;
@@ -395,7 +395,8 @@
     [self resetLayout];
 }
 
-- (void)usersDidInvite:(NSArray<NSString *> *)userIdList {
+- (void)usersDidInvite:(NSArray<NSString *> *)userIdList
+             inviterId:(NSString *)inviterId {
     for (NSString *userId in userIdList) {
         JCallMember *model = [self getCallMember:userId];
         if (!model) {
@@ -459,6 +460,19 @@
     }
 }
 
+- (void)userCamaraDidChange:(BOOL)enable
+                     userId:(NSString *)userId {
+    if ([userId isEqualToString:self.mainModel.userInfo.userId]) {
+        if (enable) {
+            [self.callSession setVideoView:self.backgroundView forUserId:userId];
+        } else {
+            [self.callSession setVideoView:nil forUserId:userId];
+        }
+    } else {
+        [self updateSubUserLayout:[self getModelInSubUserModelList:userId]];
+    }
+}
+
 #pragma mark - UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.subUserModelList.count;
@@ -486,4 +500,16 @@
 
     [self updateSubUserLayout:tempModel];
 }
+
+
+#pragma mark - GroupMemberSelectVCDelegate
+- (void)membersDidSelectWithType:(enum GroupMemberSelectType)type members:(NSArray<JUserInfo *> * _Nonnull)members {
+    NSMutableArray *userIdList = [[NSMutableArray alloc] init];
+    for (JCallMember *member in members) {
+        [userIdList addObject:member.userInfo.userId];
+    }
+    
+    [self.callSession inviteUsers:userIdList];
+}
+
 @end

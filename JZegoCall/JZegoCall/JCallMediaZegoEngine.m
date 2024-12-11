@@ -61,7 +61,7 @@
 - (void)setVideoView:(UIView *)view
               roomId:(NSString *)roomId
               userId:(NSString *)userId {
-    if (!view || roomId.length == 0 || userId.length == 0) {
+    if (roomId.length == 0 || userId.length == 0) {
         return;
     }
     NSString *streamId = [self streamIdWithRoomId:roomId
@@ -90,16 +90,25 @@
     if (updateType == ZegoUpdateTypeAdd) {
         for (ZegoStream *stream in streamList) {
             NSString *streamId = stream.streamID;
-            NSArray *array = [streamId componentsSeparatedByString:jSeperator];
-            NSUInteger length = array.count;
+            NSString *userId = [self userIdWithStreamId:streamId];
             UIView *view = nil;
-            if (length > 1) {
-                NSString *userId = array[length-1];
-                if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
-                    view = [self.delegate viewForUserId:userId];
-                }
+            if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
+                view = [self.delegate viewForUserId:userId];
             }
             [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[ZegoCanvas canvasWithView:view]];
+        }
+    }
+}
+
+- (void)onRemoteCameraStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    NSString *userId = [self userIdWithStreamId:streamID];
+    if (state == ZegoRemoteDeviceStateOpen) {
+        if ([self.delegate respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
+            [self.delegate userCamaraDidChange:YES userId:userId];
+        }
+    } else if (state == ZegoRemoteDeviceStateDisable) {
+        if ([self.delegate respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
+            [self.delegate userCamaraDidChange:NO userId:userId];
         }
     }
 }
@@ -135,6 +144,16 @@
     NSString *streamId = [roomId stringByAppendingString:jSeperator];
     streamId = [streamId stringByAppendingString:userId];
     return streamId;
+}
+
+- (NSString *)userIdWithStreamId:(NSString *)streamId {
+    NSArray *array = [streamId componentsSeparatedByString:jSeperator];
+    NSUInteger length = array.count;
+    NSString *userId = @"";
+    if (length > 1) {
+        userId = array[length-1];
+    }
+    return userId;
 }
 
 @end
