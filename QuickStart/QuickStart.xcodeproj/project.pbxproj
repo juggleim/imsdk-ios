@@ -255,6 +255,7 @@
 		A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5322D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m */; };
 		A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */; };
 		A0A3A5392D082037009AD7C3 /* MultiCallUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */; };
+		A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */; };
 		A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */; };
 		A0B4C3AA2C636188005AFCEC /* GroupNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */; };
 		A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */; };
@@ -546,6 +547,7 @@
 		A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiVideoCallUserCollectionLayout.m; sourceTree = "<group>"; };
 		A0A3A5372D082037009AD7C3 /* MultiCallUserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiCallUserCell.h; sourceTree = "<group>"; };
 		A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiCallUserCell.m; sourceTree = "<group>"; };
+		A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushKit.framework; path = System/Library/Frameworks/PushKit.framework; sourceTree = SDKROOT; };
 		A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
 		A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessage.swift; sourceTree = "<group>"; };
 		A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
@@ -574,6 +576,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
 				A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */,
@@ -1169,6 +1172,7 @@
 		A07F3CB02BF74F3E0087920B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */,
 				A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */,
 				A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */,
 				A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */,

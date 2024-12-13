@@ -7,9 +7,10 @@
 
 import UIKit
 import JuggleIM
+import PushKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, PKPushRegistryDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -25,6 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 //        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f")
         CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
+        
+//        let pushRegistry = PKPushRegistry(queue: .main)
+//        pushRegistry.delegate = self
+//        pushRegistry.desiredPushTypes = [.voIP]
         
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             switch settings.authorizationStatus {
@@ -62,6 +67,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
         SBULog.info("fail to register token, error is \(error.localizedDescription)")
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        let deviceToken = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
+        print("VoIP 推送令牌: \(deviceToken)")
+    }
+    
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        print("收到 VoIP 推送: \(payload.dictionaryPayload)")
     }
 
     // MARK: UISceneSession Lifecycle
