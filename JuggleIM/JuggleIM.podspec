@@ -24,7 +24,7 @@ Juggle IM SDK for iOS.
   s.homepage         = 'https://www.jugglechat.com/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggleim.com/libs/ios/JuggleIM_v1_8_2_1.zip' }
+  s.source           = { :http => 'https://downloads.juggleim.com/libs/ios/JuggleIM_v1_8_3.zip' }
 
   s.ios.deployment_target = '12.0'
   
