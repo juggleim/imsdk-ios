@@ -65,7 +65,6 @@ static CallCenter *_instance;
     });
 }
 
-
 - (void)presentCallViewController:(UIViewController *)viewController {
     //后台回前台的瞬间 activationState 是 UISceneActivationStateForegroundInactive
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
