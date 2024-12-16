@@ -67,6 +67,9 @@
 
 - (void)connectWithToken:(NSString *)token {
     JLogI(@"CON-Connect", @"token is %@", token);
+    if (token.length == 0) {
+        token = @"";
+    }
     [self event:JConnEventUserConnect userInfo:@{@"token":token}];
 }
 
