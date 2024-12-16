@@ -2050,7 +2050,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.2.1;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2097,7 +2097,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.2.1;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
