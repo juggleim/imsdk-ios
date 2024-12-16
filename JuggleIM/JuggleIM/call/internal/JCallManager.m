@@ -112,6 +112,14 @@
     }];
 }
 
+- (void)imKick {
+    @synchronized (self) {
+        for (JCallSessionImpl *loopSession in self.callSessionList) {
+            [loopSession event:JCallEventHangup userInfo:nil];
+        }
+    }
+}
+
 #pragma mark - JWebSocketCallDelegate
 - (void)callDidInvite:(JRtcRoom *)room
               inviter:(JUserInfo *)inviter

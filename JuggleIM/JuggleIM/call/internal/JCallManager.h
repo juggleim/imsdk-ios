@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JCallManager : NSObject <JCallProtocol>
 - (instancetype)initWithCore:(JIMCore *)core;
 - (void)connectSuccess;
+// IM 被踢下线
+- (void)imKick;
 @end
 
 NS_ASSUME_NONNULL_END

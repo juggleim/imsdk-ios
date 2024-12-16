@@ -271,6 +271,9 @@
 - (void)notify:(JConnectionStatus)status
           code:(JErrorCode)code
          extra:(NSString *)extra {
+    if (code == JErrorCodeUserKickedByOtherClient) {
+        [self.callManager imKick];
+    }
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConnectionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(connectionStatusDidChange:errorCode:extra:)]) {
