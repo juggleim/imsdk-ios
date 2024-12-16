@@ -31,6 +31,7 @@
 @property (nonatomic, strong) NSHashTable <id<JConnectionDelegate>> *delegates;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
+@property (nonatomic, copy) NSString *voipPushToken;
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) JReachability *reachability;
@@ -99,6 +100,30 @@
         JLogI(@"CON-Token", @"success");
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CON-Token", @"fail, code is %lu", code);
+    }];
+}
+
+- (void)registerVoIPToken:(NSData *)tokenData {
+    if (![tokenData isKindOfClass:[NSData class]]) {
+        JLogE(@"CON-Token", @"VoIP tokenData 类型错误，请直接将 pushRegistry:didUpdatePushCredentials:forType 方法中的 "
+              @"credentials.token 传入");
+        return;
+    }
+    JLogI(@"CON-Token", @"VoIP");
+    NSUInteger len = [tokenData length];
+    char *chars = (char *)[tokenData bytes];
+    NSMutableString *hexString = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < len; i++) {
+        [hexString appendString:[NSString stringWithFormat:@"%0.2hhx", chars[i]]];
+    }
+    self.voipPushToken = hexString;
+    
+    [self.core.webSocket registerVoIPToken:hexString
+                                    userId:self.core.userId
+                                   success:^{
+        JLogI(@"CON-Token", @"voip success");
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CON-Token", @"voip fail, code is %lu", code);
     }];
 }
 
@@ -227,6 +252,7 @@
     [self.core.webSocket connect:self.core.appKey
                            token:self.core.token
                        pushToken:self.pushToken
+                       voipToken:self.voipPushToken
                          servers:self.core.servers];
     
 //    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls

@@ -101,6 +101,7 @@ typedef GPB_ENUM(RegPushTokenReq_FieldNumber) {
   RegPushTokenReq_FieldNumber_PushChannel = 3,
   RegPushTokenReq_FieldNumber_PushToken = 4,
   RegPushTokenReq_FieldNumber_PackageName = 5,
+  RegPushTokenReq_FieldNumber_VoipToken = 6,
 };
 
 GPB_FINAL @interface RegPushTokenReq : GPBMessage
@@ -114,6 +115,8 @@ GPB_FINAL @interface RegPushTokenReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *pushToken;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *packageName;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *voipToken;
 
 @end
 

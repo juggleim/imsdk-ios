@@ -149,6 +149,7 @@ BOOL PushChannel_IsValidValue(int32_t value__) {
 @dynamic pushChannel;
 @dynamic pushToken;
 @dynamic packageName;
+@dynamic voipToken;
 
 typedef struct RegPushTokenReq__storage_ {
   uint32_t _has_storage_[1];
@@ -157,6 +158,7 @@ typedef struct RegPushTokenReq__storage_ {
   NSString *deviceId;
   NSString *pushToken;
   NSString *packageName;
+  NSString *voipToken;
 } RegPushTokenReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -211,6 +213,15 @@ typedef struct RegPushTokenReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "voipToken",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RegPushTokenReq_FieldNumber_VoipToken,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(RegPushTokenReq__storage_, voipToken),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RegPushTokenReq)
@@ -222,7 +233,7 @@ typedef struct RegPushTokenReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\001\010\000\003\013\000\004\t\000\005\013\000";
+        "\005\001\010\000\003\013\000\004\t\000\005\013\000\006\t\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

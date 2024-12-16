@@ -51,15 +51,18 @@ static CallCenter *_instance;
 }
 
 - (void)dismissCallViewController:(UIViewController *)vc {
-    for (UIWindow *window in self.callWindows) {
-        if (window.rootViewController == vc) {
-            [window resignKeyWindow];
-            window.hidden = YES;
-            [self.callWindows removeObject:window];
-            break;
+    //呼应 present 的延时，否则 dismiss 执行完了 present 还没走
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        for (UIWindow *window in self.callWindows) {
+            if (window.rootViewController == vc) {
+                [window resignKeyWindow];
+                window.hidden = YES;
+                [self.callWindows removeObject:window];
+                break;
+            }
         }
-    }
-    [vc dismissViewControllerAnimated:YES completion:nil];
+        [vc dismissViewControllerAnimated:YES completion:nil];
+    });
 }
 
 

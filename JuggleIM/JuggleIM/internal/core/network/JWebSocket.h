@@ -80,6 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)connect:(NSString *)appKey
           token:(NSString *)token
       pushToken:(NSString *)pushToken
+      voipToken:(NSString *)voipToken
         servers:(NSArray *)servers;
 
 - (void)disconnect:(BOOL)needPush;
@@ -199,6 +200,11 @@ inConversation:(JConversation *)conversation
                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)registerPushToken:(NSString *)token
+                   userId:(NSString *)userId
+                  success:(void (^)(void))successBlock
+                    error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)registerVoIPToken:(NSString *)token
                    userId:(NSString *)userId
                   success:(void (^)(void))successBlock
                     error:(void (^)(JErrorCodeInternal code))errorBlock;

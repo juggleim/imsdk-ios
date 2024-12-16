@@ -216,6 +216,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                   deviceOsVersion:(NSString *)osVersion
                       packageName:(NSString *)packageName
                         pushToken:(NSString *)pushToken
+                        voipToken:(NSString *)voipToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
                          clientIp:(NSString *)clientIp
@@ -304,6 +305,12 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                            index:(int)index;
 
 - (NSData *)registerPushToken:(NSString *)token
+                     deviceId:(NSString *)deviceId
+                  packageName:(NSString *)packageName
+                       userId:(NSString *)userId
+                        index:(int)index;
+
+- (NSData *)registerVoIPToken:(NSString *)token
                      deviceId:(NSString *)deviceId
                   packageName:(NSString *)packageName
                        userId:(NSString *)userId

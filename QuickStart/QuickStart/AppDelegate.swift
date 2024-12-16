@@ -23,7 +23,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
-//        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f")
         CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         
@@ -58,7 +57,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         JIM.shared().connectionManager.registerDeviceToken(deviceToken)
         SBULog.info("token did register")
     }
-    
   
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print("userNotificationCenter userInfo is \(response.notification.request.content.userInfo)")
@@ -70,8 +68,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
-        let deviceToken = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
-        print("VoIP 推送令牌: \(deviceToken)")
+        JIM.shared().connectionManager.registerVoIPToken(pushCredentials.token)
+        SBULog.info("voip token did register")
+
+//        let deviceToken = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
+//        print("VoIP 推送令牌: \(deviceToken)")
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {

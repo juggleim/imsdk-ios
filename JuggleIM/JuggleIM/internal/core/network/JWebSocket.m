@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, copy) NSString *appKey;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
+@property (nonatomic, copy) NSString *voipToken;
 @property (nonatomic, strong) SRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
@@ -69,12 +70,14 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 - (void)connect:(NSString *)appKey
           token:(NSString *)token
       pushToken:(NSString *)pushToken
+      voipToken:(NSString *)voipToken
         servers:(nonnull NSArray *)servers {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Connect", @"appkey is %@, token is %@", appKey, token);
         self.appKey = appKey;
         self.token = token;
         self.pushToken = pushToken;
+        self.voipToken = voipToken;
         
         [self resetSws];
         for (NSString *url in servers) {
@@ -551,6 +554,25 @@ inConversation:(JConversation *)conversation
                                             userId:userId
                                              index:self.cmdIndex++];
         JLogI(@"WS-Send", @"register push token");
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)registerVoIPToken:(NSString *)token
+                   userId:(NSString *)userId
+                  success:(void (^)(void))successBlock
+                    error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData registerVoIPToken:token
+                                          deviceId:[JUtility getDeviceId]
+                                       packageName:[[NSBundle mainBundle] bundleIdentifier]
+                                            userId:userId
+                                             index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"register voip token");
         [self simpleSendData:d
                          key:key
                      success:successBlock
@@ -1211,6 +1233,7 @@ inConversation:(JConversation *)conversation
                                    deviceOsVersion:[JUtility currentSystemVersion]
                                        packageName:[[NSBundle mainBundle] bundleIdentifier]
                                          pushToken:self.pushToken
+                                         voipToken:self.voipToken
                                          networkId:[JUtility currentNetWork]
                                             ispNum:[JUtility currentCarrier]
                                           clientIp:@""

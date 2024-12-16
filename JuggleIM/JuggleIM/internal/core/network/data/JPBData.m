@@ -86,7 +86,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jLanguage @"language"
 #define jRtcPing @"rtc_ping"
 
-#define jApns @"Apns"
+#define jApple @"Apple"
 #define jNtf @"ntf"
 #define jMsg @"msg"
 #define jCUserNtf @"c_user_ntf"
@@ -187,6 +187,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                   deviceOsVersion:(NSString *)osVersion
                       packageName:(NSString *)packageName
                         pushToken:(NSString *)pushToken
+                        voipToken:(NSString *)voipToken
                         networkId:(NSString *)networkId
                            ispNum:(NSString *)ispNum
                          clientIp:(NSString *)clientIp
@@ -202,11 +203,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.deviceModel = deviceModel;
     connectMsg.deviceOsVersion = osVersion;
     connectMsg.pushToken = pushToken;
+    connectMsg.voipToken = voipToken;
     connectMsg.networkId = networkId;
     connectMsg.ispNum = ispNum;
     connectMsg.clientIp = clientIp;
     connectMsg.packageName = packageName;
-    connectMsg.pushChannel = jApns;
+    connectMsg.pushChannel = jApple;
     connectMsg.language = language;
     
     NSData *data = [self.converter encode:connectMsg.data];
@@ -717,6 +719,31 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.platform = Platform_IOs;
     req.pushChannel = PushChannel_Apple;
     req.pushToken = token;
+    req.packageName = packageName;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRegPushToken;
+    body.targetId = userId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)registerVoIPToken:(NSString *)token
+                     deviceId:(NSString *)deviceId
+                  packageName:(NSString *)packageName
+                       userId:(NSString *)userId
+                        index:(int)index {
+    RegPushTokenReq *req = [[RegPushTokenReq alloc] init];
+    req.deviceId = deviceId;
+    req.platform = Platform_IOs;
+    req.pushChannel = PushChannel_Apple;
+    req.voipToken = token;
     req.packageName = packageName;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];

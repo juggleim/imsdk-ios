@@ -28,6 +28,8 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData;
 
+- (void)registerVoIPToken:(NSData *)tokenData;
+
 /// 设置语言（主要影响内置消息的推送语言，目前支持中/英文）
 /// - Parameters:
 ///   - language: 语言，例 “en-US”

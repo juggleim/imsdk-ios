@@ -77,6 +77,7 @@ typedef GPB_ENUM(ConnectMsgBody_FieldNumber) {
   ConnectMsgBody_FieldNumber_InstanceId = 17,
   ConnectMsgBody_FieldNumber_Language = 18,
   ConnectMsgBody_FieldNumber_IsBackend = 19,
+  ConnectMsgBody_FieldNumber_VoipToken = 20,
 };
 
 GPB_FINAL @interface ConnectMsgBody : GPBMessage
@@ -130,6 +131,9 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 
 /** app是否在后台 */
 @property(nonatomic, readwrite) BOOL isBackend;
+
+/** voip token of iOS */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *voipToken;
 
 @end
 
