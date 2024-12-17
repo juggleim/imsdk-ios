@@ -48,7 +48,7 @@
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
-@property (nonatomic, assign) long long syncNotifyTime;
+@property (nonatomic, assign) long long syncNotifyTime;//发件箱
 @property (nonatomic, assign) BOOL chatroomSyncProcessing;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *chatroomSyncDic;
 @end
@@ -1531,8 +1531,12 @@
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     JLogI(@"MSG-Rcv", @"direct message id is %@", message.messageId);
-    if (self.syncProcessing) {
-        self.syncNotifyTime = message.timestamp;
+    // 只处理发件箱的消息，收件箱的消息直接抛弃（状态消息直接漏过）
+    BOOL isStatusMessage = message.flags&JMessageFlagIsStatus;
+    if (self.syncProcessing && !isStatusMessage) {
+        if (message.direction == JMessageDirectionSend) {
+            self.syncNotifyTime = message.timestamp;
+        }
         return NO;
     }
     [self handleReceiveMessages:@[message]
@@ -1548,8 +1552,9 @@
     
     if (!isFinished) {
         [self sync];
-    } else if (self.syncNotifyTime > self.core.messageReceiveSyncTime) {
+    } else if (self.syncNotifyTime > self.core.messageSendSyncTime) {
         [self sync];
+        self.syncNotifyTime = -1;
     }  else {
         self.syncProcessing = NO;
         if (self.cachedSendTime > 0) {
