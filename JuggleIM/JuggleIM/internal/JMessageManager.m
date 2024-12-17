@@ -2026,9 +2026,10 @@
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.direction == JMessageDirectionSend) {
+        BOOL isStatusMessage = obj.flags&JMessageFlagIsStatus;
+        if (obj.direction == JMessageDirectionSend && !isStatusMessage) {
             sendTime = obj.timestamp;
-        } else if (obj.direction == JMessageDirectionReceive) {
+        } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
         }
         //recall message
