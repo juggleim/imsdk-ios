@@ -115,6 +115,7 @@ extension SBUGroupChannelModule {
             self.register(cell: SBUMediaMessageCell(), contentType: JVoiceMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JVideoMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JFileMessage.contentType())
+            self.register(cell: SBUCallMessageCell(), contentType: JCallFinishNotifyMessage.contentType())
             
             if let newMessageInfoView = self.newMessageInfoView {
                 newMessageInfoView.isHidden = true
@@ -270,7 +271,25 @@ extension SBUGroupChannelModule {
             )
             let receiptState = SBUUtils.getReceiptState(of: message)
 
-            if let textMessageCell = messageCell as? SBUTextMessageCell {
+            
+            if let callMessageCell = messageCell as? SBUCallMessageCell {
+                let configuration = SBUTextMessageCellParams(
+                    message: message,
+                    hideDateView: isSameDay,
+                    useMessagePosition: true,
+                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+                    receiptState: receiptState,
+                    useReaction: false,
+                    withTextView: true,
+                    joinedAt: 0,
+                    messageOffsetTimestamp: 0,
+                    shouldHideSuggestedReplies: false,
+                    shouldHideFormTypeMessage: false,
+                    enableEmojiLongPress: false
+                )
+                configuration.shouldHideFeedback = true
+                callMessageCell.configure(with: configuration)
+            } else if let textMessageCell = messageCell as? SBUTextMessageCell {
                 let shouldHideSuggestedReplies = false
 
                 let configuration = SBUTextMessageCellParams(

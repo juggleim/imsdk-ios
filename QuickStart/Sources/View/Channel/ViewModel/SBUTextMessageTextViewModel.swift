@@ -75,6 +75,22 @@ public struct SBUTextMessageTextViewModel {
         var text = ""
         if let textMessage = message?.content as? JTextMessage {
             text = textMessage.content
+        } else if let callMessage = message?.content as? JCallFinishNotifyMessage {
+            switch callMessage.finishType {
+            case .cancel:
+                text = "已取消"
+            case .reject:
+                text = "已拒绝"
+            case .noResponse:
+                text = "未接听"
+            case .complete:
+                let timeString = SBUTextMessageTextViewModel.getStringForTime(callMessage.duration)
+                text = "通话时长 \(timeString)"
+            @unknown default:
+                break
+            }
+        } else {
+            text = "unknown"
         }
         
         if let isEdited = isEdited {
@@ -226,5 +242,15 @@ public struct SBUTextMessageTextViewModel {
                 ])
             attributedString.append(editedAttributedString)
         }
+    }
+    
+    private static func getStringForTime(_ time: Int64) -> String {
+        let seconds = time / 1000
+        if seconds < 60 * 60 {
+            return String(format: "%02ld:%02ld", seconds/60, seconds%60)
+        } else {
+            return String(format: "%02ld:%02ld:%02ld", seconds/60/60, (seconds/60)%60, seconds%60)
+        }
+        
     }
 }
