@@ -115,7 +115,6 @@ extension SBUGroupChannelModule {
             self.register(cell: SBUMediaMessageCell(), contentType: JVoiceMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JVideoMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JFileMessage.contentType())
-            self.register(cell: SBUUnknownMessageCell(), contentType: JMessageContent.contentType())
             
             if let newMessageInfoView = self.newMessageInfoView {
                 newMessageInfoView.isHidden = true
@@ -329,19 +328,6 @@ extension SBUGroupChannelModule {
                     self.currentVoiceFileInfo = voiceFileInfo
                     self.currentVoiceContentView = voiceContentView
                 }
-            } else if let unknownMessageCell = messageCell as? SBUUnknownMessageCell {
-                let configuration = SBUUnknownMessageCellParams(
-                    message: message,
-                    hideDateView: isSameDay,
-                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
-                    receiptState: receiptState,
-                    useReaction: false,
-                    joinedAt: 0,
-                    messageOffsetTimestamp: 0
-                )
-                unknownMessageCell.configure(with: configuration)
-                self.setMessageCellAnimation(unknownMessageCell, message: message, indexPath: indexPath)
-                self.setMessageCellGestures(unknownMessageCell, message: message, indexPath: indexPath)
             } else {
                 let configuration = SBUBaseMessageCellParams(message: message, hideDateView: isSameDay, receiptState: receiptState)
                 messageCell.configure(with: configuration)

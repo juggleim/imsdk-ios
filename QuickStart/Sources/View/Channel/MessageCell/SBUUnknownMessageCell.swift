@@ -45,7 +45,6 @@ open class SBUUnknownMessageCell: SBUTextMessageCell {
                                  groupPosition: MessageGroupPosition,
                                  receiptState: SBUMessageReceiptState?,
                                  useReaction: Bool) {
-        guard let message = message as? JMessage else { return }
         let configuration = SBUUnknownMessageCellParams(
             message: message,
             hideDateView: hideDateView,

@@ -12,5 +12,6 @@ class ChannelViewController: SBUGroupChannelViewController {
         super.viewDidLoad()
         self.listComponent?.register(cell: BaseNotifyMessageCell(), contentType: GroupNotifyMessage.contentType())
         self.listComponent?.register(cell: FriendNotifyMessageCell(), contentType: FriendNotifyMessage.contentType())
+        self.listComponent?.register(cell: UnknownMessageCell(), contentType: JMessageContent.contentType())
     }
 }
