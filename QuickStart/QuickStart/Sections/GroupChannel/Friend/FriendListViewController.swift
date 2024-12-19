@@ -52,6 +52,7 @@ class FriendListViewController: BaseTableListViewController {
                     self.tableView.reloadData()
                     self.emptyView.reloadData(.none)
                 } else {
+                    self.tableView.reloadData()
                     self.emptyView.reloadData(.noMembers)
                 }
             }
@@ -90,10 +91,17 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     open func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        0
+        5
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return 1
+        }
         return self.users?.count ?? 0
     }
 
@@ -103,7 +111,16 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
         
         cell?.selectionStyle = .none
 
-        if let userCell = cell as? BaseUserCell, let user = self.users?[indexPath.row] {
+        var user: JCUser
+        
+        if indexPath.section == 0 {
+            user = JCUser()
+            user.userId = "New Friends"
+            user.userName = "New Friends"
+        } else {
+            user = self.users?[indexPath.row] ?? JCUser()
+        }
+        if let userCell = cell as? BaseUserCell {
             userCell.configure(
                 type: .friendList,
                 user: user,
@@ -115,16 +132,44 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let user = self.users?[indexPath.row] else {
-            return
+        if indexPath.section == 1 {
+            guard let user = self.users?[indexPath.row] else {
+                return
+            }
+            let conversation = JConversation(conversationType: .private, conversationId: user.userId)
+            let defaultConversationInfo = JConversationInfo()
+            defaultConversationInfo.conversation = conversation
+            let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+            self.tabBarController?.tabBar.isHidden = true
+            let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            self.navigationController?.pushViewController(channelVC, animated: true)
+        } else if indexPath.section == 0 {
+            self.tabBarController?.tabBar.isHidden = true
+            let vc = FriendApplicationListViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         }
-        let conversation = JConversation(conversationType: .private, conversationId: user.userId)
-        let defaultConversationInfo = JConversationInfo()
-        defaultConversationInfo.conversation = conversation
-        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-        self.tabBarController?.tabBar.isHidden = true
-        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelVC, animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if indexPath.section == 1 {
+            guard let user = self.users?[indexPath.row] else {
+                return nil
+            }
+            var actions: [UIContextualAction] = []
+            let deleteAction = UIContextualAction(style: .destructive, title: "删除") { _, _, actionHandler in
+                HttpManager.shared.deleteFriends(userIds: [user.userId]) { code in
+                    if code == 0 {
+                        self.loadFriends()
+                    } else {
+                        SBULog.error("delete friend error, code is \(code)")
+                    }
+                }
+            }
+            actions.append(deleteAction)
+            return UISwipeActionsConfiguration(actions: actions)
+        }
+        return nil
+    }
+    
 }
 

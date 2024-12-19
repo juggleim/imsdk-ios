@@ -209,7 +209,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.clientIp = clientIp;
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApple;
-    connectMsg.language = language;
+//    connectMsg.language = language;
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];

@@ -29,7 +29,6 @@ class MainChannelTabbarController: UITabBarController {
     var theme: SBUComponentTheme = SBUTheme.componentTheme
     var isDarkMode: Bool = false
 
-    
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,7 +60,6 @@ class MainChannelTabbarController: UITabBarController {
         
         JIM.shared().conversationManager.add(self)
         JIM.shared().connectionManager.add(self)
-        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -123,11 +121,17 @@ class MainChannelTabbarController: UITabBarController {
             : .default
     }
     
-    
     // MARK: - SDK related
     func loadTotalUnreadMessageCount() {
+        var friendCount: Int32 = 0
+        let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
+        if let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) {
+            friendCount = conversationInfo.unreadCount
+            self.setFriendBadgeCount(friendCount)
+        }
+        
         let totalCount = JIM.shared().conversationManager.getTotalUnreadCount()
-        let uintCount = UInt(totalCount)
+        let uintCount = UInt(totalCount - friendCount)
         self.setUnreadMessagesCount(uintCount)
     }
     
@@ -195,7 +199,30 @@ class MainChannelTabbarController: UITabBarController {
             ],
             for: .normal
         )
+    }
+    
+    private func setFriendBadgeCount(_ totalCount: Int32) {
+        var badgeValue: String?
         
+        if totalCount == 0 {
+            badgeValue = nil
+        } else if totalCount > 99 {
+            badgeValue = "99+"
+        } else {
+            badgeValue = "\(totalCount)"
+        }
+        
+        self.friendListViewController.tabBarItem.badgeColor = SBUColorSet.error300
+        self.friendListViewController.tabBarItem.badgeValue = badgeValue
+        self.friendListViewController.tabBarItem.setBadgeTextAttributes(
+            [
+                NSAttributedString.Key.foregroundColor : isDarkMode
+                    ? SBUColorSet.onlight01
+                    : SBUColorSet.ondark01,
+                NSAttributedString.Key.font : SBUFontSet.caption4
+            ],
+            for: .normal
+        )
     }
     
     func updateTheme(isDarkMode: Bool) {
@@ -217,6 +244,12 @@ extension MainChannelTabbarController: JConversationDelegate {
     }
     
     func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
+        for conversationInfo in conversationInfoList {
+            if conversationInfo.conversation.conversationType == .system
+                && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
+                self.setFriendBadgeCount(conversationInfo.unreadCount)
+            }
+        }
         
     }
     
@@ -225,7 +258,10 @@ extension MainChannelTabbarController: JConversationDelegate {
     }
     
     func totalUnreadMessageCountDidUpdate(_ count: Int32) {
-        let uintCount = UInt(count)
+        let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation)
+        let friendCount = conversationInfo?.unreadCount ?? 0
+        let uintCount = UInt(count - friendCount)
         self.setUnreadMessagesCount(uintCount)
     }
 }

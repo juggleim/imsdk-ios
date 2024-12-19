@@ -169,6 +169,10 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     
     private func updateConversationInfoList(_ conversationInfoList: [JConversationInfo]) {
         conversationInfoList.forEach { conversationInfo in
+            if conversationInfo.conversation.conversationType == .system
+                && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
+                return
+            }
             if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: self.conversationInfoList) {
                 self.conversationInfoList.remove(at: index)
             }

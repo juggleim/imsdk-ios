@@ -34,8 +34,18 @@ class AddFriendViewController: BaseTableListViewController {
         }
     }
     
-    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
-        HttpManager.shared.addFriend(userId: userId) { code in
+//    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+//        HttpManager.shared.addFriend(userId: userId) { code in
+//            if code == HttpManager.success {
+//                completion(true)
+//            } else {
+//                completion(false)
+//            }
+//        }
+//    }
+    
+    private func applyFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+        HttpManager.shared.applyFriend(userId: userId) { code in
             if code == HttpManager.success {
                 completion(true)
             } else {
@@ -92,7 +102,7 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
         }
         self.loadingIndicator.startAnimating()
         self.view.isUserInteractionEnabled = false
-        addFriend(user.userId) { isSuccess in
+        applyFriend(user.userId) { isSuccess in
             DispatchQueue.main.async {
                 self.loadingIndicator.stopAnimating()
                 self.view.isUserInteractionEnabled = true

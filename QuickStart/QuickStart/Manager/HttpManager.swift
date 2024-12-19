@@ -33,8 +33,23 @@ class HttpManager: NSObject {
     static let friendAddString = "/friends/add"
     static let friendIdString = "friend_id"
     
+    static let friendApplyString = "/friends/apply"
+    static let startString = "start"
+    static let orderString = "order"
+    
+    static let friendDelString = "/friends/del"
+    static let friendIdsString = "friend_ids"
+    
+    static let friendsConfrimString = "/friends/confirm"
+    static let sponsorIdString = "sponsor_id"
+    static let isAgreeString = "is_agree"
+    
     static let friendListString = "/friends/list"
     static let countString = "count"
+    
+    static let friendsApplicationsString = "/friends/applications"
+    static let targetUserString = "target_user"
+    static let isSponsorString = "is_sponsor"
     
     static let myGroupsString = "/groups/mygroups"
     static let groupIdString = "group_id"
@@ -179,6 +194,75 @@ class HttpManager: NSObject {
         task.resume()
     }
     
+    func applyFriend(
+        userId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.friendApplyString)
+        let dict = [Self.friendIdString: userId]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    func deleteFriends(
+        userIds: [String],
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.friendDelString)
+        let dict = [Self.friendIdsString: userIds]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    func confirmFriend(
+        userId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.friendsConfrimString)
+        let dict: [String : Any] = [Self.sponsorIdString: userId, Self.isAgreeString: true]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(0)
+            })
+        }
+        task.resume()
+    }
+    
     func addFriend(
         userId: String,
         completion: @escaping ((Int) -> Void)
@@ -197,6 +281,90 @@ class HttpManager: NSObject {
                     return
                 }
                 completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    func getFriendsApplications(
+        start: Int,
+        count: Int,
+        completion: @escaping ((Int, [JCUser]?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.friendsApplicationsString)
+        let dict: [String: Any] = [Self.startString: start, Self.countString: 100, Self.orderString: 0]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get friends applications error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
+                    print("get friends applications error, items is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if items.isEmpty {
+                    completion(Self.emptyCode, nil)
+                    return
+                }
+                var friends: [JCUser] = []
+                for item in items {
+                    guard let targetUserDic = item[Self.targetUserString] as? Dictionary<String, Any> else {
+                        print("get friends applications error, target user is not available")
+                        completion(Self.unknownError, nil)
+                        return
+                    }
+                    let targetUser = JCUser()
+                    if let userId = targetUserDic[Self.userIdString] as? String {
+                        targetUser.userId = userId
+                    }
+                    if let nickname = targetUserDic[Self.nickNameString] as? String {
+                        targetUser.userName = nickname
+                    }
+                    if let avatar = targetUserDic[Self.avatarString] as? String {
+                        targetUser.portrait = avatar
+                    }
+                    
+                    let isSponsor = item[Self.isSponsorString] as? Bool ?? false
+                    let status = item[Self.statusString] as? Int ?? 0
+                    if isSponsor == true {
+                        switch status {
+                        case 0:
+                            targetUser.friendApplicationStatus = .outgoingApply
+                        case 1:
+                            targetUser.friendApplicationStatus = .outgoingAccept
+                        case 3:
+                            targetUser.friendApplicationStatus = .outgoingExpired
+                        default:
+                            targetUser.friendApplicationStatus = .outgoingApply
+                        }
+                    } else {
+                        switch status {
+                        case 0:
+                            targetUser.friendApplicationStatus = .incomingApply
+                        case 1:
+                            targetUser.friendApplicationStatus = .incomingAccept
+                        case 3:
+                            targetUser.friendApplicationStatus = .incomingExpired
+                        default:
+                            targetUser.friendApplicationStatus = .incomingApply
+                        }
+                    }
+                    friends.append(targetUser)
+                }
+                completion(0, friends)
             })
         }
         task.resume()

@@ -15,17 +15,17 @@ enum GroupNotifyType: Int {
     case other
 }
 
-let messageType = "jgd:grpntf"
-let membersString = "members"
-let userIdString = "user_id"
-let avatarString = "avatar"
-let nicknameString = "nickname"
-let typeString = "type"
-let operatorString = "operator"
-let nameString = "name"
-let digestString = "[群通知]"
-
 class GroupNotifyMessage: JMessageContent {
+    static let messageType = "jgd:grpntf"
+    let membersString = "members"
+    let userIdString = "user_id"
+    let avatarString = "avatar"
+    let nicknameString = "nickname"
+    let typeString = "type"
+    let operatorString = "operator"
+    let nameString = "name"
+    let digestString = "[群通知]"
+    
     var type: GroupNotifyType = .other
     var members: [JUserInfo] = []
     var operatorInfo: JUserInfo? = nil

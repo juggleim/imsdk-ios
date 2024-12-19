@@ -10,6 +10,7 @@ import Foundation
 class ChannelViewController: SBUGroupChannelViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.listComponent?.register(cell: GroupNotifyMessageCell(), contentType: GroupNotifyMessage.contentType())
+        self.listComponent?.register(cell: BaseNotifyMessageCell(), contentType: GroupNotifyMessage.contentType())
+        self.listComponent?.register(cell: FriendNotifyMessageCell(), contentType: FriendNotifyMessage.contentType())
     }
 }

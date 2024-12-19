@@ -256,10 +256,15 @@
 		A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5352D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m */; };
 		A0A3A5392D082037009AD7C3 /* MultiCallUserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */; };
 		A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */; };
+		A0A3A53D2D12CC57009AD7C3 /* FriendApplicationListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */; };
+		A0A3A53F2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */; };
+		A0A3A5412D1418A5009AD7C3 /* GlobalConst.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */; };
+		A0A3A5432D142550009AD7C3 /* FriendNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */; };
+		A0A3A5452D142862009AD7C3 /* BaseNotifyMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5442D142862009AD7C3 /* BaseNotifyMessageCell.swift */; };
+		A0A3A5472D142C78009AD7C3 /* FriendNotifyMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A3A5462D142C78009AD7C3 /* FriendNotifyMessageCell.swift */; };
 		A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */; };
 		A0B4C3AA2C636188005AFCEC /* GroupNotifyMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */; };
 		A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */; };
-		A0B4C3B02C63A0F1005AFCEC /* GroupNotifyMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0B4C3AF2C63A0F1005AFCEC /* GroupNotifyMessageCell.swift */; };
 		A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D662C5914D900B68B96 /* ConnectView.swift */; };
 		A0C45D692C5914DA00B68B96 /* ConnectView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A0C45D672C5914D900B68B96 /* ConnectView.xib */; };
 		A0C45D6C2C59183800B68B96 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6B2C59183800B68B96 /* HttpManager.swift */; };
@@ -548,10 +553,15 @@
 		A0A3A5372D082037009AD7C3 /* MultiCallUserCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiCallUserCell.h; sourceTree = "<group>"; };
 		A0A3A5382D082037009AD7C3 /* MultiCallUserCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MultiCallUserCell.m; sourceTree = "<group>"; };
 		A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushKit.framework; path = System/Library/Frameworks/PushKit.framework; sourceTree = SDKROOT; };
+		A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendApplicationListViewController.swift; sourceTree = "<group>"; };
+		A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendApplicationUserCell.swift; sourceTree = "<group>"; };
+		A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConst.swift; sourceTree = "<group>"; };
+		A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendNotifyMessage.swift; sourceTree = "<group>"; };
+		A0A3A5442D142862009AD7C3 /* BaseNotifyMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNotifyMessageCell.swift; sourceTree = "<group>"; };
+		A0A3A5462D142C78009AD7C3 /* FriendNotifyMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendNotifyMessageCell.swift; sourceTree = "<group>"; };
 		A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateGroupViewController.swift; sourceTree = "<group>"; };
 		A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessage.swift; sourceTree = "<group>"; };
 		A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
-		A0B4C3AF2C63A0F1005AFCEC /* GroupNotifyMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupNotifyMessageCell.swift; sourceTree = "<group>"; };
 		A0C45D662C5914D900B68B96 /* ConnectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectView.swift; sourceTree = "<group>"; };
 		A0C45D672C5914D900B68B96 /* ConnectView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConnectView.xib; sourceTree = "<group>"; };
 		A0C45D6B2C59183800B68B96 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
@@ -624,7 +634,8 @@
 			children = (
 				A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */,
 				A0B4C3AD2C639DCB005AFCEC /* ChannelViewController.swift */,
-				A0B4C3AF2C63A0F1005AFCEC /* GroupNotifyMessageCell.swift */,
+				A0A3A5442D142862009AD7C3 /* BaseNotifyMessageCell.swift */,
+				A0A3A5462D142C78009AD7C3 /* FriendNotifyMessageCell.swift */,
 			);
 			path = Channels;
 			sourceTree = "<group>";
@@ -1229,6 +1240,7 @@
 				A09645D22BF36BD300290775 /* Assets.xcassets */,
 				A09645D42BF36BD300290775 /* LaunchScreen.storyboard */,
 				A09645D72BF36BD300290775 /* Info.plist */,
+				A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */,
 			);
 			path = QuickStart;
 			sourceTree = "<group>";
@@ -1485,6 +1497,7 @@
 			children = (
 				A0C45D6E2C591CC600B68B96 /* JCUser.swift */,
 				A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */,
+				A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1502,6 +1515,8 @@
 			isa = PBXGroup;
 			children = (
 				A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */,
+				A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */,
+				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
 			);
 			path = Friend;
 			sourceTree = "<group>";
@@ -1635,6 +1650,7 @@
 				A07F3B6C2BF4A2270087920B /* MessageTemplateRenderer.swift in Sources */,
 				A07F3B4D2BF4A2260087920B /* Array+SBUIKit.swift in Sources */,
 				A07F3B6E2BF4A2270087920B /* SBUToastType.swift in Sources */,
+				A0A3A53F2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift in Sources */,
 				A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */,
 				A07F3C802BF4A2290087920B /* SBUCommonItem.swift in Sources */,
 				A0968C962C2B020300E68790 /* SBUBaseChannelViewController.Keyboard.swift in Sources */,
@@ -1700,6 +1716,7 @@
 				A07F3B6B2BF4A2270087920B /* MessageTemplateParser.swift in Sources */,
 				A0968C9E2C2B02EF00E68790 /* SBUBaseChannelViewModel.swift in Sources */,
 				A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */,
+				A0A3A5412D1418A5009AD7C3 /* GlobalConst.swift in Sources */,
 				A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */,
 				A07F3C9E2BF4A2290087920B /* SBUViewLifeCycle.swift in Sources */,
 				A07F3C882BF4A2290087920B /* SBUAlertView.swift in Sources */,
@@ -1756,7 +1773,6 @@
 				A06388CF2CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift in Sources */,
 				A07F3C952BF4A2290087920B /* SBUCollectionViewFlowLayout.swift in Sources */,
 				A07F3C972BF4A2290087920B /* SBUViewControllerSet.swift in Sources */,
-				A0B4C3B02C63A0F1005AFCEC /* GroupNotifyMessageCell.swift in Sources */,
 				A07F3C7B2BF4A2290087920B /* SBUCoverImageView.swift in Sources */,
 				A07F3B4B2BF4A2260087920B /* URL+SBUKit.swift in Sources */,
 				A07F3BC42BF4A2270087920B /* SBUBaseChannelListModule.Header.swift in Sources */,
@@ -1772,6 +1788,7 @@
 				A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */,
 				A090B0B62C3EB48C00FE0E10 /* SBUCommonContentView.swift in Sources */,
 				A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */,
+				A0A3A5472D142C78009AD7C3 /* FriendNotifyMessageCell.swift in Sources */,
 				A06388D12CA696F5006357C7 /* AddFriendUserCell.swift in Sources */,
 				A06388972CA2E5B4006357C7 /* SBUDownloadManager.swift in Sources */,
 				A07F3B522BF4A2260087920B /* UIButton+SBUIKit.swift in Sources */,
@@ -1795,6 +1812,7 @@
 				A09645FA2BF3ABDD00290775 /* GlobalSetCustomManager.swift in Sources */,
 				A07F3C132BF4A2280087920B /* SBUBaseChannelCell.swift in Sources */,
 				A07F3C8F2BF4A2290087920B /* SBUUserCell.swift in Sources */,
+				A0A3A5432D142550009AD7C3 /* FriendNotifyMessage.swift in Sources */,
 				A07F3C842BF4A2290087920B /* SBUNotificationNavigationTitleView.swift in Sources */,
 				A090B0B32C3EB48C00FE0E10 /* SBUOpenChannelCommonContentView.swift in Sources */,
 				A07F3B9C2BF4A2270087920B /* SBUConfig.Base.swift in Sources */,
@@ -1803,6 +1821,7 @@
 				A07F3BA22BF4A2270087920B /* SBUConfig.CodingKeys.swift in Sources */,
 				A07F35E22BF4928B0087920B /* UIcolor+Ext.swift in Sources */,
 				A0968C942C2B020300E68790 /* SBUNotificationTimelineView.swift in Sources */,
+				A0A3A5452D142862009AD7C3 /* BaseNotifyMessageCell.swift in Sources */,
 				A0968C852C2B020300E68790 /* SBUMentionLimitGuideCell.swift in Sources */,
 				A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
@@ -1838,6 +1857,7 @@
 				A0968C8D2C2B020300E68790 /* SBUMessageProfileView.swift in Sources */,
 				A06388B22CA417B6006357C7 /* SBUGroupChannelSettingsModule.Header.swift in Sources */,
 				A07F35E72BF497820087920B /* SBUStringSet.swift in Sources */,
+				A0A3A53D2D12CC57009AD7C3 /* FriendApplicationListViewController.swift in Sources */,
 				A07F3B982BF4A2270087920B /* SBUConfigManager.swift in Sources */,
 				A0968C8E2C2B020300E68790 /* SBUTextMessageTextView.swift in Sources */,
 				A0968C8A2C2B020300E68790 /* SBUMessageInputView.swift in Sources */,
