@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -297,6 +298,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -616,7 +618,6 @@
 				A0C80D2A2C5CEBF100E55080 /* Group */,
 				A0C80D292C5CEBE700E55080 /* Friend */,
 				A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */,
-				A0C80D1E2C5B8D2000E55080 /* AddFriend */,
 				A047D7D92C245A7D00E50BCF /* MySettings */,
 				A047D7DD2C245A7D00E50BCF /* Channels */,
 			);
@@ -1508,21 +1509,15 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		A0C80D1E2C5B8D2000E55080 /* AddFriend */ = {
+		A0C80D292C5CEBE700E55080 /* Friend */ = {
 			isa = PBXGroup;
 			children = (
 				A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */,
 				A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */,
-			);
-			path = AddFriend;
-			sourceTree = "<group>";
-		};
-		A0C80D292C5CEBE700E55080 /* Friend */ = {
-			isa = PBXGroup;
-			children = (
 				A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */,
 				A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */,
 				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
+				A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */,
 			);
 			path = Friend;
 			sourceTree = "<group>";
@@ -1715,6 +1710,7 @@
 				A07F3B712BF4A2270087920B /* SBUCacheManager.File.swift in Sources */,
 				A0968C652C2B020300E68790 /* SBUUnknownMessageCellParams.swift in Sources */,
 				A07F3B492BF4A2260087920B /* SBUScrollOptions.swift in Sources */,
+				A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */,
 				A07F3B732BF4A2270087920B /* SBUCacheManager.Image.swift in Sources */,
 				A07F3B762BF4A2270087920B /* SBUVoicePlayer.swift in Sources */,
 				A07F3C912BF4A2290087920B /* SBUMarginView.swift in Sources */,

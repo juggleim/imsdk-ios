@@ -107,9 +107,6 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
 
     open func tableView(_ tableView: UITableView,
                         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
-        
-        cell?.selectionStyle = .none
 
         var user: JCUser
         
@@ -117,18 +114,24 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
             user = JCUser()
             user.userId = "New Friends"
             user.userName = "New Friends"
+            
+            var cell = NewFriendsUserCell()
+            cell.selectionStyle = .none
+            cell.configure(type: .friendList, user: user)
+            return cell
         } else {
+            var cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
+            cell?.selectionStyle = .none
             user = self.users?[indexPath.row] ?? JCUser()
+            if let userCell = cell as? BaseUserCell {
+                userCell.configure(
+                    type: .friendList,
+                    user: user,
+                    isChecked: user.isFriend
+                )
+            }
+            return cell ?? UITableViewCell()
         }
-        if let userCell = cell as? BaseUserCell {
-            userCell.configure(
-                type: .friendList,
-                user: user,
-                isChecked: user.isFriend
-            )
-        }
-        
-        return cell ?? UITableViewCell()
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

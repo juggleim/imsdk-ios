@@ -242,6 +242,7 @@ class MainChannelTabbarController: UITabBarController {
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
                 self.setFriendBadgeCount(conversationInfo.unreadCount)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "FriendApplicationCountNtf"), object: Int(conversationInfo.unreadCount))
                 break
             }
         }
