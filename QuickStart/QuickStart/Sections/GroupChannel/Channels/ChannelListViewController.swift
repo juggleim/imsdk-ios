@@ -49,12 +49,17 @@ class ChannelListViewController: SBUGroupChannelListViewController {
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
+        let scanItem = SBUActionSheetItem(
+            title: "Scan QR code",
+            color: SBUTheme.channelSettingsTheme.itemTextColor,
+            image: nil
+        ) {}
         let cancelItem = SBUActionSheetItem(
             title: SBUStringSet.Cancel,
             color: SBUTheme.channelSettingsTheme.itemColor
         ) {}
         SBUActionSheet.show(
-            items: [searchUserItem, createGroupItem],
+            items: [searchUserItem, createGroupItem, scanItem],
             cancelItem: cancelItem,
             delegate: self
         )
@@ -89,6 +94,12 @@ class ChannelListViewController: SBUGroupChannelListViewController {
         let createGroupVC = CreateGroupViewController()
         self.navigationController?.pushViewController(createGroupVC, animated: true)
     }
+    
+    func scan() {
+        self.tabBarController?.tabBar.isHidden = true
+        let vc = ScanQRCodeViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 extension ChannelListViewController: SBUActionSheetDelegate {
@@ -98,6 +109,8 @@ extension ChannelListViewController: SBUActionSheetDelegate {
             self.searchUser()
         case 1:
             self.createGroup()
+        case 2:
+            self.scan()
         default:
             break
         }

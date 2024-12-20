@@ -8,8 +8,8 @@
 import Foundation
 import JuggleIM
 
-class HttpManager: NSObject {
-    static let shared = HttpManager()
+@objc class HttpManager: NSObject {
+    @objc static let shared = HttpManager()
     
     static let domain = "https://ws.juggleim.com/jim"
     
@@ -65,6 +65,9 @@ class HttpManager: NSObject {
     static let limitString = "limit"
     static let offsetString = "offset"
     
+    static let qrcodeConfirmString = "/login/qrcode/confirm"
+    static let idString = "id"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -80,6 +83,29 @@ class HttpManager: NSObject {
     
     func setAppKey(_ appKey : String) {
         currentAppKey = appKey;
+    }
+    
+    @objc func qrcodeConfirm(
+        qrcodeString: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.qrcodeConfirmString)
+        let dict = [Self.idString: qrcodeString]
+        let req = getRequest(url: urlString, method: .post, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(0)
+            })
+        }
+        task.resume()
     }
     
     func login(

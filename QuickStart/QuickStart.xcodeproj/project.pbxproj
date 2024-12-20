@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
+		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
+		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -299,6 +301,10 @@
 
 /* Begin PBXFileReference section */
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
+		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
+		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
+		A02FA3B82D157FED002A4E0B /* QRCodeScannerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeScannerView.h; sourceTree = "<group>"; };
+		A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeScannerView.m; sourceTree = "<group>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -602,6 +608,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A02FA3B02D157D0F002A4E0B /* QRCode */ = {
+			isa = PBXGroup;
+			children = (
+				A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */,
+				A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */,
+				A02FA3B82D157FED002A4E0B /* QRCodeScannerView.h */,
+				A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */,
+			);
+			path = QRCode;
+			sourceTree = "<group>";
+		};
 		A047D7D62C245A7D00E50BCF /* Sections */ = {
 			isa = PBXGroup;
 			children = (
@@ -613,6 +630,7 @@
 		A047D7D72C245A7D00E50BCF /* GroupChannel */ = {
 			isa = PBXGroup;
 			children = (
+				A02FA3B02D157D0F002A4E0B /* QRCode */,
 				A06516032C89658000E3AEC1 /* Chatroom */,
 				A0C80D2F2C60B59200E55080 /* Base */,
 				A0C80D2A2C5CEBF100E55080 /* Group */,
@@ -1276,6 +1294,7 @@
 				A09645F12BF3A92700290775 /* Extension */,
 				A09645EA2BF3A25F00290775 /* Theme */,
 				A07F35DA2BF4650D0087920B /* JuggleUI.swift */,
+				A0CE9A362CD4D45F008B405C /* QuickStart-Bridging-Header.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1547,7 +1566,6 @@
 			children = (
 				A0CE9A372CD4D45F008B405C /* SingleCallViewController.h */,
 				A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */,
-				A0CE9A362CD4D45F008B405C /* QuickStart-Bridging-Header.h */,
 				A0CE9A3A2CD4DB40008B405C /* CallTheme.h */,
 				A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */,
 				A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */,
@@ -1682,6 +1700,7 @@
 				A07F3C792BF4A2290087920B /* SBUAnimation.swift in Sources */,
 				A0968CAF2C2B03DA00E68790 /* SBUGroupChannelModule.Header.swift in Sources */,
 				A090B0B42C3EB48C00FE0E10 /* SBUVoiceContentView.swift in Sources */,
+				A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */,
 				A0968C672C2B020300E68790 /* SBUBaseMessageCellParams.swift in Sources */,
 				A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */,
 				A0968C682C2B020300E68790 /* SBUMediaMessageCellParams.swift in Sources */,
@@ -1719,6 +1738,7 @@
 				A0968C9E2C2B02EF00E68790 /* SBUBaseChannelViewModel.swift in Sources */,
 				A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */,
 				A0A3A5412D1418A5009AD7C3 /* GlobalConst.swift in Sources */,
+				A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */,
 				A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */,
 				A07F3C9E2BF4A2290087920B /* SBUViewLifeCycle.swift in Sources */,
 				A07F3C882BF4A2290087920B /* SBUAlertView.swift in Sources */,
@@ -2085,7 +2105,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Call/QuickStart-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/QuickStart-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -2132,7 +2152,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Sources/Call/QuickStart-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Sources/QuickStart-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
