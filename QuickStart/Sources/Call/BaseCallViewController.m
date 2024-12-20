@@ -697,7 +697,7 @@
 //                  forControlEvents:UIControlEventTouchUpInside];
 
 
-        [self.view addSubview:_minimizeButton];
+//        [self.view addSubview:_minimizeButton];
         _minimizeButton.hidden = YES;
     }
     return _minimizeButton;
