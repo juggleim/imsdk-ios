@@ -236,21 +236,25 @@ class MainChannelTabbarController: UITabBarController {
         
         self.loadTotalUnreadMessageCount()
     }
-}
-
-extension MainChannelTabbarController: JConversationDelegate {
-    func conversationInfoDidAdd(_ conversationInfoList: [JConversationInfo]!) {
-        
-    }
     
-    func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
+    private func updateFriendBadgeCount(_ conversationInfoList: [JConversationInfo]) {
         for conversationInfo in conversationInfoList {
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
                 self.setFriendBadgeCount(conversationInfo.unreadCount)
+                break
             }
         }
-        
+    }
+}
+
+extension MainChannelTabbarController: JConversationDelegate {
+    func conversationInfoDidAdd(_ conversationInfoList: [JConversationInfo]!) {
+        self.updateFriendBadgeCount(conversationInfoList)
+    }
+    
+    func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
+        self.updateFriendBadgeCount(conversationInfoList)
     }
     
     func conversationInfoDidDelete(_ conversationInfoList: [JConversationInfo]!) {

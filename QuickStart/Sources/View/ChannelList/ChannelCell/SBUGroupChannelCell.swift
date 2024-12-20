@@ -301,7 +301,9 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
             } else {
                 self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+                self.unreadCount
+                    .sbu_constraint(height: unreadCountSize)
+                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
             self.unreadCount.isHidden = false
         case 100...:
@@ -310,7 +312,9 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
             } else {
                 self.unreadCount.setTitle("99+", for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+                self.unreadCount
+                    .sbu_constraint(height: unreadCountSize)
+                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
             self.unreadCount.isHidden = false
         default:
