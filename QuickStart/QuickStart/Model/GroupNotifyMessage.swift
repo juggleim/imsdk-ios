@@ -52,12 +52,15 @@ class GroupNotifyMessage: JMessageContent {
             content[operatorString] = operatorJson
         }
         
-        let data = try! JSONSerialization.data(withJSONObject: content)
-        return data
+        if let data = try? JSONSerialization.data(withJSONObject: content) {
+            return data
+        } else {
+            return Data()
+        }
     }
     
     override func decode(_ data: Data) {
-        guard let json = try! JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return
         }
         if let type = json[typeString] as? Int {

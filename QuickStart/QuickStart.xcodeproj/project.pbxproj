@@ -275,7 +275,7 @@
 		A0C45D6C2C59183800B68B96 /* HttpManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6B2C59183800B68B96 /* HttpManager.swift */; };
 		A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C45D6E2C591CC600B68B96 /* JCUser.swift */; };
 		A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */; };
-		A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */; };
+		A0C80D2C2C5CEC0800E55080 /* ContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2B2C5CEC0800E55080 /* ContactListViewController.swift */; };
 		A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */; };
 		A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D302C60C23200E55080 /* BaseUserCell.swift */; };
 		A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D322C60ECC800E55080 /* GroupListViewController.swift */; };
@@ -579,7 +579,7 @@
 		A0C45D6B2C59183800B68B96 /* HttpManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpManager.swift; sourceTree = "<group>"; };
 		A0C45D6E2C591CC600B68B96 /* JCUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCUser.swift; sourceTree = "<group>"; };
 		A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendViewController.swift; sourceTree = "<group>"; };
-		A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendListViewController.swift; sourceTree = "<group>"; };
+		A0C80D2B2C5CEC0800E55080 /* ContactListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewController.swift; sourceTree = "<group>"; };
 		A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableListViewController.swift; sourceTree = "<group>"; };
 		A0C80D302C60C23200E55080 /* BaseUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserCell.swift; sourceTree = "<group>"; };
 		A0C80D322C60ECC800E55080 /* GroupListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupListViewController.swift; sourceTree = "<group>"; };
@@ -1533,7 +1533,7 @@
 			children = (
 				A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */,
 				A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */,
-				A0C80D2B2C5CEC0800E55080 /* FriendListViewController.swift */,
+				A0C80D2B2C5CEC0800E55080 /* ContactListViewController.swift */,
 				A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */,
 				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
 				A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */,
@@ -1914,7 +1914,7 @@
 				A0968C862C2B020300E68790 /* SBUSuggestedMentionList.swift in Sources */,
 				A0A3A52D2D072F0C009AD7C3 /* MultiAudioCallViewController.m in Sources */,
 				A0968CB32C2B03DA00E68790 /* SBUBaseChannelModule.Header.swift in Sources */,
-				A0C80D2C2C5CEC0800E55080 /* FriendListViewController.swift in Sources */,
+				A0C80D2C2C5CEC0800E55080 /* ContactListViewController.swift in Sources */,
 				A07F35EB2BF49B400087920B /* SBUGlobals.swift in Sources */,
 				A06388BD2CA41A0C006357C7 /* SBUGroupChannelSettingsViewModel.swift in Sources */,
 				A07F3B612BF4A2270087920B /* NSObject+SBUIKit.swift in Sources */,

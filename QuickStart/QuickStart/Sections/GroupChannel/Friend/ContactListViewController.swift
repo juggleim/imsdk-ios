@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import JuggleIM
 
-class FriendListViewController: BaseTableListViewController {
+class ContactListViewController: BaseTableListViewController {
     var users: [JCUser]?
     
     lazy var rightBarButton: UIBarButtonItem = {
@@ -85,7 +85,7 @@ class FriendListViewController: BaseTableListViewController {
     }
 }
 
-extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
+extension ContactListViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
     }
@@ -100,7 +100,7 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 1
+            return 2
         }
         return self.users?.count ?? 0
     }
@@ -111,16 +111,26 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
         var user: JCUser
         
         if indexPath.section == 0 {
-            user = JCUser()
-            user.userId = "New Friends"
-            user.userName = "New Friends"
-            
-            var cell = NewFriendsUserCell()
-            cell.selectionStyle = .none
-            cell.configure(type: .friendList, user: user)
-            return cell
+            if indexPath.row == 0 {
+                user = JCUser()
+                user.userId = "New Friends"
+                user.userName = "New Friends"
+                
+                let cell = NewFriendsUserCell()
+                cell.selectionStyle = .none
+                cell.configure(type: .friendList, user: user)
+                return cell
+            } else {
+                user = JCUser()
+                user.userId = "Groups"
+                user.userName = "Groups"
+                let cell = NewFriendsUserCell()
+                cell.selectionStyle = .none
+                cell.configure(type: .friendList, user: user)
+                return cell
+            }
         } else {
-            var cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
+            let cell = tableView.dequeueReusableCell(withIdentifier: BaseUserCell.sbu_className)
             cell?.selectionStyle = .none
             user = self.users?[indexPath.row] ?? JCUser()
             if let userCell = cell as? BaseUserCell {
@@ -147,9 +157,15 @@ extension FriendListViewController: UITableViewDataSource, UITableViewDelegate {
             let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
             self.navigationController?.pushViewController(channelVC, animated: true)
         } else if indexPath.section == 0 {
-            self.tabBarController?.tabBar.isHidden = true
-            let vc = FriendApplicationListViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
+            if indexPath.row == 0 {
+                self.tabBarController?.tabBar.isHidden = true
+                let vc = FriendApplicationListViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else if indexPath.row == 1 {
+                self.tabBarController?.tabBar.isHidden = true
+                let vc = GroupListViewController()
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
     

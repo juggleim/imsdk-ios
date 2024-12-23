@@ -10,19 +10,19 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, friends, groups, chatrooms, mySettings
+    case channels, contacts, chatrooms, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
     let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue)])
-    let friendListViewController = FriendListViewController()
-    let groupListViewController = GroupListViewController()
+    let contactListViewController = ContactListViewController()
+//    let groupListViewController = GroupListViewController()
     let chatroomListViewController = ChatroomListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
-    var friendListNavigationController = UINavigationController()
-    var groupListNavigationController = UINavigationController()
+    var contactListNavigationController = UINavigationController()
+//    var groupListNavigationController = UINavigationController()
     var chatroomListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
@@ -39,12 +39,12 @@ class MainChannelTabbarController: UITabBarController {
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
         )
-        self.friendListNavigationController = UINavigationController(
-            rootViewController: friendListViewController
+        self.contactListNavigationController = UINavigationController(
+            rootViewController: contactListViewController
         )
-        self.groupListNavigationController = UINavigationController(
-            rootViewController: groupListViewController
-        )
+//        self.groupListNavigationController = UINavigationController(
+//            rootViewController: groupListViewController
+//        )
         self.chatroomListNavigationController = UINavigationController(
             rootViewController: chatroomListViewController
         )
@@ -52,7 +52,7 @@ class MainChannelTabbarController: UITabBarController {
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.groupListNavigationController, self.chatroomListNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.contactListNavigationController, self.chatroomListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -84,15 +84,15 @@ class MainChannelTabbarController: UITabBarController {
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
-        friendListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Friends"
+        contactListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "Contacts"
         )
-        friendListViewController.tabBarItem = self.createTabItem(type: .friends)
+        contactListViewController.tabBarItem = self.createTabItem(type: .contacts)
         
-        groupListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Groups"
-        )
-        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
+//        groupListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+//            text: "Groups"
+//        )
+//        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
         chatroomListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
             text: "Chatrooms"
@@ -107,12 +107,12 @@ class MainChannelTabbarController: UITabBarController {
         self.channelsNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
-        self.friendListNavigationController.navigationBar.barStyle = self.isDarkMode
+        self.contactListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
-        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
-            ? .black
-            : .default
+//        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
+//            ? .black
+//            : .default
         self.chatroomListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
@@ -154,14 +154,14 @@ class MainChannelTabbarController: UITabBarController {
             title = "Conversations"
             icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
             tag = 0
-        case .friends:
-            title = "Friends"
+        case .contacts:
+            title = "Contacts"
             icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
-        case .groups:
-            title = "Groups"
-            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
-            tag = 2
+//        case .groups:
+//            title = "Groups"
+//            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
+//            tag = 2
         case .chatrooms:
             title = "Chatrooms"
             icon = UIImage(named: "imgOpenchannel")?.resize(with: iconSize)
@@ -212,9 +212,9 @@ class MainChannelTabbarController: UITabBarController {
             badgeValue = "\(totalCount)"
         }
         
-        self.friendListViewController.tabBarItem.badgeColor = SBUColorSet.error300
-        self.friendListViewController.tabBarItem.badgeValue = badgeValue
-        self.friendListViewController.tabBarItem.setBadgeTextAttributes(
+        self.contactListViewController.tabBarItem.badgeColor = SBUColorSet.error300
+        self.contactListViewController.tabBarItem.badgeValue = badgeValue
+        self.contactListViewController.tabBarItem.setBadgeTextAttributes(
             [
                 NSAttributedString.Key.foregroundColor : isDarkMode
                     ? SBUColorSet.onlight01
