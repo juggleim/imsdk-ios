@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
-#define jMessageTableVersion 2
+#define jMessageTableVersion 3
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -39,6 +39,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
+NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
@@ -686,6 +687,7 @@ NSString *const jMatchCount = @"match_count";
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -697,6 +699,10 @@ NSString *const jMatchCount = @"match_count";
         if (existedVersion == 1 && jMessageTableVersion >= 2) {
             [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
             existedVersion = 2;
+        }
+        if (existedVersion == 2 && jMessageTableVersion >= 3) {
+            [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
+            existedVersion = 3;
         }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
