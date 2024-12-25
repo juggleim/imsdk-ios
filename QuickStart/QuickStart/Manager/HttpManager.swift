@@ -61,6 +61,26 @@ import JuggleIM
     static let groupsAddString = "/groups/add"
     static let membersString = "members"
     
+    static let groupsUpdateString = "/groups/update"
+    
+    static let groupsDissolveString = "/groups/dissolve"
+    
+    static let groupsMuteString = "/groups/management/setmute"
+    static let isMuteString = "is_mute"
+    
+    static let groupAnnouncementString = "/groups/setgrpannouncement"
+    static let contentString = "content"
+    
+    static let setGroupDisplayNameString = "/groups/setdisplayname"
+    static let groupDisplayNameString = "grp_display_name"
+    
+    static let groupsInviteString = "/groups/invite"
+    static let memberIdsString = "member_ids"
+    
+    static let groupsQuitString = "/groups/quit"
+    
+    static let groupsMembersDelString = "/groups/members/del"
+    
     static let groupsMembersListString = "/groups/members/list"
     static let limitString = "limit"
     static let offsetString = "offset"
@@ -586,6 +606,207 @@ import JuggleIM
                     return
                 }
                 completion(Self.success, resultOffset, users)
+            })
+        }
+        task.resume()
+    }
+    
+    func deleteGroupMembers(
+        groupId: String,
+        userIdList: [String],
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsMembersDelString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.memberIdsString: userIdList]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func quitGroup(
+        groupId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsQuitString)
+        let dic: [String: Any] = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func groupInvite(
+        groupId: String,
+        userIdList: [String],
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsInviteString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.memberIdsString: userIdList]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func setGroupDisplayName(
+        groupId: String,
+        displayName: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.setGroupDisplayNameString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.groupDisplayNameString: displayName]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func setGroupAnnouncement(
+        groupId: String,
+        content: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupAnnouncementString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.contentString: content]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func muteGroup(
+        groupId: String,
+        isMute: Int,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsMuteString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.isMuteString: isMute]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func dissolveGroup(
+        groupId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsDissolveString)
+        let dic: [String: Any] = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func updateGroup(
+        groupId: String,
+        name: String,
+        portrait: String? = nil,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsUpdateString)
+        
+        var dic: [String: Any] = [Self.groupIdString: groupId, Self.groupNameString: name]
+        if let portrait = portrait, !portrait.isEmpty {
+            dic[Self.groupPortraitString] = portrait
+        }
+        
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
             })
         }
         task.resume()

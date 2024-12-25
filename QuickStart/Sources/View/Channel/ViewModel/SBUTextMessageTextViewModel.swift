@@ -47,7 +47,7 @@ public struct SBUTextMessageTextViewModel {
     
     /// This computed property checks if the message has mentioned someone.
     public var hasMentionedMessage: Bool {
-        guard let message = message else { return false }
+        guard message != nil else { return false }
         //TODO:
         return false
     }

@@ -10,6 +10,8 @@
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
+		A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */; };
+		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -43,6 +45,7 @@
 		A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */; };
 		A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516062C89B28600E3AEC1 /* ChatroomCell.swift */; };
 		A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A076CADF2C611DD200417341 /* ProfileManager.swift */; };
+		A079500D2D1AE2D60045EFE9 /* GroupMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -305,6 +308,10 @@
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
 		A02FA3B82D157FED002A4E0B /* QRCodeScannerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeScannerView.h; sourceTree = "<group>"; };
 		A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeScannerView.m; sourceTree = "<group>"; };
+		A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupSettingViewController.swift; sourceTree = "<group>"; };
+		A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSettingTableViewCell.h; sourceTree = "<group>"; };
+		A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSettingTableViewCell.m; sourceTree = "<group>"; };
+		A02FA3C02D19A5F6002A4E0B /* OCConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCConst.h; sourceTree = "<group>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -338,6 +345,7 @@
 		A06516062C89B28600E3AEC1 /* ChatroomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatroomCell.swift; sourceTree = "<group>"; };
 		A06516082C91D1D500E3AEC1 /* QuickStart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickStart.entitlements; sourceTree = "<group>"; };
 		A076CADF2C611DD200417341 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
+		A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberViewController.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -1265,6 +1273,7 @@
 				A09645D42BF36BD300290775 /* LaunchScreen.storyboard */,
 				A09645D72BF36BD300290775 /* Info.plist */,
 				A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */,
+				A02FA3C02D19A5F6002A4E0B /* OCConst.h */,
 			);
 			path = QuickStart;
 			sourceTree = "<group>";
@@ -1548,6 +1557,8 @@
 				A0C80D342C60F5C000E55080 /* GroupCell.swift */,
 				A0B4C3A12C6236C7005AFCEC /* CreateGroupViewController.swift */,
 				A0A3A5292D06F93D009AD7C3 /* GroupMemberSelectViewController.swift */,
+				A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */,
+				A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1557,6 +1568,8 @@
 			children = (
 				A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */,
 				A0C80D302C60C23200E55080 /* BaseUserCell.swift */,
+				A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */,
+				A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1710,6 +1723,7 @@
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
+				A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */,
 				A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */,
 				A07F3C9D2BF4A2290087920B /* SBUMessageCellProtocol.swift in Sources */,
 				A07F3B5C2BF4A2260087920B /* StringProtocol+SBUIKit.swift in Sources */,
@@ -1774,6 +1788,7 @@
 				A098CD742D144E9F000579A0 /* UnknownMessageCell.swift in Sources */,
 				A07F3BC52BF4A2270087920B /* SBUBaseChannelListModule.List.swift in Sources */,
 				A07F3BC02BF4A2270087920B /* SBUBaseChannelListModule.swift in Sources */,
+				A079500D2D1AE2D60045EFE9 /* GroupMemberViewController.swift in Sources */,
 				A07F3B5D2BF4A2260087920B /* UIApplication+SBUIKit.swift in Sources */,
 				A07F3CAF2BF4A2290087920B /* SBUStringSet.swift in Sources */,
 				A06388BC2CA41A0C006357C7 /* SBUBaseChannelSettingsViewModel.swift in Sources */,
@@ -1797,6 +1812,7 @@
 				A06388CF2CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift in Sources */,
 				A07F3C952BF4A2290087920B /* SBUCollectionViewFlowLayout.swift in Sources */,
 				A07F3C972BF4A2290087920B /* SBUViewControllerSet.swift in Sources */,
+				A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */,
 				A07F3C7B2BF4A2290087920B /* SBUCoverImageView.swift in Sources */,
 				A07F3B4B2BF4A2260087920B /* URL+SBUKit.swift in Sources */,
 				A07F3BC42BF4A2270087920B /* SBUBaseChannelListModule.Header.swift in Sources */,

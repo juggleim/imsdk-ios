@@ -316,8 +316,14 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open override func showChannelSettings() {
         guard let conversationInfo = self.conversationInfo else { return }
         
-        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
+        if conversationInfo.conversation.conversationType == .private {
+            let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(conversationInfo: conversationInfo)
+            self.navigationController?.pushViewController(channelSettingsVC, animated: true)
+        } else if conversationInfo.conversation.conversationType == .group {
+            let groupSettingVC = GroupSettingViewController()
+            groupSettingVC.conversationInfo = conversationInfo
+            self.navigationController?.pushViewController(groupSettingVC, animated: true)
+        }
     }
     
     open override func showMessageThread(
