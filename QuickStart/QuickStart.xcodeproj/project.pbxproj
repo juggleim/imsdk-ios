@@ -52,6 +52,7 @@
 		A07950162D1C09EE0045EFE9 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = A07950152D1C09EE0045EFE9 /* Podfile */; };
 		A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */; };
 		A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A079501B2D1C162B0045EFE9 /* NormalAlertView.m */; };
+		A079501E2D1C377E0045EFE9 /* GroupManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -362,6 +363,7 @@
 		A07950182D1C0F6C0045EFE9 /* UIView+MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MBProgressHUD.h"; sourceTree = "<group>"; };
 		A079501A2D1C162B0045EFE9 /* NormalAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalAlertView.h; sourceTree = "<group>"; };
 		A079501B2D1C162B0045EFE9 /* NormalAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalAlertView.m; sourceTree = "<group>"; };
+		A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupManageViewController.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -1585,6 +1587,7 @@
 				A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */,
 				A079500F2D1C02FC0045EFE9 /* GroupAnnouncementViewController.h */,
 				A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */,
+				A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1992,6 +1995,7 @@
 				A07F3B482BF4A2260087920B /* SBUHighlightMessageInfo.swift in Sources */,
 				A0B4C3A22C6236C7005AFCEC /* CreateGroupViewController.swift in Sources */,
 				A07F3B452BF4A2260087920B /* SBUVoiceFileInfo.swift in Sources */,
+				A079501E2D1C377E0045EFE9 /* GroupManageViewController.swift in Sources */,
 				A07F3CA02BF4A2290087920B /* SBUView.swift in Sources */,
 				A07F3C7D2BF4A2290087920B /* SBUPhotoCollectionViewCell.swift in Sources */,
 				A07F3B772BF4A2270087920B /* SBUToastView.swift in Sources */,

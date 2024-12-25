@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import JuggleIM
 
 class GroupSettingViewController: BaseTableListViewController {
     var conversationInfo: JConversationInfo?
@@ -15,12 +16,16 @@ class GroupSettingViewController: BaseTableListViewController {
         //TODO: loadGroupInfo
     }
     
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        self.titleView.text = "群组信息"
+    }
+    
     override func configTableView() {
         super.configTableView()
         self.tableView.delegate = self
         self.tableView.dataSource = self
     }
-    
 }
 
 extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate {
@@ -80,11 +85,19 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
                 // 消息免打扰
                 let cell = getSwitchCell()
                 cell.leftLabel.text = "消息免打扰"
+                cell.switchButton.addTarget(self, action: #selector(onSetMute(_:)), for: .valueChanged)
+                if let mute = self.conversationInfo?.mute {
+                    cell.switchButton.isOn = mute
+                }
                 return cell
             } else if indexPath.row == 1 {
                 // 会话置顶
                 let cell = getSwitchCell()
                 cell.leftLabel.text = "会话置顶"
+                cell.switchButton.addTarget(self, action: #selector(onSetTop(_:)), for: .valueChanged)
+                if let top = self.conversationInfo?.isTop {
+                    cell.switchButton.isOn = top
+                }
                 return cell
             }
         } else if indexPath.section == 3 {
@@ -110,14 +123,13 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             } else if indexPath.row == 1 {
                 groupAnnouncement()
             } else if indexPath.row == 2 {
-                
+                groupManage()
             }
         } else if indexPath.section == 3 {
             if indexPath.row == 0 {
-                //TODO:
+                clearMessages()
             }
         }
-        
     }
     
     private func selectGroupMember() {
@@ -136,7 +148,6 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             
             if let groupId = self.conversationInfo?.conversation.conversationId {
                 HttpManager.shared.updateGroup(groupId: groupId, name: newChannel) { code in
-                    let i = 1
                 }
             }
         }
@@ -159,6 +170,22 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    private func groupManage() {
+        let vc = GroupManageViewController()
+        vc.conversationInfo = self.conversationInfo
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func clearMessages() {
+        SBULoading.start()
+        JIM.shared().messageManager.clearMessages(in: self.conversationInfo?.conversation, startTime: 0) {
+            SBULoading.stop()
+        } error: { code in
+            SBULoading.stop()
+        }
+
+    }
+    
     private func getArrowCell() -> BaseSettingTableViewCell {
         let cell = BaseSettingTableViewCell()
         cell.setCellStyle(.DefaultStyle)
@@ -170,6 +197,24 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
 //        cell.delegate = self
         cell.setCellStyle(.SwitchStyle)
         return cell
+    }
+    
+    @objc func onSetMute(_ sender: UISwitch) {
+        SBULoading.start()
+        JIM.shared().conversationManager.setMute(sender.isOn, conversation: self.conversationInfo?.conversation) {
+            SBULoading.stop()
+        } error: { code in
+            SBULoading.stop()
+        }
+    }
+    
+    @objc func onSetTop(_ sender: UISwitch) {
+        SBULoading.start()
+        JIM.shared().conversationManager.setTop(sender.isOn, conversation: self.conversationInfo?.conversation) {
+            SBULoading.stop()
+        } error: { code in
+            SBULoading.stop()
+        }
     }
 }
 
