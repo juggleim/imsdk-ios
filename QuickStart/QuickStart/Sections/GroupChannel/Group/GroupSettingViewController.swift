@@ -102,16 +102,13 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                let vc = GroupMemberViewController()
-                vc.groupId = self.conversationInfo?.conversation.conversationId ?? ""
-                self.navigationController?.pushViewController(vc, animated: true)
-                
+                selectGroupMember()
             }
         } else if indexPath.section == 1 {
             if indexPath.row == 0 {
                 updateGroupName()
             } else if indexPath.row == 1 {
-                
+                groupAnnouncement()
             } else if indexPath.row == 2 {
                 
             }
@@ -121,6 +118,12 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             }
         }
         
+    }
+    
+    private func selectGroupMember() {
+        let vc = GroupMemberViewController()
+        vc.groupId = self.conversationInfo?.conversation.conversationId ?? ""
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func updateGroupName() {
@@ -148,6 +151,12 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             cancelButtonItem: cancelButton,
             delegate: self
         )
+    }
+    
+    private func groupAnnouncement() {
+        let vc = GroupAnnouncementViewController()
+        vc.groupId = self.conversationInfo?.conversation.conversationId ?? ""
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {

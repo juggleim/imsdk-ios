@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46652C36834AAD292F03E628 /* Pods_QuickStart.framework */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -46,6 +47,11 @@
 		A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516062C89B28600E3AEC1 /* ChatroomCell.swift */; };
 		A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A076CADF2C611DD200417341 /* ProfileManager.swift */; };
 		A079500D2D1AE2D60045EFE9 /* GroupMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */; };
+		A07950112D1C02FC0045EFE9 /* GroupAnnouncementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */; };
+		A07950142D1C04240045EFE9 /* UITextViewAndPlaceholder.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950122D1C04240045EFE9 /* UITextViewAndPlaceholder.m */; };
+		A07950162D1C09EE0045EFE9 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = A07950152D1C09EE0045EFE9 /* Podfile */; };
+		A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */; };
+		A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A079501B2D1C162B0045EFE9 /* NormalAlertView.m */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -303,6 +309,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		46652C36834AAD292F03E628 /* Pods_QuickStart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuickStart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -346,6 +353,15 @@
 		A06516082C91D1D500E3AEC1 /* QuickStart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickStart.entitlements; sourceTree = "<group>"; };
 		A076CADF2C611DD200417341 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberViewController.swift; sourceTree = "<group>"; };
+		A079500F2D1C02FC0045EFE9 /* GroupAnnouncementViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupAnnouncementViewController.h; sourceTree = "<group>"; };
+		A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GroupAnnouncementViewController.m; sourceTree = "<group>"; };
+		A07950122D1C04240045EFE9 /* UITextViewAndPlaceholder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UITextViewAndPlaceholder.m; sourceTree = "<group>"; };
+		A07950132D1C04240045EFE9 /* UITextViewAndPlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITextViewAndPlaceholder.h; sourceTree = "<group>"; };
+		A07950152D1C09EE0045EFE9 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+MBProgressHUD.m"; sourceTree = "<group>"; };
+		A07950182D1C0F6C0045EFE9 /* UIView+MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MBProgressHUD.h"; sourceTree = "<group>"; };
+		A079501A2D1C162B0045EFE9 /* NormalAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalAlertView.h; sourceTree = "<group>"; };
+		A079501B2D1C162B0045EFE9 /* NormalAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalAlertView.m; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -599,6 +615,8 @@
 		A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallCenter.h; sourceTree = "<group>"; };
 		A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CallCenter.m; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.debug.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.debug.xcconfig"; sourceTree = "<group>"; };
+		E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.release.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -610,6 +628,7 @@
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
 				A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */,
+				3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -789,6 +808,8 @@
 		A07F35D52BF462040087920B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				A07950182D1C0F6C0045EFE9 /* UIView+MBProgressHUD.h */,
+				A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */,
 				A07F35E12BF4928B0087920B /* UIcolor+Ext.swift */,
 				A07F35DC2BF48F190087920B /* UIView+Ext.swift */,
 				A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */,
@@ -1220,6 +1241,7 @@
 				A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */,
 				A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */,
 				A07F3CB12BF74F3E0087920B /* JetIM.framework */,
+				46652C36834AAD292F03E628 /* Pods_QuickStart.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1240,10 +1262,12 @@
 		A09645BD2BF36BD000290775 = {
 			isa = PBXGroup;
 			children = (
+				A07950152D1C09EE0045EFE9 /* Podfile */,
 				A09645C82BF36BD000290775 /* QuickStart */,
 				A09645DD2BF36BF700290775 /* Sources */,
 				A09645C72BF36BD000290775 /* Products */,
 				A07F3CB02BF74F3E0087920B /* Frameworks */,
+				A5272E37B5AB127C6D246998 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1559,6 +1583,8 @@
 				A0A3A5292D06F93D009AD7C3 /* GroupMemberSelectViewController.swift */,
 				A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */,
 				A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */,
+				A079500F2D1C02FC0045EFE9 /* GroupAnnouncementViewController.h */,
+				A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1566,6 +1592,10 @@
 		A0C80D2F2C60B59200E55080 /* Base */ = {
 			isa = PBXGroup;
 			children = (
+				A079501A2D1C162B0045EFE9 /* NormalAlertView.h */,
+				A079501B2D1C162B0045EFE9 /* NormalAlertView.m */,
+				A07950132D1C04240045EFE9 /* UITextViewAndPlaceholder.h */,
+				A07950122D1C04240045EFE9 /* UITextViewAndPlaceholder.m */,
 				A0C80D2D2C60B58700E55080 /* BaseTableListViewController.swift */,
 				A0C80D302C60C23200E55080 /* BaseUserCell.swift */,
 				A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */,
@@ -1598,6 +1628,15 @@
 			path = Call;
 			sourceTree = "<group>";
 		};
+		A5272E37B5AB127C6D246998 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */,
+				E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1605,10 +1644,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A09645DA2BF36BD300290775 /* Build configuration list for PBXNativeTarget "QuickStart" */;
 			buildPhases = (
+				67D4B33EE44D84586F793B29 /* [CP] Check Pods Manifest.lock */,
 				A09645C22BF36BD000290775 /* Sources */,
 				A09645C32BF36BD000290775 /* Frameworks */,
 				A09645C42BF36BD000290775 /* Resources */,
 				A05661C82CDA0C180070EBC2 /* Embed Frameworks */,
+				137DAC17AF6959D9E4C731C8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1668,10 +1709,53 @@
 				A09645D12BF36BD000290775 /* Main.storyboard in Resources */,
 				A07F3C0A2BF4A2280087920B /* Base.xcconfig in Resources */,
 				A07F3C892BF4A2290087920B /* SBUMenuCell.xib in Resources */,
+				A07950162D1C09EE0045EFE9 /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		137DAC17AF6959D9E4C731C8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		67D4B33EE44D84586F793B29 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-QuickStart-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A09645C22BF36BD000290775 /* Sources */ = {
@@ -1716,6 +1800,7 @@
 				A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */,
 				A0968C672C2B020300E68790 /* SBUBaseMessageCellParams.swift in Sources */,
 				A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */,
+				A07950112D1C02FC0045EFE9 /* GroupAnnouncementViewController.m in Sources */,
 				A0968C682C2B020300E68790 /* SBUMediaMessageCellParams.swift in Sources */,
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
 				A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */,
@@ -1745,6 +1830,7 @@
 				A07F3B492BF4A2260087920B /* SBUScrollOptions.swift in Sources */,
 				A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */,
 				A07F3B732BF4A2270087920B /* SBUCacheManager.Image.swift in Sources */,
+				A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */,
 				A07F3B762BF4A2270087920B /* SBUVoicePlayer.swift in Sources */,
 				A07F3C912BF4A2290087920B /* SBUMarginView.swift in Sources */,
 				A07F3C0C2BF4A2280087920B /* SBUColorSet.swift in Sources */,
@@ -1836,6 +1922,7 @@
 				A07F3B4C2BF4A2260087920B /* Thread+SBUIKit.swift in Sources */,
 				A0968C882C2B020300E68790 /* SBUMessageInputMode.swift in Sources */,
 				A07F3C812BF4A2290087920B /* SBULayoutableButton.swift in Sources */,
+				A07950142D1C04240045EFE9 /* UITextViewAndPlaceholder.m in Sources */,
 				A07F3B662BF4A2270087920B /* SBULogger.swift in Sources */,
 				A07F3C142BF4A2280087920B /* SBUBaseChannelListViewController.swift in Sources */,
 				A0968C8B2C2B020300E68790 /* SBUCategoryFilterCell.swift in Sources */,
@@ -1913,6 +2000,7 @@
 				A0968CAE2C2B03DA00E68790 /* SBUGroupChannelModule.List.swift in Sources */,
 				A07F3C932BF4A2290087920B /* SBUCommonViewControllerSet.swift in Sources */,
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
+				A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */,
 				A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */,
 				A09645CA2BF36BD000290775 /* AppDelegate.swift in Sources */,
 				A0968C662C2B020300E68790 /* SBUAdminMessageCellParams.swift in Sources */,
@@ -2083,6 +2171,7 @@
 		};
 		A09645DB2BF36BD300290775 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2111,7 +2200,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.8.3.1;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2130,6 +2222,7 @@
 		};
 		A09645DC2BF36BD300290775 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -2158,7 +2251,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.8.3.1;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

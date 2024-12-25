@@ -6,3 +6,4 @@
 #import "CallCenter.h"
 #import "ScanQRCodeViewController.h"
 #import "BaseSettingTableViewCell.h"
+#import "GroupAnnouncementViewController.h"

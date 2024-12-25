@@ -71,6 +71,8 @@ import JuggleIM
     static let groupAnnouncementString = "/groups/setgrpannouncement"
     static let contentString = "content"
     
+    static let getGroupAnnouncementString = "/groups/getgrpannouncement"
+    
     static let setGroupDisplayNameString = "/groups/setdisplayname"
     static let groupDisplayNameString = "grp_display_name"
     
@@ -707,7 +709,42 @@ import JuggleIM
         task.resume()
     }
     
-    func setGroupAnnouncement(
+    @objc func getGroupAnnouncement(
+        groupId: String,
+        completion: @escaping ((Int, String) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.getGroupAnnouncementString)
+        let dic: [String: Any] = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .get, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, "")
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, "")
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get group announcement error, data is not available")
+                    completion(Self.unknownError, "")
+                    return
+                }
+                if let content = responseData[Self.contentString] as? String {
+                    completion(Self.success, content)
+                    return
+                } else {
+                    print("get group announcement error, content string is not available")
+                    completion(Self.unknownError, "")
+                    return
+                }
+            })
+        }
+        task.resume()
+    }
+    
+    @objc func setGroupAnnouncement(
         groupId: String,
         content: String,
         completion: @escaping ((Int) -> Void)
