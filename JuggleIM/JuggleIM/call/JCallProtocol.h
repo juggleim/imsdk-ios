@@ -49,6 +49,10 @@
                          mediaType:(JCallMediaType)mediaType
                           delegate:(id<JCallSessionDelegate>)delegate;
 
+/// 根据 callId 获取 CallSession
+/// - Parameter callId: 通话 id
+- (id<JCallSession>)getCallSession:(NSString *)callId;
+
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate;
 
 @end
