@@ -33,6 +33,9 @@ class GroupSettingViewController: BaseTableListViewController {
             HttpManager.shared.getGroupInfo(groupId: groupId) { code, groupInfo in
                 if code == 0 {
                     self.groupInfo = groupInfo
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
@@ -56,8 +59,11 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         if section == 0 {
             return 1
         } else if section == 1 {
-            //TODO: 非管理员 2
-            return 3
+            if self.groupInfo?.myRole == .owner || self.groupInfo?.myRole == .admin {
+                return 4
+            } else {
+                return 3
+            }
         } else if section == 2 {
             return 2
         } else if section == 3 {
@@ -86,6 +92,11 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
                 cell.leftLabel.text = "群公告"
                 return cell
             } else if indexPath.row == 2 {
+                // 群昵称
+                let cell = getArrowCell()
+                cell.leftLabel.text = "我在本群的昵称"
+                return cell
+            } else if indexPath.row == 3 {
                 // 群管理
                 let cell = getArrowCell()
                 cell.leftLabel.text = "群管理"
@@ -133,6 +144,8 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             } else if indexPath.row == 1 {
                 groupAnnouncement()
             } else if indexPath.row == 2 {
+                groupNickname()
+            } else if indexPath.row == 3 {
                 groupManage()
             }
         } else if indexPath.section == 3 {
@@ -148,6 +161,32 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    private func groupNickname() {
+        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] newNickname in
+            guard let self = self else { return }
+            guard let newNickname = newNickname as? String else { return }
+            
+            let trimmedNickname = newNickname.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmedNickname.count > 0 else { return }
+            
+            if let groupId = self.conversationInfo?.conversation.conversationId {
+                HttpManager.shared.setGroupDisplayName(groupId: groupId, displayName: trimmedNickname) { code in
+                }
+            }
+        }
+        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        
+        SBUAlertView.show(
+            title: SBUStringSet.ChannelSettings_Change_Name,
+            needInputField: true,
+            placeHolder: SBUStringSet.ChannelSettings_Enter_New_Name,
+            centerYRatio: 0.75,
+            confirmButtonItem: okButton,
+            cancelButtonItem: cancelButton,
+            delegate: self
+        )
+    }
+    
     private func updateGroupName() {
         let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] newChannelName in
             guard let self = self else { return }
@@ -157,7 +196,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             guard trimmedChannelName.count > 0 else { return }
             
             if let groupId = self.conversationInfo?.conversation.conversationId {
-                HttpManager.shared.updateGroup(groupId: groupId, name: newChannel) { code in
+                HttpManager.shared.updateGroup(groupId: groupId, name: trimmedChannelName) { code in
                 }
             }
         }

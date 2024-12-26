@@ -21,7 +21,6 @@ public class MessageTemplateTestViewController: SBUBaseViewController {
             selector: #selector(onTapLeftBarButton)
         )
         self.navigationItem.leftBarButtonItem = backButton
-
     }
     
     @objc
