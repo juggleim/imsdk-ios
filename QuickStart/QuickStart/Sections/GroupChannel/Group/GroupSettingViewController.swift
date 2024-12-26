@@ -76,29 +76,34 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 // 群成员
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群成员"
+                if let count = self.groupInfo?.memberCount, count > 0 {
+                    cell.rightLabel.text = "\(count)"
+                }
                 return cell
             }
         } else if indexPath.section == 1 {
             if indexPath.row == 0 {
                 // 群名称
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群名称"
+                cell.rightLabel.text = self.groupInfo?.groupName ?? ""
                 return cell
             } else if indexPath.row == 1 {
                 // 群公告
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群公告"
                 return cell
             } else if indexPath.row == 2 {
                 // 群昵称
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "我在本群的昵称"
+                cell.rightLabel.text = self.groupInfo?.groupDisplayName ?? ""
                 return cell
             } else if indexPath.row == 3 {
                 // 群管理
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群管理"
                 return cell
             }
@@ -125,7 +130,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         } else if indexPath.section == 3 {
             if indexPath.row == 0 {
                 // 清除聊天记录
-                let cell = getArrowCell()
+                let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "清除聊天记录"
                 return cell
             }
@@ -171,6 +176,10 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             
             if let groupId = self.conversationInfo?.conversation.conversationId {
                 HttpManager.shared.setGroupDisplayName(groupId: groupId, displayName: trimmedNickname) { code in
+                    DispatchQueue.main.async {
+                        self.groupInfo?.groupDisplayName = trimmedNickname
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
@@ -197,6 +206,10 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             
             if let groupId = self.conversationInfo?.conversation.conversationId {
                 HttpManager.shared.updateGroup(groupId: groupId, name: trimmedChannelName) { code in
+                    DispatchQueue.main.async {
+                        self.groupInfo?.groupName = trimmedChannelName
+                        self.tableView.reloadData()
+                    }
                 }
             }
         }
@@ -239,6 +252,12 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     private func getArrowCell() -> BaseSettingTableViewCell {
         let cell = BaseSettingTableViewCell()
         cell.setCellStyle(.DefaultStyle)
+        return cell
+    }
+    
+    private func getRightLabelArrowCell() -> BaseSettingTableViewCell {
+        let cell = BaseSettingTableViewCell()
+        cell.setCellStyle(.RightLabelStyle)
         return cell
     }
     

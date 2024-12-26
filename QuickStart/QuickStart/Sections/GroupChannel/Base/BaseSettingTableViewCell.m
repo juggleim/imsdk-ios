@@ -47,6 +47,11 @@
     self.leftLabel.textColor = ColorFromRGB(0x000000);
     self.leftLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
+    self.rightLabel = [[UILabel alloc] init];
+    self.rightLabel.font = [UIFont systemFontOfSize:14.f];
+    self.rightLabel.textColor = ColorFromRGB(0x999999);
+    self.rightLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
     self.rightArrow = [[UIImageView alloc] init];
     self.rightArrow.image = [UIImage imageNamed:@"iconChevronRight"];
     self.rightArrow.translatesAutoresizingMaskIntoConstraints = NO;
@@ -61,12 +66,13 @@
     self.bottomLine.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self.contentView addSubview:self.leftLabel];
+    [self.contentView addSubview:self.rightLabel];
     [self.contentView addSubview:self.rightArrow];
     [self.contentView addSubview:self.switchButton];
     [self.contentView addSubview:self.bottomLine];
 
     self.cellSubViews =
-        NSDictionaryOfVariableBindings(_leftLabel, _rightArrow, _switchButton, _bottomLine);
+        NSDictionaryOfVariableBindings(_leftLabel, _rightLabel, _rightArrow, _switchButton, _bottomLine);
     [self setLayout];
 }
 
@@ -82,7 +88,17 @@
                                                                  attribute:NSLayoutAttributeCenterY
                                                                 multiplier:1
                                                                   constant:0]];
-
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_rightLabel(21)]"
+                                                                             options:0
+                                                                             metrics:nil
+                                                                               views:self.cellSubViews]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:_rightLabel
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:self.contentView
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                multiplier:1
+                                                                  constant:0]];
     [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[_rightArrow(13)]"
                                                                              options:0
                                                                              metrics:nil
@@ -118,7 +134,13 @@
     switch (style) {
     case DefaultStyle: {
         self.switchButton.hidden = YES;
+        self.rightLabel.hidden = YES;
         constraints = @"H:|-10-[_leftLabel]-(>=10)-[_rightArrow(8)]-10-|";
+    } break;
+            
+    case RightLabelStyle: {
+        self.switchButton.hidden = YES;
+        constraints = @"H:|-10-[_leftLabel]-(>=5)-[_rightLabel]-8-[_rightArrow(16)]-12-|";
     } break;
 
     case SwitchStyle: {

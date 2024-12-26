@@ -19,6 +19,11 @@ typedef NS_ENUM(NSUInteger, BaseSettingCellStyle) {
      Display：leftLabel,rightArrow
      */
     DefaultStyle,
+    
+    /*!
+     Display：leftLabel,rightLabel,rightArrow
+     */
+    RightLabelStyle,
 
     /*!
      Display：leftLabel,switchButton
@@ -29,6 +34,7 @@ typedef NS_ENUM(NSUInteger, BaseSettingCellStyle) {
 @interface BaseSettingTableViewCell : UITableViewCell
 @property (nonatomic, strong) UILabel *leftLabel;
 @property (nonatomic, strong) UISwitch *switchButton;
+@property (nonatomic, strong) UILabel *rightLabel;
 @property (nonatomic, strong) UIImageView *rightArrow;
 @property (nonatomic, strong) UIView *bottomLine;
 @property (nonatomic, assign) BOOL switchButtonStatus;
