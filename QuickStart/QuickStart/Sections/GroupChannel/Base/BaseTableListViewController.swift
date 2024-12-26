@@ -25,6 +25,9 @@ public class BaseTableListViewController: UIViewController {
     func configNavigationItem() {
         titleView.textAlignment = .center
         self.navigationItem.titleView = titleView
+        
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     func configTableView() {
@@ -47,5 +50,9 @@ public class BaseTableListViewController: UIViewController {
         self.loadingIndicator.style = .large
         self.loadingIndicator.center = self.view.center
         self.view.addSubview(self.loadingIndicator)
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
 }
