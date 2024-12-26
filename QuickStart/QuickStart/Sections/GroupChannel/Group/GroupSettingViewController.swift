@@ -10,10 +10,11 @@ import JuggleIM
 
 class GroupSettingViewController: BaseTableListViewController {
     var conversationInfo: JConversationInfo?
+    var groupInfo: JCGroupInfo?
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        //TODO: loadGroupInfo
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadGroupInfo()
     }
     
     override func configNavigationItem() {
@@ -25,6 +26,16 @@ class GroupSettingViewController: BaseTableListViewController {
         super.configTableView()
         self.tableView.delegate = self
         self.tableView.dataSource = self
+    }
+    
+    private func loadGroupInfo() {
+        if let groupId = self.conversationInfo?.conversation.conversationId {
+            HttpManager.shared.getGroupInfo(groupId: groupId) { code, groupInfo in
+                if code == 0 {
+                    self.groupInfo = groupInfo
+                }
+            }
+        }
     }
 }
 
@@ -172,7 +183,9 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     
     private func groupManage() {
         let vc = GroupManageViewController()
-        vc.conversationInfo = self.conversationInfo
+        vc.groupId = self.conversationInfo?.conversation.conversationId ?? ""
+        vc.mute = self.groupInfo?.mute ?? 0
+        vc.historyMessageVisible = self.groupInfo?.historyMessageVisible ?? 0
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

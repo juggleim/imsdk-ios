@@ -68,6 +68,8 @@ import JuggleIM
     static let groupsMuteString = "/groups/management/setmute"
     static let isMuteString = "is_mute"
     
+    static let setHisMsgVisibleString = "/groups/management/sethismsgvisible"
+    
     static let groupAnnouncementString = "/groups/setgrpannouncement"
     static let contentString = "content"
     
@@ -86,6 +88,17 @@ import JuggleIM
     static let groupsMembersListString = "/groups/members/list"
     static let limitString = "limit"
     static let offsetString = "offset"
+    
+    static let groupsInfoString = "/groups/info"
+    static let memberCountString = "member_count"
+    static let ownerString = "owner"
+    static let myRoleString = "my_role"
+    static let groupManagementString = "group_management"
+    static let groupMuteString = "group_mute"
+    static let maxAdminCountString = "max_admin_count"
+    static let adminCountString = "admin_count"
+    static let groupVerifyTypeString = "group_verify_type"
+    static let groupHisMsgVisibleString = "group_his_msg_visible"
     
     static let qrcodeConfirmString = "/login/qrcode/confirm"
     static let idString = "id"
@@ -473,6 +486,98 @@ import JuggleIM
         task.resume()
     }
     
+    func getGroupInfo(
+        groupId: String,
+        completion: @escaping ((Int, JCGroupInfo?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsInfoString)
+        let dict: [String: Any] = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get groups error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                let groupInfo = JCGroupInfo()
+                if let groupId = responseData[Self.groupIdString] as? String {
+                    groupInfo.groupId = groupId
+                }
+                if let name = responseData[Self.groupNameString] as? String {
+                    groupInfo.groupName = name
+                }
+                if let portrait = responseData[Self.groupPortraitString] as? String {
+                    groupInfo.portrait = portrait
+                }
+                if let memberCount = responseData[Self.memberCountString] as? Int {
+                    groupInfo.memberCount = memberCount
+                }
+                if let members = responseData[Self.membersString] as? [Dictionary<String, Any>] {
+                    for member in members {
+                        let user = JCUser()
+                        if let userId = member[Self.userIdString] as? String {
+                            user.userId = userId
+                        }
+                        if let nickname = member[Self.nickNameString] as? String {
+                            user.userName = nickname
+                        }
+                        if let avatar = member[Self.avatarString] as? String {
+                            user.portrait = avatar
+                        }
+                        groupInfo.members.append(user)
+                    }
+                }
+                if let owner = responseData[Self.ownerString] as? Dictionary<String, Any> {
+                    let user = JCUser()
+                    if let userId = owner[Self.userIdString] as? String {
+                        user.userId = userId
+                    }
+                    if let nickname = owner[Self.nickNameString] as? String {
+                        user.userName = nickname
+                    }
+                    if let avatar = owner[Self.avatarString] as? String {
+                        user.portrait = avatar
+                    }
+                    groupInfo.owner = user
+                }
+                if let myRole = responseData[Self.myRoleString] as? Int {
+                    groupInfo.myRole = GroupRole(rawValue: myRole) ?? .member
+                }
+                if let management = responseData[Self.groupManagementString] as? Dictionary<String, Any> {
+                    if let mute = management[Self.groupMuteString] as? Int {
+                        groupInfo.mute = mute
+                    }
+                    if let maxAdminCount = management[Self.maxAdminCountString] as? Int {
+                        groupInfo.maxAdminCount = maxAdminCount
+                    }
+                    if let adminCount = management[Self.adminCountString] as? Int {
+                        groupInfo.adminCount = adminCount
+                    }
+                    if let groupVerifyType = management[Self.groupVerifyTypeString] as? Int {
+                        groupInfo.groupVerifyType = groupVerifyType
+                    }
+                    if let hisMsgVisible = management[Self.groupHisMsgVisibleString] as? Int {
+                        groupInfo.historyMessageVisible = hisMsgVisible
+                    }
+                }
+                if let displayName = responseData[Self.groupDisplayNameString] as? String {
+                    groupInfo.groupDisplayName = displayName
+                }
+                completion(0, groupInfo)
+            })
+        }
+        task.resume()
+    }
+    
     func getMyGroups(
         completion: @escaping ((Int, [JGroupInfo]?) -> Void)
     ) {
@@ -751,6 +856,31 @@ import JuggleIM
     ) {
         let urlString = Self.domain.appending(Self.groupAnnouncementString)
         let dic: [String: Any] = [Self.groupIdString: groupId, Self.contentString: content]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func setGroupHistoryMessageVisible(
+        groupId: String,
+        isVisible: Int,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.setHisMsgVisibleString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.groupHisMsgVisibleString: isVisible]
         let req = getRequest(url: urlString, method: .post, params: dic)
         guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError)

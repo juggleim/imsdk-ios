@@ -53,6 +53,7 @@
 		A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */; };
 		A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A079501B2D1C162B0045EFE9 /* NormalAlertView.m */; };
 		A079501E2D1C377E0045EFE9 /* GroupManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */; };
+		A07950202D1D361A0045EFE9 /* JCGroupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -364,6 +365,7 @@
 		A079501A2D1C162B0045EFE9 /* NormalAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NormalAlertView.h; sourceTree = "<group>"; };
 		A079501B2D1C162B0045EFE9 /* NormalAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalAlertView.m; sourceTree = "<group>"; };
 		A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupManageViewController.swift; sourceTree = "<group>"; };
+		A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCGroupInfo.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -1559,6 +1561,7 @@
 				A0C45D6E2C591CC600B68B96 /* JCUser.swift */,
 				A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */,
 				A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */,
+				A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2001,6 +2004,7 @@
 				A07F3B772BF4A2270087920B /* SBUToastView.swift in Sources */,
 				A07F3B502BF4A2260087920B /* UIImage+SBUIKit.swift in Sources */,
 				A0968C642C2B020300E68790 /* SBUTextMessageCellParams.swift in Sources */,
+				A07950202D1D361A0045EFE9 /* JCGroupInfo.swift in Sources */,
 				A0968CAE2C2B03DA00E68790 /* SBUGroupChannelModule.List.swift in Sources */,
 				A07F3C932BF4A2290087920B /* SBUCommonViewControllerSet.swift in Sources */,
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
