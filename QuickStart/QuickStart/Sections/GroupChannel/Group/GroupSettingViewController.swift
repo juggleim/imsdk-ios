@@ -119,7 +119,6 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
                 return cell
             }
         }
-        
         return UITableViewCell()
     }
     
@@ -196,7 +195,6 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         } error: { code in
             SBULoading.stop()
         }
-
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {
@@ -207,7 +205,6 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     
     private func getSwitchCell() -> BaseSettingTableViewCell {
         let cell = BaseSettingTableViewCell()
-//        cell.delegate = self
         cell.setCellStyle(.SwitchStyle)
         return cell
     }
