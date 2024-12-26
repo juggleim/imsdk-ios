@@ -11,6 +11,13 @@ import JuggleIM
 class GroupSettingViewController: BaseTableListViewController {
     var conversationInfo: JConversationInfo?
     var groupInfo: JCGroupInfo?
+    var deleteButton: UIButton?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setHeaderView()
+        setFooterView()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -20,12 +27,18 @@ class GroupSettingViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         self.titleView.text = "群组信息"
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     override func configTableView() {
         super.configTableView()
         self.tableView.delegate = self
         self.tableView.dataSource = self
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func loadGroupInfo() {
@@ -36,6 +49,39 @@ class GroupSettingViewController: BaseTableListViewController {
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                     }
+                }
+            }
+        }
+    }
+    
+    private func setHeaderView() {
+        
+    }
+    
+    private func setFooterView() {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 150))
+        let button = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
+        button.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
+        button.setTitle("退出并删除", for: .normal)
+        button.layer.cornerRadius = 5.f
+        button.layer.borderWidth = 0.5
+        button.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
+        view.addSubview(button)
+        button.addTarget(self, action: #selector(onDelete), for: .touchUpInside)
+        
+        self.deleteButton = button
+        self.tableView.tableFooterView = view
+    }
+    
+    @objc func onDelete() {
+        if let groupId = self.conversationInfo?.conversation.conversationId {
+            HttpManager.shared.quitGroup(groupId: groupId) { code in
+                if let conversation = self.conversationInfo?.conversation {
+                    JIM.shared().conversationManager.deleteConversationInfo(by: conversation) {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    } error: { errorCode in
+                    }
+
                 }
             }
         }

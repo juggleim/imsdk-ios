@@ -15,6 +15,8 @@ class AddFriendViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         self.titleView.text = "Add Friend"
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     override func configTableView() {
@@ -43,6 +45,10 @@ class AddFriendViewController: BaseTableListViewController {
 //            }
 //        }
 //    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
+    }
     
     private func applyFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
         HttpManager.shared.applyFriend(userId: userId) { code in

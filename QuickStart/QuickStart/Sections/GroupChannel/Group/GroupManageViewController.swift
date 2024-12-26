@@ -21,6 +21,13 @@ class GroupManageViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         self.titleView.text = "群管理"
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
 }
 

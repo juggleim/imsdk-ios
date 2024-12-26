@@ -27,6 +27,17 @@ public class GroupMemberViewController: BaseTableListViewController {
         )
     }
     
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     private func loadGroupMembers() {
         HttpManager.shared.getGroupMembers(
             groupId: groupId,

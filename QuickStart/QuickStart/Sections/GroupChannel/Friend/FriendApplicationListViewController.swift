@@ -15,6 +15,8 @@ class FriendApplicationListViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         self.titleView.text = "New Friends"
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -34,6 +36,10 @@ class FriendApplicationListViewController: BaseTableListViewController {
         } else {
             self.emptyView.reloadData(.noMembers)
         }
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func loadFriendApplications() {

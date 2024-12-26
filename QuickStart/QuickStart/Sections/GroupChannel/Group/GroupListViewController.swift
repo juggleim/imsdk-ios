@@ -34,6 +34,12 @@ class GroupListViewController: BaseTableListViewController {
         loadGroups()
     }
     
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+    }
+    
     override func configTableView() {
         super.configTableView()
         self.tableView.delegate = self
@@ -56,6 +62,10 @@ class GroupListViewController: BaseTableListViewController {
                 }
             }
         })
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc func onClickMenu() {
