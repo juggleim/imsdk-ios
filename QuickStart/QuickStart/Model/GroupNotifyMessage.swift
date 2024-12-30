@@ -12,6 +12,7 @@ enum GroupNotifyType: Int {
     case addMember = 1
     case removeMember = 2
     case rename = 3
+    case changeOwner = 4
     case other
 }
 
@@ -100,6 +101,19 @@ class GroupNotifyMessage: JMessageContent {
                 userList.append(", ")
             }
         }
+        var newOwner: String = ""
+        var isOwner = false
+        if type == .changeOwner {
+            if members.count > 0 {
+                let member = members[0]
+                if let currentUserId = ProfileManager.shared.currentUserInfo?.userId,
+                   currentUserId == member.userId {
+                    isOwner = true
+                }
+                newOwner = isOwner ? "你" : member.userName ?? ""
+            }
+        }
+        
         if !userList.isEmpty {
             userList.removeLast(2)
         }
@@ -111,6 +125,8 @@ class GroupNotifyMessage: JMessageContent {
             return "\(sender) 将 \(userList) 移除群聊"
         case .rename:
             return "\(sender) 修改群名称为 \"\(name)\""
+        case .changeOwner:
+            return "\(newOwner) 已成为新群主"
         case .other:
             return ""
         }
