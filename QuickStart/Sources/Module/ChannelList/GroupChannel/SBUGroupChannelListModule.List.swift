@@ -22,6 +22,12 @@ public protocol SBUGroupChannelListModuleListDelegate: SBUBaseChannelListModuleL
         didSelectMute isMute:Bool,
         conversationInfo: JConversationInfo
     )
+    
+    func groupChannelListModule(
+        _ listComponent: SBUGroupChannelListModule.List,
+        didSelectUnread isUnread:Bool,
+        conversationInfo: JConversationInfo
+    )
 }
 
 /// Methods to get data source for the list component in the group channel list.
@@ -113,7 +119,7 @@ extension SBUGroupChannelListModule {
             
             let leaveAction = UIContextualAction(
                 style: .normal,
-                title: ""
+                title: "删除"
             ) { [weak self] _, _, actionHandler in
                 guard let self = self else { return }
                 self.delegate?.groupChannelListModule(self, didSelectLeave: conversationInfo)
@@ -151,9 +157,13 @@ extension SBUGroupChannelListModule {
             let itemSize: CGFloat = 40.0
             
             let mute = conversationInfo.mute
+            var title = "消息免打扰"
+            if mute {
+                title = "消息提醒"
+            }
             let alarmAction = UIContextualAction(
                 style: .normal,
-                title: ""
+                title: title
             ) { [weak self] _, _, actionHandler in
                 guard let self = self else { return }
                 self.delegate?.groupChannelListModule(self, didSelectMute: !mute, conversationInfo: conversationInfo)
@@ -260,21 +270,39 @@ extension SBUGroupChannelListModule.List {
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     )
     -> UISwipeActionsConfiguration? {
-        if self.conversationInfoList?.count ?? 0 > indexPath.row,
-           let channelList = conversationInfoList {
-            let channel = channelList[indexPath.row]
-//            if channel.isChatNotification {
-//                return nil
-//            }
+        var actions: [UIContextualAction] = []
+        
+        guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return nil }
+        let leaveAction = UIContextualAction(style: .destructive, title: "删除") { action, sourceView, completeHandler in
+            self.delegate?.groupChannelListModule(self, didSelectLeave: conversationInfo)
+            completeHandler(true)
         }
         
-        var actions: [UIContextualAction] = []
-        if let leaveAction = leaveContextualAction(with: indexPath) {
-            actions.append(leaveAction)
+        var title = "消息免打扰"
+        let mute = conversationInfo.mute
+        if mute {
+            title = "消息提醒"
         }
-        if let alarmAction = alarmContextualAction(with: indexPath) {
-            actions.append(alarmAction)
+        let alarmAction = UIContextualAction(style: .normal, title: title) { action, sourceView, completeHandler in
+            self.delegate?.groupChannelListModule(self, didSelectMute: !mute, conversationInfo: conversationInfo)
+            completeHandler(true)
         }
+        alarmAction.backgroundColor = UIColor.orange
+        
+        title = "设置未读"
+        var unreadFlag = false
+        if conversationInfo.unreadCount > 0 || conversationInfo.hasUnread {
+            title = "设置已读"
+            unreadFlag = true
+        }
+        let setUnreadAction = UIContextualAction(style: .normal, title: title) { action, sourceView, completeHandler in
+            self.delegate?.groupChannelListModule(self, didSelectUnread: !unreadFlag, conversationInfo: conversationInfo)
+            completeHandler(true)
+        }
+        setUnreadAction.backgroundColor = UIColor.blue
+        actions.append(leaveAction)
+        actions.append(alarmAction)
+        actions.append(setUnreadAction)
         
         return UISwipeActionsConfiguration(actions: actions)
     }

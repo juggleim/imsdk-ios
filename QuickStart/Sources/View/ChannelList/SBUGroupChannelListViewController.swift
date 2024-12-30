@@ -238,6 +238,14 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         self.viewModel?.mute(conversationInfo, isMute: isMute)
     }
     
+    open func groupChannelListModule(
+        _ listComponent: SBUGroupChannelListModule.List,
+        didSelectUnread isUnread: Bool,
+        conversationInfo: JConversationInfo
+    ) {
+        self.viewModel?.setUnread(conversationInfo, isUnread: isUnread)
+    }
+    
     // MARK: - SBUGroupChannelListModuleListDataSource
     open func baseChannelListModule(
         _ listComponent: SBUBaseChannelListModule.List,

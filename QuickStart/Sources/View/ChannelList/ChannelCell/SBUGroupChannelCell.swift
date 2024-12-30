@@ -298,7 +298,11 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         }
         
         // Unread count
-        switch conversationInfo.unreadCount {
+        var unreadCount = conversationInfo.unreadCount
+        if unreadCount == 0 && conversationInfo.hasUnread {
+            unreadCount = 1
+        }
+        switch unreadCount {
         case 0:
             self.unreadCount.isHidden = true
         case 1...99:
@@ -306,7 +310,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 self.unreadCount.setTitle("", for: .normal)
                 self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
             } else {
-                self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
+                self.unreadCount.setTitle(String(unreadCount), for: .normal)
                 self.unreadCount
                     .sbu_constraint(height: unreadCountSize)
                     .sbu_constraint_greaterThan(width: unreadCountSize)

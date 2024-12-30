@@ -128,6 +128,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             DispatchQueue.main.async { [weak self] in
                 self?.setLoading(false, false)
                 if code != .none {
+                    self?.setLoading(false, false)
                     self?.delegate?.didReceiveError(code, isBlocker: false)
                 }
             }
@@ -149,7 +150,42 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         } error: { code in
             DispatchQueue.main.async { [weak self] in
                 if code != .none {
+                    self?.setLoading(false, false)
                     self?.delegate?.didReceiveError(code, isBlocker: false)
+                }
+            }
+        }
+    }
+    
+    public func setUnread(_ conversationInfo:JConversationInfo, isUnread: Bool) {
+        SBULog.info("[Request] setUnread: \(isUnread ? "on" : "off")")
+        self.setLoading(true, true)
+        
+        if isUnread {
+            JIM.shared().conversationManager.setUnread(conversationInfo.conversation) {
+                DispatchQueue.main.async { [weak self] in
+                    self?.setLoading(false, false)
+                }
+            } error: { code in
+                DispatchQueue.main.async { [weak self] in
+                    if code != .none {
+                        self?.setLoading(false, false)
+                        self?.delegate?.didReceiveError(code, isBlocker: false)
+                    }
+                }
+            }
+
+        } else {
+            JIM.shared().conversationManager.clearUnreadCount(by: conversationInfo.conversation) {
+                DispatchQueue.main.async { [weak self] in
+                    self?.setLoading(false, false)
+                }
+            } error: { code in
+                DispatchQueue.main.async { [weak self] in
+                    if code != .none {
+                        self?.setLoading(false, false)
+                        self?.delegate?.didReceiveError(code, isBlocker: false)
+                    }
                 }
             }
         }
