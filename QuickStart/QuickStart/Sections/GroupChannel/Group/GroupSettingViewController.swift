@@ -312,12 +312,22 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     private func clearMessages() {
-        SBULoading.start()
-        JIM.shared().messageManager.clearMessages(in: self.conversationInfo?.conversation, startTime: 0) {
-            SBULoading.stop()
-        } error: { code in
-            SBULoading.stop()
+        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] _ in
+            SBULoading.start()
+            JIM.shared().messageManager.clearMessages(in: self?.conversationInfo?.conversation, startTime: 0) {
+                SBULoading.stop()
+            } error: { code in
+                SBULoading.stop()
+            }
         }
+        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        SBUAlertView.show(
+            title: "确定清除聊天记录？",
+            needInputField: false,
+            centerYRatio: 0.75,
+            confirmButtonItem: okButton,
+            cancelButtonItem: cancelButton
+        )
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {
