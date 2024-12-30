@@ -12,6 +12,13 @@ class GroupSettingViewController: BaseTableListViewController {
     var conversationInfo: JConversationInfo?
     var groupInfo: JCGroupInfo?
     var deleteButton: UIButton?
+    lazy var headerView: UserListCollectionView = {
+        let rect: CGRect = CGRect(x: 0, y: 0, width: Int(UIScreen.main.bounds.size.width), height: 0)
+        let header = UserListCollectionView(frame: rect)
+        header.groupId = self.conversationInfo?.conversation.conversationId ?? ""
+        header.userListCollectionViewDelegate = self
+        return header
+    } ()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +55,7 @@ class GroupSettingViewController: BaseTableListViewController {
                     self.groupInfo = groupInfo
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
+                        self.setHeaderView()
                     }
                 }
             }
@@ -55,7 +63,24 @@ class GroupSettingViewController: BaseTableListViewController {
     }
     
     private func setHeaderView() {
+        self.headerView.isAllowAdd = true
+        var hasDelete: Bool = false
+        if self.groupInfo?.myRole == .admin || self.groupInfo?.myRole == .owner {
+            hasDelete = true
+        }
+        self.headerView.isAllowDelete = hasDelete
+        if let userList = self.groupInfo?.members {
+            self.headerView.reloadData(userList)
+        }
+        self.headerView.frame = CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: self.headerView.collectionViewLayout.collectionViewContentSize.height)
+        var frame: CGRect = self.headerView.frame
+        frame.size.height += 14
+        self.tableView.tableHeaderView = UIView(frame: frame)
+        self.tableView.tableHeaderView?.addSubview(self.headerView)
         
+        let separatorLine = UIView(frame: CGRect(x: 10, y: frame.size.height - 1, width: frame.size.width - 10, height: 1))
+        separatorLine.backgroundColor = UIColor(red: 0xf0/255.0, green: 0xf0/255.0, blue: 0xf6/255.0, alpha: 1.0)
+        self.tableView.tableHeaderView?.addSubview(separatorLine)
     }
     
     private func setFooterView() {
@@ -334,5 +359,67 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
 
 extension GroupSettingViewController: SBUAlertViewDelegate {
     func didDismissAlertView() {
+    }
+}
+
+extension GroupSettingViewController: UserListCollectionViewDelegate {
+    func addButtonDidClick() {
+        let vc = SelectFriendViewController()
+        if let members = self.groupInfo?.members {
+            vc.existedUsers = members
+        }
+        vc.delegate = self
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func deleteButtonDidClick() {
+        if let groupId = self.groupInfo?.groupId {
+            let vc = GroupMemberSelectViewController()
+            vc.groupId = groupId
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    func userDidClick(_ userId: String) {
+        
+    }
+}
+
+extension GroupSettingViewController: SelectFriendVCDelegate {
+    func friendsDidSelect(_ friends: [JCUser]) {
+        var userIds: [String] = []
+        for user in friends {
+            userIds.append(user.userId)
+        }
+        guard let groupId = self.groupInfo?.groupId else {
+            return
+        }
+        SBULoading.start()
+        HttpManager.shared.groupInvite(groupId: groupId, userIdList: userIds) { code in
+            DispatchQueue.main.async {
+                SBULoading.stop()
+                self.loadGroupInfo()
+            }
+        }
+    }
+}
+
+extension GroupSettingViewController: GroupMemberSelectVCDelegate {
+    func membersDidSelect(type: GroupMemberSelectType, members: [JUserInfo]) {
+        var userIds: [String] = []
+        for user in members {
+            userIds.append(user.userId)
+        }
+        guard let groupId = self.groupInfo?.groupId else {
+            return
+        }
+        SBULoading.start()
+        HttpManager.shared.deleteGroupMembers(groupId: groupId, userIdList: userIds) { code in
+            DispatchQueue.main.async {
+                SBULoading.stop()
+                self.loadGroupInfo()
+            }
+        }
     }
 }

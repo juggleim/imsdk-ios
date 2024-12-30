@@ -959,6 +959,28 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             self.placeholderLabel.text = SBUStringSet.MessageInput_Text_Placeholder
         }
     }
+    
+    public func setTextViewInitialText(content: String) {
+        guard let textView = self.textView else {
+            return
+        }
+        
+        textView.font = self.theme.textFieldFont
+        textView.text = content
+        
+        self.placeholderLabel.isHidden = !textView.text.isEmpty
+        self.updateTextViewHeight()
+        
+        let text = textView.text ?? ""
+        if self.editView.isHidden {
+            
+            self.sendButton?.isHidden = (!showsSendButton &&
+                text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            self.voiceMessageButton?.isHidden = !(showsVoiceMessageButton && (self.sendButton?.isHidden ?? false))
+            self.textViewTrailingPaddingView.isHidden = (self.sendButton?.isHidden == true) && (self.voiceMessageButton?.isHidden == true)
+            self.layoutIfNeeded()
+        }
+    }
 
     // MARK: - Action
     

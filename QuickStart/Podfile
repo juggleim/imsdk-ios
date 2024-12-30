@@ -18,5 +18,6 @@ target 'QuickStart' do
   # Pods for QuickStart
   pod 'MBProgressHUD', '1.1.0'
   pod 'Masonry', '1.1.0'
+  pod 'SDWebImage', '5.20.0'
 
 end

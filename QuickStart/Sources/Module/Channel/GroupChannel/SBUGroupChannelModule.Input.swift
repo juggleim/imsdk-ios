@@ -188,6 +188,12 @@ extension SBUGroupChannelModule {
             self.setupLayouts()
             self.setupStyles()
             
+            if let draft = self.conversationInfo?.draft, draft.count > 0,
+               let inputView = self.messageInputView as? SBUMessageInputView {
+                inputView.setTextViewInitialText(content: draft)
+            }
+
+            
 //            if SendbirdUI.config.groupChannel.channel.isMentionEnabled {
 //                self.setupMentionManager()
 //            }

@@ -217,6 +217,13 @@ class BaseUserCell: SBUTableViewCell {
             ),
             for: .selected
         )
+        self.checkboxButton.setImage(
+            SBUIconSetType.iconCheckboxChecked.image(
+                with: theme.moreButtonDisabledColor,
+                to: SBUIconSetType.Metric.defaultIconSize
+            ),
+            for: .disabled
+        )
         
         self.moreButton.setImage(
             SBUIconSetType.iconMore.image(

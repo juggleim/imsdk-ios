@@ -54,6 +54,9 @@
 		A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A079501B2D1C162B0045EFE9 /* NormalAlertView.m */; };
 		A079501E2D1C377E0045EFE9 /* GroupManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */; };
 		A07950202D1D361A0045EFE9 /* JCGroupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */; };
+		A07950232D1E8FD00045EFE9 /* UserListCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */; };
+		A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950252D1E92170045EFE9 /* UserListCollectionItem.m */; };
+		A07950282D1EB4C70045EFE9 /* SelectFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -366,6 +369,11 @@
 		A079501B2D1C162B0045EFE9 /* NormalAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NormalAlertView.m; sourceTree = "<group>"; };
 		A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupManageViewController.swift; sourceTree = "<group>"; };
 		A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JCGroupInfo.swift; sourceTree = "<group>"; };
+		A07950212D1E8FD00045EFE9 /* UserListCollectionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserListCollectionView.h; sourceTree = "<group>"; };
+		A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserListCollectionView.m; sourceTree = "<group>"; };
+		A07950242D1E92170045EFE9 /* UserListCollectionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserListCollectionItem.h; sourceTree = "<group>"; };
+		A07950252D1E92170045EFE9 /* UserListCollectionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserListCollectionItem.m; sourceTree = "<group>"; };
+		A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFriendViewController.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -1575,6 +1583,7 @@
 				A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */,
 				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
 				A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */,
+				A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */,
 			);
 			path = Friend;
 			sourceTree = "<group>";
@@ -1591,6 +1600,10 @@
 				A079500F2D1C02FC0045EFE9 /* GroupAnnouncementViewController.h */,
 				A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */,
 				A079501D2D1C377E0045EFE9 /* GroupManageViewController.swift */,
+				A07950212D1E8FD00045EFE9 /* UserListCollectionView.h */,
+				A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */,
+				A07950242D1E92170045EFE9 /* UserListCollectionItem.h */,
+				A07950252D1E92170045EFE9 /* UserListCollectionItem.m */,
 			);
 			path = Group;
 			sourceTree = "<group>";
@@ -1787,6 +1800,7 @@
 				A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
+				A07950282D1EB4C70045EFE9 /* SelectFriendViewController.swift in Sources */,
 				A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */,
 				A07F3CAC2BF4A2290087920B /* SBUStringSet.Deprecated.swift in Sources */,
 				A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */,
@@ -1904,6 +1918,7 @@
 				A06388CF2CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift in Sources */,
 				A07F3C952BF4A2290087920B /* SBUCollectionViewFlowLayout.swift in Sources */,
 				A07F3C972BF4A2290087920B /* SBUViewControllerSet.swift in Sources */,
+				A07950232D1E8FD00045EFE9 /* UserListCollectionView.m in Sources */,
 				A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */,
 				A07F3C7B2BF4A2290087920B /* SBUCoverImageView.swift in Sources */,
 				A07F3B4B2BF4A2260087920B /* URL+SBUKit.swift in Sources */,
@@ -1936,6 +1951,7 @@
 				A06388B72CA417B6006357C7 /* SBUBaseChannelSettingsModule.swift in Sources */,
 				A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */,
 				A0968C5F2C2B020300E68790 /* SBUTextMessageTextViewModel.swift in Sources */,
+				A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */,
 				A0968C9A2C2B020300E68790 /* SBUChannelTitleView.swift in Sources */,
 				A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */,
 				A090B0B72C3EB48C00FE0E10 /* SBUOpenChannelImageContentView.swift in Sources */,

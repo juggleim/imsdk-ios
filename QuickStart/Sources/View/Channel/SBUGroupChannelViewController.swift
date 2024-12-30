@@ -125,6 +125,19 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.listComponent?.pauseAllVoicePlayer()
     }
     
+    open override func onClickBack() {
+        if let conversation = self.conversationInfo?.conversation,
+           let textView = (self.inputComponent?.messageInputView as? SBUMessageInputView)?.textView,
+           let draft = textView.text {
+            if draft.count > 0 {
+                JIM.shared().conversationManager.setDraft(draft, in: conversation)
+            } else {
+                JIM.shared().conversationManager.clearDraft(in: conversation)
+            }
+        }
+        super.onClickBack()
+    }
+    
     deinit {
         SBULog.info("")
         

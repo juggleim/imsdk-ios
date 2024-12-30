@@ -1,45 +1,32 @@
 //
-//  GroupMemberSelectViewController.swift
+//  SelectFriendViewController.swift
 //  QuickStart
 //
-//  Created by Fei Li on 2024/12/9.
+//  Created by Fei Li on 2024/12/27.
 //
 
 import Foundation
-import UIKit
-import JuggleIM
 
-@objc public protocol GroupMemberSelectVCDelegate: AnyObject {
-    func membersDidSelect(type: GroupMemberSelectType, members: [JUserInfo])
+protocol SelectFriendVCDelegate: AnyObject {
+    func friendsDidSelect(_: [JCUser])
 }
 
-@objc public enum GroupMemberSelectType: Int {
-    case unknown
-    case voiceCall
-    case videoCall
-}
-
-@objc public class GroupMemberSelectViewController: BaseTableListViewController {
-    @objc var groupId: String = ""
-    @objc var users: [JUserInfo] = []
-    @objc var existedUsers: [JUserInfo] = []
-    @objc var selectedUsers: Set<JUserInfo> = []
-    @objc var type: GroupMemberSelectType = .unknown
-    @objc weak var delegate: GroupMemberSelectVCDelegate?
+class SelectFriendViewController: BaseTableListViewController {
+    var users: [JCUser] = []
+    var existedUsers: [JCUser] = []
+    var selectedUsers: Set<JCUser> = []
+    weak var delegate: SelectFriendVCDelegate?
     
-    public override func loadView() {
+    override func loadView() {
         super.loadView()
-        loadGroupMembers()
+        loadFriends()
     }
     
     override func configTableView() {
         super.configTableView()
         self.tableView.delegate = self
         self.tableView.dataSource = self
-        self.tableView.register(
-            BaseUserCell.self,
-            forCellReuseIdentifier: BaseUserCell.sbu_className
-        )
+        self.tableView.register(BaseUserCell.self, forCellReuseIdentifier: BaseUserCell.sbu_className)
     }
     
     override func configNavigationItem() {
@@ -58,12 +45,8 @@ import JuggleIM
     }
     
     @objc func onClickMenu() {
-        if self.type == .videoCall || self.type == .voiceCall {
-            self.dismiss(animated: true)
-        } else {
-            self.navigationController?.popViewController(animated: true)
-        }
-        self.delegate?.membersDidSelect(type: self.type, members: Array(selectedUsers))
+        self.navigationController?.popViewController(animated: true)
+        self.delegate?.friendsDidSelect(Array(selectedUsers))
     }
     
     private func updateMenu() {
@@ -74,27 +57,19 @@ import JuggleIM
         }
     }
     
-    private func loadGroupMembers() {
-        HttpManager.shared.getGroupMembers(
-            groupId: groupId,
-            count: 100) { errorCode, resultOffset, userInfoList in
-                DispatchQueue.main.async {
-                    if var userInfoList = userInfoList, errorCode == 0 {
-                        for (index, user) in userInfoList.enumerated() {
-                            if user.userId == JIM.shared().currentUserId {
-                                userInfoList.remove(at: index)
-                                break
-                            }
-                        }
-                        self.users = userInfoList
-                        self.tableView.reloadData()
-                    }
+    private func loadFriends() {
+        HttpManager.shared.getFriends { code, users in
+            DispatchQueue.main.async {
+                if let users = users {
+                    self.users = users
+                    self.tableView.reloadData()
                 }
             }
+        }
     }
 }
 
-extension GroupMemberSelectViewController: UITableViewDataSource, UITableViewDelegate {
+extension SelectFriendViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
     }
@@ -123,8 +98,18 @@ extension GroupMemberSelectViewController: UITableViewDataSource, UITableViewDel
                 type: .createGroup,
                 user: jcUser
             )
+            var exist = false
+            for existedUser in self.existedUsers {
+                if existedUser.userId == user.userId {
+                    exist = true
+                    break
+                }
+            }
+            if exist {
+                userCell.isUserInteractionEnabled = false
+                userCell.checkboxButton.isEnabled = false
+            }
         }
-        
         return cell ?? UITableViewCell()
     }
     

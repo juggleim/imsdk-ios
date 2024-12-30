@@ -137,8 +137,9 @@ extension SBUBaseChannelListModule {
         open func configureCell(_ channelCell: SBUBaseChannelCell?, indexPath: IndexPath) {
             guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return }
             
-            channelCell?.configure(conversationInfo: conversationInfo)
             channelCell?.setupStyles()
+            channelCell?.configure(conversationInfo: conversationInfo)
+            
         }
         
         /// Registers a custom cell as a channel cell based on `SBUBaseChannelCell`.

@@ -7,3 +7,4 @@
 #import "ScanQRCodeViewController.h"
 #import "BaseSettingTableViewCell.h"
 #import "GroupAnnouncementViewController.h"
+#import "UserListCollectionView.h"

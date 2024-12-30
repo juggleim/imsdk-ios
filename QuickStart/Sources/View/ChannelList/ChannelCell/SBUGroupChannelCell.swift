@@ -99,7 +99,8 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.unreadMentionLabel.isHidden = true
         self.notificationState.isHidden = true
         self.messageLabel.numberOfLines = 2
-        
+        self.messageLabel.textColor = theme.messageTextColor
+
         self.contentView.addSubview(
             self.contentStackView.setHStack([
                 self.coverImage,
@@ -207,7 +208,6 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.lastUpdatedTimeLabel.textColor = theme.lastUpdatedTimeTextColor
         
         self.messageLabel.font = theme.messageFont
-        self.messageLabel.textColor = theme.messageTextColor
         
         // TODO: Need to add StringSet constant?
         self.unreadMentionLabel.text = SBUGlobals.userMentionConfig?.trigger ?? SBUStringSet.Mention.Trigger_Key
@@ -285,7 +285,13 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         
         // Last message
         self.messageLabel.lineBreakMode = .byTruncatingTail
-        if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
+        if let draft = conversationInfo.draft, draft.count > 0 {
+            let content = "[草稿] \(draft)"
+            let attributeString = NSMutableAttributedString(string: content)
+            let range = NSRange(location: 0, length: 4)
+            attributeString.addAttribute(.foregroundColor, value: UIColor.red, range: range)
+            self.messageLabel.attributedText = attributeString
+        } else if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
             self.messageLabel.text = digest
         } else {
             self.messageLabel.text = ""
