@@ -29,6 +29,7 @@ public class GroupMemberViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
+        self.titleView.text = "群成员"
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
 
@@ -87,5 +88,12 @@ extension GroupMemberViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let user = self.users[indexPath.row]
+        let conversation = JConversation(conversationType: .private, conversationId: user.userId)
+        let defaultConversationInfo = JConversationInfo()
+        defaultConversationInfo.conversation = conversation
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+        self.navigationController?.pushViewController(channelVC, animated: true)
     }
 }
