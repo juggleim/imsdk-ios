@@ -37,17 +37,21 @@ extension GroupManageViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
+            let cell = getArrowCell()
+            cell.leftLabel.text = "变更群主"
+            return cell
+        } else if indexPath.row == 1 {
             let cell = getSwitchCell()
             cell.leftLabel.text = "群组全局禁言"
             cell.switchButton.isOn = (mute != 0)
             cell.switchButton.addTarget(self, action: #selector(onSetMute(_:)), for: .valueChanged)
             return cell
-        } else if indexPath.row == 1 {
+        } else if indexPath.row == 2 {
             let cell = getSwitchCell()
             cell.leftLabel.text = "新人入群查看历史"
             cell.switchButton.isOn = (historyMessageVisible != 0)
@@ -58,6 +62,14 @@ extension GroupManageViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            let vc = GroupMemberViewController()
+            vc.groupId = self.groupId
+            vc.type = .callback
+            vc.includeSelf = false
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {
@@ -95,6 +107,21 @@ extension GroupManageViewController: UITableViewDataSource, UITableViewDelegate 
                     print("set history message visible error, code is \(code)")
                 }
                 SBULoading.stop()
+            }
+        }
+    }
+}
+
+extension GroupManageViewController: GroupMemberVCDelegate {
+    func memberDidSelect(_ member: JUserInfo) {
+        SBULoading.start()
+        HttpManager.shared.changeGroupOwner(groupId: self.groupId, ownerId: member.userId) { code in
+            DispatchQueue.main.async {
+                if code != 0 {
+                    print("set history message visible error, code is \(code)")
+                }
+                SBULoading.stop()
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }

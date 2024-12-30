@@ -78,6 +78,9 @@ import JuggleIM
     static let setGroupDisplayNameString = "/groups/setdisplayname"
     static let groupDisplayNameString = "grp_display_name"
     
+    static let groupsChgownerString = "/groups/management/chgowner"
+    static let ownerIdString = "owner_id"
+    
     static let groupsInviteString = "/groups/invite"
     static let memberIdsString = "member_ids"
     
@@ -856,6 +859,31 @@ import JuggleIM
     ) {
         let urlString = Self.domain.appending(Self.groupAnnouncementString)
         let dic: [String: Any] = [Self.groupIdString: groupId, Self.contentString: content]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    func changeGroupOwner(
+        groupId: String,
+        ownerId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsChgownerString)
+        let dic: [String: Any] = [Self.groupIdString: groupId, Self.ownerIdString: ownerId]
         let req = getRequest(url: urlString, method: .post, params: dic)
         guard let request = req.urlRequest, req.isSuccess else {
             completion(Self.unknownError)

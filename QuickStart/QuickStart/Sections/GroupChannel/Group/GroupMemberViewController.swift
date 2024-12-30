@@ -8,9 +8,23 @@
 import Foundation
 import UIKit
 
+public enum GroupMemberVCSelectType {
+    // 点击进入会话页面
+    case chat
+    // 点击回调
+    case callback
+}
+
+public protocol GroupMemberVCDelegate: AnyObject {
+    func memberDidSelect(_ member: JUserInfo)
+}
+
 public class GroupMemberViewController: BaseTableListViewController {
     var groupId: String = ""
+    var type: GroupMemberVCSelectType = .chat
     var users: [JUserInfo] = []
+    var includeSelf: Bool = true
+    weak var delegate: GroupMemberVCDelegate?
     
     public override func loadView() {
         super.loadView()
@@ -44,7 +58,16 @@ public class GroupMemberViewController: BaseTableListViewController {
             groupId: groupId,
             count: 100) { errorCode, resultOffset, userInfoList in
                 DispatchQueue.main.async {
-                    if let userInfoList = userInfoList, errorCode == 0 {
+                    if var userInfoList = userInfoList, errorCode == 0 {
+                        if !self.includeSelf {
+                            for (index, user) in userInfoList.enumerated() {
+                                if user.userId == JIM.shared().currentUserId {
+                                    userInfoList.remove(at: index)
+                                    break
+                                }
+                            }
+                        }
+            
                         self.users = userInfoList
                         self.tableView.reloadData()
                     }
@@ -89,11 +112,16 @@ extension GroupMemberViewController: UITableViewDataSource, UITableViewDelegate 
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = self.users[indexPath.row]
-        let conversation = JConversation(conversationType: .private, conversationId: user.userId)
-        let defaultConversationInfo = JConversationInfo()
-        defaultConversationInfo.conversation = conversation
-        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelVC, animated: true)
+        if self.type == .chat {
+            let conversation = JConversation(conversationType: .private, conversationId: user.userId)
+            let defaultConversationInfo = JConversationInfo()
+            defaultConversationInfo.conversation = conversation
+            let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
+            let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            self.navigationController?.pushViewController(channelVC, animated: true)
+        } else if self.type == .callback {
+            self.delegate?.memberDidSelect(user)
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
