@@ -13,6 +13,8 @@
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
 		A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */; };
 		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
+		A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */; };
+		A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -324,6 +326,9 @@
 		A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSettingTableViewCell.h; sourceTree = "<group>"; };
 		A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSettingTableViewCell.m; sourceTree = "<group>"; };
 		A02FA3C02D19A5F6002A4E0B /* OCConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCConst.h; sourceTree = "<group>"; };
+		A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLanguageViewController.swift; sourceTree = "<group>"; };
+		A047B7342D2685E000710683 /* BaseSelectTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSelectTableViewCell.h; sourceTree = "<group>"; };
+		A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSelectTableViewCell.m; sourceTree = "<group>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -687,6 +692,7 @@
 				A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */,
 				A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */,
 				A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */,
+				A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1619,6 +1625,8 @@
 				A0C80D302C60C23200E55080 /* BaseUserCell.swift */,
 				A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */,
 				A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */,
+				A047B7342D2685E000710683 /* BaseSelectTableViewCell.h */,
+				A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */,
 			);
 			path = Base;
 			sourceTree = "<group>";
@@ -1828,6 +1836,7 @@
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
+				A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */,
 				A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */,
 				A0A3A5362D081A22009AD7C3 /* MultiVideoCallUserCollectionLayout.m in Sources */,
 				A07F3C9D2BF4A2290087920B /* SBUMessageCellProtocol.swift in Sources */,
@@ -2045,6 +2054,7 @@
 				A0C80D2C2C5CEC0800E55080 /* ContactListViewController.swift in Sources */,
 				A07F35EB2BF49B400087920B /* SBUGlobals.swift in Sources */,
 				A06388BD2CA41A0C006357C7 /* SBUGroupChannelSettingsViewModel.swift in Sources */,
+				A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */,
 				A07F3B612BF4A2270087920B /* NSObject+SBUIKit.swift in Sources */,
 				A0968CB72C2B045A00E68790 /* SBUVoiceMessageInputView.swift in Sources */,
 				A07F3C8B2BF4A2290087920B /* SBUMenuCell.swift in Sources */,

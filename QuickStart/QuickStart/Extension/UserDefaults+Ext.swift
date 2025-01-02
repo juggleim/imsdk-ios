@@ -29,4 +29,12 @@ extension UserDefaults {
     static func saveIsLightTheme(_ isLight: Bool) {
         UserDefaults.standard.set(isLight, forKey: "is_light_theme")
     }
+    
+    static func loadLanguage() -> GlobalConst.SettingLanguage {
+        let value = UserDefaults.standard.integer(forKey: "setting_language")
+        return GlobalConst.SettingLanguage(rawValue: value) ?? .Chinese
+    }
+    static func saveLanguage(_ language: GlobalConst.SettingLanguage) {
+        UserDefaults.standard.set(language.rawValue, forKey: "setting_language")
+    }
 }

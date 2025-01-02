@@ -12,7 +12,8 @@ import MobileCoreServices
 import JuggleIM
 
 enum MySettingsCellType: Int {
-    case signOut
+    case setLanguage
+    case globalDisturb
 }
 
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
@@ -51,14 +52,11 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         self.tableView.bounces = false
         self.tableView.alwaysBounceVertical = false
         self.tableView.separatorStyle = .none
-        self.tableView.register(
-            type(of: MySettingsCell()),
-            forCellReuseIdentifier: MySettingsCell.sbu_className
-        )
         self.tableView.tableHeaderView = self.userInfoView
         self.tableView.sectionHeaderHeight = UITableView.automaticDimension
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 44.0
+        self.setFooterView()
         self.view.addSubview(self.tableView)
         
         // autolayout
@@ -257,12 +255,25 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     }
     
     /// Sign out and dismiss tabbarController,
-    func signOutAction() {
+    @objc func signOutAction() {
         if JIM.shared().connectionManager.getConnectionStatus() == .disconnected {
             self.tabBarController?.dismiss(animated: true, completion: nil)
             return
         }
         JIM.shared().connectionManager.disconnect(false)
+    }
+    
+    private func setFooterView() {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 150))
+        let button = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
+        button.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
+        button.setTitle("退出登录", for: .normal)
+        button.layer.cornerRadius = 5.f
+        button.layer.borderWidth = 0.5
+        button.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
+        view.addSubview(button)
+        button.addTarget(self, action: #selector(signOutAction), for: .touchUpInside)
+        self.tableView.tableFooterView = view
     }
 }
 
@@ -273,8 +284,12 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
         let rowValue = indexPath.row
         let type = MySettingsCellType(rawValue: rowValue)
         switch type {
-        case .signOut:
-            self.signOutAction()
+        case .setLanguage:
+            let vc = SettingsLanguageViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+            
+        case .globalDisturb:
+            let i = 1
         default:
             break
         }
@@ -282,32 +297,36 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     
     open func tableView(_ tableView: UITableView,
                         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: MySettingsCell.sbu_className
-            ) as? MySettingsCell else { fatalError() }
-
-        cell.selectionStyle = .none
-        
-        let isDarkMode = (self.tabBarController as? MainChannelTabbarController)?.isDarkMode ?? false
-
         let rowValue = indexPath.row
         if let type = MySettingsCellType(rawValue: rowValue) {
-            cell.configure(type: type, isDarkMode: isDarkMode)
-
             switch type {
-//                case .darkTheme:
-//                    cell.switchAction = { [weak self] isOn in
-//                        self?.changeDarkThemeSwitch(isOn: isOn)
-//                    }
-                case .signOut: break
+            case .setLanguage:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "设置语言"
+                return cell
+            case .globalDisturb:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "全局免打扰"
+                return cell
             }
         }
-
-        return cell
+        return UITableViewCell()
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 2
+    }
+    
+    private func getArrowCell() -> BaseSettingTableViewCell {
+        let cell = BaseSettingTableViewCell()
+        cell.setCellStyle(.DefaultStyle)
+        return cell
+    }
+    
+    private func getSwitchCell() -> BaseSettingTableViewCell {
+        let cell = BaseSettingTableViewCell()
+        cell.setCellStyle(.SwitchStyle)
+        return cell
     }
 }
 
