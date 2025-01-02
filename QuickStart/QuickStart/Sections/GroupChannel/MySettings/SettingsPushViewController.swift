@@ -40,8 +40,7 @@ extension SettingsPushViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = SettingsLanguageViewController()
-        vc.type = .push
+        let vc = SettingsPushLanguageViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

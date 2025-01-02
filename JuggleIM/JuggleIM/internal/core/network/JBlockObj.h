@@ -74,8 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *chatroomId;
 @end
 
-@interface JCallAuthObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSString *zegoToken);
+@interface JStringObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSString *);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

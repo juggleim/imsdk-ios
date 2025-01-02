@@ -83,6 +83,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcQry @"rtc_qry"
 #define jSetUserSettings @"set_user_settings"
+#define jGetUserSettings @"get_user_settings"
 #define jLanguage @"language"
 #define jRtcPing @"rtc_ping"
 
@@ -135,7 +136,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JRtcInviteEventNtf
 @end
 
-@implementation JCallAuthAck
+@implementation JStringAck
 @end
 
 @implementation JRtcQryCallRoomsAck
@@ -1275,6 +1276,26 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getLanguage:(NSString *)userId index:(int)index {
+    NSMutableArray *arr = [NSMutableArray array];
+    KvItem *item = [[KvItem alloc] init];
+    item.key = jLanguage;
+    [arr addObject:item];
+    UserInfo *userInfo = [[UserInfo alloc] init];
+    userInfo.settingsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jGetUserSettings;
+    body.targetId = userId;
+    body.data_p = [userInfo data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -1432,6 +1453,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeQryCallRoomAck:
                     obj = [self qryCallRoomAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetUserInfoAck:
+                    obj = [self getUserInfoAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1971,11 +1995,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeCallAuthAck;
-    JCallAuthAck *a = [[JCallAuthAck alloc] init];
+    JStringAck *a = [[JStringAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
-    a.zegoToken = zegoAuth.token;
-    obj.callInviteAck = a;
+    a.str = zegoAuth.token;
+    obj.stringAck = a;
     return obj;
 }
 
@@ -2022,6 +2046,30 @@ typedef NS_ENUM(NSUInteger, JQos) {
     [a encodeWithQueryAckMsgBody:body];
     a.rooms = outRooms;
     obj.rtcQryCallRoomsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)getUserInfoAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    UserInfo *userInfo = [[UserInfo alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get userInfo ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetUserInfoAck;
+    NSString *s = @"";
+    for (KvItem *item in userInfo.settingsArray) {
+        if ([item.key isEqualToString:jLanguage]) {
+            s = item.value;
+            break;
+        }
+    }
+    JStringAck *a = [[JStringAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.str = s;
+    obj.stringAck = a;
     return obj;
 }
 
@@ -2336,7 +2384,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcPing:@(JPBRcvTypeRtcPingAck),
              jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
              jRtcQry:@(JPBRcvTypeQryCallRoomAck),
-             jSetUserSettings:@(JPBRcvTypeSimpleQryAck)
+             jSetUserSettings:@(JPBRcvTypeSimpleQryAck),
+             jGetUserSettings:@(JPBRcvTypeGetUserInfoAck)
     };
 }
 @end

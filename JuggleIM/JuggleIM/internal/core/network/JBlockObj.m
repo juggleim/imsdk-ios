@@ -43,7 +43,7 @@
 @implementation JChatroomObj
 @end
 
-@implementation JCallAuthObj
+@implementation JStringObj
 @end
 
 @implementation JRtcRoomArrayObj

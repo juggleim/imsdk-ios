@@ -54,7 +54,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeCallAuthAck,
     JPBRcvTypeRtcPingAck,
     JPBRcvTypeQryCallRoomsAck,
-    JPBRcvTypeQryCallRoomAck
+    JPBRcvTypeQryCallRoomAck,
+    JPBRcvTypeGetUserInfoAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -174,8 +175,8 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSArray <JChatroomAttributeItem *> *items;
 @end
 
-@interface JCallAuthAck : JQryAck
-@property (nonatomic, copy) NSString *zegoToken;
+@interface JStringAck : JQryAck
+@property (nonatomic, copy) NSString *str;
 @end
 
 @interface JRtcQryCallRoomsAck : JQryAck
@@ -200,7 +201,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JChatroomAttrsAck *chatroomAttrsAck;
 @property (nonatomic, strong) JRtcRoomEventNtf *rtcRoomEventNtf;
 @property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
-@property (nonatomic, strong) JCallAuthAck *callInviteAck;
+@property (nonatomic, strong) JStringAck *stringAck;
 @property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @end
 
@@ -420,6 +421,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)setLanguage:(NSString *)language
                  userId:(NSString *)userId
+                  index:(int)index;
+
+- (NSData *)getLanguage:(NSString *)userId
                   index:(int)index;
 
 - (NSData *)rtcPingData:(NSString *)callId

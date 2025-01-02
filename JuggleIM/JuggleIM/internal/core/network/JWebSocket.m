@@ -849,7 +849,7 @@ inConversation:(JConversation *)conversation
                                targetIdList:userIdList
                                  engineType:engineType
                                       index:self.cmdIndex++];
-        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
+        JStringObj *obj = [[JStringObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -882,7 +882,7 @@ inConversation:(JConversation *)conversation
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callAccept:callId
                                       index:self.cmdIndex++];
-        JCallAuthObj *obj = [[JCallAuthObj alloc] init];
+        JStringObj *obj = [[JStringObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -954,6 +954,23 @@ inConversation:(JConversation *)conversation
                          key:key
                      success:successBlock
                        error:errorBlock];
+    });
+}
+
+- (void)getLanguage:(NSString *)userId
+            success:(void (^)(NSString *))successBlock
+              error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get language");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getLanguage:userId index:self.cmdIndex++];
+        JStringObj *obj = [[JStringObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -1156,7 +1173,7 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeCallAuthAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeCallAuthAck");
-            [self handleRtcInviteAck:obj.callInviteAck];
+            [self handleRtcInviteAck:obj.stringAck];
             break;
         case JPBRcvTypeQryCallRoomsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomsAck");
@@ -1166,6 +1183,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomAck");
             //复用 rtcQryCallRoomsAck
             [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
+            break;
+        case JPBRcvTypeGetUserInfoAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetUserInfoAck");
+            [self handleGetUserInfoAck:obj.stringAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1213,11 +1234,14 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JUpdateChatroomAttrObj class]]) {
         JUpdateChatroomAttrObj *s = (JUpdateChatroomAttrObj *)obj;
         s.completeBlock(code, nil);
-    } else if ([obj isKindOfClass:[JCallAuthObj class]]) {
-        JCallAuthObj *s = (JCallAuthObj *)obj;
+    } else if ([obj isKindOfClass:[JStringObj class]]) {
+        JStringObj *s = (JStringObj *)obj;
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
         JRtcRoomArrayObj *s = (JRtcRoomArrayObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JStringObj class]]) {
+        JStringObj *s = (JStringObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1536,14 +1560,14 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleRtcInviteAck:(JCallAuthAck *)ack {
+- (void)handleRtcInviteAck:(JStringAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JCallAuthObj class]]) {
-        JCallAuthObj *inviteObj = (JCallAuthObj *)obj;
+    if ([obj isKindOfClass:[JStringObj class]]) {
+        JStringObj *inviteObj = (JStringObj *)obj;
         if (ack.code != 0) {
             inviteObj.errorBlock(ack.code);
         } else {
-            inviteObj.successBlock(ack.zegoToken);
+            inviteObj.successBlock(ack.str);
         }
     }
 }
@@ -1556,6 +1580,18 @@ inConversation:(JConversation *)conversation
             roomsObj.errorBlock(ack.code);
         } else {
             roomsObj.successBlock(ack.rooms);
+        }
+    }
+}
+
+- (void)handleGetUserInfoAck:(JStringAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JStringObj class]]) {
+        JStringObj *stringObj = (JStringObj *)obj;
+        if (ack.code != 0) {
+            stringObj.errorBlock(ack.code);
+        } else {
+            stringObj.successBlock(ack.str);
         }
     }
 }

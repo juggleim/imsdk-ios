@@ -1,5 +1,5 @@
 //
-//  SettingsLanguageViewController.swift
+//  SettingsPushLanguageViewController.swift
 //  QuickStart
 //
 //  Created by Fei Li on 2025/1/2.
@@ -7,11 +7,13 @@
 
 import Foundation
 
-class SettingsLanguageViewController: BaseTableListViewController {
+class SettingsPushLanguageViewController: BaseTableListViewController {
+    
+    var language: GlobalConst.SettingLanguage = .Chinese
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "语言设置"
+        self.titleView.text = "推送语言设置"
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -20,6 +22,14 @@ class SettingsLanguageViewController: BaseTableListViewController {
         super.configTableView()
         self.tableView.delegate = self
         self.tableView.dataSource = self
+        SBULoading.start()
+        JIM.shared().connectionManager.getLanguage { code, lg in
+            SBULoading.stop()
+            if let lg = lg, lg.starts(with: "en") {
+                self.language = .English
+            }
+            self.tableView.reloadData()
+        }
     }
     
     @objc func onTapLeftBarButton() {
@@ -27,13 +37,12 @@ class SettingsLanguageViewController: BaseTableListViewController {
     }
 }
 
-extension SettingsLanguageViewController: UITableViewDataSource, UITableViewDelegate {
+extension SettingsPushLanguageViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         2
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let language = UserDefaults.loadLanguage()
         let cell: BaseSelectTableViewCell
         if indexPath.row == language.rawValue {
             cell = BaseSelectTableViewCell(selected: true)
@@ -50,7 +59,16 @@ extension SettingsLanguageViewController: UITableViewDataSource, UITableViewDele
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UserDefaults.saveLanguage(GlobalConst.SettingLanguage(rawValue: indexPath.row) ?? .Chinese)
-        self.navigationController?.popViewController(animated: true)
+        var lg: String = "zh-Hans-CN"
+        if indexPath.row == 1 {
+            lg = "en_US"
+        }
+        SBULoading.start()
+        JIM.shared().connectionManager.setLanguage(lg) { code in
+            SBULoading.stop()
+            if code == .none {
+                self.navigationController?.popViewController(animated: true)
+            }
+        }
     }
 }

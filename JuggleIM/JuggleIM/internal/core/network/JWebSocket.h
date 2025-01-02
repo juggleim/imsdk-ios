@@ -289,6 +289,10 @@ inConversation:(JConversation *)conversation
             success:(void (^)(void))successBlock
               error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)getLanguage:(NSString *)userId
+            success:(void (^)(NSString *))successBlock
+              error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call
