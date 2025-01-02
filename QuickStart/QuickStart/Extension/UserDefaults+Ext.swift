@@ -37,4 +37,5 @@ extension UserDefaults {
     static func saveLanguage(_ language: GlobalConst.SettingLanguage) {
         UserDefaults.standard.set(language.rawValue, forKey: "setting_language")
     }
+    
 }

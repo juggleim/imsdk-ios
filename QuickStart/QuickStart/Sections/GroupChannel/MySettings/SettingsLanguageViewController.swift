@@ -7,11 +7,21 @@
 
 import Foundation
 
+enum SettingsLanguageType {
+    case global
+    case push
+}
+
 class SettingsLanguageViewController: BaseTableListViewController {
+    var type: SettingsLanguageType = .global
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "设置语言"
+        if type == .global {
+            self.titleView.text = "语言设置"
+        } else if type == .push {
+            self.titleView.text = "推送语言设置"
+        }
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -44,13 +54,17 @@ extension SettingsLanguageViewController: UITableViewDataSource, UITableViewDele
         if indexPath.row == 0 {
             cell.leftLabel.text = "中文"
         } else if indexPath.row == 1 {
-            cell.leftLabel.text = "英文"
+            cell.leftLabel.text = "English"
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UserDefaults.saveLanguage(GlobalConst.SettingLanguage(rawValue: indexPath.row) ?? .Chinese)
-        self.navigationController?.popViewController(animated: true)
+        if self.type == .global {
+            UserDefaults.saveLanguage(GlobalConst.SettingLanguage(rawValue: indexPath.row) ?? .Chinese)
+            self.navigationController?.popViewController(animated: true)
+        } else if self.type == .push {
+            
+        }
     }
 }

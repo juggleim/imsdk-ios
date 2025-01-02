@@ -15,6 +15,8 @@
 		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
 		A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */; };
 		A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */; };
+		A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7372D2691C900710683 /* SettingsPushViewController.swift */; };
+		A047B73D2D269A6B00710683 /* SettingsDisturbViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B73C2D269A6B00710683 /* SettingsDisturbViewController.swift */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -329,6 +331,8 @@
 		A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLanguageViewController.swift; sourceTree = "<group>"; };
 		A047B7342D2685E000710683 /* BaseSelectTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSelectTableViewCell.h; sourceTree = "<group>"; };
 		A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSelectTableViewCell.m; sourceTree = "<group>"; };
+		A047B7372D2691C900710683 /* SettingsPushViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPushViewController.swift; sourceTree = "<group>"; };
+		A047B73C2D269A6B00710683 /* SettingsDisturbViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsDisturbViewController.swift; path = "/Users/feili/workspace/iOS/juggle/im-ios-sdk/QuickStart/QuickStart/Sections/GroupChannel/MySettings/SettingsDisturbViewController.swift"; sourceTree = "<absolute>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -689,10 +693,12 @@
 		A047D7D92C245A7D00E50BCF /* MySettings */ = {
 			isa = PBXGroup;
 			children = (
+				A047B73C2D269A6B00710683 /* SettingsDisturbViewController.swift */,
 				A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */,
 				A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */,
 				A047D7DC2C245A7D00E50BCF /* MySettingsViewController.swift */,
 				A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */,
+				A047B7372D2691C900710683 /* SettingsPushViewController.swift */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1859,6 +1865,7 @@
 				A07F3B492BF4A2260087920B /* SBUScrollOptions.swift in Sources */,
 				A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */,
 				A07F3B732BF4A2270087920B /* SBUCacheManager.Image.swift in Sources */,
+				A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */,
 				A079501C2D1C162B0045EFE9 /* NormalAlertView.m in Sources */,
 				A07F3B762BF4A2270087920B /* SBUVoicePlayer.swift in Sources */,
 				A07F3C912BF4A2290087920B /* SBUMarginView.swift in Sources */,
@@ -2032,6 +2039,7 @@
 				A07950202D1D361A0045EFE9 /* JCGroupInfo.swift in Sources */,
 				A0968CAE2C2B03DA00E68790 /* SBUGroupChannelModule.List.swift in Sources */,
 				A07F3C932BF4A2290087920B /* SBUCommonViewControllerSet.swift in Sources */,
+				A047B73D2D269A6B00710683 /* SettingsDisturbViewController.swift in Sources */,
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
 				A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */,
 				A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */,

@@ -13,6 +13,7 @@ import JuggleIM
 
 enum MySettingsCellType: Int {
     case setLanguage
+    case push
     case globalDisturb
 }
 
@@ -141,6 +142,7 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.tabBarController?.tabBar.isHidden = false
 
         if let user = ProfileManager.shared.currentUserInfo {
             self.userInfoView.configure(user: user)
@@ -285,11 +287,17 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
         let type = MySettingsCellType(rawValue: rowValue)
         switch type {
         case .setLanguage:
+            self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsLanguageViewController()
             self.navigationController?.pushViewController(vc, animated: true)
-            
+        case .push:
+            self.tabBarController?.tabBar.isHidden = true
+            let vc = SettingsPushViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         case .globalDisturb:
-            let i = 1
+            self.tabBarController?.tabBar.isHidden = true
+            let vc = SettingsDisturbViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }
@@ -302,7 +310,11 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             switch type {
             case .setLanguage:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "设置语言"
+                cell.leftLabel.text = "语言设置"
+                return cell
+            case .push:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "推送设置"
                 return cell
             case .globalDisturb:
                 let cell = getArrowCell()
@@ -314,7 +326,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {

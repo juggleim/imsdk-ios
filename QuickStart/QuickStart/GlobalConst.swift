@@ -14,4 +14,11 @@ public class GlobalConst {
         case Chinese = 0
         case English = 1
     }
+    
+    public enum SettingDisturbTime: Int {
+        case noDisturb = 0
+        case eightToTwelve = 1
+        case nineteenToTwenty = 2
+        case twentyThreeToSix = 3
+    }
 }
