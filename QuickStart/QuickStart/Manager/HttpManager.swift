@@ -11,7 +11,9 @@ import JuggleIM
 @objc class HttpManager: NSObject {
     @objc static let shared = HttpManager()
     
-    static let domain = "https://ws.juggleim.com/jim"
+    static var domain: String {
+        GlobalConfig.demoServer
+    }
     
     static let smsLoginString = "/sms_login"
     static let phoneString = "phone"

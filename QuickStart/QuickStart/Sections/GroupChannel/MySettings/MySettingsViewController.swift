@@ -298,7 +298,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsDisturbViewController()
             self.navigationController?.pushViewController(vc, animated: true)
-        default:
+        case .none:
             break
         }
     }

@@ -38,4 +38,24 @@ extension UserDefaults {
         UserDefaults.standard.set(language.rawValue, forKey: "setting_language")
     }
     
+    static func loadAppKey() -> String? {
+        return UserDefaults.standard.string(forKey: "app_key")
+    }
+    static func saveAppKey(_ appKey: String) {
+        UserDefaults.standard.set(appKey, forKey: "app_key")
+    }
+    
+    static func loadIMServer() -> String? {
+        return UserDefaults.standard.string(forKey: "im_server")
+    }
+    static func saveIMServer(_ appKey: String) {
+        UserDefaults.standard.set(appKey, forKey: "im_server")
+    }
+    
+    static func loadDemoServer() -> String? {
+        return UserDefaults.standard.string(forKey: "demo_server")
+    }
+    static func saveDemoServer(_ appKey: String) {
+        UserDefaults.standard.set(appKey, forKey: "demo_server")
+    }
 }

@@ -18,6 +18,8 @@
 		A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7372D2691C900710683 /* SettingsPushViewController.swift */; };
 		A047B73D2D269A6B00710683 /* SettingsDisturbViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B73C2D269A6B00710683 /* SettingsDisturbViewController.swift */; };
 		A047B73F2D26CBF800710683 /* SettingsPushLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B73E2D26CBF800710683 /* SettingsPushLanguageViewController.swift */; };
+		A047B7412D27923600710683 /* SettingsServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7402D27923600710683 /* SettingsServerViewController.swift */; };
+		A047B7432D27E5BB00710683 /* GlobalConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7422D27E5BB00710683 /* GlobalConfig.swift */; };
 		A047D7DF2C245A7D00E50BCF /* MainChannelTabbarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */; };
 		A047D7E02C245A7D00E50BCF /* UserInfoTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */; };
 		A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */; };
@@ -335,6 +337,8 @@
 		A047B7372D2691C900710683 /* SettingsPushViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPushViewController.swift; sourceTree = "<group>"; };
 		A047B73C2D269A6B00710683 /* SettingsDisturbViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsDisturbViewController.swift; path = "/Users/feili/workspace/iOS/juggle/im-ios-sdk/QuickStart/QuickStart/Sections/GroupChannel/MySettings/SettingsDisturbViewController.swift"; sourceTree = "<absolute>"; };
 		A047B73E2D26CBF800710683 /* SettingsPushLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPushLanguageViewController.swift; sourceTree = "<group>"; };
+		A047B7402D27923600710683 /* SettingsServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsServerViewController.swift; sourceTree = "<group>"; };
+		A047B7422D27E5BB00710683 /* GlobalConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalConfig.swift; sourceTree = "<group>"; };
 		A047D7D82C245A7D00E50BCF /* MainChannelTabbarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainChannelTabbarController.swift; sourceTree = "<group>"; };
 		A047D7DA2C245A7D00E50BCF /* UserInfoTitleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfoTitleView.swift; sourceTree = "<group>"; };
 		A047D7DB2C245A7D00E50BCF /* MySettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MySettingsCell.swift; sourceTree = "<group>"; };
@@ -702,6 +706,7 @@
 				A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */,
 				A047B7372D2691C900710683 /* SettingsPushViewController.swift */,
 				A047B73E2D26CBF800710683 /* SettingsPushLanguageViewController.swift */,
+				A047B7402D27923600710683 /* SettingsServerViewController.swift */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1325,6 +1330,7 @@
 				A09645D72BF36BD300290775 /* Info.plist */,
 				A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */,
 				A02FA3C02D19A5F6002A4E0B /* OCConst.h */,
+				A047B7422D27E5BB00710683 /* GlobalConfig.swift */,
 			);
 			path = QuickStart;
 			sourceTree = "<group>";
@@ -1962,6 +1968,7 @@
 				A0968C8C2C2B020300E68790 /* SBUMessageStateView.swift in Sources */,
 				A07F3B4C2BF4A2260087920B /* Thread+SBUIKit.swift in Sources */,
 				A0968C882C2B020300E68790 /* SBUMessageInputMode.swift in Sources */,
+				A047B7432D27E5BB00710683 /* GlobalConfig.swift in Sources */,
 				A07F3C812BF4A2290087920B /* SBULayoutableButton.swift in Sources */,
 				A07950142D1C04240045EFE9 /* UITextViewAndPlaceholder.m in Sources */,
 				A07F3B662BF4A2270087920B /* SBULogger.swift in Sources */,
@@ -1986,6 +1993,7 @@
 				A090B0B32C3EB48C00FE0E10 /* SBUOpenChannelCommonContentView.swift in Sources */,
 				A07F3B9C2BF4A2270087920B /* SBUConfig.Base.swift in Sources */,
 				A07F3C0D2BF4A2280087920B /* SBUTheme+Type.swift in Sources */,
+				A047B7412D27923600710683 /* SettingsServerViewController.swift in Sources */,
 				A07F3B582BF4A2260087920B /* Float+SBUKit.swift in Sources */,
 				A07F3BA22BF4A2270087920B /* SBUConfig.CodingKeys.swift in Sources */,
 				A07F35E22BF4928B0087920B /* UIcolor+Ext.swift in Sources */,
@@ -2245,7 +2253,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.3.1;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -2296,7 +2304,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.3.1;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

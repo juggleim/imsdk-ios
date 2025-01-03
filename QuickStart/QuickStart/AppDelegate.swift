@@ -17,8 +17,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         print("didFinishLaunchingWithOptions")
         
-        JIM.shared().setServerUrls(["wss://ws.juggleim.com"])
-        let appKey = "nsw3sue72begyv7y"
+        JIM.shared().setServerUrls([GlobalConfig.imServer])
+        let appKey = GlobalConfig.appKey
         HttpManager.shared.setAppKey(appKey)
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)

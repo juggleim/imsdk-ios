@@ -21,6 +21,16 @@ class ViewController: UIViewController {
     var verifyCodeTextField: UITextField { connectView.verifyCodeTextField }
     var signInButton: UIButton { connectView.signInButton }
     
+    var serverSettingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("服务器设置", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.setTitleColor(UIColor(hex: "#0091FF"), for: .normal)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.addTarget(self, action: #selector(onServerSetting), for: .touchUpInside)
+        return button
+    }()
+    
     @IBOutlet weak var versionLabel: UILabel!
     
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView! {
@@ -61,6 +71,14 @@ class ViewController: UIViewController {
         
         phoneNumberTextField.text = UserDefaults.loadPhoneNumber()
         verifyCodeTextField.text = UserDefaults.loadVerifyCode()
+        
+        self.view.addSubview(self.serverSettingButton)
+        
+        self.serverSettingButton.sbu_constraint(width: 100)
+        var layoutConstraints: [NSLayoutConstraint] = []
+        layoutConstraints.append(self.serverSettingButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10))
+        layoutConstraints.append(self.serverSettingButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 40))
+        NSLayoutConstraint.activate(layoutConstraints)
         
         guard phoneNumberTextField.text != nil,
               verifyCodeTextField.text != nil else {
@@ -134,6 +152,12 @@ class ViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc func onServerSetting() {
+        let vc = SettingsServerViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true)
     }
 }
 
