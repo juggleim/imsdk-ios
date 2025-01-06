@@ -496,7 +496,8 @@
 - (void)syncChatroomAttr:(nonnull NSString *)chatroomId time:(long long)syncTime {
     JLogI(@"MSG-ChrmAttrSync", @"id is %@, time is %lld", chatroomId, syncTime);
     [self.core.webSocket syncChatroomAttributesWithTime:syncTime
-                                             chatroomId:chatroomId];
+                                             chatroomId:chatroomId
+                                                 userId:self.core.userId];
 }
 
 - (NSHashTable<id<JChatroomDelegate>> *)delegates {

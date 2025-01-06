@@ -259,10 +259,12 @@ inConversation:(JConversation *)conversation
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId
+                              userId:(NSString *)userId
                     prevMessageCount:(int)count;
 
 - (void)syncChatroomAttributesWithTime:(long long)syncTime
-                            chatroomId:(NSString *)chatroomId;
+                            chatroomId:(NSString *)chatroomId
+                                userId:(NSString *)userId;
 
 - (void)getFirstUnreadMessage:(JConversation *)conversation
                       success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock

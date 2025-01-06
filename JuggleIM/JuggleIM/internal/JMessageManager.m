@@ -2205,6 +2205,7 @@
     self.chatroomSyncProcessing = YES;
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
                                            chatroomId:chatroomId
+                                               userId:self.core.userId
                                      prevMessageCount:count];
 }
 

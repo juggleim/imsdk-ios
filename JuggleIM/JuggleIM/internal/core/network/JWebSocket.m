@@ -756,10 +756,12 @@ inConversation:(JConversation *)conversation
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId
+                              userId:(NSString *)userId
                     prevMessageCount:(int)count {
     dispatch_async(self.sendQueue, ^{
         NSData *d = [self.pbData syncChatroomMessages:syncTime
                                            chatroomId:chatroomId
+                                               userId:userId
                                      prevMessageCount:count
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"sync chatroom messages, id is %@, time is %lld, prevMessageCount is %d", chatroomId, syncTime, count);
@@ -771,11 +773,14 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)syncChatroomAttributesWithTime:(long long)syncTime chatroomId:(NSString *)chatroomId {
+- (void)syncChatroomAttributesWithTime:(long long)syncTime
+                            chatroomId:(NSString *)chatroomId
+                                userId:(nonnull NSString *)userId {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncChatroomAttributes:syncTime
                                              chatroomId:chatroomId
+                                                 userId:userId
                                                   index:self.cmdIndex++];
         JLogI(@"WS-Send", @"sync chatroom attributes, id is %@, time is %lld", chatroomId, syncTime);
         NSError *err = nil;

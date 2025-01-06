@@ -850,6 +850,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
+                          userId:(NSString *)userId
                 prevMessageCount:(int)count
                            index:(int)index {
     SyncChatroomReq *req = [[SyncChatroomReq alloc] init];
@@ -860,7 +861,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jSyncChatroomMessage;
-    body.targetId = chatroomId;
+    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -872,6 +873,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)syncChatroomAttributes:(long long)syncTime
                         chatroomId:(NSString *)chatroomId
+                            userId:(NSString *)userId
                              index:(int)index {
     SyncChatroomReq *req = [[SyncChatroomReq alloc] init];
     req.chatroomId = chatroomId;
@@ -880,7 +882,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jSyncChatroomAtts;
-    body.targetId = chatroomId;
+    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {

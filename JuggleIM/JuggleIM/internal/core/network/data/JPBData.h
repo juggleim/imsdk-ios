@@ -374,11 +374,13 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
+                          userId:(NSString *)userId
                 prevMessageCount:(int)count
                            index:(int)index;
 
 - (NSData *)syncChatroomAttributes:(long long)syncTime
                         chatroomId:(NSString *)chatroomId
+                            userId:(NSString *)userId
                              index:(int)index;
 
 - (NSData *)qryFirstUnreadMessage:(JConversation *)conversation
