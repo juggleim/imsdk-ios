@@ -50,6 +50,10 @@
     }
 }
 
+- (void)stopPreview {
+    [[ZegoExpressEngine sharedEngine] stopPreview];
+}
+
 - (void)enableCamera:(BOOL)isEnable {
     [[ZegoExpressEngine sharedEngine] enableCamera:isEnable];
 }
