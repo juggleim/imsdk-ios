@@ -757,6 +757,10 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         self.baseViewModel?.deleteMessage(message: message)
     }
     
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRecallMessage message: JMessage) {
+        self.baseViewModel?.recallMessage(message: message)
+    }
+    
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: JMessage) {
         self.setMessageInputViewMode(.quoteReply, message: message)
     }

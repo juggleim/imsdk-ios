@@ -19,6 +19,7 @@ public class SBUStringSet {
     public static var Save = "Save"
     public static var Copy = "Copy"
     public static var Delete = "Delete"
+    public static var Recall = "Recall"
     public static var Edit = "Edit"
     public static var Remove = "Remove"
     public static var Camera = "Camera"
@@ -39,6 +40,7 @@ public class SBUStringSet {
     
     // MARK: - Alert
     public static var Alert_Delete = "Are you sure you want to delete?"
+    public static var Alert_Recall = "Are you sure you want to recall?"
     public static var Alert_Delete_MultipleFilesMessage: (Int) -> String = {
         return  "Do you want to delete all \($0) photos?"
     }

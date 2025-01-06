@@ -111,6 +111,7 @@ extension SBUGroupChannelModule {
             super.setupViews()
             
             self.register(cell: SBUTextMessageCell(), contentType: JTextMessage.contentType())
+            self.register(cell: SBURecallMessageCell(), contentType: JRecallInfoMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JImageMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JVoiceMessage.contentType())
             self.register(cell: SBUMediaMessageCell(), contentType: JVideoMessage.contentType())

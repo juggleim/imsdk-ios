@@ -457,7 +457,10 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
     }
     
     public func messageDidRecall(_ message: JMessage!) {
-        
+        if !message.conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        self.updateMessagesInList(messages: [message], needReload: true)
     }
     
     public func messageDidDelete(_ conversation: JConversation!, clientMsgNos: [NSNumber]!) {

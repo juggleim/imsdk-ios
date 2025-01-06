@@ -473,6 +473,14 @@ open class SBUBaseChannelViewModel: NSObject {
         }
     }
     
+    public func recallMessage(message: JMessage) {
+        SBULog.info("[Request] Recall message: \(message.description)")
+        JIM.shared().messageManager.recallMessage(message.messageId, extras: nil) { recallMessage in
+        } error: { code in
+            
+        }
+    }
+    
     // MARK: - List
     
     /// This function updates the messages in the list.
@@ -484,17 +492,14 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - needReload: If set to `true`, the tableview will be call reloadData.
     /// - Since: 1.2.5
     public func updateMessagesInList(messages: [JMessage]?, needReload: Bool) {
-//        messages?.forEach { message in
-//            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
-//                if !self.messageListParams.belongsTo(message) {
-//                    self.messageList.remove(at: index)
-//                } else {
-//                    self.messageList[index] = message
-//                }
-//            }
-//        }
-//
-//        self.sortAllMessageList(needReload: needReload)
+        messages?.forEach { message in
+            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
+                self.messageList.remove(at: index)
+                self.messageList.append(message)
+            }
+        }
+
+        self.sortAllMessageList(needReload: needReload)
     }
     
     // TODO: Not used

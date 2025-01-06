@@ -28,6 +28,7 @@
 		A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */; };
 		A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; };
 		A05661C72CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A05EDB1A2D2BE722006CE94B /* SBURecallMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05EDB192D2BE722006CE94B /* SBURecallMessageCell.swift */; };
 		A06388972CA2E5B4006357C7 /* SBUDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */; };
 		A06388A12CA41298006357C7 /* SBUBaseChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */; };
 		A06388A22CA41298006357C7 /* SBUGroupChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */; };
@@ -346,6 +347,7 @@
 		A047D7DE2C245A7D00E50BCF /* ChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListViewController.swift; sourceTree = "<group>"; };
 		A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZegoExpressEngine.xcframework; path = ../JZegoCall/framework/ZegoExpressEngine.xcframework; sourceTree = "<group>"; };
+		A05EDB192D2BE722006CE94B /* SBURecallMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBURecallMessageCell.swift; sourceTree = "<group>"; };
 		A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUDownloadManager.swift; sourceTree = "<group>"; };
 		A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelSettingCell.swift; sourceTree = "<group>"; };
 		A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUGroupChannelSettingCell.swift; sourceTree = "<group>"; };
@@ -1458,6 +1460,7 @@
 				A0A09F332C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift */,
 				A0A09F312C2EB40E00E96EDE /* SBUTextMessageCell.swift */,
 				A098CD752D145C5B000579A0 /* SBUCallMessageCell.swift */,
+				A05EDB192D2BE722006CE94B /* SBURecallMessageCell.swift */,
 			);
 			path = MessageCell;
 			sourceTree = "<group>";
@@ -2055,6 +2058,7 @@
 				A07F3BC22BF4A2270087920B /* SBUGroupChannelListModule.swift in Sources */,
 				A07950192D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m in Sources */,
 				A0A3A5332D081A0F009AD7C3 /* MultiAudioCallUserCollectionLayout.m in Sources */,
+				A05EDB1A2D2BE722006CE94B /* SBURecallMessageCell.swift in Sources */,
 				A09645CA2BF36BD000290775 /* AppDelegate.swift in Sources */,
 				A0968C662C2B020300E68790 /* SBUAdminMessageCellParams.swift in Sources */,
 				A07F3B722BF4A2270087920B /* SBUCacheManager.Template.swift in Sources */,

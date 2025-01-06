@@ -291,6 +291,18 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             let range = NSRange(location: 0, length: 4)
             attributeString.addAttribute(.foregroundColor, value: UIColor.red, range: range)
             self.messageLabel.attributedText = attributeString
+        } else if conversationInfo.lastMessage.content is JRecallInfoMessage {
+            var tip = ""
+            if conversationInfo.lastMessage.direction == .receive {
+                var userName = conversationInfo.lastMessage.senderUserId ?? ""
+                if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.lastMessage.senderUserId) {
+                    userName = user.userName ?? userName
+                }
+                tip = "\(userName) 撤回了一条消息"
+            } else {
+                tip = "你 撤回了一条消息"
+            }
+            self.messageLabel.text = tip
         } else if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
             self.messageLabel.text = digest
         } else {

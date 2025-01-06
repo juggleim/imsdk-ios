@@ -129,6 +129,8 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - message: The message that the selected menu item belongs to.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage)
     
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRecallMessage message: JMessage)
+    
     /// Called when a user selects the *edit* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
@@ -629,12 +631,34 @@ extension SBUBaseChannelModule {
             
             let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
             
-            var title = SBUStringSet.Alert_Delete
+            let title = SBUStringSet.Alert_Delete
             
             SBUAlertView.show(
                 title: title,
                 oneTimetheme: oneTimeTheme,
                 confirmButtonItem: deleteButton,
+                cancelButtonItem: cancelButton
+            )
+        }
+        
+        open func showRecallMessageAlert(on message: JMessage, oneTimeTheme: SBUComponentTheme? = nil) {
+            let recallButton = SBUAlertButtonItem(
+                title: SBUStringSet.Recall,
+                color: self.theme?.alertRemoveColor
+            ) { [weak self, message] _ in
+                guard let self = self else { return }
+                SBULog.info("[Request] Remove message: \(message.description)")
+                self.baseDelegate?.baseChannelModule(self, didTapRecallMessage: message)
+            }
+            
+            let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+            
+            let title = SBUStringSet.Alert_Recall
+            
+            SBUAlertView.show(
+                title: title,
+                oneTimetheme: oneTimeTheme,
+                confirmButtonItem: recallButton,
                 cancelButtonItem: cancelButton
             )
         }
@@ -753,6 +777,11 @@ extension SBUBaseChannelModule {
             }
             let delete = self.createDeleteMenuItem(for: message)
             items.append(delete)
+            
+            if isSentByMe {
+                let recall = self.createRecallMenuItem(for: message)
+                items.append(recall)
+            }
             return items
         }
         
@@ -788,6 +817,22 @@ extension SBUBaseChannelModule {
             ) { [weak self, message] in
                 guard let self = self else { return }
                 self.showDeleteMessageAlert(on: message)
+            }
+            menuItem.isEnabled = true//message.threadInfo.replyCount == 0
+            return menuItem
+        }
+        
+        open func createRecallMenuItem(for message: JMessage) -> SBUMenuItem {
+            let menuItem = SBUMenuItem(
+                title: SBUStringSet.Recall,
+                color: theme?.menuTextColor,
+                image: SBUIconSetType.iconDelete.image(
+                    with: SBUTheme.componentTheme.alertButtonColor,
+                    to: SBUIconSetType.Metric.iconActionSheetItem
+                )
+            ) { [weak self, message] in
+                guard let self = self else { return }
+                self.showRecallMessageAlert(on: message)
             }
             menuItem.isEnabled = true//message.threadInfo.replyCount == 0
             return menuItem
