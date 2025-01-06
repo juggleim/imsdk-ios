@@ -185,7 +185,7 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
             color: theme.itemColor
         ) {}
         SBUActionSheet.show(
-            items: [changeNameItem],
+            items: [changeNameItem, changeImageItem],
             cancelItem: cancelItem,
             identifier: actionSheetIdEdit,
             delegate: self
@@ -371,68 +371,61 @@ extension MySettingsViewController: SBUActionSheetDelegate {
             default:
                 break
             }
+        } else {
+            let type = MediaResourceType.init(rawValue: index)
+            var sourceType: UIImagePickerController.SourceType = .photoLibrary
+            let mediaType: [String] = [String(kUTTypeImage)]
+
+            switch type {
+            case .camera:
+                sourceType = .camera
+            case .library:
+                sourceType = .photoLibrary
+            default:
+                break
+            }
+
+            if type != .document {
+                if UIImagePickerController.isSourceTypeAvailable(sourceType) {
+                    let imagePickerController = UIImagePickerController()
+                    imagePickerController.delegate = self
+                    imagePickerController.sourceType = sourceType
+                    imagePickerController.mediaTypes = mediaType
+                    self.present(imagePickerController, animated: true, completion: nil)
+                }
+            }
         }
-//        else {
-//            let type = MediaResourceType.init(rawValue: index)
-//            var sourceType: UIImagePickerController.SourceType = .photoLibrary
-//            let mediaType: [String] = [String(kUTTypeImage)]
-//
-//            switch type {
-//            case .camera:
-//                sourceType = .camera
-//            case .library:
-//                sourceType = .photoLibrary
-//            default:
-//                break
-//            }
-//
-//            if type != .document {
-//                if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-//                    let imagePickerController = UIImagePickerController()
-//                    imagePickerController.delegate = self
-//                    imagePickerController.sourceType = sourceType
-//                    imagePickerController.mediaTypes = mediaType
-//                    self.present(imagePickerController, animated: true, completion: nil)
-//                }
-//            }
-//        }
     }
 }
 
 
 // MARK: UIImagePickerViewControllerDelegate
-//extension MySettingsViewController: UIImagePickerControllerDelegate {
-//    public func imagePickerController(
-//        _ picker: UIImagePickerController,
-//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-//
-//        picker.dismiss(animated: true) { [weak self] in
-//            guard let originalImage = info[.originalImage] as? UIImage else { return }
-//
-//            self?.userInfoView.coverImage.image = originalImage
-//
-//            HttpManager.shared.updateUserInfo(userId: JIM.shared().currentUserId, portrait: portrait) { code in
-//                if code != HttpManager.success {
-//                    return
-//                }
-//                DispatchQueue.main.async { [weak self] in
-//                    self.currentUserInfo?.portrait = portrait
-//                    self.userInfoView.configure(user: self.currentUserInfo)
-//                }
-//            }
-//
-//            // Sendbird provides various access control options when using the Chat SDK. By default, the Allow retrieving user list attribute is turned on to facilitate creating sample apps. However, this may grant access to unwanted data or operations, leading to potential security concerns. To manage your access control settings, you can turn on or off each setting on Sendbird Dashboard.
-//            SendbirdUI.updateUserInfo(
-//                nickname: nil,
-//                profileImage: originalImage.jpegData(compressionQuality: 0.5)
-//            ) { error in
-//                guard error == nil else {
-//                    SBULog.error(error?.localizedDescription)
-//                    return
-//                }
-//                guard let user = SBUGlobals.currentUser else { return }
-//                self?.userInfoView.configure(user: user)
-//            }
-//        }
-//    }
-//}
+extension MySettingsViewController: UIImagePickerControllerDelegate {
+    public func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+
+        picker.dismiss(animated: true) { [weak self] in
+            guard let originalImage = info[.originalImage] as? UIImage else { return }
+
+            self?.userInfoView.coverImage.image = originalImage
+            
+            JIM.shared().messageManager.uploadImage(originalImage) { url in
+                HttpManager.shared.updateUserInfo(
+                    userId: JIM.shared().currentUserId,
+                    portrait: url) { code in
+                        if code != HttpManager.success {
+                            return
+                        }
+                        DispatchQueue.main.async { [weak self] in
+                            if let userInfo = ProfileManager.shared.currentUserInfo {
+                                userInfo.portrait = url
+                                self?.userInfoView.configure(user: userInfo)
+                            }
+                        }
+                    }
+            } error: { code in
+            }
+        }
+    }
+}

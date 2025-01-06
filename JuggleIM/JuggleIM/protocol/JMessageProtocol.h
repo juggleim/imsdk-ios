@@ -14,6 +14,7 @@
 #import <JuggleIM/JGetMessageOptions.h>
 #import <JuggleIM/JQueryMessageOptions.h>
 #import <JuggleIM/JSearchConversationsResult.h>
+#import <UIKit/UIImage.h>
 
 @class JMergeMessage;
 
@@ -434,5 +435,13 @@
 /// - Parameter completeBlock: 结果回调 [errorCode: 错误码，0 为成功; isMute: 是否免打扰; timezone: 时区; periods: 免打扰的时间段, 为空视为全天免打扰]
 - (void)getMuteStatus:(void (^)(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))completeBlock;
 
+/// 上传图片
+/// - Parameters:
+///   - image: 图片
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)uploadImage:(UIImage *)image
+            success:(void (^)(NSString * url))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
 
 @end

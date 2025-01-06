@@ -17,5 +17,9 @@
         messageId:(NSString *)messageId
          complete:(void (^)(void))completeBlock;
 
+- (void)uploadImage:(UIImage *)image
+            success:(void (^)(NSString * url))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
+
 @end
 

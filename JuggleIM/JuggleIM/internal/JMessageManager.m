@@ -1501,6 +1501,26 @@
     }];
 }
 
+- (void)uploadImage:(UIImage *)image success:(void (^)(NSString *))successBlock error:(void (^)(JErrorCode))errorBlock {
+    JUploadManager *uploader = [[JUploadManager alloc] initWithCore:self.core];
+    [uploader uploadImage:image
+                  success:^(NSString *url) {
+        JLogI(@"MSG-UpldImg", @"url is %@", url);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(url);
+            }
+        });
+    } error:^(JErrorCode code) {
+        JLogE(@"MSG-UpldImg", @"error, code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(code);
+            }
+        });
+    }];
+}
+
 - (void)connectSuccess {
     self.syncProcessing = YES;
     self.syncNotifyTime = 0;
