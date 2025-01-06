@@ -200,13 +200,19 @@
 }
 
 - (void)handleWithValue:(NSString *)value {
-    [HttpManager.shared qrcodeConfirmWithQrcodeString:value completion:^(NSInteger code) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (code == 0) {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-        });
-    }];
+    NSData *data = [value dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+    NSString *action = json[@"action"];
+    if ([action isEqualToString:@"login"]) {
+        NSString *code = json[@"code"];
+        [HttpManager.shared qrcodeConfirmWithQrcodeString:code completion:^(NSInteger code) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (code == 0) {
+                    [self.navigationController popViewControllerAnimated:YES];
+                }
+            });
+        }];
+    }
 
 }
 
