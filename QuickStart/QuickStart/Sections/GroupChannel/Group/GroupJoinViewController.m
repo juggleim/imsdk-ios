@@ -22,6 +22,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = ColorFromRGB(0xf5f6f9);
     [self setNaviItem];
     [self addSubViews];
     [self setGroupInfo];
@@ -112,10 +114,12 @@
 }
 
 - (void)pushChatVC {
-    JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:self.group.groupId];
-    JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
-    ChannelViewController *vc = [[ChannelViewController alloc] initWithConversationInfo:info];
-    [self.navigationController pushViewController:vc animated:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:self.group.groupId];
+        JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conversation];
+        ChannelViewController *vc = [[ChannelViewController alloc] initWithConversationInfo:info];
+        [self.navigationController pushViewController:vc animated:YES];
+    });
 }
 
 #pragma mark - getter
