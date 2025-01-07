@@ -8,10 +8,11 @@
 import Foundation
 import JuggleIM
 
-enum GroupRole: Int {
+@objc enum GroupRole: Int {
     case member = 0
     case owner = 1
     case admin = 2
+    case notMember = 3
 }
 
 class JCGroupInfo: JGroupInfo {
@@ -19,7 +20,7 @@ class JCGroupInfo: JGroupInfo {
     // 只包含前 20 个成员
     var members: [JCUser] = []
     var owner: JCUser?
-    var myRole: GroupRole = .member
+    @objc var myRole: GroupRole = .member
     var mute: Int = 0
     var maxAdminCount: Int = 10
     var adminCount: Int = 0

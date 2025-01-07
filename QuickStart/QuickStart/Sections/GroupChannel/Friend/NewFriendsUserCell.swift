@@ -69,12 +69,16 @@ class NewFriendsUserCell: BaseUserCell {
     override func configure(type: UserListType, user: JCUser, isChecked: Bool = false, operatorMode: Bool = false) {
         super.configure(type: type, user: user, isChecked: isChecked, operatorMode: operatorMode)
         
-        var count: Int32 = 0
-        let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
-        if let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) {
-            count = conversationInfo.unreadCount
+        if type == .friendList {
+            var count: Int32 = 0
+            let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
+            if let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) {
+                count = conversationInfo.unreadCount
+            }
+            self.updateUnreadCount(Int(count))
+        } else if type == .none {
+            self.unreadCount.isHidden = true
         }
-        self.updateUnreadCount(Int(count))
     }
     
     private func updateUnreadCount(_ count: Int) {

@@ -9,7 +9,7 @@ import Foundation
 import JuggleIM
 
 class GroupSettingViewController: BaseTableListViewController {
-    var conversationInfo: JConversationInfo?
+    @objc var conversationInfo: JConversationInfo?
     var groupInfo: JCGroupInfo?
     var deleteButton: UIButton?
     lazy var headerView: UserListCollectionView = {

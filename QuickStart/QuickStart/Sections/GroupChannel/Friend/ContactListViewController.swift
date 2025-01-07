@@ -126,7 +126,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 user.userName = "Groups"
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
-                cell.configure(type: .friendList, user: user)
+                cell.configure(type: .none, user: user)
                 return cell
             }
         } else {

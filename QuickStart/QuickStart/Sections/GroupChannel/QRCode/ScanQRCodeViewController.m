@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "QuickStart-Swift.h"
 #import "PersonDetailViewController.h"
+#import "GroupJoinViewController.h"
 
 @interface ScanQRCodeViewController () <AVCaptureMetadataOutputObjectsDelegate>
 @property (nonatomic, strong) QRCodeScannerView *scannerView;
@@ -212,8 +213,25 @@
         }];
     } else if ([action isEqualToString:@"join_group"]) {
         NSString *groupId = json[@"group_id"];
-        NSString *userId = json[@"user_id"];
-        //TODO: 加群
+//        NSString *userId = json[@"user_id"];
+        
+        [HttpManager.shared getGroupInfoWithGroupId:groupId completion:^(NSInteger code, JCGroupInfo * _Nullable group) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (code == 0) {
+                    if (group.myRole == GroupRoleNotMember) {
+                        GroupJoinViewController *vc = [[GroupJoinViewController alloc] init];
+                        vc.group = group;
+                        [self.navigationController pushViewController:vc animated:YES];
+                    } else {
+                        JConversation *conv = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:group.groupId];
+                        JConversationInfo *info = [JIM.shared.conversationManager getConversationInfo:conv];
+                        ChannelViewController *vc = [[ChannelViewController alloc] initWithConversationInfo:info];
+                        [self.navigationController pushViewController:vc animated:YES];
+                    }
+                }
+            });
+        }];
+        
     } else if ([action isEqualToString:@"add_friend"]) {
         NSString *userId = json[@"user_id"];
         PersonDetailViewController *vc = [[PersonDetailViewController alloc] init];

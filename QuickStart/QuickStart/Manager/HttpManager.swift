@@ -111,6 +111,8 @@ import JuggleIM
     static let groupsQrcodeString = "/groups/qrcode"
     static let qrcodeString = "qr_code"
     
+    static let groupsApplyString = "/groups/apply"
+    
     static let usersQrcodeString = "/users/qrcode"
     
     static let usersInfoString = "/users/info"
@@ -574,7 +576,7 @@ import JuggleIM
         task.resume()
     }
     
-    func getGroupInfo(
+    @objc func getGroupInfo(
         groupId: String,
         completion: @escaping ((Int, JCGroupInfo?) -> Void)
     ) {
@@ -835,6 +837,29 @@ import JuggleIM
         completion: @escaping ((Int) -> Void)
     ) {
         let urlString = Self.domain.appending(Self.groupsQuitString)
+        let dic: [String: Any] = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .post, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code)
+                    return
+                }
+                completion(Self.success)
+            })
+        }
+        task.resume()
+    }
+    
+    @objc func groupApply(
+        groupId: String,
+        completion: @escaping ((Int) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsApplyString)
         let dic: [String: Any] = [Self.groupIdString: groupId]
         let req = getRequest(url: urlString, method: .post, params: dic)
         guard let request = req.urlRequest, req.isSuccess else {
