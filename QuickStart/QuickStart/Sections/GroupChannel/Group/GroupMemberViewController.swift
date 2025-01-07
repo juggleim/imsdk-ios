@@ -113,12 +113,9 @@ extension GroupMemberViewController: UITableViewDataSource, UITableViewDelegate 
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = self.users[indexPath.row]
         if self.type == .chat {
-            let conversation = JConversation(conversationType: .private, conversationId: user.userId)
-            let defaultConversationInfo = JConversationInfo()
-            defaultConversationInfo.conversation = conversation
-            let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-            let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
-            self.navigationController?.pushViewController(channelVC, animated: true)
+            let vc = PersonDetailViewController()
+            vc.userId = user.userId
+            self.navigationController?.pushViewController(vc, animated: true)
         } else if self.type == .callback {
             self.delegate?.memberDidSelect(user)
             self.navigationController?.popViewController(animated: true)

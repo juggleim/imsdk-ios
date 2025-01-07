@@ -409,12 +409,9 @@ extension GroupSettingViewController: UserListCollectionViewDelegate {
     }
     
     func userDidClick(_ userId: String) {
-        let conversation = JConversation(conversationType: .private, conversationId: userId)
-        let defaultConversationInfo = JConversationInfo()
-        defaultConversationInfo.conversation = conversation
-        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-        let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelVC, animated: true)
+        let vc = PersonDetailViewController()
+        vc.userId = userId
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
