@@ -10,6 +10,7 @@
 #import "OCConst.h"
 #import <Masonry/Masonry.h>
 #import "QuickStart-Swift.h"
+#import "UIView+MBProgressHUD.h"
 
 @interface QRCodeViewController ()
 @property (nonatomic, strong) UIView *qrBgView;
@@ -153,22 +154,47 @@
 }
 
 - (void)saveImageToPhotos:(UIImage *)image {
-//    [RCDUtilities savePhotosAlbumWithImage:image authorizationStatusBlock:^{
-//        [RCAlertView showAlertController:RCLocalizedString(@"AccessRightTitle")
-//                                 message:RCLocalizedString(@"photoAccessRight")
-//                             cancelTitle:RCLocalizedString(@"OK")
-//                        inViewController:self];
-//    } resultBlock:^(BOOL success) {
-//        [self showHUDWithSuccess:success];
-//    }];
+    [self savePhotosAlbumWithImage:image authorizationStatusBlock:^{
+        UIAlertController *alertController =
+            [UIAlertController alertControllerWithTitle:nil message:@"没有访问权限，请前往“设置-隐私-照片”选项中，允许访问您的照片" preferredStyle:UIAlertControllerStyleAlert];
+        [alertController
+            addAction:[UIAlertAction actionWithTitle:@"确认"
+                                               style:UIAlertActionStyleDestructive
+                                             handler:^(UIAlertAction *_Nonnull action){
+            [self.navigationController popViewControllerAnimated:true];
+                                             }]];
+        [self presentViewController:alertController animated:true completion:nil];
+    } resultBlock:^(BOOL success) {
+        [self showHUDWithSuccess:success];
+    }];
+}
+
+- (void)savePhotosAlbumWithImage:(UIImage *)image authorizationStatusBlock:(nullable dispatch_block_t)authorizationStatusBlock resultBlock:(nullable void (^)(BOOL success))resultBlock {
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (PHAuthorizationStatusRestricted == status || PHAuthorizationStatusDenied == status) {
+        if (authorizationStatusBlock) {
+            authorizationStatusBlock();
+        }
+        return;
+    }
+    
+    [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
+        [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+    } completionHandler:^(BOOL success, NSError * _Nullable error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (resultBlock) {
+                resultBlock(nil == error);
+            }
+        });
+    }];
 }
 
 - (void)showHUDWithSuccess:(BOOL)success {
-//    if (success) {
-//        [self.view showHUDMessage:RCLocalizedString(@"SavePhotoSuccess")];
-//    } else {
-//        [self.view showHUDMessage:RCLocalizedString(@"SavePhotoFailed")];
-//    }
+    if (success) {
+        [self.view showHUDMessage:@"图片保存成功"];
+    } else {
+        [self.view showHUDMessage:@"图片保存失败"];
+    }
 }
 
 - (void)addSubViews {

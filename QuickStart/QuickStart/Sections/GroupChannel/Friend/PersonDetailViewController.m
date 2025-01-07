@@ -54,7 +54,7 @@
     if (self.user) {
         if ([self isCurrentUser]) {
             self.tableView.hidden = YES;
-            self.conversationButton.hidden = NO;
+            self.conversationButton.hidden = YES;
             self.addFriendButton.hidden = YES;
             self.audioCallButton.hidden = YES;
             self.videoCallButton.hidden = YES;

@@ -6,7 +6,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "QuickStart-Swift.h"
 
 @class JCUser;
 NS_ASSUME_NONNULL_BEGIN
