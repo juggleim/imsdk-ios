@@ -12,6 +12,7 @@ import MobileCoreServices
 import JuggleIM
 
 enum MySettingsCellType: Int {
+    case qrcode
     case setLanguage
     case push
     case globalDisturb
@@ -286,6 +287,11 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
         let rowValue = indexPath.row
         let type = MySettingsCellType(rawValue: rowValue)
         switch type {
+        case .qrcode:
+            self.tabBarController?.tabBar.isHidden = true
+            let conversation = JConversation(conversationType: .private, conversationId: JIM.shared().currentUserId)
+            let vc = QRCodeViewController(conversation: conversation)
+            self.navigationController?.pushViewController(vc, animated: true)
         case .setLanguage:
             self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsLanguageViewController()
@@ -308,6 +314,10 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
         let rowValue = indexPath.row
         if let type = MySettingsCellType(rawValue: rowValue) {
             switch type {
+            case .qrcode:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "我的二维码"
+                return cell
             case .setLanguage:
                 let cell = getArrowCell()
                 cell.leftLabel.text = "语言设置"
@@ -326,7 +336,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 4
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {

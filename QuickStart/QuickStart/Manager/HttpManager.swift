@@ -108,6 +108,13 @@ import JuggleIM
     static let qrcodeConfirmString = "/login/qrcode/confirm"
     static let idString = "id"
     
+    static let groupsQrcodeString = "/groups/qrcode"
+    static let qrcodeString = "qr_code"
+    
+    static let usersQrcodeString = "/users/qrcode"
+    
+    static let usersInfoString = "/users/info"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -201,6 +208,36 @@ import JuggleIM
         task.resume()
     }
     
+    @objc func getUserInfo(
+        userId: String,
+        completion: @escaping ((Int, JCUser?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.usersInfoString)
+        let dic = [Self.userIdString: userId]
+        let req = getRequest(url: urlString, method: .get, params: dic)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get user error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                
+                let jcUser = self?.jcUserFrom(json: responseData)
+                completion(0, jcUser)
+            })
+        }
+        task.resume()
+    }
+    
     func searchUser(
         phoneNumber: String,
         completion: @escaping ((Int, JCUser?) -> Void)
@@ -233,34 +270,14 @@ import JuggleIM
                     return
                 }
                 let item = items[0]
-                let jcUser: JCUser = JCUser()
-                if let userId = item[Self.userIdString] as? String {
-                    jcUser.userId = userId
-                } else {
-                    print("search user error, userId is not available")
-                    completion(Self.unknownError, nil)
-                    return
-                }
-                if let nickname = item[Self.nickNameString] as? String {
-                    jcUser.userName = nickname
-                }
-                if let avatar = item[Self.avatarString] as? String {
-                    jcUser.portrait = avatar
-                }
-                if let phone = item[Self.phoneString] as? String {
-                    jcUser.phoneNumber = phone
-                }
-                if let isFriend = item[Self.isFriendString] as? Bool {
-                    jcUser.isFriend = isFriend
-                }
-
+                let jcUser = self?.jcUserFrom(json: item)
                 completion(0, jcUser)
             })
         }
         task.resume()
     }
     
-    func applyFriend(
+    @objc func applyFriend(
         userId: String,
         completion: @escaping ((Int) -> Void)
     ) {
@@ -347,6 +364,72 @@ import JuggleIM
                     return
                 }
                 completion(0)
+            })
+        }
+        task.resume()
+    }
+    
+    @objc func getUserQRCode(
+        completion: @escaping ((Int, String?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.usersQrcodeString)
+        let req = getRequest(url: urlString, method: .get, params: nil)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get user qrcode error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if let qrcode = responseData[Self.qrcodeString] as? String {
+                    completion(Self.success, qrcode)
+                } else {
+                    print("get user qrcode error, qr_code is not available")
+                    completion(Self.unknownError, nil)
+                }
+            })
+        }
+        task.resume()
+    }
+    
+    @objc func getGroupQRCode(
+        groupId: String,
+        completion: @escaping ((Int, String?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.groupsQrcodeString)
+        let dict = [Self.groupIdString: groupId]
+        let req = getRequest(url: urlString, method: .get, params: dict)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get group qrcode error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if let qrcode = responseData[Self.qrcodeString] as? String {
+                    completion(Self.success, qrcode)
+                } else {
+                    print("get group qrcode error, qr_code is not available")
+                    completion(Self.unknownError, nil)
+                }
             })
         }
         task.resume()
@@ -1141,5 +1224,25 @@ import JuggleIM
             return
         }
         completion(Self.success, json)
+    }
+    
+    private func jcUserFrom(json: Dictionary<String, Any>) -> JCUser {
+        let jcUser: JCUser = JCUser()
+        if let userId = json[Self.userIdString] as? String {
+            jcUser.userId = userId
+        }
+        if let nickname = json[Self.nickNameString] as? String {
+            jcUser.userName = nickname
+        }
+        if let avatar = json[Self.avatarString] as? String {
+            jcUser.portrait = avatar
+        }
+        if let phone = json[Self.phoneString] as? String {
+            jcUser.phoneNumber = phone
+        }
+        if let isFriend = json[Self.isFriendString] as? Bool {
+            jcUser.isFriend = isFriend
+        }
+        return jcUser
     }
 }

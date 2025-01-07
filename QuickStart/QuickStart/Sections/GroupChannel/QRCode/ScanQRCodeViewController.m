@@ -9,6 +9,7 @@
 #import "QRCodeScannerView.h"
 #import <AVFoundation/AVFoundation.h>
 #import "QuickStart-Swift.h"
+#import "PersonDetailViewController.h"
 
 @interface ScanQRCodeViewController () <AVCaptureMetadataOutputObjectsDelegate>
 @property (nonatomic, strong) QRCodeScannerView *scannerView;
@@ -68,17 +69,14 @@
 - (void)showErrorAlertView {
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertController *alertController =
-            [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleAlert];
+            [UIAlertController alertControllerWithTitle:nil message:@"无法识别的二维码" preferredStyle:UIAlertControllerStyleAlert];
         [alertController
             addAction:[UIAlertAction actionWithTitle:@"确认"
                                                style:UIAlertActionStyleDestructive
                                              handler:^(UIAlertAction *_Nonnull action){
+            [self.navigationController popViewControllerAnimated:true];
                                              }]];
-        [alertController addAction:[UIAlertAction actionWithTitle:@"二维码识别错误"
-                                                            style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction *_Nonnull action) {
-                                                              [self.navigationController popViewControllerAnimated:YES];
-                                                          }]];
+        [self presentViewController:alertController animated:true completion:nil];
     });
 }
 
@@ -212,6 +210,17 @@
                 }
             });
         }];
+    } else if ([action isEqualToString:@"join_group"]) {
+        NSString *groupId = json[@"group_id"];
+        NSString *userId = json[@"user_id"];
+        //TODO: 加群
+    } else if ([action isEqualToString:@"add_friend"]) {
+        NSString *userId = json[@"user_id"];
+        PersonDetailViewController *vc = [[PersonDetailViewController alloc] init];
+        vc.userId = userId;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else {
+        [self showErrorAlertView];
     }
 
 }

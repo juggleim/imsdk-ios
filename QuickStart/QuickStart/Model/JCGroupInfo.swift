@@ -15,7 +15,7 @@ enum GroupRole: Int {
 }
 
 class JCGroupInfo: JGroupInfo {
-    var memberCount: Int = 0
+    @objc var memberCount: Int = 0
     // 只包含前 20 个成员
     var members: [JCUser] = []
     var owner: JCUser?

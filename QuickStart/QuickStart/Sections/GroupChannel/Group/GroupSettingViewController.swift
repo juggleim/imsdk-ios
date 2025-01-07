@@ -131,9 +131,9 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             return 1
         } else if section == 1 {
             if self.groupInfo?.myRole == .owner || self.groupInfo?.myRole == .admin {
-                return 4
+                return 5
             } else {
-                return 3
+                return 4
             }
         } else if section == 2 {
             return 2
@@ -162,17 +162,22 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
                 cell.rightLabel.text = self.groupInfo?.groupName ?? ""
                 return cell
             } else if indexPath.row == 1 {
+                // 群二维码
+                let cell = getRightLabelArrowCell()
+                cell.leftLabel.text = "群二维码"
+                return cell
+            } else if indexPath.row == 2 {
                 // 群公告
                 let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群公告"
                 return cell
-            } else if indexPath.row == 2 {
+            } else if indexPath.row == 3 {
                 // 群昵称
                 let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "我在本群的昵称"
                 cell.rightLabel.text = self.groupInfo?.groupDisplayName ?? ""
                 return cell
-            } else if indexPath.row == 3 {
+            } else if indexPath.row == 4 {
                 // 群管理
                 let cell = getRightLabelArrowCell()
                 cell.leftLabel.text = "群管理"
@@ -218,10 +223,12 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             if indexPath.row == 0 {
                 updateGroupName()
             } else if indexPath.row == 1 {
-                groupAnnouncement()
+                qrcode()
             } else if indexPath.row == 2 {
-                groupNickname()
+                groupAnnouncement()
             } else if indexPath.row == 3 {
+                groupNickname()
+            } else if indexPath.row == 4 {
                 groupManage()
             }
         } else if indexPath.section == 3 {
@@ -295,6 +302,16 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             cancelButtonItem: cancelButton,
             delegate: self
         )
+    }
+    
+    private func qrcode() {
+        if let conversation = self.conversationInfo?.conversation {
+            let vc = QRCodeViewController(conversation: conversation)
+            if let group = self.groupInfo {
+                vc.group = group
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     private func groupAnnouncement() {

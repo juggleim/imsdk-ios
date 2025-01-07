@@ -9,3 +9,4 @@
 #import "GroupAnnouncementViewController.h"
 #import "UserListCollectionView.h"
 #import "BaseSelectTableViewCell.h"
+#import "QRCodeViewController.h"

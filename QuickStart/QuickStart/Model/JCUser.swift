@@ -19,6 +19,6 @@ enum FriendApplicationStatus {
 
 class JCUser: JUserInfo {
     var phoneNumber: String?
-    var isFriend: Bool = false
+    @objc var isFriend: Bool = false
     var friendApplicationStatus: FriendApplicationStatus?
 }

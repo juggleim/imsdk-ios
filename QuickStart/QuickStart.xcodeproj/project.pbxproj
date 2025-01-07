@@ -29,6 +29,9 @@
 		A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; };
 		A05661C72CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A05EDB1A2D2BE722006CE94B /* SBURecallMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05EDB192D2BE722006CE94B /* SBURecallMessageCell.swift */; };
+		A05EDB1F2D2C078A006CE94B /* QRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EDB1E2D2C078A006CE94B /* QRCodeViewController.m */; };
+		A05EDB242D2CE5C0006CE94B /* PersonDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EDB232D2CE5C0006CE94B /* PersonDetailViewController.m */; };
+		A05EDB272D2CFBF6006CE94B /* PersonInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = A05EDB262D2CFBF6006CE94B /* PersonInfoView.m */; };
 		A06388972CA2E5B4006357C7 /* SBUDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */; };
 		A06388A12CA41298006357C7 /* SBUBaseChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */; };
 		A06388A22CA41298006357C7 /* SBUGroupChannelSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */; };
@@ -348,6 +351,12 @@
 		A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZegoExpressEngine.xcframework; path = ../JZegoCall/framework/ZegoExpressEngine.xcframework; sourceTree = "<group>"; };
 		A05EDB192D2BE722006CE94B /* SBURecallMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBURecallMessageCell.swift; sourceTree = "<group>"; };
+		A05EDB1D2D2C078A006CE94B /* QRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QRCodeViewController.h; sourceTree = "<group>"; };
+		A05EDB1E2D2C078A006CE94B /* QRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QRCodeViewController.m; sourceTree = "<group>"; };
+		A05EDB222D2CE5C0006CE94B /* PersonDetailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersonDetailViewController.h; sourceTree = "<group>"; };
+		A05EDB232D2CE5C0006CE94B /* PersonDetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PersonDetailViewController.m; sourceTree = "<group>"; };
+		A05EDB252D2CFBF6006CE94B /* PersonInfoView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PersonInfoView.h; sourceTree = "<group>"; };
+		A05EDB262D2CFBF6006CE94B /* PersonInfoView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PersonInfoView.m; sourceTree = "<group>"; };
 		A06388962CA2E5B4006357C7 /* SBUDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUDownloadManager.swift; sourceTree = "<group>"; };
 		A06388982CA41298006357C7 /* SBUBaseChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseChannelSettingCell.swift; sourceTree = "<group>"; };
 		A06388992CA41298006357C7 /* SBUGroupChannelSettingCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUGroupChannelSettingCell.swift; sourceTree = "<group>"; };
@@ -709,6 +718,8 @@
 				A047B7372D2691C900710683 /* SettingsPushViewController.swift */,
 				A047B73E2D26CBF800710683 /* SettingsPushLanguageViewController.swift */,
 				A047B7402D27923600710683 /* SettingsServerViewController.swift */,
+				A05EDB1D2D2C078A006CE94B /* QRCodeViewController.h */,
+				A05EDB1E2D2C078A006CE94B /* QRCodeViewController.m */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1608,6 +1619,10 @@
 				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
 				A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */,
 				A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */,
+				A05EDB222D2CE5C0006CE94B /* PersonDetailViewController.h */,
+				A05EDB232D2CE5C0006CE94B /* PersonDetailViewController.m */,
+				A05EDB252D2CFBF6006CE94B /* PersonInfoView.h */,
+				A05EDB262D2CFBF6006CE94B /* PersonInfoView.m */,
 			);
 			path = Friend;
 			sourceTree = "<group>";
@@ -1848,6 +1863,7 @@
 				A047D7E22C245A7D00E50BCF /* MySettingsViewController.swift in Sources */,
 				A07950112D1C02FC0045EFE9 /* GroupAnnouncementViewController.m in Sources */,
 				A0968C682C2B020300E68790 /* SBUMediaMessageCellParams.swift in Sources */,
+				A05EDB272D2CFBF6006CE94B /* PersonInfoView.m in Sources */,
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
 				A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */,
 				A06388CD2CA59644006357C7 /* SBUQuotedUserMessageView.swift in Sources */,
@@ -1907,6 +1923,7 @@
 				A07F3B9B2BF4A2270087920B /* SBUVoiceMessageConfiguration.swift in Sources */,
 				A07F3B9E2BF4A2270087920B /* SBUMentionConfiguration.swift in Sources */,
 				A0968C7D2C2B020300E68790 /* SBUBaseMessageCell.swift in Sources */,
+				A05EDB242D2CE5C0006CE94B /* PersonDetailViewController.m in Sources */,
 				A0968C802C2B020300E68790 /* SBUAdminMessageCell.swift in Sources */,
 				A07F35E02BF491B00087920B /* CustomSampleEnums.swift in Sources */,
 				A06388C92CA59644006357C7 /* QuotedFileCommonContentView.swift in Sources */,
@@ -1935,6 +1952,7 @@
 				A090B0B52C3EB48C00FE0E10 /* SBUImageContentView.swift in Sources */,
 				A06388A12CA41298006357C7 /* SBUBaseChannelSettingCell.swift in Sources */,
 				A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */,
+				A05EDB1F2D2C078A006CE94B /* QRCodeViewController.m in Sources */,
 				A0A09F322C2EB40E00E96EDE /* SBUTextMessageCell.swift in Sources */,
 				A07F3B652BF4A2270087920B /* SBUUtils.swift in Sources */,
 				A07F3B5F2BF4A2260087920B /* Sequence+SBUIKit.swift in Sources */,
