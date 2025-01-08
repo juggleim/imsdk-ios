@@ -96,7 +96,7 @@ public struct SBUTextMessageTextViewModel {
         if let isEdited = isEdited {
             edited = isEdited
         } else {
-            edited = false
+            edited = message?.isEdit ?? false
         }
         
         self.theme = isOverlay ? SBUTheme.overlayTheme.messageCellTheme : SBUTheme.messageCellTheme

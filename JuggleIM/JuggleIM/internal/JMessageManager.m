@@ -1552,6 +1552,10 @@
             [self.core.dbManager updateMessageContent:content
                                           contentType:m.contentType
                                         withMessageId:messageId];
+            int flags = m.flags | JMessageFlagIsModified;
+            m.flags = flags;
+            m.isEdit = YES;
+            [self.core.dbManager setMessageFlags:flags withMessageId:messageId];
             if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
                 [self.sendReceiveDelegate messageDidUpdate:m];
             }
@@ -2020,6 +2024,10 @@
     NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
     if (messages.count > 0) {
         JConcreteMessage * message = (JConcreteMessage *)messages.firstObject;
+        int flags = message.flags | JMessageFlagIsModified;
+        message.flags = flags;
+        message.isEdit = YES;
+        [self.core.dbManager setMessageFlags:flags withMessageId:message.messageId];
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
             [self.sendReceiveDelegate messageDidUpdate:message];
         }

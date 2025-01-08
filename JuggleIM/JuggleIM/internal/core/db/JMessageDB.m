@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
-#define jMessageTableVersion 3
+#define jMessageTableVersion 4
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -35,11 +35,13 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "search_content TEXT,"
                                         "local_attribute TEXT,"
                                         "mention_info TEXT,"
-                                        "refer_msg_id VARCHAR (64)"
+                                        "refer_msg_id VARCHAR (64),"
+                                        "flags INTEGER"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
+NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
@@ -58,10 +60,11 @@ NSString *const jOr = @" OR";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info ,refer_msg_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
 NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE client_uid = ?";
-NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?,search_content = ? WHERE ";
+NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
+NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
@@ -109,6 +112,7 @@ NSString *const jLocalAttribute = @"local_attribute";
 NSString *const jMessageMentionInfo = @"mention_info";
 NSString *const jReferMsgId = @"refer_msg_id";
 NSString *const jMatchCount = @"match_count";
+NSString *const jFlags = @"flags";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -210,6 +214,12 @@ NSString *const jMatchCount = @"match_count";
     NSString *sql = [jUpdateMessageContent stringByAppendingString:jClientMsgNoIs];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[s, type, content.searchContent, @(clientMsgNo)]];
 }
+
+- (void)setMessageFlags:(int)flags withMessageId:(NSString *)messageId {
+    NSString *sql = jSetMessageFlags;
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(flags), messageId]];
+}
+
 -(void)updateMessage:(JConcreteMessage *)message{
     NSMutableArray *args = [NSMutableArray array];
     [args addObject:message.contentType];
@@ -704,6 +714,9 @@ NSString *const jMatchCount = @"match_count";
             [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
             existedVersion = 3;
         }
+        if (existedVersion == 3 && jMessageTableVersion >= 4) {
+            [self.dbHelper executeUpdate:kAlterAddFlags withArgumentsInArray:nil];
+        }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
     }
@@ -721,10 +734,12 @@ NSString *const jMatchCount = @"match_count";
     long long seqNo = 0;
     long long msgIndex = 0;
     NSString *clientUid = @"";
+    int flags = 0;
     if ([message isKindOfClass:[JConcreteMessage class]]) {
         seqNo = ((JConcreteMessage *)message).seqNo;
         msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
+        flags = ((JConcreteMessage *)message).flags;
     }
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -763,7 +778,9 @@ NSString *const jMatchCount = @"match_count";
                       @(memberCount),
                       message.content.searchContent,
                       mentionInfo,
-                      referMsgId];
+                      referMsgId,
+                      @(flags)
+    ];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
@@ -830,6 +847,8 @@ NSString *const jMatchCount = @"match_count";
     }
     message.referMsgId = [rs stringForColumn:jReferMsgId];
     message.localAttribute = [rs stringForColumn:jLocalAttribute];
+    message.flags = [rs intForColumn:jFlags];
+    message.isEdit = message.flags & JMessageFlagIsModified;
     return message;
 }
 
