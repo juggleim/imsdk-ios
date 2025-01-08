@@ -13,6 +13,7 @@ enum GroupNotifyType: Int {
     case removeMember = 2
     case rename = 3
     case changeOwner = 4
+    case join = 5
     case other
 }
 
@@ -127,6 +128,8 @@ class GroupNotifyMessage: JMessageContent {
             return "\(sender) 修改群名称为 \"\(name)\""
         case .changeOwner:
             return "\(newOwner) 已成为新群主"
+        case .join:
+            return "\(sender) 加入群聊"
         case .other:
             return ""
         }
