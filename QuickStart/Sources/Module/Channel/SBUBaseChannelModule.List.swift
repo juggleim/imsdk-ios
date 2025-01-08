@@ -734,6 +734,10 @@ extension SBUBaseChannelModule {
             case is JTextMessage:
                 let copy = self.createCopyMenuItem(for: message)
                 items.append(copy)
+                if isSentByMe {
+                    let edit = self.createEditMenuItem(for: message)
+                    items.append(edit)
+                }
                 
             case is JImageMessage, is JVideoMessage, is JFileMessage:
                 let save = self.createSaveMenuItem(for: message)

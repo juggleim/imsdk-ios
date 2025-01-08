@@ -750,7 +750,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage) {
-
+        self.setMessageInputViewMode(.edit, message: message)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage) {
@@ -1112,9 +1112,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         _ inputComponent: SBUBaseChannelModule.Input,
         didTapEdit text: String
     ) {
-//        guard let message = self.baseViewModel?.inEditingMessage else { return }
-//
-//        self.baseViewModel?.updateUserMessage(message: message, text: text)
+        guard let message = self.baseViewModel?.inEditingMessage else { return }
+        self.baseViewModel?.updateMessage(message: message, text: text)
     }
     
     open func baseChannelModule(
@@ -1137,7 +1136,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         didChangeMode mode: SBUMessageInputMode, 
         message: JMessage?
     ) {
-//        baseViewModel?.inEditingMessage = message as? UserMessage
+        baseViewModel?.inEditingMessage = message
     }
     
     open func baseChannelModule(

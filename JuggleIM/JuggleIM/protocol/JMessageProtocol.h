@@ -36,7 +36,9 @@
 - (void)messageDidClear:(JConversation *)conversation
               timestamp:(long long)timestamp
                senderId:(NSString *)senderId;
-
+/// 消息修改的回调
+/// - Parameter message: 修改后的消息
+- (void)messageDidUpdate:(JMessage *)message;
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -421,6 +423,19 @@
 /// 取消下载消息
 /// - Parameter messageId: 消息 id
 - (void)cancelDownloadMediaMessage:(NSString *)messageId;
+
+/// 修改消息
+/// - Parameters:
+///   - content: 消息实体
+///   - messageId: 消息 id
+///   - conversation: 会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)updateMessage:(JMessageContent *)content
+            messageId:(NSString *)messageId
+       inConversation:(JConversation *)conversation
+              success:(void (^)(JMessage *message))successBlock
+                error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 设置消息全局免打扰
 /// - Parameters:

@@ -90,6 +90,9 @@ open class SBUBaseChannelViewModel: NSObject {
     /// The starting point of the message list in the `channel`.
     public internal(set) var startingPoint: Int64?
     
+    /// This user message object that is being edited.
+    public internal(set) var inEditingMessage: JMessage?
+    
     /// This object has a list of all success messages synchronized with the server.
     @SBUAtomic public internal(set) var messageList: [JMessage] = []
     /// This object has a list of all messages.
@@ -477,7 +480,16 @@ open class SBUBaseChannelViewModel: NSObject {
         SBULog.info("[Request] Recall message: \(message.description)")
         JIM.shared().messageManager.recallMessage(message.messageId, extras: nil) { recallMessage in
         } error: { code in
-            
+        }
+    }
+    
+    public func updateMessage(message: JMessage, text: String) {
+        SBULog.info("[Request] update message: \(message.description), text: \(text)")
+        let textMessage = JTextMessage(content: text)
+        JIM.shared().messageManager.updateMessage(textMessage, messageId: message.messageId, in: message.conversation) { updatedMessage in
+            guard let conversationInfo = self.conversationInfo else { return }
+            self.baseDelegate?.baseChannelViewModel(self, shouldFinishEditModeForChannel: conversationInfo)
+        } error: { code in
         }
     }
     

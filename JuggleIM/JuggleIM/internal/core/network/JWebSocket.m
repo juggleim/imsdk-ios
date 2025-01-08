@@ -150,16 +150,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
-        NSData *encodeData;
-        if ([content isKindOfClass:[JMediaMessageContent class]]) {
-            JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
-            NSString *local = mediaContent.localPath;
-            mediaContent.localPath = nil;
-            encodeData = [mediaContent encode];
-            mediaContent.localPath = local;
-        } else {
-            encodeData = [content encode];
-        }
+        NSData *encodeData = [self encodeContentData:content];
         NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
                                                  msgData:encodeData
                                                    flags:[[content class] flags]
@@ -205,6 +196,31 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                                          timestamp:timestamp
                                              index:self.cmdIndex++];
         JLogI(@"WS-Send", @"recall message, id is %@", messageId);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)updateMessage:(NSString *)messageId
+              content:(JMessageContent *)content
+         conversation:(JConversation *)conversation
+            timestamp:(long long)timestamp
+             msgSeqNo:(long long)msgSeqNo
+              success:(void (^)(long long))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *contentData = [self encodeContentData:content];
+        NSData *d = [self.pbData updateMessageData:messageId
+                                           msgType:[[content class] contentType]
+                                           msgData:contentData
+                                      conversation:conversation
+                                         timestamp:timestamp
+                                          msgSeqNo:msgSeqNo
+                                             index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"update message, messageId is %@", messageId);
         [self timestampSendData:d
                             key:key
                         success:successBlock
@@ -1641,6 +1657,20 @@ inConversation:(JConversation *)conversation
     } else {
         [self.commandManager setBlockObject:obj forKey:key];
     }
+}
+
+- (NSData *)encodeContentData:(JMessageContent *)content {
+    NSData *encodeData;
+    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+        JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
+        NSString *local = mediaContent.localPath;
+        mediaContent.localPath = nil;
+        encodeData = [mediaContent encode];
+        mediaContent.localPath = local;
+    } else {
+        encodeData = [content encode];
+    }
+    return encodeData;
 }
 
 - (SRWebSocket *)createWebSocket:(NSString *)url {

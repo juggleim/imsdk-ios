@@ -362,6 +362,8 @@
 		A0E3DDCD2C6B3DCD00FE9D3B /* JChatroomManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E3DDCB2C6B3DCD00FE9D3B /* JChatroomManager.m */; };
 		A0E3DDD02C6F4FA600FE9D3B /* JGetMessageOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A0E3DDCE2C6F4FA600FE9D3B /* JGetMessageOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0E3DDD12C6F4FA600FE9D3B /* JGetMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E3DDCF2C6F4FA600FE9D3B /* JGetMessageOptions.m */; };
+		A0E68E5D2D2E88CE00640324 /* JMsgModifyMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */; };
+		A0E68E5E2D2E88CE00640324 /* JMsgModifyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */; };
 		A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376132B3571CE0076CB84 /* JProfileDB.h */; };
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
 		A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */; };
@@ -740,6 +742,8 @@
 		A0E3DDCB2C6B3DCD00FE9D3B /* JChatroomManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomManager.m; sourceTree = "<group>"; };
 		A0E3DDCE2C6F4FA600FE9D3B /* JGetMessageOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGetMessageOptions.h; sourceTree = "<group>"; };
 		A0E3DDCF2C6F4FA600FE9D3B /* JGetMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetMessageOptions.m; sourceTree = "<group>"; };
+		A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMsgModifyMessage.h; sourceTree = "<group>"; };
+		A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMsgModifyMessage.m; sourceTree = "<group>"; };
 		A0F376132B3571CE0076CB84 /* JProfileDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JProfileDB.h; sourceTree = "<group>"; };
 		A0F376142B3571CE0076CB84 /* JProfileDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JProfileDB.m; sourceTree = "<group>"; };
 		A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteConversationInfo.h; sourceTree = "<group>"; };
@@ -1468,6 +1472,8 @@
 				A0834F762C19B67B0074AE93 /* JAddConvMessage.m */,
 				A08F4BB92C7880BC00791C52 /* JMarkUnreadMessage.h */,
 				A08F4BBA2C7880BC00791C52 /* JMarkUnreadMessage.m */,
+				A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */,
+				A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1633,6 +1639,7 @@
 				A08AA2242B1499C9008B114C /* JMessageProtocol.h in Headers */,
 				A08AA4012B19EEDB008B114C /* SRError.h in Headers */,
 				A08AA3802B19CB78008B114C /* GPBWrappers.pbobjc.h in Headers */,
+				A0E68E5D2D2E88CE00640324 /* JMsgModifyMessage.h in Headers */,
 				A08AA2702B162A11008B114C /* JFMResultSet.h in Headers */,
 				A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */,
 				A07D0E342C0083FD00B9035B /* JNaviTask.h in Headers */,
@@ -1776,6 +1783,7 @@
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
 				A079E8872CE395CC00A1008F /* JConnSuperState.m in Sources */,
 				A0F3761C2B3994920076CB84 /* JConcreteConversationInfo.m in Sources */,
+				A0E68E5E2D2E88CE00640324 /* JMsgModifyMessage.m in Sources */,
 				A09716C72BA0004600D1DB24 /* JUserInfoDB.m in Sources */,
 				A08AA28A2B175726008B114C /* JConversationManager.m in Sources */,
 				A08AA38B2B19CB78008B114C /* GPBAny.pbobjc.m in Sources */,

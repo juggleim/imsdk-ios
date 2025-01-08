@@ -865,7 +865,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         mentionedMessageTemplate: String,
         mentionedUserIds: [String]
     ) {
-//        guard let message = self.baseViewModel?.inEditingMessage else { return }
+        guard let message = self.baseViewModel?.inEditingMessage else { return }
 //        self.viewModel?.updateUserMessage(
 //            message: message,
 //            text: text,

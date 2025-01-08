@@ -469,7 +469,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             // Start a new mode
             switch newValue {
             case .edit(let message):
-                self.startEditMode(text: "")
+                var text = ""
+                if let textMessage = message.content as? JTextMessage {
+                    text = textMessage.content
+                }
+                self.startEditMode(text: text)
             case .quoteReply(let message):
                 self.startQuoteReplyMode(message: message)
             case .none:

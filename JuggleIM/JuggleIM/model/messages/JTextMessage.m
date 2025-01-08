@@ -25,7 +25,7 @@
     return kTextType;
 }
 
--(NSData *)encode{
+-(NSData *)encode {
     NSDictionary *dic = @{jContent:self.content?:@"",
                            jTextExtra:self.extra?:@""};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];

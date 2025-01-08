@@ -45,6 +45,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
 #define kRecallMsg @"recall_msg"
+#define kModifyMsg @"modify_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define jQryHisMsgsByIds @"qry_hismsg_by_ids"
 #define kSyncConvers @"sync_convers"
@@ -374,6 +375,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
         downMsg.referMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
     }
     return downMsg;
+}
+
+- (NSData *)updateMessageData:(NSString *)messageId
+                      msgType:(nonnull NSString *)contentType
+                      msgData:(nonnull NSData *)msgData
+                 conversation:(nonnull JConversation *)conversation
+                    timestamp:(long long)timestamp
+                     msgSeqNo:(long long)msgSeqNo
+                        index:(int)index {
+    ModifyMsgReq *req = [[ModifyMsgReq alloc] init];
+    req.msgId = messageId;
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgTime = timestamp;
+    req.msgSeqNo = msgSeqNo;
+    req.msgContent = msgData;
+    req.msgType = contentType;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = kModifyMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = [req data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *sm = [self createImWebSocketMsgWithQueryMsg:body];
+    return sm.data;
 }
 
 - (NSData *)recallMessageData:(NSString *)messageId
@@ -2387,7 +2417,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
              jRtcQry:@(JPBRcvTypeQryCallRoomAck),
              jSetUserSettings:@(JPBRcvTypeSimpleQryAck),
-             jGetUserSettings:@(JPBRcvTypeGetUserInfoAck)
+             jGetUserSettings:@(JPBRcvTypeGetUserInfoAck),
+             kModifyMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp)
     };
 }
 @end

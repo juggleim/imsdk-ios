@@ -243,6 +243,14 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                     timestamp:(long long)msgTime
                         index:(int)index;
 
+- (NSData *)updateMessageData:(NSString *)messageId
+                      msgType:(NSString *)contentType
+                      msgData:(NSData *)msgData
+                 conversation:(JConversation *)conversation
+                    timestamp:(long long)timestamp
+                     msgSeqNo:(long long)msgSeqNo
+                        index:(int)index;
+
 - (NSData *)sendReadReceiptData:(NSArray <NSString *> *)messageIds
                  inConversation:(JConversation *)conversation
                           index:(int)index;

@@ -121,6 +121,14 @@ NS_ASSUME_NONNULL_BEGIN
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
 
+- (void)updateMessage:(NSString *)messageId
+              content:(JMessageContent *)content
+         conversation:(JConversation *)conversation
+            timestamp:(long long)timestamp
+             msgSeqNo:(long long)msgSeqNo
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
+
 - (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation
                 success:(void (^)(long long timestamp))successBlock
