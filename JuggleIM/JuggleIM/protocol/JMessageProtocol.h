@@ -426,7 +426,7 @@
 
 /// 修改消息
 /// - Parameters:
-///   - content: 消息实体
+///   - content: 修改后的消息实体
 ///   - messageId: 消息 id
 ///   - conversation: 会话
 ///   - successBlock: 成功回调
