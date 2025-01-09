@@ -69,8 +69,13 @@ class ViewController: UIViewController {
         let uikitVersion: String = JuggleUI.version
         versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
         
-        phoneNumberTextField.text = UserDefaults.loadPhoneNumber()
-        verifyCodeTextField.text = UserDefaults.loadVerifyCode()
+        let (phone, code) = loadLoginInfo()
+        if phone != nil {
+            phoneNumberTextField.text = phone
+        }
+        if code != nil {
+            verifyCodeTextField.text = code
+        }
         
         self.view.addSubview(self.serverSettingButton)
         
@@ -80,8 +85,11 @@ class ViewController: UIViewController {
         layoutConstraints.append(self.serverSettingButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 40))
         NSLayoutConstraint.activate(layoutConstraints)
         
-        guard phoneNumberTextField.text != nil,
-              verifyCodeTextField.text != nil else {
+        guard let phoneText = phoneNumberTextField.text,
+              let codeText = verifyCodeTextField.text,
+              phoneText.count > 0,
+              codeText.count > 0
+        else {
             return
         }
         signinAction()
@@ -135,8 +143,7 @@ class ViewController: UIViewController {
             return
         }
         
-        UserDefaults.savePhoneNumber(phoneNumber)
-        UserDefaults.saveVerifyCode(verifyCode)
+        addLoginInfo(phone: phoneNumber, code: verifyCode)
         
         HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser, token in
             if code == 0 {
@@ -158,6 +165,35 @@ class ViewController: UIViewController {
         let vc = SettingsServerViewController()
         vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true)
+    }
+    
+    private func loadLoginInfo() -> (String?, String?) {
+        if let accounts = UserDefaults.loadAccounts(), accounts.count > 0 {
+            if let account = accounts.first as? Dictionary<String, String> {
+                if let phone = account.keys.first,
+                   let code = account[phone] {
+                    return (phone, code)
+                }
+            }
+        }
+        return (nil, nil)
+    }
+    
+    private func addLoginInfo(phone: String, code: String) {
+        var accounts: [Dictionary<String, String>]
+        if let a = UserDefaults.loadAccounts() as? [Dictionary<String, String>] {
+            accounts = a
+        } else {
+            accounts = []
+        }
+        for (index, account) in accounts.enumerated() {
+            if account.keys.contains(phone) {
+                accounts.remove(at: index)
+                break
+            }
+        }
+        accounts.insert([phone: code], at: 0)
+        UserDefaults.saveAccounts(accounts)
     }
 }
 

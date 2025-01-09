@@ -9,19 +9,6 @@
 import UIKit
 
 extension UserDefaults {
-    static func loadPhoneNumber() -> String? {
-        return UserDefaults.standard.string(forKey: "phone_number")
-    }
-    static func savePhoneNumber(_ phoneNumber: String) {
-        UserDefaults.standard.set(phoneNumber, forKey: "phone_number")
-    }
-    
-    static func loadVerifyCode() -> String? {
-        return UserDefaults.standard.string(forKey: "verify_code")
-    }
-    static func saveVerifyCode(_ verifyCode: String) {
-        UserDefaults.standard.set(verifyCode, forKey: "verify_code")
-    }
     
     static func loadIsLightTheme() -> Bool {
         return UserDefaults.standard.bool(forKey: "is_light_theme")
@@ -57,5 +44,12 @@ extension UserDefaults {
     }
     static func saveDemoServer(_ appKey: String) {
         UserDefaults.standard.set(appKey, forKey: "demo_server")
+    }
+    
+    static func loadAccounts() -> [Any]? {
+        return UserDefaults.standard.array(forKey: "accounts")
+    }
+    static func saveAccounts(_ accounts: [Any]) {
+        UserDefaults.standard.set(accounts, forKey: "accounts")
     }
 }
