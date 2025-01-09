@@ -7,15 +7,15 @@
 
 import Foundation
 
-protocol SelectFriendVCDelegate: AnyObject {
+protocol SelectMultiFriendVCDelegate: AnyObject {
     func friendsDidSelect(_: [JCUser])
 }
 
-class SelectFriendViewController: BaseTableListViewController {
+class SelectMultiFriendViewController: BaseTableListViewController {
     var users: [JCUser] = []
     var existedUsers: [JCUser] = []
     var selectedUsers: Set<JCUser> = []
-    weak var delegate: SelectFriendVCDelegate?
+    weak var delegate: SelectMultiFriendVCDelegate?
     
     override func loadView() {
         super.loadView()
@@ -69,7 +69,7 @@ class SelectFriendViewController: BaseTableListViewController {
     }
 }
 
-extension SelectFriendViewController: UITableViewDataSource, UITableViewDelegate {
+extension SelectMultiFriendViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         nil
     }

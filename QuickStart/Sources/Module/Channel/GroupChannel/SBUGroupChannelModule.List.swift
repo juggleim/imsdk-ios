@@ -272,8 +272,25 @@ extension SBUGroupChannelModule {
             )
             let receiptState = SBUUtils.getReceiptState(of: message)
 
-            
-            if let callMessageCell = messageCell as? SBUCallMessageCell {
+            if let contactCardCell = messageCell as? ContactCardMessageCell {
+                let configuration = SBUTextMessageCellParams(
+                    message: message,
+                    hideDateView: isSameDay,
+                    useMessagePosition: true,
+                    groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
+                    receiptState: receiptState,
+                    useReaction: false,
+                    withTextView: true,
+                    joinedAt: 0,
+                    messageOffsetTimestamp: 0,
+                    shouldHideSuggestedReplies: false,
+                    shouldHideFormTypeMessage: false,
+                    enableEmojiLongPress: false
+                )
+                configuration.shouldHideFeedback = true
+                contactCardCell.configure(with: configuration)
+                self.setMessageCellGestures(contactCardCell, message: message, indexPath: indexPath)
+            } else if let callMessageCell = messageCell as? SBUCallMessageCell {
                 let configuration = SBUTextMessageCellParams(
                     message: message,
                     hideDateView: isSameDay,

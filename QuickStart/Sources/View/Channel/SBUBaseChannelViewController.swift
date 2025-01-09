@@ -694,6 +694,13 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             default:
                 break
             }
+        case is ContactCardMessage:
+            guard let contactCard = message.content as? ContactCardMessage else {
+                return
+            }
+            let vc = PersonDetailViewController()
+            vc.userId = contactCard.userId
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }
@@ -1004,7 +1011,10 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
                     self.selectCallMembers(type: .videoCall)
                 }
             }
-            
+        case .contactCard:
+            let vc = SelectSingleFriendViewController()
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             self.showPhotoLibraryPicker()
         }
@@ -1457,5 +1467,12 @@ extension SBUBaseChannelViewController: GroupMemberSelectVCDelegate {
         }
         let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, delegate: nil)
         CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
+    }
+}
+
+extension SBUBaseChannelViewController: SelectSingleFriendVCDelegate {
+    func friendDidSelect(_ user: JCUser) {
+        let contactCard = ContactCardMessage(userInfo: user)
+        self.baseViewModel?.sendMessage(content: contactCard)
     }
 }

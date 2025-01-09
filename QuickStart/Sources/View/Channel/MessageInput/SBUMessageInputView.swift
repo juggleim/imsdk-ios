@@ -419,6 +419,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         tag: MediaResourceType.videoCall.rawValue,
         completionHandler: nil
     )
+    let contactCardItem = SBUActionSheetItem(
+        title: "Contact card",
+        tag: MediaResourceType.contactCard.rawValue,
+        completionHandler: nil
+    )
     let cancelItem = SBUActionSheetItem(title: SBUStringSet.Cancel, completionHandler: nil)
 
     @SBUThemeWrapper(theme: SBUTheme.messageInputTheme)
@@ -791,6 +796,10 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             with: theme.buttonTintColor,
             to: SBUIconSetType.Metric.iconActionSheetItem
         )
+        self.contactCardItem.image = SBUIconSetType.iconUser.image(
+            with: theme.buttonTintColor,
+            to: SBUIconSetType.Metric.iconActionSheetItem
+        )
         self.cancelItem.color = theme.buttonTintColor
         
         self.divider.backgroundColor = theme.channelViewDividerColor
@@ -1013,6 +1022,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         items.append(self.documentItem)       
         items.append(self.voiceCallItem)
         items.append(self.videoCallItem)
+        items.append(self.contactCardItem)
         return items
     }
     

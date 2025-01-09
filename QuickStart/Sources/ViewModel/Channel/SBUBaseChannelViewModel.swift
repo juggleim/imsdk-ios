@@ -183,6 +183,21 @@ open class SBUBaseChannelViewModel: NSObject {
     }
     
     // MARK: - Message
+    open func sendMessage(content: JMessageContent) {
+        let message = JIM.shared().messageManager.sendMessage(content, in: conversationInfo?.conversation) { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code , errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
     
     /// Sends a user message with text and parentMessageId.
     /// - Parameters:

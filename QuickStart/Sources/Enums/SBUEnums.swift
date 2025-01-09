@@ -190,6 +190,7 @@ public enum MediaResourceType: Int {
     case document
     case voiceCall
     case videoCall
+    case contactCard
     case unknown
     case delete
 }

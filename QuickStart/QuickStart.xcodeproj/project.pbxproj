@@ -68,7 +68,7 @@
 		A07950202D1D361A0045EFE9 /* JCGroupInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */; };
 		A07950232D1E8FD00045EFE9 /* UserListCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */; };
 		A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950252D1E92170045EFE9 /* UserListCollectionItem.m */; };
-		A07950282D1EB4C70045EFE9 /* SelectFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */; };
+		A07950282D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07950272D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -308,6 +308,9 @@
 		A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D342C60F5C000E55080 /* GroupCell.swift */; };
 		A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */; };
 		A0CE9A402CD8A465008B405C /* CallCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */; };
+		A0E68E602D2F8AA600640324 /* ContactCardMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E5F2D2F8AA600640324 /* ContactCardMessage.swift */; };
+		A0E68E622D2FA94400640324 /* ContactCardMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */; };
+		A0E68E642D2FB6BE00640324 /* SelectSingleFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
 /* End PBXBuildFile section */
 
@@ -402,7 +405,7 @@
 		A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserListCollectionView.m; sourceTree = "<group>"; };
 		A07950242D1E92170045EFE9 /* UserListCollectionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserListCollectionItem.h; sourceTree = "<group>"; };
 		A07950252D1E92170045EFE9 /* UserListCollectionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserListCollectionItem.m; sourceTree = "<group>"; };
-		A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFriendViewController.swift; sourceTree = "<group>"; };
+		A07950272D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMultiFriendViewController.swift; sourceTree = "<group>"; };
 		A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Ext.swift"; sourceTree = "<group>"; };
 		A07F35DA2BF4650D0087920B /* JuggleUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuggleUI.swift; sourceTree = "<group>"; };
 		A07F35DC2BF48F190087920B /* UIView+Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Ext.swift"; sourceTree = "<group>"; };
@@ -655,6 +658,9 @@
 		A0CE9A3A2CD4DB40008B405C /* CallTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTheme.h; sourceTree = "<group>"; };
 		A0CE9A3E2CD8A1F9008B405C /* CallCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallCenter.h; sourceTree = "<group>"; };
 		A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CallCenter.m; sourceTree = "<group>"; };
+		A0E68E5F2D2F8AA600640324 /* ContactCardMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardMessage.swift; sourceTree = "<group>"; };
+		A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardMessageCell.swift; sourceTree = "<group>"; };
+		A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSingleFriendViewController.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.debug.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.debug.xcconfig"; sourceTree = "<group>"; };
 		E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.release.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.release.xcconfig"; sourceTree = "<group>"; };
@@ -735,6 +741,7 @@
 				A0A3A5442D142862009AD7C3 /* BaseNotifyMessageCell.swift */,
 				A0A3A5462D142C78009AD7C3 /* FriendNotifyMessageCell.swift */,
 				A098CD732D144E9F000579A0 /* UnknownMessageCell.swift */,
+				A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */,
 			);
 			path = Channels;
 			sourceTree = "<group>";
@@ -1608,6 +1615,7 @@
 				A0B4C3A92C636187005AFCEC /* GroupNotifyMessage.swift */,
 				A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */,
 				A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */,
+				A0E68E5F2D2F8AA600640324 /* ContactCardMessage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1618,10 +1626,11 @@
 				A0C80D212C5B8D6600E55080 /* AddFriendViewController.swift */,
 				A06388D02CA696F5006357C7 /* AddFriendUserCell.swift */,
 				A0C80D2B2C5CEC0800E55080 /* ContactListViewController.swift */,
+				A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */,
 				A0A3A53C2D12CC57009AD7C3 /* FriendApplicationListViewController.swift */,
 				A0A3A53E2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift */,
 				A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */,
-				A07950272D1EB4C70045EFE9 /* SelectFriendViewController.swift */,
+				A07950272D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift */,
 				A05EDB222D2CE5C0006CE94B /* PersonDetailViewController.h */,
 				A05EDB232D2CE5C0006CE94B /* PersonDetailViewController.m */,
 				A05EDB252D2CFBF6006CE94B /* PersonInfoView.h */,
@@ -1834,6 +1843,7 @@
 				A0A3A53F2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift in Sources */,
 				A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */,
 				A07F3C802BF4A2290087920B /* SBUCommonItem.swift in Sources */,
+				A0E68E622D2FA94400640324 /* ContactCardMessageCell.swift in Sources */,
 				A0968C962C2B020300E68790 /* SBUBaseChannelViewController.Keyboard.swift in Sources */,
 				A06388B12CA417B6006357C7 /* SBUChannelSettingItem.swift in Sources */,
 				A07F3C872BF4A2290087920B /* SBUNotificationEmptyView.swift in Sources */,
@@ -1846,7 +1856,7 @@
 				A0C45D682C5914DA00B68B96 /* ConnectView.swift in Sources */,
 				A07F3B6A2BF4A2270087920B /* MessageTemplateRenderer.Image.swift in Sources */,
 				A07F3C102BF4A2280087920B /* SBUBaseViewController.swift in Sources */,
-				A07950282D1EB4C70045EFE9 /* SelectFriendViewController.swift in Sources */,
+				A07950282D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift in Sources */,
 				A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */,
 				A07F3CAC2BF4A2290087920B /* SBUStringSet.Deprecated.swift in Sources */,
 				A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */,
@@ -1980,6 +1990,7 @@
 				A0968CB02C2B03DA00E68790 /* SBUGroupChannelModule.swift in Sources */,
 				A09645EE2BF3A2E800290775 /* SBUFontSet.swift in Sources */,
 				A07F3C8A2BF4A2290087920B /* SBUMenuSheetViewController.swift in Sources */,
+				A0E68E642D2FB6BE00640324 /* SelectSingleFriendViewController.swift in Sources */,
 				A07F3C9B2BF4A2290087920B /* SBUCollectionViewCell.swift in Sources */,
 				A07F3C152BF4A2280087920B /* SBUGroupChannelListViewController.swift in Sources */,
 				A047D7E32C245A7D00E50BCF /* ChannelListViewController.swift in Sources */,
@@ -2017,6 +2028,7 @@
 				A0A3A5432D142550009AD7C3 /* FriendNotifyMessage.swift in Sources */,
 				A07F3C842BF4A2290087920B /* SBUNotificationNavigationTitleView.swift in Sources */,
 				A090B0B32C3EB48C00FE0E10 /* SBUOpenChannelCommonContentView.swift in Sources */,
+				A0E68E602D2F8AA600640324 /* ContactCardMessage.swift in Sources */,
 				A07F3B9C2BF4A2270087920B /* SBUConfig.Base.swift in Sources */,
 				A07F3C0D2BF4A2280087920B /* SBUTheme+Type.swift in Sources */,
 				A047B7412D27923600710683 /* SettingsServerViewController.swift in Sources */,

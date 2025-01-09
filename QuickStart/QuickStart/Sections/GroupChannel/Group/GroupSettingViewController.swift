@@ -391,7 +391,7 @@ extension GroupSettingViewController: SBUAlertViewDelegate {
 
 extension GroupSettingViewController: UserListCollectionViewDelegate {
     func addButtonDidClick() {
-        let vc = SelectFriendViewController()
+        let vc = SelectMultiFriendViewController()
         if let members = self.groupInfo?.members {
             vc.existedUsers = members
         }
@@ -415,7 +415,7 @@ extension GroupSettingViewController: UserListCollectionViewDelegate {
     }
 }
 
-extension GroupSettingViewController: SelectFriendVCDelegate {
+extension GroupSettingViewController: SelectMultiFriendVCDelegate {
     func friendsDidSelect(_ friends: [JCUser]) {
         var userIds: [String] = []
         for user in friends {
