@@ -192,11 +192,7 @@ extension SBUGroupChannelModule {
                let inputView = self.messageInputView as? SBUMessageInputView {
                 inputView.setTextViewInitialText(content: draft)
             }
-
-            
-//            if SendbirdUI.config.groupChannel.channel.isMentionEnabled {
-//                self.setupMentionManager()
-//            }
+            self.setupMentionManager()
         }
         
         open override func setupViews() {
@@ -730,24 +726,22 @@ extension SBUGroupChannelModule {
         /// Initializes `SBUMentionManager` instance and configure with attributes.
         /// The `messageInputView` updates to use its `defaultAttributes` and `mentionedAttributes`.
         open func setupMentionManager() {
-//            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else { return }
-//
-//            if mentionManager == nil {
-//                self.mentionManager = SBUMentionManager()
-//            }
-//
-//            guard let messageInputView = self.messageInputView as? SBUMessageInputView,
-//                  let mentionManager = self.mentionManager else { return }
-//
-//            mentionManager.configure(
-//                delegate: self,
-//                dataSource: self.mentionManagerDataSource,
-//                defaultTextAttributes: messageInputView.defaultAttributes,
-//                mentionTextAttributes: messageInputView.mentionedAttributes
-//            )
-//
-//            messageInputView.textView?.typingAttributes = mentionManager.defaultTextAttributes
-//            messageInputView.textView?.linkTextAttributes = mentionManager.mentionTextAttributes
+            if mentionManager == nil {
+                self.mentionManager = SBUMentionManager()
+            }
+
+            guard let messageInputView = self.messageInputView as? SBUMessageInputView,
+                  let mentionManager = self.mentionManager else { return }
+
+            mentionManager.configure(
+                delegate: self,
+                dataSource: self.mentionManagerDataSource,
+                defaultTextAttributes: messageInputView.defaultAttributes,
+                mentionTextAttributes: messageInputView.mentionedAttributes
+            )
+
+            messageInputView.textView?.typingAttributes = mentionManager.defaultTextAttributes
+            messageInputView.textView?.linkTextAttributes = mentionManager.mentionTextAttributes
         }
         
         /// Handles pending mention suggestion. This calls when the channel view model receives member list from callback.
@@ -757,22 +751,11 @@ extension SBUGroupChannelModule {
         
         /// Updates `suggestedMentionList` with `members`
         open func updateSuggestedMentionList(with members: [SBUUser]) {
-            guard let config = SBUGlobals.userMentionConfig else {
-                SBULog.error("`SBUGlobals.userMentionConfig` is `nil`")
-                return
-            }
-//
-//            guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else {
-//                SBULog.error("User mention features are disabled. See `SBUGlobals.isMentionEnabled` for more information")
-//                return
-//            }
-            
             var filteredMembers = members.filter {
-//                ($0.user?.isActive == true) &&
                 ($0.userId != SBUGlobals.currentUser?.userId)
             }
             
-            if filteredMembers.count > config.suggestionLimit {
+            if filteredMembers.count > 15 {
                 // Remove buffer member
                 filteredMembers.removeLast()
             }

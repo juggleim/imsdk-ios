@@ -234,18 +234,33 @@ open class SBUBaseChannelViewModel: NSObject {
     /// print(mentionedUserIds) // ["{UserID}"]
     /// ```
     open func sendTextMessage(text: String, mentionedMessageTemplate: String, mentionedUserIds: [String], parentMessage: JMessage? = nil) {
-        //        let messageParams = UserMessageCreateParams(message: text)
-        //
-        //        SBUGlobalCustomParams.userMessageParamsSendBuilder?(messageParams)
-        //
-        //        if let parentMessage = parentMessage,
-        //           SendbirdUI.config.groupChannel.channel.replyType != .none {
-        //            messageParams.parentMessageId = parentMessage.messageId
-        //            messageParams.isReplyToChannel = true
-        //        }
-        //        messageParams.mentionedMessageTemplate = mentionedMessageTemplate
-        //        messageParams.mentionedUserIds = mentionedUserIds
-        //        self.sendUserMessage(messageParams: messageParams, parentMessage: parentMessage)
+        
+        let textMessage = JTextMessage(content: text)
+        var mentionUsers: [JUserInfo] = []
+        for userId in mentionedUserIds {
+            let user = JUserInfo()
+            user.userId = userId
+            mentionUsers.append(user)
+        }
+        let mentionInfo = JMessageMentionInfo()
+        mentionInfo.type = .someOne
+        mentionInfo.targetUsers = mentionUsers
+        let option = JMessageOptions()
+        option.referredMsgId = parentMessage?.messageId
+        option.mentionInfo = mentionInfo
+        let message = JIM.shared().messageManager.sendMessage(textMessage, messageOption: option, in: conversationInfo?.conversation) { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code , errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        }
+
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }
     
     open func sendImageMessage(url: URL?) {

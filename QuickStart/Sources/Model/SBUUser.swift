@@ -76,7 +76,7 @@ public class SBUUser: NSObject {
     /// - Returns: mentioned nickname
     /// - since: 3.0.0
     public func mentionedNickname() -> String {
-        let trigger = SBUGlobals.userMentionConfig?.trigger ?? ""
+        let trigger = "@"
         let refinedNickname = refinedNickname()
         return "\(trigger)\(refinedNickname)"
     }

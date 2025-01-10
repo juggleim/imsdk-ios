@@ -883,11 +883,11 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     ) { }
     
     open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, shouldLoadSuggestedMentions filterText: String) {
-//        self.viewModel?.loadSuggestedMentions(with: filterText)
+        self.viewModel?.loadSuggestedMentions(with: filterText)
     }
     
     open func groupChannelModuleShouldStopSuggestingMention(_ inputComponent: SBUGroupChannelModule.Input) {
-//        self.viewModel?.cancelLoadingSuggestedMentions()
+        self.viewModel?.cancelLoadingSuggestedMentions()
     }
     
     open func groupChannelModuleDidTapVoiceMessage(_ inputComponent: SBUGroupChannelModule.Input) {

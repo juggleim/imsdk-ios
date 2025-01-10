@@ -68,6 +68,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     var debouncer: SBUDebouncer?
     var suggestedMemberList: [SBUUser]?
     var hasPreviousMessage = true
+    var groupInfo: JCGroupInfo?
     
     // MARK: - LifeCycle
     public init(conversationInfo: JConversationInfo? = nil,
@@ -91,6 +92,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         JIM.shared().messageManager.add(self as JMessageDelegate)
         JIM.shared().messageManager.add(self as JMessageReadReceiptDelegate)
         self.loadPrevMessages()
+        self.loadGroupInfo()
     }
     
     // MARK: - Message
@@ -371,68 +373,37 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     /// Loads mentionable member list.
     /// When the suggested list is received, it calls `groupChannelViewModel(_:didReceiveSuggestedMembers:)` delegate method.
     /// - Parameter filterText: The text that is used as filter while searching for the suggested mentions.
-//    public func loadSuggestedMentions(with filterText: String) {
-//        self.debouncer?.add { [weak self] in
-//            guard let self = self else { return }
-//
-//            if let channel = self.channel as? GroupChannel {
-//                if channel.isSuper {
-//                    guard let config = SBUGlobals.userMentionConfig else {
-//                        SBULog.error("`SBUGlobals.userMentionConfig` is `nil`")
-//                        return
-//                    }
-//
-//                    guard SendbirdUI.config.groupChannel.channel.isMentionEnabled else {
-//                        SBULog.error("User mention features are disabled. See `SBUGlobals.isMentionEnabled` for more information")
-//                        return
-//                    }
-//
-//                    let params = MemberListQueryParams()
-//                    params.nicknameStartsWithFilter = filterText
-//
-//                    // +1 is buffer for when the current user is included in the search results
-//                    params.limit = UInt(config.suggestionLimit) + 1
-//                    self.query = channel.createMemberListQuery(params: params)
-//
-//                    self.query?.loadNextPage { [weak self] members, _ in
-//                        guard let self = self else { return }
-//                        self.suggestedMemberList = SBUUser.convertUsers(members)
-//                        self.delegate?.groupChannelViewModel(
-//                            self,
-//                            didReceiveSuggestedMentions: self.suggestedMemberList
-//                        )
-//                    }
-//                } else {
-//                    guard channel.members.count > 0 else {
-//                        self.suggestedMemberList = nil
-//                        self.delegate?.groupChannelViewModel(self, didReceiveSuggestedMentions: nil)
-//                        return
-//                    }
-//
-//                    let sortedMembers = channel.members.sorted { $0.nickname.lowercased() < $1.nickname.lowercased() }
-//                    let matchedMembers = sortedMembers.filter {
-//                        return $0.nickname.lowercased().hasPrefix(filterText.lowercased())
-//                    }
-//                    let memberCount = matchedMembers.count
-//                    // +1 is buffer for when the current user is included in the search results
-//                    let limit = (SBUGlobals.userMentionConfig?.suggestionLimit ?? 0) + 1
-//                    let splitCount = min(memberCount, Int(limit))
-//
-//                    let resultMembers = Array(matchedMembers[0..<splitCount])
-//                    self.suggestedMemberList = SBUUser.convertUsers(resultMembers)
-//                    self.delegate?.groupChannelViewModel(
-//                        self,
-//                        didReceiveSuggestedMentions: self.suggestedMemberList
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    /// Cancels loading the suggested mentions.
-//    public func cancelLoadingSuggestedMentions() {
-//        self.debouncer?.cancel()
-//    }
+    public func loadSuggestedMentions(with filterText: String) {
+        self.debouncer?.add { [weak self] in
+            guard let self = self else { return }
+                guard let groupInfo = self.groupInfo, groupInfo.members.count > 0 else {
+                    self.suggestedMemberList = nil
+                    self.delegate?.groupChannelViewModel(self, didReceiveSuggestedMentions: nil)
+                    return
+                }
+
+                let sortedMembers = groupInfo.members.sorted { $0.userName?.lowercased() ?? "" < $1.userName?.lowercased() ?? "" }
+                let matchedMembers = sortedMembers.filter {
+                    return $0.userName?.lowercased().hasPrefix(filterText.lowercased()) ?? false
+                }
+                let memberCount = matchedMembers.count
+                // +1 is buffer for when the current user is included in the search results
+                let limit = 16//(SBUGlobals.userMentionConfig?.suggestionLimit ?? 0) + 1
+                let splitCount = min(memberCount, Int(limit))
+
+                let resultMembers = Array(matchedMembers[0..<splitCount])
+                self.suggestedMemberList = SBUUser.convertUsers(resultMembers)
+                self.delegate?.groupChannelViewModel(
+                    self,
+                    didReceiveSuggestedMentions: self.suggestedMemberList
+                )
+        }
+    }
+
+    /// Cancels loading the suggested mentions.
+    public func cancelLoadingSuggestedMentions() {
+        self.debouncer?.cancel()
+    }
     
     // MARK: - Common
     public override func hasPrevious() -> Bool {
@@ -443,6 +414,19 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.markAsRead()
         
         super.reset()
+    }
+    
+    // MARK: - Private
+    private func loadGroupInfo() {
+        guard let conversation =  self.conversationInfo?.conversation,
+              conversation.conversationType == .group else {
+            return
+        }
+        HttpManager.shared.getGroupInfo(groupId: conversation.conversationId) { code , groupInfo in
+            if code == 0 {
+                self.groupInfo = groupInfo
+            }
+        }
     }
 }
 
