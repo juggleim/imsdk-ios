@@ -211,6 +211,8 @@
 		A07F3CAD2BF4A2290087920B /* SBUDateFormatSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F3B3A2BF4A2260087920B /* SBUDateFormatSet.swift */; };
 		A07F3CAE2BF4A2290087920B /* SBUConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F3B3B2BF4A2260087920B /* SBUConstant.swift */; };
 		A07F3CAF2BF4A2290087920B /* SBUStringSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F3B3C2BF4A2260087920B /* SBUStringSet.swift */; };
+		A088BF772D2FF32800D59B7A /* SwitchAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A088BF762D2FF32800D59B7A /* SwitchAccountViewController.swift */; };
+		A088BF792D3006BB00D59B7A /* SwitchAccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A088BF782D3006BB00D59B7A /* SwitchAccountCell.swift */; };
 		A08CC1502C1AE59B0082EA08 /* SBUModuleSet.Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08CC14F2C1AE59B0082EA08 /* SBUModuleSet.Deprecated.swift */; };
 		A090B0AA2C3EB2F100FE0E10 /* SBUMediaMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A090B0A92C3EB2F000FE0E10 /* SBUMediaMessageCell.swift */; };
 		A090B0B22C3EB48C00FE0E10 /* SBUBaseFileContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A090B0AC2C3EB48C00FE0E10 /* SBUBaseFileContentView.swift */; };
@@ -549,6 +551,8 @@
 		A07F3B3B2BF4A2260087920B /* SBUConstant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUConstant.swift; sourceTree = "<group>"; };
 		A07F3B3C2BF4A2260087920B /* SBUStringSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUStringSet.swift; sourceTree = "<group>"; };
 		A07F3CB12BF74F3E0087920B /* JetIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JetIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A088BF762D2FF32800D59B7A /* SwitchAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchAccountViewController.swift; sourceTree = "<group>"; };
+		A088BF782D3006BB00D59B7A /* SwitchAccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchAccountCell.swift; sourceTree = "<group>"; };
 		A08CC14F2C1AE59B0082EA08 /* SBUModuleSet.Deprecated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SBUModuleSet.Deprecated.swift; path = Deprecated/SBUModuleSet.Deprecated.swift; sourceTree = "<group>"; };
 		A090B0A92C3EB2F000FE0E10 /* SBUMediaMessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMediaMessageCell.swift; sourceTree = "<group>"; };
 		A090B0AC2C3EB48C00FE0E10 /* SBUBaseFileContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUBaseFileContentView.swift; sourceTree = "<group>"; };
@@ -729,6 +733,8 @@
 				A047B7402D27923600710683 /* SettingsServerViewController.swift */,
 				A05EDB1D2D2C078A006CE94B /* QRCodeViewController.h */,
 				A05EDB1E2D2C078A006CE94B /* QRCodeViewController.m */,
+				A088BF762D2FF32800D59B7A /* SwitchAccountViewController.swift */,
+				A088BF782D3006BB00D59B7A /* SwitchAccountCell.swift */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1958,6 +1964,7 @@
 				A079500D2D1AE2D60045EFE9 /* GroupMemberViewController.swift in Sources */,
 				A07F3B5D2BF4A2260087920B /* UIApplication+SBUIKit.swift in Sources */,
 				A07F3CAF2BF4A2290087920B /* SBUStringSet.swift in Sources */,
+				A088BF772D2FF32800D59B7A /* SwitchAccountViewController.swift in Sources */,
 				A06388BC2CA41A0C006357C7 /* SBUBaseChannelSettingsViewModel.swift in Sources */,
 				A0968C842C2B020300E68790 /* SBUGroupChannelViewController.swift in Sources */,
 				A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */,
@@ -2064,6 +2071,7 @@
 				A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */,
 				A07F3C9F2BF4A2290087920B /* SBUQuotedMessageViewProtocol.swift in Sources */,
 				A07F3B622BF4A2270087920B /* UITextField+SBUIKit.swift in Sources */,
+				A088BF792D3006BB00D59B7A /* SwitchAccountCell.swift in Sources */,
 				A0A09F342C2EB6BA00E96EDE /* SBUUnknownMessageCell.swift in Sources */,
 				A07F3B3D2BF4A2260087920B /* VoiceMessageStatus.swift in Sources */,
 				A07F3C0B2BF4A2280087920B /* SBUIconSet.swift in Sources */,

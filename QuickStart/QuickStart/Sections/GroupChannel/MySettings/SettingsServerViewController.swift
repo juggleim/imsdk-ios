@@ -24,6 +24,7 @@ class SettingsServerViewController: UIViewController {
     let saveButton: UIButton = {
         let button = UIButton()
         button.setTitle("保存", for: .normal)
+        button.layer.cornerRadius = 5
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.addTarget(self, action: #selector(onSave), for: .touchUpInside)
         return button
@@ -31,6 +32,7 @@ class SettingsServerViewController: UIViewController {
     let cancelButton: UIButton = {
         let button = UIButton()
         button.setTitle("取消", for: .normal)
+        button.layer.cornerRadius = 5
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.addTarget(self, action: #selector(onCancel), for: .touchUpInside)
         return button

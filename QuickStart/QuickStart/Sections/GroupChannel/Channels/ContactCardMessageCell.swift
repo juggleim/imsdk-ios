@@ -42,13 +42,6 @@ class ContactCardMessageCell: SBUContentBaseMessageCell {
         nameLabel.sbu_constraint(width: nameLabelWidth, height: 45)
         userProfileView.sbu_constraint(equalTo: mainContainerView, leading: 16)
         
-        
-        
-//        self.portraitView.sbu_constraint(width: 45, height: 45)
-//        self.portraitView.translatesAutoresizingMaskIntoConstraints = true
-//        self.portraitView.layer.masksToBounds = true
-//        self.portraitView.layer.cornerRadius = 5
-        
         seperationLine.sbu_constraint(width: lineWidth, height: 0.5)
         
         typeLabel.sbu_constraint(width: lineWidth, height: 20)

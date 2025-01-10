@@ -257,6 +257,12 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         self.tableView.reloadData()
     }
     
+    @objc func switchAccountAction() {
+        let vc = SwitchAccountViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true)
+    }
+    
     /// Sign out and dismiss tabbarController,
     @objc func signOutAction() {
         if JIM.shared().connectionManager.getConnectionStatus() == .disconnected {
@@ -268,18 +274,27 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     
     private func setFooterView() {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 150))
-        let button = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
-        button.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
-        button.setTitle("退出登录", for: .normal)
-        button.layer.cornerRadius = 5.f
-        button.layer.borderWidth = 0.5
-        button.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
-        view.addSubview(button)
-        button.addTarget(self, action: #selector(signOutAction), for: .touchUpInside)
+        
+        let switchButton = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
+        switchButton.backgroundColor = UIColor(red: 31.0 / 255.0, green: 124.0 / 255.0, blue: 252.0 / 255.0, alpha: 1.0)
+        switchButton.setTitle("切换账号", for: .normal)
+        switchButton.layer.cornerRadius = 5.f
+        switchButton.layer.borderWidth = 0.5
+        switchButton.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
+        view.addSubview(switchButton)
+        switchButton.addTarget(self, action: #selector(switchAccountAction), for: .touchUpInside)
+        
+        let quitButton = UIButton(frame: CGRect(x: 10, y: 80, width: self.view.bounds.size.width-20.0, height: 42))
+        quitButton.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
+        quitButton.setTitle("退出登录", for: .normal)
+        quitButton.layer.cornerRadius = 5.f
+        quitButton.layer.borderWidth = 0.5
+        quitButton.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
+        view.addSubview(quitButton)
+        quitButton.addTarget(self, action: #selector(signOutAction), for: .touchUpInside)
         self.tableView.tableFooterView = view
     }
 }
-
 
 // MARK: - UITableView relations
 extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
