@@ -377,8 +377,10 @@ extension MySettingsViewController : JConnectionDelegate {
     }
     
     public func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
-        if status == .disconnected {
-            self.tabBarController?.dismiss(animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
+            if status == .disconnected {
+                self.tabBarController?.dismiss(animated: true, completion: nil)
+            }
         }
     }
 }

@@ -79,6 +79,8 @@ class ViewController: UIViewController {
         
         self.view.addSubview(self.serverSettingButton)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(accountDidSwitch(notification:)), name: NSNotification.Name("SwitchAccount"), object: nil)
+        
         self.serverSettingButton.sbu_constraint(width: 100)
         var layoutConstraints: [NSLayoutConstraint] = []
         layoutConstraints.append(self.serverSettingButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10))
@@ -93,6 +95,10 @@ class ViewController: UIViewController {
             return
         }
         signinAction()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -143,13 +149,13 @@ class ViewController: UIViewController {
             return
         }
         
-        addLoginInfo(phone: phoneNumber, code: verifyCode)
-        
         HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser, token in
             if code == 0 {
-                guard let token = token else {
+                guard let token = token,
+                let jcUser = jcUser else {
                     return
                 }
+                self.addLoginInfo(phone: phoneNumber, code: verifyCode, user: jcUser)
                 ProfileManager.shared.currentUserInfo = jcUser
                 JIM.shared().connectionManager.connect(withToken: token)
             } else {
@@ -157,6 +163,19 @@ class ViewController: UIViewController {
                     self.loadingIndicator.stopAnimating()
                     self.view.isUserInteractionEnabled = true
                 }
+            }
+        }
+    }
+    
+    @objc func accountDidSwitch(notification: NSNotification) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
+            if let user = notification.object as? JCUser {
+                self.phoneNumberTextField.text = user.phoneNumber
+                self.verifyCodeTextField.text = "000000"
+                self.signinAction()
+            } else {
+                self.phoneNumberTextField.text = ""
+                self.verifyCodeTextField.text = ""
             }
         }
     }
@@ -169,9 +188,10 @@ class ViewController: UIViewController {
     
     private func loadLoginInfo() -> (String?, String?) {
         if let accounts = UserDefaults.loadAccounts(), accounts.count > 0 {
-            if let account = accounts.first as? Dictionary<String, String> {
+            if let account = accounts.first as? Dictionary<String, Dictionary<String, String>> {
                 if let phone = account.keys.first,
-                   let code = account[phone] {
+                   let infoDic = account[phone],
+                   let code = infoDic["code"] {
                     return (phone, code)
                 }
             }
@@ -179,9 +199,9 @@ class ViewController: UIViewController {
         return (nil, nil)
     }
     
-    private func addLoginInfo(phone: String, code: String) {
-        var accounts: [Dictionary<String, String>]
-        if let a = UserDefaults.loadAccounts() as? [Dictionary<String, String>] {
+    private func addLoginInfo(phone: String, code: String, user: JCUser) {
+        var accounts: [Dictionary<String, Dictionary<String, String>>]
+        if let a = UserDefaults.loadAccounts() as? [Dictionary<String, Dictionary<String, String>>] {
             accounts = a
         } else {
             accounts = []
@@ -192,7 +212,7 @@ class ViewController: UIViewController {
                 break
             }
         }
-        accounts.insert([phone: code], at: 0)
+        accounts.insert([phone: ["code": code, "id": user.userId, "name": user.userName ?? "", "portrait": user.portrait ?? ""]], at: 0)
         UserDefaults.saveAccounts(accounts)
     }
 }

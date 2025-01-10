@@ -15,6 +15,7 @@ class SwitchAccountCell: UITableViewCell {
         let title = UILabel()
         title.text = "当前使用"
         title.isHidden = true
+        title.textColor = UIColor(hex: "#0086ff")
         return title
     }()
     

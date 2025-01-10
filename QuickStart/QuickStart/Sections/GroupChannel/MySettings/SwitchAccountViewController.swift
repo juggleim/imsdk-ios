@@ -9,6 +9,7 @@ import Foundation
 
 class SwitchAccountViewController: UIViewController {
     var accounts: [JCUser] = []
+    var switchAccount: JCUser?
     let titleLabel: UILabel = {
         let title = UILabel()
         title.text = "点击以切换账号"
@@ -49,40 +50,31 @@ class SwitchAccountViewController: UIViewController {
         setupViews()
         setupLayouts()
         loadAccounts()
+        JIM.shared().connectionManager.add(self)
     }
     
     func loadAccounts() {
-        DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
-            let user1 = JCUser()
-            user1.userId = "userId1"
-            user1.userName = "userName1"
-            user1.portrait = ""
-            
-            let user2 = JCUser()
-            user2.userId = "userId2"
-            user2.userName = "userName2"
-            user2.portrait = ""
-            
-            let user3 = JCUser()
-            user3.userId = "userId3"
-            user3.userName = "userName3"
-            user3.portrait = ""
-            
-            self.accounts = [user1, user2, user3]
-            self.tableView.reloadData()
+        var accounts: [Dictionary<String, Dictionary<String, String>>]
+        if let a = UserDefaults.loadAccounts() as? [Dictionary<String, Dictionary<String, String>>] {
+            accounts = a
+        } else {
+            accounts = []
         }
-        
-        
-        
-//        if let a = UserDefaults.loadAccounts(),
-//           a.count > 0 {
-//            for index in 0...2 {
-//                if index < a.count-1 {
-//                    let user = JIM.shared().userInfoManager.get
-//                }
-//            }
-//        }
-        
+        var users: [JCUser] = []
+        let loopNumber = min(3, accounts.count)
+        for account in accounts[..<loopNumber] {
+            if let phone = account.keys.first,
+               let infoDic = account[phone] {
+                let user = JCUser()
+                user.userId = infoDic["id"] ?? ""
+                user.userName = infoDic["name"] ?? ""
+                user.portrait = infoDic["portrait"] ?? ""
+                user.phoneNumber = phone
+                users.append(user)
+            }
+        }
+        self.accounts = users
+        self.tableView.reloadData()
     }
     
     func setupViews() {
@@ -112,11 +104,21 @@ class SwitchAccountViewController: UIViewController {
     }
     
     @objc func onAdd() {
-        
+        self.switchAccount = nil
+        if JIM.shared().connectionManager.getConnectionStatus() == .disconnected {
+            self.dismissAndSwitchAccount()
+        } else {
+            JIM.shared().connectionManager.disconnect(false)
+        }
     }
     
     @objc func onCancel() {
         self.dismiss(animated: true)
+    }
+    
+    private func dismissAndSwitchAccount() {
+        self.dismiss(animated: true)
+        NotificationCenter.default.post(name: NSNotification.Name("SwitchAccount"), object: self.switchAccount)
     }
 }
 
@@ -150,5 +152,26 @@ extension SwitchAccountViewController: UITableViewDelegate, UITableViewDataSourc
         }
         cell.configure(user: user, inUse: inUse)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            self.dismiss(animated: true)
+        } else {
+            self.switchAccount = self.accounts[indexPath.section]
+            if JIM.shared().connectionManager.getConnectionStatus() == .disconnected {
+                self.dismissAndSwitchAccount()
+            } else {
+                JIM.shared().connectionManager.disconnect(false)
+            }
+        }
+    }
+}
+
+extension SwitchAccountViewController: JConnectionDelegate {
+    public func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+        if status == .disconnected {
+            self.dismissAndSwitchAccount()
+        }
     }
 }
