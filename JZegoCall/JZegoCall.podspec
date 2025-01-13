@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   Juggle Call With Zego for iOS.
                        DESC
 
-  s.homepage         = 'https://www.jugglechat.com/'
+  s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
   s.source           = { :http => 'https://downloads.juggleim.com/libs/ios/JZegoCall/JZegoCall_v1_8_3.zip' }

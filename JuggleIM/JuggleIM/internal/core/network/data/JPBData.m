@@ -317,6 +317,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JConversationTypeSystem:
             break;
+            
         default:
             break;
     }

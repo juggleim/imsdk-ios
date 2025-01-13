@@ -376,27 +376,27 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
     public func loadSuggestedMentions(with filterText: String) {
         self.debouncer?.add { [weak self] in
             guard let self = self else { return }
-                guard let groupInfo = self.groupInfo, groupInfo.members.count > 0 else {
-                    self.suggestedMemberList = nil
-                    self.delegate?.groupChannelViewModel(self, didReceiveSuggestedMentions: nil)
-                    return
-                }
+            guard let groupInfo = self.groupInfo, groupInfo.members.count > 0 else {
+                self.suggestedMemberList = nil
+                self.delegate?.groupChannelViewModel(self, didReceiveSuggestedMentions: nil)
+                return
+            }
 
-                let sortedMembers = groupInfo.members.sorted { $0.userName?.lowercased() ?? "" < $1.userName?.lowercased() ?? "" }
-                let matchedMembers = sortedMembers.filter {
-                    return $0.userName?.lowercased().hasPrefix(filterText.lowercased()) ?? false
-                }
-                let memberCount = matchedMembers.count
-                // +1 is buffer for when the current user is included in the search results
-                let limit = 16//(SBUGlobals.userMentionConfig?.suggestionLimit ?? 0) + 1
-                let splitCount = min(memberCount, Int(limit))
+            let sortedMembers = groupInfo.members.sorted { $0.userName?.lowercased() ?? "" < $1.userName?.lowercased() ?? "" }
+            let matchedMembers = sortedMembers.filter {
+                return $0.userName?.lowercased().hasPrefix(filterText.lowercased()) ?? false
+            }
+            let memberCount = matchedMembers.count
+            // +1 is buffer for when the current user is included in the search results
+            let limit = 16//(SBUGlobals.userMentionConfig?.suggestionLimit ?? 0) + 1
+            let splitCount = min(memberCount, Int(limit))
 
-                let resultMembers = Array(matchedMembers[0..<splitCount])
-                self.suggestedMemberList = SBUUser.convertUsers(resultMembers)
-                self.delegate?.groupChannelViewModel(
-                    self,
-                    didReceiveSuggestedMentions: self.suggestedMemberList
-                )
+            let resultMembers = Array(matchedMembers[0..<splitCount])
+            self.suggestedMemberList = SBUUser.convertUsers(resultMembers)
+            self.delegate?.groupChannelViewModel(
+                self,
+                didReceiveSuggestedMentions: self.suggestedMemberList
+            )
         }
     }
 
