@@ -7,6 +7,8 @@
 
 #import "JBaseUploader.h"
 #import "JUploadPreSignCred.h"
+#import "JUploadEnum.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JPreSignUploader : JBaseUploader
@@ -14,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JUploadPreSignCred * preSignCred;
 
 -(instancetype)initWith:(NSString *)localPath 
-            preSignCred:(JUploadPreSignCred *)preSignCred;
+            preSignCred:(JUploadPreSignCred *)preSignCred
+                ossType:(JUploadOssType)ossType;
 
 @end
 

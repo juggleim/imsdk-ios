@@ -24,7 +24,7 @@
         case JUploadOssType_S3:
         case JUploadOssType_MinIO:
         case JUploadOssType_OSS:
-            uploader = [[JPreSignUploader alloc] initWith:localPath preSignCred:preSignCred];
+            uploader = [[JPreSignUploader alloc] initWith:localPath preSignCred:preSignCred ossType:ossType];
             break;
         default:
             break;
