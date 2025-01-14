@@ -995,6 +995,68 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                    userId:(NSString *)userId
+                   success:(void (^)(long long))successBlock
+                     error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"add message reaction, messageId is %@, reactionId is %@", messageId, reactionId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData addMsgSet:messageId
+                              conversation:conversation
+                                       key:reactionId
+                                    userId:userId
+                                     index:self.cmdIndex++];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                       userId:(NSString *)userId
+                      success:(void (^)(long long))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"remove message reaction, messageId is %@, reactionId is %@", messageId, reactionId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData removeMsgSet:messageId
+                                 conversation:conversation
+                                          key:reactionId
+                                       userId:userId
+                                        index:self.cmdIndex++];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)getMessagesReaction:(NSArray<NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray<JMessageReaction *> * _Nonnull))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get messages reaction, count is %ld", messageIdList.count);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData queryMsgExSet:messageIdList
+                                  conversation:conversation
+                                         index:self.cmdIndex++];
+        JMessageReactionObj *obj = [[JMessageReactionObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1209,6 +1271,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeGetUserInfoAck");
             [self handleGetUserInfoAck:obj.stringAck];
             break;
+        case JPBRcvTypeQryMsgExtAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryMsgExtAck");
+            [self handleQryMsgExtAck:obj.qryMsgExtAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1263,6 +1329,9 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JStringObj class]]) {
         JStringObj *s = (JStringObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JMessageReactionObj class]]) {
+        JMessageReactionObj *s = (JMessageReactionObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1613,6 +1682,18 @@ inConversation:(JConversation *)conversation
             stringObj.errorBlock(ack.code);
         } else {
             stringObj.successBlock(ack.str);
+        }
+    }
+}
+
+- (void)handleQryMsgExtAck:(JQryMsgExtAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JMessageReactionObj class]]) {
+        JMessageReactionObj *stringObj = (JMessageReactionObj *)obj;
+        if (ack.code != 0) {
+            stringObj.errorBlock(ack.code);
+        } else {
+            stringObj.successBlock(ack.reactionList);
         }
     }
 }

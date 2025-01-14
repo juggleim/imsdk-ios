@@ -303,6 +303,25 @@ inConversation:(JConversation *)conversation
             success:(void (^)(NSString *))successBlock
               error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                    userId:(NSString *)userId
+                   success:(void (^)(long long timestamp))successBlock
+                     error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                       userId:(NSString *)userId
+                      success:(void (^)(long long timestamp))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getMessagesReaction:(NSArray <NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call

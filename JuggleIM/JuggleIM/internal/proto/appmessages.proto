@@ -322,11 +322,26 @@ message QryMergedMsgsReq{
   int32 order = 3;
 }
 
+message QryMsgExtReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+  repeated string msgIds = 3;
+}
+
 message MsgExt {
   string targetId = 1;
   ChannelType channelType = 2;
   string msgId = 3;
   MsgExtItem ext = 4;
+}
+
+message MsgExtItemsList{
+  repeated MsgExtItems items = 1;
+}
+
+message MsgExtItems{
+  string msgId = 1;
+  repeated MsgExtItem exts = 2;
 }
 
 message MsgExtItem {

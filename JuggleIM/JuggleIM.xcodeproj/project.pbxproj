@@ -49,6 +49,12 @@
 		A017F9392C3BD80A00D527B0 /* JChatroomInfoOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */; };
 		A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */; };
+		A024C3932D35262F005C369C /* JMsgExSetMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A024C3912D35262F005C369C /* JMsgExSetMessage.h */; };
+		A024C3942D35262F005C369C /* JMsgExSetMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3922D35262F005C369C /* JMsgExSetMessage.m */; };
+		A024C3972D353557005C369C /* JMessageReactionItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A024C3952D353557005C369C /* JMessageReactionItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A024C3982D353557005C369C /* JMessageReactionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3962D353557005C369C /* JMessageReactionItem.m */; };
+		A024C39B2D353814005C369C /* JMessageReaction.h in Headers */ = {isa = PBXBuildFile; fileRef = A024C3992D353814005C369C /* JMessageReaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A024C39C2D353814005C369C /* JMessageReaction.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C39A2D353814005C369C /* JMessageReaction.m */; };
 		A03B39FD2CC8EC86003D150A /* JCallSessionImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B39FC2CC8EC86003D150A /* JCallSessionImpl.m */; };
 		A03B39FE2CC8EC86003D150A /* JCallSessionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B39FB2CC8EC86003D150A /* JCallSessionImpl.h */; };
 		A03B3A052CC914CE003D150A /* JCallMember.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A042CC914CE003D150A /* JCallMember.m */; };
@@ -420,6 +426,12 @@
 		A017F9372C3BD80A00D527B0 /* JChatroomInfoOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfoOptions.m; sourceTree = "<group>"; };
 		A0222A982BD25B7F00253311 /* JMessageMentionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageMentionInfo.h; sourceTree = "<group>"; };
 		A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageMentionInfo.m; sourceTree = "<group>"; };
+		A024C3912D35262F005C369C /* JMsgExSetMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMsgExSetMessage.h; sourceTree = "<group>"; };
+		A024C3922D35262F005C369C /* JMsgExSetMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMsgExSetMessage.m; sourceTree = "<group>"; };
+		A024C3952D353557005C369C /* JMessageReactionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReactionItem.h; sourceTree = "<group>"; };
+		A024C3962D353557005C369C /* JMessageReactionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReactionItem.m; sourceTree = "<group>"; };
+		A024C3992D353814005C369C /* JMessageReaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReaction.h; sourceTree = "<group>"; };
+		A024C39A2D353814005C369C /* JMessageReaction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReaction.m; sourceTree = "<group>"; };
 		A03B39F92CC8E81F003D150A /* JCallEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallEvent.h; sourceTree = "<group>"; };
 		A03B39FB2CC8EC86003D150A /* JCallSessionImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallSessionImpl.h; sourceTree = "<group>"; };
 		A03B39FC2CC8EC86003D150A /* JCallSessionImpl.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallSessionImpl.m; sourceTree = "<group>"; };
@@ -1017,6 +1029,10 @@
 				A06516162C9A866400E3AEC1 /* JPushData.m */,
 				A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */,
 				A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */,
+				A024C3952D353557005C369C /* JMessageReactionItem.h */,
+				A024C3962D353557005C369C /* JMessageReactionItem.m */,
+				A024C3992D353814005C369C /* JMessageReaction.h */,
+				A024C39A2D353814005C369C /* JMessageReaction.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1474,6 +1490,8 @@
 				A08F4BBA2C7880BC00791C52 /* JMarkUnreadMessage.m */,
 				A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */,
 				A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */,
+				A024C3912D35262F005C369C /* JMsgExSetMessage.h */,
+				A024C3922D35262F005C369C /* JMsgExSetMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1485,6 +1503,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A024C39B2D353814005C369C /* JMessageReaction.h in Headers */,
+				A024C3972D353557005C369C /* JMessageReactionItem.h in Headers */,
 				A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */,
 				A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */,
 				A079E8882CE395CC00A1008F /* JConnSuperState.h in Headers */,
@@ -1556,6 +1576,7 @@
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
 				A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */,
 				A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */,
+				A024C3932D35262F005C369C /* JMsgExSetMessage.h in Headers */,
 				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
 				A0D3AD2D2B6D1B9C00D170D7 /* JRecallCmdMessage.h in Headers */,
@@ -1834,6 +1855,7 @@
 				5B7C06382C3E29E000E91783 /* JUploaderFactory.m in Sources */,
 				A096458D2BF252DC00290775 /* JThumbnailPackedImageMessage.m in Sources */,
 				A079E8712CE3595200A1008F /* JConnConnectingState.m in Sources */,
+				A024C3982D353557005C369C /* JMessageReactionItem.m in Sources */,
 				5B4DB68B2BFC3BC700DD18B6 /* JTopConvMessage.m in Sources */,
 				A08AA2512B14AF1F008B114C /* JMessage.m in Sources */,
 				A0F376282B3A89780076CB84 /* JVoiceMessage.m in Sources */,
@@ -1861,11 +1883,13 @@
 				A0CE9A2E2CD4BDF4008B405C /* JCallMediaUser.m in Sources */,
 				A09727E92CC6346B00E08BC4 /* JCallIncomingState.m in Sources */,
 				A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */,
+				A024C3942D35262F005C369C /* JMsgExSetMessage.m in Sources */,
 				A09727F12CC6346B00E08BC4 /* JCallEventUtil.m in Sources */,
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
 				A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
+				A024C39C2D353814005C369C /* JMessageReaction.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
 				A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,

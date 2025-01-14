@@ -33,6 +33,7 @@
 #import "JDownloadManager.h"
 #import "JUtility.h"
 #import "JMsgModifyMessage.h"
+#import "JMsgExSetMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -1429,6 +1430,139 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                   success:(void (^)(void))successBlock
+                     error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0 ||
+        conversation.conversationId.length == 0 ||
+        reactionId.length == 0) {
+        JLogE(@"MSG-ReactionAdd", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket addMessageReaction:messageId
+                               conversation:conversation
+                                 reactionId:reactionId
+                                     userId:self.core.userId
+                                    success:^(long long timestamp) {
+        JLogI(@"MSG-ReactionAdd", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+            reaction.messageId = messageId;
+            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
+            item.reactionId = reactionId;
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            item.userInfoList = @[currentUser];
+            reaction.itemList = @[item];
+            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageReactionDidAdd:)]) {
+                    [obj messageReactionDidAdd:reaction];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionAdd", @"error, code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0 ||
+        conversation.conversationId.length == 0 ||
+        reactionId.length == 0) {
+        JLogE(@"MSG-ReactionRemove", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket removeMessageReaction:messageId
+                                  conversation:conversation
+                                    reactionId:reactionId
+                                        userId:self.core.userId
+                                       success:^(long long timestamp) {
+        JLogI(@"MSG-ReactionRemove", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+            reaction.messageId = messageId;
+            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
+            item.reactionId = reactionId;
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            item.userInfoList = @[currentUser];
+            reaction.itemList = @[item];
+            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageReactionDidRemove:)]) {
+                    [obj messageReactionDidRemove:reaction];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionRemove", @"error, code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getMessagesReaction:(NSArray<NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray<JMessageReaction *> *))successBlock
+                      error:(void (^)(JErrorCode))errorBlock {
+    if (messageIdList.count == 0 ||
+        conversation.conversationId.length == 0) {
+        JLogE(@"MSG-ReactionGet", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket getMessagesReaction:messageIdList
+                                conversation:conversation
+                                     success:^(NSArray<JMessageReaction *> * _Nonnull reactionList) {
+        JLogI(@"MSG-ReactionGet", @"success");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(reactionList);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionGet", @"error, code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (void)setMute:(BOOL)isMute
         periods:(NSArray<JTimePeriod *> *)periods
        complete:(void (^)(JErrorCode))completeBlock {
@@ -1779,6 +1913,7 @@
     [self registerContentType:[JMarkUnreadMessage class]];
     [self registerContentType:[JCallFinishNotifyMessage class]];
     [self registerContentType:[JMsgModifyMessage class]];
+    [self registerContentType:[JMsgExSetMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2142,6 +2277,37 @@
         } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
         }
+        
+        // reaction
+        if ([obj.contentType isEqualToString:[JMsgExSetMessage contentType]]) {
+            JMsgExSetMessage *cmd = (JMsgExSetMessage *)obj.content;
+            if (cmd.addItemList.count > 0) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(messageReactionDidAdd:)]) {
+                            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+                            reaction.messageId = cmd.originalMessageId;
+                            reaction.itemList = cmd.addItemList;
+                            [obj messageReactionDidAdd:reaction];
+                        }
+                    }];
+                });
+            }
+            if (cmd.removeItemList.count > 0) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([obj respondsToSelector:@selector(messageReactionDidRemove:)]) {
+                            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+                            reaction.messageId = cmd.originalMessageId;
+                            reaction.itemList = cmd.removeItemList;
+                            [obj messageReactionDidRemove:reaction];
+                        }
+                    }];
+                });
+            }
+            return;
+        }
+        
         //modify message
         if ([obj.contentType isEqualToString:[JMsgModifyMessage contentType]]) {
             JMsgModifyMessage *cmd = (JMsgModifyMessage *)obj.content;

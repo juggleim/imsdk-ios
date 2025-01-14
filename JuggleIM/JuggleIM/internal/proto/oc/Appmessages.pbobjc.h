@@ -46,6 +46,7 @@ CF_EXTERN_C_BEGIN
 @class Mentions;
 @class MergedMsgs;
 @class MsgExtItem;
+@class MsgExtItems;
 @class PreSignResp;
 @class PushData;
 @class QiNiuCredResp;
@@ -1533,6 +1534,38 @@ GPB_FINAL @interface QryMergedMsgsReq : GPBMessage
 
 @end
 
+#pragma mark - QryMsgExtReq
+
+typedef GPB_ENUM(QryMsgExtReq_FieldNumber) {
+  QryMsgExtReq_FieldNumber_TargetId = 1,
+  QryMsgExtReq_FieldNumber_ChannelType = 2,
+  QryMsgExtReq_FieldNumber_MsgIdsArray = 3,
+};
+
+GPB_FINAL @interface QryMsgExtReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgIdsArray;
+/** The number of items in @c msgIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger msgIdsArray_Count;
+
+@end
+
+/**
+ * Fetches the raw value of a @c QryMsgExtReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t QryMsgExtReq_ChannelType_RawValue(QryMsgExtReq *message);
+/**
+ * Sets the raw value of an @c QryMsgExtReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetQryMsgExtReq_ChannelType_RawValue(QryMsgExtReq *message, int32_t value);
+
 #pragma mark - MsgExt
 
 typedef GPB_ENUM(MsgExt_FieldNumber) {
@@ -1567,6 +1600,37 @@ int32_t MsgExt_ChannelType_RawValue(MsgExt *message);
  * was generated.
  **/
 void SetMsgExt_ChannelType_RawValue(MsgExt *message, int32_t value);
+
+#pragma mark - MsgExtItemsList
+
+typedef GPB_ENUM(MsgExtItemsList_FieldNumber) {
+  MsgExtItemsList_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface MsgExtItemsList : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MsgExtItems*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - MsgExtItems
+
+typedef GPB_ENUM(MsgExtItems_FieldNumber) {
+  MsgExtItems_FieldNumber_MsgId = 1,
+  MsgExtItems_FieldNumber_ExtsArray = 2,
+};
+
+GPB_FINAL @interface MsgExtItems : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<MsgExtItem*> *extsArray;
+/** The number of items in @c extsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger extsArray_Count;
+
+@end
 
 #pragma mark - MsgExtItem
 

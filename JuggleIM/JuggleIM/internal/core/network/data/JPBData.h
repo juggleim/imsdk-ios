@@ -55,7 +55,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeRtcPingAck,
     JPBRcvTypeQryCallRoomsAck,
     JPBRcvTypeQryCallRoomAck,
-    JPBRcvTypeGetUserInfoAck
+    JPBRcvTypeGetUserInfoAck,
+    JPBRcvTypeQryMsgExtAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -183,6 +184,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSArray <JRtcRoom *> *rooms;
 @end
 
+@interface JQryMsgExtAck : JQryAck
+@property (nonatomic, copy) NSArray <JMessageReaction *> *reactionList;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -203,6 +208,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JRtcInviteEventNtf *rtcInviteEventNtf;
 @property (nonatomic, strong) JStringAck *stringAck;
 @property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
+@property (nonatomic, strong) JQryMsgExtAck *qryMsgExtAck;
 @end
 
 @interface JPBData : NSObject
@@ -401,6 +407,22 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)removeAttributes:(NSArray <NSString *> *)keys
                  forChatroom:(NSString *)chatroomId
                        index:(int)index;
+
+- (NSData *)addMsgSet:(NSString *)messageId
+         conversation:(JConversation *)conversation
+                  key:(NSString *)key
+               userId:(NSString *)userId
+                index:(int)index;
+
+- (NSData *)removeMsgSet:(NSString *)messageId
+            conversation:(JConversation *)conversation
+                     key:(NSString *)key
+                  userId:(NSString *)userId
+                   index:(int)index;
+
+- (NSData *)queryMsgExSet:(NSArray <NSString *> *)messageIdList
+             conversation:(JConversation *)conversation
+                    index:(int)index;
 
 - (NSData *)pingData;
 

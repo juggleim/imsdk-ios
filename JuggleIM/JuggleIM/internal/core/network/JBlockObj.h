@@ -79,6 +79,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
+@interface JMessageReactionObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray <JMessageReaction *> *);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
 @interface JRtcRoomArrayObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSArray <JRtcRoom *> *);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);

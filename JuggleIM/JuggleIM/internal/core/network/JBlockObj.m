@@ -48,3 +48,6 @@
 
 @implementation JRtcRoomArrayObj
 @end
+
+@implementation JMessageReactionObj
+@end

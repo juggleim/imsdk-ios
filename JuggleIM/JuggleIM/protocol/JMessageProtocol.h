@@ -14,6 +14,7 @@
 #import <JuggleIM/JGetMessageOptions.h>
 #import <JuggleIM/JQueryMessageOptions.h>
 #import <JuggleIM/JSearchConversationsResult.h>
+#import <JuggleIM/JMessageReaction.h>
 #import <UIKit/UIImage.h>
 
 @class JMergeMessage;
@@ -39,6 +40,14 @@
 /// 消息修改的回调
 /// - Parameter message: 修改后的消息
 - (void)messageDidUpdate:(JMessage *)message;
+
+/// 新增消息回应的回调
+/// - Parameter reaction: 新增的消息回应
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction;
+
+/// 删除消息回应的回调
+/// - Parameter reaction: 删除的消息回应
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction;
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -396,6 +405,43 @@
 ///   - attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
 ///   - clientMsgNo: 本端消息唯一编号
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
+
+/// 添加消息回应
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 消息所属会话
+///   - reactionId: 回应 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                   success:(void (^)(void))successBlock
+                     error:(void (^)(JErrorCode code))errorBlock;
+
+/// 删除消息回应
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 消息所属会话
+///   - reactionId: 回应 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
+
+/// 批量获取消息回应（消息必须属于同一个会话）
+/// - Parameters:
+///   - messageIdList: 消息 id 列表
+///   - conversation: 消息所属会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getMessagesReaction:(NSArray <NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
+                      error:(void (^)(JErrorCode code))errorBlock;
 
 /// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
 /// - Parameters:

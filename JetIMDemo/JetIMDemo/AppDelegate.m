@@ -28,7 +28,7 @@
     [JIM.shared setServerUrls:@[@"wss://ws.juggleim.com"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:kToken1182];
+    [JIM.shared.connectionManager connectWithToken:kToken1181];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -53,8 +53,29 @@
     NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [JIM.shared.chatroomManager joinChatroom:@"chatroom1001"];
-            
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"CYXf6GNeM"];
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"hello"];
+//            [JIM.shared.messageManager sendMessage:text
+//                                    inConversation:c
+//                                           success:^(JMessage *message) {
+//                int i = 1;
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                
+//            }];
+//            
+//            
+//            [JIM.shared.messageManager removeMessageReaction:@"nwnrv8pkaa6g3hx7" conversation:c reactionId:@"reaction9" success:^{
+//                int i = 1;
+//            } error:^(JErrorCode code) {
+//                int i = 1;
+//            }];
+            [JIM.shared.messageManager getMessagesReaction:@[@"nwnrv8pkaa6g3hx7"]
+                                              conversation:c
+                                                   success:^(NSArray<JMessageReaction *> *reactionList) {
+                int i = 1;
+            } error:^(JErrorCode code) {
+                int i = 1;
+            }];
             
 
         });
@@ -97,6 +118,14 @@
     [msgs enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, JGroupMessageReadInfo * _Nonnull obj, BOOL * _Nonnull stop) {
         NSLog(@"messageId is %@, readCount is %d, memberCount is %d", key, obj.readCount, obj.memberCount);
     }];
+}
+
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction {
+    NSLog(@"messageReactionDidAdd, original messageId is %@", reaction.messageId);
+}
+
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction {
+    NSLog(@"messageReactionDidRemove, original messageId is %@", reaction.messageId);
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

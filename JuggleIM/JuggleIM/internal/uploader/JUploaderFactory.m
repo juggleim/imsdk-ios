@@ -9,7 +9,6 @@
 #import "JPreSignUploader.h"
 #import "JQiNiuUploader.h"
 
-
 @implementation JUploaderFactory
 
 + (JBaseUploader *)getUpload:(NSString *)localPath
