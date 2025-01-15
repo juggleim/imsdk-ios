@@ -286,7 +286,7 @@ extension SBUGroupChannelModule {
                     messageOffsetTimestamp: 0,
                     shouldHideSuggestedReplies: false,
                     shouldHideFormTypeMessage: false,
-                    enableEmojiLongPress: false
+                    enableEmojiLongPress: true
                 )
                 configuration.shouldHideFeedback = true
                 contactCardCell.configure(with: configuration)
@@ -305,7 +305,7 @@ extension SBUGroupChannelModule {
                     messageOffsetTimestamp: 0,
                     shouldHideSuggestedReplies: false,
                     shouldHideFormTypeMessage: false,
-                    enableEmojiLongPress: false
+                    enableEmojiLongPress: true
                 )
                 configuration.shouldHideFeedback = true
                 callMessageCell.configure(with: configuration)
@@ -325,7 +325,7 @@ extension SBUGroupChannelModule {
                     messageOffsetTimestamp: 0,
                     shouldHideSuggestedReplies: shouldHideSuggestedReplies,
                     shouldHideFormTypeMessage: false,
-                    enableEmojiLongPress: false
+                    enableEmojiLongPress: true
                 )
                 configuration.shouldHideFeedback = true
                 textMessageCell.configure(with: configuration)
@@ -346,7 +346,7 @@ extension SBUGroupChannelModule {
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
                     voiceFileInfo: voiceFileInfo,
-                    enableEmojiLongPress: false
+                    enableEmojiLongPress: true
                 )
                 configuration.shouldHideFeedback = true
                 

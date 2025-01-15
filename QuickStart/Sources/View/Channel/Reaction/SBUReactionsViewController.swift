@@ -64,9 +64,10 @@ public class SBUReactionsViewController: SBUBaseViewController, UITableViewDeleg
 
     /// Use this function when initialize.
     /// - Parameter message: BaseMessage types
-    init(channel: JConversationInfo, message: JMessage, selectedReaction: JMessageReactionItem?) {
+    init(channel: JConversationInfo, message: JMessage, reaction: JMessageReaction?, selectedReaction: JMessageReactionItem?) {
         super.init(nibName: nil, bundle: nil)
         self.channel = channel
+        self.reactionList = reaction?.itemList ?? []
         self.selectedReaction = selectedReaction
     }
 
@@ -302,13 +303,14 @@ public class SBUReactionsViewController: SBUBaseViewController, UITableViewDeleg
         guard reactionList.count > indexPath.row else { return .init() }
         
         let reaction = self.reactionList[indexPath.row]
-        let emoji = self.emojiList.first(where: { $0 == reaction.reactionId })
+        let emoji = self.emojiList.first(where: { EmojiManager.emojiToUtf16($0) == reaction.reactionId })
         
         cell.configure(
             type: .reactions,
             emoji: emoji,
             count: reaction.userInfoList.count
         )
+        cell.emojiView.text = emoji
         return cell
     }
 
