@@ -332,7 +332,7 @@ extension SBUGroupChannelModule {
                 textMessageCell.configure(highlightInfo: self.highlightInfo)
 
                 self.setMessageCellAnimation(textMessageCell, message: message, indexPath: indexPath)
-                self.setMessageCellGestures(textMessageCell, message: message, indexPath: indexPath)
+                self.setMessageCellGestures(textMessageCell, message: message, reaction: reaction, indexPath: indexPath)
             } else if let mediaMessageCell = messageCell as? SBUMediaMessageCell {
                 let voiceFileInfo = self.voiceFileInfos[message.cacheKey] ?? nil
                 let configuration = SBUMediaMessageCellParams(
@@ -358,7 +358,7 @@ extension SBUGroupChannelModule {
                 mediaMessageCell.configure(with: configuration)
                 mediaMessageCell.configure(highlightInfo: self.highlightInfo)
                 self.setMessageCellAnimation(mediaMessageCell, message: message, indexPath: indexPath)
-                self.setMessageCellGestures(mediaMessageCell, message: message, indexPath: indexPath)
+                self.setMessageCellGestures(mediaMessageCell, message: message, reaction: reaction, indexPath: indexPath)
                 self.setMediaMessageCellImage(mediaMessageCell, mediaMessage: message)
                 
                 if let voiceFileInfo = voiceFileInfo,

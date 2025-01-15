@@ -243,10 +243,7 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
         let currentUserId = JIM.shared().currentUserId
 
         let emoji = emojiList[indexPath.row]
-        //TODO: reaction
-        
-        
-        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == emoji }) {
+        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == EmojiManager.emojiToUtf16(emoji) }) {
             let shouldSelect = reactionItem.userInfoList.contains(where: {$0.userId == currentUserId}) == false
             self.emojiTapHandler?(emoji, shouldSelect)
         } else {

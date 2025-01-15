@@ -284,7 +284,15 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter message: `JMessage` object
     /// - Since: 1.1.0
     open func showEmojiListModal(message: JMessage) {
-        let emojiListVC = SBUEmojiListViewController(message: message)
+        var reaction: JMessageReaction? = nil
+        self.baseViewModel?.reactionList.forEach { r in
+            if r.messageId == message.messageId {
+                reaction = r
+                return
+            }
+        }
+        
+        let emojiListVC = SBUEmojiListViewController(message: message, reaction: reaction)
         emojiListVC.modalPresentationStyle = .custom
         emojiListVC.transitioningDelegate = self
 

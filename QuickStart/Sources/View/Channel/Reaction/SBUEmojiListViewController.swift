@@ -16,6 +16,7 @@ class SBUEmojiListViewController: SBUBaseViewController, UICollectionViewDelegat
     let layout: UICollectionViewFlowLayout = SBUCollectionViewFlowLayout()
     let emojiList: [String]
     let message: JMessage?
+    let reaction: JMessageReaction?
     
     @SBUThemeWrapper(theme: SBUTheme.componentTheme)
     var theme: SBUComponentTheme
@@ -39,13 +40,15 @@ class SBUEmojiListViewController: SBUBaseViewController, UICollectionViewDelegat
     required init?(coder: NSCoder) {
         self.message = nil
         self.emojiList = EmojiManager.getAllEmojis()
+        self.reaction = nil
         super.init(coder: coder)
     }
 
     /// Use this function when initialize.
     /// - Parameter message: BaseMessage
-    init(message: JMessage) {
+    init(message: JMessage, reaction: JMessageReaction?) {
         self.message = message
+        self.reaction = reaction
         
         // Filter emojis if custom `SBUGlobals.emojiCategoryFilter` is defined.
         emojiList = EmojiManager.getAllEmojis()
@@ -190,14 +193,13 @@ class SBUEmojiListViewController: SBUBaseViewController, UICollectionViewDelegat
 //        guard let currentUesr = SBUGlobals.currentUser else { self.dismiss(animated: true); return }
 
         let emoji = emojiList[indexPath.row]
+        
+        var shouldSelect = true
+        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == EmojiManager.emojiToUtf16(emoji) }) {
+            shouldSelect = reactionItem.userInfoList.contains(where: {$0.userId == JIM.shared().currentUserId }) == false
+        }
 
-        //TODO: reaction
-        let wasSelected = false
-//        let wasSelected = message?.reactions
-//            .first { $0.key == emoji.key }?.userIds
-//            .contains(currentUesr.userId) ?? false
-
-        self.emojiTapHandler?(emoji, !wasSelected)
+        self.emojiTapHandler?(emoji, shouldSelect)
         self.dismiss(animated: true)
     }
 

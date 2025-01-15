@@ -67,8 +67,6 @@ public class SBUReactionsViewController: SBUBaseViewController, UITableViewDeleg
     init(channel: JConversationInfo, message: JMessage, selectedReaction: JMessageReactionItem?) {
         super.init(nibName: nil, bundle: nil)
         self.channel = channel
-        //TODO: reaction
-//        self.reactionList = message.reactions
         self.selectedReaction = selectedReaction
     }
 
