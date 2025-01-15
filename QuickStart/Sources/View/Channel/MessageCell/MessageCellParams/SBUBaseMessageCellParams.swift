@@ -13,6 +13,8 @@ public class SBUBaseMessageCellParams {
     /// The message.
     public let message: JMessage
     
+    public let reaction: JMessageReaction?
+    
     /// Hide or expose date information
     public let hideDateView: Bool
     
@@ -57,6 +59,7 @@ public class SBUBaseMessageCellParams {
         - receiptState: ReadReceipt state
      */
     public init(message: JMessage,
+                reaction: JMessageReaction? = nil,
                 hideDateView: Bool,
                 messagePosition: MessagePosition = .center,
                 groupPosition: MessageGroupPosition = .none,
@@ -66,6 +69,7 @@ public class SBUBaseMessageCellParams {
                 shouldHideFeedback: Bool = true,
                 messageOffsetTimestamp: Int64 = 0) {
         self.message = message
+        self.reaction = reaction
         self.hideDateView = hideDateView
         self.messagePosition = messagePosition
         self.receiptState = receiptState

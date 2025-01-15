@@ -43,11 +43,15 @@
 
 /// 新增消息回应的回调
 /// - Parameter reaction: 新增的消息回应
-- (void)messageReactionDidAdd:(JMessageReaction *)reaction;
+/// - Parameter conversation: 所属会话
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction
+               inConversation:(JConversation *)conversation;
 
 /// 删除消息回应的回调
 /// - Parameter reaction: 删除的消息回应
-- (void)messageReactionDidRemove:(JMessageReaction *)reaction;
+/// - Parameter conversation: 所属会话
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction
+                  inConversation:(JConversation *)conversation;
 @end
 
 @protocol JMessageSyncDelegate <NSObject>

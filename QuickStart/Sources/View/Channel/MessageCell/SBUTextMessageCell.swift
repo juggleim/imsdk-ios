@@ -56,6 +56,7 @@ open class SBUTextMessageCell: SBUContentBaseMessageCell, SBUTextMessageTextView
         self.mainContainerView.setStack([
             self.messageTextView,
             self.additionContainerView.setStack([
+                self.reactionView
             ])
         ])
     }

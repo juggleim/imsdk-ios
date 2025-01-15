@@ -202,7 +202,7 @@ public class SBUCoverImageView: UIView {
     /// The image is created using up to four user objects.
     /// - Parameter users: `SBUUser` object array
     public func setImage(withUsers users: [JUserInfo]) {
-        let filteredUsers = users.filter { $0.userId != SBUGlobals.currentUser?.userId }
+        let filteredUsers = users.filter { $0.userId != JIM.shared().currentUserId }
         let index = (filteredUsers.count > 3) ? 4 : filteredUsers.count
         let newUsers = Array(filteredUsers[0..<index])
         
@@ -239,7 +239,7 @@ public class SBUCoverImageView: UIView {
             mainStackView.addArrangedSubview(imageView)
 
         } else {
-            let filteredUsers = users.filter { $0.userId != SBUGlobals.currentUser?.userId }
+            let filteredUsers = users.filter { $0.userId != JIM.shared().currentUserId }
             for user in filteredUsers {
                 let profileURL = user.portrait ?? ""
                 let imageView = UIImageView(frame: self.frame)

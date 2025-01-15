@@ -143,7 +143,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     }()
     
     /// A ``SBUMessageReactionView`` that shows reactions on the message.
-//    public var reactionView: SBUMessageReactionView = SBUMessageReactionView()
+    public var reactionView: SBUMessageReactionView = SBUMessageReactionView()
     
     public private(set) lazy var profileContentSpacing: UIView = UIView()
     
@@ -229,20 +229,20 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
             action: #selector(self.onTapUserProfileView(sender:)))
         )
 
-//        self.reactionView.emojiTapHandler = { [weak self] emojiKey in
-//            guard let self = self else { return }
-//            self.emojiTapHandler?(emojiKey)
-//        }
-//
-//        self.reactionView.emojiLongPressHandler = { [weak self] emojiKey in
-//            guard let self = self else { return }
-//            self.emojiLongPressHandler?(emojiKey)
-//        }
-//
-//        self.reactionView.moreEmojiTapHandler = { [weak self] in
-//            guard let self = self else { return }
-//            self.moreEmojiTapHandler?()
-//        }
+        self.reactionView.emojiTapHandler = { [weak self] emojiKey in
+            guard let self = self else { return }
+            self.emojiTapHandler?(emojiKey)
+        }
+
+        self.reactionView.emojiLongPressHandler = { [weak self] emojiKey in
+            guard let self = self else { return }
+            self.emojiLongPressHandler?(emojiKey)
+        }
+
+        self.reactionView.moreEmojiTapHandler = { [weak self] in
+            guard let self = self else { return }
+            self.moreEmojiTapHandler?()
+        }
     }
     
     open override func setupStyles() {
@@ -253,7 +253,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         self.mainContainerView.rightPressedBackgroundColor = self.theme.rightPressedBackgroundColor
         
         self.mainContainerView.setupStyles()
-//        self.reactionView.setupStyles()
+        self.reactionView.setupStyles()
         
         if let userNameView = self.userNameView as? SBUUserNameView {
             userNameView.setupStyles()
@@ -290,13 +290,14 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
         guard let message = self.message else { return }
         
 //        // MARK: Configure reaction view
-//        self.reactionView.configure(
-//            maxWidth: SBUConstant.imageSize.width,
-//            useReaction: self.useReaction,
-////            reactions: message.reactions,
-//            //TODO:
-//            enableEmojiLongPress: self.enableEmojiLongPress
-//        )
+        let params = SBUMessageReactionViewParams(
+            maxWidth: SBUConstant.imageSize.width,
+            useReaction: self.useReaction,
+            reactions: configuration.reaction?.itemList ?? [],
+            enableEmojiLongPress: self.enableEmojiLongPress,
+            message: message
+        )
+        self.reactionView.configure(configuration: params)
         
         // MARK: update UI with message position
         

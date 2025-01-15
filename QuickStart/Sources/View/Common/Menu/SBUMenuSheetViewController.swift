@@ -20,8 +20,9 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
     let layout: UICollectionViewFlowLayout = SBUCollectionViewFlowLayout()
     var tableView = UITableView()
     let message: JMessage?
+    let reaction: JMessageReaction?
     let items: [SBUMenuItem]
-//    let emojiList: [Emoji] = SBUEmojiManager.getAllEmojis()
+    let emojiList: [String] = EmojiManager.getAllEmojis()
     var useReaction: Bool
 
     let maxEmojiOneLine = 6
@@ -40,13 +41,15 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
         self.message = nil
         self.items = []
         self.useReaction = false
+        self.reaction = nil
         super.init(coder: coder)
     }
 
     /// Use this function when initialize.
     /// - Parameter items: Menu item types
-    public init(message: JMessage, items: [SBUMenuItem], useReaction: Bool) {
+    public init(message: JMessage, reaction: JMessageReaction?, items: [SBUMenuItem], useReaction: Bool) {
         self.message = message
+        self.reaction = reaction
         self.items = items
         self.useReaction = useReaction
         super.init(nibName: nil, bundle: nil)
@@ -102,10 +105,10 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
 
             self.collectionView.dataSource = self
             self.collectionView.delegate = self
-//            self.collectionView.register(
-//                SBUReactionCollectionViewCell.sbu_loadNib(),
-//                forCellWithReuseIdentifier: SBUReactionCollectionViewCell.sbu_className
-//            ) // for xib
+            self.collectionView.register(
+                SBUReactionCollectionViewCell.self,
+                forCellWithReuseIdentifier: SBUReactionCollectionViewCell.sbu_className
+            ) // for xib
             self.collectionView.bounces = false
             self.collectionView.showsHorizontalScrollIndicator = false
             self.collectionView.backgroundColor = .clear
@@ -191,40 +194,35 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 6
+        return emojiList.count < 6 ? emojiList.count : 6
     }
 
     public func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: SBUReactionCollectionViewCell.sbu_className,
+            for: indexPath) as? SBUReactionCollectionViewCell else { return .init() }
+
+        if indexPath.row == 5 {
+            let moreEmoji = SBUIconSetType.iconEmojiMore.image(
+                with: theme.addReactionTintColor,
+                to: SBUIconSetType.Metric.iconEmojiLarge
+            )
+            cell.configure(type: .messageMenu, emoji: nil)
+            cell.emojiView.text = "more"
+            cell.isSelected = false
+            return cell
+        }
+
+        let emoji = emojiList[indexPath.row]
+        cell.configure(type: .messageMenu, emoji: emoji)
         
-        return .init()
-//        guard let cell = collectionView.dequeueReusableCell(
-//            withReuseIdentifier: SBUReactionCollectionViewCell.sbu_className,
-//            for: indexPath) as? SBUReactionCollectionViewCell else { return .init() }
-//
-//        if indexPath.row == 5 {
-//            let moreEmoji = SBUIconSetType.iconEmojiMore.image(
-//                with: theme.addReactionTintColor,
-//                to: SBUIconSetType.Metric.iconEmojiLarge
-//            )
-//            cell.configure(type: .messageMenu, url: nil)
-//            cell.emojiImageView.image = moreEmoji
-//            cell.isSelected = false
-//            return cell
-//        }
-//
-////        let emoji = emojiList[indexPath.row]
-////        cell.configure(type: .messageMenu, url: emoji.url)
-//
-//        guard let currentUesr = SBUGlobals.currentUser else { return cell }
-//        let didSelect = message?.reactions
-//            .first { $0.key == emoji.key }?.userIds
-//            .contains(currentUesr.userId) ?? false
-//        cell.isSelected = didSelect
-//
-//        return cell
+        let didSelect = reaction?.itemList.first { $0.reactionId == emoji }?.userInfoList.contains(where: { $0.userId == JIM.shared().currentUserId }) ?? false
+        cell.isSelected = didSelect
+
+        return cell
     }
 
     public func collectionView(
@@ -238,18 +236,23 @@ public class SBUMenuSheetViewController: SBUBaseViewController, UITableViewDeleg
             return
         }
 
-//        guard let currentUesr = SBUGlobals.currentUser else {
+//        guard let currentUserId = JIM.shared().currentUserId else {
 //            self.dismiss(animated: true); return
 //        }
+        
+        let currentUserId = JIM.shared().currentUserId
 
-//        let emoji = emojiList[indexPath.row]
-//        if let reaction = message?.reactions.first(where: { $0.key == emoji.key }) {
-//            let shouldSelect = reaction.userIds.contains(currentUesr.userId) == false
-//            self.emojiTapHandler?(emoji.key, shouldSelect)
-//        } else {
-//            self.emojiTapHandler?(emoji.key, true)
-//        }
-//
-//        self.dismiss(animated: true)
+        let emoji = emojiList[indexPath.row]
+        //TODO: reaction
+        
+        
+        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == emoji }) {
+            let shouldSelect = reactionItem.userInfoList.contains(where: {$0.userId == currentUserId}) == false
+            self.emojiTapHandler?(emoji, shouldSelect)
+        } else {
+            self.emojiTapHandler?(emoji, true)
+        }
+
+        self.dismiss(animated: true)
     }
 }

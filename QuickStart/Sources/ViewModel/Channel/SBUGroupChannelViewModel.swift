@@ -197,6 +197,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { messageList, timestamp, hasMore, errorCode in
             SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode)")
             self.upsertMessagesInList(messages: messageList, needReload: true)
+            self.loadMessageReaction(messages: messageList)
             if let messageList = messageList {
                 self.sendReceipt(messageList)
             }
@@ -474,6 +475,92 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
         self.reset()
         self.clearMessageList()
         self.sortAllMessageList(needReload: true)
+    }
+    
+    public func messageReactionDidAdd(_ reaction: JMessageReaction!, in conversation: JConversation!) {
+        if !conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        if self.messageList.contains(where: { $0.messageId == reaction.messageId}) {
+            guard let messages = JIM.shared().messageManager.getMessagesByMessageIds([reaction.messageId]),
+                  messages.count > 0,
+                  let message = messages.first else {
+                return
+            }
+            if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                self.reactionList[index].itemList = mergeReaction(oldItemList: self.reactionList[index].itemList, newItemList: reaction.itemList)
+            } else {
+                self.reactionList.append(reaction)
+            }
+            self.updateMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+
+    public func messageReactionDidRemove(_ reaction: JMessageReaction!, in conversation: JConversation!) {
+        if !conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        if self.messageList.contains(where: { $0.messageId == reaction.messageId}) {
+            guard let messages = JIM.shared().messageManager.getMessagesByMessageIds([reaction.messageId]),
+                  messages.count > 0,
+                  let message = messages.first else {
+                return
+            }
+            if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                self.reactionList[index].itemList = removeReaction(oldItemList: self.reactionList[index].itemList, newItemList: reaction.itemList)
+            }
+            
+            self.updateMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    private func mergeReaction(oldItemList: [JMessageReactionItem], newItemList: [JMessageReactionItem]) -> [JMessageReactionItem] {
+        var result: [JMessageReactionItem] = []
+        var needMerge = false
+        result.append(contentsOf: oldItemList)
+        for newItem in newItemList {
+            needMerge = false
+            for oldItem in result {
+                if oldItem.reactionId == newItem.reactionId {
+                    needMerge = true
+                    var userInfoList = oldItem.userInfoList
+                    for newUserInfo in newItem.userInfoList {
+                        if userInfoList.contains(where: { $0.userId == newUserInfo.userId}) {
+                            continue
+                        }
+                        userInfoList.append(newUserInfo)
+                    }
+                    oldItem.userInfoList = userInfoList
+                    break
+                }
+            }
+            if !needMerge {
+                result.append(newItem)
+            }
+        }
+        return result
+    }
+    
+    private func removeReaction(oldItemList: [JMessageReactionItem], newItemList: [JMessageReactionItem]) -> [JMessageReactionItem] {
+        var result: [JMessageReactionItem] = []
+        result.append(contentsOf: oldItemList)
+        for newItem in newItemList {
+            for oldItem in result {
+                if oldItem.reactionId == newItem.reactionId {
+                    var userInfoList = oldItem.userInfoList
+                    for newUserInfo in newItem.userInfoList {
+                        if let index = SBUUtils.findIndex(ofUser: newUserInfo, in: userInfoList) {
+                            userInfoList.remove(at: index)
+                        }
+                    }
+                    oldItem.userInfoList = userInfoList
+                    break
+                }
+            }
+        }
+        result = result.filter { !$0.userInfoList.isEmpty }
+        return result
     }
 }
 

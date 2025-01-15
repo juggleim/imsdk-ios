@@ -239,7 +239,7 @@ extension SBUGroupChannelModule {
         ///   - cell: The message cell
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
-        open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: JMessage, indexPath: IndexPath) {
+        open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: JMessage, reaction: JMessageReaction? = nil, indexPath: IndexPath) {
             cell.tapHandlerToContent = { [weak self] in
                 guard let self = self else { return }
                 self.setTapGesture(cell, message: message, indexPath: indexPath)
@@ -247,7 +247,7 @@ extension SBUGroupChannelModule {
             
             cell.longPressHandlerToContent = { [weak self] in
                 guard let self = self else { return }
-                self.setLongTapGesture(cell, message: message, indexPath: indexPath)
+                self.setLongTapGesture(cell, message: message, reaction: reaction, indexPath: indexPath)
             }
         }
         
@@ -262,7 +262,7 @@ extension SBUGroupChannelModule {
         ///    - messageCell: `SBUBaseMessageCell` object.
         ///    - message: The message for `messageCell`.
         ///    - indexPath: An index path representing the `messageCell`
-        open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, forRowAt indexPath: IndexPath) {
+        open func configureCell(_ messageCell: SBUBaseMessageCell, message: JMessage, reaction: JMessageReaction?, forRowAt indexPath: IndexPath) {
             // NOTE: to disable unwanted animation while configuring cells
             UIView.setAnimationsEnabled(false)
 
@@ -275,11 +275,12 @@ extension SBUGroupChannelModule {
             if let contactCardCell = messageCell as? ContactCardMessageCell {
                 let configuration = SBUTextMessageCellParams(
                     message: message,
+                    reaction: reaction,
                     hideDateView: isSameDay,
                     useMessagePosition: true,
                     groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
                     receiptState: receiptState,
-                    useReaction: false,
+                    useReaction: true,
                     withTextView: true,
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
@@ -289,15 +290,16 @@ extension SBUGroupChannelModule {
                 )
                 configuration.shouldHideFeedback = true
                 contactCardCell.configure(with: configuration)
-                self.setMessageCellGestures(contactCardCell, message: message, indexPath: indexPath)
+                self.setMessageCellGestures(contactCardCell, message: message, reaction: reaction, indexPath: indexPath)
             } else if let callMessageCell = messageCell as? SBUCallMessageCell {
                 let configuration = SBUTextMessageCellParams(
                     message: message,
+                    reaction: reaction,
                     hideDateView: isSameDay,
                     useMessagePosition: true,
                     groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
                     receiptState: receiptState,
-                    useReaction: false,
+                    useReaction: true,
                     withTextView: true,
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
@@ -312,11 +314,12 @@ extension SBUGroupChannelModule {
 
                 let configuration = SBUTextMessageCellParams(
                     message: message,
+                    reaction: reaction,
                     hideDateView: isSameDay,
                     useMessagePosition: true,
                     groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
                     receiptState: receiptState,
-                    useReaction: false,
+                    useReaction: true,
                     withTextView: true,
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
@@ -334,11 +337,12 @@ extension SBUGroupChannelModule {
                 let voiceFileInfo = self.voiceFileInfos[message.cacheKey] ?? nil
                 let configuration = SBUMediaMessageCellParams(
                     message: message,
+                    reaction: reaction,
                     hideDateView: isSameDay,
                     useMessagePosition: true,
                     groupPosition: self.getMessageGroupingPosition(currentIndex: indexPath.row),
                     receiptState: receiptState,
-                    useReaction: false,
+                    useReaction: true,
                     joinedAt: 0,
                     messageOffsetTimestamp: 0,
                     voiceFileInfo: voiceFileInfo,
@@ -366,7 +370,7 @@ extension SBUGroupChannelModule {
                     self.currentVoiceContentView = voiceContentView
                 }
             } else {
-                let configuration = SBUBaseMessageCellParams(message: message, hideDateView: isSameDay, receiptState: receiptState)
+                let configuration = SBUBaseMessageCellParams(message: message, reaction: reaction, hideDateView: isSameDay, receiptState: receiptState)
                 messageCell.configure(with: configuration)
             }
 
@@ -433,7 +437,15 @@ extension SBUGroupChannelModule {
                 return cell
             }
             
-            self.configureCell(messageCell, message: message, forRowAt: indexPath)
+            var reaction: JMessageReaction? = nil
+            self.reactionList.forEach { r in
+                if r.messageId == message.messageId {
+                    reaction = r
+                    return
+                }
+            }
+            
+            self.configureCell(messageCell, message: message, reaction: reaction, forRowAt: indexPath)
             
             return cell
         }

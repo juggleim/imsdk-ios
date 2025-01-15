@@ -284,19 +284,19 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter message: `JMessage` object
     /// - Since: 1.1.0
     open func showEmojiListModal(message: JMessage) {
-//        let emojiListVC = SBUEmojiListViewController(message: message)
-//        emojiListVC.modalPresentationStyle = .custom
-//        emojiListVC.transitioningDelegate = self
-//
-//        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
-//            guard let self = self else { return }
-//            self.baseViewModel?.setReaction(
-//                message: message,
-//                emojiKey: emojiKey,
-//                didSelect: setSelect
-//            )
-//        }
-//        self.present(emojiListVC, animated: true)
+        let emojiListVC = SBUEmojiListViewController(message: message)
+        emojiListVC.modalPresentationStyle = .custom
+        emojiListVC.transitioningDelegate = self
+
+        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
+            guard let self = self else { return }
+            self.baseViewModel?.setReaction(
+                message: message,
+                emojiKey: emojiKey,
+                didSelect: setSelect
+            )
+        }
+        self.present(emojiListVC, animated: true)
     }
     
     // MARK: - TableView
@@ -737,9 +737,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
 //        }
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: JMessage, reaction: JMessageReaction? = nil, forRowAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        listComponent.showMessageMenu(on: message, forRowAt: indexPath)
+        listComponent.showMessageMenu(on: message, reaction: reaction, forRowAt: indexPath)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage JMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {}
@@ -919,6 +919,10 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         fullMessagesInTableView tableView: UITableView
     ) -> [JMessage] {
         self.baseViewModel?.fullMessageList ?? []
+    }
+    
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, reactionListInTableView tableView: UITableView) -> [JMessageReaction] {
+        self.baseViewModel?.reactionList ?? []
     }
     
     open func baseChannelModule(

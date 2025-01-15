@@ -22,7 +22,10 @@ public class SBUGlobals {
     
     /// The current user that is type of `SBUUser`
     /// - Since: 3.0.0
-    public static var currentUser: SBUUser?
+    public static var currentUser: SBUUser? = {
+        SBUUser(user: JIM.shared().userInfoManager.getUserInfo(JIM.shared().currentUserId))
+        
+    }()
     
 //    // MARK: - Channel List
 //    /// If this value is enabled, the channel list shows the typing indicator. The defaut value is `false`.

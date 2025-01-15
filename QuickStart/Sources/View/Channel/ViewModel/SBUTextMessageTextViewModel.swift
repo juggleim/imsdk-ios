@@ -211,11 +211,10 @@ public struct SBUTextMessageTextViewModel {
     ///   - attributedString: The attributed string to be highlighted.
     ///   - mentionedList: The list of mentioned users.
     public func addMentionedUserHighlightIfNeeded(with attributedString: NSMutableAttributedString, mentionedList: [SBUMention]?) {
-        guard let mentionedList = mentionedList,
-              let currentUser = SBUGlobals.currentUser else { return }
+        guard let mentionedList = mentionedList else { return }
         
         let currentUserRanges = mentionedList
-            .filter { currentUser.userId == $0.user.userId }
+            .filter { JIM.shared().currentUserId == $0.user.userId }
             .map(\.range)
         
         currentUserRanges.forEach { (range) in

@@ -255,7 +255,7 @@ class BaseUserCell: SBUTableViewCell {
         self.type = type
         self.isChecked = isChecked
         
-        let isMe = (user.userId == SBUGlobals.currentUser?.userId)
+        let isMe = (user.userId == JIM.shared().currentUserId)
         self.userIdLabel.text = user.userId
         
         if let userName = user.userName {

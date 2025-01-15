@@ -1465,8 +1465,8 @@
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(messageReactionDidAdd:)]) {
-                    [obj messageReactionDidAdd:reaction];
+                if ([obj respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
+                    [obj messageReactionDidAdd:reaction inConversation:conversation];
                 }
             }];
         });
@@ -1515,8 +1515,8 @@
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(messageReactionDidRemove:)]) {
-                    [obj messageReactionDidRemove:reaction];
+                if ([obj respondsToSelector:@selector(messageReactionDidRemove:inConversation:)]) {
+                    [obj messageReactionDidRemove:reaction inConversation:conversation];
                 }
             }];
         });
@@ -2283,24 +2283,24 @@
             JMsgExSetMessage *cmd = (JMsgExSetMessage *)obj.content;
             if (cmd.addItemList.count > 0) {
                 dispatch_async(self.core.delegateQueue, ^{
-                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        if ([obj respondsToSelector:@selector(messageReactionDidAdd:)]) {
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
                             JMessageReaction *reaction = [[JMessageReaction alloc] init];
                             reaction.messageId = cmd.originalMessageId;
                             reaction.itemList = cmd.addItemList;
-                            [obj messageReactionDidAdd:reaction];
+                            [dlg messageReactionDidAdd:reaction inConversation:obj.conversation];
                         }
                     }];
                 });
             }
             if (cmd.removeItemList.count > 0) {
                 dispatch_async(self.core.delegateQueue, ^{
-                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        if ([obj respondsToSelector:@selector(messageReactionDidRemove:)]) {
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageReactionDidRemove:inConversation:)]) {
                             JMessageReaction *reaction = [[JMessageReaction alloc] init];
                             reaction.messageId = cmd.originalMessageId;
                             reaction.itemList = cmd.removeItemList;
-                            [obj messageReactionDidRemove:reaction];
+                            [dlg messageReactionDidRemove:reaction inConversation:obj.conversation];
                         }
                     }];
                 });

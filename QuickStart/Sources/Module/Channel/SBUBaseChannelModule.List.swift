@@ -42,6 +42,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         didLongTapMessage message: JMessage,
+        reaction: JMessageReaction?,
         forRowAt indexPath: IndexPath
     )
     
@@ -230,6 +231,8 @@ public protocol SBUBaseChannelModuleListDataSource: AnyObject {
     /// - Returns: The array of `JMessage` object including the sent, the failed and the pending.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, fullMessagesInTableView tableView: UITableView) -> [JMessage]
     
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, reactionListInTableView tableView: UITableView) -> [JMessageReaction]
+    
     /// Ask the data source to return whether the `tableView` has next data.
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelModule.List` object.
@@ -380,6 +383,10 @@ extension SBUBaseChannelModule {
         /// The array of all messages includes the sent, the failed and the pending. The value is returned by `baseChannelModule(_:fullMessagesInTableView:)` data source method.
         public var fullMessageList: [JMessage] {
             self.baseDataSource?.baseChannelModule(self, fullMessagesInTableView: self.tableView) ?? []
+        }
+        
+        public var reactionList: [JMessageReaction] {
+            self.baseDataSource?.baseChannelModule(self, reactionListInTableView: self.tableView) ?? []
         }
         
         // MARK: - Logic properties (Private)
@@ -560,7 +567,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The `JMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
-        open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
+        open func showMessageMenu(on message: JMessage, reaction: JMessageReaction? = nil, forRowAt indexPath: IndexPath) {
             switch message.messageState {
             case .unknown, .sending, .uploading:
                 break
@@ -574,9 +581,9 @@ extension SBUBaseChannelModule {
                     return
                 }
                 cell.isSelected = true
-                if false {
+                if true {
                     // shows menu sheet view controller
-                    self.showMessageMenuSheet(for: message, cell: cell)
+                    self.showMessageMenuSheet(for: message, reaction: reaction, cell: cell)
                 } else {
                     self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
                 }
@@ -668,7 +675,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The `JMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
-        open func showMessageMenuSheet(for message: JMessage, cell: UITableViewCell) {
+        open func showMessageMenuSheet(for message: JMessage, reaction: JMessageReaction? = nil, cell: UITableViewCell) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
             
             guard let parentViewController = self.baseDataSource?.baseChannelModule(
@@ -676,8 +683,9 @@ extension SBUBaseChannelModule {
                 parentViewControllerDisplayMenuItems: messageMenuItems
             ) else { return }
             
-            let useReaction = false//SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
-            let menuSheetVC = SBUMenuSheetViewController(message: message, items: messageMenuItems, useReaction: useReaction)
+            let useReaction = true//SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
+            
+            let menuSheetVC = SBUMenuSheetViewController(message: message, reaction: reaction, items: messageMenuItems, useReaction: useReaction)
             menuSheetVC.modalPresentationStyle = .custom
             menuSheetVC.transitioningDelegate = parentViewController as? UIViewControllerTransitioningDelegate
             parentViewController.present(menuSheetVC, animated: true)
@@ -941,8 +949,8 @@ extension SBUBaseChannelModule {
         ///   - cell: Message cell object
         ///   - message: Message object
         ///   - indexPath: indexpath of cell
-        open func setLongTapGesture(_ cell: UITableViewCell, message: JMessage, indexPath: IndexPath) {
-            self.baseDelegate?.baseChannelModule(self, didLongTapMessage: message, forRowAt: indexPath)
+        open func setLongTapGesture(_ cell: UITableViewCell, message: JMessage, reaction: JMessageReaction? = nil,  indexPath: IndexPath) {
+            self.baseDelegate?.baseChannelModule(self, didLongTapMessage: message, reaction: reaction, forRowAt: indexPath)
         }
         
         /// This function sets the user profile tap gesture handling.

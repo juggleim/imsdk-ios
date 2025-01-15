@@ -752,7 +752,7 @@ extension SBUGroupChannelModule {
         /// Updates `suggestedMentionList` with `members`
         open func updateSuggestedMentionList(with members: [SBUUser]) {
             var filteredMembers = members.filter {
-                ($0.userId != SBUGlobals.currentUser?.userId)
+                ($0.userId != JIM.shared().currentUserId)
             }
             
             if filteredMembers.count > 15 {

@@ -33,7 +33,8 @@ open class SBUMediaMessageCell: SBUContentBaseMessageCell {
         // + ------------------- +
         
         self.mainContainerView.setStack([
-            self.baseFileContentView
+            self.baseFileContentView,
+            self.reactionView
         ])
     }
     

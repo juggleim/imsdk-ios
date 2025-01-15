@@ -98,6 +98,8 @@ open class SBUBaseChannelViewModel: NSObject {
     /// This object has a list of all messages.
     @SBUAtomic public internal(set) var fullMessageList: [JMessage] = []
     
+    @SBUAtomic public internal(set) var reactionList: [JMessageReaction] = []
+    
     /// This object is used to check if current user is an operator.
     public var isOperator: Bool {
 //        if let groupChannel = self.channel as? GroupChannel {
@@ -563,6 +565,35 @@ open class SBUBaseChannelViewModel: NSObject {
         return []
     }
     
+    func loadMessageReaction(messages: [JMessage]?) {
+        guard let messages = messages, messages.count > 0 else {
+            return
+        }
+        let conversation = messages.first?.conversation
+        var messageIdList: [String] = []
+        for message in messages {
+            messageIdList.append(message.messageId)
+        }
+        JIM.shared().messageManager.getMessagesReaction(messageIdList, conversation: conversation) { reactionList in
+            guard let reactionList = reactionList, reactionList.count > 0 else {
+                return
+            }
+            reactionList.forEach { reaction in
+                if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                    self.reactionList.remove(at: index)
+                }
+                self.reactionList.append(reaction)
+                self.baseDelegate?.baseChannelViewModel(
+                    self,
+                    didChangeMessageList: self.fullMessageList,
+                    needsToReload: true,
+                    initialLoad: self.isInitialLoading
+                )
+            }
+        } error: { code in
+        }
+    }
+    
     /// This function upserts the messages in the list.
     /// - Parameters:
     ///   - messages: Message array to upsert
@@ -732,39 +763,23 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - didSelect: set reaction state
     /// - Since: 1.1.0
     public func setReaction(message: JMessage, emojiKey: String, didSelect: Bool) {
-//        if didSelect {
-//            SBULog.info("[Request] Add Reaction")
-//            self.channel?.addReaction(with: message, key: emojiKey) { reactionEvent, error in
-//                // INFO:
-//                // In **super group channel limited mode**, current user can only addReaction and never deleteReaction.
-//                // If currentUser reacts to an already reacted emoji, the request succeeds, but Chat SDK returns a decoding error (80000).
-//                // (the response doesn't contain "updated_at" field, but Chat SDK tries to decode this as a non-optional property)
-//                if let error = error {
-//                    self.baseDelegate?.didReceiveError(error, isBlocker: false)
-//                }
-//
-//                SBULog.info("[Response] \(reactionEvent?.key ?? "") reaction")
-//                guard let reactionEvent = reactionEvent else { return }
-//                if reactionEvent.messageId == message.messageId {
-//                    message.apply(reactionEvent)
-//                }
-//                self.baseDelegate?.baseChannelViewModel(self, didUpdateReaction: reactionEvent, forMessage: message)
-//            }
-//        } else {
-//            SBULog.info("[Request] Delete Reaction")
-//            self.channel?.deleteReaction(with: message, key: emojiKey) { reactionEvent, error in
-//                if let error = error {
-//                    self.baseDelegate?.didReceiveError(error, isBlocker: false)
-//                }
-//
-//                SBULog.info("[Response] \(reactionEvent?.key ?? "") reaction")
-//                guard let reactionEvent = reactionEvent else { return }
-//                if reactionEvent.messageId == message.messageId {
-//                    message.apply(reactionEvent)
-//                }
-//                self.baseDelegate?.baseChannelViewModel(self, didUpdateReaction: reactionEvent, forMessage: message)
-//            }
-//        }
+        var emojiUtf16: String
+        if emojiKey.starts(with: "%u") {
+            emojiUtf16 = emojiKey
+        } else {
+            emojiUtf16 = EmojiManager.emojiToUtf16(emojiKey)
+        }
+        if didSelect {
+            SBULog.info("[Request] Add Reaction")
+            JIM.shared().messageManager.addMessageReaction(message.messageId, conversation: message.conversation, reactionId: emojiUtf16) {
+            } error: { code in
+            }
+        } else {
+            SBULog.info("[Request] Delete Reaction")
+            JIM.shared().messageManager.removeMessageReaction(message.messageId, conversation: message.conversation, reactionId: emojiUtf16) {
+            } error: { code in
+            }
+        }
     }
     
     // MARK: - Common

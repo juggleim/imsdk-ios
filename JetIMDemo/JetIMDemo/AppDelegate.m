@@ -120,11 +120,13 @@
     }];
 }
 
-- (void)messageReactionDidAdd:(JMessageReaction *)reaction {
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction
+               inConversation:(JConversation *)conversation {
     NSLog(@"messageReactionDidAdd, original messageId is %@", reaction.messageId);
 }
 
-- (void)messageReactionDidRemove:(JMessageReaction *)reaction {
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction
+                  inConversation:(JConversation *)conversation {
     NSLog(@"messageReactionDidRemove, original messageId is %@", reaction.messageId);
 }
 

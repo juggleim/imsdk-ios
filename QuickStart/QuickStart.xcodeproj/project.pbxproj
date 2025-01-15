@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46652C36834AAD292F03E628 /* Pods_QuickStart.framework */; };
+		A024C3A32D366FBE005C369C /* SBUEmojiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39D2D366FBE005C369C /* SBUEmojiListViewController.swift */; };
+		A024C3A42D366FBE005C369C /* SBUMessageReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39E2D366FBE005C369C /* SBUMessageReactionView.swift */; };
+		A024C3A52D366FBE005C369C /* SBUParentMessageInfoReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39F2D366FBE005C369C /* SBUParentMessageInfoReactionView.swift */; };
+		A024C3A62D366FBE005C369C /* SBUReactionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3A02D366FBE005C369C /* SBUReactionCollectionViewCell.swift */; };
+		A024C3A72D366FBE005C369C /* SBUReactionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3A12D366FBE005C369C /* SBUReactionsViewController.swift */; };
+		A024C3AB2D3680FF005C369C /* EmojiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3AA2D3680FF005C369C /* EmojiManager.swift */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -332,6 +338,12 @@
 
 /* Begin PBXFileReference section */
 		46652C36834AAD292F03E628 /* Pods_QuickStart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuickStart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A024C39D2D366FBE005C369C /* SBUEmojiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUEmojiListViewController.swift; sourceTree = "<group>"; };
+		A024C39E2D366FBE005C369C /* SBUMessageReactionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageReactionView.swift; sourceTree = "<group>"; };
+		A024C39F2D366FBE005C369C /* SBUParentMessageInfoReactionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUParentMessageInfoReactionView.swift; sourceTree = "<group>"; };
+		A024C3A02D366FBE005C369C /* SBUReactionCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUReactionCollectionViewCell.swift; sourceTree = "<group>"; };
+		A024C3A12D366FBE005C369C /* SBUReactionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUReactionsViewController.swift; sourceTree = "<group>"; };
+		A024C3AA2D3680FF005C369C /* EmojiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiManager.swift; sourceTree = "<group>"; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -686,6 +698,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A024C3A22D366FBE005C369C /* Reaction */ = {
+			isa = PBXGroup;
+			children = (
+				A024C39D2D366FBE005C369C /* SBUEmojiListViewController.swift */,
+				A024C39E2D366FBE005C369C /* SBUMessageReactionView.swift */,
+				A024C39F2D366FBE005C369C /* SBUParentMessageInfoReactionView.swift */,
+				A024C3A02D366FBE005C369C /* SBUReactionCollectionViewCell.swift */,
+				A024C3A12D366FBE005C369C /* SBUReactionsViewController.swift */,
+			);
+			path = Reaction;
+			sourceTree = "<group>";
+		};
 		A02FA3B02D157D0F002A4E0B /* QRCode */ = {
 			isa = PBXGroup;
 			children = (
@@ -991,6 +1015,7 @@
 				A07F39982BF4A2240087920B /* SBUToastView.swift */,
 				A07F399D2BF4A2240087920B /* SBUVoiceRecorder.swift */,
 				A07F399E2BF4A2240087920B /* SBUPermissionManager.swift */,
+				A024C3AA2D3680FF005C369C /* EmojiManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -1451,6 +1476,7 @@
 		A0968C092C2B020200E68790 /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				A024C3A22D366FBE005C369C /* Reaction */,
 				A0968C0A2C2B020200E68790 /* ViewModel */,
 				A0968C0E2C2B020200E68790 /* SBUBaseChannelViewController.swift */,
 				A0968C0F2C2B020200E68790 /* MessageCell */,
@@ -1846,6 +1872,7 @@
 				A07F3B6C2BF4A2270087920B /* MessageTemplateRenderer.swift in Sources */,
 				A07F3B4D2BF4A2260087920B /* Array+SBUIKit.swift in Sources */,
 				A07F3B6E2BF4A2270087920B /* SBUToastType.swift in Sources */,
+				A024C3AB2D3680FF005C369C /* EmojiManager.swift in Sources */,
 				A0A3A53F2D12CD1F009AD7C3 /* FriendApplicationUserCell.swift in Sources */,
 				A07F3B9A2BF4A2270087920B /* SBUConfig.swift in Sources */,
 				A07F3C802BF4A2290087920B /* SBUCommonItem.swift in Sources */,
@@ -1888,6 +1915,7 @@
 				A07F3C942BF4A2290087920B /* SBULoading.swift in Sources */,
 				A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */,
 				A06388CD2CA59644006357C7 /* SBUQuotedUserMessageView.swift in Sources */,
+				A024C3A62D366FBE005C369C /* SBUReactionCollectionViewCell.swift in Sources */,
 				A07F3B9D2BF4A2270087920B /* SBUConfig.GroupChannel.swift in Sources */,
 				A07F3C8D2BF4A2290087920B /* SBUBottomSheetController.swift in Sources */,
 				A07F3C832BF4A2290087920B /* SBUNavigationTitleView.swift in Sources */,
@@ -1952,6 +1980,7 @@
 				A0968CB12C2B03DA00E68790 /* SBUBaseChannelModule.Input.swift in Sources */,
 				A0968C982C2B020300E68790 /* SBUNewMessageInfo.swift in Sources */,
 				A0C45D6F2C591CC600B68B96 /* JCUser.swift in Sources */,
+				A024C3A42D366FBE005C369C /* SBUMessageReactionView.swift in Sources */,
 				A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */,
 				A06388B52CA417B6006357C7 /* SBUBaseChannelSettingsModule.Header.swift in Sources */,
 				A0968C952C2B020300E68790 /* SBUFileViewController.swift in Sources */,
@@ -2025,6 +2054,7 @@
 				A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */,
 				A0968C9A2C2B020300E68790 /* SBUChannelTitleView.swift in Sources */,
 				A0B4C3AE2C639DCB005AFCEC /* ChannelViewController.swift in Sources */,
+				A024C3A52D366FBE005C369C /* SBUParentMessageInfoReactionView.swift in Sources */,
 				A090B0B72C3EB48C00FE0E10 /* SBUOpenChannelImageContentView.swift in Sources */,
 				A07F3B7F2BF4A2270087920B /* SBUGroupChannelListViewModel.swift in Sources */,
 				A0968C9F2C2B02EF00E68790 /* SBUGroupChannelViewModel.swift in Sources */,
@@ -2045,6 +2075,7 @@
 				A0968C942C2B020300E68790 /* SBUNotificationTimelineView.swift in Sources */,
 				A0A3A5452D142862009AD7C3 /* BaseNotifyMessageCell.swift in Sources */,
 				A0968C852C2B020300E68790 /* SBUMentionLimitGuideCell.swift in Sources */,
+				A024C3A32D366FBE005C369C /* SBUEmojiListViewController.swift in Sources */,
 				A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
 				A0968C912C2B020300E68790 /* SBUMessageDateView.swift in Sources */,
@@ -2068,6 +2099,7 @@
 				A0968C8F2C2B020300E68790 /* SBUUserNameView.swift in Sources */,
 				A0A3A5392D082037009AD7C3 /* MultiCallUserCell.m in Sources */,
 				A07F3C7A2BF4A2290087920B /* SBUEmptyView.swift in Sources */,
+				A024C3A72D366FBE005C369C /* SBUReactionsViewController.swift in Sources */,
 				A047D7E12C245A7D00E50BCF /* MySettingsCell.swift in Sources */,
 				A07F3C9F2BF4A2290087920B /* SBUQuotedMessageViewProtocol.swift in Sources */,
 				A07F3B622BF4A2270087920B /* UITextField+SBUIKit.swift in Sources */,

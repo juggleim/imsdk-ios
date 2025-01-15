@@ -733,18 +733,23 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     // MARK: - SBUGroupChannelModuleListDelegate
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-//        guard let currentUser = SBUGlobals.currentUser,
-//              let message = messageCell.message else { return }
+        guard let message = messageCell.message else { return }
+        
+        var shouldSelect = true
+        if let _ = self.viewModel?.reactionList.first(where: { $0.messageId == message.messageId })?.itemList.first(where: { $0.reactionId == emojiKey })?.userInfoList.first(where: { $0.userId == JIM.shared().currentUserId }) {
+            shouldSelect = false
+        }
         
 //        let shouldSelect = message.reactions.first { $0.key == emojiKey }?
 //            .userIds.contains(currentUser.userId) == false
-//        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
+        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didLongTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
+        //TODO: reaction
 //        guard let conversationInfo = self.conversationInfo,
 //              let message = messageCell.message else { return }
-        
+//        
 //        let reaction = message.reactions.first { $0.key == emojiKey }
 //        let reactionsVC = SBUReactionsViewController(
 //            channel: channel,

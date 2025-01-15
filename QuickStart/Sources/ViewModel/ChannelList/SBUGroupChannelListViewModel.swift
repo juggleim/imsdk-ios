@@ -91,7 +91,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         }
         
         let count = self.conversationInfoList.count
-        let startTime = count > 0 ? self.conversationInfoList[count-1].sortTime : 0
+        let startTime = count > 0 ? self.conversationInfoList[0].sortTime : 0
         let newConversationInfoList: [JConversationInfo]
         if let types = self.conversationTypes {
             newConversationInfoList = JIM.shared().conversationManager.getConversationInfoList(withTypes: types, count: SBUGroupChannelListViewModel.channelLoadLimit, timestamp: startTime, direction: .older)

@@ -262,6 +262,14 @@ extension SBUUtils {
         return messageList.firstIndex(where: { $0.clientMsgNo == message.clientMsgNo })
     }
     
+    static func findIndex(ofReaction reaction: JMessageReaction, in reactionList: [JMessageReaction]) -> Int? {
+        return reactionList.firstIndex(where: {$0.messageId == reaction.messageId})
+    }
+    
+    static func findIndex(ofUser user: JUserInfo, in userList: [JUserInfo]) -> Int? {
+        return userList.firstIndex(where: {$0.userId == user.userId})
+    }
+    
     static func contains(clientMsgNo: Int64, in messageList: [JMessage]) -> Bool {
         return messageList.contains(where: { $0.clientMsgNo == clientMsgNo })
     }
