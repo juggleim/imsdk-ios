@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JuggleIM'
-  s.version          = '1.8.3.1'
+  s.version          = '1.8.5'
   s.summary          = 'Juggle IM SDK.'
 
 # This description is used to generate tags and improve search results.
@@ -21,10 +21,10 @@ Pod::Spec.new do |s|
 Juggle IM SDK for iOS.
                        DESC
 
-  s.homepage         = 'https://www.jugglechat.com/'
+  s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggleim.com/libs/ios/JuggleIM_v1_8_3_1.zip' }
+  s.source           = { :http => 'https://downloads.juggleim.com/libs/ios/JuggleIM_v1_8_5.zip' }
 
   s.ios.deployment_target = '12.0'
   
