@@ -469,7 +469,6 @@
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode))errorBlock;
 
-
 /// 取消下载消息
 /// - Parameter messageId: 消息 id
 - (void)cancelDownloadMediaMessage:(NSString *)messageId;
