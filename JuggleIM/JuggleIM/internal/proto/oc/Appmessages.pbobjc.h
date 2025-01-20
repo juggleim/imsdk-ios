@@ -1987,6 +1987,7 @@ typedef GPB_ENUM(MentionMsg_FieldNumber) {
   MentionMsg_FieldNumber_SenderId = 1,
   MentionMsg_FieldNumber_MsgId = 2,
   MentionMsg_FieldNumber_MsgTime = 3,
+  MentionMsg_FieldNumber_MentionType = 4,
 };
 
 GPB_FINAL @interface MentionMsg : GPBMessage
@@ -1997,7 +1998,21 @@ GPB_FINAL @interface MentionMsg : GPBMessage
 
 @property(nonatomic, readwrite) int64_t msgTime;
 
+@property(nonatomic, readwrite) MentionType mentionType;
+
 @end
+
+/**
+ * Fetches the raw value of a @c MentionMsg's @c mentionType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t MentionMsg_MentionType_RawValue(MentionMsg *message);
+/**
+ * Sets the raw value of an @c MentionMsg's @c mentionType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value);
 
 #pragma mark - QryMentionMsgsReq
 

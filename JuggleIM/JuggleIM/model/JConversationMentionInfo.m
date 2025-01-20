@@ -7,17 +7,13 @@
 
 #import "JConversationMentionInfo.h"
 
-
-
 #define jConversationMentionInfoMsgs                @"mentionMsgs"
 #define jConversationMentionMessageSenderId         @"senderId"
 #define jConversationMentionMessageMsgId            @"msgId"
 #define jConversationMentionMessageMsgTime          @"msgTime"
-
+#define jConversationMentionMessageType             @"type"
 
 @implementation JConversationMentionMessage
-
-
 - (BOOL)isEqual:(id)object{
     if ([object isKindOfClass:self.class]) {
         JConversationMentionMessage * it = (JConversationMentionMessage *)object;
@@ -26,13 +22,9 @@
         return [super isEqual:object];
     }
 }
-
-
 @end
 
-
 @implementation JConversationMentionInfo
-
 - (NSString *)encodeToJson {
     NSMutableDictionary *dic = [NSMutableDictionary dictionary];
     if (self.mentionMsgList.count > 0) {
@@ -42,6 +34,7 @@
             [msg setObject:mentionMessage.senderId ? : @"" forKey:jConversationMentionMessageSenderId];
             [msg setObject:mentionMessage.msgId ? : @"" forKey:jConversationMentionMessageMsgId];
             [msg setObject:@(mentionMessage.msgTime) forKey:jConversationMentionMessageMsgTime];
+            [msg setObject:@(mentionMessage.type) forKey:jConversationMentionMessageType];
             [msgs addObject:msg];
         }
         [dic setObject:msgs forKey:jConversationMentionInfoMsgs];
@@ -71,6 +64,12 @@
                 mentionMessage.msgTime = msgTime.longLongValue;
             }else{
                 mentionMessage.msgTime = 0;
+            }
+            NSNumber *type = msg[jConversationMentionMessageType];
+            if (type) {
+                mentionMessage.type = type.intValue;
+            } else {
+                mentionMessage.type = JMentionTypeDefault;
             }
             [msgs addObject:mentionMessage];
         }

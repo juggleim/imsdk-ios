@@ -867,6 +867,7 @@
             msg.senderId = message.senderUserId;
             msg.msgId = message.messageId;
             msg.msgTime = message.timestamp;
+            msg.type = message.mentionInfo.type;
             [msgs addObject:msg];
             mentionInfo = [[JConversationMentionInfo alloc] init];
             mentionInfo.mentionMsgList = msgs;

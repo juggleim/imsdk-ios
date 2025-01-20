@@ -5567,9 +5567,11 @@ typedef struct Mentions__storage_ {
 @dynamic senderId;
 @dynamic msgId;
 @dynamic msgTime;
+@dynamic mentionType;
 
 typedef struct MentionMsg__storage_ {
   uint32_t _has_storage_[1];
+  MentionType mentionType;
   NSString *senderId;
   NSString *msgId;
   int64_t msgTime;
@@ -5609,6 +5611,15 @@ typedef struct MentionMsg__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
       },
+      {
+        .name = "mentionType",
+        .dataTypeSpecific.enumDescFunc = MentionType_EnumDescriptor,
+        .number = MentionMsg_FieldNumber_MentionType,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(MentionMsg__storage_, mentionType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(MentionMsg)
@@ -5620,7 +5631,7 @@ typedef struct MentionMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\005\000\003\007\000";
+        "\004\001\010\000\002\005\000\003\007\000\004\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -5632,6 +5643,18 @@ typedef struct MentionMsg__storage_ {
 }
 
 @end
+
+int32_t MentionMsg_MentionType_RawValue(MentionMsg *message) {
+  GPBDescriptor *descriptor = [MentionMsg descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MentionMsg_FieldNumber_MentionType];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value) {
+  GPBDescriptor *descriptor = [MentionMsg descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:MentionMsg_FieldNumber_MentionType];
+  GPBSetMessageRawEnumField(message, field, value);
+}
 
 #pragma mark - QryMentionMsgsReq
 

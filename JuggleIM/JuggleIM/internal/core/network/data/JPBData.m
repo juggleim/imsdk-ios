@@ -1971,6 +1971,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     mentionMessage.senderId = mentionMsg.senderId;
     mentionMessage.msgId = mentionMsg.msgId;
     mentionMessage.msgTime = mentionMsg.msgTime;
+    mentionMessage.type = (JMentionType)mentionMsg.mentionType;
     return mentionMessage;
 }
 
