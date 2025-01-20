@@ -138,6 +138,8 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - message: The message that the selected menu item belongs to.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage)
     
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapForwardMessage message: JMessage)
+    
     /// Called when a user selects the *save* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
@@ -794,6 +796,9 @@ extension SBUBaseChannelModule {
                 let recall = self.createRecallMenuItem(for: message)
                 items.append(recall)
             }
+            
+            let forward = self.createForwardMenuItem(for: message)
+            items.append(forward)
             return items
         }
         
@@ -829,6 +834,22 @@ extension SBUBaseChannelModule {
             ) { [weak self, message] in
                 guard let self = self else { return }
                 self.showDeleteMessageAlert(on: message)
+            }
+            menuItem.isEnabled = true//message.threadInfo.replyCount == 0
+            return menuItem
+        }
+        
+        open func createForwardMenuItem(for message: JMessage) -> SBUMenuItem {
+            let menuItem = SBUMenuItem(
+                title: SBUStringSet.Forward,
+                color: theme?.menuTextColor,
+                image: SBUIconSetType.iconThread.image(
+                    with: SBUTheme.componentTheme.alertButtonColor,
+                    to: SBUIconSetType.Metric.iconActionSheetItem
+                )
+            ) { [weak self, message] in
+                guard let self = self else { return }
+                self.baseDelegate?.baseChannelModule(self, didTapForwardMessage: message)
             }
             menuItem.isEnabled = true//message.threadInfo.replyCount == 0
             return menuItem

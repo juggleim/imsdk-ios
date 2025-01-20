@@ -19,6 +19,7 @@ public class SBUStringSet {
     public static var Save = "Save"
     public static var Copy = "Copy"
     public static var Delete = "Delete"
+    public static var Forward = "Forward"
     public static var Recall = "Recall"
     public static var Edit = "Edit"
     public static var Remove = "Remove"

@@ -768,6 +768,15 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         self.setMessageInputViewMode(.edit, message: message)
     }
     
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapForwardMessage message: JMessage) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
+            let vc = ForwardSelectViewController.init(messageContent: message.content)
+            let navi = UINavigationController.init(rootViewController: vc)
+            navi.modalPresentationStyle = .fullScreen
+            self.present(navi, animated: true)
+        }
+    }
+    
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage) {
         self.baseViewModel?.deleteMessage(message: message)
     }

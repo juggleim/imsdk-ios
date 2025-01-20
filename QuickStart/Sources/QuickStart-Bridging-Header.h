@@ -11,3 +11,4 @@
 #import "BaseSelectTableViewCell.h"
 #import "QRCodeViewController.h"
 #import "PersonDetailViewController.h"
+#import "ForwardSelectViewController.h"
