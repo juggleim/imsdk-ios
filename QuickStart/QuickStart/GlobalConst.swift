@@ -20,5 +20,6 @@ public class GlobalConst {
         case eightToTwelve = 1
         case nineteenToTwenty = 2
         case twentyThreeToSix = 3
+        case allDay = 4
     }
 }

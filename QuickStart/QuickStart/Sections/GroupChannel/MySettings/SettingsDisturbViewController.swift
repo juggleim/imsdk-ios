@@ -24,17 +24,24 @@ class SettingsDisturbViewController: BaseTableListViewController {
         SBULoading.start()
         JIM.shared().messageManager.getMuteStatus { code, isMute, timezone, periods in
             SBULoading.stop()
-            self.disturbTime = .noDisturb
-            if let periods = periods {
-                if periods.count > 0 {
-                    let period = periods.first
-                    if period?.startTime == "08:00" {
-                        self.disturbTime = .eightToTwelve
-                    } else if period?.startTime == "19:00" {
-                        self.disturbTime = .nineteenToTwenty
-                    } else if period?.startTime == "23:00" {
-                        self.disturbTime = .twentyThreeToSix
+            if !isMute {
+                self.disturbTime = .noDisturb
+            } else {
+                if let periods = periods {
+                    if periods.count > 0 {
+                        let period = periods.first
+                        if period?.startTime == "08:00" {
+                            self.disturbTime = .eightToTwelve
+                        } else if period?.startTime == "19:00" {
+                            self.disturbTime = .nineteenToTwenty
+                        } else if period?.startTime == "23:00" {
+                            self.disturbTime = .twentyThreeToSix
+                        }
+                    } else {
+                        self.disturbTime = .allDay
                     }
+                } else {
+                    self.disturbTime = .allDay
                 }
             }
             self.tableView.reloadData()
@@ -48,7 +55,7 @@ class SettingsDisturbViewController: BaseTableListViewController {
 
 extension SettingsDisturbViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        4
+        5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -63,13 +70,14 @@ extension SettingsDisturbViewController: UITableViewDataSource, UITableViewDeleg
         if indexPath.row == 0 {
             cell.leftLabel.text = "允许通知"
         } else if indexPath.row == 1 {
-            cell.leftLabel.text = "08:00 ~ 12:00"
+            cell.leftLabel.text = "免打扰时段 08:00 ~ 12:00"
         } else if indexPath.row == 2 {
-            cell.leftLabel.text = "19:00 ~ 20:00"
+            cell.leftLabel.text = "免打扰时段 19:00 ~ 20:00"
         } else if indexPath.row == 3 {
-            cell.leftLabel.text = "23:00 ~ 06:00"
+            cell.leftLabel.text = "免打扰时段 23:00 ~ 06:00"
+        } else if indexPath.row == 4 {
+            cell.leftLabel.text = "全天免打扰"
         }
-        
         
         return cell
     }

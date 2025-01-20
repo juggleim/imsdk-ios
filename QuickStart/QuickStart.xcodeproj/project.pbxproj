@@ -14,6 +14,9 @@
 		A024C3A62D366FBE005C369C /* SBUReactionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3A02D366FBE005C369C /* SBUReactionCollectionViewCell.swift */; };
 		A024C3A72D366FBE005C369C /* SBUReactionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3A12D366FBE005C369C /* SBUReactionsViewController.swift */; };
 		A024C3AB2D3680FF005C369C /* EmojiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3AA2D3680FF005C369C /* EmojiManager.swift */; };
+		A024C3B92D3E456E005C369C /* ForwardSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3B82D3E456E005C369C /* ForwardSelectViewController.m */; };
+		A024C3BC2D3E65AA005C369C /* ForwardSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */; };
+		A024C3BF2D3E8930005C369C /* ForwardAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BE2D3E8930005C369C /* ForwardAlertView.m */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -344,6 +347,12 @@
 		A024C3A02D366FBE005C369C /* SBUReactionCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUReactionCollectionViewCell.swift; sourceTree = "<group>"; };
 		A024C3A12D366FBE005C369C /* SBUReactionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUReactionsViewController.swift; sourceTree = "<group>"; };
 		A024C3AA2D3680FF005C369C /* EmojiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiManager.swift; sourceTree = "<group>"; };
+		A024C3B72D3E456E005C369C /* ForwardSelectViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardSelectViewController.h; sourceTree = "<group>"; };
+		A024C3B82D3E456E005C369C /* ForwardSelectViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardSelectViewController.m; sourceTree = "<group>"; };
+		A024C3BA2D3E65AA005C369C /* ForwardSelectCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardSelectCell.h; sourceTree = "<group>"; };
+		A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardSelectCell.m; sourceTree = "<group>"; };
+		A024C3BD2D3E8930005C369C /* ForwardAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardAlertView.h; sourceTree = "<group>"; };
+		A024C3BE2D3E8930005C369C /* ForwardAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardAlertView.m; sourceTree = "<group>"; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -772,6 +781,12 @@
 				A0A3A5462D142C78009AD7C3 /* FriendNotifyMessageCell.swift */,
 				A098CD732D144E9F000579A0 /* UnknownMessageCell.swift */,
 				A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */,
+				A024C3B72D3E456E005C369C /* ForwardSelectViewController.h */,
+				A024C3B82D3E456E005C369C /* ForwardSelectViewController.m */,
+				A024C3BA2D3E65AA005C369C /* ForwardSelectCell.h */,
+				A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */,
+				A024C3BD2D3E8930005C369C /* ForwardAlertView.h */,
+				A024C3BE2D3E8930005C369C /* ForwardAlertView.m */,
 			);
 			path = Channels;
 			sourceTree = "<group>";
@@ -1949,6 +1964,7 @@
 				A07F3C912BF4A2290087920B /* SBUMarginView.swift in Sources */,
 				A07F3C0C2BF4A2280087920B /* SBUColorSet.swift in Sources */,
 				A07F3B6B2BF4A2270087920B /* MessageTemplateParser.swift in Sources */,
+				A024C3BF2D3E8930005C369C /* ForwardAlertView.m in Sources */,
 				A0968C9E2C2B02EF00E68790 /* SBUBaseChannelViewModel.swift in Sources */,
 				A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */,
 				A0A3A5412D1418A5009AD7C3 /* GlobalConst.swift in Sources */,
@@ -2015,6 +2031,7 @@
 				A0968C922C2B020300E68790 /* SBULinkClickableTextView.swift in Sources */,
 				A06388CF2CA59644006357C7 /* SBUQuotedBaseMessageViewParams.swift in Sources */,
 				A07F3C952BF4A2290087920B /* SBUCollectionViewFlowLayout.swift in Sources */,
+				A024C3BC2D3E65AA005C369C /* ForwardSelectCell.m in Sources */,
 				A07F3C972BF4A2290087920B /* SBUViewControllerSet.swift in Sources */,
 				A07950232D1E8FD00045EFE9 /* UserListCollectionView.m in Sources */,
 				A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */,
@@ -2138,6 +2155,7 @@
 				A0968C662C2B020300E68790 /* SBUAdminMessageCellParams.swift in Sources */,
 				A07F3B722BF4A2270087920B /* SBUCacheManager.Template.swift in Sources */,
 				A0968C892C2B020300E68790 /* SBUQuoteMessageInputViewParams.swift in Sources */,
+				A024C3B92D3E456E005C369C /* ForwardSelectViewController.m in Sources */,
 				A09645CC2BF36BD000290775 /* SceneDelegate.swift in Sources */,
 				A07F3C0F2BF4A2280087920B /* SBUTheme.swift in Sources */,
 				A07F3B542BF4A2260087920B /* JMessage+SBUIKit.swift in Sources */,

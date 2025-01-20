@@ -11,6 +11,7 @@
 #import <Masonry/Masonry.h>
 #import "QuickStart-Swift.h"
 #import "UIView+MBProgressHUD.h"
+#import "ForwardSelectViewController.h"
 
 @interface QRCodeViewController ()
 @property (nonatomic, strong) UIView *qrBgView;
@@ -107,40 +108,11 @@
 
 - (void)didShareAction {
     UIImage *image = [self captureCurrentView:self.qrBgView];
-//    RCImageMessage *msg = [RCImageMessage messageWithImage:image];
-//    msg.full = YES;
-//    RCMessage *message = [[RCMessage alloc] initWithType:self.type
-//                                                targetId:self.targetId
-//                                               direction:(MessageDirection_SEND)
-//                                               messageId:-1
-//                                                 content:msg];
-//    [[RCDForwardManager sharedInstance]
-//        setWillForwardMessageBlock:^(RCConversationType type, NSString *_Nonnull targetId) {
-//            [[RCIM sharedRCIM] sendMediaMessage:type
-//                targetId:targetId
-//                content:msg
-//                pushContent:nil
-//                pushData:nil
-//                progress:^(int progress, long messageId) {
-//
-//                }
-//                success:^(long messageId) {
-//
-//                }
-//                error:^(RCErrorCode errorCode, long messageId) {
-//
-//                }
-//                cancel:^(long messageId){
-//
-//                }];
-//        }];
-//    [RCDForwardManager sharedInstance].isForward = YES;
-//    [RCDForwardManager sharedInstance].isMultiSelect = NO;
-//    [RCDForwardManager sharedInstance].selectedMessages = @[ [RCMessageModel modelWithMessage:message] ];
-//    RCDForwardSelectedViewController *forwardSelectedVC = [[RCDForwardSelectedViewController alloc] init];
-//    UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:forwardSelectedVC];
-//    navi.modalPresentationStyle = UIModalPresentationFullScreen;
-//    [self.navigationController presentViewController:navi animated:YES completion:nil];
+    JImageMessage *msg = [[JImageMessage alloc] initWithImage:image];
+    ForwardSelectViewController *vc = [[ForwardSelectViewController alloc] initWithMessageContent:msg];
+    UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:vc];
+    navi.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self.navigationController presentViewController:navi animated:YES completion:nil];
 }
 
 - (UIImage *)captureCurrentView:(UIView *)view {
