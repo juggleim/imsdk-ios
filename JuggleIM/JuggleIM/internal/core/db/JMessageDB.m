@@ -716,6 +716,7 @@ NSString *const jFlags = @"flags";
         }
         if (existedVersion == 3 && jMessageTableVersion >= 4) {
             [self.dbHelper executeUpdate:kAlterAddFlags withArgumentsInArray:nil];
+            existedVersion = 4;
         }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];

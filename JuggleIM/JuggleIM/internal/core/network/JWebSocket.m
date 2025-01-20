@@ -1327,9 +1327,6 @@ inConversation:(JConversation *)conversation
     } else if ([obj isKindOfClass:[JRtcRoomArrayObj class]]) {
         JRtcRoomArrayObj *s = (JRtcRoomArrayObj *)obj;
         s.errorBlock(code);
-    } else if ([obj isKindOfClass:[JStringObj class]]) {
-        JStringObj *s = (JStringObj *)obj;
-        s.errorBlock(code);
     } else if ([obj isKindOfClass:[JMessageReactionObj class]]) {
         JMessageReactionObj *s = (JMessageReactionObj *)obj;
         s.errorBlock(code);

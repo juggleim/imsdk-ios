@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo;
-- (void)setMessageFlags:(int )flags
+- (void)setMessageFlags:(int)flags
           withMessageId:(NSString *)messageId;
 - (void)updateMessage:(JConcreteMessage *)message;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;

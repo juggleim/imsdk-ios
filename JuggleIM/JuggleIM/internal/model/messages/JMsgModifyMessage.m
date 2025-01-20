@@ -35,6 +35,4 @@
 + (JMessageFlag)flags {
     return JMessageFlagIsCmd;
 }
-
-
 @end

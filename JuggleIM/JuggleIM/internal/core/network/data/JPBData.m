@@ -1767,6 +1767,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
     }
     msg.flags = downMsg.flags;
+    msg.isEdit = msg.flags & JMessageFlagIsModified;
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
