@@ -16,6 +16,8 @@ enum MySettingsCellType: Int {
     case setLanguage
     case push
     case globalDisturb
+    case privacyPolicy
+    case userAgreement
 }
 
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
@@ -319,6 +321,14 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsDisturbViewController()
             self.navigationController?.pushViewController(vc, animated: true)
+        case .privacyPolicy:
+            self.tabBarController?.tabBar.isHidden = true
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: "隐私政策")
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .userAgreement:
+            self.tabBarController?.tabBar.isHidden = true
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: "用户政策")
+            self.navigationController?.pushViewController(vc, animated: true)
         case .none:
             break
         }
@@ -345,13 +355,21 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 let cell = getArrowCell()
                 cell.leftLabel.text = "全局免打扰"
                 return cell
+            case .privacyPolicy:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "隐私政策"
+                return cell
+            case .userAgreement:
+                let cell = getArrowCell()
+                cell.leftLabel.text = "用户协议"
+                return cell
             }
         }
         return UITableViewCell()
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
+        return 6
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {

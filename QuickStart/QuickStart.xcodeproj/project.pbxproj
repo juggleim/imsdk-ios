@@ -17,6 +17,7 @@
 		A024C3B92D3E456E005C369C /* ForwardSelectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3B82D3E456E005C369C /* ForwardSelectViewController.m */; };
 		A024C3BC2D3E65AA005C369C /* ForwardSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */; };
 		A024C3BF2D3E8930005C369C /* ForwardAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BE2D3E8930005C369C /* ForwardAlertView.m */; };
+		A024C3C12D3F9279005C369C /* SettingsWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -353,6 +354,7 @@
 		A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardSelectCell.m; sourceTree = "<group>"; };
 		A024C3BD2D3E8930005C369C /* ForwardAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardAlertView.h; sourceTree = "<group>"; };
 		A024C3BE2D3E8930005C369C /* ForwardAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardAlertView.m; sourceTree = "<group>"; };
+		A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWebViewController.swift; sourceTree = "<group>"; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -768,6 +770,7 @@
 				A05EDB1E2D2C078A006CE94B /* QRCodeViewController.m */,
 				A088BF762D2FF32800D59B7A /* SwitchAccountViewController.swift */,
 				A088BF782D3006BB00D59B7A /* SwitchAccountCell.swift */,
+				A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -1967,6 +1970,7 @@
 				A024C3BF2D3E8930005C369C /* ForwardAlertView.m in Sources */,
 				A0968C9E2C2B02EF00E68790 /* SBUBaseChannelViewModel.swift in Sources */,
 				A0C80D222C5B8D6600E55080 /* AddFriendViewController.swift in Sources */,
+				A024C3C12D3F9279005C369C /* SettingsWebViewController.swift in Sources */,
 				A0A3A5412D1418A5009AD7C3 /* GlobalConst.swift in Sources */,
 				A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */,
 				A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */,
