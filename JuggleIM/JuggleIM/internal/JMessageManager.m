@@ -1629,7 +1629,9 @@
 - (void)messageDidSend:(NSString *)messageId
                   time:(long long)timestamp
                  seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid {
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content {
     if (clientUid.length == 0) {
         return;
     }
@@ -1637,6 +1639,11 @@
                                                    messageId:messageId
                                                    timestamp:timestamp
                                                        seqNo:seqNo];
+    if (contentType && content) {
+        [self.core.dbManager updateMessageContent:content
+                                      contentType:contentType
+                                    withMessageId:messageId];
+    }
 }
 
 #pragma mark - internal
@@ -1785,7 +1792,7 @@
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
                               pushData:message.pushData
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
@@ -1795,6 +1802,12 @@
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        
+        if (contentType && content) {
+            [self.core.dbManager updateMessageContent:content contentType:contentType withMessageId:msgId];
+            message.content = content;
+            message.contentType = contentType;
+        }
         
         if([message.content isKindOfClass:[JMergeMessage class]]){
             JMergeMessage * mergeMessage = (JMergeMessage *)message.content;

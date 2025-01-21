@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JSendMessageObj : JBlockObj
 @property (nonatomic, assign) long long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo);
+@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode, long long clientMsgNo);
 @end
 

@@ -45,7 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)messageDidSend:(NSString *)messageId
                   time:(long long)timestamp
                  seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid;
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content;
 @end
 
 @protocol JWebSocketChatroomDelegate <NSObject>
@@ -111,7 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
 - (void)recallMessage:(NSString *)messageId
