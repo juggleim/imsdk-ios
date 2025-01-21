@@ -37,6 +37,7 @@
 GPBObjCClassDeclaration(ConnectAckMsgBody);
 GPBObjCClassDeclaration(ConnectMsgBody);
 GPBObjCClassDeclaration(DisconnectMsgBody);
+GPBObjCClassDeclaration(DownMsg);
 GPBObjCClassDeclaration(ImWebsocketMsg);
 GPBObjCClassDeclaration(PublishAckMsgBody);
 GPBObjCClassDeclaration(PublishMsgBody);
@@ -588,6 +589,7 @@ typedef struct PublishMsgBody__storage_ {
 @dynamic msgSeqNo;
 @dynamic memberCount;
 @dynamic clientMsgId;
+@dynamic hasModifiedMsg, modifiedMsg;
 
 typedef struct PublishAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -596,6 +598,7 @@ typedef struct PublishAckMsgBody__storage_ {
   int32_t memberCount;
   NSString *msgId;
   NSString *clientMsgId;
+  DownMsg *modifiedMsg;
   int64_t timestamp;
   int64_t msgSeqNo;
 } PublishAckMsgBody__storage_;
@@ -670,6 +673,15 @@ typedef struct PublishAckMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "modifiedMsg",
+        .dataTypeSpecific.clazz = GPBObjCClass(DownMsg),
+        .number = PublishAckMsgBody_FieldNumber_ModifiedMsg,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(PublishAckMsgBody__storage_, modifiedMsg),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(PublishAckMsgBody)
@@ -681,7 +693,7 @@ typedef struct PublishAckMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\003\005\000\005\010\000\006\013\000\007\013\000";
+        "\005\003\005\000\005\010\000\006\013\000\007\013\000\010\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

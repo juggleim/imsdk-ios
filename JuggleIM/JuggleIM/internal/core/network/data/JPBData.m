@@ -1492,6 +1492,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.timestamp = body.timestamp;
             a.seqNo = body.msgSeqNo;
             a.clientUid = body.clientMsgId;
+            if (body.hasModifiedMsg) {
+                JMessage *modifiedMsg = [self messageWithDownMsg:body.modifiedMsg];
+                a.contentType = modifiedMsg.contentType;
+                a.content = modifiedMsg.content;
+            }
             obj.publishMsgAck = a;
         }
             break;

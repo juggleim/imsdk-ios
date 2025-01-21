@@ -94,6 +94,8 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) long long seqNo;
 @property (nonatomic, copy) NSString *clientUid;
+@property (nonatomic, copy) NSString *contentType;
+@property (nonatomic, strong) JMessageContent *content;
 @end
 
 @interface JPublishMsgBody : NSObject
