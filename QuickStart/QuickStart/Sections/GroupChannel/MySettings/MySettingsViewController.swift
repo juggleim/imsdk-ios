@@ -13,7 +13,7 @@ import JuggleIM
 
 enum MySettingsCellType: Int {
     case qrcode
-    case setLanguage
+//    case setLanguage
     case push
     case globalDisturb
     case privacyPolicy
@@ -310,10 +310,10 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             let conversation = JConversation(conversationType: .private, conversationId: JIM.shared().currentUserId)
             let vc = QRCodeViewController(conversation: conversation)
             self.navigationController?.pushViewController(vc, animated: true)
-        case .setLanguage:
-            self.tabBarController?.tabBar.isHidden = true
-            let vc = SettingsLanguageViewController()
-            self.navigationController?.pushViewController(vc, animated: true)
+//        case .setLanguage:
+//            self.tabBarController?.tabBar.isHidden = true
+//            let vc = SettingsLanguageViewController()
+//            self.navigationController?.pushViewController(vc, animated: true)
         case .push:
             self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsPushViewController()
@@ -344,10 +344,10 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 let cell = getArrowCell()
                 cell.leftLabel.text = "我的二维码"
                 return cell
-            case .setLanguage:
-                let cell = getArrowCell()
-                cell.leftLabel.text = "语言设置"
-                return cell
+//            case .setLanguage:
+//                let cell = getArrowCell()
+//                cell.leftLabel.text = "语言设置"
+//                return cell
             case .push:
                 let cell = getArrowCell()
                 cell.leftLabel.text = "推送设置"
@@ -370,7 +370,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return 5
     }
     
     private func getArrowCell() -> BaseSettingTableViewCell {
