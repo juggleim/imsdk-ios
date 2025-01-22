@@ -8,7 +8,7 @@
 import Foundation
 
 class ProfileManager: NSObject {
-    static let shared = ProfileManager()
+    @objc static let shared = ProfileManager()
     
-    var currentUserInfo: JCUser?
+    @objc var currentUserInfo: JCUser?
 }

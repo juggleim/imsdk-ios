@@ -12,3 +12,4 @@
 #import "QRCodeViewController.h"
 #import "PersonDetailViewController.h"
 #import "ForwardSelectViewController.h"
+#import "SettingsMeViewController.h"

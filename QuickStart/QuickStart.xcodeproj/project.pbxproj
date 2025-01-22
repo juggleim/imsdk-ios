@@ -18,6 +18,9 @@
 		A024C3BC2D3E65AA005C369C /* ForwardSelectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */; };
 		A024C3BF2D3E8930005C369C /* ForwardAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3BE2D3E8930005C369C /* ForwardAlertView.m */; };
 		A024C3C12D3F9279005C369C /* SettingsWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */; };
+		A024C3C42D411EFD005C369C /* SettingsMeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C32D411EFD005C369C /* SettingsMeViewController.m */; };
+		A024C3CA2D41327E005C369C /* UIImage+JImage.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C92D41327E005C369C /* UIImage+JImage.m */; };
+		A024C3CD2D4135C5005C369C /* EditUserNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3CC2D4135C5005C369C /* EditUserNameViewController.m */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -355,6 +358,12 @@
 		A024C3BD2D3E8930005C369C /* ForwardAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForwardAlertView.h; sourceTree = "<group>"; };
 		A024C3BE2D3E8930005C369C /* ForwardAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ForwardAlertView.m; sourceTree = "<group>"; };
 		A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWebViewController.swift; sourceTree = "<group>"; };
+		A024C3C22D411EFD005C369C /* SettingsMeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsMeViewController.h; sourceTree = "<group>"; };
+		A024C3C32D411EFD005C369C /* SettingsMeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SettingsMeViewController.m; sourceTree = "<group>"; };
+		A024C3C82D41327E005C369C /* UIImage+JImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+JImage.h"; sourceTree = "<group>"; };
+		A024C3C92D41327E005C369C /* UIImage+JImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JImage.m"; sourceTree = "<group>"; };
+		A024C3CB2D4135C5005C369C /* EditUserNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditUserNameViewController.h; sourceTree = "<group>"; };
+		A024C3CC2D4135C5005C369C /* EditUserNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditUserNameViewController.m; sourceTree = "<group>"; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -771,6 +780,10 @@
 				A088BF762D2FF32800D59B7A /* SwitchAccountViewController.swift */,
 				A088BF782D3006BB00D59B7A /* SwitchAccountCell.swift */,
 				A024C3C02D3F9279005C369C /* SettingsWebViewController.swift */,
+				A024C3C22D411EFD005C369C /* SettingsMeViewController.h */,
+				A024C3C32D411EFD005C369C /* SettingsMeViewController.m */,
+				A024C3CB2D4135C5005C369C /* EditUserNameViewController.h */,
+				A024C3CC2D4135C5005C369C /* EditUserNameViewController.m */,
 			);
 			path = MySettings;
 			sourceTree = "<group>";
@@ -911,6 +924,8 @@
 		A07F35D52BF462040087920B /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				A024C3C82D41327E005C369C /* UIImage+JImage.h */,
+				A024C3C92D41327E005C369C /* UIImage+JImage.m */,
 				A07950182D1C0F6C0045EFE9 /* UIView+MBProgressHUD.h */,
 				A07950172D1C0F6C0045EFE9 /* UIView+MBProgressHUD.m */,
 				A07F35E12BF4928B0087920B /* UIcolor+Ext.swift */,
@@ -1982,6 +1997,7 @@
 				A07F3CAD2BF4A2290087920B /* SBUDateFormatSet.swift in Sources */,
 				A07F3CAE2BF4A2290087920B /* SBUConstant.swift in Sources */,
 				A08CC1502C1AE59B0082EA08 /* SBUModuleSet.Deprecated.swift in Sources */,
+				A024C3CA2D41327E005C369C /* UIImage+JImage.m in Sources */,
 				A0968CB22C2B03DA00E68790 /* SBUBaseChannelModule.swift in Sources */,
 				A07F3B5B2BF4A2260087920B /* Date+SBUIKit.swift in Sources */,
 				A07F3C0E2BF4A2280087920B /* SBUFontSet.swift in Sources */,
@@ -2096,6 +2112,7 @@
 				A0968C942C2B020300E68790 /* SBUNotificationTimelineView.swift in Sources */,
 				A0A3A5452D142862009AD7C3 /* BaseNotifyMessageCell.swift in Sources */,
 				A0968C852C2B020300E68790 /* SBUMentionLimitGuideCell.swift in Sources */,
+				A024C3C42D411EFD005C369C /* SettingsMeViewController.m in Sources */,
 				A024C3A32D366FBE005C369C /* SBUEmojiListViewController.swift in Sources */,
 				A0C80D2E2C60B58700E55080 /* BaseTableListViewController.swift in Sources */,
 				A07F3C922BF4A2290087920B /* SBUTypingIndicatorBubbleView.swift in Sources */,
@@ -2144,6 +2161,7 @@
 				A079501E2D1C377E0045EFE9 /* GroupManageViewController.swift in Sources */,
 				A07F3CA02BF4A2290087920B /* SBUView.swift in Sources */,
 				A07F3C7D2BF4A2290087920B /* SBUPhotoCollectionViewCell.swift in Sources */,
+				A024C3CD2D4135C5005C369C /* EditUserNameViewController.m in Sources */,
 				A07F3B772BF4A2270087920B /* SBUToastView.swift in Sources */,
 				A07F3B502BF4A2260087920B /* UIImage+SBUIKit.swift in Sources */,
 				A0968C642C2B020300E68790 /* SBUTextMessageCellParams.swift in Sources */,

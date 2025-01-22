@@ -23,16 +23,16 @@ enum MySettingsCellType: Int {
 open class MySettingsViewController: UIViewController, UINavigationControllerDelegate {
 
     // MARK: - Property
-    lazy var rightBarButton: UIBarButtonItem = {
-        let rightItem =  UIBarButtonItem(
-            title: SBUStringSet.Edit,
-            style: .plain,
-            target: self,
-            action: #selector(onClickEdit)
-        )
-        rightItem.setTitleTextAttributes([.font : SBUFontSet.button2], for: .normal)
-        return rightItem
-    }()
+//    lazy var rightBarButton: UIBarButtonItem = {
+//        let rightItem =  UIBarButtonItem(
+//            title: SBUStringSet.Edit,
+//            style: .plain,
+//            target: self,
+//            action: #selector(onClickEdit)
+//        )
+//        rightItem.setTitleTextAttributes([.font : SBUFontSet.button2], for: .normal)
+//        return rightItem
+//    }()
     
     lazy var userInfoView = UserInfoTitleView()
     lazy var tableView = UITableView()
@@ -48,7 +48,10 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         super.loadView()
         
         // navigation bar
-        self.navigationItem.rightBarButtonItem = self.rightBarButton
+//        self.navigationItem.rightBarButtonItem = self.rightBarButton
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapUserInfo))
+        self.userInfoView.addGestureRecognizer(tapGesture)
         
         // tableView
         self.tableView.delegate = self
@@ -121,7 +124,7 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
             tintColor: theme.navigationBarTintColor
         )
         
-        self.rightBarButton.tintColor = theme.rightBarButtonTintColor
+//        self.rightBarButton.tintColor = theme.rightBarButtonTintColor
         
         self.view.backgroundColor = theme.backgroundColor
         self.tableView.backgroundColor = theme.backgroundColor
@@ -290,6 +293,12 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         view.addSubview(quitButton)
         quitButton.addTarget(self, action: #selector(signOutAction), for: .touchUpInside)
         self.tableView.tableFooterView = view
+    }
+    
+    @objc private func tapUserInfo() {
+        let vc = SettingsMeViewController()
+        vc.hidesBottomBarWhenPushed = true
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

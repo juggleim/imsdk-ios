@@ -718,7 +718,7 @@ import JuggleIM
         task.resume()
     }
     
-    func updateUserInfo(
+    @objc func updateUserInfo(
         userId: String,
         name: String? = nil,
         portrait: String? = nil,
