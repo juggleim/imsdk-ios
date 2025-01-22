@@ -420,7 +420,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         completionHandler: nil
     )
     let contactCardItem = SBUActionSheetItem(
-        title: "Contact card",
+        title: "个人名片",
         tag: MediaResourceType.contactCard.rawValue,
         completionHandler: nil
     )

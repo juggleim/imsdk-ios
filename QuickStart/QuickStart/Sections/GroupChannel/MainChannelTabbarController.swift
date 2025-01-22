@@ -34,7 +34,7 @@ class MainChannelTabbarController: UITabBarController {
         super.viewDidLoad()
         
         channelsViewController.headerComponent?.titleView = UIView()
-        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "Conversations")
+        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "消息")
         
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
@@ -80,12 +80,12 @@ class MainChannelTabbarController: UITabBarController {
             ? SBUColorSet.primary200
             : SBUColorSet.primary300
         channelsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Conversations"
+            text: "消息"
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
         contactListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Contacts"
+            text: "通讯录"
         )
         contactListViewController.tabBarItem = self.createTabItem(type: .contacts)
         
@@ -95,12 +95,12 @@ class MainChannelTabbarController: UITabBarController {
 //        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
         chatroomListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Chatrooms"
+            text: "聊天室"
         )
         chatroomListViewController.tabBarItem = self.createTabItem(type: .chatrooms)
         
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "My settings"
+            text: "我"
         )
         settingsViewController.tabBarItem = self.createTabItem(type: .mySettings)
         
@@ -151,11 +151,11 @@ class MainChannelTabbarController: UITabBarController {
         let tag: Int
         switch type {
         case .channels:
-            title = "Conversations"
+            title = "消息"
             icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
             tag = 0
         case .contacts:
-            title = "Contacts"
+            title = "通讯录"
             icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
 //        case .groups:
@@ -163,11 +163,11 @@ class MainChannelTabbarController: UITabBarController {
 //            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
 //            tag = 2
         case .chatrooms:
-            title = "Chatrooms"
+            title = "聊天室"
             icon = UIImage(named: "imgOpenchannel")?.resize(with: iconSize)
             tag = 3
         case .mySettings:
-            title = "My settings"
+            title = "我"
             icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
             tag = 4
         }

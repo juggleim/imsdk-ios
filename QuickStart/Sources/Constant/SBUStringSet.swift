@@ -13,21 +13,21 @@ import JuggleIM
 
 public class SBUStringSet {
     // MARK: - Common
-    public static var Cancel = "Cancel"
-    public static var OK = "OK"
+    public static var Cancel = "取消"
+    public static var OK = "确认"
     public static var Retry = "Retry"
-    public static var Save = "Save"
-    public static var Copy = "Copy"
-    public static var Delete = "Delete"
-    public static var Forward = "Forward"
-    public static var Recall = "Recall"
-    public static var Edit = "Edit"
+    public static var Save = "保存"
+    public static var Copy = "复制"
+    public static var Delete = "删除"
+    public static var Forward = "转发"
+    public static var Recall = "撤回"
+    public static var Edit = "编辑"
     public static var Remove = "Remove"
-    public static var Camera = "Camera"
-    public static var PhotoVideoLibrary = "Photo library"
-    public static var Document = "Files"
-    public static var VoiceCall = "Voice call"
-    public static var VideoCall = "Video call"
+    public static var Camera = "拍摄"
+    public static var PhotoVideoLibrary = "照片"
+    public static var Document = "文件"
+    public static var VoiceCall = "语音通话"
+    public static var VideoCall = "视频通话"
     public static var Loading = "Loading..."
     public static var Invite = "Invite"
     public static var TakePhoto = "Take photo"
@@ -36,7 +36,7 @@ public class SBUStringSet {
     public static var ViewLibrary = "View library"
     public static var Search = "Search"
     public static var Settings = "Settings"
-    public static var Reply = "Reply"
+    public static var Reply = "引用"
     public static var Submit = "Submit" // 3.11.0
     
     // MARK: - Alert
@@ -150,14 +150,14 @@ public class SBUStringSet {
     public static var Notification_Channel_Name_Default = "Notifications"
 
     // MARK: - Channel Setting
-    public static var ChannelSettings_Header_Title = "Conversation information"
-    public static var ChannelSettings_Change_Name = "Change name"
+    public static var ChannelSettings_Header_Title = "聊天详情"
+    public static var ChannelSettings_Change_Name = "编辑名字"
     public static var ChannelSettings_Change_Image = "Change channel image"
-    public static var ChannelSettings_Enter_New_Name = "Enter name"
+    public static var ChannelSettings_Enter_New_Name = "输入名字"
     public static var ChannelSettings_Enter_New_Channel_Name = "Enter channel name"
-    public static var ChannelSettings_Notifications = "Notifications"
-    public static var ChannelSettings_Top = "Sticky on Top"
-    public static var ChannelSettings_Clear = "Clear Chat History"
+    public static var ChannelSettings_Notifications = "消息通知"
+    public static var ChannelSettings_Top = "会话置顶"
+    public static var ChannelSettings_Clear = "清除聊天记录"
     public static var ChannelSettings_Notifications_On = "On"
     public static var ChannelSettings_Notifications_Off = "Off"
     public static var ChannelSettings_Notifications_Mentiones_Only = "Mentions only"
@@ -304,7 +304,7 @@ public class SBUStringSet {
     }
 
     // MARK: - User List
-    public static var UserList_Me = "(You)"
+    public static var UserList_Me = "(你)"
     public static var UserList_Ban = "Ban"
     public static var UserList_Unban = "Unban"
     public static var UserList_Mute = "Mute"

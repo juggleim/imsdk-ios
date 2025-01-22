@@ -40,22 +40,22 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     
     @objc func onClickMenu() {
         let searchUserItem = SBUActionSheetItem(
-            title: "Add friend",
+            title: "添加好友",
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let createGroupItem = SBUActionSheetItem(
-            title: "Create new group",
+            title: "创建群组",
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let scanItem = SBUActionSheetItem(
-            title: "Scan QR code",
+            title: "扫一扫",
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let cancelItem = SBUActionSheetItem(
-            title: SBUStringSet.Cancel,
+            title: "取消",
             color: SBUTheme.channelSettingsTheme.itemColor
         ) {}
         SBUActionSheet.show(
@@ -66,7 +66,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     }
     
     func searchUser() {
-        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] phoneNumber in
+        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] phoneNumber in
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
@@ -79,11 +79,11 @@ class ChannelListViewController: SBUGroupChannelListViewController {
                 }
             }
         }
-        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        let cancelButton = SBUAlertButtonItem(title: "取消") { _ in }
         SBUAlertView.show(
-            title: "Add friend",
+            title: "添加好友",
             needInputField: true,
-            placeHolder: "Enter phone number",
+            placeHolder: "输入手机号码",
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton

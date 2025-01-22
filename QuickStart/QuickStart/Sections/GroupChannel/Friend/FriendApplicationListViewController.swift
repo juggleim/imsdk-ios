@@ -14,7 +14,7 @@ class FriendApplicationListViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "New Friends"
+        self.titleView.text = "新朋友"
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }

@@ -245,7 +245,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     private func groupNickname() {
-        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] newNickname in
+        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] newNickname in
             guard let self = self else { return }
             guard let newNickname = newNickname as? String else { return }
             
@@ -329,7 +329,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     private func clearMessages() {
-        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] _ in
+        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] _ in
             SBULoading.start()
             JIM.shared().messageManager.clearMessages(in: self?.conversationInfo?.conversation, startTime: 0) {
                 SBULoading.stop()

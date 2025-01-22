@@ -160,7 +160,7 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
     }
     
     open func groupChannelSettingsModuleDidClearMessages(_ listComponent: SBUGroupChannelSettingsModule.List) {
-        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] _ in
+        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] _ in
             self?.viewModel?.clearMessages()
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }

@@ -60,7 +60,7 @@ class ContactListViewController: BaseTableListViewController {
     }
     
     @objc func onClickMenu() {
-        let okButton = SBUAlertButtonItem(title: SBUStringSet.OK) {[weak self] phoneNumber in
+        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] phoneNumber in
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
@@ -73,11 +73,11 @@ class ContactListViewController: BaseTableListViewController {
                 }
             }
         }
-        let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+        let cancelButton = SBUAlertButtonItem(title: "取消") { _ in }
         SBUAlertView.show(
-            title: "Add friend",
+            title: "添加好友",
             needInputField: true,
-            placeHolder: "Enter phone number",
+            placeHolder: "输入手机号码",
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton
@@ -113,8 +113,8 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 user = JCUser()
-                user.userId = "New Friends"
-                user.userName = "New Friends"
+                user.userId = "新朋友"
+                user.userName = "新朋友"
                 
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
@@ -122,8 +122,8 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 return cell
             } else {
                 user = JCUser()
-                user.userId = "Groups"
-                user.userName = "Groups"
+                user.userId = "群组"
+                user.userName = "群组"
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
                 cell.configure(type: .none, user: user)

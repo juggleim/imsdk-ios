@@ -82,7 +82,7 @@
 }
 
 - (void)setNavi {
-    self.navigationItem.title = @"Scan";
+    self.navigationItem.title = @"扫一扫";
 }
 
 - (void)checkCameraAuthorizationStatus {

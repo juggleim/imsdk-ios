@@ -174,12 +174,12 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     /// Open the user edit action sheet.
     @objc func onClickEdit() {
         let changeNameItem = SBUActionSheetItem(
-            title: "Change my nickname",
+            title: "修改昵称",
             color: theme.itemTextColor,
             image: nil
         ) {}
         let changeImageItem = SBUActionSheetItem(
-            title: "Change my profile image",
+            title: "修改头像",
             color: theme.itemTextColor,
             image: nil
         ) {}
@@ -216,9 +216,9 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
         SBUAlertView.show(
-            title: "Change my nickname",
+            title: "修改昵称",
             needInputField: true,
-            placeHolder: "Enter nickname",
+            placeHolder: "输入昵称",
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton
@@ -323,11 +323,11 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             self.navigationController?.pushViewController(vc, animated: true)
         case .privacyPolicy:
             self.tabBarController?.tabBar.isHidden = true
-            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: "隐私政策")
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: "隐私协议")
             self.navigationController?.pushViewController(vc, animated: true)
         case .userAgreement:
             self.tabBarController?.tabBar.isHidden = true
-            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: "用户政策")
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: "用户协议")
             self.navigationController?.pushViewController(vc, animated: true)
         case .none:
             break
@@ -357,7 +357,7 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
                 return cell
             case .privacyPolicy:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "隐私政策"
+                cell.leftLabel.text = "隐私协议"
                 return cell
             case .userAgreement:
                 let cell = getArrowCell()
