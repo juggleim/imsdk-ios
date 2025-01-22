@@ -31,6 +31,24 @@ class ViewController: UIViewController {
         return button
     }()
     
+    var startupView: UIView = {
+        let view = UIView()
+        view.isOpaque = true
+        view.alpha = 1.0
+        view.backgroundColor = UIColor.white
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    var startupImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "logoSendbirdFull")
+        image.contentMode = .scaleAspectFit
+        image.clipsToBounds = true
+        image.isOpaque = true
+        return image
+    }()
+    
     @IBOutlet weak var versionLabel: UILabel!
     
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView! {
@@ -50,6 +68,14 @@ class ViewController: UIViewController {
         
         SBUTheme.set(theme: .light)
         GlobalSetCustomManager.setDefault()
+        
+        if let isAutoLogin = UserDefaults.loadIsAutoLogin(), isAutoLogin == true {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = false
+        } else {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = true
+        }
     }
     
     override func viewDidLoad() {
@@ -69,7 +95,7 @@ class ViewController: UIViewController {
         let uikitVersion: String = JuggleUI.version
         versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
         
-        let (phone, code) = loadLoginInfo()
+        let (phone, code, isAutoLogin) = loadLoginInfo()
         if phone != nil {
             phoneNumberTextField.text = phone
         }
@@ -94,7 +120,28 @@ class ViewController: UIViewController {
         else {
             return
         }
-        signinAction()
+        
+        self.startupView.frame = self.view.bounds
+        self.view.addSubview(self.startupView)
+        self.startupView.addSubview(self.startupImageView)
+        self.startupImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.startupImageView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            self.startupImageView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            self.startupImageView.widthAnchor.constraint(equalToConstant: 185),
+            self.startupImageView.heightAnchor.constraint(equalToConstant: 32)
+        ])
+        
+        
+        if let isAutoLogin = isAutoLogin, isAutoLogin == true {
+            signinAction()
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = false
+        } else {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = true
+        }
     }
     
     deinit {
@@ -155,6 +202,7 @@ class ViewController: UIViewController {
                 let jcUser = jcUser else {
                     return
                 }
+                UserDefaults.saveIsAutoLogin(true)
                 self.addLoginInfo(phone: phoneNumber, code: verifyCode, user: jcUser)
                 ProfileManager.shared.currentUserInfo = jcUser
                 JIM.shared().connectionManager.connect(withToken: token)
@@ -186,17 +234,22 @@ class ViewController: UIViewController {
         self.present(vc, animated: true)
     }
     
-    private func loadLoginInfo() -> (String?, String?) {
+    private func loadLoginInfo() -> (String?, String?, Bool?) {
+        var isAutoLogin = false
+        if let isAuto = UserDefaults.loadIsAutoLogin(), isAuto == true {
+            isAutoLogin = true
+        }
+        
         if let accounts = UserDefaults.loadAccounts(), accounts.count > 0 {
             if let account = accounts.first as? Dictionary<String, Dictionary<String, String>> {
                 if let phone = account.keys.first,
                    let infoDic = account[phone],
                    let code = infoDic["code"] {
-                    return (phone, code)
+                    return (phone, code, isAutoLogin)
                 }
             }
         }
-        return (nil, nil)
+        return (nil, nil, false)
     }
     
     private func addLoginInfo(phone: String, code: String, user: JCUser) {

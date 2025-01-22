@@ -52,4 +52,11 @@ extension UserDefaults {
     static func saveAccounts(_ accounts: [Any]) {
         UserDefaults.standard.set(accounts, forKey: "accounts")
     }
+    
+    static func loadIsAutoLogin() -> Bool? {
+        return UserDefaults.standard.bool(forKey: "is_auto_login")
+    }
+    static func saveIsAutoLogin(_ isAutoLogin: Bool) {
+        UserDefaults.standard.set(isAutoLogin, forKey: "is_auto_login")
+    }
 }
