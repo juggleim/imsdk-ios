@@ -145,7 +145,6 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
 
         if let user = ProfileManager.shared.currentUserInfo {
             self.userInfoView.configure(user: user)
@@ -159,11 +158,6 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     open override func viewDidLoad() {
         super.viewDidLoad()
         JIM.shared().connectionManager.add(self)
-    }
-    
-    open override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
     }
 
     open override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -306,29 +300,29 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
         let type = MySettingsCellType(rawValue: rowValue)
         switch type {
         case .qrcode:
-            self.tabBarController?.tabBar.isHidden = true
             let conversation = JConversation(conversationType: .private, conversationId: JIM.shared().currentUserId)
             let vc = QRCodeViewController(conversation: conversation)
+            vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
 //        case .setLanguage:
-//            self.tabBarController?.tabBar.isHidden = true
 //            let vc = SettingsLanguageViewController()
+//            vc.hidesBottomBarWhenPushed = true
 //            self.navigationController?.pushViewController(vc, animated: true)
         case .push:
-            self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsPushViewController()
+            vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .globalDisturb:
-            self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsDisturbViewController()
+            vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .privacyPolicy:
-            self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: "隐私协议")
+            vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .userAgreement:
-            self.tabBarController?.tabBar.isHidden = true
             let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: "用户协议")
+            vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .none:
             break

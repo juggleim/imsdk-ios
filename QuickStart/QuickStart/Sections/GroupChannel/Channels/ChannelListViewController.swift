@@ -27,14 +27,9 @@ class ChannelListViewController: SBUGroupChannelListViewController {
         self.navigationItem.rightBarButtonItem = rightBarButton
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
-    }
-    
     override func showChannel(conversationInfo: JConversationInfo) {
-        self.tabBarController?.tabBar.isHidden = true
         let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+        channelVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
     
@@ -70,11 +65,11 @@ class ChannelListViewController: SBUGroupChannelListViewController {
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
-                    self?.tabBarController?.tabBar.isHidden = true
                     let addFriendVC = AddFriendViewController()
                     if let jcUser = jcUser {
                         addFriendVC.users = [jcUser]
                     }
+                    addFriendVC.hidesBottomBarWhenPushed = true
                     self?.navigationController?.pushViewController(addFriendVC, animated: true)
                 }
             }
@@ -96,8 +91,8 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     }
     
     func scan() {
-        self.tabBarController?.tabBar.isHidden = true
         let vc = ScanQRCodeViewController()
+        vc.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

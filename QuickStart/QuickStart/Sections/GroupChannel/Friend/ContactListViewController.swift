@@ -30,7 +30,6 @@ class ContactListViewController: BaseTableListViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
         loadFriends()
     }
     
@@ -64,11 +63,11 @@ class ContactListViewController: BaseTableListViewController {
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
-                    self?.tabBarController?.tabBar.isHidden = true
                     let addFriendVC = AddFriendViewController()
                     if let jcUser = jcUser {
                         addFriendVC.users = [jcUser]
                     }
+                    addFriendVC.hidesBottomBarWhenPushed = true
                     self?.navigationController?.pushViewController(addFriendVC, animated: true)
                 }
             }
@@ -153,17 +152,17 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
             let defaultConversationInfo = JConversationInfo()
             defaultConversationInfo.conversation = conversation
             let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-            self.tabBarController?.tabBar.isHidden = true
             let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            channelVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(channelVC, animated: true)
         } else if indexPath.section == 0 {
             if indexPath.row == 0 {
-                self.tabBarController?.tabBar.isHidden = true
                 let vc = FriendApplicationListViewController()
+                vc.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(vc, animated: true)
             } else if indexPath.row == 1 {
-                self.tabBarController?.tabBar.isHidden = true
                 let vc = GroupListViewController()
+                vc.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(vc, animated: true)
             }
         }

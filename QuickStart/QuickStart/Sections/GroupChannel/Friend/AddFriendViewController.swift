@@ -101,8 +101,8 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
             let defaultConversationInfo = JConversationInfo()
             defaultConversationInfo.conversation = conversation
             let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-            self.tabBarController?.tabBar.isHidden = true
             let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            channelVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(channelVC, animated: true)
             return
         }
