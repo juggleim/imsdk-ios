@@ -69,14 +69,14 @@ class NewFriendsUserCell: BaseUserCell {
     override func configure(type: UserListType, user: JCUser, isChecked: Bool = false, operatorMode: Bool = false) {
         super.configure(type: type, user: user, isChecked: isChecked, operatorMode: operatorMode)
         
-        if type == .friendList {
+        if type == .newFriend {
             var count: Int32 = 0
             let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
             if let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) {
                 count = conversationInfo.unreadCount
             }
             self.updateUnreadCount(Int(count))
-        } else if type == .none {
+        } else if type == .group {
             self.unreadCount.isHidden = true
         }
     }

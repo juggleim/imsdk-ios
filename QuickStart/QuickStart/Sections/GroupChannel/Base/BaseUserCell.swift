@@ -321,6 +321,10 @@ class BaseUserCell: SBUTableViewCell {
             self.userIdLabel.isHidden = !showsUserId
             self.userImageSize = 28
             self.updateLayouts()
+        case .newFriend:
+            self.userImageView.image = UIImage(named: "newFriend")
+        case .group:
+            self.userImageView.image = UIImage(named: "defaultGroup")
         default:
             break
         }

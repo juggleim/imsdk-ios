@@ -118,7 +118,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
-                cell.configure(type: .friendList, user: user)
+                cell.configure(type: .newFriend, user: user)
                 return cell
             } else {
                 user = JCUser()
@@ -126,7 +126,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 user.userName = "群组"
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
-                cell.configure(type: .none, user: user)
+                cell.configure(type: .group, user: user)
                 return cell
             }
         } else {
