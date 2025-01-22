@@ -10,9 +10,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol ForwardSelectViewControllerDelegate <NSObject>
+
+- (void)messageWillForward:(JMessage *)message;
+- (void)messageDidForward:(JMessage *)message;
+- (void)messageDidForwardFail:(JMessage *)message
+                    errorCode:(JErrorCode)code;
+
+@end
+
 @interface ForwardSelectViewController : UIViewController
 
 - (instancetype)initWithMessageContent:(JMessageContent *)content;
+
+@property (nonatomic, weak) id<ForwardSelectViewControllerDelegate> delegate;
 
 @end
 

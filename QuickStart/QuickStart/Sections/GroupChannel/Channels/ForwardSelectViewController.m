@@ -121,33 +121,55 @@ static NSString *forwardCellIdentifier = @"forwardCellIdentifier";
                 }
             }
             if (isMedia) {
-                [JIM.shared.messageManager sendMediaMessage:(JMediaMessageContent *)self.content
+                JMessage *m = [JIM.shared.messageManager sendMediaMessage:(JMediaMessageContent *)self.content
                                              inConversation:conversation
                                                    progress:nil
                                                     success:^(JMessage *message) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [hud hideAnimated:YES];
                         [self dismissViewControllerAnimated:NO completion:nil];
+                        if ([self.delegate respondsToSelector:@selector(messageDidForward:)]) {
+                            [self.delegate messageDidForward:message];
+                        }
                     });
                 } error:^(JErrorCode errorCode, JMessage *message) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [hud hideAnimated:YES];
                         [self dismissViewControllerAnimated:NO completion:nil];
+                        if ([self.delegate respondsToSelector:@selector(messageDidForwardFail:errorCode:)]) {
+                            [self.delegate messageDidForwardFail:message errorCode:errorCode];
+                        }
                     });
                 } cancel:nil];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([self.delegate respondsToSelector:@selector(messageWillForward:)]) {
+                        [self.delegate messageWillForward:m];
+                    }
+                });
             } else {
-                [JIM.shared.messageManager sendMessage:self.content inConversation:conversation
+                JMessage *m = [JIM.shared.messageManager sendMessage:self.content inConversation:conversation
                                                success:^(JMessage *message) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [hud hideAnimated:YES];
                         [self dismissViewControllerAnimated:NO completion:nil];
+                        if ([self.delegate respondsToSelector:@selector(messageDidForward:)]) {
+                            [self.delegate messageDidForward:message];
+                        }
                     });
                 } error:^(JErrorCode errorCode, JMessage *message) {
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [hud hideAnimated:YES];
                         [self dismissViewControllerAnimated:NO completion:nil];
+                        if ([self.delegate respondsToSelector:@selector(messageDidForwardFail:errorCode:)]) {
+                            [self.delegate messageDidForwardFail:message errorCode:errorCode];
+                        }
                     });
                 }];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if ([self.delegate respondsToSelector:@selector(messageWillForward:)]) {
+                        [self.delegate messageWillForward:m];
+                    }
+                });
             }
         });
     }
@@ -155,7 +177,7 @@ static NSString *forwardCellIdentifier = @"forwardCellIdentifier";
 
 #pragma mark - private
 - (void)setupData {
-    NSArray <JConversationInfo *> *conversationList = [JIM.shared.conversationManager getConversationInfoList];
+    NSArray <JConversationInfo *> *conversationList = [JIM.shared.conversationManager getConversationInfoListWithTypes:@[@(JConversationTypeGroup), @(JConversationTypePrivate)] count:100 timestamp:0 direction:JPullDirectionOlder];
     self.conversationList = [conversationList copy];
 }
 

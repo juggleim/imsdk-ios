@@ -771,6 +771,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapForwardMessage message: JMessage) {
         DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
             let vc = ForwardSelectViewController.init(messageContent: message.content)
+            vc.delegate = self
             let navi = UINavigationController.init(rootViewController: vc)
             navi.modalPresentationStyle = .fullScreen
             self.present(navi, animated: true)
@@ -1496,4 +1497,26 @@ extension SBUBaseChannelViewController: SelectSingleFriendVCDelegate {
         let contactCard = ContactCardMessage(userInfo: user)
         self.baseViewModel?.sendMessage(content: contactCard)
     }
+}
+
+extension SBUBaseChannelViewController: ForwardSelectViewControllerDelegate {
+    public func messageWillForward(_ message: JMessage) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    public func messageDidForward(_ message: JMessage) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    public func messageDidForwardFail(_ message: JMessage, errorCode code: JErrorCode) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    
 }
