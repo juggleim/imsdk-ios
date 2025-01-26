@@ -89,6 +89,8 @@ public struct SBUTextMessageTextViewModel {
             @unknown default:
                 break
             }
+        } else if let streamTextMessage = message?.content as? StreamTextMessage {
+            text = streamTextMessage.content ?? ""
         } else {
             text = "unknown"
         }

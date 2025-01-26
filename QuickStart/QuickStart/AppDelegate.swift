@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
         JIM.shared().messageManager.registerContentType(FriendNotifyMessage.self)
         JIM.shared().messageManager.registerContentType(ContactCardMessage.self)
+        JIM.shared().messageManager.registerContentType(StreamTextMessage.self)
         CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         

@@ -21,6 +21,7 @@ import JuggleIM
     static let msgString = "msg"
     static let dataString = "data"
     static let userIdString = "user_id"
+    static let botIdString = "bot_id"
     static let authorizationString = "authorization"
     static let appKey = "appkey"
     static let nickNameString = "nickname"
@@ -117,6 +118,8 @@ import JuggleIM
     
     static let usersInfoString = "/users/info"
     
+    static let botsListString = "/bots/list"
+    
     static let unknownError = 505
     static let emptyCode = 444
     static let success = 0
@@ -206,6 +209,47 @@ import JuggleIM
                 jcUser.phoneNumber = phoneNumber
                 completion(0, jcUser, token)
             }
+        }
+        task.resume()
+    }
+    
+    func getBotList(
+        completion: @escaping ((Int, [JCUser]?) -> Void)
+    ) {
+        let urlString = Self.domain.appending(Self.botsListString)
+        let req = getRequest(url: urlString, method: .get, params: nil)
+        guard let request = req.urlRequest, req.isSuccess else {
+            completion(Self.unknownError, nil)
+            return
+        }
+        let task = URLSession(configuration: .default).dataTask(with: request) { [weak self] data, response, error in
+            self?.errorCheck(data: data, response: response, error: error, completion: { code, json in
+                if code != Self.success {
+                    completion(code, nil)
+                    return
+                }
+                guard let responseData = json?[Self.dataString] as? Dictionary<String, Any> else {
+                    print("get bot list error, data is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                guard let items = responseData[Self.itemsString] as? [Dictionary<String, Any>] else {
+                    print("get bot list, items is not available")
+                    completion(Self.unknownError, nil)
+                    return
+                }
+                if items.isEmpty {
+                    completion(Self.emptyCode, nil)
+                    return
+                }
+                var bots: [JCUser] = []
+                for item in items {
+                    if let bot = self?.botFrom(json: item) {
+                        bots.append(bot)
+                    }
+                }
+                completion(0, bots)
+            })
         }
         task.resume()
     }
@@ -1254,6 +1298,26 @@ import JuggleIM
     private func jcUserFrom(json: Dictionary<String, Any>) -> JCUser {
         let jcUser: JCUser = JCUser()
         if let userId = json[Self.userIdString] as? String {
+            jcUser.userId = userId
+        }
+        if let nickname = json[Self.nickNameString] as? String {
+            jcUser.userName = nickname
+        }
+        if let avatar = json[Self.avatarString] as? String {
+            jcUser.portrait = avatar
+        }
+        if let phone = json[Self.phoneString] as? String {
+            jcUser.phoneNumber = phone
+        }
+        if let isFriend = json[Self.isFriendString] as? Bool {
+            jcUser.isFriend = isFriend
+        }
+        return jcUser
+    }
+    
+    private func botFrom(json: Dictionary<String, Any>) -> JCUser {
+        let jcUser: JCUser = JCUser()
+        if let userId = json[Self.botIdString] as? String {
             jcUser.userId = userId
         }
         if let nickname = json[Self.nickNameString] as? String {

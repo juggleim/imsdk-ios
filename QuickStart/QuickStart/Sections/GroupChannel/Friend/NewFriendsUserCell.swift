@@ -76,7 +76,7 @@ class NewFriendsUserCell: BaseUserCell {
                 count = conversationInfo.unreadCount
             }
             self.updateUnreadCount(Int(count))
-        } else if type == .group {
+        } else if type == .group || type == .chatroom {
             self.unreadCount.isHidden = true
         }
     }

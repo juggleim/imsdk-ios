@@ -99,7 +99,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
-            return 2
+            return 3
         }
         return self.users?.count ?? 0
     }
@@ -119,10 +119,18 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 cell.selectionStyle = .none
                 cell.configure(type: .newFriend, user: user)
                 return cell
-            } else {
+            } else if indexPath.row == 1 {
                 user = JCUser()
                 user.userId = "群组"
                 user.userName = "群组"
+                let cell = NewFriendsUserCell()
+                cell.selectionStyle = .none
+                cell.configure(type: .group, user: user)
+                return cell
+            } else if indexPath.row == 2 {
+                user = JCUser()
+                user.userId = "聊天室"
+                user.userName = "聊天室"
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
                 cell.configure(type: .group, user: user)
@@ -141,6 +149,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
             }
             return cell ?? UITableViewCell()
         }
+        return UITableViewCell()
     }
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -162,6 +171,10 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 self.navigationController?.pushViewController(vc, animated: true)
             } else if indexPath.row == 1 {
                 let vc = GroupListViewController()
+                vc.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else if indexPath.row == 2 {
+                let vc = ChatroomListViewController()
                 vc.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(vc, animated: true)
             }

@@ -21,6 +21,8 @@
 		A024C3C42D411EFD005C369C /* SettingsMeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C32D411EFD005C369C /* SettingsMeViewController.m */; };
 		A024C3CA2D41327E005C369C /* UIImage+JImage.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3C92D41327E005C369C /* UIImage+JImage.m */; };
 		A024C3CD2D4135C5005C369C /* EditUserNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3CC2D4135C5005C369C /* EditUserNameViewController.m */; };
+		A024C3DF2D436CC0005C369C /* BotListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3DE2D436CC0005C369C /* BotListViewController.swift */; };
+		A024C3E42D462BEC005C369C /* StreamTextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C3E32D462BEC005C369C /* StreamTextMessage.swift */; };
 		A02FA3AF2D154E50002A4E0B /* NewFriendsUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */; };
 		A02FA3B72D157FCB002A4E0B /* ScanQRCodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */; };
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
@@ -364,6 +366,8 @@
 		A024C3C92D41327E005C369C /* UIImage+JImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JImage.m"; sourceTree = "<group>"; };
 		A024C3CB2D4135C5005C369C /* EditUserNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EditUserNameViewController.h; sourceTree = "<group>"; };
 		A024C3CC2D4135C5005C369C /* EditUserNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditUserNameViewController.m; sourceTree = "<group>"; };
+		A024C3DE2D436CC0005C369C /* BotListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BotListViewController.swift; sourceTree = "<group>"; };
+		A024C3E32D462BEC005C369C /* StreamTextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTextMessage.swift; sourceTree = "<group>"; };
 		A02FA3AE2D154E50002A4E0B /* NewFriendsUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFriendsUserCell.swift; sourceTree = "<group>"; };
 		A02FA3B52D157FCB002A4E0B /* ScanQRCodeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScanQRCodeViewController.h; sourceTree = "<group>"; };
 		A02FA3B62D157FCB002A4E0B /* ScanQRCodeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScanQRCodeViewController.m; sourceTree = "<group>"; };
@@ -803,6 +807,7 @@
 				A024C3BB2D3E65AA005C369C /* ForwardSelectCell.m */,
 				A024C3BD2D3E8930005C369C /* ForwardAlertView.h */,
 				A024C3BE2D3E8930005C369C /* ForwardAlertView.m */,
+				A024C3DE2D436CC0005C369C /* BotListViewController.swift */,
 			);
 			path = Channels;
 			sourceTree = "<group>";
@@ -1681,6 +1686,7 @@
 				A0A3A5422D142550009AD7C3 /* FriendNotifyMessage.swift */,
 				A079501F2D1D361A0045EFE9 /* JCGroupInfo.swift */,
 				A0E68E5F2D2F8AA600640324 /* ContactCardMessage.swift */,
+				A024C3E32D462BEC005C369C /* StreamTextMessage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2035,6 +2041,7 @@
 				A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */,
 				A0A3A5262D06D30E009AD7C3 /* BaseCallViewController.m in Sources */,
 				A07F3B4F2BF4A2260087920B /* Formatter+SBUIKit.swift in Sources */,
+				A024C3DF2D436CC0005C369C /* BotListViewController.swift in Sources */,
 				A07F3CAB2BF4A2290087920B /* CommonProtocols.swift in Sources */,
 				A090B0B52C3EB48C00FE0E10 /* SBUImageContentView.swift in Sources */,
 				A06388A12CA41298006357C7 /* SBUBaseChannelSettingCell.swift in Sources */,
@@ -2086,6 +2093,7 @@
 				A0968C8B2C2B020300E68790 /* SBUCategoryFilterCell.swift in Sources */,
 				A07F3C852BF4A2290087920B /* SBUBarButtonItem.swift in Sources */,
 				A06388B72CA417B6006357C7 /* SBUBaseChannelSettingsModule.swift in Sources */,
+				A024C3E42D462BEC005C369C /* StreamTextMessage.swift in Sources */,
 				A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */,
 				A0968C5F2C2B020300E68790 /* SBUTextMessageTextViewModel.swift in Sources */,
 				A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */,

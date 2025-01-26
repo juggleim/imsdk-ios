@@ -32,7 +32,7 @@
     return data;
 }
 
-- (void)decode:(NSData *)data{
+- (void)decode:(NSData *)data {
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     id content = json[jContent];
     if ([content isKindOfClass:[NSString class]]) {

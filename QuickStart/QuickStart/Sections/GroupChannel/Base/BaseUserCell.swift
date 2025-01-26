@@ -325,6 +325,8 @@ class BaseUserCell: SBUTableViewCell {
             self.userImageView.image = UIImage(named: "newFriend")
         case .group:
             self.userImageView.image = UIImage(named: "defaultGroup")
+        case .chatroom:
+            self.userImageView.image = UIImage(named: "imgOpenchannel")
         default:
             break
         }

@@ -36,6 +36,17 @@ class ChatroomListViewController : BaseTableListViewController {
             forCellReuseIdentifier: ChatroomCell.sbu_className
         )
     }
+    
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+        self.titleView.text = "聊天室"
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
+    }
 }
 
 extension ChatroomListViewController: UITableViewDataSource, UITableViewDelegate {

@@ -1864,6 +1864,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.userId = pbUserInfo.userId;
     result.userName = pbUserInfo.nickname;
     result.portrait = pbUserInfo.userPortrait;
+    result.type = (int)pbUserInfo.userType;
     if (pbUserInfo.extFieldsArray_Count > 0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         for (KvItem *item in pbUserInfo.extFieldsArray) {

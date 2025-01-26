@@ -433,9 +433,41 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 
 extension SBUGroupChannelViewModel : JMessageDelegate {
     public func messageDidReceive(_ message: JMessage!) {
+        SBULog.info("bot, messageDidReceive")
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
             return
         }
+        
+        if message.contentType == JTextMessage.contentType() {
+            var streamId = ""
+            if let textMessage = message.content as? JTextMessage,
+               !textMessage.extra.isEmpty,
+               let jsonData = textMessage.extra.data(using: .utf8)
+            {
+                if let jsonDic = try? JSONSerialization.jsonObject(with: jsonData) as? [String: String],
+                   let stream = jsonDic["stream_msg_id"] {
+                    streamId = stream
+                }
+            }
+            if !streamId.isEmpty, let index = SBUUtils.findIndex(ofStreamMessage: streamId, in: self.messageList) {
+                self.messageList.remove(at: index)
+            }
+        }
+        
+        if let streamText = message.content as? StreamTextMessage,
+           let streamId = streamText.streamId {
+            var streamContent = ""
+            if !streamId.isEmpty, let index = SBUUtils.findIndex(ofStreamMessage: streamId, in: self.messageList) {
+                let foundStreamTextMessage = self.messageList[index]
+                if let foundStreamText = foundStreamTextMessage.content as? StreamTextMessage,
+                   let content = foundStreamText.content {
+                    streamContent = content
+                }
+                self.messageList.remove(at: index)
+            }
+            streamText.content = streamContent.appending(streamText.content ?? "")
+        }
+        
         self.upsertMessagesInList(messages: [message], needReload: true)
         self.sendReceipt([message])
         self.markAsRead()

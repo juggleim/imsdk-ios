@@ -8,7 +8,7 @@
 #import "JUserInfoDB.h"
 
 //user 最新版本
-#define jUserTableVersion 1
+#define jUserTableVersion 2
 //NSUserDefault 中保存 user 数据库版本的 key
 #define jUserTableVersionKey @"UserVersion"
 //group 最新版本
@@ -21,7 +21,8 @@ NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("
                                         "user_id VARCHAR (64),"
                                         "name VARCHAR (64),"
                                         "portrait TEXT,"
-                                        "extension TEXT"
+                                        "extension TEXT,"
+                                        "type SMALLINT"
                                         ")";
 NSString *const jCreateGroupTable = @"CREATE TABLE IF NOT EXISTS group_info ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -32,15 +33,17 @@ NSString *const jCreateGroupTable = @"CREATE TABLE IF NOT EXISTS group_info ("
                                         ")";
 NSString *const jCreateUserIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_user ON user(user_id)";
 NSString *const jCreateGroupIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_group ON group_info(group_id)";
+NSString *const kAlterAddUserType = @"ALTER TABLE user ADD COLUMN type SMALLINT";
 NSString *const jGetUserInfo = @"SELECT * FROM user WHERE user_id = ?";
 NSString *const jGetGroupInfo = @"SELECT * FROM group_info WHERE group_id = ?";
-NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension) VALUES (?, ?, ?, ?)";
+NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension, type) VALUES (?, ?, ?, ?, ?)";
 NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension) VALUES (?, ?, ?, ?)";
 NSString *const jColUserId = @"user_id";
 NSString *const jColGroupId = @"group_id";
 NSString *const jColName = @"name";
 NSString *const jColPortrait = @"portrait";
 NSString *const jColExtension = @"extension";
+NSString *const jColType = @"type";
 
 @interface JUserInfoDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -58,15 +61,22 @@ NSString *const jColExtension = @"extension";
 }
 
 - (void)updateTables {
-    NSNumber *existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jUserTableVersionKey];
-    if (jUserTableVersion > existedVersion.intValue) {
+    NSNumber *existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jUserTableVersionKey];
+    int existedVersion = existedVersionNumber.intValue;
+    if (jUserTableVersion > existedVersion) {
         //update table
+        
+        if (existedVersion == 1 && jUserTableVersion >= 2) {
+            [self.dbHelper executeUpdate:kAlterAddUserType withArgumentsInArray:nil];
+            existedVersion = 2;
+        }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
     }
 
-    existedVersion = [[NSUserDefaults standardUserDefaults] objectForKey:jGroupTableVersionKey];
-    if (jGroupTableVersion > existedVersion.intValue) {
+    existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jGroupTableVersionKey];
+    existedVersion = existedVersionNumber.intValue;
+    if (jGroupTableVersion > existedVersion) {
         //update table
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
@@ -117,7 +127,8 @@ NSString *const jColExtension = @"extension";
             NSString *name = obj.userName?:@"";
             NSString *portrait = obj.portrait?:@"";
             NSString *extension = [self stringFromDic:obj.extraDic];
-            [db executeUpdate:jInsertUserInfo withArgumentsInArray:@[userId, name, portrait, extension]];
+            
+            [db executeUpdate:jInsertUserInfo withArgumentsInArray:@[userId, name, portrait, extension, @(obj.type)]];
         }];
     }];
 }
@@ -142,6 +153,7 @@ NSString *const jColExtension = @"extension";
     userInfo.portrait = [rs stringForColumn:jColPortrait];
     NSString *extra = [rs stringForColumn:jColExtension];
     userInfo.extraDic = [self dicFromString:extra];
+    userInfo.type = [rs intForColumn:jColType];
     return userInfo;
 }
 

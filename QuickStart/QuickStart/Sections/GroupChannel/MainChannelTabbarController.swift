@@ -10,20 +10,18 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, contacts, chatrooms, mySettings
+    case channels, contacts, bots, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
     let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue)])
     let contactListViewController = ContactListViewController()
-//    let groupListViewController = GroupListViewController()
-    let chatroomListViewController = ChatroomListViewController()
+    let botListViewController = BotListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
     var contactListNavigationController = UINavigationController()
-//    var groupListNavigationController = UINavigationController()
-    var chatroomListNavigationController = UINavigationController()
+    var botListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
     var theme: SBUComponentTheme = SBUTheme.componentTheme
@@ -45,14 +43,14 @@ class MainChannelTabbarController: UITabBarController {
 //        self.groupListNavigationController = UINavigationController(
 //            rootViewController: groupListViewController
 //        )
-        self.chatroomListNavigationController = UINavigationController(
-            rootViewController: chatroomListViewController
+        self.botListNavigationController = UINavigationController(
+            rootViewController: botListViewController
         )
         self.mySettingsNavigationController = UINavigationController(
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.contactListNavigationController, self.chatroomListNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.contactListNavigationController, self.botListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -94,10 +92,10 @@ class MainChannelTabbarController: UITabBarController {
 //        )
 //        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
-        chatroomListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "聊天室"
+        botListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "智能体"
         )
-        chatroomListViewController.tabBarItem = self.createTabItem(type: .chatrooms)
+        botListViewController.tabBarItem = self.createTabItem(type: .bots)
         
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
             text: "我"
@@ -113,7 +111,7 @@ class MainChannelTabbarController: UITabBarController {
 //        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
 //            ? .black
 //            : .default
-        self.chatroomListNavigationController.navigationBar.barStyle = self.isDarkMode
+        self.botListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
         self.mySettingsNavigationController.navigationBar.barStyle = self.isDarkMode
@@ -162,9 +160,9 @@ class MainChannelTabbarController: UITabBarController {
 //            title = "Groups"
 //            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
 //            tag = 2
-        case .chatrooms:
-            title = "聊天室"
-            icon = UIImage(named: "imgOpenchannel")?.resize(with: iconSize)
+        case .bots:
+            title = "智能体"
+            icon = UIImage(named: "iconBot")?.resize(with: iconSize)
             tag = 3
         case .mySettings:
             title = "我"

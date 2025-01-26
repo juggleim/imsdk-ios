@@ -262,6 +262,16 @@ extension SBUUtils {
         return messageList.firstIndex(where: { $0.clientMsgNo == message.clientMsgNo })
     }
     
+    static func findIndex(ofStreamMessage streamId: String, in messageList: [JMessage]) -> Int? {
+        return messageList.firstIndex { message in
+            if let streamText = message.content as? StreamTextMessage,
+               streamText.streamId == streamId {
+                return true
+            }
+            return false
+        }
+    }
+    
     static func findIndex(ofReaction reaction: JMessageReaction, in reactionList: [JMessageReaction]) -> Int? {
         return reactionList.firstIndex(where: {$0.messageId == reaction.messageId})
     }

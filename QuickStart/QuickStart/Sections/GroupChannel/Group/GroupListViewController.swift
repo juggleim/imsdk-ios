@@ -37,6 +37,7 @@ class GroupListViewController: BaseTableListViewController {
         super.configNavigationItem()
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
+        self.titleView.text = "群组"
     }
     
     override func configTableView() {
