@@ -102,9 +102,11 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             self.historyComplete = true
         }
         
-        self.conversationInfoList.append(contentsOf: newConversationInfoList)
+        self.updateConversationInfoList(newConversationInfoList)
         
-        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
+//        self.conversationInfoList.append(contentsOf: newConversationInfoList)
+//        
+//        self.delegate?.groupChannelListViewModel(self, didChangeChannelList: self.conversationInfoList, needsToReload: true)
     }
     
     /// This function resets channelList
