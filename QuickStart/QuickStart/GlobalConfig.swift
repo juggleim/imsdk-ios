@@ -13,7 +13,7 @@ public class GlobalConfig {
             if let s = UserDefaults.loadAppKey() {
                 return s
             } else {
-                return "nsw3sue72begyv7y"
+                return "xxx"
             }
         }
         set {
@@ -26,7 +26,7 @@ public class GlobalConfig {
             if let s = UserDefaults.loadIMServer() {
                 return s
             } else {
-                return "wss://ws.juggleim.com"
+                return "xxx"
             }
         }
         set {
@@ -39,7 +39,7 @@ public class GlobalConfig {
             if let s = UserDefaults.loadDemoServer() {
                 return s
             } else {
-                return "https://ws.juggleim.com/jim"
+                return "xxx"
             }
         }
         set {
