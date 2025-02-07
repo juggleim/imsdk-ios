@@ -76,6 +76,10 @@
                   delegate:delegate];
 }
 
+- (id<JCallSession>)getCallSession:(NSString *)callId {
+    return [self getCallSessionImpl:callId];
+}
+
 - (instancetype)initWithCore:(JIMCore *)core {
     if (self = [super init]) {
         self.core = core;

@@ -10,50 +10,47 @@ import UIKit
 import JuggleIM
 
 enum TabType {
-    case channels, friends, groups, chatrooms, mySettings
+    case channels, contacts, bots, mySettings
 }
 
 class MainChannelTabbarController: UITabBarController {
     let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue)])
-    let friendListViewController = FriendListViewController()
-    let groupListViewController = GroupListViewController()
-    let chatroomListViewController = ChatroomListViewController()
+    let contactListViewController = ContactListViewController()
+    let botListViewController = BotListViewController()
     let settingsViewController = MySettingsViewController()
     
     var channelsNavigationController = UINavigationController()
-    var friendListNavigationController = UINavigationController()
-    var groupListNavigationController = UINavigationController()
-    var chatroomListNavigationController = UINavigationController()
+    var contactListNavigationController = UINavigationController()
+    var botListNavigationController = UINavigationController()
     var mySettingsNavigationController = UINavigationController()
     
     var theme: SBUComponentTheme = SBUTheme.componentTheme
     var isDarkMode: Bool = false
 
-    
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         channelsViewController.headerComponent?.titleView = UIView()
-        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "Conversations")
+        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "消息")
         
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
         )
-        self.friendListNavigationController = UINavigationController(
-            rootViewController: friendListViewController
+        self.contactListNavigationController = UINavigationController(
+            rootViewController: contactListViewController
         )
-        self.groupListNavigationController = UINavigationController(
-            rootViewController: groupListViewController
-        )
-        self.chatroomListNavigationController = UINavigationController(
-            rootViewController: chatroomListViewController
+//        self.groupListNavigationController = UINavigationController(
+//            rootViewController: groupListViewController
+//        )
+        self.botListNavigationController = UINavigationController(
+            rootViewController: botListViewController
         )
         self.mySettingsNavigationController = UINavigationController(
             rootViewController: settingsViewController
         )
         
-        let tabbarItems = [self.channelsNavigationController, self.friendListNavigationController, self.groupListNavigationController, self.chatroomListNavigationController, self.mySettingsNavigationController]
+        let tabbarItems = [self.channelsNavigationController, self.contactListNavigationController, self.botListNavigationController, self.mySettingsNavigationController]
         self.viewControllers = tabbarItems
         
         self.setupStyles()
@@ -61,7 +58,6 @@ class MainChannelTabbarController: UITabBarController {
         
         JIM.shared().conversationManager.add(self)
         JIM.shared().connectionManager.add(self)
-        
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -82,40 +78,40 @@ class MainChannelTabbarController: UITabBarController {
             ? SBUColorSet.primary200
             : SBUColorSet.primary300
         channelsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Conversations"
+            text: "消息"
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
-        friendListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Friends"
+        contactListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "通讯录"
         )
-        friendListViewController.tabBarItem = self.createTabItem(type: .friends)
+        contactListViewController.tabBarItem = self.createTabItem(type: .contacts)
         
-        groupListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Groups"
-        )
-        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
+//        groupListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+//            text: "Groups"
+//        )
+//        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
-        chatroomListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "Chatrooms"
+        botListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
+            text: "智能体"
         )
-        chatroomListViewController.tabBarItem = self.createTabItem(type: .chatrooms)
+        botListViewController.tabBarItem = self.createTabItem(type: .bots)
         
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "My settings"
+            text: "我"
         )
         settingsViewController.tabBarItem = self.createTabItem(type: .mySettings)
         
         self.channelsNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
-        self.friendListNavigationController.navigationBar.barStyle = self.isDarkMode
+        self.contactListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
-        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
-            ? .black
-            : .default
-        self.chatroomListNavigationController.navigationBar.barStyle = self.isDarkMode
+//        self.groupListNavigationController.navigationBar.barStyle = self.isDarkMode
+//            ? .black
+//            : .default
+        self.botListNavigationController.navigationBar.barStyle = self.isDarkMode
             ? .black
             : .default
         self.mySettingsNavigationController.navigationBar.barStyle = self.isDarkMode
@@ -123,11 +119,17 @@ class MainChannelTabbarController: UITabBarController {
             : .default
     }
     
-    
     // MARK: - SDK related
     func loadTotalUnreadMessageCount() {
+        var friendCount: Int32 = 0
+        let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
+        if let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) {
+            friendCount = conversationInfo.unreadCount
+            self.setFriendBadgeCount(friendCount)
+        }
+        
         let totalCount = JIM.shared().conversationManager.getTotalUnreadCount()
-        let uintCount = UInt(totalCount)
+        let uintCount = UInt(totalCount - friendCount)
         self.setUnreadMessagesCount(uintCount)
     }
     
@@ -147,23 +149,23 @@ class MainChannelTabbarController: UITabBarController {
         let tag: Int
         switch type {
         case .channels:
-            title = "Conversations"
+            title = "消息"
             icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
             tag = 0
-        case .friends:
-            title = "Friends"
+        case .contacts:
+            title = "通讯录"
             icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
-        case .groups:
-            title = "Groups"
-            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
-            tag = 2
-        case .chatrooms:
-            title = "Chatrooms"
-            icon = UIImage(named: "imgOpenchannel")?.resize(with: iconSize)
+//        case .groups:
+//            title = "Groups"
+//            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
+//            tag = 2
+        case .bots:
+            title = "智能体"
+            icon = UIImage(named: "iconBot")?.resize(with: iconSize)
             tag = 3
         case .mySettings:
-            title = "My settings"
+            title = "我"
             icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
             tag = 4
         }
@@ -195,7 +197,30 @@ class MainChannelTabbarController: UITabBarController {
             ],
             for: .normal
         )
+    }
+    
+    private func setFriendBadgeCount(_ totalCount: Int32) {
+        var badgeValue: String?
         
+        if totalCount == 0 {
+            badgeValue = nil
+        } else if totalCount > 99 {
+            badgeValue = "99+"
+        } else {
+            badgeValue = "\(totalCount)"
+        }
+        
+        self.contactListViewController.tabBarItem.badgeColor = SBUColorSet.error300
+        self.contactListViewController.tabBarItem.badgeValue = badgeValue
+        self.contactListViewController.tabBarItem.setBadgeTextAttributes(
+            [
+                NSAttributedString.Key.foregroundColor : isDarkMode
+                    ? SBUColorSet.onlight01
+                    : SBUColorSet.ondark01,
+                NSAttributedString.Key.font : SBUFontSet.caption4
+            ],
+            for: .normal
+        )
     }
     
     func updateTheme(isDarkMode: Bool) {
@@ -209,15 +234,26 @@ class MainChannelTabbarController: UITabBarController {
         
         self.loadTotalUnreadMessageCount()
     }
+    
+    private func updateFriendBadgeCount(_ conversationInfoList: [JConversationInfo]) {
+        for conversationInfo in conversationInfoList {
+            if conversationInfo.conversation.conversationType == .system
+                && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
+                self.setFriendBadgeCount(conversationInfo.unreadCount)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "FriendApplicationCountNtf"), object: Int(conversationInfo.unreadCount))
+                break
+            }
+        }
+    }
 }
 
 extension MainChannelTabbarController: JConversationDelegate {
     func conversationInfoDidAdd(_ conversationInfoList: [JConversationInfo]!) {
-        
+        self.updateFriendBadgeCount(conversationInfoList)
     }
     
     func conversationInfoDidUpdate(_ conversationInfoList: [JConversationInfo]!) {
-        
+        self.updateFriendBadgeCount(conversationInfoList)
     }
     
     func conversationInfoDidDelete(_ conversationInfoList: [JConversationInfo]!) {
@@ -225,7 +261,10 @@ extension MainChannelTabbarController: JConversationDelegate {
     }
     
     func totalUnreadMessageCountDidUpdate(_ count: Int32) {
-        let uintCount = UInt(count)
+        let conversation = JConversation(conversationType: .system, conversationId: GlobalConst.friendConversationId)
+        let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation)
+        let friendCount = conversationInfo?.unreadCount ?? 0
+        let uintCount = UInt(count - friendCount)
         self.setUnreadMessagesCount(uintCount)
     }
 }

@@ -47,7 +47,7 @@ public struct SBUTextMessageTextViewModel {
     
     /// This computed property checks if the message has mentioned someone.
     public var hasMentionedMessage: Bool {
-        guard let message = message else { return false }
+        guard message != nil else { return false }
         //TODO:
         return false
     }
@@ -75,12 +75,30 @@ public struct SBUTextMessageTextViewModel {
         var text = ""
         if let textMessage = message?.content as? JTextMessage {
             text = textMessage.content
+        } else if let callMessage = message?.content as? JCallFinishNotifyMessage {
+            switch callMessage.finishType {
+            case .cancel:
+                text = "已取消"
+            case .reject:
+                text = "已拒绝"
+            case .noResponse:
+                text = "未接听"
+            case .complete:
+                let timeString = SBUTextMessageTextViewModel.getStringForTime(callMessage.duration)
+                text = "通话时长 \(timeString)"
+            @unknown default:
+                break
+            }
+        } else if let streamTextMessage = message?.content as? StreamTextMessage {
+            text = streamTextMessage.content ?? ""
+        } else {
+            text = "unknown"
         }
         
         if let isEdited = isEdited {
             edited = isEdited
         } else {
-            edited = false
+            edited = message?.isEdit ?? false
         }
         
         self.theme = isOverlay ? SBUTheme.overlayTheme.messageCellTheme : SBUTheme.messageCellTheme
@@ -195,11 +213,10 @@ public struct SBUTextMessageTextViewModel {
     ///   - attributedString: The attributed string to be highlighted.
     ///   - mentionedList: The list of mentioned users.
     public func addMentionedUserHighlightIfNeeded(with attributedString: NSMutableAttributedString, mentionedList: [SBUMention]?) {
-        guard let mentionedList = mentionedList,
-              let currentUser = SBUGlobals.currentUser else { return }
+        guard let mentionedList = mentionedList else { return }
         
         let currentUserRanges = mentionedList
-            .filter { currentUser.userId == $0.user.userId }
+            .filter { JIM.shared().currentUserId == $0.user.userId }
             .map(\.range)
         
         currentUserRanges.forEach { (range) in
@@ -226,5 +243,15 @@ public struct SBUTextMessageTextViewModel {
                 ])
             attributedString.append(editedAttributedString)
         }
+    }
+    
+    private static func getStringForTime(_ time: Int64) -> String {
+        let seconds = time / 1000
+        if seconds < 60 * 60 {
+            return String(format: "%02ld:%02ld", seconds/60, seconds%60)
+        } else {
+            return String(format: "%02ld:%02ld:%02ld", seconds/60/60, (seconds/60)%60, seconds%60)
+        }
+        
     }
 }

@@ -419,6 +419,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         tag: MediaResourceType.videoCall.rawValue,
         completionHandler: nil
     )
+    let contactCardItem = SBUActionSheetItem(
+        title: "个人名片",
+        tag: MediaResourceType.contactCard.rawValue,
+        completionHandler: nil
+    )
     let cancelItem = SBUActionSheetItem(title: SBUStringSet.Cancel, completionHandler: nil)
 
     @SBUThemeWrapper(theme: SBUTheme.messageInputTheme)
@@ -469,7 +474,11 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             // Start a new mode
             switch newValue {
             case .edit(let message):
-                self.startEditMode(text: "")
+                var text = ""
+                if let textMessage = message.content as? JTextMessage {
+                    text = textMessage.content
+                }
+                self.startEditMode(text: text)
             case .quoteReply(let message):
                 self.startQuoteReplyMode(message: message)
             case .none:
@@ -787,6 +796,10 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             with: theme.buttonTintColor,
             to: SBUIconSetType.Metric.iconActionSheetItem
         )
+        self.contactCardItem.image = SBUIconSetType.iconUser.image(
+            with: theme.buttonTintColor,
+            to: SBUIconSetType.Metric.iconActionSheetItem
+        )
         self.cancelItem.color = theme.buttonTintColor
         
         self.divider.backgroundColor = theme.channelViewDividerColor
@@ -959,6 +972,28 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
             self.placeholderLabel.text = SBUStringSet.MessageInput_Text_Placeholder
         }
     }
+    
+    public func setTextViewInitialText(content: String) {
+        guard let textView = self.textView else {
+            return
+        }
+        
+        textView.font = self.theme.textFieldFont
+        textView.text = content
+        
+        self.placeholderLabel.isHidden = !textView.text.isEmpty
+        self.updateTextViewHeight()
+        
+        let text = textView.text ?? ""
+        if self.editView.isHidden {
+            
+            self.sendButton?.isHidden = (!showsSendButton &&
+                text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            self.voiceMessageButton?.isHidden = !(showsVoiceMessageButton && (self.sendButton?.isHidden ?? false))
+            self.textViewTrailingPaddingView.isHidden = (self.sendButton?.isHidden == true) && (self.voiceMessageButton?.isHidden == true)
+            self.layoutIfNeeded()
+        }
+    }
 
     // MARK: - Action
     
@@ -987,6 +1022,7 @@ open class SBUMessageInputView: SBUView, SBUActionSheetDelegate, UITextViewDeleg
         items.append(self.documentItem)       
         items.append(self.voiceCallItem)
         items.append(self.videoCallItem)
+        items.append(self.contactCardItem)
         return items
     }
     

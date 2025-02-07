@@ -342,6 +342,7 @@
 #pragma mark - media
 - (void)mediaQuit {
     JLogI(@"Call-Media", @"media quit");
+    [JCallMediaManager.shared stopPreview];
     [JCallMediaManager.shared leaveRoom:self.callId];
 }
 

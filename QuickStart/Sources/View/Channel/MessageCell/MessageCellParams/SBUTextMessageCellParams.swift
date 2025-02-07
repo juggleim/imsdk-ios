@@ -32,6 +32,7 @@ public class SBUTextMessageCellParams: SBUBaseMessageCellParams {
 
     public init(
         message: JMessage,
+        reaction: JMessageReaction? = nil,
         hideDateView: Bool,
         useMessagePosition: Bool,
         groupPosition: MessageGroupPosition = .none,
@@ -59,6 +60,7 @@ public class SBUTextMessageCellParams: SBUBaseMessageCellParams {
         
         super.init(
             message: message,
+            reaction: reaction,
             hideDateView: hideDateView,
             messagePosition: messagePosition,
             groupPosition: groupPosition,

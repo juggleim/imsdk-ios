@@ -45,6 +45,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
 #define kRecallMsg @"recall_msg"
+#define kModifyMsg @"modify_msg"
 #define kQryHisMsgs @"qry_hismsgs"
 #define jQryHisMsgsByIds @"qry_hismsg_by_ids"
 #define kSyncConvers @"sync_convers"
@@ -75,6 +76,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryFirstUnreadMsg @"qry_first_unread_msg"
 #define jBatchAddAtt @"c_batch_add_att"
 #define jBatchDelAtt @"c_batch_del_att"
+#define jMsgExSet @"msg_exset"
+#define jDelMsgExSet @"del_msg_exset"
+#define jQryMsgExSet @"qry_msg_exset"
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
 #define jRtcAccept @"rtc_accept"
@@ -83,6 +87,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcQry @"rtc_qry"
 #define jSetUserSettings @"set_user_settings"
+#define jGetUserSettings @"get_user_settings"
 #define jLanguage @"language"
 #define jRtcPing @"rtc_ping"
 
@@ -135,10 +140,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JRtcInviteEventNtf
 @end
 
-@implementation JCallAuthAck
+@implementation JStringAck
 @end
 
 @implementation JRtcQryCallRoomsAck
+@end
+
+@implementation JQryMsgExtAck
 @end
 
 @implementation JQryAck
@@ -209,7 +217,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.clientIp = clientIp;
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApple;
-    connectMsg.language = language;
+//    connectMsg.language = language;
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
@@ -315,6 +323,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JConversationTypeSystem:
             break;
+            
         default:
             break;
     }
@@ -373,6 +382,35 @@ typedef NS_ENUM(NSUInteger, JQos) {
         downMsg.referMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
     }
     return downMsg;
+}
+
+- (NSData *)updateMessageData:(NSString *)messageId
+                      msgType:(nonnull NSString *)contentType
+                      msgData:(nonnull NSData *)msgData
+                 conversation:(nonnull JConversation *)conversation
+                    timestamp:(long long)timestamp
+                     msgSeqNo:(long long)msgSeqNo
+                        index:(int)index {
+    ModifyMsgReq *req = [[ModifyMsgReq alloc] init];
+    req.msgId = messageId;
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgTime = timestamp;
+    req.msgSeqNo = msgSeqNo;
+    req.msgContent = msgData;
+    req.msgType = contentType;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = kModifyMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = [req data];
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *sm = [self createImWebSocketMsgWithQueryMsg:body];
+    return sm.data;
 }
 
 - (NSData *)recallMessageData:(NSString *)messageId
@@ -849,6 +887,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)syncChatroomMessages:(long long)syncTime
                       chatroomId:(NSString *)chatroomId
+                          userId:(NSString *)userId
                 prevMessageCount:(int)count
                            index:(int)index {
     SyncChatroomReq *req = [[SyncChatroomReq alloc] init];
@@ -859,7 +898,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jSyncChatroomMessage;
-    body.targetId = chatroomId;
+    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -871,6 +910,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)syncChatroomAttributes:(long long)syncTime
                         chatroomId:(NSString *)chatroomId
+                            userId:(NSString *)userId
                              index:(int)index {
     SyncChatroomReq *req = [[SyncChatroomReq alloc] init];
     req.chatroomId = chatroomId;
@@ -879,7 +919,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
     body.topic = jSyncChatroomAtts;
-    body.targetId = chatroomId;
+    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -955,6 +995,88 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)addMsgSet:(NSString *)messageId
+         conversation:(JConversation *)conversation
+                  key:(NSString *)key
+               userId:(NSString *)userId
+                index:(int)index {
+    MsgExtItem *item = [[MsgExtItem alloc] init];
+    item.key = key;
+    item.value = userId;
+    
+    MsgExt *ext = [[MsgExt alloc] init];
+    ext.targetId = conversation.conversationId;
+    ext.channelType = (int32_t)conversation.conversationType;
+    ext.msgId = messageId;
+    ext.ext = item;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jMsgExSet;
+    body.targetId = messageId;
+    body.data_p = ext.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)removeMsgSet:(NSString *)messageId
+            conversation:(JConversation *)conversation
+                     key:(NSString *)key
+                  userId:(NSString *)userId
+                   index:(int)index {
+    MsgExtItem *item = [[MsgExtItem alloc] init];
+    item.key = key;
+    item.value = userId;
+    
+    MsgExt *ext = [[MsgExt alloc] init];
+    ext.targetId = conversation.conversationId;
+    ext.channelType = (int32_t)conversation.conversationType;
+    ext.msgId = messageId;
+    ext.ext = item;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jDelMsgExSet;
+    body.targetId = messageId;
+    body.data_p = ext.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)queryMsgExSet:(NSArray<NSString *> *)messageIdList
+             conversation:(JConversation *)conversation
+                    index:(int)index {
+    NSMutableArray *array = [NSMutableArray array];
+    for (NSString *messageId in messageIdList) {
+        [array addObject:messageId];
+    }
+    
+    QryMsgExtReq *req = [[QryMsgExtReq alloc] init];
+    req.targetId = conversation.conversationId;
+    req.channelType = (int32_t)conversation.conversationType;
+    req.msgIdsArray = array;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryMsgExSet;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
     }
     ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
     return m.data;
@@ -1275,6 +1397,26 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getLanguage:(NSString *)userId index:(int)index {
+    NSMutableArray *arr = [NSMutableArray array];
+    KvItem *item = [[KvItem alloc] init];
+    item.key = jLanguage;
+    [arr addObject:item];
+    UserInfo *userInfo = [[UserInfo alloc] init];
+    userInfo.settingsArray = arr;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jGetUserSettings;
+    body.targetId = userId;
+    body.data_p = [userInfo data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)rtcPingData:(NSString *)callId
                   index:(int)index {
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -1350,6 +1492,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.timestamp = body.timestamp;
             a.seqNo = body.msgSeqNo;
             a.clientUid = body.clientMsgId;
+            if (body.hasModifiedMsg) {
+                JMessage *modifiedMsg = [self messageWithDownMsg:body.modifiedMsg];
+                a.contentType = modifiedMsg.contentType;
+                a.content = modifiedMsg.content;
+            }
             obj.publishMsgAck = a;
         }
             break;
@@ -1432,6 +1579,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeQryCallRoomAck:
                     obj = [self qryCallRoomAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetUserInfoAck:
+                    obj = [self getUserInfoAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeQryMsgExtAck:
+                    obj = [self qryMsgExtAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -1619,6 +1772,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
     }
     msg.flags = downMsg.flags;
+    msg.isEdit = msg.flags & JMessageFlagIsModified;
     JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
     info.readCount = downMsg.readCount;
     info.memberCount = downMsg.memberCount;
@@ -1710,6 +1864,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.userId = pbUserInfo.userId;
     result.userName = pbUserInfo.nickname;
     result.portrait = pbUserInfo.userPortrait;
+    result.type = (int)pbUserInfo.userType;
     if (pbUserInfo.extFieldsArray_Count > 0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         for (KvItem *item in pbUserInfo.extFieldsArray) {
@@ -1822,6 +1977,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     mentionMessage.senderId = mentionMsg.senderId;
     mentionMessage.msgId = mentionMsg.msgId;
     mentionMessage.msgTime = mentionMsg.msgTime;
+    mentionMessage.type = (JMentionType)mentionMsg.mentionType;
     return mentionMessage;
 }
 
@@ -1971,11 +2127,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeCallAuthAck;
-    JCallAuthAck *a = [[JCallAuthAck alloc] init];
+    JStringAck *a = [[JStringAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
-    a.zegoToken = zegoAuth.token;
-    obj.callInviteAck = a;
+    a.str = zegoAuth.token;
+    obj.stringAck = a;
     return obj;
 }
 
@@ -2022,6 +2178,75 @@ typedef NS_ENUM(NSUInteger, JQos) {
     [a encodeWithQueryAckMsgBody:body];
     a.rooms = outRooms;
     obj.rtcQryCallRoomsAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)getUserInfoAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    UserInfo *userInfo = [[UserInfo alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get userInfo ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetUserInfoAck;
+    NSString *s = @"";
+    for (KvItem *item in userInfo.settingsArray) {
+        if ([item.key isEqualToString:jLanguage]) {
+            s = item.value;
+            break;
+        }
+    }
+    JStringAck *a = [[JStringAck alloc] init];
+    [a encodeWithQueryAckMsgBody:body];
+    a.str = s;
+    obj.stringAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)qryMsgExtAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    MsgExtItemsList *list = [[MsgExtItemsList alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry msg ext ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryMsgExtAck;
+    NSMutableArray <JMessageReaction *> *reactionList = [NSMutableArray array];
+    for (MsgExtItems *pbItems in list.itemsArray) {
+        JMessageReaction *reaction = [[JMessageReaction alloc] init];
+        reaction.messageId = pbItems.msgId;
+        NSMutableArray <JMessageReactionItem *> *itemList = [NSMutableArray array];
+        BOOL isUpdate = NO;
+        for (MsgExtItem *pbItem in pbItems.extsArray) {
+            JUserInfo *user = [self userInfoWithPBUserInfo:pbItem.userInfo];
+            isUpdate = NO;
+            for (JMessageReactionItem *loopItem in itemList) {
+                if ([loopItem.reactionId isEqualToString:pbItem.key]) {
+                    isUpdate = YES;
+                    NSMutableArray <JUserInfo *> *userInfoList = [loopItem.userInfoList mutableCopy];
+                    [userInfoList addObject:user];
+                    loopItem.userInfoList = [userInfoList copy];
+                    break;
+                }
+            }
+            if (!isUpdate) {
+                JMessageReactionItem *reactionItem = [[JMessageReactionItem alloc] init];
+                reactionItem.reactionId = pbItem.key;
+                reactionItem.userInfoList = @[user];
+                [itemList addObject:reactionItem];
+            }
+        }
+        reaction.itemList = [itemList copy];
+        [reactionList addObject:reaction];
+    }
+    JQryMsgExtAck *ack = [[JQryMsgExtAck alloc] init];
+    [ack encodeWithQueryAckMsgBody:body];
+    ack.reactionList = reactionList;
+    obj.qryMsgExtAck = ack;
     return obj;
 }
 
@@ -2336,7 +2561,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcPing:@(JPBRcvTypeRtcPingAck),
              jRtcMemberRooms:@(JPBRcvTypeQryCallRoomsAck),
              jRtcQry:@(JPBRcvTypeQryCallRoomAck),
-             jSetUserSettings:@(JPBRcvTypeSimpleQryAck)
+             jSetUserSettings:@(JPBRcvTypeSimpleQryAck),
+             jGetUserSettings:@(JPBRcvTypeGetUserInfoAck),
+             kModifyMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jQryMsgExSet:@(JPBRcvTypeQryMsgExtAck)
     };
 }
 @end

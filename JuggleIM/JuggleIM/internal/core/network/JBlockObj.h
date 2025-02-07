@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JSendMessageObj : JBlockObj
 @property (nonatomic, assign) long long clientMsgNo;
-@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo);
+@property (nonatomic, copy) void (^successBlock)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode, long long clientMsgNo);
 @end
 
@@ -74,8 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *chatroomId;
 @end
 
-@interface JCallAuthObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSString *zegoToken);
+@interface JStringObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSString *);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JMessageReactionObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray <JMessageReaction *> *);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

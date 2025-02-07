@@ -14,6 +14,8 @@
 #import <JuggleIM/JGetMessageOptions.h>
 #import <JuggleIM/JQueryMessageOptions.h>
 #import <JuggleIM/JSearchConversationsResult.h>
+#import <JuggleIM/JMessageReaction.h>
+#import <UIKit/UIImage.h>
 
 @class JMergeMessage;
 
@@ -35,7 +37,21 @@
 - (void)messageDidClear:(JConversation *)conversation
               timestamp:(long long)timestamp
                senderId:(NSString *)senderId;
+/// 消息修改的回调
+/// - Parameter message: 修改后的消息
+- (void)messageDidUpdate:(JMessage *)message;
 
+/// 新增消息回应的回调
+/// - Parameter reaction: 新增的消息回应
+/// - Parameter conversation: 所属会话
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction
+               inConversation:(JConversation *)conversation;
+
+/// 删除消息回应的回调
+/// - Parameter reaction: 删除的消息回应
+/// - Parameter conversation: 所属会话
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction
+                  inConversation:(JConversation *)conversation;
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -330,7 +346,7 @@
 /// 消息本地检索
 /// - Parameters:
 ///   - searchContent: 查询内容
-///   - conversation: 要查询的会话，传空从所有会话中查询
+///   - conversation: 要查询的会话
 ///   - count:拉取数量，超过 100 条按 100 返回
 ///   - time: 消息时间戳，如果传 0 为当前时间
 ///   - direction: 查询方向
@@ -394,6 +410,43 @@
 ///   - clientMsgNo: 本端消息唯一编号
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 
+/// 添加消息回应
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 消息所属会话
+///   - reactionId: 回应 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                   success:(void (^)(void))successBlock
+                     error:(void (^)(JErrorCode code))errorBlock;
+
+/// 删除消息回应
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 消息所属会话
+///   - reactionId: 回应 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
+
+/// 批量获取消息回应（消息必须属于同一个会话）
+/// - Parameters:
+///   - messageIdList: 消息 id 列表
+///   - conversation: 消息所属会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getMessagesReaction:(NSArray <NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
+                      error:(void (^)(JErrorCode code))errorBlock;
+
 /// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
 /// - Parameters:
 ///   - content: 消息实体
@@ -416,10 +469,22 @@
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode))errorBlock;
 
-
 /// 取消下载消息
 /// - Parameter messageId: 消息 id
 - (void)cancelDownloadMediaMessage:(NSString *)messageId;
+
+/// 修改消息
+/// - Parameters:
+///   - content: 修改后的消息实体
+///   - messageId: 消息 id
+///   - conversation: 会话
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)updateMessage:(JMessageContent *)content
+            messageId:(NSString *)messageId
+       inConversation:(JConversation *)conversation
+              success:(void (^)(JMessage *message))successBlock
+                error:(void (^)(JErrorCode errorCode))errorBlock;
 
 /// 设置消息全局免打扰
 /// - Parameters:
@@ -434,5 +499,13 @@
 /// - Parameter completeBlock: 结果回调 [errorCode: 错误码，0 为成功; isMute: 是否免打扰; timezone: 时区; periods: 免打扰的时间段, 为空视为全天免打扰]
 - (void)getMuteStatus:(void (^)(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))completeBlock;
 
+/// 上传图片
+/// - Parameters:
+///   - image: 图片
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)uploadImage:(UIImage *)image
+            success:(void (^)(NSString * url))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
 
 @end

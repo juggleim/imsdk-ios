@@ -32,7 +32,7 @@ class CreateGroupViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         let rightItem =  UIBarButtonItem(
-            title: "Create",
+            title: "创建",
             style: .plain,
             target: self,
             action: #selector(onClickMenu)
@@ -42,6 +42,12 @@ class CreateGroupViewController: BaseTableListViewController {
         if selectedUsers.isEmpty {
             self.navigationItem.rightBarButtonItem?.isEnabled = false
         }
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     @objc func onClickMenu() {

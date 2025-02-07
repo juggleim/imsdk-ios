@@ -25,6 +25,8 @@ typedef NS_ENUM(NSUInteger, JCallFinishNotifyType) {
 @property (nonatomic, assign) JCallFinishNotifyType finishType;
 // 通话时长，单位（ms）
 @property (nonatomic, assign) long long duration;
+// 通话类型
+@property (nonatomic, assign) JCallMediaType mediaType;
 
 @end
 

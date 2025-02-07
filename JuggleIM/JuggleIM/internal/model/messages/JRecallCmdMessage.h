@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSString *originalMessageId;
 @property (nonatomic, assign) long long originalMessageTime;
-@property (nonatomic, copy) NSDictionary * extra;
+@property (nonatomic, copy) NSDictionary *extra;
 
 @end
 

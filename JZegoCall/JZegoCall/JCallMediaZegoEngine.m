@@ -50,6 +50,10 @@
     }
 }
 
+- (void)stopPreview {
+    [[ZegoExpressEngine sharedEngine] stopPreview];
+}
+
 - (void)enableCamera:(BOOL)isEnable {
     [[ZegoExpressEngine sharedEngine] enableCamera:isEnable];
 }
@@ -131,6 +135,7 @@
 
 #pragma mark -
 - (void)createEngineWith:(NSNumber *)appId appSign:(NSString *)appSign {
+    [ZegoExpressEngine destroyEngine:nil];
     ZegoEngineProfile *profile = [[ZegoEngineProfile alloc] init];
     profile.appID = appId.intValue;
     profile.appSign = appSign;

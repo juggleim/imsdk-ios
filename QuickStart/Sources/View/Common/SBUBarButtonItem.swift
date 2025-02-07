@@ -8,9 +8,9 @@
 
 import UIKit
 
-class SBUBarButtonItem {
+@objc class SBUBarButtonItem: NSObject {
 
-    static func backButton(target: Any, selector: Selector) -> UIBarButtonItem {
+    @objc static func backButton(target: Any, selector: Selector) -> UIBarButtonItem {
         return UIBarButtonItem(
             image: SBUIconSetType.iconBack.image(to: SBUIconSetType.Metric.defaultIconSize),
             style: .plain,

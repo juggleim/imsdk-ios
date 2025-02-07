@@ -25,9 +25,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServerUrls:@[@"wss://ws.juggleim.com"]];
+    [JIM.shared setServerUrls:@[@"xxx"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
+    [JIM.shared initWithAppKey:@"xxx"];
     [JIM.shared.connectionManager connectWithToken:kToken1182];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
@@ -41,7 +41,7 @@
     
     [JIM.shared.callManager addReceiveDelegate:self];
     
-    [JIM.shared.callManager initZegoEngineWith:1881186044 appSign:@"fa122239ebb969ac7be4b3c09a8e1350f34abc1bdb6d24af216470060c84fd6f"];
+    [JIM.shared.callManager initZegoEngineWith:111 appSign:@"xxx"];
     
     return YES;
 }
@@ -53,9 +53,58 @@
     NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [JIM.shared.connectionManager setLanguage:@"asdfasdf" complete:^(JErrorCode code) {
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"botid8"];
+            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"hello"];
+            [JIM.shared.messageManager sendMessage:text
+                                    inConversation:c
+                                           success:^(JMessage *message) {
+                int i = 0;
+            } error:^(JErrorCode errorCode, JMessage *message) {
+                int i = 0;
+            }];
+            
+            
+//            [JIM.shared.messageManager sendMessage:text
+//                                    inConversation:c
+//                                           success:^(JMessage *message) {
+//                int i = 1;
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                
+//            }];
+//            
+            
+//            [JIM.shared.messageManager removeMessageReaction:@"nwnrv8pkaa6g3hx7"
+//                                                conversation:c
+//                                                  reactionId:@"reaction3"
+//                                                     success:^{
+//                
+//            } error:^(JErrorCode code) {
+//                
+//            }];
+            
+//            [JIM.shared.messageManager addMessageReaction:@"nwnrv8pkaa6g3hx7"
+//                                             conversation:c
+//                                               reactionId:@"reaction3"
+//                                                  success:^{
+//                int i = 1;
+//            } error:^(JErrorCode code) {
 //                int i = 1;
 //            }];
+//
+//            [JIM.shared.messageManager removeMessageReaction:@"nwnrv8pkaa6g3hx7" conversation:c reactionId:@"reaction9" success:^{
+//                int i = 1;
+//            } error:^(JErrorCode code) {
+//                int i = 1;
+//            }];
+//            [JIM.shared.messageManager getMessagesReaction:@[@"nwnrv8pkaa6g3hx7"]
+//                                              conversation:c
+//                                                   success:^(NSArray<JMessageReaction *> *reactionList) {
+//                int i = 1;
+//            } error:^(JErrorCode code) {
+//                int i = 1;
+//            }];
+            
+
         });
     }
 }
@@ -98,6 +147,16 @@
     }];
 }
 
+- (void)messageReactionDidAdd:(JMessageReaction *)reaction
+               inConversation:(JConversation *)conversation {
+    NSLog(@"messageReactionDidAdd, original messageId is %@", reaction.messageId);
+}
+
+- (void)messageReactionDidRemove:(JMessageReaction *)reaction
+                  inConversation:(JConversation *)conversation {
+    NSLog(@"messageReactionDidRemove, original messageId is %@", reaction.messageId);
+}
+
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [JIM.shared.connectionManager registerDeviceToken:deviceToken];
 }
@@ -105,6 +164,7 @@
 
 - (void)chatroomDidJoin:(NSString *)chatroomId {
     NSLog(@"AppDelegate, chatroomDidJoin, chatroomId is %@", chatroomId);
+    
 }
 
 - (void)chatroomDidQuit:(NSString *)chatroomId {
@@ -209,6 +269,8 @@
         NSLog(@"AppDelegate, file messageDidReceive, name is %@, url is %@, size is %lld, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
         NSLog(@"AppDelegate, voice messageDidReceive, url is %@, duration is %ld, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
+    } else if ([content isKindOfClass:[JStreamTextMessage class]]) {
+        NSLog(@"AppDelegate, JStreamTextMessage messageDidReceive, content is %@", ((JStreamTextMessage *)content).content);
     }
     
 ////    if ([content isKindOfClass:[JMediaMessageContent class]]) {
@@ -222,6 +284,10 @@
 ////            NSLog(@"AppDelegate, download error code is %d", errorCode);
 ////        }];
 //    }
+}
+
+- (void)streamTextMessageDidAppend:(JStreamAppend *)streamAppend {
+    NSLog(@"AppDelegate, streamMessageDidAppend");
 }
 
 - (void)messageDidRecall:(JMessage *)message {

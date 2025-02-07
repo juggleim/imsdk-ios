@@ -9,18 +9,20 @@
 #import "JLogger.h"
 
 @interface JPreSignUploader ()<NSURLSessionTaskDelegate>
-
 @property (nonatomic, strong) NSURLSessionUploadTask * uploadTask;
+@property (nonatomic, assign) JUploadOssType ossType;
 @end
 
 
 @implementation JPreSignUploader
 
 -(instancetype)initWith:(NSString *)localPath
-            preSignCred:(JUploadPreSignCred *)preSignCred{
+            preSignCred:(JUploadPreSignCred *)preSignCred
+                ossType:(JUploadOssType)ossType {
     if(self = [super init]){
         self.localPath = localPath;
         self.preSignCred = preSignCred;
+        self.ossType = ossType;
     }
     return self;
 }
@@ -59,6 +61,9 @@
     // 创建请求
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadURL];
     [request setHTTPMethod:@"PUT"];
+    if (self.ossType == JUploadOssType_S3) {
+        [request setValue:@"public-read" forHTTPHeaderField:@"x-amz-acl"];
+    }
     // 创建上传任务
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession * session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];

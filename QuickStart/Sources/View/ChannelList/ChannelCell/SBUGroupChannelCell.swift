@@ -99,7 +99,11 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.unreadMentionLabel.isHidden = true
         self.notificationState.isHidden = true
         self.messageLabel.numberOfLines = 2
-        
+        self.messageLabel.textColor = theme.messageTextColor
+        self.titleLabel.textColor = theme.titleTextColor
+        self.messageLabel.font = theme.messageFont
+        self.titleLabel.font = theme.titleFont
+
         self.contentView.addSubview(
             self.contentStackView.setHStack([
                 self.coverImage,
@@ -197,17 +201,11 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             self.backgroundColor = UIColor(red: 240.0 / 255.0, green: 242.0 / 255.0, blue: 245.0 / 255.0, alpha: 1.0)
         }
         
-        self.titleLabel.font = theme.titleFont
-        self.titleLabel.textColor = theme.titleTextColor
-        
         self.memberCountLabel.font = theme.memberCountFont
         self.memberCountLabel.textColor = theme.memberCountTextColor
         
         self.lastUpdatedTimeLabel.font = theme.lastUpdatedTimeFont
         self.lastUpdatedTimeLabel.textColor = theme.lastUpdatedTimeTextColor
-        
-        self.messageLabel.font = theme.messageFont
-        self.messageLabel.textColor = theme.messageTextColor
         
         // TODO: Need to add StringSet constant?
         self.unreadMentionLabel.text = SBUGlobals.userMentionConfig?.trigger ?? SBUStringSet.Mention.Trigger_Key
@@ -255,15 +253,26 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
 
         var url = ""
         var name = ""
+        var attributeName = NSMutableAttributedString(string: name)
         if (conversationInfo.conversation.conversationType == .private) {
             if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId) {
                 url = user.portrait ?? ""
                 name = user.userName ?? ""
+                attributeName = NSMutableAttributedString(string: name)
+                if user.type == .bot {
+                    name.append(" 智能体")
+                    attributeName = NSMutableAttributedString(string: name)
+                    let range = NSRange(location: name.count-4, length: 4)
+                    attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
+                    let font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
+                    attributeName.addAttribute(.font, value: font, range: range)
+                }
             }
         } else if (conversationInfo.conversation.conversationType == .group) {
             if let group = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId) {
                 url = group.portrait ?? ""
                 name = group.groupName ?? ""
+                attributeName = NSMutableAttributedString(string: name)
             }
         }
         
@@ -275,7 +284,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         }
         
         // Title
-        self.titleLabel.text = name
+        self.titleLabel.attributedText = attributeName
         
         // Notification state. If myPushTriggerOption is all, this property will hidden.
         self.notificationState.isHidden = !conversationInfo.mute
@@ -285,14 +294,36 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         
         // Last message
         self.messageLabel.lineBreakMode = .byTruncatingTail
-        if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
+        if let draft = conversationInfo.draft, draft.count > 0 {
+            let content = "[草稿] \(draft)"
+            let attributeString = NSMutableAttributedString(string: content)
+            let range = NSRange(location: 0, length: 4)
+            attributeString.addAttribute(.foregroundColor, value: UIColor.red, range: range)
+            self.messageLabel.attributedText = attributeString
+        } else if conversationInfo.lastMessage.content is JRecallInfoMessage {
+            var tip = ""
+            if conversationInfo.lastMessage.direction == .receive {
+                var userName = conversationInfo.lastMessage.senderUserId ?? ""
+                if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.lastMessage.senderUserId) {
+                    userName = user.userName ?? userName
+                }
+                tip = "\(userName) 撤回了一条消息"
+            } else {
+                tip = "你 撤回了一条消息"
+            }
+            self.messageLabel.text = tip
+        } else if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {
             self.messageLabel.text = digest
         } else {
             self.messageLabel.text = ""
         }
         
         // Unread count
-        switch conversationInfo.unreadCount {
+        var unreadCount = conversationInfo.unreadCount
+        if unreadCount == 0 && conversationInfo.hasUnread {
+            unreadCount = 1
+        }
+        switch unreadCount {
         case 0:
             self.unreadCount.isHidden = true
         case 1...99:
@@ -300,8 +331,10 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 self.unreadCount.setTitle("", for: .normal)
                 self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
             } else {
-                self.unreadCount.setTitle(String(conversationInfo.unreadCount), for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+                self.unreadCount.setTitle(String(unreadCount), for: .normal)
+                self.unreadCount
+                    .sbu_constraint(height: unreadCountSize)
+                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
             self.unreadCount.isHidden = false
         case 100...:
@@ -310,7 +343,9 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
             } else {
                 self.unreadCount.setTitle("99+", for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize, height: unreadCountSize)
+                self.unreadCount
+                    .sbu_constraint(height: unreadCountSize)
+                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
             self.unreadCount.isHidden = false
         default:

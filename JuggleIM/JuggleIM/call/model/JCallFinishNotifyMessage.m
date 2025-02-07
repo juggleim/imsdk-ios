@@ -10,6 +10,7 @@
 #define jCallFinishNtf @"jg:callfinishntf"
 #define jReason @"reason"
 #define jDuration @"duration"
+#define jMediaType @"media_type"
 #define jCall @"[Call]"
 
 @implementation JCallFinishNotifyMessage
@@ -24,7 +25,8 @@
 
 - (NSData *)encode {
     NSDictionary *dic = @{jReason:@(self.finishType),
-                          jDuration:@(self.duration)};
+                          jDuration:@(self.duration),
+                          jMediaType:@(self.mediaType)};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
@@ -38,6 +40,10 @@
     obj = json[jDuration];
     if ([obj isKindOfClass:[NSNumber class]]) {
         self.duration = [(NSNumber *)obj longLongValue];
+    }
+    obj = json[jMediaType];
+    if ([obj isKindOfClass:[NSNumber class]]) {
+        self.mediaType = [(NSNumber *)obj intValue];
     }
 }
 

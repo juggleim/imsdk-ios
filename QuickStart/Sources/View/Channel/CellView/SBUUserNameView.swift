@@ -16,7 +16,7 @@ open class SBUUserNameView: SBUView {
     @SBUThemeWrapper(theme: SBUTheme.overlayTheme.messageCellTheme, setToDefault: true)
     public var overlayTheme: SBUMessageCellTheme
     
-    public var button: UIButton = .init()
+    public var button: UIButton = UIButton(type: .custom)
     public var username: String = ""
     public var leftMargin: CGFloat = 0
     
@@ -48,6 +48,11 @@ open class SBUUserNameView: SBUView {
         super.setupViews()
         
         self.addSubview(self.button)
+        if let usernameColor = self.usernameColor {
+            self.button.setTitleColor(usernameColor, for: .normal)
+        } else {
+            self.button.setTitleColor(theme.userNameTextColor, for: .normal)
+        }
     }
     
     open override func setupLayouts() {
@@ -85,12 +90,6 @@ open class SBUUserNameView: SBUView {
 
         self.button.titleLabel?.font = theme.userNameFont
         self.button.contentHorizontalAlignment = .left
-
-        if let usernameColor = self.usernameColor {
-            self.button.setTitleColor(usernameColor, for: .normal)
-        } else {
-            self.button.setTitleColor(theme.userNameTextColor, for: .normal)
-        }
     }
     
     open override func updateStyles() {
@@ -103,7 +102,15 @@ open class SBUUserNameView: SBUView {
         self.isOverlay = isOverlay
         
         self.username = username
-        self.button.setTitle(username, for: .normal)
+        
+        let attributeName = NSMutableAttributedString(string: username)
+        if username.hasSuffix(" 智能体") {
+            let range = NSRange(location: username.count-4, length: 4)
+            attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
+            let font = UIFont.systemFont(ofSize: 8.0, weight: .regular)
+            attributeName.addAttribute(.font, value: font, range: range)
+        }
+        self.button.setAttributedTitle(attributeName, for: .normal)
         self.button.sizeToFit()
         
         self.updateStyles()

@@ -21,6 +21,34 @@ class ViewController: UIViewController {
     var verifyCodeTextField: UITextField { connectView.verifyCodeTextField }
     var signInButton: UIButton { connectView.signInButton }
     
+    var serverSettingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("服务器设置", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
+        button.setTitleColor(UIColor(hex: "#0091FF"), for: .normal)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.addTarget(self, action: #selector(onServerSetting), for: .touchUpInside)
+        return button
+    }()
+    
+    var startupView: UIView = {
+        let view = UIView()
+        view.isOpaque = true
+        view.alpha = 1.0
+        view.backgroundColor = UIColor.white
+        view.clipsToBounds = true
+        return view
+    }()
+    
+    var startupImageView: UIImageView = {
+        let image = UIImageView()
+        image.image = UIImage(named: "logoSendbirdFull")
+        image.contentMode = .scaleAspectFit
+        image.clipsToBounds = true
+        image.isOpaque = true
+        return image
+    }()
+    
     @IBOutlet weak var versionLabel: UILabel!
     
     @IBOutlet weak var loadingIndicator: UIActivityIndicatorView! {
@@ -40,6 +68,14 @@ class ViewController: UIViewController {
         
         SBUTheme.set(theme: .light)
         GlobalSetCustomManager.setDefault()
+        
+        if let isAutoLogin = UserDefaults.loadIsAutoLogin(), isAutoLogin == true {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = false
+        } else {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = true
+        }
     }
     
     override func viewDidLoad() {
@@ -59,14 +95,57 @@ class ViewController: UIViewController {
         let uikitVersion: String = JuggleUI.version
         versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
         
-        phoneNumberTextField.text = UserDefaults.loadPhoneNumber()
-        verifyCodeTextField.text = UserDefaults.loadVerifyCode()
+        let (phone, code, isAutoLogin) = loadLoginInfo()
+        if phone != nil {
+            phoneNumberTextField.text = phone
+        }
+        if code != nil {
+            verifyCodeTextField.text = code
+        }
         
-        guard phoneNumberTextField.text != nil,
-              verifyCodeTextField.text != nil else {
+        self.view.addSubview(self.serverSettingButton)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(accountDidSwitch(notification:)), name: NSNotification.Name("SwitchAccount"), object: nil)
+        
+        self.serverSettingButton.sbu_constraint(width: 100)
+        var layoutConstraints: [NSLayoutConstraint] = []
+        layoutConstraints.append(self.serverSettingButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -10))
+        layoutConstraints.append(self.serverSettingButton.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 40))
+        NSLayoutConstraint.activate(layoutConstraints)
+        
+        guard let phoneText = phoneNumberTextField.text,
+              let codeText = verifyCodeTextField.text,
+              phoneText.count > 0,
+              codeText.count > 0
+        else {
             return
         }
-        signinAction()
+        
+        self.startupView.frame = self.view.bounds
+        self.view.addSubview(self.startupView)
+        self.startupView.addSubview(self.startupImageView)
+        self.startupImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            self.startupImageView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            self.startupImageView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            self.startupImageView.widthAnchor.constraint(equalToConstant: 185),
+            self.startupImageView.heightAnchor.constraint(equalToConstant: 32)
+        ])
+        
+        
+        if let isAutoLogin = isAutoLogin, isAutoLogin == true {
+            signinAction()
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = false
+        } else {
+            self.view.bringSubviewToFront(self.startupView)
+            self.startupView.isHidden = true
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -117,14 +196,14 @@ class ViewController: UIViewController {
             return
         }
         
-        UserDefaults.savePhoneNumber(phoneNumber)
-        UserDefaults.saveVerifyCode(verifyCode)
-        
         HttpManager.shared.login(phoneNumber: phoneNumber, verifyCode: verifyCode) { code, jcUser, token in
             if code == 0 {
-                guard let token = token else {
+                guard let token = token,
+                let jcUser = jcUser else {
                     return
                 }
+                UserDefaults.saveIsAutoLogin(true)
+                self.addLoginInfo(phone: phoneNumber, code: verifyCode, user: jcUser)
                 ProfileManager.shared.currentUserInfo = jcUser
                 JIM.shared().connectionManager.connect(withToken: token)
             } else {
@@ -134,6 +213,60 @@ class ViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc func accountDidSwitch(notification: NSNotification) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
+            if let user = notification.object as? JCUser {
+                self.phoneNumberTextField.text = user.phoneNumber
+                self.verifyCodeTextField.text = "000000"
+                self.signinAction()
+            } else {
+                self.phoneNumberTextField.text = ""
+                self.verifyCodeTextField.text = ""
+            }
+        }
+    }
+    
+    @objc func onServerSetting() {
+        let vc = SettingsServerViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.present(vc, animated: true)
+    }
+    
+    private func loadLoginInfo() -> (String?, String?, Bool?) {
+        var isAutoLogin = false
+        if let isAuto = UserDefaults.loadIsAutoLogin(), isAuto == true {
+            isAutoLogin = true
+        }
+        
+        if let accounts = UserDefaults.loadAccounts(), accounts.count > 0 {
+            if let account = accounts.first as? Dictionary<String, Dictionary<String, String>> {
+                if let phone = account.keys.first,
+                   let infoDic = account[phone],
+                   let code = infoDic["code"] {
+                    return (phone, code, isAutoLogin)
+                }
+            }
+        }
+        return (nil, nil, false)
+    }
+    
+    private func addLoginInfo(phone: String, code: String, user: JCUser) {
+        var accounts: [Dictionary<String, Dictionary<String, String>>]
+        if let a = UserDefaults.loadAccounts() as? [Dictionary<String, Dictionary<String, String>>] {
+            accounts = a
+        } else {
+            accounts = []
+        }
+        for (index, account) in accounts.enumerated() {
+            if account.keys.contains(phone) {
+                accounts.remove(at: index)
+                break
+            }
+        }
+        accounts.insert([phone: ["code": code, "id": user.userId, "name": user.userName ?? "", "portrait": user.portrait ?? ""]], at: 0)
+        UserDefaults.saveAccounts(accounts)
     }
 }
 

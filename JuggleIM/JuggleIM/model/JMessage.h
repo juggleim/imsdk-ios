@@ -58,5 +58,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, strong) JMessage *referredMsg;
 /// 消息本地属性（仅对本端生效，不会同步到服务端） 
 @property (nonatomic, copy) NSString *localAttribute;
+/// 是否被编辑
+@property (nonatomic, assign) BOOL isEdit;
 
 @end

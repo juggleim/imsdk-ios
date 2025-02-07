@@ -43,8 +43,11 @@
 @implementation JChatroomObj
 @end
 
-@implementation JCallAuthObj
+@implementation JStringObj
 @end
 
 @implementation JRtcRoomArrayObj
+@end
+
+@implementation JMessageReactionObj
 @end

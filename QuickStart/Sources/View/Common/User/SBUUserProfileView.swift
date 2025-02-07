@@ -155,7 +155,7 @@ class SBUUserProfileView: UIView, SBUUserProfileViewProtocol {
         
         self.menuStackView.addArrangedSubview(self.largeMessageButton)
         self.contentView.addSubview(self.menuStackView)
-        self.menuStackView.isHidden = (self.user?.userId == SBUGlobals.currentUser?.userId) || self.isMenuStackViewHidden
+        self.menuStackView.isHidden = (self.user?.userId == JIM.shared().currentUserId) || self.isMenuStackViewHidden
         
         self.contentView.addSubview(self.separatorView)
         self.contentView.addSubview(self.userIdTitleLabel)
@@ -254,7 +254,7 @@ class SBUUserProfileView: UIView, SBUUserProfileViewProtocol {
             self.userIdLabel.trailingAnchor.constraint(equalTo: self.contentView.safeAreaLayoutGuide.trailingAnchor, constant: -30)
         ])
         
-        if (self.user?.userId == SBUGlobals.currentUser?.userId) || self.isMenuStackViewHidden {
+        if (self.user?.userId == JIM.shared().currentUserId) || self.isMenuStackViewHidden {
             self.separatorYAxisAnchor = self.userNameLabel.bottomAnchor
         } else {
             self.separatorYAxisAnchor = self.menuStackView.bottomAnchor

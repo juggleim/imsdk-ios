@@ -70,7 +70,7 @@ extension Array where Element: JMessage {
         guard message.messageId == latestMessage.messageId else { return nil }
         guard message.timestamp == 0 else { return  nil }
         guard message.messageState == .sent else { return nil }
-        guard message.senderUserId != SBUGlobals.currentUser?.userId else { return nil }
+        guard message.senderUserId != JIM.shared().currentUserId else { return nil }
         
         return message
     }
@@ -99,5 +99,11 @@ public extension NSArray {
     func sbu_convertUserList() -> [SBUUser] {
         guard let users = self as? [JUserInfo] else { return [] }
         return users.sbu_convertUserList()
+    }
+}
+
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }

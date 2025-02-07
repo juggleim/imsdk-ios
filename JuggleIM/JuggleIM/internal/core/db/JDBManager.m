@@ -224,6 +224,10 @@
                            withMessageId:messageId];
 }
 
+- (void)setMessageFlags:(int)flags withMessageId:(NSString *)messageId {
+    [self.messageDb setMessageFlags:flags withMessageId:messageId];
+}
+
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo {

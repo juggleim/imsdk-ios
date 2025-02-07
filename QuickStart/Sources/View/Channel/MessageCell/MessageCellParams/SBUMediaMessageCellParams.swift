@@ -9,7 +9,7 @@ import JuggleIM
 
 public class SBUMediaMessageCellParams: SBUBaseMessageCellParams {
     public var mediaMessage: JMessage? {
-        self.message as? JMessage
+        self.message
     }
     public let useReaction: Bool
     /// ``SBUVoiceFileInfo`` object that has voice file informations.
@@ -22,6 +22,7 @@ public class SBUMediaMessageCellParams: SBUBaseMessageCellParams {
     
     public init(
         message: JMessage,
+        reaction: JMessageReaction? = nil,
         hideDateView: Bool,
         useMessagePosition: Bool,
         groupPosition: MessageGroupPosition = .none,
@@ -45,6 +46,7 @@ public class SBUMediaMessageCellParams: SBUBaseMessageCellParams {
         
         super.init(
             message: message,
+            reaction: reaction,
             hideDateView: hideDateView,
             messagePosition: messagePosition,
             groupPosition: groupPosition,

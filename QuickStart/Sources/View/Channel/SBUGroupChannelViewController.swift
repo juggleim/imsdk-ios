@@ -125,6 +125,19 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.listComponent?.pauseAllVoicePlayer()
     }
     
+    open override func onClickBack() {
+        if let conversation = self.conversationInfo?.conversation,
+           let textView = (self.inputComponent?.messageInputView as? SBUMessageInputView)?.textView,
+           let draft = textView.text {
+            if draft.count > 0 {
+                JIM.shared().conversationManager.setDraft(draft, in: conversation)
+            } else {
+                JIM.shared().conversationManager.clearDraft(in: conversation)
+            }
+        }
+        super.onClickBack()
+    }
+    
     deinit {
         SBULog.info("")
         
@@ -316,8 +329,14 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     open override func showChannelSettings() {
         guard let conversationInfo = self.conversationInfo else { return }
         
-        let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(conversationInfo: conversationInfo)
-        self.navigationController?.pushViewController(channelSettingsVC, animated: true)
+        if conversationInfo.conversation.conversationType == .private {
+            let channelSettingsVC = SBUViewControllerSet.GroupChannelSettingsViewController.init(conversationInfo: conversationInfo)
+            self.navigationController?.pushViewController(channelSettingsVC, animated: true)
+        } else if conversationInfo.conversation.conversationType == .group {
+            let groupSettingVC = GroupSettingViewController()
+            groupSettingVC.conversationInfo = conversationInfo
+            self.navigationController?.pushViewController(groupSettingVC, animated: true)
+        }
     }
     
     open override func showMessageThread(
@@ -714,28 +733,35 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     
     // MARK: - SBUGroupChannelModuleListDelegate
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-//        guard let currentUser = SBUGlobals.currentUser,
-//              let message = messageCell.message else { return }
+        guard let message = messageCell.message else { return }
+        
+        var shouldSelect = true
+        if let _ = self.viewModel?.reactionList.first(where: { $0.messageId == message.messageId })?.itemList.first(where: { $0.reactionId == emojiKey })?.userInfoList.first(where: { $0.userId == JIM.shared().currentUserId }) {
+            shouldSelect = false
+        }
         
 //        let shouldSelect = message.reactions.first { $0.key == emojiKey }?
 //            .userIds.contains(currentUser.userId) == false
-//        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
+        self.viewModel?.setReaction(message: message, emojiKey: emojiKey, didSelect: shouldSelect)
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didLongTapEmoji emojiKey: String, messageCell: SBUBaseMessageCell) {
-//        guard let conversationInfo = self.conversationInfo,
-//              let message = messageCell.message else { return }
+        //TODO: reaction
+        guard let conversationInfo = self.conversationInfo,
+              let message = messageCell.message else { return }
         
-//        let reaction = message.reactions.first { $0.key == emojiKey }
-//        let reactionsVC = SBUReactionsViewController(
-//            channel: channel,
-//            message: message,
-//            selectedReaction: reaction
-//        )
-//        reactionsVC.delegate = self
-//        reactionsVC.modalPresentationStyle = UIModalPresentationStyle.custom
-//        reactionsVC.transitioningDelegate = self
-//        self.present(reactionsVC, animated: true)
+        let reaction = self.viewModel?.reactionList.first(where: { $0.messageId == message.messageId })
+        let reactionItem = reaction?.itemList.first(where: { $0.reactionId == emojiKey })
+        let reactionsVC = SBUReactionsViewController(
+            channel: conversationInfo,
+            message: message,
+            reaction: reaction,
+            selectedReaction: reactionItem
+        )
+        reactionsVC.delegate = self
+        reactionsVC.modalPresentationStyle = UIModalPresentationStyle.custom
+        reactionsVC.transitioningDelegate = self
+        self.present(reactionsVC, animated: true)
     }
     
     open func groupChannelModule(_ listComponent: SBUGroupChannelModule.List, didTapMoreEmojiForCell messageCell: SBUBaseMessageCell) {
@@ -846,7 +872,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         mentionedMessageTemplate: String,
         mentionedUserIds: [String]
     ) {
-//        guard let message = self.baseViewModel?.inEditingMessage else { return }
+        guard let message = self.baseViewModel?.inEditingMessage else { return }
 //        self.viewModel?.updateUserMessage(
 //            message: message,
 //            text: text,
@@ -864,11 +890,11 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
     ) { }
     
     open func groupChannelModule(_ inputComponent: SBUGroupChannelModule.Input, shouldLoadSuggestedMentions filterText: String) {
-//        self.viewModel?.loadSuggestedMentions(with: filterText)
+        self.viewModel?.loadSuggestedMentions(with: filterText)
     }
     
     open func groupChannelModuleShouldStopSuggestingMention(_ inputComponent: SBUGroupChannelModule.Input) {
-//        self.viewModel?.cancelLoadingSuggestedMentions()
+        self.viewModel?.cancelLoadingSuggestedMentions()
     }
     
     open func groupChannelModuleDidTapVoiceMessage(_ inputComponent: SBUGroupChannelModule.Input) {
@@ -931,5 +957,26 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         
         self.dismissVoiceMessageInput()
         self.viewModel?.sendVoiceMessage(voiceFileInfo: voiceFileInfo, parentMessage: parentMessage)
+    }
+}
+
+// MARK: - SBUReactionsViewControllerDelegate
+extension SBUGroupChannelViewController: SBUReactionsViewControllerDelegate {
+    /// - Since: 3.11.0
+    open func reactionsViewController(
+        _ viewController: SBUReactionsViewController,
+        didTapUserProfile user: SBUUser
+    ) {
+        self.showUserProfile(user: user)
+    }
+    
+    /// - Since: 3.11.0
+    open func reactionsViewController(
+        _ viewController: SBUReactionsViewController,
+        tableView: UITableView,
+        didSelect user: SBUUser,
+        forRowAt indexPath: IndexPath
+    ) {
+        
     }
 }

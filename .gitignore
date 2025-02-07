@@ -6,3 +6,7 @@ DerivedData
 */*.xcodeproj/project.xcworkspace/xcshareddata
 */*.xcodeproj/xcuserdata
 */*.xcodeproj/xcshareddata
+*/Pods
+*/*.xcworkspace/xcuserdata
+*/*.xcworkspace/xcshareddata
+*/Podfile.lock

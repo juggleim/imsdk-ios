@@ -14,7 +14,9 @@ class AddFriendViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "Add Friend"
+        self.titleView.text = "添加好友"
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     override func configTableView() {
@@ -34,8 +36,22 @@ class AddFriendViewController: BaseTableListViewController {
         }
     }
     
-    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
-        HttpManager.shared.addFriend(userId: userId) { code in
+//    private func addFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+//        HttpManager.shared.addFriend(userId: userId) { code in
+//            if code == HttpManager.success {
+//                completion(true)
+//            } else {
+//                completion(false)
+//            }
+//        }
+//    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    private func applyFriend(_ userId: String, _ completion: @escaping (Bool) -> Void) {
+        HttpManager.shared.applyFriend(userId: userId) { code in
             if code == HttpManager.success {
                 completion(true)
             } else {
@@ -85,14 +101,14 @@ extension AddFriendViewController: UITableViewDataSource, UITableViewDelegate {
             let defaultConversationInfo = JConversationInfo()
             defaultConversationInfo.conversation = conversation
             let conversationInfo = JIM.shared().conversationManager.getConversationInfo(conversation) ?? defaultConversationInfo
-            self.tabBarController?.tabBar.isHidden = true
             let channelVC = ChannelViewController.init(conversationInfo: conversationInfo)
+            channelVC.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(channelVC, animated: true)
             return
         }
         self.loadingIndicator.startAnimating()
         self.view.isUserInteractionEnabled = false
-        addFriend(user.userId) { isSuccess in
+        applyFriend(user.userId) { isSuccess in
             DispatchQueue.main.async {
                 self.loadingIndicator.stopAnimating()
                 self.view.isUserInteractionEnabled = true

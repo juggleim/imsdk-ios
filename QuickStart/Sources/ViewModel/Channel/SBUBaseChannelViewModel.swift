@@ -90,10 +90,15 @@ open class SBUBaseChannelViewModel: NSObject {
     /// The starting point of the message list in the `channel`.
     public internal(set) var startingPoint: Int64?
     
+    /// This user message object that is being edited.
+    public internal(set) var inEditingMessage: JMessage?
+    
     /// This object has a list of all success messages synchronized with the server.
     @SBUAtomic public internal(set) var messageList: [JMessage] = []
     /// This object has a list of all messages.
     @SBUAtomic public internal(set) var fullMessageList: [JMessage] = []
+    
+    @SBUAtomic public internal(set) var reactionList: [JMessageReaction] = []
     
     /// This object is used to check if current user is an operator.
     public var isOperator: Bool {
@@ -180,6 +185,21 @@ open class SBUBaseChannelViewModel: NSObject {
     }
     
     // MARK: - Message
+    open func sendMessage(content: JMessageContent) {
+        let message = JIM.shared().messageManager.sendMessage(content, in: conversationInfo?.conversation) { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code , errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        }
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
     
     /// Sends a user message with text and parentMessageId.
     /// - Parameters:
@@ -216,18 +236,33 @@ open class SBUBaseChannelViewModel: NSObject {
     /// print(mentionedUserIds) // ["{UserID}"]
     /// ```
     open func sendTextMessage(text: String, mentionedMessageTemplate: String, mentionedUserIds: [String], parentMessage: JMessage? = nil) {
-        //        let messageParams = UserMessageCreateParams(message: text)
-        //
-        //        SBUGlobalCustomParams.userMessageParamsSendBuilder?(messageParams)
-        //
-        //        if let parentMessage = parentMessage,
-        //           SendbirdUI.config.groupChannel.channel.replyType != .none {
-        //            messageParams.parentMessageId = parentMessage.messageId
-        //            messageParams.isReplyToChannel = true
-        //        }
-        //        messageParams.mentionedMessageTemplate = mentionedMessageTemplate
-        //        messageParams.mentionedUserIds = mentionedUserIds
-        //        self.sendUserMessage(messageParams: messageParams, parentMessage: parentMessage)
+        
+        let textMessage = JTextMessage(content: text)
+        var mentionUsers: [JUserInfo] = []
+        for userId in mentionedUserIds {
+            let user = JUserInfo()
+            user.userId = userId
+            mentionUsers.append(user)
+        }
+        let mentionInfo = JMessageMentionInfo()
+        mentionInfo.type = .someOne
+        mentionInfo.targetUsers = mentionUsers
+        let option = JMessageOptions()
+        option.referredMsgId = parentMessage?.messageId
+        option.mentionInfo = mentionInfo
+        let message = JIM.shared().messageManager.sendMessage(textMessage, messageOption: option, in: conversationInfo?.conversation) { sendMessage in
+            if let sendMessage = sendMessage {
+                self.upsertMessagesInList(messages: [sendMessage], needReload: true)
+            }
+        } error: { code , errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        }
+
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
     }
     
     open func sendImageMessage(url: URL?) {
@@ -473,6 +508,23 @@ open class SBUBaseChannelViewModel: NSObject {
         }
     }
     
+    public func recallMessage(message: JMessage) {
+        SBULog.info("[Request] Recall message: \(message.description)")
+        JIM.shared().messageManager.recallMessage(message.messageId, extras: nil) { recallMessage in
+        } error: { code in
+        }
+    }
+    
+    public func updateMessage(message: JMessage, text: String) {
+        SBULog.info("[Request] update message: \(message.description), text: \(text)")
+        let textMessage = JTextMessage(content: text)
+        JIM.shared().messageManager.updateMessage(textMessage, messageId: message.messageId, in: message.conversation) { updatedMessage in
+            guard let conversationInfo = self.conversationInfo else { return }
+            self.baseDelegate?.baseChannelViewModel(self, shouldFinishEditModeForChannel: conversationInfo)
+        } error: { code in
+        }
+    }
+    
     // MARK: - List
     
     /// This function updates the messages in the list.
@@ -484,17 +536,14 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - needReload: If set to `true`, the tableview will be call reloadData.
     /// - Since: 1.2.5
     public func updateMessagesInList(messages: [JMessage]?, needReload: Bool) {
-//        messages?.forEach { message in
-//            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
-//                if !self.messageListParams.belongsTo(message) {
-//                    self.messageList.remove(at: index)
-//                } else {
-//                    self.messageList[index] = message
-//                }
-//            }
-//        }
-//
-//        self.sortAllMessageList(needReload: needReload)
+        messages?.forEach { message in
+            if let index = SBUUtils.findIndex(of: message, in: self.messageList) {
+                self.messageList.remove(at: index)
+                self.messageList.append(message)
+            }
+        }
+
+        self.sortAllMessageList(needReload: needReload)
     }
     
     // TODO: Not used
@@ -514,6 +563,35 @@ open class SBUBaseChannelViewModel: NSObject {
 //        }
 //        return refinedResult
         return []
+    }
+    
+    func loadMessageReaction(messages: [JMessage]?) {
+        guard let messages = messages, messages.count > 0 else {
+            return
+        }
+        let conversation = messages.first?.conversation
+        var messageIdList: [String] = []
+        for message in messages {
+            messageIdList.append(message.messageId)
+        }
+        JIM.shared().messageManager.getMessagesReaction(messageIdList, conversation: conversation) { reactionList in
+            guard let reactionList = reactionList, reactionList.count > 0 else {
+                return
+            }
+            reactionList.forEach { reaction in
+                if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                    self.reactionList.remove(at: index)
+                }
+                self.reactionList.append(reaction)
+                self.baseDelegate?.baseChannelViewModel(
+                    self,
+                    didChangeMessageList: self.fullMessageList,
+                    needsToReload: true,
+                    initialLoad: self.isInitialLoading
+                )
+            }
+        } error: { code in
+        }
     }
     
     /// This function upserts the messages in the list.
@@ -685,39 +763,23 @@ open class SBUBaseChannelViewModel: NSObject {
     ///   - didSelect: set reaction state
     /// - Since: 1.1.0
     public func setReaction(message: JMessage, emojiKey: String, didSelect: Bool) {
-//        if didSelect {
-//            SBULog.info("[Request] Add Reaction")
-//            self.channel?.addReaction(with: message, key: emojiKey) { reactionEvent, error in
-//                // INFO:
-//                // In **super group channel limited mode**, current user can only addReaction and never deleteReaction.
-//                // If currentUser reacts to an already reacted emoji, the request succeeds, but Chat SDK returns a decoding error (80000).
-//                // (the response doesn't contain "updated_at" field, but Chat SDK tries to decode this as a non-optional property)
-//                if let error = error {
-//                    self.baseDelegate?.didReceiveError(error, isBlocker: false)
-//                }
-//
-//                SBULog.info("[Response] \(reactionEvent?.key ?? "") reaction")
-//                guard let reactionEvent = reactionEvent else { return }
-//                if reactionEvent.messageId == message.messageId {
-//                    message.apply(reactionEvent)
-//                }
-//                self.baseDelegate?.baseChannelViewModel(self, didUpdateReaction: reactionEvent, forMessage: message)
-//            }
-//        } else {
-//            SBULog.info("[Request] Delete Reaction")
-//            self.channel?.deleteReaction(with: message, key: emojiKey) { reactionEvent, error in
-//                if let error = error {
-//                    self.baseDelegate?.didReceiveError(error, isBlocker: false)
-//                }
-//
-//                SBULog.info("[Response] \(reactionEvent?.key ?? "") reaction")
-//                guard let reactionEvent = reactionEvent else { return }
-//                if reactionEvent.messageId == message.messageId {
-//                    message.apply(reactionEvent)
-//                }
-//                self.baseDelegate?.baseChannelViewModel(self, didUpdateReaction: reactionEvent, forMessage: message)
-//            }
-//        }
+        var emojiUtf16: String
+        if emojiKey.starts(with: "%u") {
+            emojiUtf16 = emojiKey
+        } else {
+            emojiUtf16 = EmojiManager.emojiToUtf16(emojiKey)
+        }
+        if didSelect {
+            SBULog.info("[Request] Add Reaction")
+            JIM.shared().messageManager.addMessageReaction(message.messageId, conversation: message.conversation, reactionId: emojiUtf16) {
+            } error: { code in
+            }
+        } else {
+            SBULog.info("[Request] Delete Reaction")
+            JIM.shared().messageManager.removeMessageReaction(message.messageId, conversation: message.conversation, reactionId: emojiUtf16) {
+            } error: { code in
+            }
+        }
     }
     
     // MARK: - Common

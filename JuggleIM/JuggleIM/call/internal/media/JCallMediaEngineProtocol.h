@@ -38,6 +38,8 @@
 
 - (void)startPreview:(UIView *)view;
 
+- (void)stopPreview;
+
 - (void)setVideoView:(UIView *)view
               roomId:(NSString *)roomId
               userId:(NSString *)userId;

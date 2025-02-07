@@ -32,6 +32,8 @@
 #import "JDownloader.h"
 #import "JDownloadManager.h"
 #import "JUtility.h"
+#import "JMsgModifyMessage.h"
+#import "JMsgExSetMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -48,7 +50,7 @@
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
-@property (nonatomic, assign) long long syncNotifyTime;
+@property (nonatomic, assign) long long syncNotifyTime;//发件箱
 @property (nonatomic, assign) BOOL chatroomSyncProcessing;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *chatroomSyncDic;
 @end
@@ -1428,6 +1430,139 @@
     [self.core.dbManager setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
 
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                   success:(void (^)(void))successBlock
+                     error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0 ||
+        conversation.conversationId.length == 0 ||
+        reactionId.length == 0) {
+        JLogE(@"MSG-ReactionAdd", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket addMessageReaction:messageId
+                               conversation:conversation
+                                 reactionId:reactionId
+                                     userId:self.core.userId
+                                    success:^(long long timestamp) {
+        JLogI(@"MSG-ReactionAdd", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+            reaction.messageId = messageId;
+            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
+            item.reactionId = reactionId;
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            item.userInfoList = @[currentUser];
+            reaction.itemList = @[item];
+            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
+                    [obj messageReactionDidAdd:reaction inConversation:conversation];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionAdd", @"error, code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0 ||
+        conversation.conversationId.length == 0 ||
+        reactionId.length == 0) {
+        JLogE(@"MSG-ReactionRemove", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket removeMessageReaction:messageId
+                                  conversation:conversation
+                                    reactionId:reactionId
+                                        userId:self.core.userId
+                                       success:^(long long timestamp) {
+        JLogI(@"MSG-ReactionRemove", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+            reaction.messageId = messageId;
+            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
+            item.reactionId = reactionId;
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            item.userInfoList = @[currentUser];
+            reaction.itemList = @[item];
+            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageReactionDidRemove:inConversation:)]) {
+                    [obj messageReactionDidRemove:reaction inConversation:conversation];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionRemove", @"error, code is %ld", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getMessagesReaction:(NSArray<NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray<JMessageReaction *> *))successBlock
+                      error:(void (^)(JErrorCode))errorBlock {
+    if (messageIdList.count == 0 ||
+        conversation.conversationId.length == 0) {
+        JLogE(@"MSG-ReactionGet", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket getMessagesReaction:messageIdList
+                                conversation:conversation
+                                     success:^(NSArray<JMessageReaction *> * _Nonnull reactionList) {
+        JLogI(@"MSG-ReactionGet", @"success");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(reactionList);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ReactionGet", @"error, code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 - (void)setMute:(BOOL)isMute
         periods:(NSArray<JTimePeriod *> *)periods
        complete:(void (^)(JErrorCode))completeBlock {
@@ -1501,6 +1636,90 @@
     }];
 }
 
+- (void)uploadImage:(UIImage *)image success:(void (^)(NSString *))successBlock error:(void (^)(JErrorCode))errorBlock {
+    JUploadManager *uploader = [[JUploadManager alloc] initWithCore:self.core];
+    [uploader uploadImage:image
+                  success:^(NSString *url) {
+        JLogI(@"MSG-UpldImg", @"url is %@", url);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(url);
+            }
+        });
+    } error:^(JErrorCode code) {
+        JLogE(@"MSG-UpldImg", @"error, code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(code);
+            }
+        });
+    }];
+}
+
+- (void)updateMessage:(JMessageContent *)content
+            messageId:(NSString *)messageId
+       inConversation:(JConversation *)conversation
+              success:(void (^)(JMessage *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0) {
+        JLogE(@"MSG-Update", @"messageId length is 0");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    NSArray *messages = [self getMessagesByMessageIds:@[messageId]];
+    if (messages.count > 0) {
+        JConcreteMessage *m = messages[0];
+        [self.core.webSocket updateMessage:messageId
+                                   content:content
+                              conversation:conversation
+                                 timestamp:m.timestamp
+                                  msgSeqNo:m.seqNo
+                                   success:^(long long timestamp) {
+            JLogI(@"MSG-Update", @"success");
+            [self updateSendSyncTime:timestamp];
+            m.contentType = [[content class] contentType];
+            m.content = content;
+            [self.core.dbManager updateMessageContent:content
+                                          contentType:m.contentType
+                                        withMessageId:messageId];
+            int flags = m.flags | JMessageFlagIsModified;
+            m.flags = flags;
+            m.isEdit = YES;
+            [self.core.dbManager setMessageFlags:flags withMessageId:messageId];
+            if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
+                [self.sendReceiveDelegate messageDidUpdate:m];
+            }
+            dispatch_async(self.core.delegateQueue, ^{
+                if (successBlock) {
+                    successBlock(m);
+                }
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(messageDidUpdate:)]) {
+                        [obj messageDidUpdate:m];
+                    }
+                }];
+            });
+        } error:^(JErrorCodeInternal errorCode) {
+            JLogE(@"MSG-Update", @"error code is %ld", errorCode);
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock((JErrorCode)errorCode);
+                }
+            });
+        }];
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeMessageNotExist);
+            }
+        });
+    }
+}
+
 - (void)connectSuccess {
     self.syncProcessing = YES;
     self.syncNotifyTime = 0;
@@ -1531,8 +1750,12 @@
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     JLogI(@"MSG-Rcv", @"direct message id is %@", message.messageId);
-    if (self.syncProcessing) {
-        self.syncNotifyTime = message.timestamp;
+    // 只处理发件箱的消息，收件箱的消息直接抛弃（状态消息直接漏过）
+    BOOL isStatusMessage = message.flags&JMessageFlagIsStatus;
+    if (self.syncProcessing && !isStatusMessage) {
+        if (message.direction == JMessageDirectionSend) {
+            self.syncNotifyTime = message.timestamp;
+        }
         return NO;
     }
     [self handleReceiveMessages:@[message]
@@ -1548,8 +1771,9 @@
     
     if (!isFinished) {
         [self sync];
-    } else if (self.syncNotifyTime > self.core.messageReceiveSyncTime) {
+    } else if (self.syncNotifyTime > self.core.messageSendSyncTime) {
         [self sync];
+        self.syncNotifyTime = -1;
     }  else {
         self.syncProcessing = NO;
         if (self.cachedSendTime > 0) {
@@ -1624,7 +1848,9 @@
 - (void)messageDidSend:(NSString *)messageId
                   time:(long long)timestamp
                  seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid {
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content {
     if (clientUid.length == 0) {
         return;
     }
@@ -1632,6 +1858,11 @@
                                                    messageId:messageId
                                                    timestamp:timestamp
                                                        seqNo:seqNo];
+    if (contentType && content) {
+        [self.core.dbManager updateMessageContent:content
+                                      contentType:contentType
+                                    withMessageId:messageId];
+    }
 }
 
 #pragma mark - internal
@@ -1688,6 +1919,8 @@
     [self registerContentType:[JClearTotalUnreadMessage class]];
     [self registerContentType:[JMarkUnreadMessage class]];
     [self registerContentType:[JCallFinishNotifyMessage class]];
+    [self registerContentType:[JMsgModifyMessage class]];
+    [self registerContentType:[JMsgExSetMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -1780,7 +2013,7 @@
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
                               pushData:message.pushData
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo) {
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
@@ -1790,6 +2023,12 @@
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        
+        if (contentType && content) {
+            [self.core.dbManager updateMessageContent:content contentType:contentType withMessageId:msgId];
+            message.content = content;
+            message.contentType = contentType;
+        }
         
         if([message.content isKindOfClass:[JMergeMessage class]]){
             JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
@@ -1921,8 +2160,32 @@
     }
 }
 
+- (JMessage *)handleModifyMessage:(NSString *)messageId
+                          msgType:(NSString *)msgType
+                          content:(JMessageContent *)content {
+    if(messageId == nil) {
+        return nil;
+    }
+    [self.core.dbManager updateMessageContent:content
+                                  contentType:msgType
+                                withMessageId:messageId];
+    NSArray <JMessage *> *messages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
+    if (messages.count > 0) {
+        JConcreteMessage * message = (JConcreteMessage *)messages.firstObject;
+        int flags = message.flags | JMessageFlagIsModified;
+        message.flags = flags;
+        message.isEdit = YES;
+        [self.core.dbManager setMessageFlags:flags withMessageId:message.messageId];
+        if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
+            [self.sendReceiveDelegate messageDidUpdate:message];
+        }
+        return message;
+    }
+    return nil;
+}
+
 - (JMessage *)handleRecallCmdMessage:(NSString *)messageId extra:(NSDictionary *)extra {
-    if(messageId == nil){
+    if(messageId == nil) {
         return nil;
     }
     JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
@@ -2021,11 +2284,60 @@
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.direction == JMessageDirectionSend) {
+        BOOL isStatusMessage = obj.flags&JMessageFlagIsStatus;
+        if (obj.direction == JMessageDirectionSend && !isStatusMessage) {
             sendTime = obj.timestamp;
-        } else if (obj.direction == JMessageDirectionReceive) {
+        } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
         }
+        
+        // reaction
+        if ([obj.contentType isEqualToString:[JMsgExSetMessage contentType]]) {
+            JMsgExSetMessage *cmd = (JMsgExSetMessage *)obj.content;
+            if (cmd.addItemList.count > 0) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
+                            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+                            reaction.messageId = cmd.originalMessageId;
+                            reaction.itemList = cmd.addItemList;
+                            [dlg messageReactionDidAdd:reaction inConversation:obj.conversation];
+                        }
+                    }];
+                });
+            }
+            if (cmd.removeItemList.count > 0) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageReactionDidRemove:inConversation:)]) {
+                            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+                            reaction.messageId = cmd.originalMessageId;
+                            reaction.itemList = cmd.removeItemList;
+                            [dlg messageReactionDidRemove:reaction inConversation:obj.conversation];
+                        }
+                    }];
+                });
+            }
+            return;
+        }
+        
+        //modify message
+        if ([obj.contentType isEqualToString:[JMsgModifyMessage contentType]]) {
+            JMsgModifyMessage *cmd = (JMsgModifyMessage *)obj.content;
+            JMessage *updatedMessage = [self handleModifyMessage:cmd.originalMessageId msgType:cmd.messageType content:cmd.messageContent];
+            //updatedMessage 为空表示被修改的消息本地不存在，不需要回调
+            if (updatedMessage) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageDidUpdate:)]) {
+                            [dlg messageDidUpdate:updatedMessage];
+                        }
+                    }];
+                });
+            }
+            return;
+        }
+        
         //recall message
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
@@ -2199,6 +2511,7 @@
     self.chatroomSyncProcessing = YES;
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
                                            chatroomId:chatroomId
+                                               userId:self.core.userId
                                      prevMessageCount:count];
 }
 

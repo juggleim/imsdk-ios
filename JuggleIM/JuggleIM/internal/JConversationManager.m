@@ -666,7 +666,8 @@
                      isUpdateMention:(BOOL)isUpdateMention {
     BOOL isLastMessageUpdate = (info.lastMessage == nil ||
                                 info.lastMessage.clientMsgNo != lastMessage.clientMsgNo ||
-                                ![info.lastMessage.contentType isEqualToString:lastMessage.contentType]);
+                                ![info.lastMessage.contentType isEqualToString:lastMessage.contentType] ||
+                                info.lastMessage.content.hash != lastMessage.content.hash);
     if (isLastMessageUpdate || isUpdateMention) {
         [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
         info.lastMessage = lastMessage;
@@ -866,6 +867,7 @@
             msg.senderId = message.senderUserId;
             msg.msgId = message.messageId;
             msg.msgTime = message.timestamp;
+            msg.type = message.mentionInfo.type;
             [msgs addObject:msg];
             mentionInfo = [[JConversationMentionInfo alloc] init];
             mentionInfo.mentionMsgList = msgs;

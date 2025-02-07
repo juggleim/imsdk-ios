@@ -32,9 +32,9 @@ class AddFriendUserCell: BaseUserCell {
     override func setupStyles() {
         super.setupStyles()
         
-        self.addButton.setTitle("add", for: .normal)
+        self.addButton.setTitle("添加", for: .normal)
         self.addButton.setTitleColor(theme.checkboxOnColor, for: .normal)
-        self.addButton.setTitle("added", for: .selected)
+        self.addButton.setTitle("已添加", for: .selected)
         self.addButton.setTitleColor(theme.checkboxOffColor, for: .selected)
     }
     

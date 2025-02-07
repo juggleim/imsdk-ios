@@ -35,7 +35,7 @@ public class SBUUnknownMessageCellParams: SBUBaseMessageCellParams {
         self.useReaction = useReaction
         
         var messagePosition: MessagePosition = .left
-        let isMyMessage = SBUGlobals.currentUser?.userId == message.senderUserId
+        let isMyMessage = JIM.shared().currentUserId == message.senderUserId
         messagePosition = isMyMessage ? .right : .left
         
         self.enableEmojiLongPress = enableEmojiLongPress

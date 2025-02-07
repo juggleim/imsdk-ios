@@ -17,6 +17,7 @@
 #import "JThumbnailPackedImageMessage.h"
 #import "JSnapshotPackedVideoMessage.h"
 #import "JUploaderFactory.h"
+#import "JUtility.h"
 
 #define jLogUploadSuccess 3
 #define jLogUploadFail 4
@@ -35,6 +36,43 @@
         self.core = core;
     }
     return self;
+}
+
+- (void)uploadImage:(UIImage *)image success:(void (^)(NSString *))successBlock error:(void (^)(JErrorCode))errorBlock {
+    if (self.core.webSocket == nil) {
+        JLogE(@"J-Uploader", @"upload image fail, webSocket is null");
+        if(errorBlock) {
+            errorBlock(JErrorCodeConnectionUnavailable);
+        }
+        return;
+    }
+    if (!image) {
+        JLogE(@"J-Uploader", @"upload image fail, image is nil");
+        if (errorBlock) {
+            errorBlock(JErrorCodeInvalidParam);
+        }
+        return;
+    }
+    NSString *path = [self pathOfImage:image];
+    JUploadFileType uploadFileType = JUploadFileType_Image;
+    [self requestUploadFileCred:uploadFileType
+                       filePath:path
+                        success:^(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred) {
+        [self uploadFile:path
+                 ossType:ossType
+               qiNiuCred:qiNiuCred
+             preSignCred:preSignCred
+                 success:successBlock
+                   error:^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeMessageUploadError);
+            }
+        }];
+    } error:^(JErrorCodeInternal code) {
+        if (errorBlock) {
+            errorBlock((JErrorCode)code);
+        }
+    }];
 }
 
 - (void)uploadLog:(NSString *)filePath
@@ -298,5 +336,21 @@
                                   userId:self.core.userId
                                messageId:messageId
                                      url:url];
+}
+
+- (NSString *)pathOfImage:(UIImage *)image {
+    NSData *imgData = UIImageJPEGRepresentation(image, 0.5);
+    
+    NSString *mediaPath = [JUtility mediaPath:JMediaTypeImage];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:mediaPath]) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:mediaPath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+    }
+    NSString *fileName = [NSString stringWithFormat:@"%lld.jpg", (long long)[NSDate date].timeIntervalSince1970];
+    NSString *localPath = [mediaPath stringByAppendingPathComponent:fileName];
+    [imgData writeToFile:localPath atomically:YES];
+    return localPath;
 }
 @end

@@ -12,20 +12,22 @@ enum GroupNotifyType: Int {
     case addMember = 1
     case removeMember = 2
     case rename = 3
+    case changeOwner = 4
+    case join = 5
     case other
 }
 
-let messageType = "jgd:grpntf"
-let membersString = "members"
-let userIdString = "user_id"
-let avatarString = "avatar"
-let nicknameString = "nickname"
-let typeString = "type"
-let operatorString = "operator"
-let nameString = "name"
-let digestString = "[群通知]"
-
 class GroupNotifyMessage: JMessageContent {
+    static let messageType = "jgd:grpntf"
+    let membersString = "members"
+    let userIdString = "user_id"
+    let avatarString = "avatar"
+    let nicknameString = "nickname"
+    let typeString = "type"
+    let operatorString = "operator"
+    let nameString = "name"
+    let digestString = "[群通知]"
+    
     var type: GroupNotifyType = .other
     var members: [JUserInfo] = []
     var operatorInfo: JUserInfo? = nil
@@ -52,12 +54,15 @@ class GroupNotifyMessage: JMessageContent {
             content[operatorString] = operatorJson
         }
         
-        let data = try! JSONSerialization.data(withJSONObject: content)
-        return data
+        if let data = try? JSONSerialization.data(withJSONObject: content) {
+            return data
+        } else {
+            return Data()
+        }
     }
     
     override func decode(_ data: Data) {
-        guard let json = try! JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+        guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             return
         }
         if let type = json[typeString] as? Int {
@@ -97,6 +102,19 @@ class GroupNotifyMessage: JMessageContent {
                 userList.append(", ")
             }
         }
+        var newOwner: String = ""
+        var isOwner = false
+        if type == .changeOwner {
+            if members.count > 0 {
+                let member = members[0]
+                if let currentUserId = ProfileManager.shared.currentUserInfo?.userId,
+                   currentUserId == member.userId {
+                    isOwner = true
+                }
+                newOwner = isOwner ? "你" : member.userName ?? ""
+            }
+        }
+        
         if !userList.isEmpty {
             userList.removeLast(2)
         }
@@ -108,6 +126,10 @@ class GroupNotifyMessage: JMessageContent {
             return "\(sender) 将 \(userList) 移除群聊"
         case .rename:
             return "\(sender) 修改群名称为 \"\(name)\""
+        case .changeOwner:
+            return "\(newOwner) 已成为新群主"
+        case .join:
+            return "\(sender) 加入群聊"
         case .other:
             return ""
         }

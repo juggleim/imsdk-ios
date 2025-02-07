@@ -9,12 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, JUserType) {
+    JUserTypeDefault = 0,
+    JUserTypeBot = 1
+};
+
 @interface JUserInfo : NSObject
 
 @property (nonatomic, copy) NSString *userId;
 @property (nullable, nonatomic, copy) NSString *userName;
 @property (nullable, nonatomic, copy) NSString *portrait;
 @property (nullable, nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
+@property (nonatomic, assign) JUserType type;
 
 @end
 

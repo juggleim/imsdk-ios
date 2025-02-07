@@ -1,13 +1,14 @@
 //
-//  GroupNotifyMessageCell.swift
+//  BaseNotifyMessageCell.swift
 //  QuickStart
 //
-//  Created by Nathan on 2024/8/7.
+//  Created by Fei Li on 2024/12/19.
 //
 
+import Foundation
 import UIKit
 
-class GroupNotifyMessageCell: SBUBaseMessageCell {
+class BaseNotifyMessageCell: SBUBaseMessageCell {
     
     // MARK: - Public property
     public var messageLabel = UILabel()

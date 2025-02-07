@@ -284,19 +284,27 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     /// - Parameter message: `JMessage` object
     /// - Since: 1.1.0
     open func showEmojiListModal(message: JMessage) {
-//        let emojiListVC = SBUEmojiListViewController(message: message)
-//        emojiListVC.modalPresentationStyle = .custom
-//        emojiListVC.transitioningDelegate = self
-//
-//        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
-//            guard let self = self else { return }
-//            self.baseViewModel?.setReaction(
-//                message: message,
-//                emojiKey: emojiKey,
-//                didSelect: setSelect
-//            )
-//        }
-//        self.present(emojiListVC, animated: true)
+        var reaction: JMessageReaction? = nil
+        self.baseViewModel?.reactionList.forEach { r in
+            if r.messageId == message.messageId {
+                reaction = r
+                return
+            }
+        }
+        
+        let emojiListVC = SBUEmojiListViewController(message: message, reaction: reaction)
+        emojiListVC.modalPresentationStyle = .custom
+        emojiListVC.transitioningDelegate = self
+
+        emojiListVC.emojiTapHandler = { [weak self] emojiKey, setSelect in
+            guard let self = self else { return }
+            self.baseViewModel?.setReaction(
+                message: message,
+                emojiKey: emojiKey,
+                didSelect: setSelect
+            )
+        }
+        self.present(emojiListVC, animated: true)
     }
     
     // MARK: - TableView
@@ -694,6 +702,13 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             default:
                 break
             }
+        case is ContactCardMessage:
+            guard let contactCard = message.content as? ContactCardMessage else {
+                return
+            }
+            let vc = PersonDetailViewController()
+            vc.userId = contactCard.userId
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }
@@ -730,9 +745,9 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
 //        }
     }
     
-    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: JMessage, forRowAt indexPath: IndexPath) {
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didLongTapMessage message: JMessage, reaction: JMessageReaction? = nil, forRowAt indexPath: IndexPath) {
         self.view.endEditing(true)
-        listComponent.showMessageMenu(on: message, forRowAt: indexPath)
+        listComponent.showMessageMenu(on: message, reaction: reaction, forRowAt: indexPath)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapVoiceMessage JMessage: JMessage, cell: UITableViewCell, forRowAt indexPath: IndexPath) {}
@@ -750,11 +765,25 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage) {
-
+        self.setMessageInputViewMode(.edit, message: message)
+    }
+    
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapForwardMessage message: JMessage) {
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
+            let vc = ForwardSelectViewController.init(messageContent: message.content)
+            vc.delegate = self
+            let navi = UINavigationController.init(rootViewController: vc)
+            navi.modalPresentationStyle = .fullScreen
+            self.present(navi, animated: true)
+        }
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage) {
         self.baseViewModel?.deleteMessage(message: message)
+    }
+    
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRecallMessage message: JMessage) {
+        self.baseViewModel?.recallMessage(message: message)
     }
     
     open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapReplyMessage message: JMessage) {
@@ -910,6 +939,10 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         self.baseViewModel?.fullMessageList ?? []
     }
     
+    open func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, reactionListInTableView tableView: UITableView) -> [JMessageReaction] {
+        self.baseViewModel?.reactionList ?? []
+    }
+    
     open func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         hasNextInTableView tableView: UITableView
@@ -1000,7 +1033,10 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
                     self.selectCallMembers(type: .videoCall)
                 }
             }
-            
+        case .contactCard:
+            let vc = SelectSingleFriendViewController()
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
         default:
             self.showPhotoLibraryPicker()
         }
@@ -1108,9 +1144,8 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         _ inputComponent: SBUBaseChannelModule.Input,
         didTapEdit text: String
     ) {
-//        guard let message = self.baseViewModel?.inEditingMessage else { return }
-//
-//        self.baseViewModel?.updateUserMessage(message: message, text: text)
+        guard let message = self.baseViewModel?.inEditingMessage else { return }
+        self.baseViewModel?.updateMessage(message: message, text: text)
     }
     
     open func baseChannelModule(
@@ -1133,7 +1168,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         didChangeMode mode: SBUMessageInputMode, 
         message: JMessage?
     ) {
-//        baseViewModel?.inEditingMessage = message as? UserMessage
+        baseViewModel?.inEditingMessage = message
     }
     
     open func baseChannelModule(
@@ -1455,4 +1490,33 @@ extension SBUBaseChannelViewController: GroupMemberSelectVCDelegate {
         let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, delegate: nil)
         CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
     }
+}
+
+extension SBUBaseChannelViewController: SelectSingleFriendVCDelegate {
+    func friendDidSelect(_ user: JCUser) {
+        let contactCard = ContactCardMessage(userInfo: user)
+        self.baseViewModel?.sendMessage(content: contactCard)
+    }
+}
+
+extension SBUBaseChannelViewController: ForwardSelectViewControllerDelegate {
+    public func messageWillForward(_ message: JMessage) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    public func messageDidForward(_ message: JMessage) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    public func messageDidForwardFail(_ message: JMessage, errorCode code: JErrorCode) {
+        if message.conversation.isEqual(self.baseViewModel?.conversationInfo?.conversation) {
+            self.baseViewModel?.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
+    
+    
 }

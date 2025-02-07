@@ -76,6 +76,10 @@ static JCallMediaManager *_instance;
     [self.engine startPreview:view];
 }
 
+- (void)stopPreview {
+    [self.engine stopPreview];
+}
+
 - (void)setVideoView:(UIView *)view roomId:(NSString *)roomId userId:(NSString *)userId {
     [self.engine setVideoView:view roomId:roomId userId:userId];
 }

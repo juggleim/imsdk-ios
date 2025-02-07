@@ -17,13 +17,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         print("didFinishLaunchingWithOptions")
         
-        JIM.shared().setServerUrls(["wss://ws.juggleim.com"])
-        let appKey = "nsw3sue72begyv7y"
+        JIM.shared().setServerUrls([GlobalConfig.imServer])
+        let appKey = GlobalConfig.appKey
         HttpManager.shared.setAppKey(appKey)
         JIM.shared().setConsoleLogLevel(.verbose)
         JIM.shared().initWithAppKey(appKey)
         JIM.shared().messageManager.registerContentType(GroupNotifyMessage.self)
-        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
+        JIM.shared().messageManager.registerContentType(FriendNotifyMessage.self)
+        JIM.shared().messageManager.registerContentType(ContactCardMessage.self)
+        JIM.shared().messageManager.registerContentType(StreamTextMessage.self)
+        CallCenter.shared().initZegoEngine(with: 111, appSign: "")
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         
 //        let pushRegistry = PKPushRegistry(queue: .main)

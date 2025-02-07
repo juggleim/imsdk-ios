@@ -217,6 +217,13 @@ class BaseUserCell: SBUTableViewCell {
             ),
             for: .selected
         )
+        self.checkboxButton.setImage(
+            SBUIconSetType.iconCheckboxChecked.image(
+                with: theme.moreButtonDisabledColor,
+                to: SBUIconSetType.Metric.defaultIconSize
+            ),
+            for: .disabled
+        )
         
         self.moreButton.setImage(
             SBUIconSetType.iconMore.image(
@@ -248,7 +255,7 @@ class BaseUserCell: SBUTableViewCell {
         self.type = type
         self.isChecked = isChecked
         
-        let isMe = (user.userId == SBUGlobals.currentUser?.userId)
+        let isMe = (user.userId == JIM.shared().currentUserId)
         self.userIdLabel.text = user.userId
         
         if let userName = user.userName {
@@ -314,6 +321,12 @@ class BaseUserCell: SBUTableViewCell {
             self.userIdLabel.isHidden = !showsUserId
             self.userImageSize = 28
             self.updateLayouts()
+        case .newFriend:
+            self.userImageView.image = UIImage(named: "newFriend")
+        case .group:
+            self.userImageView.image = UIImage(named: "defaultGroup")
+        case .chatroom:
+            self.userImageView.image = UIImage(named: "imgOpenchannel")
         default:
             break
         }

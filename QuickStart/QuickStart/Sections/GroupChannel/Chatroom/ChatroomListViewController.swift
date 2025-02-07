@@ -27,11 +27,6 @@ class ChatroomListViewController : BaseTableListViewController {
         JIM.shared().chatroomManager.add(self)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.tabBarController?.tabBar.isHidden = false
-    }
-    
     override func configTableView() {
         super.configTableView()
         self.tableView.delegate = self
@@ -40,6 +35,17 @@ class ChatroomListViewController : BaseTableListViewController {
             ChatroomCell.self,
             forCellReuseIdentifier: ChatroomCell.sbu_className
         )
+    }
+    
+    override func configNavigationItem() {
+        super.configNavigationItem()
+        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
+        self.navigationItem.leftBarButtonItem = leftButton
+        self.titleView.text = "聊天室"
+    }
+    
+    @objc func onTapLeftBarButton() {
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
@@ -76,8 +82,8 @@ extension ChatroomListViewController: JChatroomDelegate {
         let conversation = JConversation(conversationType: .chatroom, conversationId: chatroomId)
         let defaultConversationInfo = JConversationInfo()
         defaultConversationInfo.conversation = conversation
-        self.tabBarController?.tabBar.isHidden = true
         let channelVC = ChannelViewController.init(conversationInfo: defaultConversationInfo)
+        channelVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(channelVC, animated: true)
     }
     

@@ -143,34 +143,34 @@ class MySettingsCell: UITableViewCell {
     
     /// This function configure a cell using channel information.
     /// - Parameter channel: cell object
-    open func configure(type: MySettingsCellType, isDarkMode: Bool) {
-        self.rightSwitch.isHidden = false
-        
-        switch type {
-//        case .darkTheme:
-//            self.rightSwitch.isOn = isDarkMode
-//            self.typeIcon.image = UIImage(named: "iconTheme")?
+//    open func configure(type: MySettingsCellType, isDarkMode: Bool) {
+//        self.rightSwitch.isHidden = false
+//        
+//        switch type {
+////        case .darkTheme:
+////            self.rightSwitch.isOn = isDarkMode
+////            self.typeIcon.image = UIImage(named: "iconTheme")?
+////                .sbu_with(tintColor: isDarkMode ? nil : .white)
+////                .resize(with: CGSize(width: 18, height: 18))
+////                .withBackground(
+////                    color: isDarkMode ? SBUColorSet.background300 : SBUColorSet.background400,
+////                    margin: 3,
+////                    circle: true
+////            )
+////            self.titleLabel.text = "Dark theme"
+//        case .signOut:
+//            self.typeIcon.image = UIImage(named: "iconLeave")?
 //                .sbu_with(tintColor: isDarkMode ? nil : .white)
 //                .resize(with: CGSize(width: 18, height: 18))
 //                .withBackground(
-//                    color: isDarkMode ? SBUColorSet.background300 : SBUColorSet.background400,
+//                    color: isDarkMode ? SBUColorSet.error200 : SBUColorSet.error300,
 //                    margin: 3,
 //                    circle: true
 //            )
-//            self.titleLabel.text = "Dark theme"
-        case .signOut:
-            self.typeIcon.image = UIImage(named: "iconLeave")?
-                .sbu_with(tintColor: isDarkMode ? nil : .white)
-                .resize(with: CGSize(width: 18, height: 18))
-                .withBackground(
-                    color: isDarkMode ? SBUColorSet.error200 : SBUColorSet.error300,
-                    margin: 3,
-                    circle: true
-            )
-            self.titleLabel.text = "Exit to home"
-            self.rightSwitch.isHidden = true
-        }
-    }
+//            self.titleLabel.text = "Exit to home"
+//            self.rightSwitch.isHidden = true
+//        }
+//    }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

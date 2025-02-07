@@ -45,7 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)messageDidSend:(NSString *)messageId
                   time:(long long)timestamp
                  seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid;
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content;
 @end
 
 @protocol JWebSocketChatroomDelegate <NSObject>
@@ -111,13 +113,21 @@ NS_ASSUME_NONNULL_BEGIN
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long reqNo))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
 - (void)recallMessage:(NSString *)messageId
                extras:(NSDictionary *)extras
          conversation:(JConversation *)conversation
             timestamp:(long long)timestamp
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
+
+- (void)updateMessage:(NSString *)messageId
+              content:(JMessageContent *)content
+         conversation:(JConversation *)conversation
+            timestamp:(long long)timestamp
+             msgSeqNo:(long long)msgSeqNo
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode))errorBlock;
 
@@ -259,10 +269,12 @@ inConversation:(JConversation *)conversation
 
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId
+                              userId:(NSString *)userId
                     prevMessageCount:(int)count;
 
 - (void)syncChatroomAttributesWithTime:(long long)syncTime
-                            chatroomId:(NSString *)chatroomId;
+                            chatroomId:(NSString *)chatroomId
+                                userId:(NSString *)userId;
 
 - (void)getFirstUnreadMessage:(JConversation *)conversation
                       success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
@@ -288,6 +300,29 @@ inConversation:(JConversation *)conversation
              userId:(NSString *)userId
             success:(void (^)(void))successBlock
               error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)getLanguage:(NSString *)userId
+            success:(void (^)(NSString *))successBlock
+              error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)addMessageReaction:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                reactionId:(NSString *)reactionId
+                    userId:(NSString *)userId
+                   success:(void (^)(long long timestamp))successBlock
+                     error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)removeMessageReaction:(NSString *)messageId
+                 conversation:(JConversation *)conversation
+                   reactionId:(NSString *)reactionId
+                       userId:(NSString *)userId
+                      success:(void (^)(long long timestamp))successBlock
+                        error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getMessagesReaction:(NSArray <NSString *> *)messageIdList
+               conversation:(JConversation *)conversation
+                    success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)sendPing;
 

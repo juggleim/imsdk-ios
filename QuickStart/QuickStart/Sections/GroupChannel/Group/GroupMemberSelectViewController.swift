@@ -58,7 +58,11 @@ import JuggleIM
     }
     
     @objc func onClickMenu() {
-        self.dismiss(animated: true)
+        if self.type == .videoCall || self.type == .voiceCall {
+            self.dismiss(animated: true)
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
         self.delegate?.membersDidSelect(type: self.type, members: Array(selectedUsers))
     }
     

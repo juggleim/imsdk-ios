@@ -42,6 +42,7 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     func baseChannelModule(
         _ listComponent: SBUBaseChannelModule.List,
         didLongTapMessage message: JMessage,
+        reaction: JMessageReaction?,
         forRowAt indexPath: IndexPath
     )
     
@@ -129,11 +130,15 @@ public protocol SBUBaseChannelModuleListDelegate: SBUCommonDelegate {
     ///    - message: The message that the selected menu item belongs to.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapDeleteMessage message: JMessage)
     
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapRecallMessage message: JMessage)
+    
     /// Called when a user selects the *edit* menu item of a `message` in the `listComponent`.
     /// - Parameters:
     ///    - listComponent: A ``SBUBaseChannelModule/List`` object.
     ///    - message: The message that the selected menu item belongs to.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapEditMessage message: JMessage)
+    
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, didTapForwardMessage message: JMessage)
     
     /// Called when a user selects the *save* menu item of a `message` in the `listComponent`.
     /// - Parameters:
@@ -227,6 +232,8 @@ public protocol SBUBaseChannelModuleListDataSource: AnyObject {
     ///    - tableView: `UITableView` object from list component.
     /// - Returns: The array of `JMessage` object including the sent, the failed and the pending.
     func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, fullMessagesInTableView tableView: UITableView) -> [JMessage]
+    
+    func baseChannelModule(_ listComponent: SBUBaseChannelModule.List, reactionListInTableView tableView: UITableView) -> [JMessageReaction]
     
     /// Ask the data source to return whether the `tableView` has next data.
     /// - Parameters:
@@ -378,6 +385,10 @@ extension SBUBaseChannelModule {
         /// The array of all messages includes the sent, the failed and the pending. The value is returned by `baseChannelModule(_:fullMessagesInTableView:)` data source method.
         public var fullMessageList: [JMessage] {
             self.baseDataSource?.baseChannelModule(self, fullMessagesInTableView: self.tableView) ?? []
+        }
+        
+        public var reactionList: [JMessageReaction] {
+            self.baseDataSource?.baseChannelModule(self, reactionListInTableView: self.tableView) ?? []
         }
         
         // MARK: - Logic properties (Private)
@@ -558,7 +569,7 @@ extension SBUBaseChannelModule {
         /// - Parameters:
         ///    - message: The `JMessage` object that corresponds to the message of the menu to show.
         ///    - indexPath: The value of the `UITableViewCell` where the `message` is located.
-        open func showMessageMenu(on message: JMessage, forRowAt indexPath: IndexPath) {
+        open func showMessageMenu(on message: JMessage, reaction: JMessageReaction? = nil, forRowAt indexPath: IndexPath) {
             switch message.messageState {
             case .unknown, .sending, .uploading:
                 break
@@ -572,9 +583,9 @@ extension SBUBaseChannelModule {
                     return
                 }
                 cell.isSelected = true
-                if false {
+                if true {
                     // shows menu sheet view controller
-                    self.showMessageMenuSheet(for: message, cell: cell)
+                    self.showMessageMenuSheet(for: message, reaction: reaction, cell: cell)
                 } else {
                     self.showMessageContextMenu(for: message, cell: cell, forRowAt: indexPath)
                 }
@@ -629,7 +640,7 @@ extension SBUBaseChannelModule {
             
             let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
             
-            var title = SBUStringSet.Alert_Delete
+            let title = SBUStringSet.Alert_Delete
             
             SBUAlertView.show(
                 title: title,
@@ -639,12 +650,34 @@ extension SBUBaseChannelModule {
             )
         }
         
+        open func showRecallMessageAlert(on message: JMessage, oneTimeTheme: SBUComponentTheme? = nil) {
+            let recallButton = SBUAlertButtonItem(
+                title: SBUStringSet.Recall,
+                color: self.theme?.alertRemoveColor
+            ) { [weak self, message] _ in
+                guard let self = self else { return }
+                SBULog.info("[Request] Remove message: \(message.description)")
+                self.baseDelegate?.baseChannelModule(self, didTapRecallMessage: message)
+            }
+            
+            let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
+            
+            let title = SBUStringSet.Alert_Recall
+            
+            SBUAlertView.show(
+                title: title,
+                oneTimetheme: oneTimeTheme,
+                confirmButtonItem: recallButton,
+                cancelButtonItem: cancelButton
+            )
+        }
+        
         /// Calls the ``SBUMenuSheetViewController`` instance in ``UIViewController``, which is returned after ``SBUBaseChannelModuleListDataSource/baseChannelModule(_:parentViewControllerDisplayMenuItems:)`` is called.
         /// - NOTE: To learn about the event delegates in this instance, refer to the event delegate methods in ``SBUBaseChannelModuleListDelegate``.
         /// - Parameters:
         ///    - message: The `JMessage` object  that refers to the message of the menu to display.
         ///    - cell: The `UITableViewCell` object that shows the message.
-        open func showMessageMenuSheet(for message: JMessage, cell: UITableViewCell) {
+        open func showMessageMenuSheet(for message: JMessage, reaction: JMessageReaction? = nil, cell: UITableViewCell) {
             let messageMenuItems = self.createMessageMenuItems(for: message)
             
             guard let parentViewController = self.baseDataSource?.baseChannelModule(
@@ -652,8 +685,9 @@ extension SBUBaseChannelModule {
                 parentViewControllerDisplayMenuItems: messageMenuItems
             ) else { return }
             
-            let useReaction = false//SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
-            let menuSheetVC = SBUMenuSheetViewController(message: message, items: messageMenuItems, useReaction: useReaction)
+            let useReaction = true//SBUEmojiManager.isReactionEnabled(channel: self.baseChannel)
+            
+            let menuSheetVC = SBUMenuSheetViewController(message: message, reaction: reaction, items: messageMenuItems, useReaction: useReaction)
             menuSheetVC.modalPresentationStyle = .custom
             menuSheetVC.transitioningDelegate = parentViewController as? UIViewControllerTransitioningDelegate
             parentViewController.present(menuSheetVC, animated: true)
@@ -710,6 +744,10 @@ extension SBUBaseChannelModule {
             case is JTextMessage:
                 let copy = self.createCopyMenuItem(for: message)
                 items.append(copy)
+                if isSentByMe {
+                    let edit = self.createEditMenuItem(for: message)
+                    items.append(edit)
+                }
                 
             case is JImageMessage, is JVideoMessage, is JFileMessage:
                 let save = self.createSaveMenuItem(for: message)
@@ -753,6 +791,14 @@ extension SBUBaseChannelModule {
             }
             let delete = self.createDeleteMenuItem(for: message)
             items.append(delete)
+            
+            if isSentByMe {
+                let recall = self.createRecallMenuItem(for: message)
+                items.append(recall)
+            }
+            
+            let forward = self.createForwardMenuItem(for: message)
+            items.append(forward)
             return items
         }
         
@@ -788,6 +834,38 @@ extension SBUBaseChannelModule {
             ) { [weak self, message] in
                 guard let self = self else { return }
                 self.showDeleteMessageAlert(on: message)
+            }
+            menuItem.isEnabled = true//message.threadInfo.replyCount == 0
+            return menuItem
+        }
+        
+        open func createForwardMenuItem(for message: JMessage) -> SBUMenuItem {
+            let menuItem = SBUMenuItem(
+                title: SBUStringSet.Forward,
+                color: theme?.menuTextColor,
+                image: SBUIconSetType.iconThread.image(
+                    with: SBUTheme.componentTheme.alertButtonColor,
+                    to: SBUIconSetType.Metric.iconActionSheetItem
+                )
+            ) { [weak self, message] in
+                guard let self = self else { return }
+                self.baseDelegate?.baseChannelModule(self, didTapForwardMessage: message)
+            }
+            menuItem.isEnabled = true//message.threadInfo.replyCount == 0
+            return menuItem
+        }
+        
+        open func createRecallMenuItem(for message: JMessage) -> SBUMenuItem {
+            let menuItem = SBUMenuItem(
+                title: SBUStringSet.Recall,
+                color: theme?.menuTextColor,
+                image: SBUIconSetType.iconDelete.image(
+                    with: SBUTheme.componentTheme.alertButtonColor,
+                    to: SBUIconSetType.Metric.iconActionSheetItem
+                )
+            ) { [weak self, message] in
+                guard let self = self else { return }
+                self.showRecallMessageAlert(on: message)
             }
             menuItem.isEnabled = true//message.threadInfo.replyCount == 0
             return menuItem
@@ -892,8 +970,8 @@ extension SBUBaseChannelModule {
         ///   - cell: Message cell object
         ///   - message: Message object
         ///   - indexPath: indexpath of cell
-        open func setLongTapGesture(_ cell: UITableViewCell, message: JMessage, indexPath: IndexPath) {
-            self.baseDelegate?.baseChannelModule(self, didLongTapMessage: message, forRowAt: indexPath)
+        open func setLongTapGesture(_ cell: UITableViewCell, message: JMessage, reaction: JMessageReaction? = nil,  indexPath: IndexPath) {
+            self.baseDelegate?.baseChannelModule(self, didLongTapMessage: message, reaction: reaction, forRowAt: indexPath)
         }
         
         /// This function sets the user profile tap gesture handling.
