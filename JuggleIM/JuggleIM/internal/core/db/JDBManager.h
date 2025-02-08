@@ -72,6 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
                          state:(JMessageState)state
                withClientMsgNo:(long long)clientMsgNo;
 - (void)setTopConversationsOrderType:(JTopConversationsOrderType)type;
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
@@ -126,12 +127,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;
-
 - (JGroupInfo *)getGroupInfo:(NSString *)groupId;
-
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos;
-
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
+
+#pragma mark - reaction table
+- (NSArray <JMessageReaction *> *)getMessageReactions:(NSArray <NSString *> *)messageIds;
+- (void)setMessageReactions:(NSArray <JMessageReaction *> *)reactions;
 @end
 
 NS_ASSUME_NONNULL_END

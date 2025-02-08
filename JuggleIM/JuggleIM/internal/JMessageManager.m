@@ -1457,11 +1457,29 @@
             if (successBlock) {
                 successBlock();
             }
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            
+            //update reaction db
+            NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
+            if (dbReactions.count > 0) {
+                JMessageReaction *dbReaction = dbReactions[0];
+                for (JMessageReactionItem *item in dbReaction.itemList) {
+                    if ([reactionId isEqualToString:item.reactionId]) {
+                        NSMutableArray *userInfoList = [item.userInfoList mutableCopy];
+                        [userInfoList addObject:currentUser];
+                        item.userInfoList = [userInfoList copy];
+                        break;
+                    }
+                }
+                [weakSelf.core.dbManager setMessageReactions:@[dbReaction]];
+            }
+            
+            //callback delegate
+            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
             item.reactionId = reactionId;
-            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1507,6 +1525,28 @@
             if (successBlock) {
                 successBlock();
             }
+            
+            // update reaction db
+            NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
+            if (dbReactions.count > 0) {
+                JMessageReaction *dbReaction = dbReactions[0];
+                for (JMessageReactionItem *item in dbReaction.itemList) {
+                    if ([reactionId isEqualToString:item.reactionId]) {
+                        NSMutableArray *userInfoList = [NSMutableArray array];
+                        for (JUserInfo *userInfo in item.userInfoList) {
+                            if (![weakSelf.core.userId isEqualToString:userInfo.userId]) {
+                                [userInfoList addObject:userInfo];
+                            }
+                        }
+                        item.userInfoList = [userInfoList copy];
+                        break;
+                    }
+                }
+                [weakSelf.core.dbManager setMessageReactions:@[dbReaction]];
+            }
+            
+            //callback delegate
+            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
@@ -1547,6 +1587,7 @@
     [self.core.webSocket getMessagesReaction:messageIdList
                                 conversation:conversation
                                      success:^(NSArray<JMessageReaction *> * _Nonnull reactionList) {
+        [self.core.dbManager setMessageReactions:reactionList];
         JLogI(@"MSG-ReactionGet", @"success");
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -1561,6 +1602,10 @@
             }
         });
     }];
+}
+
+- (NSArray<JMessageReaction *> *)getCachedMessagesReaction:(NSArray<NSString *> *)messageIdList {
+    return [self.core.dbManager getMessageReactions:messageIdList];
 }
 
 - (void)setMute:(BOOL)isMute

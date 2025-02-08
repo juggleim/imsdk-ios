@@ -447,6 +447,10 @@
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCode code))errorBlock;
 
+/// 获取缓存的消息回应（缓存的数据不一定是最新版本，可用于第一时间渲染，优化用户体验）
+/// - Parameter messageIdList: 消息 id 列表
+- (NSArray <JMessageReaction *> *)getCachedMessagesReaction:(NSArray <NSString *> *)messageIdList;
+
 /// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
 /// - Parameters:
 ///   - content: 消息实体

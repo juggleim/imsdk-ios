@@ -11,6 +11,7 @@
 #import "JConversationDB.h"
 #import "JProfileDB.h"
 #import "JUserInfoDB.h"
+#import "JReactionDB.h"
 #import "JUtility.h"
 
 #define kJetIMDBName @"jetimdb"
@@ -21,6 +22,7 @@
 @property (nonatomic, strong) JConversationDB *conversationDb;
 @property (nonatomic, strong) JProfileDB *profileDb;
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
+@property (nonatomic, strong) JReactionDB *reactionDB;
 @end
 
 @implementation JDBManager
@@ -356,6 +358,15 @@
     [self.userInfoDB insertGroupInfos:groupInfos];
 }
 
+#pragma mark - reaction table
+- (NSArray<JMessageReaction *> *)getMessageReactions:(NSArray<NSString *> *)messageIds {
+    return [self.reactionDB getMessageReactions:messageIds];
+}
+
+- (void)setMessageReactions:(NSArray<JMessageReaction *> *)reactions {
+    [self.reactionDB setMessageReactions:reactions];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {
@@ -384,6 +395,7 @@
     [self.conversationDb createTables];
     [self.profileDb createTables];
     [self.userInfoDB createTables];
+    [self.reactionDB createTables];
 }
 
 - (void)updateTables {
@@ -391,6 +403,7 @@
     [self.conversationDb updateTables];
     [self.profileDb updateTables];
     [self.userInfoDB updateTables];
+    [self.reactionDB updateTables];
 }
 
 //DB 目录
@@ -423,6 +436,7 @@
         self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
         self.conversationDb.messageDB = self.messageDb;
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
+        self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;
 }
