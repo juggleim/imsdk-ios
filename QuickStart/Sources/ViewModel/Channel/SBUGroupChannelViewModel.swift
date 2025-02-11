@@ -195,7 +195,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         option.startTime = startTime
         option.count = Int32(defaultFetchLimit)
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { messageList, timestamp, hasMore, errorCode in
-            SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode)")
+            SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode.rawValue)")
             self.upsertMessagesInList(messages: messageList, needReload: true)
             self.loadMessageReaction(messages: messageList)
             if let messageList = messageList {
@@ -435,6 +435,13 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
     public func messageDidReceive(_ message: JMessage!) {
         SBULog.info("bot, messageDidReceive")
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        
+        guard let conversationInfo = self.conversationInfo else {
+            return
+        }
+        if message.timestamp <= conversationInfo.lastMessage.timestamp {
             return
         }
         

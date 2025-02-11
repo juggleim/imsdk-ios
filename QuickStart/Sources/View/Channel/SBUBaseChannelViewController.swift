@@ -578,6 +578,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
         
         // Verify that the UIViewController is currently visible on the screen
         let needsToLayout = self.isViewLoaded && (self.view.window != nil)
+        SBULog.info("SBUBaseChannelViewController before reloadTableView")
         baseListComponent.reloadTableView(needsToLayout: needsToLayout)
         
         guard let lastSeenIndexPath = self.lastSeenIndexPath else {

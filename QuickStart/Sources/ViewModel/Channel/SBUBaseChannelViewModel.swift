@@ -579,6 +579,9 @@ open class SBUBaseChannelViewModel: NSObject {
                 return
             }
             reactionList.forEach { reaction in
+                if reaction.itemList.isEmpty {
+                    return
+                }
                 if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
                     self.reactionList.remove(at: index)
                 }
