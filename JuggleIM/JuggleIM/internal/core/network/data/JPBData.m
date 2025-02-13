@@ -1779,6 +1779,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.groupReadInfo = info;
     msg.groupInfo = [self groupInfoWithPBGroupInfo:downMsg.groupInfo];
     msg.targetUserInfo = [self userInfoWithPBUserInfo:downMsg.targetUserInfo];
+    msg.groupMemberInfo = [self groupMemberWithPBGroupMember:downMsg.grpMemberInfo
+                                                groupId:msg.groupInfo.groupId
+                                                 userId:msg.targetUserInfo.userId];
     if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
         JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
         mentionInfo.type = (JMentionType)downMsg.mentionInfo.mentionType;
@@ -1868,6 +1871,26 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (pbUserInfo.extFieldsArray_Count > 0) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
         for (KvItem *item in pbUserInfo.extFieldsArray) {
+            [dic setObject:item.value forKey:item.key];
+        }
+        result.extraDic = [dic copy];
+    }
+    return result;
+}
+
+- (JGroupMember *)groupMemberWithPBGroupMember:(GrpMemberInfo *)pbGroupMember
+                                       groupId:(NSString *)groupId
+                                        userId:(NSString *)userId {
+    if (pbGroupMember == nil) {
+        return nil;
+    }
+    JGroupMember *result = [JGroupMember new];
+    result.groupId = groupId;
+    result.userId = userId;
+    result.groupDisplayName = pbGroupMember.grpDisplayName;
+    if (pbGroupMember.extFieldsArray_Count > 0) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        for (KvItem *item in pbGroupMember.extFieldsArray) {
             [dic setObject:item.value forKey:item.key];
         }
         result.extraDic = [dic copy];

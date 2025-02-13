@@ -130,6 +130,8 @@
 		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
 		A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */; };
 		A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A9A552D5DE532009EE779 /* JGroupMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08A9A582D5DE532009EE779 /* JGroupMember.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A9A562D5DE532009EE779 /* JGroupMember.m */; };
 		A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21D2B148BFF008B114C /* JIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JIM.m */; };
@@ -512,6 +514,8 @@
 		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
 		A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushtoken.pbobjc.h; sourceTree = "<group>"; };
 		A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pushtoken.pbobjc.m; sourceTree = "<group>"; };
+		A08A9A552D5DE532009EE779 /* JGroupMember.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupMember.h; sourceTree = "<group>"; };
+		A08A9A562D5DE532009EE779 /* JGroupMember.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMember.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* JuggleIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIM.h; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIM.h; sourceTree = "<group>"; };
@@ -1039,6 +1043,8 @@
 				A024C3962D353557005C369C /* JMessageReactionItem.m */,
 				A024C3992D353814005C369C /* JMessageReaction.h */,
 				A024C39A2D353814005C369C /* JMessageReaction.m */,
+				A08A9A552D5DE532009EE779 /* JGroupMember.h */,
+				A08A9A562D5DE532009EE779 /* JGroupMember.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1509,6 +1515,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */,
 				A024C39B2D353814005C369C /* JMessageReaction.h in Headers */,
 				A024C3972D353557005C369C /* JMessageReactionItem.h in Headers */,
 				A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */,
@@ -1829,6 +1836,7 @@
 				A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */,
 				A09727E72CC6346B00E08BC4 /* JCallIdleState.m in Sources */,
 				5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */,
+				A08A9A582D5DE532009EE779 /* JGroupMember.m in Sources */,
 				A08AA4062B19EEDB008B114C /* SRError.m in Sources */,
 				A08AA3662B19CB77008B114C /* GPBMessage.m in Sources */,
 				A079E8692CE3591100A1008F /* JConnConnectedState.m in Sources */,

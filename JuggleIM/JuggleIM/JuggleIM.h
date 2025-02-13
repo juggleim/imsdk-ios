@@ -60,3 +60,4 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JCallFinishNotifyMessage.h>
 #import <JuggleIM/JMessageReactionItem.h>
 #import <JuggleIM/JMessageReaction.h>
+#import <JuggleIM/JGroupMember.h>

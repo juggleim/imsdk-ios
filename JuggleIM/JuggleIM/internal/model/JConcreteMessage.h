@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL existed;
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
+@property (nonatomic, strong) JGroupMember *groupMemberInfo;
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
 @end

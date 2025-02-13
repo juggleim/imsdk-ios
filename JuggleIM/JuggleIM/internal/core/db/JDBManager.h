@@ -128,8 +128,11 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;
 - (JGroupInfo *)getGroupInfo:(NSString *)groupId;
+- (JGroupMember *)getGroupMember:(NSString *)groupId
+                          userId:(NSString *)userId;
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos;
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
+- (void)insertGroupMembers:(NSArray <JGroupMember *> *)members;
 
 #pragma mark - reaction table
 - (NSArray <JMessageReaction *> *)getMessageReactions:(NSArray <NSString *> *)messageIds;

@@ -38,6 +38,7 @@ CF_EXTERN_C_BEGIN
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
+@class GrpMemberInfo;
 @class IndexScope;
 @class KvItem;
 @class MemberReadDetailItem;
@@ -672,6 +673,8 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_MsgExSetArray = 25,
   DownMsg_FieldNumber_MsgExtsArray = 26,
   DownMsg_FieldNumber_ConverTagsArray = 27,
+  DownMsg_FieldNumber_SearchText = 29,
+  DownMsg_FieldNumber_GrpMemberInfo = 30,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -750,6 +753,12 @@ GPB_FINAL @interface DownMsg : GPBMessage
 /** The number of items in @c converTagsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger converTagsArray_Count;
 
+@property(nonatomic, readwrite, copy, null_resettable) NSString *searchText;
+
+@property(nonatomic, readwrite, strong, null_resettable) GrpMemberInfo *grpMemberInfo;
+/** Test to see if @c grpMemberInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasGrpMemberInfo;
+
 @end
 
 /**
@@ -763,6 +772,26 @@ int32_t DownMsg_ChannelType_RawValue(DownMsg *message);
  * was generated.
  **/
 void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
+
+#pragma mark - GrpMemberInfo
+
+typedef GPB_ENUM(GrpMemberInfo_FieldNumber) {
+  GrpMemberInfo_FieldNumber_GrpDisplayName = 1,
+  GrpMemberInfo_FieldNumber_ExtFieldsArray = 2,
+  GrpMemberInfo_FieldNumber_UpdatedTime = 3,
+};
+
+GPB_FINAL @interface GrpMemberInfo : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *grpDisplayName;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<KvItem*> *extFieldsArray;
+/** The number of items in @c extFieldsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger extFieldsArray_Count;
+
+@property(nonatomic, readwrite) int64_t updatedTime;
+
+@end
 
 #pragma mark - MsgAck
 

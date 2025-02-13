@@ -2567,12 +2567,17 @@
 - (void)updateUserInfos:(NSArray <JConcreteMessage *> *)messages {
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *groupMemberDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.groupInfo.groupId.length > 0) {
             [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
         }
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
+        }
+        if (obj.groupMemberInfo.userId.length > 0 && obj.groupMemberInfo.groupId.length > 0) {
+            NSString *key = [NSString stringWithFormat:@"%@xxx%@", obj.groupMemberInfo.groupId, obj.groupMemberInfo.userId];
+            [groupMemberDic setObject:obj.groupMemberInfo forKey:key];
         }
         if (obj.mentionInfo) {
             for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
@@ -2582,6 +2587,7 @@
     }];
     [self.core.dbManager insertUserInfos:userDic.allValues];
     [self.core.dbManager insertGroupInfos:groupDic.allValues];
+    [self.core.dbManager insertGroupMembers:groupMemberDic.allValues];
 }
 
 - (void)insertRemoteMessages:(NSArray<JConcreteMessage *> *)messages {

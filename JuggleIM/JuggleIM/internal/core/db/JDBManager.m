@@ -350,12 +350,20 @@
     return [self.userInfoDB getGroupInfo:groupId];
 }
 
+- (JGroupMember *)getGroupMember:(NSString *)groupId userId:(NSString *)userId {
+    return [self.userInfoDB getGroupMemberIn:groupId userId:userId];
+}
+
 - (void)insertUserInfos:(NSArray<JUserInfo *> *)userInfos {
     [self.userInfoDB insertUserInfos:userInfos];
 }
 
 - (void)insertGroupInfos:(NSArray<JGroupInfo *> *)groupInfos {
     [self.userInfoDB insertGroupInfos:groupInfos];
+}
+
+- (void)insertGroupMembers:(NSArray<JGroupMember *> *)members {
+    [self.userInfoDB insertGroupMembers:members];
 }
 
 #pragma mark - reaction table

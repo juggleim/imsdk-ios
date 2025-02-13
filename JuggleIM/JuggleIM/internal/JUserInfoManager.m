@@ -28,4 +28,8 @@
     return [self.core.dbManager getGroupInfo:groupId];
 }
 
+- (JGroupMember *)getGroupMember:(NSString *)groupId userId:(NSString *)userId {
+    return [self.core.dbManager getGroupMember:groupId userId:userId];
+}
+
 @end

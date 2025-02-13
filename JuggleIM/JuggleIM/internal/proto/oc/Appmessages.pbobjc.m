@@ -66,6 +66,7 @@ GPBObjCClassDeclaration(GroupMembersReq);
 GPBObjCClassDeclaration(GroupMembersResp);
 GPBObjCClassDeclaration(GroupMuteReq);
 GPBObjCClassDeclaration(GroupSnapshot);
+GPBObjCClassDeclaration(GrpMemberInfo);
 GPBObjCClassDeclaration(IndexScope);
 GPBObjCClassDeclaration(KickUserReq);
 GPBObjCClassDeclaration(KvItem);
@@ -1576,6 +1577,8 @@ void SetPushData_ChannelType_RawValue(PushData *message, int32_t value) {
 @dynamic msgExSetArray, msgExSetArray_Count;
 @dynamic msgExtsArray, msgExtsArray_Count;
 @dynamic converTagsArray, converTagsArray_Count;
+@dynamic searchText;
+@dynamic hasGrpMemberInfo, grpMemberInfo;
 
 typedef struct DownMsg__storage_ {
   uint32_t _has_storage_[1];
@@ -1601,6 +1604,8 @@ typedef struct DownMsg__storage_ {
   NSMutableArray *msgExSetArray;
   NSMutableArray *msgExtsArray;
   NSMutableArray *converTagsArray;
+  NSString *searchText;
+  GrpMemberInfo *grpMemberInfo;
   int64_t msgSeqNo;
   int64_t msgTime;
   int64_t unreadIndex;
@@ -1856,6 +1861,24 @@ typedef struct DownMsg__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "searchText",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DownMsg_FieldNumber_SearchText,
+        .hasIndex = 25,
+        .offset = (uint32_t)offsetof(DownMsg__storage_, searchText),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "grpMemberInfo",
+        .dataTypeSpecific.clazz = GPBObjCClass(GrpMemberInfo),
+        .number = DownMsg_FieldNumber_GrpMemberInfo,
+        .hasIndex = 26,
+        .offset = (uint32_t)offsetof(DownMsg__storage_, grpMemberInfo),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(DownMsg)
@@ -1867,9 +1890,9 @@ typedef struct DownMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\031\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
+        "\033\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
         "\020\010\000\021\016\000\022\t\000\023\n\000\024\r\000\025\013\000\026\t\000\027\013\000\030\000msgItems\000\031\000msg"
-        "ExSet\000\032\000msgExts\000\033\000converTags\000";
+        "ExSet\000\032\000msgExts\000\033\000converTags\000\035J\000\036\r\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1893,6 +1916,79 @@ void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value) {
   GPBFieldDescriptor *field = [descriptor fieldWithNumber:DownMsg_FieldNumber_ChannelType];
   GPBSetMessageRawEnumField(message, field, value);
 }
+
+#pragma mark - GrpMemberInfo
+
+@implementation GrpMemberInfo
+
+@dynamic grpDisplayName;
+@dynamic extFieldsArray, extFieldsArray_Count;
+@dynamic updatedTime;
+
+typedef struct GrpMemberInfo__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *grpDisplayName;
+  NSMutableArray *extFieldsArray;
+  int64_t updatedTime;
+} GrpMemberInfo__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "grpDisplayName",
+        .dataTypeSpecific.clazz = Nil,
+        .number = GrpMemberInfo_FieldNumber_GrpDisplayName,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(GrpMemberInfo__storage_, grpDisplayName),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "extFieldsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(KvItem),
+        .number = GrpMemberInfo_FieldNumber_ExtFieldsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(GrpMemberInfo__storage_, extFieldsArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "updatedTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = GrpMemberInfo_FieldNumber_UpdatedTime,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(GrpMemberInfo__storage_, updatedTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(GrpMemberInfo)
+                                   messageName:@"GrpMemberInfo"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(GrpMemberInfo__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\003\001\016\000\002\000extFields\000\003\013\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
 
 #pragma mark - MsgAck
 
