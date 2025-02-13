@@ -1884,6 +1884,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (pbGroupMember == nil) {
         return nil;
     }
+    if (pbGroupMember.updatedTime == 0) {
+        return nil;
+    }
     JGroupMember *result = [JGroupMember new];
     result.groupId = groupId;
     result.userId = userId;
