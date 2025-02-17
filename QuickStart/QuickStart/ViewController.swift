@@ -272,6 +272,7 @@ class ViewController: UIViewController {
 
 extension ViewController: JConnectionDelegate {
     func connectionStatusDidChange(_ status: JConnectionStatus, errorCode code: JErrorCode, extra: String!) {
+        UserDefaults.saveIsAutoLogin(false)
     }
     
     func dbDidOpen() {
