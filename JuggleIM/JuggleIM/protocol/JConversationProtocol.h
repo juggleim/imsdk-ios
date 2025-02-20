@@ -8,6 +8,7 @@
 #import <JuggleIM/JConversation.h>
 #import <JuggleIM/JConversationInfo.h>
 #import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JGetConversationOptions.h>
 
 @protocol JConversationDelegate <NSObject>
 
@@ -24,6 +25,16 @@
 @protocol JConversationSyncDelegate <NSObject>
 
 - (void)conversationSyncDidComplete;
+
+@end
+
+@protocol JConversationTagDelegate <NSObject>
+
+- (void)conversationsDidAddToTag:(NSString *)tagId
+                   conversations:(NSArray <JConversation *> *)conversationList;
+
+- (void)conversationsDidRemoveFromTag:(NSString *)tagId
+                        conversations:(NSArray <JConversation *> *)conversationList;
 
 @end
 
@@ -51,6 +62,10 @@
 - (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
                                                        timestamp:(long long)ts
                                                        direction:(JPullDirection)direction;
+
+/// 根据查询条件获取会话信息列表
+/// - Parameter options: 查询条件
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
 
 /// 获取某个特定会话信息
 /// - Parameter conversation: 会话标识
@@ -86,15 +101,41 @@
 /// 获取消息未读的总数
 - (int)getTotalUnreadCount;
 
-/// 根据类型获取会话信息列表
+/// 根据会话类型获取消息未读总数
 /// - Parameter conversationTypes: 会话类型的数组，需要将 JConversationType 转为 NSNumber 并构建 NSArray
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
+
+/// 根据标签 id 获取消息未读总数
+/// - Parameter tagId: 标签 id
+- (int)getUnreadCountWithTag:(NSString *)tagId;
 
 /// 清除某一个会话的未读数
 /// - Parameter conversation: 会话对象
 - (void)clearUnreadCountByConversation:(JConversation *)conversation
                                success:(void (^)(void))successBlock
                                  error:(void (^)(JErrorCode code))errorBlock;
+
+/// 将会话添加到标签
+/// - Parameters:
+///   - conversationList: 会话列表
+///   - tagId: 标签 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)addConversationList:(NSArray <JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCode code))errorBlock;
+
+/// 将会话从标签中移除
+/// - Parameters:
+///   - conversationList: 待移除的会话列表
+///   - tagId: 标签 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)removeConversationList:(NSArray <JConversation *> *)conversationList
+                       fromTag:(NSString *)tagId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
 
 /// 设置静音
 /// - Parameters:
@@ -143,5 +184,7 @@
 - (void)addDelegate:(id<JConversationDelegate>)delegate;
 
 - (void)addSyncDelegate:(id<JConversationSyncDelegate>)delegate;
+
+- (void)addTagDelegate:(id<JConversationTagDelegate>)delegate;
 
 @end

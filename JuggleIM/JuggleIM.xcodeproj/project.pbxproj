@@ -100,6 +100,12 @@
 		A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */; };
 		A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */; };
 		A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */; };
+		A0752D7B2D65D97D009B7E0F /* JGetConversationOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A0752D7A2D65D97D009B7E0F /* JGetConversationOptions.m */; };
+		A0752D7C2D65D97D009B7E0F /* JGetConversationOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = A0752D792D65D97D009B7E0F /* JGetConversationOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0752D7F2D66F75F009B7E0F /* JTagAddConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0752D7E2D66F75F009B7E0F /* JTagAddConvMessage.m */; };
+		A0752D802D66F75F009B7E0F /* JTagAddConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0752D7D2D66F75F009B7E0F /* JTagAddConvMessage.h */; };
+		A0752D832D66F8AA009B7E0F /* JTagDelConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0752D822D66F8AA009B7E0F /* JTagDelConvMessage.m */; };
+		A0752D842D66F8AA009B7E0F /* JTagDelConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0752D812D66F8AA009B7E0F /* JTagDelConvMessage.h */; };
 		A079E8652CE3589C00A1008F /* JConnIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A079E8642CE3589C00A1008F /* JConnIdleState.m */; };
 		A079E8662CE3589C00A1008F /* JConnIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A079E8632CE3589C00A1008F /* JConnIdleState.h */; };
 		A079E8692CE3591100A1008F /* JConnConnectedState.m in Sources */ = {isa = PBXBuildFile; fileRef = A079E8682CE3591100A1008F /* JConnConnectedState.m */; };
@@ -483,6 +489,12 @@
 		A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMessageReadInfo.m; sourceTree = "<group>"; };
 		A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteMessage.h; sourceTree = "<group>"; };
 		A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteMessage.m; sourceTree = "<group>"; };
+		A0752D792D65D97D009B7E0F /* JGetConversationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGetConversationOptions.h; sourceTree = "<group>"; };
+		A0752D7A2D65D97D009B7E0F /* JGetConversationOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetConversationOptions.m; sourceTree = "<group>"; };
+		A0752D7D2D66F75F009B7E0F /* JTagAddConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTagAddConvMessage.h; sourceTree = "<group>"; };
+		A0752D7E2D66F75F009B7E0F /* JTagAddConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTagAddConvMessage.m; sourceTree = "<group>"; };
+		A0752D812D66F8AA009B7E0F /* JTagDelConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTagDelConvMessage.h; sourceTree = "<group>"; };
+		A0752D822D66F8AA009B7E0F /* JTagDelConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTagDelConvMessage.m; sourceTree = "<group>"; };
 		A079E8632CE3589C00A1008F /* JConnIdleState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnIdleState.h; sourceTree = "<group>"; };
 		A079E8642CE3589C00A1008F /* JConnIdleState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnIdleState.m; sourceTree = "<group>"; };
 		A079E8672CE3591100A1008F /* JConnConnectedState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnConnectedState.h; sourceTree = "<group>"; };
@@ -1045,6 +1057,8 @@
 				A024C39A2D353814005C369C /* JMessageReaction.m */,
 				A08A9A552D5DE532009EE779 /* JGroupMember.h */,
 				A08A9A562D5DE532009EE779 /* JGroupMember.m */,
+				A0752D792D65D97D009B7E0F /* JGetConversationOptions.h */,
+				A0752D7A2D65D97D009B7E0F /* JGetConversationOptions.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1504,6 +1518,10 @@
 				A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */,
 				A024C3912D35262F005C369C /* JMsgExSetMessage.h */,
 				A024C3922D35262F005C369C /* JMsgExSetMessage.m */,
+				A0752D7D2D66F75F009B7E0F /* JTagAddConvMessage.h */,
+				A0752D7E2D66F75F009B7E0F /* JTagAddConvMessage.m */,
+				A0752D812D66F8AA009B7E0F /* JTagDelConvMessage.h */,
+				A0752D822D66F8AA009B7E0F /* JTagDelConvMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1515,7 +1533,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0752D7C2D65D97D009B7E0F /* JGetConversationOptions.h in Headers */,
 				A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */,
+				A0752D842D66F8AA009B7E0F /* JTagDelConvMessage.h in Headers */,
 				A024C39B2D353814005C369C /* JMessageReaction.h in Headers */,
 				A024C3972D353557005C369C /* JMessageReactionItem.h in Headers */,
 				A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */,
@@ -1650,6 +1670,7 @@
 				A08AA37B2B19CB78008B114C /* Type.pbobjc.h in Headers */,
 				A08AA39B2B19CB78008B114C /* GPBDescriptor_PackagePrivate.h in Headers */,
 				A08AA2582B14B153008B114C /* JConversationInfo.h in Headers */,
+				A0752D802D66F75F009B7E0F /* JTagAddConvMessage.h in Headers */,
 				A08AA38C2B19CB78008B114C /* GPBType.pbobjc.h in Headers */,
 				A08AA3612B19CB77008B114C /* GPBArray.h in Headers */,
 				A08AA3792B19CB78008B114C /* FieldMask.pbobjc.h in Headers */,
@@ -1881,6 +1902,7 @@
 				A065160C2C91DEBE00E3AEC1 /* JIntervalGenerator.m in Sources */,
 				A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */,
 				A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */,
+				A0752D7B2D65D97D009B7E0F /* JGetConversationOptions.m in Sources */,
 				A0D3AD2A2B6973D600D170D7 /* Connect.pbobjc.m in Sources */,
 				A03B39FD2CC8EC86003D150A /* JCallSessionImpl.m in Sources */,
 				A08AA4002B19EEDB008B114C /* SRURLUtilities.m in Sources */,
@@ -1893,6 +1915,7 @@
 				A08AA4022B19EEDB008B114C /* SRLog.m in Sources */,
 				A08AA2752B162A11008B114C /* JFMDatabaseQueue.m in Sources */,
 				A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */,
+				A0752D7F2D66F75F009B7E0F /* JTagAddConvMessage.m in Sources */,
 				A07CE41D2B3AF131006E3F4D /* JContentTypeCenter.m in Sources */,
 				A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */,
 				A0CE9A2E2CD4BDF4008B405C /* JCallMediaUser.m in Sources */,
@@ -1929,6 +1952,7 @@
 				A0E3DDD12C6F4FA600FE9D3B /* JGetMessageOptions.m in Sources */,
 				A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */,
 				A097280E2CC6676E00E08BC4 /* Rtcroom.pbobjc.m in Sources */,
+				A0752D832D66F8AA009B7E0F /* JTagDelConvMessage.m in Sources */,
 				A08AA4352B1B78FE008B114C /* Appmessages.pbobjc.m in Sources */,
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
 				5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */,

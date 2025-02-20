@@ -324,6 +324,18 @@ inConversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)addConversationList:(NSArray <JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                     userId:(NSString *)userId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)removeConversationList:(NSArray <JConversation *> *)conversations
+                       fromTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call

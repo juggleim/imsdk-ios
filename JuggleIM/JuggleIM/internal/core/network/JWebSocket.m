@@ -1057,6 +1057,45 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)addConversationList:(NSArray<JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                     userId:(NSString *)userId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"add conversations to tag, tagId is %@, conversations count is %ld", tagId, conversationList.count);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData addConversations:conversationList
+                                            toTag:tagId
+                                           userId:userId
+                                            index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)removeConversationList:(NSArray<JConversation *> *)conversations
+                       fromTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"remove conversations from tag, tagId is %@, conversations count is %ld", tagId, conversations.count);
+        NSNumber *key = @(self.cmdIndex);
+        
+        NSData *d = [self.pbData removeConversations:conversations
+                                             fromTag:tagId
+                                              userId:userId
+                                               index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");

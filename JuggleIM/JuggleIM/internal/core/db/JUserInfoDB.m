@@ -105,12 +105,12 @@ NSString *const jColDisplayName = @"display_name";
         [self.dbHelper executeUpdate:jCreateGroupMemberTable withArgumentsInArray:nil];
         [self.dbHelper executeUpdate:jCreateGroupMemberIndex withArgumentsInArray:nil];
         [[NSUserDefaults standardUserDefaults] setObject:@(jGroupMemberTableVersion) forKey:jGroupMemberTableVersionKey];
-        return;
-    }
-    existedVersion = existedVersionNumber.intValue;
-    if (jGroupMemberTableVersion > existedVersion) {
-        //update table
-        
+    } else {
+        existedVersion = existedVersionNumber.intValue;
+        if (jGroupMemberTableVersion > existedVersion) {
+            //update table
+            
+        }
     }
 }
 

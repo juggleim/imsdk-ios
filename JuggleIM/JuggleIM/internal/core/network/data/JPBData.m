@@ -79,6 +79,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jMsgExSet @"msg_exset"
 #define jDelMsgExSet @"del_msg_exset"
 #define jQryMsgExSet @"qry_msg_exset"
+#define jTagAddConvers @"tag_add_convers"
+#define jTagDelConvers @"tag_del_convers"
+
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
 #define jRtcAccept @"rtc_accept"
@@ -1082,6 +1085,64 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)addConversations:(NSArray<JConversation *> *)conversations
+                       toTag:(NSString *)tagId
+                      userId:(NSString *)userId
+                       index:(int)index {
+    NSMutableArray *pbConversations = [NSMutableArray array];
+    for (JConversation *conversation in conversations) {
+        SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
+        pbConversation.targetId = conversation.conversationId;
+        pbConversation.channelType = (int32_t)conversation.conversationType;
+        [pbConversations addObject:pbConversation];
+    }
+    
+    TagConvers *tagConvers = [[TagConvers alloc] init];
+    tagConvers.tag = tagId;
+    tagConvers.conversArray = pbConversations;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jTagAddConvers;
+    body.targetId = userId;
+    body.data_p = tagConvers.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)removeConversations:(NSArray<JConversation *> *)conversations
+                        fromTag:(NSString *)tagId
+                         userId:(NSString *)userId
+                          index:(int)index {
+    NSMutableArray *pbConversations = [NSMutableArray array];
+    for (JConversation *conversation in conversations) {
+        SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
+        pbConversation.targetId = conversation.conversationId;
+        pbConversation.channelType = (int32_t)conversation.conversationType;
+        [pbConversations addObject:pbConversation];
+    }
+    
+    TagConvers *tagConvers = [[TagConvers alloc] init];
+    tagConvers.tag = tagId;
+    tagConvers.conversArray = pbConversations;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jTagDelConvers;
+    body.targetId = userId;
+    body.data_p = tagConvers.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -1992,6 +2053,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
     }
     info.hasUnread = conversation.unreadTag;
+    if (conversation.converTagsArray_Count > 0) {
+        NSMutableArray <NSString *> *tagIdList = [NSMutableArray array];
+        for (ConverTag *pbTag in conversation.converTagsArray) {
+            [tagIdList addObject:pbTag.tag];
+        }
+        info.tagIdList = [tagIdList copy];
+    }
     return info;
 }
 
@@ -2592,7 +2660,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              kModifyMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jQryMsgExSet:@(JPBRcvTypeQryMsgExtAck)
+             jQryMsgExSet:@(JPBRcvTypeQryMsgExtAck),
+             jTagAddConvers:@(JPBRcvTypeSimpleQryAck),
+             jTagDelConvers:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

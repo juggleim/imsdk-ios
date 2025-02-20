@@ -37,6 +37,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
     public lazy var unreadMentionLabel = UILabel()
     /// The button that shows the number of the unread messages.
     public lazy var unreadCount = UIButton()
+    public lazy var muteUnread = UIButton()
     /// The image view that represents read/delivery receipt state of the last message that was sent by the current user.
     public lazy var stateImageView = UIImageView()
     /// A view that is used as a separator between the channel cells.
@@ -122,7 +123,8 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                         self.messageLabel,
                         self.messageSpacer,
                         self.unreadMentionLabel,
-                        self.unreadCount
+                        self.unreadCount,
+                        self.muteUnread
                     ]),
                 ])
             ])
@@ -133,6 +135,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.messageStackView.setCustomSpacing(0, after: messageSpacer)
         
         self.unreadCount.isUserInteractionEnabled = false
+        self.muteUnread.isUserInteractionEnabled = false
     }
     
     /// This function handles the initialization of actions.
@@ -184,6 +187,10 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             .sbu_constraint(height: unreadCountSize)
             .sbu_constraint_greaterThan(width: unreadCountSize)
         
+        self.muteUnread
+            .sbu_constraint(width: unreadCountSize/2)
+            .sbu_constraint(height: unreadCountSize/2)
+        
         self.separatorLine
             .sbu_constraint(equalTo: self.contentView, trailing: 0, bottom: 0.5)
             .sbu_constraint(equalTo: self.infoStackView, leading: 0)
@@ -216,6 +223,10 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.unreadCount.setTitleColor(theme.unreadCountTextColor, for: .normal)
         self.unreadCount.titleLabel?.font = theme.unreadCountFont
         
+        self.muteUnread.backgroundColor = theme.unreadCountBackgroundColor
+        self.muteUnread.setTitleColor(theme.unreadCountTextColor, for: .normal)
+        self.muteUnread.titleLabel?.font = theme.unreadCountFont
+        
         self.broadcastIcon.image = SBUIconSetType.iconBroadcast.image(
             with: theme.broadcastMarkTintColor,
             to: SBUIconSetType.Metric.defaultIconSize
@@ -240,6 +251,10 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         self.unreadCount.contentEdgeInsets.left = 6.0
         self.unreadCount.contentEdgeInsets.right = 6.0
         self.unreadCount.layer.cornerRadius = unreadCountSize / 2
+        
+        self.muteUnread.contentEdgeInsets.left = 6.0
+        self.muteUnread.contentEdgeInsets.right = 6.0
+        self.muteUnread.layer.cornerRadius = unreadCountSize / 2
     }
     
     deinit {
@@ -326,28 +341,27 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         switch unreadCount {
         case 0:
             self.unreadCount.isHidden = true
+            self.muteUnread.isHidden = true
         case 1...99:
             if conversationInfo.mute {
-                self.unreadCount.setTitle("", for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
+                self.unreadCount.isHidden = true
+                self.muteUnread.isHidden = false
             } else {
+                self.unreadCount.isHidden = false
+                self.muteUnread.isHidden = true
                 self.unreadCount.setTitle(String(unreadCount), for: .normal)
-                self.unreadCount
-                    .sbu_constraint(height: unreadCountSize)
-                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
-            self.unreadCount.isHidden = false
+            
         case 100...:
             if conversationInfo.mute {
-                self.unreadCount.setTitle("", for: .normal)
-                self.unreadCount.sbu_constraint(width: unreadCountSize/2, height: unreadCountSize/2)
+                self.unreadCount.isHidden = true
+                self.muteUnread.isHidden = false
             } else {
+                self.unreadCount.isHidden = false
+                self.muteUnread.isHidden = true
                 self.unreadCount.setTitle("99+", for: .normal)
-                self.unreadCount
-                    .sbu_constraint(height: unreadCountSize)
-                    .sbu_constraint_greaterThan(width: unreadCountSize)
             }
-            self.unreadCount.isHidden = false
+            
         default:
             break
         }

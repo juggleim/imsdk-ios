@@ -34,6 +34,8 @@
 #import "JUtility.h"
 #import "JMsgModifyMessage.h"
 #import "JMsgExSetMessage.h"
+#import "JTagAddConvMessage.h"
+#import "JTagDelConvMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -1966,6 +1968,8 @@
     [self registerContentType:[JCallFinishNotifyMessage class]];
     [self registerContentType:[JMsgModifyMessage class]];
     [self registerContentType:[JMsgExSetMessage class]];
+    [self registerContentType:[JTagAddConvMessage class]];
+    [self registerContentType:[JTagDelConvMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2334,6 +2338,36 @@
             sendTime = obj.timestamp;
         } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
+        }
+        
+        // tag add conversation
+        if ([obj.contentType isEqualToString:[JTagAddConvMessage contentType]]) {
+            if (obj.timestamp <= self.core.conversationSyncTime) {
+                return;
+            }
+            JTagAddConvMessage *cmd = (JTagAddConvMessage *)obj.content;
+            if (cmd.conversations.count == 0 || cmd.tagId == 0) {
+                return;
+            }
+            [self.core.dbManager addConversations:cmd.conversations toTag:cmd.tagId];
+            [self.sendReceiveDelegate conversationsDidAddToTag:cmd.tagId
+                                                 conversations:cmd.conversations];
+            return;
+        }
+        
+        // tag remove conversation
+        if ([obj.contentType isEqualToString:[JTagDelConvMessage contentType]]) {
+            if (obj.timestamp <= self.core.conversationSyncTime) {
+                return;
+            }
+            JTagDelConvMessage *cmd = (JTagDelConvMessage *)obj.content;
+            if (cmd.conversations.count == 0 || cmd.tagId == 0) {
+                return;
+            }
+            [self.core.dbManager removeConversations:cmd.conversations fromTag:cmd.tagId];
+            [self.sendReceiveDelegate conversationsDidRemoveFromTag:cmd.tagId
+                                                      conversations:cmd.conversations];
+            return;
         }
         
         // reaction
