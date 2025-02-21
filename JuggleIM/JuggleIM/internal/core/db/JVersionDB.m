@@ -12,9 +12,9 @@
 
 #define jDBVersion 1
 
-NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (version INTEGER)";
-NSString *const jGetVersion = @"SELECT version FROM version";
-NSString *const jSetVersion = @"UPDATE version SET version = ?";
+NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
+NSString *const jGetVersion = @"SELECT v FROM version";
+NSString *const jSetVersion = @"INSERT OR REPLACE INTO version (v) VALUES (?)";
 
 @interface JVersionDB()
 @property (nonatomic, strong) JDBHelper *dbHelper;
