@@ -27,6 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos;
 
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
+
++ (NSString *)alterUserTableAddType;
 @end
 
 NS_ASSUME_NONNULL_END

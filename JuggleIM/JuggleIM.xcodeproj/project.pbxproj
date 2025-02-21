@@ -100,6 +100,8 @@
 		A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */; };
 		A06FC66A2B25A39700E43DA8 /* JConcreteMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */; };
 		A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */; };
+		A0752D892D68615D009B7E0F /* JVersionDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0752D872D68615D009B7E0F /* JVersionDB.h */; };
+		A0752D8A2D68615D009B7E0F /* JVersionDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0752D882D68615D009B7E0F /* JVersionDB.m */; };
 		A079E8652CE3589C00A1008F /* JConnIdleState.m in Sources */ = {isa = PBXBuildFile; fileRef = A079E8642CE3589C00A1008F /* JConnIdleState.m */; };
 		A079E8662CE3589C00A1008F /* JConnIdleState.h in Headers */ = {isa = PBXBuildFile; fileRef = A079E8632CE3589C00A1008F /* JConnIdleState.h */; };
 		A079E8692CE3591100A1008F /* JConnConnectedState.m in Sources */ = {isa = PBXBuildFile; fileRef = A079E8682CE3591100A1008F /* JConnConnectedState.m */; };
@@ -481,6 +483,8 @@
 		A06CF0FD2B989C7400B5CD89 /* JGroupMessageReadInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMessageReadInfo.m; sourceTree = "<group>"; };
 		A06FC6682B25A39700E43DA8 /* JConcreteMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteMessage.h; sourceTree = "<group>"; };
 		A06FC6692B25A39700E43DA8 /* JConcreteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConcreteMessage.m; sourceTree = "<group>"; };
+		A0752D872D68615D009B7E0F /* JVersionDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JVersionDB.h; sourceTree = "<group>"; };
+		A0752D882D68615D009B7E0F /* JVersionDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JVersionDB.m; sourceTree = "<group>"; };
 		A079E8632CE3589C00A1008F /* JConnIdleState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnIdleState.h; sourceTree = "<group>"; };
 		A079E8642CE3589C00A1008F /* JConnIdleState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnIdleState.m; sourceTree = "<group>"; };
 		A079E8672CE3591100A1008F /* JConnConnectedState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnConnectedState.h; sourceTree = "<group>"; };
@@ -899,6 +903,8 @@
 				A06A2F122B233351009B9588 /* JDBHelper.m */,
 				A0574BF22D56275B00632625 /* JReactionDB.h */,
 				A0574BF32D56275B00632625 /* JReactionDB.m */,
+				A0752D872D68615D009B7E0F /* JVersionDB.h */,
+				A0752D882D68615D009B7E0F /* JVersionDB.m */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -1597,6 +1603,7 @@
 				A09727EA2CC6346B00E08BC4 /* JCallOutgoingState.h in Headers */,
 				A08AA37D2B19CB78008B114C /* GPBUtilities_PackagePrivate.h in Headers */,
 				A08AA36C2B19CB77008B114C /* GPBDuration.pbobjc.h in Headers */,
+				A0752D892D68615D009B7E0F /* JVersionDB.h in Headers */,
 				A08AA36A2B19CB77008B114C /* GPBFieldMask.pbobjc.h in Headers */,
 				A09579902B8DE3C2004E3D60 /* JMessageSendReceiveDelegate.h in Headers */,
 				A08AA3762B19CB77008B114C /* Empty.pbobjc.h in Headers */,
@@ -1795,6 +1802,7 @@
 				A03B3A052CC914CE003D150A /* JCallMember.m in Sources */,
 				A09727EF2CC6346B00E08BC4 /* JStateMachine.m in Sources */,
 				A06516022C8092C400E3AEC1 /* JChatroomAttributeItem.m in Sources */,
+				A0752D8A2D68615D009B7E0F /* JVersionDB.m in Sources */,
 				5B7C06202C3D3F1800E91783 /* JUploadQiNiuCred.m in Sources */,
 				5B7C062A2C3E260C00E91783 /* JBaseUploader.m in Sources */,
 				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,

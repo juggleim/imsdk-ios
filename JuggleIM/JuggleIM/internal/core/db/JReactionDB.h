@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray <JMessageReaction *> *)getMessageReactions:(NSArray <NSString *> *)messageIds;
 - (void)setMessageReactions:(NSArray <JMessageReaction *> *)reactions;
 
++ (NSString *)createReactionTable;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -80,6 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;
+#pragma mark - update table
++ (NSString *)alterTableAddFlags;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -8,7 +8,7 @@
 #import "JUserInfoDB.h"
 
 //user 最新版本
-#define jUserTableVersion 2
+#define jUserTableVersion 1
 //NSUserDefault 中保存 user 数据库版本的 key
 #define jUserTableVersionKey @"UserVersion"
 //group 最新版本
@@ -65,12 +65,6 @@ NSString *const jColType = @"type";
     int existedVersion = existedVersionNumber.intValue;
     if (jUserTableVersion > existedVersion) {
         //update table
-        
-        if (existedVersion == 1 && jUserTableVersion >= 2) {
-            [self.dbHelper executeUpdate:kAlterAddUserType withArgumentsInArray:nil];
-            existedVersion = 2;
-        }
-        
         [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
     }
 
@@ -143,6 +137,10 @@ NSString *const jColType = @"type";
             [db executeUpdate:jInsertGroupInfo withArgumentsInArray:@[groupId, name, portrait, extension]];
         }];
     }];
+}
+
++ (NSString *)alterUserTableAddType {
+    return kAlterAddUserType;
 }
 
 #pragma mark - internal
