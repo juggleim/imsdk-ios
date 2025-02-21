@@ -8,17 +8,13 @@
 #import "JUserInfoDB.h"
 
 //user 最新版本
-#define jUserTableVersion 2
+#define jUserTableVersion 1
 //NSUserDefault 中保存 user 数据库版本的 key
 #define jUserTableVersionKey @"UserVersion"
 //group 最新版本
 #define jGroupTableVersion 1
 //NSUserDefault 中保存 group 数据库版本的 key
 #define jGroupTableVersionKey @"GroupVersion"
-//group_member 最新版本
-#define jGroupMemberTableVersion 1
-//NSUserDefault 中保存 group_member 数据库版本的 key
-#define jGroupMemberTableVersionKey @"GroupMemberVersion"
 
 NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -75,7 +71,6 @@ NSString *const jColDisplayName = @"display_name";
     [self.dbHelper executeUpdate:jCreateGroupMemberIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
     [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
-    [[NSUserDefaults standardUserDefaults] setObject:@(jGroupMemberTableVersion) forKey:jGroupMemberTableVersionKey];
 }
 
 - (void)updateTables {
@@ -83,12 +78,6 @@ NSString *const jColDisplayName = @"display_name";
     int existedVersion = existedVersionNumber.intValue;
     if (jUserTableVersion > existedVersion) {
         //update table
-        
-        if (existedVersion == 1 && jUserTableVersion >= 2) {
-            [self.dbHelper executeUpdate:kAlterAddUserType withArgumentsInArray:nil];
-            existedVersion = 2;
-        }
-        
         [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
     }
 
@@ -98,19 +87,6 @@ NSString *const jColDisplayName = @"display_name";
         //update table
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
-    }
-    
-    existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jGroupMemberTableVersionKey];
-    if (!existedVersionNumber) {
-        [self.dbHelper executeUpdate:jCreateGroupMemberTable withArgumentsInArray:nil];
-        [self.dbHelper executeUpdate:jCreateGroupMemberIndex withArgumentsInArray:nil];
-        [[NSUserDefaults standardUserDefaults] setObject:@(jGroupMemberTableVersion) forKey:jGroupMemberTableVersionKey];
-    } else {
-        existedVersion = existedVersionNumber.intValue;
-        if (jGroupMemberTableVersion > existedVersion) {
-            //update table
-            
-        }
     }
 }
 
@@ -208,6 +184,18 @@ NSString *const jColDisplayName = @"display_name";
     }
     
     [self.dbHelper executeUpdate:sql withArgumentsInArray:arguments];
+}
+
++ (NSString *)alterUserTableAddType {
+    return kAlterAddUserType;
+}
+
++ (NSString *)createGroupMemberTable {
+    return jCreateGroupMemberTable;
+}
+
++ (NSString *)createGroupMemberIndex {
+    return jCreateGroupMemberIndex;
 }
 
 #pragma mark - internal

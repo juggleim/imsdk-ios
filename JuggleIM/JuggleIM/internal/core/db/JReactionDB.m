@@ -7,11 +7,6 @@
 
 #import "JReactionDB.h"
 
-//reaction 最新版本
-#define jReactionTableVersion 1
-//NSUserDefault 中保存 reaction 数据库版本的 key
-#define jReactionTableVersionKey @"ReactionVersion"
-
 NSString *const jCreateReactionTable = @"CREATE TABLE IF NOT EXISTS reaction ("
                                         "messageId VARCHAR (64) PRIMARY KEY,"
                                         "reactions TEXT"
@@ -30,19 +25,9 @@ NSString *const jUserInfoList = @"userInfoList";
 
 - (void)createTables {
     [self.dbHelper executeUpdate:jCreateReactionTable withArgumentsInArray:nil];
-    [[NSUserDefaults standardUserDefaults] setObject:@(jReactionTableVersion) forKey:jReactionTableVersionKey];
 }
 
 - (void)updateTables {
-    NSNumber *existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jReactionTableVersionKey];
-    if (!existedVersionNumber) {
-        [self createTables];
-        return;
-    }
-    int existedVersion = existedVersionNumber.intValue;
-    if (jReactionTableVersion > existedVersion) {
-        //update table
-    }
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
@@ -76,6 +61,10 @@ NSString *const jUserInfoList = @"userInfoList";
             }
         }];
     }];
+}
+
++ (NSString *)createReactionTable {
+    return jCreateReactionTable;
 }
 
 - (NSString *)jsonWith:(NSArray <JMessageReactionItem *> *)items {
@@ -134,6 +123,5 @@ NSString *const jUserInfoList = @"userInfoList";
     reaction.itemList = reactionItemList;
     return reaction;
 }
-
 
 @end

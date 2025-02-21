@@ -12,10 +12,6 @@
 #define jConversationTableVersion 2
 //NSUserDefault 中保存 conversation_info 数据库版本的 key
 #define jConversationTableVersionKey @"ConversationVersion"
-//conversation_tag 最新版本
-#define jConversationTagTableVersion 1
-//NSUserDefault 中保存 conversation_tag 数据库版本的 key
-#define jConversationTagTableVersionKey @"ConversationTagVersion"
 
 NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversation_info ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -150,7 +146,6 @@ NSString *const jHasUnread = @"unread_tag";
     [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
-    [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTagTableVersion) forKey:jConversationTagTableVersionKey];
 }
 
 - (void)updateTables {
@@ -165,18 +160,6 @@ NSString *const jHasUnread = @"unread_tag";
         }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
-    }
-    
-    existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jConversationTagTableVersionKey];
-    if (!existedVersionNumber) {
-        [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
-        [self.dbHelper executeUpdate:jCreateConversationTagIndex withArgumentsInArray:nil];
-        [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTagTableVersion) forKey:jConversationTagTableVersionKey];
-    } else {
-        existedVersion = existedVersionNumber.intValue;
-        if (jConversationTagTableVersion > existedVersion) {
-            // update table
-        }
     }
 }
 
@@ -631,6 +614,14 @@ NSString *const jHasUnread = @"unread_tag";
     }];
 }
 
++ (NSString *)createConversationTagTable {
+    return jCreateConversationTagTable;
+}
+
++ (nonnull NSString *)createConversationTagIndex {
+    return jCreateConversationTagIndex;
+}
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {
         self.dbHelper = dbHelper;
@@ -690,4 +681,5 @@ NSString *const jHasUnread = @"unread_tag";
     }
     return originSql;
 }
+
 @end

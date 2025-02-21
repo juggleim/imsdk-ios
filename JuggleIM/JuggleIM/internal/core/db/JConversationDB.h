@@ -63,6 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeConversations:(NSArray <JConversation *> *)conversations
                     fromTag:(NSString *)tagId;
 - (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
+
++ (NSString *)createConversationTagTable;
++ (NSString *)createConversationTagIndex;
 @end
 
 NS_ASSUME_NONNULL_END

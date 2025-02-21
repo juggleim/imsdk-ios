@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
-#define jMessageTableVersion 4
+#define jMessageTableVersion 3
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -714,10 +714,6 @@ NSString *const jFlags = @"flags";
             [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
             existedVersion = 3;
         }
-        if (existedVersion == 3 && jMessageTableVersion >= 4) {
-            [self.dbHelper executeUpdate:kAlterAddFlags withArgumentsInArray:nil];
-            existedVersion = 4;
-        }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
     }
@@ -795,6 +791,11 @@ NSString *const jFlags = @"flags";
         message = [self messageWith:resultSet];
     }
     return message;
+}
+
+#pragma mark - update table
++ (NSString *)alterTableAddFlags {
+    return kAlterAddFlags;
 }
 
 #pragma mark - internal

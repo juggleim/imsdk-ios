@@ -32,6 +32,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
 
 - (void)insertGroupMembers:(NSArray<JGroupMember *> *)members;
+
++ (NSString *)alterUserTableAddType;
++ (NSString *)createGroupMemberTable;
++ (NSString *)createGroupMemberIndex;
+
 @end
 
 NS_ASSUME_NONNULL_END

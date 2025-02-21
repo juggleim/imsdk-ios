@@ -13,6 +13,7 @@
 #import "JUserInfoDB.h"
 #import "JReactionDB.h"
 #import "JUtility.h"
+#import "JVersionDB.h"
 
 #define kJetIMDBName @"jetimdb"
 
@@ -23,6 +24,7 @@
 @property (nonatomic, strong) JProfileDB *profileDb;
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
 @property (nonatomic, strong) JReactionDB *reactionDB;
+@property (nonatomic, strong) JVersionDB *versionDB;
 @end
 
 @implementation JDBManager
@@ -417,6 +419,7 @@
     [self.profileDb createTables];
     [self.userInfoDB createTables];
     [self.reactionDB createTables];
+    [self.versionDB createTables];
 }
 
 - (void)updateTables {
@@ -425,6 +428,7 @@
     [self.profileDb updateTables];
     [self.userInfoDB updateTables];
     [self.reactionDB updateTables];
+    [self.versionDB updateTables];
 }
 
 //DB 目录
@@ -458,6 +462,7 @@
         self.conversationDb.messageDB = self.messageDb;
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
         self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
+        self.versionDB = [[JVersionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;
 }
