@@ -38,6 +38,7 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
         [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
             if (version < 1) {
                 [db executeUpdate:jCreateVersionTable];
+                [db executeUpdate:jInsertVersion withArgumentsInArray:@[@(0)]];
                 [db executeUpdate:[JMessageDB alterTableAddFlags]];
                 [db executeUpdate:[JUserInfoDB alterUserTableAddType]];
                 [db executeUpdate:[JReactionDB createReactionTable]];
