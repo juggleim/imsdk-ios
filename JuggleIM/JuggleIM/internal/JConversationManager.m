@@ -384,6 +384,7 @@
                     success:(void (^)(void))successBlock
                       error:(void (^)(JErrorCode))errorBlock {
     if (tagId.length == 0 || conversationList.count == 0) {
+        JLogE(@"CONV-TagAdd", @"invalid param");
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -424,6 +425,7 @@
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCode))errorBlock {
     if (tagId.length == 0 || conversationList.count == 0) {
+        JLogE(@"CONV-TagRemove", @"invalid param");
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
