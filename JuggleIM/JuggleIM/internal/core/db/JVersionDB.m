@@ -14,7 +14,9 @@
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
-NSString *const jSetVersion = @"INSERT OR REPLACE INTO version (v) VALUES (?)";
+NSString *const jInsertVersion = @"INSERT INTO version (v) VALUES (?)";
+NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
+
 
 @interface JVersionDB()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -25,7 +27,7 @@ NSString *const jSetVersion = @"INSERT OR REPLACE INTO version (v) VALUES (?)";
 - (void)createTables {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [db executeUpdate:jCreateVersionTable];
-        [db executeUpdate:jSetVersion withArgumentsInArray:@[@(jDBVersion)]];
+        [db executeUpdate:jInsertVersion withArgumentsInArray:@[@(jDBVersion)]];
     }];
 }
 
@@ -36,11 +38,12 @@ NSString *const jSetVersion = @"INSERT OR REPLACE INTO version (v) VALUES (?)";
         [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
             if (version < 1) {
                 [db executeUpdate:jCreateVersionTable];
+                [db executeUpdate:jInsertVersion withArgumentsInArray:@[@(0)]];
                 [db executeUpdate:[JMessageDB alterTableAddFlags]];
                 [db executeUpdate:[JUserInfoDB alterUserTableAddType]];
                 [db executeUpdate:[JReactionDB createReactionTable]];
             }
-            [db executeUpdate:jSetVersion withArgumentsInArray:@[@(jDBVersion)]];
+            [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];
     }
 }
@@ -51,7 +54,7 @@ NSString *const jSetVersion = @"INSERT OR REPLACE INTO version (v) VALUES (?)";
            withArgumentsInArray:nil
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
-            version = [resultSet intForColumn:@"version"];
+            version = [resultSet intForColumn:@"v"];
         }
     }];
     return version;
