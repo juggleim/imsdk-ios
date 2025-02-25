@@ -1462,6 +1462,10 @@
                 successBlock();
             }
             JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            if (!currentUser) {
+                currentUser = [[JUserInfo alloc] init];
+                currentUser.userId = weakSelf.core.userId;
+            }
             
             //update reaction db
             NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
@@ -1556,6 +1560,10 @@
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
             item.reactionId = reactionId;
             JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            if (!currentUser) {
+                currentUser = [[JUserInfo alloc] init];
+                currentUser.userId = weakSelf.core.userId;
+            }
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
