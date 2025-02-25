@@ -45,7 +45,7 @@
         result = [db executeUpdate:sql withArgumentsInArray:arguments];
         long long end = [[NSDate date] timeIntervalSince1970] * 1000;
         if (end - start > jDbDuration) {
-            JLogW(@"DB-Duration", @"executeUpdate last for %lld ms, sql is %@", end-start, sql);
+            JLogW(@"DB-Duration", @"executeUpdate lasts for %lld ms, sql is %@", end-start, sql);
         }
     }];
     return result;
@@ -61,10 +61,10 @@ withArgumentsInArray:(NSArray *)arguments
         syncResultBlock(resultSet);
         long long end2 = [[NSDate date] timeIntervalSince1970] * 1000;
         if (end1 - start > jDbDuration) {
-            JLogW(@"DB-Duration", @"executeQuery last for %lld ms, sql is %@", end1-start, sql);
+            JLogW(@"DB-Duration", @"executeQuery lasts for %lld ms, sql is %@", end1-start, sql);
         }
         if (end2 - end1 > jDbDuration) {
-            JLogW(@"DB-Duration", @"executeQuery result block last for %lld ms, sql is %@", end1-start, sql);
+            JLogW(@"DB-Duration", @"executeQuery result block lasts for %lld ms, sql is %@", end1-start, sql);
         }
         [resultSet close];
     }];
@@ -77,7 +77,7 @@ withArgumentsInArray:(NSArray *)arguments
             transactionBlock(db, rollback);
             long long end = [[NSDate date] timeIntervalSince1970] * 1000;
             if (end - start > jDbDuration) {
-                JLogW(@"DB-Duration", @"executeTransaction last for %lld ms", end-start);
+                JLogW(@"DB-Duration", @"executeTransaction lasts for %lld ms", end-start);
             }
         }
     }];
