@@ -8,6 +8,8 @@
 #import "JDBHelper.h"
 #import "JLogger.h"
 
+#define jDbDuration 500
+
 @interface JDBHelper ()
 @property (nonatomic, strong) JFMDatabaseQueue *dbQueue;
 @end
@@ -39,7 +41,12 @@
 - (BOOL)executeUpdate:(NSString *)sql withArgumentsInArray:(NSArray *)arguments {
     __block BOOL result = NO;
     [self.dbQueue inDatabase:^(JFMDatabase *db) {
+        long long start = [[NSDate date] timeIntervalSince1970] * 1000;
         result = [db executeUpdate:sql withArgumentsInArray:arguments];
+        long long end = [[NSDate date] timeIntervalSince1970] * 1000;
+        if (end - start > jDbDuration) {
+            JLogW(@"DB-Duration", @"executeUpdate last for %lld ms, sql is %@", end-start, sql);
+        }
     }];
     return result;
 }
@@ -48,8 +55,17 @@
 withArgumentsInArray:(NSArray *)arguments
           syncResult:(void (^)(JFMResultSet *resultSet))syncResultBlock {
     [self.dbQueue inDatabase:^(JFMDatabase *db) {
+        long long start = [[NSDate date] timeIntervalSince1970] * 1000;
         JFMResultSet *resultSet = [db executeQuery:sql withArgumentsInArray:arguments];
+        long long end1 = [[NSDate date] timeIntervalSince1970] * 1000;
         syncResultBlock(resultSet);
+        long long end2 = [[NSDate date] timeIntervalSince1970] * 1000;
+        if (end1 - start > jDbDuration) {
+            JLogW(@"DB-Duration", @"executeQuery last for %lld ms, sql is %@", end1-start, sql);
+        }
+        if (end2 - end1 > jDbDuration) {
+            JLogW(@"DB-Duration", @"executeQuery result block last for %lld ms, sql is %@", end1-start, sql);
+        }
         [resultSet close];
     }];
 }
@@ -57,7 +73,12 @@ withArgumentsInArray:(NSArray *)arguments
 - (void)executeTransaction:(void (^)(JFMDatabase *db, BOOL *rollback))transactionBlock {
     [self.dbQueue inTransaction:^(JFMDatabase *db, BOOL *rollback) {
         if (transactionBlock) {
+            long long start = [[NSDate date] timeIntervalSince1970] * 1000;
             transactionBlock(db, rollback);
+            long long end = [[NSDate date] timeIntervalSince1970] * 1000;
+            if (end - start > jDbDuration) {
+                JLogW(@"DB-Duration", @"executeTransaction last for %lld ms", end-start);
+            }
         }
     }];
 }
