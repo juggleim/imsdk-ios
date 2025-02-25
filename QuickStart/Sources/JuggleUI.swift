@@ -9,6 +9,6 @@ import Foundation
 
 public class JuggleUI {
     
-    public static let version: String = "1.8.6.2"
+    public static let version: String = "1.8.6.3"
     
 }
