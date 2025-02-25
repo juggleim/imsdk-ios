@@ -59,6 +59,8 @@
 
 @implementation JMessageManager
 
+@synthesize chatroomSyncProcessing = _chatroomSyncProcessing;
+
 - (void)syncMessages {
     self.syncProcessing = YES;
     [self sync];
@@ -1770,6 +1772,8 @@
 - (void)connectSuccess {
     self.syncProcessing = YES;
     self.syncNotifyTime = 0;
+    self.chatroomSyncProcessing = NO;
+    [self clearChatroomSyncDic];
 }
 
 #pragma mark - JChatroomProtocol
@@ -1810,6 +1814,46 @@
     return YES;
 }
 
+- (void)syncNotify:(long long)syncTime {
+    if (self.syncProcessing) {
+        self.syncNotifyTime = syncTime;
+        return;
+    }
+    if (syncTime > self.core.messageReceiveSyncTime) {
+        self.syncProcessing = YES;
+        [self sync];
+    }
+}
+
+- (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
+    if (self.chatroomSyncProcessing) {
+        [self setTimeForChatroomSyncDic:syncTime chatroomId:chatroomId];
+        return;
+    }
+    [self syncChatroomMessages:chatroomId time:syncTime];
+}
+
+- (void)messageDidSend:(NSString *)messageId
+                  time:(long long)timestamp
+                 seqNo:(long long)seqNo
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content {
+    if (clientUid.length == 0) {
+        return;
+    }
+    [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
+                                                   messageId:messageId
+                                                   timestamp:timestamp
+                                                       seqNo:seqNo];
+    if (contentType && content) {
+        [self.core.dbManager updateMessageContent:content
+                                      contentType:contentType
+                                    withMessageId:messageId];
+    }
+}
+
+#pragma mark - internal
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished {
     JLogI(@"MSG-Rcv", @"message count is %ld, isFinish is %d", messages.count, isFinished);
@@ -1873,52 +1917,12 @@
     [self checkChatroomSyncDic];
 }
 
-- (void)syncNotify:(long long)syncTime {
-    if (self.syncProcessing) {
-        self.syncNotifyTime = syncTime;
-        return;
-    }
-    if (syncTime > self.core.messageReceiveSyncTime) {
-        self.syncProcessing = YES;
-        [self sync];
-    }
-}
-
-- (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
-    if (self.chatroomSyncProcessing) {
-        [self.chatroomSyncDic setObject:@(syncTime) forKey:chatroomId];
-        return;
-    }
-    [self syncChatroomMessages:chatroomId time:syncTime];
-}
-
-- (void)messageDidSend:(NSString *)messageId
-                  time:(long long)timestamp
-                 seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid
-           contentType:(nullable NSString *)contentType
-               content:(nullable JMessageContent *)content {
-    if (clientUid.length == 0) {
-        return;
-    }
-    [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
-                                                   messageId:messageId
-                                                   timestamp:timestamp
-                                                       seqNo:seqNo];
-    if (contentType && content) {
-        [self.core.dbManager updateMessageContent:content
-                                      contentType:contentType
-                                    withMessageId:messageId];
-    }
-}
-
-#pragma mark - internal
 - (void)checkChatroomSyncDic {
-    if (self.chatroomSyncDic.count > 0) {
-        NSArray *keys = [self.chatroomSyncDic allKeys];
+    NSDictionary <NSString *, NSNumber *> *popDic = [self popChatroomSyncDic];
+    if (popDic.count > 0) {
+        NSArray *keys = [popDic allKeys];
         NSString *chatroomId = [keys objectAtIndex:0];
-        long long time = [self.chatroomSyncDic objectForKey:chatroomId].longLongValue;
-        [self.chatroomSyncDic removeObjectForKey:chatroomId];
+        long long time = [popDic objectForKey:chatroomId].longLongValue;
         [self syncChatroomMessages:chatroomId time:time];
     } else {
         self.chatroomSyncProcessing = NO;
@@ -2580,7 +2584,14 @@
     JLogI(@"MSG-Sync", @"receive time is %lld, send time is %lld", self.core.messageReceiveSyncTime, self.core.messageSendSyncTime);
     [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
                                             sendTime:self.core.messageSendSyncTime
-                                              userId:self.core.userId];
+                                              userId:self.core.userId
+                                             success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-Sync", @"success");
+        [self messagesDidReceive:messages isFinished:isFinished];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Sync", @"error, code is %ld", code);
+        [self messagesDidReceive:[NSArray array] isFinished:YES];
+    }];
 }
 
 - (void)webSocketSyncChatroomMessages:(NSString *)chatroomId
@@ -2591,7 +2602,14 @@
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
                                            chatroomId:chatroomId
                                                userId:self.core.userId
-                                     prevMessageCount:count];
+                                     prevMessageCount:count
+                                              success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-ChrmSync", @"success");
+        [self chatroomMessagesDidReceive:messages];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ChrmSync", @"error, code is %ld", code);
+        [self chatroomMessagesDidReceive:[NSArray array]];
+    }];
 }
 
 - (NSString *)createClientUid {
@@ -2728,6 +2746,48 @@
         _downloadManager = [[JDownloadManager alloc] init];
     }
     return _downloadManager;
+}
+
+- (void)setTimeForChatroomSyncDic:(long long)timestamp
+                       chatroomId:(NSString *)chatroomId {
+    @synchronized (self) {
+        [self.chatroomSyncDic setObject:@(timestamp) forKey:chatroomId];
+    }
+}
+
+- (NSDictionary <NSString *, NSNumber *>*)popChatroomSyncDic {
+    @synchronized (self) {
+        if (self.chatroomSyncDic.count > 0) {
+            NSArray *keys = [self.chatroomSyncDic allKeys];
+            NSString *chatroomId = [keys objectAtIndex:0];
+            long long time = [self.chatroomSyncDic objectForKey:chatroomId].longLongValue;
+            [self.chatroomSyncDic removeObjectForKey:chatroomId];
+            NSDictionary *result = @{chatroomId:@(time)};
+            return result;
+        } else {
+            return nil;
+        }
+    }
+}
+
+- (void)clearChatroomSyncDic {
+    @synchronized (self) {
+        [self.chatroomSyncDic removeAllObjects];
+    }
+}
+
+- (BOOL)chatroomSyncProcessing {
+    @synchronized (self) {
+        return _chatroomSyncProcessing;
+    }
+}
+
+- (void)setChatroomSyncProcessing:(BOOL)chatroomSyncProcessing {
+    @synchronized (self) {
+        if (_chatroomSyncProcessing != chatroomSyncProcessing) {
+            _chatroomSyncProcessing = chatroomSyncProcessing;
+        }
+    }
 }
 
 - (NSMutableDictionary<NSString *,NSNumber *> *)chatroomSyncDic {
