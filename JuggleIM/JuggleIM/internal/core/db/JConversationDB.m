@@ -178,6 +178,7 @@ NSString *const jHasUnread = @"unread_tag";
             if ([resultSet next]) {
                 info = [self conversationInfoWith:resultSet];
             }
+            [resultSet close];
             NSString * mentionInfo;
             if(obj.mentionInfo){
                 mentionInfo = [obj.mentionInfo encodeToJson];
