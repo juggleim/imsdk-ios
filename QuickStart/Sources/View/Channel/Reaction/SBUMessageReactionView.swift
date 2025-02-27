@@ -270,7 +270,7 @@ open class SBUMessageReactionView: SBUView, UICollectionViewDelegate, UICollecti
             needsSideMargin: self.sameCellWidth
         )
         if !emojiKey.isEmpty {
-            cell.emojiView.text = EmojiManager.utf16ToEmoji(emojiKey)
+            cell.emojiView.text = emojiKey
         }
         cell.emojiImageViewRatioConstraint?.isActive = true
         cell.emojiLongPressHandler = { [weak self] in
@@ -340,7 +340,7 @@ open class SBUMessageReactionView: SBUView, UICollectionViewDelegate, UICollecti
     public func hasMoreEmoji() -> Bool {
         let availableEmojis = EmojiManager.getAllEmojis()
         let reactedEmojiKeys = reactions.map { $0.reactionId }
-        let unreactedAvailableEmojis = availableEmojis.filter { !reactedEmojiKeys.contains(EmojiManager.emojiToUtf16($0)) }
+        let unreactedAvailableEmojis = availableEmojis.filter { !reactedEmojiKeys.contains($0) }
         let hasMoreEmoji = !unreactedAvailableEmojis.isEmpty
         return hasMoreEmoji
     }

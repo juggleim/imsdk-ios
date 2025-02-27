@@ -770,7 +770,7 @@ open class SBUBaseChannelViewModel: NSObject {
         if emojiKey.starts(with: "%u") {
             emojiUtf16 = emojiKey
         } else {
-            emojiUtf16 = EmojiManager.emojiToUtf16(emojiKey)
+            emojiUtf16 = emojiKey
         }
         if didSelect {
             SBULog.info("[Request] Add Reaction")

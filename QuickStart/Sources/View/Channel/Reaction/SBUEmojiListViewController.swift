@@ -195,7 +195,7 @@ class SBUEmojiListViewController: SBUBaseViewController, UICollectionViewDelegat
         let emoji = emojiList[indexPath.row]
         
         var shouldSelect = true
-        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == EmojiManager.emojiToUtf16(emoji) }) {
+        if let reactionItem = reaction?.itemList.first(where: { $0.reactionId == emoji }) {
             shouldSelect = reactionItem.userInfoList.contains(where: {$0.userId == JIM.shared().currentUserId }) == false
         }
 
