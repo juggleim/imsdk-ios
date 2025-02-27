@@ -790,6 +790,7 @@ NSString *const jFlags = @"flags";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
+    [resultSet close];
     return message;
 }
 
@@ -809,6 +810,7 @@ NSString *const jFlags = @"flags";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
+    [resultSet close];
     return message;
 }
 
