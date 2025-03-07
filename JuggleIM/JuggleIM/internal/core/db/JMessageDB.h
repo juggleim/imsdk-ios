@@ -82,6 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
                  inDb:(JFMDatabase *)db;
 #pragma mark - update table
 + (NSString *)alterTableAddFlags;
++ (NSString *)addConversationTSIndex;
 @end
 
 NS_ASSUME_NONNULL_END
