@@ -909,7 +909,7 @@
                                                           conversationTypes:nil];
     
     __block BOOL needRemote = NO;
-    if (localMessages.count < option.count) {
+    if (localMessages.count < option.count+1) {
         //本地数据小于需要拉取的数量
         needRemote = YES;
     } else {
