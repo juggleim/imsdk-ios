@@ -346,6 +346,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)deleteMessage:(JConversation *)conversation
                   msgList:(NSArray <JConcreteMessage *> *)msgList
+              forAllUsers:(BOOL)forAllUsers
                     index:(int)index;
 
 - (NSData *)clearHistoryMessage:(JConversation *)conversation

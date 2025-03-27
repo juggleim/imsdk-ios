@@ -621,12 +621,14 @@ inConversation:(JConversation *)conversation
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
+          forAllUsers:(BOOL)forAllUsers
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData deleteMessage:conversation
                                        msgList:msgList
+                                   forAllUsers:forAllUsers
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete message");
         [self timestampSendData:d
@@ -639,13 +641,15 @@ inConversation:(JConversation *)conversation
 
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
+                forAllUsers:(BOOL)forAllUsers
                     success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
+        int scope = forAllUsers ? 1 : 0;
         NSData *d = [self.pbData clearHistoryMessage:conversation
                                                 time:time
-                                               scope:0
+                                               scope:scope
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear history message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
         [self timestampSendData:d

@@ -1165,10 +1165,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)deleteMessage:(JConversation *)conversation
                   msgList:(NSArray <JConcreteMessage *> *)msgList
+              forAllUsers:(BOOL)forAllUsers
                     index:(int)index{
     DelHisMsgsReq * req = [[DelHisMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (forAllUsers) {
+        req.delScope = 1;
+    }
     NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
     for (JConcreteMessage *msg in msgList) {
         SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];

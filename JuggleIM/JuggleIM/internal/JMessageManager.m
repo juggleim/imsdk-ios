@@ -121,9 +121,10 @@
 
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
                            conversation:(JConversation *)conversation
+                            forAllUsers:(BOOL)forAllUsers
                                 success:(void (^)(void))successBlock
-                                  error:(void (^)(JErrorCode))errorBlock{
-    if(clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil){
+                                  error:(void (^)(JErrorCode))errorBlock {
+    if (clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -135,16 +136,16 @@
     NSMutableArray * deleteClientMsgNoList = [NSMutableArray array];
     NSMutableArray * deleteRemoteList = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
+        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
            && message.conversation.conversationType == conversation.conversationType){
-            if(message.messageId.length > 0){
+            if (message.messageId.length > 0) {
                 [deleteRemoteList addObject:message];
             }
             [deleteClientMsgNoList addObject:@(message.clientMsgNo)];
         }
     }
     JLogI(@"MSG-Delete", @"by clientMsgNo, local count is %lu, remote count is %lu", (unsigned long)deleteClientMsgNoList.count, (unsigned long)deleteRemoteList.count);
-    if(deleteClientMsgNoList.count == 0){
+    if (deleteClientMsgNoList.count == 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeMessageNotExist);
@@ -153,7 +154,7 @@
         return;
     }
     //如果没有远端消息 只删除本地后直接回调
-    if(deleteRemoteList.count == 0){
+    if (deleteRemoteList.count == 0) {
         [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [self notifyMessageRemoved:conversation removedMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
@@ -173,6 +174,7 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
+                           forAllUsers:forAllUsers
                                success:^(long long timestamp) {
         JLogI(@"MSG-Delete", @"websocket success");
         [weakSelf updateSendSyncTime:timestamp];
@@ -199,11 +201,23 @@
     }];
 }
 
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
+                           conversation:(JConversation *)conversation
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode))errorBlock {
+    [self deleteMessagesByClientMsgNoList:clientMsgNos
+                             conversation:conversation
+                              forAllUsers:NO
+                                  success:successBlock
+                                    error:errorBlock];
+}
+
 - (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                       conversation:(JConversation *)conversation
+                       forAllUsers:(BOOL)forAllUsers
                            success:(void (^)(void))successBlock
-                             error:(void (^)(JErrorCode))errorBlock{
-    if(messageIds == nil || messageIds.count == 0 || conversation == nil){
+                             error:(void (^)(JErrorCode))errorBlock {
+    if (messageIds == nil || messageIds.count == 0 || conversation == nil) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -216,17 +230,18 @@
     NSMutableArray *msgList = [NSMutableArray array];
     NSMutableArray <NSNumber *> *clientMsgNos = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
-           && message.conversation.conversationType == conversation.conversationType){
+        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
+           && message.conversation.conversationType == conversation.conversationType) {
             [msgList addObject:message];
             [clientMsgNos addObject:@(message.clientMsgNo)];
         }
     }
     JLogI(@"MSG-Delete", @"by messageId, count is %lu", (unsigned long)msgList.count);
-    if(msgList.count != 0){
+    if (msgList.count != 0) {
         __weak typeof(self) weakSelf = self;
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
+                               forAllUsers:forAllUsers
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Delete", @"websocket success");
             [weakSelf updateSendSyncTime:timestamp];
@@ -255,13 +270,24 @@
             });
         }];
         
-    }else{
+    } else {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeMessageNotExist);
             }
         });
     }
+}
+
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode))errorBlock {
+    [self deleteMessagesByMessageIds:messageIds
+                        conversation:conversation
+                         forAllUsers:NO
+                             success:successBlock
+                               error:errorBlock];
 }
 
 - (void)recallMessage:(NSString *)messageId
@@ -349,15 +375,17 @@
 
 - (void)clearMessagesIn:(JConversation *)conversation
               startTime:(long long)startTime
+            forAllUsers:(BOOL)forAllUsers
                 success:(void (^)(void))successBlock
-                  error:(void (^)(JErrorCode errorCode))errorBlock{
-    if(startTime == 0){
+                  error:(void (^)(JErrorCode))errorBlock {
+    if (startTime == 0) {
         long long currentTime =  [[NSDate date] timeIntervalSince1970] * 1000;
         startTime =  MAX(MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime), currentTime);
     }
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
+                                 forAllUsers:forAllUsers
                                      success:^(long long timestamp) {
         JLogI(@"MSG-Clear", @"success");
         [weakSelf updateSendSyncTime:timestamp];
@@ -382,6 +410,17 @@
             }
         });
     }];
+}
+
+- (void)clearMessagesIn:(JConversation *)conversation
+              startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock {
+    [self clearMessagesIn:conversation
+                startTime:startTime
+              forAllUsers:NO
+                  success:successBlock
+                    error:errorBlock];
 }
 
 -(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{

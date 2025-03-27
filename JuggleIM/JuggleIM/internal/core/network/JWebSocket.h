@@ -225,15 +225,15 @@ inConversation:(JConversation *)conversation
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
+          forAllUsers:(BOOL)forAllUsers
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
+                forAllUsers:(BOOL)forAllUsers
                     success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
-
 
 - (void)getUploadFileCred:(NSString *)userId
                  fileType:(JUploadFileType)fileType
