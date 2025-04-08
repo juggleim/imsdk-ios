@@ -106,7 +106,6 @@ class GroupSettingViewController: BaseTableListViewController {
                         self.navigationController?.popToRootViewController(animated: true)
                     } error: { errorCode in
                     }
-
                 }
             }
         }
