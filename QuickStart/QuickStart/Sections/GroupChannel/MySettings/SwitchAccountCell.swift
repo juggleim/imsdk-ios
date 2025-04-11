@@ -55,9 +55,12 @@ class SwitchAccountCell: UITableViewCell {
     }
     
     func configure(user: JCUser, inUse: Bool) {
-        if let portrait = user.portrait {
-            portraitView.configure(urlString: portrait, imageSize: 45)
+        let portrait = user.portrait ?? ""
+        var image: UIImage? = nil
+        if portrait.count == 0 {
+            image = PortraitUtil.defaultPortraitImage(with: user.userId, name: user.userName, type: .private)
         }
+        portraitView.configure(urlString: portrait, imageSize: 45, uiImage: image)
         nameLabel.text = user.userName
         userIdLabel.text = user.userId
         if inUse {

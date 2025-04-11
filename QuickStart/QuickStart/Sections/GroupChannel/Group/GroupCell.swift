@@ -228,15 +228,19 @@ class GroupCell: SBUTableViewCell {
         }
         
         let profileURL = group.portrait ?? ""
-        self.loadImageSession = self.portraitView.loadImage(
-            urlString: profileURL,
-            placeholder: SBUIconSetType.iconSupergroup.image(
-                with: self.theme.userPlaceholderTintColor,
-                to: SBUIconSetType.Metric.defaultIconSize
-            ),
-            subPath: SBUCacheManager.PathType.userProfile
-        )
-        self.portraitView.contentMode = profileURL.count > 0 ? .scaleAspectFill : .center
+        if profileURL.count == 0 {
+            self.portraitView.image = PortraitUtil.defaultPortraitImage(with: group.groupId, name: group.groupName, type: .group)
+        } else {
+            self.loadImageSession = self.portraitView.loadImage(
+                urlString: profileURL,
+                placeholder: SBUIconSetType.iconSupergroup.image(
+                    with: self.theme.userPlaceholderTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                ),
+                subPath: SBUCacheManager.PathType.userProfile
+            )
+        }
+        self.portraitView.contentMode = .scaleAspectFill
         
         self.portraitView.backgroundColor = theme.userPlaceholderBackgroundColor
 

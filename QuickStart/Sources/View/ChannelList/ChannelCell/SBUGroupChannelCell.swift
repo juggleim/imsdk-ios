@@ -268,34 +268,45 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
 
         var url = ""
         var name = ""
+        var image: UIImage? = nil
         var attributeName = NSMutableAttributedString(string: name)
         if (conversationInfo.conversation.conversationType == .private) {
-            if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId) {
-                url = user.portrait ?? ""
-                name = user.userName ?? ""
+            let userId = conversationInfo.conversation.conversationId
+            let user = JIM.shared().userInfoManager.getUserInfo(userId)
+            url = user?.portrait ?? ""
+            if url.count == 0 {
+                image = PortraitUtil.defaultPortraitImage(with: userId, name: user?.userName, type: .private)
+            }
+            name = user?.userName ?? ""
+            attributeName = NSMutableAttributedString(string: name)
+            if user?.type == .bot {
+                name.append(" 智能体")
                 attributeName = NSMutableAttributedString(string: name)
-                if user.type == .bot {
-                    name.append(" 智能体")
-                    attributeName = NSMutableAttributedString(string: name)
-                    let range = NSRange(location: name.count-4, length: 4)
-                    attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
-                    let font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
-                    attributeName.addAttribute(.font, value: font, range: range)
-                }
+                let range = NSRange(location: name.count-4, length: 4)
+                attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
+                let font = UIFont.systemFont(ofSize: 10.0, weight: .regular)
+                attributeName.addAttribute(.font, value: font, range: range)
             }
         } else if (conversationInfo.conversation.conversationType == .group) {
-            if let group = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId) {
-                url = group.portrait ?? ""
-                name = group.groupName ?? ""
-                attributeName = NSMutableAttributedString(string: name)
+            let groupId = conversationInfo.conversation.conversationId
+            let group = JIM.shared().userInfoManager.getGroupInfo(groupId)
+            url = group?.portrait ?? ""
+            if url.count == 0 {
+                image = PortraitUtil.defaultPortraitImage(with: groupId, name: group?.groupName, type: .group)
             }
+            name = group?.groupName ?? ""
+            attributeName = NSMutableAttributedString(string: name)
         }
         
         // Cover image
         if url.count > 0 {
             self.coverImage.setImage(withCoverURL: url)
         } else {
-            self.coverImage.setPlaceholder(type: .iconUser, iconSize: .init(width: 40, height: 40))
+            if let image = image {
+                self.coverImage.setImage(withImage: image, contentMode: .scaleAspectFit)
+            } else {
+                self.coverImage.setPlaceholder(type: .iconUser, iconSize: .init(width: 40, height: 40))
+            }
         }
         
         // Title

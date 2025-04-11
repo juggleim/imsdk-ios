@@ -589,8 +589,13 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
     open func configureUserProfileView(message: JMessage) {
         if let profileView = self.profileView as? SBUMessageProfileView {
             let userId = message.senderUserId
-            let urlString = JIM.shared().userInfoManager.getUserInfo(userId)?.portrait ?? ""
-            profileView.configure(urlString: urlString)
+            let userInfo = JIM.shared().userInfoManager.getUserInfo(userId)
+            let urlString = userInfo?.portrait ?? ""
+            var image: UIImage? = nil
+            if urlString.count == 0 {
+                image = PortraitUtil.defaultPortraitImage(with: userId, name: userInfo?.userName, type: .private)
+            }
+            profileView.configure(urlString: urlString, uiImage: image)
         }
     }
         

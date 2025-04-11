@@ -230,7 +230,12 @@ class UserInfoTitleView: UIView {
     }
     
     func configure(user: JCUser) {
-        if let url = user.portrait {
+        let url = user.portrait ?? ""
+        if (url.count == 0) {
+            let image = PortraitUtil.defaultPortraitImage(with: user.userId, name: user.userName, type: .private)
+            self.coverImage.image = image
+            self.coverImage.contentMode = .scaleAspectFit
+        } else {
             self.coverImage.loadImage(urlString: url)
         }
         self.userNicknameLabel.text = user.userName ?? user.userId

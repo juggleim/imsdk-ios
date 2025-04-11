@@ -178,19 +178,37 @@ public class SBUChannelTitleView: UIView {
             return
         }
         if conversationInfo.conversation.conversationType == .private {
-            if let portrait = JIM.shared().userInfoManager.getUserInfo(conversationInfo.conversation.conversationId)?.portrait {
-                self.coverImage.setImage(withCoverURL: portrait)
+            let userId = conversationInfo.conversation.conversationId
+            let userInfo = JIM.shared().userInfoManager.getUserInfo(userId)
+            let portrait = userInfo?.portrait ?? ""
+            if portrait.count == 0 {
+                if let image = PortraitUtil.defaultPortraitImage(with: userId, name: userInfo?.userName, type: .private) {
+                    self.coverImage.setImage(withImage: image, contentMode: .scaleAspectFit)
+                } else {
+                    self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+                }
             } else {
-                self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+                self.coverImage.setImage(withCoverURL: portrait)
             }
         } else if conversationInfo.conversation.conversationType == .group {
-            if let portrait = JIM.shared().userInfoManager.getGroupInfo(conversationInfo.conversation.conversationId)?.portrait {
-                self.coverImage.setImage(withCoverURL: portrait)
+            let groupId = conversationInfo.conversation.conversationId
+            let group = JIM.shared().userInfoManager.getGroupInfo(groupId)
+            let portrait = group?.portrait ?? ""
+            if portrait.count == 0 {
+                if let image = PortraitUtil.defaultPortraitImage(with: groupId, name: group?.groupName, type: .group) {
+                    self.coverImage.setImage(withImage: image, contentMode: .scaleAspectFit)
+                } else {
+                    self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+                }
             } else {
-                self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+                self.coverImage.setImage(withCoverURL: portrait)
             }
+        } else if conversationInfo.conversation.conversationType == .chatroom {
+            self.coverImage.setPlaceholder(type: .iconSupergroup, iconSize: CGSize(width: 40, height: 40))
+            self.coverImage.contentMode = .scaleAspectFit
         } else {
             self.coverImage.setPlaceholder(type: .iconUser, iconSize: CGSize(width: 40, height: 40))
+            self.coverImage.contentMode = .scaleAspectFit
         }
     }
     

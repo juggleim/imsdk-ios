@@ -265,15 +265,19 @@ class BaseUserCell: SBUTableViewCell {
         }
         
         let profileURL = user.portrait ?? ""
-        self.loadImageSession = self.userImageView.loadImage(
-            urlString: profileURL,
-            placeholder: SBUIconSetType.iconUser.image(
-                with: self.theme.userPlaceholderTintColor,
-                to: SBUIconSetType.Metric.defaultIconSize
-            ),
-            subPath: SBUCacheManager.PathType.userProfile
-        )
-        self.userImageView.contentMode = profileURL.count > 0 ? .scaleAspectFill : .center
+        if profileURL.count == 0 {
+            self.userImageView.image = PortraitUtil.defaultPortraitImage(with: user.userId, name: user.userName, type: .private)
+        } else {
+            self.loadImageSession = self.userImageView.loadImage(
+                urlString: profileURL,
+                placeholder: SBUIconSetType.iconUser.image(
+                    with: self.theme.userPlaceholderTintColor,
+                    to: SBUIconSetType.Metric.defaultIconSize
+                ),
+                subPath: SBUCacheManager.PathType.userProfile
+            )
+        }
+        self.userImageView.contentMode = .scaleAspectFill
         
         self.userImageView.backgroundColor = theme.userPlaceholderBackgroundColor
 
