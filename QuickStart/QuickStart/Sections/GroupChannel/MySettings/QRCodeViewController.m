@@ -12,6 +12,7 @@
 #import "QuickStart-Swift.h"
 #import "UIView+MBProgressHUD.h"
 #import "ForwardSelectViewController.h"
+#import "PortraitUtil.h"
 
 @interface QRCodeViewController ()
 @property (nonatomic, strong) UIView *qrBgView;
@@ -50,7 +51,11 @@
 - (void)configData {
     if (self.conversation.conversationType == JConversationTypeGroup) {
         self.countLabel.text = [NSString stringWithFormat:@"%ld 人", self.group.memberCount];
-        [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:self.group.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
+        if (self.group.portrait.length == 0) {
+            self.portraitImageView.image = [PortraitUtil defaultPortraitImageWith:self.group.groupId name:self.group.groupName type:JConversationTypeGroup];
+        } else {
+            [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:self.group.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
+        }
         self.nameLabel.text = self.group.groupName;
         self.infoLabel.text = @"扫一扫群二维码，立刻加入该群";
         [HttpManager.shared getGroupQRCodeWithGroupId:self.group.groupId
@@ -69,7 +74,11 @@
         }];
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
         JUserInfo *userInfo = [JIM.shared.userInfoManager getUserInfo:self.conversation.conversationId];
-        [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:userInfo.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
+        if (userInfo.portrait.length == 0) {
+            self.portraitImageView.image = [PortraitUtil defaultPortraitImageWith:self.conversation.conversationId name:userInfo.userName type:JConversationTypePrivate];
+        } else {
+            [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:userInfo.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
+        }
         self.nameLabel.text = userInfo.userName;
         self.infoLabel.text = @"扫一扫二维码，加我为好友";
         [HttpManager.shared getUserQRCodeWithCompletion:^(NSInteger code, NSString * _Nullable base64) {
