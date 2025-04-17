@@ -33,8 +33,7 @@ public protocol SBUGroupChannelListViewModelDelegate: SBUBaseChannelListViewMode
 
 open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     // MARK: - Constants
-    static let channelLoadLimit: Int32 = 20
-    static let notificationChannelLoadLimit: UInt = 100
+    static let channelLoadLimit: Int32 = 50
     
     // MARK: - Property (Public)
     public var conversationInfoList: [JConversationInfo] = []
@@ -48,6 +47,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     var conversationTypes: [NSNumber]?
     
     var historyComplete = false
+    let nextLock = NSLock()
     
     // MARK: - Life Cycle
     
@@ -80,14 +80,19 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     /// This function loads the channel list. If the reset value is `true`, the channel list will reset.
     /// - Parameter reset: To reset the channel list
     public override func loadNextChannelList(reset: Bool) {
+        if historyComplete {
+            return
+        }
+        
+        guard self.nextLock.try() else {
+            SBULog.info("Next channel list already loading")
+            return
+        }
+        
         super.loadNextChannelList(reset: reset)
         
         if reset {
             self.reset()
-        }
-        
-        if historyComplete {
-            return
         }
         
         let count = self.conversationInfoList.count
@@ -103,6 +108,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
         }
         
         self.updateConversationInfoList(newConversationInfoList)
+        self.nextLock.unlock()
+        SBULog.info("Next channel list unlock")
         
 //        self.conversationInfoList.append(contentsOf: newConversationInfoList)
 //        
@@ -206,19 +213,20 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     }
     
     private func updateConversationInfoList(_ conversationInfoList: [JConversationInfo]) {
+        var tempList = Array(self.conversationInfoList)
         conversationInfoList.forEach { conversationInfo in
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
                 return
             }
-            if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: self.conversationInfoList) {
-                self.conversationInfoList.remove(at: index)
+            if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: tempList) {
+                tempList.remove(at: index)
             }
-            self.conversationInfoList.insert(conversationInfo, at: 0)
+            tempList.insert(conversationInfo, at: 0)
         }
         var topConversationInfoList: [JConversationInfo] = []
         var notTopConversationInfoList: [JConversationInfo] = []
-        for conversationInfo in self.conversationInfoList {
+        for conversationInfo in tempList {
             if conversationInfo.isTop {
                 topConversationInfoList.append(conversationInfo)
             } else {

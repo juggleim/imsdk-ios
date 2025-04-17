@@ -25,7 +25,7 @@ public protocol SBUBaseChannelListModuleListDelegate: SBUCommonDelegate {
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelListModule.List` object.
     ///    - indexPath: An index path locating the row in table view of `listComponent
-    func baseChannelListModule(_ listComponent: SBUBaseChannelListModule.List, didDetectPreloadingPosition indexPath: IndexPath)
+    func baseChannelListModuledidDetectPreloading(_ listComponent: SBUBaseChannelListModule.List)
     
     /// Called when the retry button was selected from the `listComponent`.
     /// - Parameter listComponent: `SBUOpenChannelListModule.List` object.
@@ -237,6 +237,10 @@ extension SBUBaseChannelListModule.List: SBUEmptyViewDelegate {
 extension SBUBaseChannelListModule.List: UITableViewDataSource, UITableViewDelegate {
     open func numberOfSections(in tableView: UITableView) -> Int {
         return 1
+    }
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
     }
     
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {

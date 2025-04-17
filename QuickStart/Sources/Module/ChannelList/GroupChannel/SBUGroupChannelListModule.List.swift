@@ -249,11 +249,16 @@ extension SBUGroupChannelListModule.List {
         willDisplay cell: UITableViewCell,
         forRowAt indexPath: IndexPath
     ) {
-        let rowForPreloading = Int(SBUGroupChannelListViewModel.channelLoadLimit)/2
-        let channelListCount = self.conversationInfoList?.count ?? 0
-        if channelListCount > 0,
-           indexPath.row == (channelListCount - rowForPreloading) {
-            self.delegate?.baseChannelListModule(self, didDetectPreloadingPosition: indexPath)
+    }
+    
+    public override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        // 当滚动到接近当前数据列表末尾时加载更多数据
+        if offsetY > contentHeight - frameHeight - 100 {
+            self.delegate?.baseChannelListModuledidDetectPreloading(self)
         }
     }
     
