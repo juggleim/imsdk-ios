@@ -73,6 +73,7 @@
 		A06516052C89659C00E3AEC1 /* ChatroomListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516042C89659C00E3AEC1 /* ChatroomListViewController.swift */; };
 		A06516072C89B28600E3AEC1 /* ChatroomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06516062C89B28600E3AEC1 /* ChatroomCell.swift */; };
 		A06885CE2DA8EB28002F012F /* PortraitUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A06885CD2DA8EB28002F012F /* PortraitUtil.m */; };
+		A07084302DAE853500E3EC71 /* ConversationInfoWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A070842F2DAE853500E3EC71 /* ConversationInfoWrapper.swift */; };
 		A076CAE02C611DD200417341 /* ProfileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A076CADF2C611DD200417341 /* ProfileManager.swift */; };
 		A079500D2D1AE2D60045EFE9 /* GroupMemberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */; };
 		A07950112D1C02FC0045EFE9 /* GroupAnnouncementViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950102D1C02FC0045EFE9 /* GroupAnnouncementViewController.m */; };
@@ -429,6 +430,7 @@
 		A06516082C91D1D500E3AEC1 /* QuickStart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickStart.entitlements; sourceTree = "<group>"; };
 		A06885CC2DA8EB28002F012F /* PortraitUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PortraitUtil.h; sourceTree = "<group>"; };
 		A06885CD2DA8EB28002F012F /* PortraitUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PortraitUtil.m; sourceTree = "<group>"; };
+		A070842F2DAE853500E3EC71 /* ConversationInfoWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationInfoWrapper.swift; sourceTree = "<group>"; };
 		A076CADF2C611DD200417341 /* ProfileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManager.swift; sourceTree = "<group>"; };
 		A079500C2D1AE2D60045EFE9 /* GroupMemberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupMemberViewController.swift; sourceTree = "<group>"; };
 		A079500F2D1C02FC0045EFE9 /* GroupAnnouncementViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GroupAnnouncementViewController.h; sourceTree = "<group>"; };
@@ -979,6 +981,7 @@
 				A07F39602BF4A2230087920B /* SBUVoiceFileInfo.swift */,
 				A07F39632BF4A2230087920B /* SBUHighlightMessageInfo.swift */,
 				A07F39642BF4A2230087920B /* SBUScrollOptions.swift */,
+				A070842F2DAE853500E3EC71 /* ConversationInfoWrapper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2110,6 +2113,7 @@
 				A07F3B7F2BF4A2270087920B /* SBUGroupChannelListViewModel.swift in Sources */,
 				A0968C9F2C2B02EF00E68790 /* SBUGroupChannelViewModel.swift in Sources */,
 				A07F3B682BF4A2270087920B /* SBUDebouncer.swift in Sources */,
+				A07084302DAE853500E3EC71 /* ConversationInfoWrapper.swift in Sources */,
 				A09645FA2BF3ABDD00290775 /* GlobalSetCustomManager.swift in Sources */,
 				A07F3C132BF4A2280087920B /* SBUBaseChannelCell.swift in Sources */,
 				A07F3C8F2BF4A2290087920B /* SBUUserCell.swift in Sources */,
