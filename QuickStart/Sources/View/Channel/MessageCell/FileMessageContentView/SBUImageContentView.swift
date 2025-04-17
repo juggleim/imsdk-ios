@@ -88,12 +88,21 @@ open class SBUImageContentView: SBUBaseFileContentView {
         let imageOption: UIImageView.ImageOption
         var urlString: String
         let thumbnailSize: CGSize
+        var localPath = ""
         
         if let imageMessage = message.content as? JImageMessage {
             imageOption = .imageToThumbnail
             urlString = imageMessage.thumbnailUrl
             if urlString.count == 0, let url = imageMessage.url {
                 urlString = url
+            }
+            if let path = imageMessage.localPath, path.count > 0 {
+                localPath = path
+            } else {
+                JIM.shared().messageManager.downloadMediaMessage(message.messageId) { m1, code in
+                } success: { m2 in
+                } error: { code in
+                }
             }
             if (imageMessage.width > 0 && imageMessage.height > 0) {
                 thumbnailSize = CGSize(width: Int(imageMessage.width), height: Int(imageMessage.height))
@@ -104,6 +113,9 @@ open class SBUImageContentView: SBUBaseFileContentView {
             imageOption = .imageToThumbnail
             urlString = videoMessage.snapshotUrl
             thumbnailSize = SBUGlobals.messageCellConfiguration.groupChannel.thumbnailSize
+            if videoMessage.snapshotLocalPath.count > 0 {
+                localPath = videoMessage.snapshotLocalPath
+            }
         } else {
             imageOption = .imageToThumbnail
             urlString = ""
@@ -111,13 +123,17 @@ open class SBUImageContentView: SBUBaseFileContentView {
         }
         
         self.resizeImageView(by: thumbnailSize)
-        self.loadImageSession = self.imageView.loadImage(
-            urlString: urlString,
-            option: imageOption,
-            thumbnailSize: thumbnailSize
-        ) { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.setFileIcon()
+        if localPath.count > 0, let image = UIImage(contentsOfFile: localPath) {
+            self.imageView.image = image
+        } else {
+            self.loadImageSession = self.imageView.loadImage(
+                urlString: urlString,
+                option: imageOption,
+                thumbnailSize: thumbnailSize
+            ) { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.setFileIcon()
+                }
             }
         }
         self.setFileIcon()
