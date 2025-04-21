@@ -433,7 +433,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 
 extension SBUGroupChannelViewModel : JMessageDelegate {
     public func messageDidReceive(_ message: JMessage!) {
-        SBULog.info("bot, messageDidReceive")
+        SBULog.info("messageDidReceive")
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
             return
         }
@@ -441,7 +441,8 @@ extension SBUGroupChannelViewModel : JMessageDelegate {
         guard let conversationInfo = self.conversationInfo else {
             return
         }
-        if message.timestamp <= conversationInfo.lastMessage.timestamp {
+        
+        if let lastMessage = conversationInfo.lastMessage, message.timestamp <= lastMessage.timestamp {
             return
         }
         
