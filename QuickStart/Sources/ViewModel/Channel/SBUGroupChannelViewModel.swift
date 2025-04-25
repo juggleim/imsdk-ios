@@ -196,6 +196,15 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         option.count = Int32(defaultFetchLimit)
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { messageList, timestamp, hasMore, errorCode in
             SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode.rawValue)")
+            var messageIdList:[String] = []
+            if let messageList = messageList {
+                for message in messageList {
+                    messageIdList.append(message.messageId)
+                }
+            }
+            
+            let reactionList = JIM.shared().messageManager.getCachedMessagesReaction(messageIdList)
+            self.updateReaction(reactionList: reactionList)
             self.upsertMessagesInList(messages: messageList, needReload: true)
             self.loadMessageReaction(messages: messageList)
             if let messageList = messageList {

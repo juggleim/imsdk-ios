@@ -575,25 +575,31 @@ open class SBUBaseChannelViewModel: NSObject {
             messageIdList.append(message.messageId)
         }
         JIM.shared().messageManager.getMessagesReaction(messageIdList, conversation: conversation) { reactionList in
-            guard let reactionList = reactionList, reactionList.count > 0 else {
+            self.updateReaction(reactionList: reactionList)
+            self.baseDelegate?.baseChannelViewModel(
+                self,
+                didChangeMessageList: self.fullMessageList,
+                needsToReload: true,
+                initialLoad: self.isInitialLoading
+            )
+        } error: { code in
+        }
+    }
+    
+    func updateReaction(reactionList: [JMessageReaction]?) {
+        guard let reactionList = reactionList, reactionList.count > 0 else {
+            return
+        }
+        reactionList.forEach { reaction in
+            if reaction.itemList.isEmpty {
                 return
             }
-            reactionList.forEach { reaction in
-                if reaction.itemList.isEmpty {
-                    return
-                }
-                if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
-                    self.reactionList.remove(at: index)
-                }
-                self.reactionList.append(reaction)
-                self.baseDelegate?.baseChannelViewModel(
-                    self,
-                    didChangeMessageList: self.fullMessageList,
-                    needsToReload: true,
-                    initialLoad: self.isInitialLoading
-                )
+            if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                self.reactionList.remove(at: index)
             }
-        } error: { code in
+            if (reaction.itemList.count > 0) {
+                self.reactionList.append(reaction)
+            }
         }
     }
     
@@ -734,6 +740,7 @@ open class SBUBaseChannelViewModel: NSObject {
     public func clearMessageList() {
         self.fullMessageList.removeAll(where: { SBUUtils.findIndex(of: $0, in: messageList) != nil })
         self.messageList = []
+        self.reactionList = []
     }
     
     // MARK: - MessageListParams

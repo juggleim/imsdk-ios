@@ -13,6 +13,7 @@ NSString *const jCreateReactionTable = @"CREATE TABLE IF NOT EXISTS reaction ("
                                         ")";
 NSString *const jGetReactions = @"SELECT * FROM reaction WHERE messageId IN ";
 NSString *const jSetReactions = @"INSERT OR REPLACE INTO reaction (messageId, reactions) VALUES (?, ?)";
+NSString *const jDeleteReaction = @"DELETE FROM reaction WHERE messageId = ?";
 
 NSString *const jReactionId = @"reactionId";
 NSString *const jUserInfoList = @"userInfoList";
@@ -56,8 +57,12 @@ NSString *const jUserInfoList = @"userInfoList";
 - (void)setMessageReactions:(NSArray<JMessageReaction *> *)reactions {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [reactions enumerateObjectsUsingBlock:^(JMessageReaction * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if (obj.messageId.length > 0 && obj.itemList.count > 0) {
-                [db executeUpdate:jSetReactions, obj.messageId, [self jsonWith:obj.itemList]];
+            if (obj.messageId.length > 0) {
+                if (obj.itemList.count > 0) {
+                    [db executeUpdate:jSetReactions, obj.messageId, [self jsonWith:obj.itemList]];
+                } else {
+                    [db executeUpdate:jDeleteReaction, obj.messageId];
+                }
             }
         }];
     }];

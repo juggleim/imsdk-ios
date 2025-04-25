@@ -807,6 +807,10 @@ NSString *const jFlags = @"flags";
     return jCreateMessageConversationTSIndex;
 }
 
++ (NSString *)addMessageClientUidIndex {
+    return kCreateClientUidIndex;
+}
+
 #pragma mark - internal
 - (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid
                                          inDb:(JFMDatabase *)db {

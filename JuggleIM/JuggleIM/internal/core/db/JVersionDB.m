@@ -32,6 +32,7 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
 }
 
 - (void)updateTables {
+    [self.dbHelper executeUpdate:[JMessageDB addMessageClientUidIndex] withArgumentsInArray:nil];
     int version = [self getVersion];
     
     if (version < jDBVersion) {

@@ -1506,6 +1506,15 @@
                 currentUser.userId = weakSelf.core.userId;
             }
             
+            //callback delegate
+            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
+            JMessageReaction *reaction = [[JMessageReaction alloc] init];
+            reaction.messageId = messageId;
+            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
+            item.reactionId = reactionId;
+            item.userInfoList = @[currentUser];
+            reaction.itemList = @[item];
+            
             //update reaction db
             NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
             if (dbReactions.count > 0) {
@@ -1519,16 +1528,10 @@
                     }
                 }
                 [weakSelf.core.dbManager setMessageReactions:@[dbReaction]];
+            } else {
+                [weakSelf.core.dbManager setMessageReactions:@[reaction]];
             }
             
-            //callback delegate
-            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
-            JMessageReaction *reaction = [[JMessageReaction alloc] init];
-            reaction.messageId = messageId;
-            JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
-            item.reactionId = reactionId;
-            item.userInfoList = @[currentUser];
-            reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
                     [obj messageReactionDidAdd:reaction inConversation:conversation];
@@ -1585,7 +1588,13 @@
                                 [userInfoList addObject:userInfo];
                             }
                         }
-                        item.userInfoList = [userInfoList copy];
+                        if (userInfoList.count == 0) {
+                            NSMutableArray *l = [dbReaction.itemList mutableCopy];
+                            [l removeObject:item];
+                            dbReaction.itemList = [l copy];
+                        } else {
+                            item.userInfoList = [userInfoList copy];
+                        }
                         break;
                     }
                 }

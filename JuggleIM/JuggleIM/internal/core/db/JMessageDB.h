@@ -83,6 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - update table
 + (NSString *)alterTableAddFlags;
 + (NSString *)addConversationTSIndex;
++ (NSString *)addMessageClientUidIndex;
 @end
 
 NS_ASSUME_NONNULL_END
