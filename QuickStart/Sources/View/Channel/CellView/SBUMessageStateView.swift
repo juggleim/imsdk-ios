@@ -221,7 +221,7 @@ open class SBUMessageStateView: SBUView {
         switch self.sendingState {
         case .unknown:
             stateImage = nil
-        case .sending:
+        case .sending, .uploading:
             stateImage = SBUIconSetType.iconSpinner.image(
                 with: theme.pendingStateColor,
                 to: SBUIconSetType.Metric.defaultIconSizeSmall
