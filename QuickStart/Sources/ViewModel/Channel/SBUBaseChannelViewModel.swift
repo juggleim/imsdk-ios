@@ -572,7 +572,9 @@ open class SBUBaseChannelViewModel: NSObject {
         let conversation = messages.first?.conversation
         var messageIdList: [String] = []
         for message in messages {
-            messageIdList.append(message.messageId)
+            if let messageId = message.messageId {
+                messageIdList.append(messageId)
+            }
         }
         JIM.shared().messageManager.getMessagesReaction(messageIdList, conversation: conversation) { reactionList in
             self.updateReaction(reactionList: reactionList)

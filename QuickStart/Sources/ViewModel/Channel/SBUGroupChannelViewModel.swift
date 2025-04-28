@@ -199,7 +199,9 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
             var messageIdList:[String] = []
             if let messageList = messageList {
                 for message in messageList {
-                    messageIdList.append(message.messageId)
+                    if let messageId = message.messageId {
+                        messageIdList.append(messageId)
+                    }
                 }
             }
             
