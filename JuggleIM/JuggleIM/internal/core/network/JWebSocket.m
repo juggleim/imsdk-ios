@@ -1794,7 +1794,12 @@ inConversation:(JConversation *)conversation
            error:(void (^)(JErrorCodeInternal code))errorBlock {
     NSError *err = nil;
     [self.sws sendData:data error:&err];
-    if (err != nil) {
+    if (!self.sws) {
+        JLogE(@"WS-Send", @"send data error, sws is nil");
+        if (errorBlock) {
+            errorBlock(JErrorCodeInternalConnectionUnavailable);
+        }
+    } else if (err != nil) {
         JLogE(@"WS-Send", @"send data error, description is %@", err.description);
         if (errorBlock) {
             errorBlock(JErrorCodeInternalWebSocketFailure);
