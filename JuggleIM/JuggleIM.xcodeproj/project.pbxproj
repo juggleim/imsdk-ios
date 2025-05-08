@@ -134,6 +134,12 @@
 		A07F3CBA2BFC928E0087920B /* JLogCommandMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */; };
 		A0834F772C19B67B0074AE93 /* JAddConvMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0834F752C19B67B0074AE93 /* JAddConvMessage.h */; };
 		A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0834F762C19B67B0074AE93 /* JAddConvMessage.m */; };
+		A085189A2DC10F090001F699 /* JLRUCacheNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A08518982DC10F090001F699 /* JLRUCacheNode.h */; };
+		A085189B2DC10F090001F699 /* JLRUCacheNode.m in Sources */ = {isa = PBXBuildFile; fileRef = A08518992DC10F090001F699 /* JLRUCacheNode.m */; };
+		A085189E2DC10F430001F699 /* JLRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A085189C2DC10F430001F699 /* JLRUCache.h */; };
+		A085189F2DC10F430001F699 /* JLRUCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A085189D2DC10F430001F699 /* JLRUCache.m */; };
+		A08518A32DCB423E0001F699 /* JUserInfoCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A08518A12DCB423E0001F699 /* JUserInfoCache.h */; };
+		A08518A42DCB423E0001F699 /* JUserInfoCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A08518A22DCB423E0001F699 /* JUserInfoCache.m */; };
 		A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
 		A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */; };
@@ -526,6 +532,12 @@
 		A07F3CB82BFC928E0087920B /* JLogCommandMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLogCommandMessage.m; sourceTree = "<group>"; };
 		A0834F752C19B67B0074AE93 /* JAddConvMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JAddConvMessage.h; sourceTree = "<group>"; };
 		A0834F762C19B67B0074AE93 /* JAddConvMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JAddConvMessage.m; sourceTree = "<group>"; };
+		A08518982DC10F090001F699 /* JLRUCacheNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLRUCacheNode.h; sourceTree = "<group>"; };
+		A08518992DC10F090001F699 /* JLRUCacheNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLRUCacheNode.m; sourceTree = "<group>"; };
+		A085189C2DC10F430001F699 /* JLRUCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLRUCache.h; sourceTree = "<group>"; };
+		A085189D2DC10F430001F699 /* JLRUCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLRUCache.m; sourceTree = "<group>"; };
+		A08518A12DCB423E0001F699 /* JUserInfoCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserInfoCache.h; sourceTree = "<group>"; };
+		A08518A22DCB423E0001F699 /* JUserInfoCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserInfoCache.m; sourceTree = "<group>"; };
 		A0897C7B2BA9D4BC00041E33 /* JMergeMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeMessage.h; sourceTree = "<group>"; };
 		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
 		A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushtoken.pbobjc.h; sourceTree = "<group>"; };
@@ -863,6 +875,10 @@
 				A0AF4A292C1065B000D97694 /* JLogUploader.m */,
 				A06516092C91DEBE00E3AEC1 /* JIntervalGenerator.h */,
 				A065160A2C91DEBE00E3AEC1 /* JIntervalGenerator.m */,
+				A08518982DC10F090001F699 /* JLRUCacheNode.h */,
+				A08518992DC10F090001F699 /* JLRUCacheNode.m */,
+				A085189C2DC10F430001F699 /* JLRUCache.h */,
+				A085189D2DC10F430001F699 /* JLRUCache.m */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1126,6 +1142,8 @@
 				A098243F2C4FABE8001852A6 /* JDownloadManager.m */,
 				A0E3DDCA2C6B3DCD00FE9D3B /* JChatroomManager.h */,
 				A0E3DDCB2C6B3DCD00FE9D3B /* JChatroomManager.m */,
+				A08518A12DCB423E0001F699 /* JUserInfoCache.h */,
+				A08518A22DCB423E0001F699 /* JUserInfoCache.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -1561,6 +1579,7 @@
 				A0CC37332C661A9D009AF2CC /* JTimePeriod.h in Headers */,
 				A017F9382C3BD80A00D527B0 /* JChatroomInfoOptions.h in Headers */,
 				A017F9352C3BD66000D527B0 /* JChatroomProtocol.h in Headers */,
+				A08518A32DCB423E0001F699 /* JUserInfoCache.h in Headers */,
 				A0CE99EC2CD384A8008B405C /* JCallMediaManager.h in Headers */,
 				A03B3A0D2CCA4044003D150A /* JRtcRoom.h in Headers */,
 				A017F92F2C3BD47D00D527B0 /* JChatroomInfo.h in Headers */,
@@ -1629,6 +1648,7 @@
 				A08AA3942B19CB78008B114C /* GPBArray_PackagePrivate.h in Headers */,
 				A09727EA2CC6346B00E08BC4 /* JCallOutgoingState.h in Headers */,
 				A08AA37D2B19CB78008B114C /* GPBUtilities_PackagePrivate.h in Headers */,
+				A085189E2DC10F430001F699 /* JLRUCache.h in Headers */,
 				A08AA36C2B19CB77008B114C /* GPBDuration.pbobjc.h in Headers */,
 				A0752D892D68615D009B7E0F /* JVersionDB.h in Headers */,
 				A08AA36A2B19CB77008B114C /* GPBFieldMask.pbobjc.h in Headers */,
@@ -1712,6 +1732,7 @@
 				A07F3CB52BFC791E0087920B /* JLogger.h in Headers */,
 				A05EED5E2B207D5200809F13 /* JUtility.h in Headers */,
 				A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */,
+				A085189A2DC10F090001F699 /* JLRUCacheNode.h in Headers */,
 				A08AA2762B162A11008B114C /* JFMDatabasePool.h in Headers */,
 				A097280D2CC6676E00E08BC4 /* Rtcroom.pbobjc.h in Headers */,
 				A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */,
@@ -1836,6 +1857,7 @@
 				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,
 				A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */,
 				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
+				A085189F2DC10F430001F699 /* JLRUCache.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
@@ -1969,6 +1991,7 @@
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,
 				A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */,
+				A085189B2DC10F090001F699 /* JLRUCacheNode.m in Sources */,
 				A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */,
 				5B4DB68F2BFC3BD600DD18B6 /* JClearUnreadMessage.m in Sources */,
 				A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */,
@@ -1988,6 +2011,7 @@
 				A06A2F1A2B233A08009B9588 /* JMessageDB.m in Sources */,
 				A08AA4032B19EEDB008B114C /* SRHash.m in Sources */,
 				5B4DB6932BFC3BF700DD18B6 /* JDeleteMsgMessage.m in Sources */,
+				A08518A42DCB423E0001F699 /* JUserInfoCache.m in Sources */,
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
 				A0CE9A322CD4BE19008B405C /* JCallMediaRoomConfig.m in Sources */,
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,

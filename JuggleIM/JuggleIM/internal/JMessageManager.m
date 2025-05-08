@@ -48,6 +48,7 @@
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
@@ -67,10 +68,12 @@
 }
 
 - (instancetype)initWithCore:(JIMCore *)core
-             chatroomManager:(nonnull JChatroomManager *)chatroomManager {
+             chatroomManager:(nonnull JChatroomManager *)chatroomManager
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
     if (self = [super init]) {
         self.core = core;
         self.chatroomManager = chatroomManager;
+        self.userInfoManager = userInfoManager;
         [self.chatroomManager addDelegate:self];
         [self.core.webSocket setMessageDelegate:self];
         [self registerMessages];
@@ -2693,9 +2696,9 @@
             }
         }
     }];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
-    [self.core.dbManager insertGroupInfos:groupDic.allValues];
-    [self.core.dbManager insertGroupMembers:groupMemberDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
+    [self.userInfoManager insertGroupInfoList:groupDic.allValues];
+    [self.userInfoManager insertGroupMemberList:groupMemberDic.allValues];
 }
 
 - (void)insertRemoteMessages:(NSArray<JConcreteMessage *> *)messages {

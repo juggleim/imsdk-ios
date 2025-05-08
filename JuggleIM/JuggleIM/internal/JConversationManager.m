@@ -26,17 +26,21 @@
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
 
-@property (nonatomic, strong) JMessageManager * messageManager;
+@property (nonatomic, strong) JMessageManager *messageManager;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) NSTimer *syncRetryTimer;
 @end
 
 @implementation JConversationManager
 
-- (instancetype)initWithCore:(JIMCore *)core messageManager:(JMessageManager *)messageManager{
+- (instancetype)initWithCore:(JIMCore *)core
+              messageManager:(JMessageManager *)messageManager
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
     if (self = [super init]) {
         self.core = core;
         self.messageManager = messageManager;
+        self.userInfoManager = userInfoManager;
         self.cachedSyncTime = -1;
         self.syncProcessing = YES;
     }
@@ -961,8 +965,8 @@
             }
         }
     }];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
-    [self.core.dbManager insertGroupInfos:groupDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
+    [self.userInfoManager insertGroupInfoList:groupDic.allValues];
 }
 
 - (void)updateConversationTag:(NSArray <JConcreteConversationInfo *> *)conversations {

@@ -10,10 +10,14 @@
 #import "JIMCore.h"
 #import "JMessageSendReceiveDelegate.h"
 #import "JMessageManager.h"
+#import "JUserInfoManager.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConversationManager : NSObject <JConversationProtocol, JMessageSendReceiveDelegate>
-- (instancetype)initWithCore:(JIMCore *)core messageManager:(JMessageManager *)messageManager;
+- (instancetype)initWithCore:(JIMCore *)core
+              messageManager:(JMessageManager *)messageManager
+             userInfoManager:(JUserInfoManager *)userInfoManager;
 - (void)syncConversations:(void(^)(void))completeBlock;
 - (void)connectSuccess;
 @end

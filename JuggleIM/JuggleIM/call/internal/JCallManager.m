@@ -15,6 +15,7 @@
 
 @interface JCallManager () <JCallSessionLifeCycleDelegate, JWebSocketCallDelegate>
 @property (nonatomic, strong) JIMCore *core;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) NSMutableArray <JCallSessionImpl *> *callSessionList;
 @property (nonatomic, strong) NSHashTable <id<JCallReceiveDelegate>> *callReceiveDelegates;
 @property (nonatomic, assign) JCallEngineType engineType;
@@ -80,10 +81,12 @@
     return [self getCallSessionImpl:callId];
 }
 
-- (instancetype)initWithCore:(JIMCore *)core {
+- (instancetype)initWithCore:(JIMCore *)core
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
     if (self = [super init]) {
         self.core = core;
         [self.core.webSocket setCallDelegate:self];
+        self.userInfoManager = userInfoManager;
     }
     return self;
 }
@@ -113,7 +116,7 @@
                             [callSession addMember:member];
                         }
                     }
-                    [self.core.dbManager insertUserInfos:userDic.allValues];
+                    [self.userInfoManager insertUserInfoList:userDic.allValues];
                     [self initCallSession:callSession
                            withCallStatus:callStatus];
                 } error:^(JErrorCodeInternal code) {
@@ -143,7 +146,7 @@
     for (JCallMember *member in room.members) {
         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
     }
-    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
     
     JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
     if (callSession) {
@@ -183,7 +186,7 @@
                  user:(JUserInfo *)user {
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [userDic setObject:user forKey:user.userId];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
     
     JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
     if (!callSession) {
@@ -202,7 +205,7 @@
             includeCurrent = YES;
         }
     }
-    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
     
     JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
     if (!callSession) {
@@ -220,7 +223,7 @@
                  user:(JUserInfo *)user {
     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
     [userDic setObject:user forKey:user.userId];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
     
     JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
     if (!callSession) {

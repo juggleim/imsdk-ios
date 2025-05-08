@@ -14,6 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JUserInfoManager : NSObject <JUserInfoProtocol>
 
 - (instancetype)initWithCore:(JIMCore *)core;
+- (void)clearCache;
+- (void)insertUserInfoList:(NSArray <JUserInfo *> *)userInfoList;
+- (void)insertGroupInfoList:(NSArray <JGroupInfo *> *)groupInfoList;
+- (void)insertGroupMemberList:(NSArray <JGroupMember *> *)groupMemberList;
 
 @end
 
