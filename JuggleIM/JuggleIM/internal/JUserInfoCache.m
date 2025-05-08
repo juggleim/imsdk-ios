@@ -21,6 +21,7 @@
 - (void)clearCache {
     [self.userInfoCache clearCache];
     [self.groupInfoCache clearCache];
+    [self.groupMemberCache clearCache];
 }
 
 - (JUserInfo *)getUserInfo:(NSString *)userId {
