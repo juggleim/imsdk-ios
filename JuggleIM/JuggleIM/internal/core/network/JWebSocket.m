@@ -267,18 +267,23 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
-                             userId:(NSString *)userId {
+                             userId:(NSString *)userId
+                            success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                              error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncMessagesDataWithReceiveTime:receiveTime
                                                         sendTime:sendTime
                                                           userId:userId
                                                            index:self.cmdIndex++];
         JLogI(@"WS-Send", @"sync messages, receive is %lld, send is %lld", receiveTime, sendTime);
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            JLogE(@"WS-Send", @"sync message error, msg is %@", err.description);
-        }
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -616,12 +621,14 @@ inConversation:(JConversation *)conversation
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
+          forAllUsers:(BOOL)forAllUsers
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData deleteMessage:conversation
                                        msgList:msgList
+                                   forAllUsers:forAllUsers
                                          index:self.cmdIndex++];
         JLogI(@"WS-Send", @"delete message");
         [self timestampSendData:d
@@ -634,13 +641,15 @@ inConversation:(JConversation *)conversation
 
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
+                forAllUsers:(BOOL)forAllUsers
                     success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock{
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
+        int scope = forAllUsers ? 1 : 0;
         NSData *d = [self.pbData clearHistoryMessage:conversation
                                                 time:time
-                                               scope:0
+                                               scope:scope
                                                index:self.cmdIndex++];
         JLogI(@"WS-Send", @"clear history message, type is %lu, id is %@", (unsigned long)conversation.conversationType, conversation.conversationId);
         [self timestampSendData:d
@@ -773,19 +782,24 @@ inConversation:(JConversation *)conversation
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId
                               userId:(NSString *)userId
-                    prevMessageCount:(int)count {
+                    prevMessageCount:(int)count
+                             success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                               error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData syncChatroomMessages:syncTime
                                            chatroomId:chatroomId
                                                userId:userId
                                      prevMessageCount:count
                                                 index:self.cmdIndex++];
         JLogI(@"WS-Send", @"sync chatroom messages, id is %@, time is %lld, prevMessageCount is %d", chatroomId, syncTime, count);
-        NSError *err = nil;
-        [self.sws sendData:d error:&err];
-        if (err != nil) {
-            JLogE(@"WS-Send", @"sync chatroom message error, msg is %@", err.description);
-        }
+        JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -1054,6 +1068,45 @@ inConversation:(JConversation *)conversation
                    key:key
                    obj:obj
                  error:errorBlock];
+    });
+}
+
+- (void)addConversationList:(NSArray<JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                     userId:(NSString *)userId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"add conversations to tag, tagId is %@, conversations count is %ld", tagId, conversationList.count);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData addConversations:conversationList
+                                            toTag:tagId
+                                           userId:userId
+                                            index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)removeConversationList:(NSArray<JConversation *> *)conversations
+                       fromTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"remove conversations from tag, tagId is %@, conversations count is %ld", tagId, conversations.count);
+        NSNumber *key = @(self.cmdIndex);
+        
+        NSData *d = [self.pbData removeConversations:conversations
+                                             fromTag:tagId
+                                              userId:userId
+                                               index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
     });
 }
 
@@ -1423,14 +1476,26 @@ inConversation:(JConversation *)conversation
 
 //sync 和 queryHisMsgs 共用一个 ack
 - (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
-    if ([self.messageDelegate respondsToSelector:@selector(messagesDidReceive:isFinished:)]) {
-        [self.messageDelegate messagesDidReceive:ack.msgs isFinished:ack.isFinished];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
+        JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
+        if (ack.code != 0) {
+            qryHisMsgsObj.errorBlock(ack.code);
+        } else {
+            qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
+        }
     }
 }
 
 - (void)handleSyncChatroomMsgsAck:(JQryHisMsgsAck *)ack {
-    if ([self.messageDelegate respondsToSelector:@selector(chatroomMessagesDidReceive:)]) {
-        [self.messageDelegate chatroomMessagesDidReceive:ack.msgs];
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
+        JQryHisMsgsObj *qryHisMsgsObj = (JQryHisMsgsObj *)obj;
+        if (ack.code != 0) {
+            qryHisMsgsObj.errorBlock(ack.code);
+        } else {
+            qryHisMsgsObj.successBlock(ack.msgs, ack.isFinished);
+        }
     }
 }
 
@@ -1729,7 +1794,12 @@ inConversation:(JConversation *)conversation
            error:(void (^)(JErrorCodeInternal code))errorBlock {
     NSError *err = nil;
     [self.sws sendData:data error:&err];
-    if (err != nil) {
+    if (!self.sws) {
+        JLogE(@"WS-Send", @"send data error, sws is nil");
+        if (errorBlock) {
+            errorBlock(JErrorCodeInternalConnectionUnavailable);
+        }
+    } else if (err != nil) {
         JLogE(@"WS-Send", @"send data error, description is %@", err.description);
         if (errorBlock) {
             errorBlock(JErrorCodeInternalWebSocketFailure);

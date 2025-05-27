@@ -12,13 +12,15 @@
 #import "JMessageManager.h"
 #import "JChatroomManager.h"
 #import "JCallManager.h"
+#import "JUserInfoManager.h"
 
 @interface JConnectionManager : NSObject <JConnectionProtocol>
 - (instancetype)initWithCore:(JIMCore *)core
          conversationManager:(JConversationManager *)conversationManager
               messageManager:(JMessageManager *)messageManager
              chatroomManager:(JChatroomManager *)chatroomManager
-                 callManager:(JCallManager *)callManager;
+                 callManager:(JCallManager *)callManager
+             userInfoManager:(JUserInfoManager *)userInfoManager;
 
 #pragma mark - called from fsm
 - (void)setConnectionStatus:(JConnectionStatusInternal)status;

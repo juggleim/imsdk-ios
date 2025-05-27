@@ -145,7 +145,8 @@
         UIImage *image = [UIImage imageWithData:data];
         [self dismissViewControllerAnimated:YES completion:nil];
         [JIM.shared.messageManager uploadImage:image success:^(NSString *url) {
-            [HttpManager.shared updateUserInfoWithUserId:JIM.shared.currentUserId name:nil portrait:url completion:^(NSInteger code) {
+            JCUser *current = ProfileManager.shared.currentUserInfo;
+            [HttpManager.shared updateUserInfoWithUserId:JIM.shared.currentUserId name:current.userName portrait:url completion:^(NSInteger code) {
                 if (code != 0) {
                     return;
                 }

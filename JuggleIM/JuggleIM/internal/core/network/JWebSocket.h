@@ -36,9 +36,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol JWebSocketMessageDelegate <NSObject>
 - (BOOL)messageDidReceive:(JConcreteMessage *)message;
-- (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
-                isFinished:(BOOL)isFinished;
-- (void)chatroomMessagesDidReceive:(NSArray<JConcreteMessage *> *)messages;
 - (void)syncNotify:(long long)syncTime;
 - (void)syncChatroomNotify:(NSString *)chatroomId
                       time:(long long)syncTime;
@@ -138,7 +135,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)syncMessagesWithReceiveTime:(long long)receiveTime
                            sendTime:(long long)sendTime
-                             userId:(NSString *)userId;
+                             userId:(NSString *)userId
+                            success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)queryHisMsgsFrom:(JConversation *)conversation
                startTime:(long long)startTime
@@ -226,15 +225,15 @@ inConversation:(JConversation *)conversation
 
 - (void)deleteMessage:(JConversation *)conversation
               msgList:(NSArray <JConcreteMessage *> *)msgList
+          forAllUsers:(BOOL)forAllUsers
               success:(void (^)(long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-
 - (void)clearHistoryMessage:(JConversation *)conversation
                        time:(long long)time
+                forAllUsers:(BOOL)forAllUsers
                     success:(void (^)(long long timestamp))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
-
 
 - (void)getUploadFileCred:(NSString *)userId
                  fileType:(JUploadFileType)fileType
@@ -270,7 +269,9 @@ inConversation:(JConversation *)conversation
 - (void)syncChatroomMessagesWithTime:(long long)syncTime
                           chatroomId:(NSString *)chatroomId
                               userId:(NSString *)userId
-                    prevMessageCount:(int)count;
+                    prevMessageCount:(int)count
+                             success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
+                               error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)syncChatroomAttributesWithTime:(long long)syncTime
                             chatroomId:(NSString *)chatroomId
@@ -323,6 +324,18 @@ inConversation:(JConversation *)conversation
                conversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)addConversationList:(NSArray <JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                     userId:(NSString *)userId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)removeConversationList:(NSArray <JConversation *> *)conversations
+                       fromTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)sendPing;
 

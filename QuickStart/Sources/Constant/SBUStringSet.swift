@@ -40,8 +40,8 @@ public class SBUStringSet {
     public static var Submit = "Submit" // 3.11.0
     
     // MARK: - Alert
-    public static var Alert_Delete = "Are you sure you want to delete?"
-    public static var Alert_Recall = "Are you sure you want to recall?"
+    public static var Alert_Delete = "是否删除该条消息？" //"Are you sure you want to delete?"
+    public static var Alert_Recall = "是否撤回该条消息？" //"Are you sure you want to recall?"
     public static var Alert_Delete_MultipleFilesMessage: (Int) -> String = {
         return  "Do you want to delete all \($0) photos?"
     }
@@ -207,7 +207,7 @@ public class SBUStringSet {
     public static var MessageInput_Quote_Message_Video = "Video"
 
     // MARK: - Message
-    public static var Message_Edited = "(edited)"
+    public static var Message_Edited = "(已编辑)"
     public static var Message_System = "System message"
     public static var Message_Unknown_Title = "(Unknown message type)"
     public static var Message_Unknown_Description = "Can't read this message."

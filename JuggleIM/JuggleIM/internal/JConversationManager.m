@@ -21,21 +21,26 @@
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JConversationDelegate>> *delegates;
 @property (nonatomic, strong) NSHashTable <id<JConversationSyncDelegate>> *syncDelegates;
+@property (nonatomic, strong) NSHashTable <id<JConversationTagDelegate>> *tagDelegates;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
 
-@property (nonatomic, strong) JMessageManager * messageManager;
+@property (nonatomic, strong) JMessageManager *messageManager;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) NSTimer *syncRetryTimer;
 @end
 
 @implementation JConversationManager
 
-- (instancetype)initWithCore:(JIMCore *)core messageManager:(JMessageManager *)messageManager{
+- (instancetype)initWithCore:(JIMCore *)core
+              messageManager:(JMessageManager *)messageManager
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
     if (self = [super init]) {
         self.core = core;
         self.messageManager = messageManager;
+        self.userInfoManager = userInfoManager;
         self.cachedSyncTime = -1;
         self.syncProcessing = YES;
     }
@@ -55,10 +60,17 @@
                                                              count:(int)count
                                                          timestamp:(long long)ts
                                                          direction:(JPullDirection)direction {
-    return [self.core.dbManager getConversationInfoListWithTypes:conversationTypes
-                                                           count:count
-                                                       timestamp:ts
-                                                       direction:direction];
+    JGetConversationOptions *option = [[JGetConversationOptions alloc] init];
+    option.conversationTypes = conversationTypes;
+    option.count = count;
+    option.timestamp = ts;
+    option.direction = direction;
+    
+    return [self getConversationInfoListWith:option];
+}
+
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options {
+    return [self.core.dbManager getConversationInfoListWith:options];
 }
 
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count
@@ -178,6 +190,13 @@
 
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes {
     return [self.core.dbManager getUnreadCountWithTypes:conversationTypes];
+}
+
+- (int)getUnreadCountWithTag:(NSString *)tagId {
+    if (tagId.length == 0) {
+        return 0;
+    }
+    return [self.core.dbManager getUnreadCountWithTag:tagId];
 }
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
@@ -364,6 +383,87 @@
     [self.core.dbManager setTopConversationsOrderType:type];
 }
 
+- (void)addConversationList:(NSArray<JConversation *> *)conversationList
+                      toTag:(NSString *)tagId
+                    success:(void (^)(void))successBlock
+                      error:(void (^)(JErrorCode))errorBlock {
+    if (tagId.length == 0 || conversationList.count == 0) {
+        JLogE(@"CONV-TagAdd", @"invalid param");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket addConversationList:conversationList
+                                       toTag:tagId
+                                      userId:self.core.userId
+                                     success:^{
+        JLogI(@"CONV-TagAdd", @"success");
+        [weakSelf.core.dbManager addConversations:conversationList toTag:tagId];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            [weakSelf.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationsDidAddToTag:conversations:)]) {
+                    [obj conversationsDidAddToTag:tagId
+                                    conversations:conversationList];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-TagAdd", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
+}
+
+- (void)removeConversationList:(NSArray<JConversation *> *)conversationList
+                       fromTag:(NSString *)tagId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCode))errorBlock {
+    if (tagId.length == 0 || conversationList.count == 0) {
+        JLogE(@"CONV-TagRemove", @"invalid param");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket removeConversationList:conversationList
+                                        fromTag:tagId
+                                         userId:self.core.userId
+                                        success:^{
+        JLogI(@"CONV-TagRemove", @"success");
+        [weakSelf.core.dbManager removeConversations:conversationList fromTag:tagId];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            [weakSelf.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(conversationsDidRemoveFromTag:conversations:)]) {
+                    [obj conversationsDidRemoveFromTag:tagId conversations:conversationList];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-TagRemove", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
+}
+
 - (void)addDelegate:(id<JConversationDelegate>)delegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!delegate) {
@@ -379,6 +479,15 @@
             return;
         }
         [self.syncDelegates addObject:delegate];
+    });
+}
+
+- (void)addTagDelegate:(id<JConversationTagDelegate>)delegate {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.tagDelegates addObject:delegate];
     });
 }
 
@@ -633,6 +742,26 @@
     [self setDBUnreadAndNotice:conversation];
 }
 
+- (void)conversationsDidAddToTag:(NSString *)tagId conversations:(NSArray<JConversation *> *)conversationList {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationsDidAddToTag:conversations:)]) {
+                [obj conversationsDidAddToTag:tagId conversations:conversationList];
+            }
+        }];
+    });
+}
+
+- (void)conversationsDidRemoveFromTag:(NSString *)tagId conversations:(NSArray<JConversation *> *)conversationList {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(conversationsDidRemoveFromTag:conversations:)]) {
+                [obj conversationsDidRemoveFromTag:tagId conversations:conversationList];
+            }
+        }];
+    });
+}
+
 #pragma mark - internal
 -(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
     if(conversation == nil) {
@@ -693,6 +822,7 @@
             long long syncTime = 0;
             if (conversations.lastObject) {
                 [self updateUserInfos:conversations];
+                [self updateConversationTag:conversations];
                 JConcreteConversationInfo *last = conversations.lastObject;
                 if (last.syncTime > syncTime) {
                     syncTime = last.syncTime;
@@ -722,6 +852,7 @@
             }
             if (deletedConversations.lastObject) {
                 [self updateUserInfos:deletedConversations];
+                [self updateConversationTag:deletedConversations];
                 JConcreteConversationInfo *last = deletedConversations.lastObject;
                 if (last.syncTime > syncTime) {
                     syncTime = last.syncTime;
@@ -789,6 +920,7 @@
 - (JConcreteConversationInfo *)handleConversationAdd:(JConcreteConversationInfo *)conversationInfo {
     [self updateSyncTime:conversationInfo.syncTime];
     [self updateUserInfos:@[conversationInfo]];
+    [self updateConversationTag:@[conversationInfo]];
     JConcreteConversationInfo *old = [self.core.dbManager getConversationInfo:conversationInfo.conversation];
     if (old) {
         if (conversationInfo.sortTime > old.sortTime) {
@@ -833,8 +965,12 @@
             }
         }
     }];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
-    [self.core.dbManager insertGroupInfos:groupDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
+    [self.userInfoManager insertGroupInfoList:groupDic.allValues];
+}
+
+- (void)updateConversationTag:(NSArray <JConcreteConversationInfo *> *)conversations {
+    [self.core.dbManager updateConversationTag:conversations];
 }
 
 -(void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *)messages {
@@ -1003,6 +1139,13 @@
         _syncDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _syncDelegates;
+}
+
+- (NSHashTable<id<JConversationTagDelegate>> *)tagDelegates {
+    if (!_tagDelegates) {
+        _tagDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _tagDelegates;
 }
 
 - (JIntervalGenerator *)intervalGenerator {

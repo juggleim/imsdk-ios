@@ -241,14 +241,15 @@ extension SBUGroupChannelModule {
         ///   - message: message object
         ///   - indexPath: Cell's indexPath
         open func setMessageCellGestures(_ cell: SBUBaseMessageCell, message: JMessage, reaction: JMessageReaction? = nil, indexPath: IndexPath) {
+            weak var weakCell: SBUBaseMessageCell? = cell
             cell.tapHandlerToContent = { [weak self] in
-                guard let self = self else { return }
-                self.setTapGesture(cell, message: message, indexPath: indexPath)
+                guard let self = self, let weakCell = weakCell else { return }
+                self.setTapGesture(weakCell, message: message, indexPath: indexPath)
             }
             
             cell.longPressHandlerToContent = { [weak self] in
-                guard let self = self else { return }
-                self.setLongTapGesture(cell, message: message, reaction: reaction, indexPath: indexPath)
+                guard let self = self, let weakCell = weakCell else { return }
+                self.setLongTapGesture(weakCell, message: message, reaction: reaction, indexPath: indexPath)
             }
         }
         

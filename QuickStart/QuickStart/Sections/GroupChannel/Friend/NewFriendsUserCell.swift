@@ -115,7 +115,9 @@ class NewFriendsUserCell: BaseUserCell {
     
     @objc private func countDidUpdate(notification: NSNotification) {
         if let count = notification.object as? Int {
-            updateUnreadCount(count)
+            if (self.type == .newFriend) {
+                updateUnreadCount(count)
+            }
         }
     }
 }

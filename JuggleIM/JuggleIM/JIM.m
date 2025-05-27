@@ -33,11 +33,11 @@ static JIM *_instance;
         JLogger.shared.core = core;
         JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
         _instance.chatroomManager = chatroomManager;
-        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager];
-        JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager];
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
+        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager userInfoManager:userInfoManager];
+        JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager userInfoManager:userInfoManager];
         messageManager.sendReceiveDelegate = conversationManager;
-        JCallManager *callManager = [[JCallManager alloc] initWithCore:core];
+        JCallManager *callManager = [[JCallManager alloc] initWithCore:core userInfoManager:userInfoManager];
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
         _instance.userInfoManager = userInfoManager;
@@ -46,7 +46,8 @@ static JIM *_instance;
                                                            conversationManager:conversationManager
                                                                 messageManager:messageManager
                                                                chatroomManager:chatroomManager
-                                                                   callManager:callManager];
+                                                                   callManager:callManager
+                                                               userInfoManager:userInfoManager];
     });
     return _instance;
 }

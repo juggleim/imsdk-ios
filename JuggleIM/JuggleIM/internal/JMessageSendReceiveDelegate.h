@@ -31,6 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)messageDidRead:(JConversation *)conversation
            messageIds:(NSArray <NSString *> *)messageIds;
 - (void)conversationDidSetUnread:(JConversation *)conversation;
+- (void)conversationsDidAddToTag:(NSString *)tagId
+                   conversations:(NSArray<JConversation *> *)conversationList;
+- (void)conversationsDidRemoveFromTag:(NSString *)tagId
+                        conversations:(NSArray<JConversation *> *)conversationList;
 @end
 
 NS_ASSUME_NONNULL_END

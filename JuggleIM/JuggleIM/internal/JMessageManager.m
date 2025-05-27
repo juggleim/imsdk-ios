@@ -34,6 +34,8 @@
 #import "JUtility.h"
 #import "JMsgModifyMessage.h"
 #import "JMsgExSetMessage.h"
+#import "JTagAddConvMessage.h"
+#import "JTagDelConvMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -46,6 +48,7 @@
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
@@ -57,16 +60,20 @@
 
 @implementation JMessageManager
 
+@synthesize chatroomSyncProcessing = _chatroomSyncProcessing;
+
 - (void)syncMessages {
     self.syncProcessing = YES;
     [self sync];
 }
 
 - (instancetype)initWithCore:(JIMCore *)core
-             chatroomManager:(nonnull JChatroomManager *)chatroomManager {
+             chatroomManager:(nonnull JChatroomManager *)chatroomManager
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
     if (self = [super init]) {
         self.core = core;
         self.chatroomManager = chatroomManager;
+        self.userInfoManager = userInfoManager;
         [self.chatroomManager addDelegate:self];
         [self.core.webSocket setMessageDelegate:self];
         [self registerMessages];
@@ -117,9 +124,10 @@
 
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
                            conversation:(JConversation *)conversation
+                            forAllUsers:(BOOL)forAllUsers
                                 success:(void (^)(void))successBlock
-                                  error:(void (^)(JErrorCode))errorBlock{
-    if(clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil){
+                                  error:(void (^)(JErrorCode))errorBlock {
+    if (clientMsgNos == nil || clientMsgNos.count == 0 || conversation == nil) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -131,16 +139,16 @@
     NSMutableArray * deleteClientMsgNoList = [NSMutableArray array];
     NSMutableArray * deleteRemoteList = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
+        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
            && message.conversation.conversationType == conversation.conversationType){
-            if(message.messageId.length > 0){
+            if (message.messageId.length > 0) {
                 [deleteRemoteList addObject:message];
             }
             [deleteClientMsgNoList addObject:@(message.clientMsgNo)];
         }
     }
     JLogI(@"MSG-Delete", @"by clientMsgNo, local count is %lu, remote count is %lu", (unsigned long)deleteClientMsgNoList.count, (unsigned long)deleteRemoteList.count);
-    if(deleteClientMsgNoList.count == 0){
+    if (deleteClientMsgNoList.count == 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeMessageNotExist);
@@ -149,7 +157,7 @@
         return;
     }
     //如果没有远端消息 只删除本地后直接回调
-    if(deleteRemoteList.count == 0){
+    if (deleteRemoteList.count == 0) {
         [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [self notifyMessageRemoved:conversation removedMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
@@ -169,6 +177,7 @@
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
+                           forAllUsers:forAllUsers
                                success:^(long long timestamp) {
         JLogI(@"MSG-Delete", @"websocket success");
         [weakSelf updateSendSyncTime:timestamp];
@@ -195,11 +204,23 @@
     }];
 }
 
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
+                           conversation:(JConversation *)conversation
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode))errorBlock {
+    [self deleteMessagesByClientMsgNoList:clientMsgNos
+                             conversation:conversation
+                              forAllUsers:NO
+                                  success:successBlock
+                                    error:errorBlock];
+}
+
 - (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                       conversation:(JConversation *)conversation
+                       forAllUsers:(BOOL)forAllUsers
                            success:(void (^)(void))successBlock
-                             error:(void (^)(JErrorCode))errorBlock{
-    if(messageIds == nil || messageIds.count == 0 || conversation == nil){
+                             error:(void (^)(JErrorCode))errorBlock {
+    if (messageIds == nil || messageIds.count == 0 || conversation == nil) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -212,17 +233,18 @@
     NSMutableArray *msgList = [NSMutableArray array];
     NSMutableArray <NSNumber *> *clientMsgNos = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if([message.conversation.conversationId isEqualToString:conversation.conversationId]
-           && message.conversation.conversationType == conversation.conversationType){
+        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
+           && message.conversation.conversationType == conversation.conversationType) {
             [msgList addObject:message];
             [clientMsgNos addObject:@(message.clientMsgNo)];
         }
     }
     JLogI(@"MSG-Delete", @"by messageId, count is %lu", (unsigned long)msgList.count);
-    if(msgList.count != 0){
+    if (msgList.count != 0) {
         __weak typeof(self) weakSelf = self;
         [self.core.webSocket deleteMessage:conversation
                                    msgList:msgList
+                               forAllUsers:forAllUsers
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Delete", @"websocket success");
             [weakSelf updateSendSyncTime:timestamp];
@@ -251,13 +273,24 @@
             });
         }];
         
-    }else{
+    } else {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeMessageNotExist);
             }
         });
     }
+}
+
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                      conversation:(JConversation *)conversation
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode))errorBlock {
+    [self deleteMessagesByMessageIds:messageIds
+                        conversation:conversation
+                         forAllUsers:NO
+                             success:successBlock
+                               error:errorBlock];
 }
 
 - (void)recallMessage:(NSString *)messageId
@@ -345,15 +378,17 @@
 
 - (void)clearMessagesIn:(JConversation *)conversation
               startTime:(long long)startTime
+            forAllUsers:(BOOL)forAllUsers
                 success:(void (^)(void))successBlock
-                  error:(void (^)(JErrorCode errorCode))errorBlock{
-    if(startTime == 0){
+                  error:(void (^)(JErrorCode))errorBlock {
+    if (startTime == 0) {
         long long currentTime =  [[NSDate date] timeIntervalSince1970] * 1000;
         startTime =  MAX(MAX(self.core.messageSendSyncTime, self.core.messageReceiveSyncTime), currentTime);
     }
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket clearHistoryMessage:conversation
                                         time:startTime
+                                 forAllUsers:forAllUsers
                                      success:^(long long timestamp) {
         JLogI(@"MSG-Clear", @"success");
         [weakSelf updateSendSyncTime:timestamp];
@@ -378,6 +413,17 @@
             }
         });
     }];
+}
+
+- (void)clearMessagesIn:(JConversation *)conversation
+              startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock {
+    [self clearMessagesIn:conversation
+                startTime:startTime
+              forAllUsers:NO
+                  success:successBlock
+                    error:errorBlock];
 }
 
 -(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{
@@ -905,7 +951,7 @@
                                                           conversationTypes:nil];
     
     __block BOOL needRemote = NO;
-    if (localMessages.count < option.count) {
+    if (localMessages.count < option.count+1) {
         //本地数据小于需要拉取的数量
         needRemote = YES;
     } else {
@@ -1457,13 +1503,38 @@
             if (successBlock) {
                 successBlock();
             }
+            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            if (!currentUser) {
+                currentUser = [[JUserInfo alloc] init];
+                currentUser.userId = weakSelf.core.userId;
+            }
+            
+            //callback delegate
+            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
             item.reactionId = reactionId;
-            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
+            
+            //update reaction db
+            NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
+            if (dbReactions.count > 0) {
+                JMessageReaction *dbReaction = dbReactions[0];
+                for (JMessageReactionItem *item in dbReaction.itemList) {
+                    if ([reactionId isEqualToString:item.reactionId]) {
+                        NSMutableArray *userInfoList = [item.userInfoList mutableCopy];
+                        [userInfoList addObject:currentUser];
+                        item.userInfoList = [userInfoList copy];
+                        break;
+                    }
+                }
+                [weakSelf.core.dbManager setMessageReactions:@[dbReaction]];
+            } else {
+                [weakSelf.core.dbManager setMessageReactions:@[reaction]];
+            }
+            
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(messageReactionDidAdd:inConversation:)]) {
                     [obj messageReactionDidAdd:reaction inConversation:conversation];
@@ -1507,11 +1578,43 @@
             if (successBlock) {
                 successBlock();
             }
+            
+            // update reaction db
+            NSArray <JMessageReaction *> *dbReactions = [weakSelf.core.dbManager getMessageReactions:@[messageId]];
+            if (dbReactions.count > 0) {
+                JMessageReaction *dbReaction = dbReactions[0];
+                for (JMessageReactionItem *item in dbReaction.itemList) {
+                    if ([reactionId isEqualToString:item.reactionId]) {
+                        NSMutableArray *userInfoList = [NSMutableArray array];
+                        for (JUserInfo *userInfo in item.userInfoList) {
+                            if (![weakSelf.core.userId isEqualToString:userInfo.userId]) {
+                                [userInfoList addObject:userInfo];
+                            }
+                        }
+                        if (userInfoList.count == 0) {
+                            NSMutableArray *l = [dbReaction.itemList mutableCopy];
+                            [l removeObject:item];
+                            dbReaction.itemList = [l copy];
+                        } else {
+                            item.userInfoList = [userInfoList copy];
+                        }
+                        break;
+                    }
+                }
+                [weakSelf.core.dbManager setMessageReactions:@[dbReaction]];
+            }
+            
+            //callback delegate
+            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
             item.reactionId = reactionId;
             JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            if (!currentUser) {
+                currentUser = [[JUserInfo alloc] init];
+                currentUser.userId = weakSelf.core.userId;
+            }
             item.userInfoList = @[currentUser];
             reaction.itemList = @[item];
             [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -1547,6 +1650,7 @@
     [self.core.webSocket getMessagesReaction:messageIdList
                                 conversation:conversation
                                      success:^(NSArray<JMessageReaction *> * _Nonnull reactionList) {
+        [self.core.dbManager setMessageReactions:reactionList];
         JLogI(@"MSG-ReactionGet", @"success");
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -1561,6 +1665,10 @@
             }
         });
     }];
+}
+
+- (NSArray<JMessageReaction *> *)getCachedMessagesReaction:(NSArray<NSString *> *)messageIdList {
+    return [self.core.dbManager getMessageReactions:messageIdList];
 }
 
 - (void)setMute:(BOOL)isMute
@@ -1723,6 +1831,8 @@
 - (void)connectSuccess {
     self.syncProcessing = YES;
     self.syncNotifyTime = 0;
+    self.chatroomSyncProcessing = NO;
+    [self clearChatroomSyncDic];
 }
 
 #pragma mark - JChatroomProtocol
@@ -1763,6 +1873,46 @@
     return YES;
 }
 
+- (void)syncNotify:(long long)syncTime {
+    if (self.syncProcessing) {
+        self.syncNotifyTime = syncTime;
+        return;
+    }
+    if (syncTime > self.core.messageReceiveSyncTime) {
+        self.syncProcessing = YES;
+        [self sync];
+    }
+}
+
+- (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
+    if (self.chatroomSyncProcessing) {
+        [self setTimeForChatroomSyncDic:syncTime chatroomId:chatroomId];
+        return;
+    }
+    [self syncChatroomMessages:chatroomId time:syncTime];
+}
+
+- (void)messageDidSend:(NSString *)messageId
+                  time:(long long)timestamp
+                 seqNo:(long long)seqNo
+             clientUid:(NSString *)clientUid
+           contentType:(nullable NSString *)contentType
+               content:(nullable JMessageContent *)content {
+    if (clientUid.length == 0) {
+        return;
+    }
+    [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
+                                                   messageId:messageId
+                                                   timestamp:timestamp
+                                                       seqNo:seqNo];
+    if (contentType && content) {
+        [self.core.dbManager updateMessageContent:content
+                                      contentType:contentType
+                                    withMessageId:messageId];
+    }
+}
+
+#pragma mark - internal
 - (void)messagesDidReceive:(NSArray<JConcreteMessage *> *)messages
                 isFinished:(BOOL)isFinished {
     JLogI(@"MSG-Rcv", @"message count is %ld, isFinish is %d", messages.count, isFinished);
@@ -1826,52 +1976,12 @@
     [self checkChatroomSyncDic];
 }
 
-- (void)syncNotify:(long long)syncTime {
-    if (self.syncProcessing) {
-        self.syncNotifyTime = syncTime;
-        return;
-    }
-    if (syncTime > self.core.messageReceiveSyncTime) {
-        self.syncProcessing = YES;
-        [self sync];
-    }
-}
-
-- (void)syncChatroomNotify:(NSString *)chatroomId time:(long long)syncTime {
-    if (self.chatroomSyncProcessing) {
-        [self.chatroomSyncDic setObject:@(syncTime) forKey:chatroomId];
-        return;
-    }
-    [self syncChatroomMessages:chatroomId time:syncTime];
-}
-
-- (void)messageDidSend:(NSString *)messageId
-                  time:(long long)timestamp
-                 seqNo:(long long)seqNo
-             clientUid:(NSString *)clientUid
-           contentType:(nullable NSString *)contentType
-               content:(nullable JMessageContent *)content {
-    if (clientUid.length == 0) {
-        return;
-    }
-    [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
-                                                   messageId:messageId
-                                                   timestamp:timestamp
-                                                       seqNo:seqNo];
-    if (contentType && content) {
-        [self.core.dbManager updateMessageContent:content
-                                      contentType:contentType
-                                    withMessageId:messageId];
-    }
-}
-
-#pragma mark - internal
 - (void)checkChatroomSyncDic {
-    if (self.chatroomSyncDic.count > 0) {
-        NSArray *keys = [self.chatroomSyncDic allKeys];
+    NSDictionary <NSString *, NSNumber *> *popDic = [self popChatroomSyncDic];
+    if (popDic.count > 0) {
+        NSArray *keys = [popDic allKeys];
         NSString *chatroomId = [keys objectAtIndex:0];
-        long long time = [self.chatroomSyncDic objectForKey:chatroomId].longLongValue;
-        [self.chatroomSyncDic removeObjectForKey:chatroomId];
+        long long time = [popDic objectForKey:chatroomId].longLongValue;
         [self syncChatroomMessages:chatroomId time:time];
     } else {
         self.chatroomSyncProcessing = NO;
@@ -1921,6 +2031,8 @@
     [self registerContentType:[JCallFinishNotifyMessage class]];
     [self registerContentType:[JMsgModifyMessage class]];
     [self registerContentType:[JMsgExSetMessage class]];
+    [self registerContentType:[JTagAddConvMessage class]];
+    [self registerContentType:[JTagDelConvMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2291,6 +2403,36 @@
             receiveTime = obj.timestamp;
         }
         
+        // tag add conversation
+        if ([obj.contentType isEqualToString:[JTagAddConvMessage contentType]]) {
+            if (obj.timestamp <= self.core.conversationSyncTime) {
+                return;
+            }
+            JTagAddConvMessage *cmd = (JTagAddConvMessage *)obj.content;
+            if (cmd.conversations.count == 0 || cmd.tagId == 0) {
+                return;
+            }
+            [self.core.dbManager addConversations:cmd.conversations toTag:cmd.tagId];
+            [self.sendReceiveDelegate conversationsDidAddToTag:cmd.tagId
+                                                 conversations:cmd.conversations];
+            return;
+        }
+        
+        // tag remove conversation
+        if ([obj.contentType isEqualToString:[JTagDelConvMessage contentType]]) {
+            if (obj.timestamp <= self.core.conversationSyncTime) {
+                return;
+            }
+            JTagDelConvMessage *cmd = (JTagDelConvMessage *)obj.content;
+            if (cmd.conversations.count == 0 || cmd.tagId == 0) {
+                return;
+            }
+            [self.core.dbManager removeConversations:cmd.conversations fromTag:cmd.tagId];
+            [self.sendReceiveDelegate conversationsDidRemoveFromTag:cmd.tagId
+                                                      conversations:cmd.conversations];
+            return;
+        }
+        
         // reaction
         if ([obj.contentType isEqualToString:[JMsgExSetMessage contentType]]) {
             JMsgExSetMessage *cmd = (JMsgExSetMessage *)obj.content;
@@ -2501,7 +2643,14 @@
     JLogI(@"MSG-Sync", @"receive time is %lld, send time is %lld", self.core.messageReceiveSyncTime, self.core.messageSendSyncTime);
     [self.core.webSocket syncMessagesWithReceiveTime:self.core.messageReceiveSyncTime
                                             sendTime:self.core.messageSendSyncTime
-                                              userId:self.core.userId];
+                                              userId:self.core.userId
+                                             success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-Sync", @"success");
+        [self messagesDidReceive:messages isFinished:isFinished];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-Sync", @"error, code is %ld", code);
+        [self messagesDidReceive:[NSArray array] isFinished:YES];
+    }];
 }
 
 - (void)webSocketSyncChatroomMessages:(NSString *)chatroomId
@@ -2512,7 +2661,14 @@
     [self.core.webSocket syncChatroomMessagesWithTime:syncTime
                                            chatroomId:chatroomId
                                                userId:self.core.userId
-                                     prevMessageCount:count];
+                                     prevMessageCount:count
+                                              success:^(NSArray * _Nonnull messages, BOOL isFinished) {
+        JLogI(@"MSG-ChrmSync", @"success");
+        [self chatroomMessagesDidReceive:messages];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-ChrmSync", @"error, code is %ld", code);
+        [self chatroomMessagesDidReceive:[NSArray array]];
+    }];
 }
 
 - (NSString *)createClientUid {
@@ -2522,6 +2678,7 @@
 - (void)updateUserInfos:(NSArray <JConcreteMessage *> *)messages {
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *groupMemberDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.groupInfo.groupId.length > 0) {
             [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
@@ -2529,14 +2686,19 @@
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
         }
+        if (obj.groupMemberInfo.userId.length > 0 && obj.groupMemberInfo.groupId.length > 0) {
+            NSString *key = [NSString stringWithFormat:@"%@xxx%@", obj.groupMemberInfo.groupId, obj.groupMemberInfo.userId];
+            [groupMemberDic setObject:obj.groupMemberInfo forKey:key];
+        }
         if (obj.mentionInfo) {
             for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
                 [userDic setObject:userInfo forKey:userInfo.userId];
             }
         }
     }];
-    [self.core.dbManager insertUserInfos:userDic.allValues];
-    [self.core.dbManager insertGroupInfos:groupDic.allValues];
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
+    [self.userInfoManager insertGroupInfoList:groupDic.allValues];
+    [self.userInfoManager insertGroupMemberList:groupMemberDic.allValues];
 }
 
 - (void)insertRemoteMessages:(NSArray<JConcreteMessage *> *)messages {
@@ -2643,6 +2805,48 @@
         _downloadManager = [[JDownloadManager alloc] init];
     }
     return _downloadManager;
+}
+
+- (void)setTimeForChatroomSyncDic:(long long)timestamp
+                       chatroomId:(NSString *)chatroomId {
+    @synchronized (self) {
+        [self.chatroomSyncDic setObject:@(timestamp) forKey:chatroomId];
+    }
+}
+
+- (NSDictionary <NSString *, NSNumber *>*)popChatroomSyncDic {
+    @synchronized (self) {
+        if (self.chatroomSyncDic.count > 0) {
+            NSArray *keys = [self.chatroomSyncDic allKeys];
+            NSString *chatroomId = [keys objectAtIndex:0];
+            long long time = [self.chatroomSyncDic objectForKey:chatroomId].longLongValue;
+            [self.chatroomSyncDic removeObjectForKey:chatroomId];
+            NSDictionary *result = @{chatroomId:@(time)};
+            return result;
+        } else {
+            return nil;
+        }
+    }
+}
+
+- (void)clearChatroomSyncDic {
+    @synchronized (self) {
+        [self.chatroomSyncDic removeAllObjects];
+    }
+}
+
+- (BOOL)chatroomSyncProcessing {
+    @synchronized (self) {
+        return _chatroomSyncProcessing;
+    }
+}
+
+- (void)setChatroomSyncProcessing:(BOOL)chatroomSyncProcessing {
+    @synchronized (self) {
+        if (_chatroomSyncProcessing != chatroomSyncProcessing) {
+            _chatroomSyncProcessing = chatroomSyncProcessing;
+        }
+    }
 }
 
 - (NSMutableDictionary<NSString *,NSNumber *> *)chatroomSyncDic {

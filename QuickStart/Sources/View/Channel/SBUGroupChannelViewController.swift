@@ -250,7 +250,7 @@ open class SBUGroupChannelViewController: SBUBaseChannelViewController, SBUGroup
         self.headerComponent?.updateStyles(theme: self.theme)
         self.listComponent?.updateStyles(theme: self.theme)
         
-        self.listComponent?.reloadTableView(needsToLayout: needsToLayout)
+//        self.listComponent?.reloadTableView(needsToLayout: needsToLayout)
     }
     
     open override func updateStyles() {

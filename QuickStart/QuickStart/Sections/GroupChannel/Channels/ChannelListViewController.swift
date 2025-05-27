@@ -87,6 +87,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     
     func createGroup() {
         let createGroupVC = CreateGroupViewController()
+        createGroupVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(createGroupVC, animated: true)
     }
     

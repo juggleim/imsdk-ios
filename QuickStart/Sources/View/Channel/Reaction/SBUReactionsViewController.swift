@@ -303,7 +303,7 @@ public class SBUReactionsViewController: SBUBaseViewController, UITableViewDeleg
         guard reactionList.count > indexPath.row else { return .init() }
         
         let reaction = self.reactionList[indexPath.row]
-        let emoji = self.emojiList.first(where: { EmojiManager.emojiToUtf16($0) == reaction.reactionId })
+        let emoji = self.emojiList.first(where: { $0 == reaction.reactionId })
         
         cell.configure(
             type: .reactions,

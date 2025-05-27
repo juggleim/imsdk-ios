@@ -13,9 +13,9 @@ import JuggleIM
 open class SBUMediaMessageCell: SBUContentBaseMessageCell {
     
     // MARK: - Public property
-    public var mediaMessage: JMessage? {
-        self.message
-    }
+//    public var mediaMessage: JMessage? {
+//        self.message
+//    }
     
     public lazy var baseFileContentView: SBUBaseFileContentView = {
         let fileView = SBUBaseFileContentView()

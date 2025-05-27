@@ -9,7 +9,7 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
-#define jMessageTableVersion 4
+#define jMessageTableVersion 3
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -41,10 +41,11 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
+NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
-NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE conversation_type = ? AND conversation_id = ? AND is_deleted = 0";
+NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND conversation_type = ? AND conversation_id = ? ";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jAndTypeIn = @" AND type IN ";
@@ -494,32 +495,7 @@ NSString *const jFlags = @"flags";
     }
     __block NSString *sql = jGetMessagesNotDeleted;
     NSMutableArray *args = [NSMutableArray array];
-    if (searchContent.length > 0) {
-        NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
-        sql = [sql stringByAppendingString:jAndSearchContentIs];
-        [args addObject:searchString];
-    }
-    if (pullDirection == JPullDirectionNewer) {
-        sql = [sql stringByAppendingString:jAndGreaterThan];
-    } else {
-        sql = [sql stringByAppendingString:jAndLessThan];
-    }
-    [args addObject:@(time)];
-    if (contentTypes.count > 0) {
-        sql = [sql stringByAppendingString:jAndTypeIn];
-        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
-        [args addObjectsFromArray:contentTypes];
-    }
-    if (senderUserIds.count > 0) {
-        sql = [sql stringByAppendingString:jAndSenderIn];
-        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:senderUserIds.count]];
-        [args addObjectsFromArray:senderUserIds];
-    }
-    if (messageStates.count > 0) {
-        sql = [sql stringByAppendingString:jAndStateIn];
-        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageStates.count]];
-        [args addObjectsFromArray:messageStates];
-    }
+    
     if (conversations.count > 0) {
         sql = [sql stringByAppendingString:jAnd];
         sql = [sql stringByAppendingString:jLeftBracket];
@@ -538,6 +514,33 @@ NSString *const jFlags = @"flags";
             }
         }];
         sql = [sql stringByAppendingString:jRightBracket];
+    }
+    if (pullDirection == JPullDirectionNewer) {
+        sql = [sql stringByAppendingString:jAndGreaterThan];
+    } else {
+        sql = [sql stringByAppendingString:jAndLessThan];
+    }
+    [args addObject:@(time)];
+    
+    if (searchContent.length > 0) {
+        NSString *searchString = [NSString stringWithFormat:@"%%%@%%",searchContent];
+        sql = [sql stringByAppendingString:jAndSearchContentIs];
+        [args addObject:searchString];
+    }
+    if (contentTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
+        [args addObjectsFromArray:contentTypes];
+    }
+    if (senderUserIds.count > 0) {
+        sql = [sql stringByAppendingString:jAndSenderIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:senderUserIds.count]];
+        [args addObjectsFromArray:senderUserIds];
+    }
+    if (messageStates.count > 0) {
+        sql = [sql stringByAppendingString:jAndStateIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageStates.count]];
+        [args addObjectsFromArray:messageStates];
     }
     if (conversationTypes.count > 0) {
         sql = [sql stringByAppendingString:jAndConversationTypeIn];
@@ -698,6 +701,7 @@ NSString *const jFlags = @"flags";
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageConversationTSIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -713,10 +717,6 @@ NSString *const jFlags = @"flags";
         if (existedVersion == 2 && jMessageTableVersion >= 3) {
             [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
             existedVersion = 3;
-        }
-        if (existedVersion == 3 && jMessageTableVersion >= 4) {
-            [self.dbHelper executeUpdate:kAlterAddFlags withArgumentsInArray:nil];
-            existedVersion = 4;
         }
         
         [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
@@ -794,7 +794,21 @@ NSString *const jFlags = @"flags";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
+    [resultSet close];
     return message;
+}
+
+#pragma mark - update table
++ (NSString *)alterTableAddFlags {
+    return kAlterAddFlags;
+}
+
++ (NSString *)addConversationTSIndex {
+    return jCreateMessageConversationTSIndex;
+}
+
++ (NSString *)addMessageClientUidIndex {
+    return kCreateClientUidIndex;
 }
 
 #pragma mark - internal
@@ -808,6 +822,7 @@ NSString *const jFlags = @"flags";
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
+    [resultSet close];
     return message;
 }
 

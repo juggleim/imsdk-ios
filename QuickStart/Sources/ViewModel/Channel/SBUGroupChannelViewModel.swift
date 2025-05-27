@@ -195,7 +195,18 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         option.startTime = startTime
         option.count = Int32(defaultFetchLimit)
         JIM.shared().messageManager.getMessages(self.conversationInfo?.conversation, direction: .older, option: option) { messageList, timestamp, hasMore, errorCode in
-            SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode)")
+            SBULog.info("[Request] Prev message list count is \(messageList?.count ?? 0), hasMore is \(hasMore), errorCode is \(errorCode.rawValue)")
+            var messageIdList:[String] = []
+            if let messageList = messageList {
+                for message in messageList {
+                    if let messageId = message.messageId {
+                        messageIdList.append(messageId)
+                    }
+                }
+            }
+            
+            let reactionList = JIM.shared().messageManager.getCachedMessagesReaction(messageIdList)
+            self.updateReaction(reactionList: reactionList)
             self.upsertMessagesInList(messages: messageList, needReload: true)
             self.loadMessageReaction(messages: messageList)
             if let messageList = messageList {
@@ -433,8 +444,16 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
 
 extension SBUGroupChannelViewModel : JMessageDelegate {
     public func messageDidReceive(_ message: JMessage!) {
-        SBULog.info("bot, messageDidReceive")
+        SBULog.info("messageDidReceive")
         if !message.conversation.isEqual(self.conversationInfo?.conversation) {
+            return
+        }
+        
+        guard let conversationInfo = self.conversationInfo else {
+            return
+        }
+        
+        if let lastMessage = conversationInfo.lastMessage, message.timestamp <= lastMessage.timestamp {
             return
         }
         

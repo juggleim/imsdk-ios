@@ -64,7 +64,8 @@
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
         //count 为 0，timestamp 也为 0，服务端永远同步不下来消息
-        if (count == 0) {
+        long long existedSyncTime = [self getSyncTimeForChatroom:chatroomId];
+        if (count == 0 && existedSyncTime == 0) {
             [self setSyncTime:timestamp forChatroom:chatroomId];
         }
         [self syncChatroomAttr:chatroomId time:[self getAttrSyncTimeForChatroom:chatroomId]];

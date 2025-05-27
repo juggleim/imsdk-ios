@@ -572,25 +572,36 @@ open class SBUBaseChannelViewModel: NSObject {
         let conversation = messages.first?.conversation
         var messageIdList: [String] = []
         for message in messages {
-            messageIdList.append(message.messageId)
+            if let messageId = message.messageId {
+                messageIdList.append(messageId)
+            }
         }
         JIM.shared().messageManager.getMessagesReaction(messageIdList, conversation: conversation) { reactionList in
-            guard let reactionList = reactionList, reactionList.count > 0 else {
+            self.updateReaction(reactionList: reactionList)
+            self.baseDelegate?.baseChannelViewModel(
+                self,
+                didChangeMessageList: self.fullMessageList,
+                needsToReload: true,
+                initialLoad: self.isInitialLoading
+            )
+        } error: { code in
+        }
+    }
+    
+    func updateReaction(reactionList: [JMessageReaction]?) {
+        guard let reactionList = reactionList, reactionList.count > 0 else {
+            return
+        }
+        reactionList.forEach { reaction in
+            if reaction.itemList.isEmpty {
                 return
             }
-            reactionList.forEach { reaction in
-                if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
-                    self.reactionList.remove(at: index)
-                }
-                self.reactionList.append(reaction)
-                self.baseDelegate?.baseChannelViewModel(
-                    self,
-                    didChangeMessageList: self.fullMessageList,
-                    needsToReload: true,
-                    initialLoad: self.isInitialLoading
-                )
+            if let index = SBUUtils.findIndex(ofReaction: reaction, in: self.reactionList) {
+                self.reactionList.remove(at: index)
             }
-        } error: { code in
+            if (reaction.itemList.count > 0) {
+                self.reactionList.append(reaction)
+            }
         }
     }
     
@@ -731,6 +742,7 @@ open class SBUBaseChannelViewModel: NSObject {
     public func clearMessageList() {
         self.fullMessageList.removeAll(where: { SBUUtils.findIndex(of: $0, in: messageList) != nil })
         self.messageList = []
+        self.reactionList = []
     }
     
     // MARK: - MessageListParams
@@ -767,7 +779,7 @@ open class SBUBaseChannelViewModel: NSObject {
         if emojiKey.starts(with: "%u") {
             emojiUtf16 = emojiKey
         } else {
-            emojiUtf16 = EmojiManager.emojiToUtf16(emojiKey)
+            emojiUtf16 = emojiKey
         }
         if didSelect {
             SBULog.info("[Request] Add Reaction")

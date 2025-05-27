@@ -55,6 +55,34 @@ extension SBUGroupChannelListModule {
             get { self.baseDataSource as? SBUGroupChannelListModuleListDataSource }
             set { self.baseDataSource = newValue }
         }
+        
+        enum Section: CaseIterable {
+            case main
+        }
+        
+        lazy var diffableDataSource: UITableViewDiffableDataSource<Section, ConversationInfoWrapper> = {
+            let source = UITableViewDiffableDataSource<Section, ConversationInfoWrapper>(tableView: self.tableView) { tableView, indexPath, item in
+                var cell: SBUBaseChannelCell?
+                if let channelCell = self.channelCell {
+                    cell = tableView.dequeueReusableCell(
+                        withIdentifier: channelCell.sbu_className
+                    ) as? SBUBaseChannelCell
+                } else if let customCell = self.customCell {
+                    cell = tableView.dequeueReusableCell(
+                        withIdentifier: customCell.sbu_className
+                    ) as? SBUBaseChannelCell
+                } else {
+                    cell = SBUBaseChannelCell()
+                }
+                
+                cell?.selectionStyle = .none
+                
+                self.configureCell(cell, conversationInfoWrapper: item)
+                
+                return cell ?? UITableViewCell()
+            }
+            return source
+        }()
 
         // MARK: - LifeCycle
         @available(*, unavailable, renamed: "SBUGroupChannelListModule.List()")
@@ -104,6 +132,22 @@ extension SBUGroupChannelListModule {
             self.tableView.backgroundColor = self.theme?.backgroundColor
             
             (self.emptyView as? SBUEmptyView)?.setupStyles()
+        }
+        
+        public override func reloadTableView() {
+            var wrappers: [ConversationInfoWrapper] = []
+            if let list = self.conversationInfoList {
+                for conversationInfo in list {
+                    var wrapper = ConversationInfoWrapper()
+                    wrapper.conversationInfo = conversationInfo
+                    wrappers.append(wrapper)
+                }
+            }
+            
+            var snapshot = NSDiffableDataSourceSnapshot<Section, ConversationInfoWrapper>()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(wrappers, toSection: .main)
+            self.diffableDataSource.apply(snapshot, animatingDifferences: false)
         }
         
         // MARK: - TableView
@@ -206,42 +250,8 @@ extension SBUGroupChannelListModule {
 
 // MARK: - UITableView relations
 extension SBUGroupChannelListModule.List {
-    open override func numberOfSections(in tableView: UITableView) -> Int {
-        return super.numberOfSections(in: tableView)
-    }
-    
     open override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.delegate?.baseChannelListModule(self, didSelectRowAt: indexPath)
-    }
-    
-    open override func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
-//        guard indexPath.row < self.channelList?.count ?? 0 else {
-//            let error = JErrorCode(domain: "The index is out of range.", code: -1, userInfo: nil)
-//            self.delegate?.didReceiveError(error, isBlocker: false)
-//            return UITableViewCell()
-//        }
-        
-        var cell: SBUBaseChannelCell?
-        if let channelCell = self.channelCell {
-            cell = tableView.dequeueReusableCell(
-                withIdentifier: channelCell.sbu_className
-            ) as? SBUBaseChannelCell
-        } else if let customCell = self.customCell {
-            cell = tableView.dequeueReusableCell(
-                withIdentifier: customCell.sbu_className
-            ) as? SBUBaseChannelCell
-        } else {
-            cell = SBUBaseChannelCell()
-        }
-        
-        cell?.selectionStyle = .none
-        
-        self.configureCell(cell, indexPath: indexPath)
-        
-        return cell ?? UITableViewCell()
     }
     
     open override func tableView(
@@ -249,20 +259,17 @@ extension SBUGroupChannelListModule.List {
         willDisplay cell: UITableViewCell,
         forRowAt indexPath: IndexPath
     ) {
-        let rowForPreloading = Int(SBUGroupChannelListViewModel.channelLoadLimit)/2
-        let channelListCount = self.conversationInfoList?.count ?? 0
-        if channelListCount > 0,
-           indexPath.row == (channelListCount - rowForPreloading) {
-            self.delegate?.baseChannelListModule(self, didDetectPreloadingPosition: indexPath)
-        }
     }
     
-    open override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableView.backgroundView?.isHidden = !(self.conversationInfoList?.isEmpty ?? true)
-        if let count = self.conversationInfoList?.count {
-            SBULog.info("conversationInfoList count is  \(count)")
+    public override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+
+        // 当滚动到接近当前数据列表末尾时加载更多数据
+        if offsetY > contentHeight - frameHeight - 100 {
+            self.delegate?.baseChannelListModuledidDetectPreloading(self)
         }
-        return self.conversationInfoList?.count ?? 0
     }
     
     open override func tableView(

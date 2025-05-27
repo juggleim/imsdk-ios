@@ -208,9 +208,8 @@ open class SBUGroupChannelListViewController: SBUBaseChannelListViewController, 
         self.showChannel(conversationInfo: channel)
     }
     
-    open func baseChannelListModule(
-        _ listComponent: SBUBaseChannelListModule.List,
-        didDetectPreloadingPosition indexPath: IndexPath
+    open func baseChannelListModuledidDetectPreloading(
+        _ listComponent: SBUBaseChannelListModule.List
     ) {
         self.viewModel?.loadNextChannelList(reset: false)
     }

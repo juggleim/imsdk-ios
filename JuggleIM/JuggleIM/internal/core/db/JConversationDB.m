@@ -40,6 +40,13 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "unread_tag BOOLEAN"
 //                                        "extra TEXT"
                                         ")";
+NSString *const jCreateConversationTagTable = @"CREATE TABLE IF NOT EXISTS conversation_tag ("
+                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                        "tag_id VARCHAR (64),"
+                                        "conversation_type SMALLINT,"
+                                        "conversation_id VARCHAR (64)"
+                                        ")";
+NSString *const jCreateConversationTagIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag ON conversation_tag(tag_id, conversation_type, conversation_id)";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
                                        "(conversation_type, conversation_id, timestamp, last_message_id,"
@@ -86,6 +93,7 @@ NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE convers
 NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
 NSString *const jSetUnread = @"UPDATE conversation_info SET unread_tag = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
+NSString *const jGetUnreadCountWithTag = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info INNER JOIN conversation_tag ON conversation_info.conversation_type = conversation_tag.conversation_type AND conversation_info.conversation_id = conversation_tag.conversation_id WHERE tag_id = ?";
 NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jUpdateConversationTime = @"UPDATE conversation_info SET timestamp = ?";
@@ -93,6 +101,13 @@ NSString *const jUpdateConversationMentionInfo = @"UPDATE conversation_info SET 
 NSString *const jClearConversationMentionInfo = @"UPDATE conversation_info SET mention_info = NULL";
 NSString *const jUpdateConversationLastMessageHasRead = @"UPDATE conversation_info SET last_message_has_read = 1 WHERE conversation_type = ? AND conversation_id = ?";
 NSString *const jUpdateConversationLastMessageState = @"UPDATE conversation_info SET last_message_state = ? WHERE conversation_type = ? AND conversation_id = ? AND last_message_client_msg_no = ?";
+NSString *const jClearTagByConversation = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jInsertConversationTag = @"INSERT INTO conversation_tag (tag_id, conversation_type, conversation_id) VALUES ";
+NSString *const jRemoveConversationFromTag = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ? AND tag_id = ?";
+NSString *const jGetConversationsByTag = @"SELECT * FROM conversation_info INNER JOIN conversation_tag"
+                                            " ON conversation_info.conversation_type = conversation_tag.conversation_type"
+                                            " AND conversation_info.conversation_id = conversation_tag.conversation_id"
+                                            " WHERE tag_id = ? ";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -128,6 +143,8 @@ NSString *const jHasUnread = @"unread_tag";
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateConversationIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateConversationTagIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
 }
 
@@ -161,6 +178,7 @@ NSString *const jHasUnread = @"unread_tag";
             if ([resultSet next]) {
                 info = [self conversationInfoWith:resultSet];
             }
+            [resultSet close];
             NSString * mentionInfo;
             if(obj.mentionInfo){
                 mentionInfo = [obj.mentionInfo encodeToJson];
@@ -225,30 +243,36 @@ NSString *const jHasUnread = @"unread_tag";
     return array;
 }
 
-- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
-                                                             count:(int)count
-                                                         timestamp:(long long)ts
-                                                         direction:(JPullDirection)direction {
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options {
+    NSString *sql;
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    if (options.tagId.length > 0) {
+        sql = jGetConversationsByTag;
+        sql = [sql stringByAppendingString:jConversationAnd];
+        [args addObject:options.tagId];
+    } else {
+        sql = jGetConversationsBy;
+    }
+    
+    long long ts = options.timestamp;
     if (ts == 0) {
         ts = INT64_MAX;
     }
-    NSMutableArray *args = [[NSMutableArray alloc] init];
-    NSString *sql = jGetConversationsBy;
-    if (direction == JPullDirectionOlder) {
+    if (options.direction == JPullDirectionOlder) {
         sql = [sql stringByAppendingString:jTimestampLessThan];
     } else {
         sql = [sql stringByAppendingString:jTimestampGreaterThan];
     }
     [args addObject:@(ts)];
-    if (conversationTypes.count > 0) {
+    if (options.conversationTypes.count > 0) {
         sql = [sql stringByAppendingString:jConversationAnd];
         sql = [sql stringByAppendingString:jConversationTypeIn];
-        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
-        [args addObjectsFromArray:conversationTypes];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:options.conversationTypes.count]];
+        [args addObjectsFromArray:options.conversationTypes];
     }
     sql = [self appendOrderSql:sql];
     sql = [sql stringByAppendingString:jConversationLimit];
-    [args addObject:@(count)];
+    [args addObject:@(options.count)];
     
     NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
     [self.dbHelper executeQuery:sql
@@ -441,6 +465,19 @@ NSString *const jHasUnread = @"unread_tag";
     return count;
 }
 
+- (int)getUnreadCountWithTag:(NSString *)tagId {
+    NSString *sql = jGetUnreadCountWithTag;
+    __block int count = 0;
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:@[tagId]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            count = [resultSet intForColumn:jTotalCount];
+        }
+    }];
+    return count;
+}
+
 - (void)clearTotalUnreadCount{
     [self.dbHelper executeUpdate:jClearTotalUnreadCount withArgumentsInArray:nil];
 }
@@ -523,6 +560,69 @@ NSString *const jHasUnread = @"unread_tag";
 
 }
 
+- (void)updateConversationTag:(NSArray<JConcreteConversationInfo *> *)conversations {
+    __block NSString *sql = jInsertConversationTag;
+    NSMutableArray *arguments = [NSMutableArray array];
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        for (JConcreteConversationInfo *info in conversations) {
+            if (info.tagIdList.count > 0) {
+                [db executeUpdate:jClearTagByConversation, @(info.conversation.conversationType), info.conversation.conversationId];
+                for (NSString *tagId in info.tagIdList) {
+                    sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:3]];
+                    sql = [sql stringByAppendingFormat:@", "];
+                    [arguments addObject:tagId];
+                    [arguments addObject:@(info.conversation.conversationType)];
+                    [arguments addObject:info.conversation.conversationId];
+                }
+            }
+        }
+        if ([sql hasSuffix:@", "]) {
+            sql = [sql substringToIndex:sql.length-2];
+            [db executeUpdate:sql withArgumentsInArray:arguments];
+        }
+    }];
+}
+
+- (void)addConversations:(NSArray <JConversation *> *)conversations
+                   toTag:(NSString *)tagId {
+    if (conversations.count == 0 || tagId.length == 0) {
+        return;
+    }
+    NSString *sql = jInsertConversationTag;
+    NSMutableArray *arguments = [NSMutableArray array];
+    for (int i = 0; i < conversations.count; i++) {
+        JConversation *conversation = conversations[i];
+        sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:3]];
+        if (i != conversations.count - 1) {
+            sql = [sql stringByAppendingFormat:@", "];
+        }
+        [arguments addObject:tagId];
+        [arguments addObject:@(conversation.conversationType)];
+        [arguments addObject:conversation.conversationId];
+    }
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:arguments];
+}
+
+- (void)removeConversations:(NSArray <JConversation *> *)conversations
+                    fromTag:(NSString *)tagId {
+    if (conversations.count == 0 || tagId.length == 0) {
+        return;
+    }
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        for (JConversation *conversation in conversations) {
+            [db executeUpdate:jRemoveConversationFromTag withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, tagId]];
+        }
+    }];
+}
+
++ (NSString *)createConversationTagTable {
+    return jCreateConversationTagTable;
+}
+
++ (nonnull NSString *)createConversationTagIndex {
+    return jCreateConversationTagIndex;
+}
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {
         self.dbHelper = dbHelper;
@@ -582,4 +682,5 @@ NSString *const jHasUnread = @"unread_tag";
     }
     return originSql;
 }
+
 @end

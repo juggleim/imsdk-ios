@@ -233,6 +233,32 @@
                            success:(void (^)(void))successBlock
                              error:(void (^)(JErrorCode errorCode))errorBlock;
 
+/// 在同一个会话里，根据本端消息唯一编号批量删除消息
+/// - Parameters:
+///   - clientMsgNos: 本端消息唯一编号列表
+///   - conversation: 会话标识
+///   - forAllUsers: 是否对会话里所有用户删除消息
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
+                           conversation:(JConversation *)conversation
+                            forAllUsers:(BOOL)forAllUsers
+                                success:(void (^)(void))successBlock
+                                  error:(void (^)(JErrorCode))errorBlock;
+
+/// 在同一个会话里，根据消息 id 批量删除消息
+/// - Parameters:
+///   - messageIds: 消息 id 列表
+///   - conversation: 会话标识
+///   - forAllUsers: 是否对会话里所有用户删除消息
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
+                      conversation:(JConversation *)conversation
+                       forAllUsers:(BOOL)forAllUsers
+                           success:(void (^)(void))successBlock
+                             error:(void (^)(JErrorCode errorCode))errorBlock;
+
 /// 撤回消息（撤回后会话中的所有人都看不到原消息）
 /// - Parameters:
 ///   - messageId: 被撤回的消息 id
@@ -252,6 +278,19 @@
 ///   - errorBlock: 失败回调
 - (void)clearMessagesIn:(JConversation *)conversation
               startTime:(long long)startTime
+                success:(void (^)(void))successBlock
+                  error:(void (^)(JErrorCode errorCode))errorBlock;
+
+/// 清空会话中指定时间之前的所有消息，startTime 传 0 表示当前时间
+/// - Parameters:
+///   - conversation: 会话标识
+///   - startTime: 开始时间，传 0 表示当前时间
+///   - forAllUsers: 是否对会话里所有用户清除消息
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)clearMessagesIn:(JConversation *)conversation
+              startTime:(long long)startTime
+            forAllUsers:(BOOL)forAllUsers
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock;
 
@@ -446,6 +485,10 @@
                conversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取缓存的消息回应（缓存的数据不一定是最新版本，可用于第一时间渲染，优化用户体验）
+/// - Parameter messageIdList: 消息 id 列表
+- (NSArray <JMessageReaction *> *)getCachedMessagesReaction:(NSArray <NSString *> *)messageIdList;
 
 /// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
 /// - Parameters:

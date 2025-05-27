@@ -259,7 +259,7 @@
         _announcementContent = [[UITextViewAndPlaceholder alloc] initWithFrame:CGRectZero];
         _announcementContent.delegate = self;
         _announcementContent.font = [UIFont systemFontOfSize:14.f];
-        _announcementContent.textColor = [ColorFromRGB(0x939393) colorWithAlphaComponent:0.9];
+        _announcementContent.textColor = [UIColor blackColor];
         _announcementContent.myPlaceholder = @"请编辑群公告";
     }
     return _announcementContent;

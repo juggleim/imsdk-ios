@@ -8,11 +8,13 @@
 #import <Foundation/Foundation.h>
 #import "JCallProtocol.h"
 #import "JIMCore.h"
+#import "JUserInfoManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JCallManager : NSObject <JCallProtocol>
-- (instancetype)initWithCore:(JIMCore *)core;
+- (instancetype)initWithCore:(JIMCore *)core
+             userInfoManager:(JUserInfoManager *)userInfoManager;
 - (void)connectSuccess;
 // IM 被踢下线
 - (void)imKick;

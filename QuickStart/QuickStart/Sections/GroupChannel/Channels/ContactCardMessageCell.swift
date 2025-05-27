@@ -75,9 +75,14 @@ class ContactCardMessageCell: SBUContentBaseMessageCell {
         }
         nameLabel.text = contactCard.name
         
+        var image: UIImage? = nil
+        if contactCard.portrait.count == 0 {
+            image = PortraitUtil.defaultPortraitImage(with: contactCard.userId, name: contactCard.name, type: .private)
+        }
         userProfileView.configure(
             urlString: contactCard.portrait,
-            imageSize: 45
+            imageSize: 45,
+            uiImage: image
         )
         
         typeLabel.text = "个人名片"

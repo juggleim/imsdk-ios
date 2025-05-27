@@ -74,7 +74,9 @@ open class SBUMessageProfileView: SBUView {
     }
     
     open func configure(urlString: String,
-                        imageSize: CGFloat? = SBUMessageProfileView.imageSize) {
+                        imageSize: CGFloat? = SBUMessageProfileView.imageSize,
+                        uiImage: UIImage? = nil
+    ) {
         self.urlString = urlString
         if let imageSize = imageSize {
             self.imageSize = imageSize
@@ -87,14 +89,19 @@ open class SBUMessageProfileView: SBUView {
         
         imageView.contentMode = urlString.count > 0 ? .scaleAspectFill : .center
         
-        self.imageDownloadTask = self.imageView.loadImage(
-            urlString: urlString,
-            placeholder: SBUIconSetType.iconUser.image(
-                with: self.theme.userPlaceholderTintColor,
-                to: SBUIconSetType.Metric.iconUserProfileInChat
-            ),
-            subPath: SBUCacheManager.PathType.userProfile
-        )
+        if urlString.count == 0 {
+            self.imageView.image = uiImage
+            self.imageView.contentMode = .scaleAspectFit
+        } else {
+            self.imageDownloadTask = self.imageView.loadImage(
+                urlString: urlString,
+                placeholder: SBUIconSetType.iconUser.image(
+                    with: self.theme.userPlaceholderTintColor,
+                    to: SBUIconSetType.Metric.iconUserProfileInChat
+                ),
+                subPath: SBUCacheManager.PathType.userProfile
+            )
+        }
         self.imageView.backgroundColor = theme.userPlaceholderBackgroundColor
     }
     

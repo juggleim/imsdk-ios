@@ -10,12 +10,14 @@
 #import "JIMCore.h"
 #import "JMessageSendReceiveDelegate.h"
 #import "JChatroomManager.h"
+#import "JUserInfoManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JMessageManager : NSObject <JMessageProtocol>
 - (instancetype)initWithCore:(JIMCore *)core
-             chatroomManager:(JChatroomManager *)chatroomManager;
+             chatroomManager:(JChatroomManager *)chatroomManager
+             userInfoManager:(JUserInfoManager *)userInfoManager;
 - (void)syncMessages;
 - (void)updateSendSyncTime:(long long)timestamp;
 - (void)connectSuccess;

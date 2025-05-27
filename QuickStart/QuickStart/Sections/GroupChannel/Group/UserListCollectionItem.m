@@ -9,6 +9,7 @@
 #import "OCConst.h"
 #import <JuggleIM/JuggleIM.h>
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "PortraitUtil.h"
 
 #define ivAvaWidth 40
 
@@ -91,7 +92,13 @@
     self.ivAva.image = nil;
     self.userId = user.userId;
     self.titleLabel.text = user.userName;
-    [self.ivAva sd_setImageWithURL:[NSURL URLWithString:user.portrait]
-                  placeholderImage:[UIImage imageNamed:@"iconPerson"]];
+    if (user.portrait.length == 0) {
+        UIImage *image = [PortraitUtil defaultPortraitImageWith:user.userId name:user.userName type:JConversationTypePrivate];
+        self.ivAva.image = image;
+        self.ivAva.contentMode = UIViewContentModeScaleAspectFit;
+    } else {
+        [self.ivAva sd_setImageWithURL:[NSURL URLWithString:user.portrait]
+                      placeholderImage:[UIImage imageNamed:@"iconPerson"]];
+    }
 }
 @end

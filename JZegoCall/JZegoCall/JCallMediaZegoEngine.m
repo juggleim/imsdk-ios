@@ -6,7 +6,6 @@
 //
 
 #import "JCallMediaZegoEngine.h"
-#import <ZegoExpressEngine/ZegoExpressEngine.h>
 
 #define jSeperator @"+++"
 
@@ -102,6 +101,9 @@
             [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[ZegoCanvas canvasWithView:view]];
         }
     }
+    if ([sHandler respondsToSelector:@selector(onRoomStreamUpdate:streamList:extendedData:roomID:)]) {
+        [sHandler onRoomStreamUpdate:updateType streamList:streamList extendedData:extendedData roomID:roomID];
+    }
 }
 
 - (void)onRemoteCameraStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
@@ -131,6 +133,81 @@
     } else if (updateType == ZegoUpdateTypeDelete) {
         //暂不处理
     }
+    if ([sHandler respondsToSelector:@selector(onRoomUserUpdate:userList:roomID:)]) {
+        [sHandler onRoomUserUpdate:updateType userList:userList roomID:roomID];
+    }
+}
+
+- (void)onEngineStateUpdate:(ZegoEngineState)state {
+    if ([sHandler respondsToSelector:@selector(onEngineStateUpdate:)]) {
+        [sHandler onEngineStateUpdate:state];
+    }
+}
+
+- (void)onIMRecvCustomCommand:(NSString *)command fromUser:(ZegoUser *)fromUser roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onIMRecvCustomCommand:fromUser:roomID:)]) {
+        [sHandler onIMRecvCustomCommand:command fromUser:fromUser roomID:roomID];
+    }
+}
+
+- (void)onPublisherStateUpdate:(ZegoPublisherState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPublisherStateUpdate:errorCode:extendedData:streamID:)]) {
+        [sHandler onPublisherStateUpdate:state errorCode:errorCode extendedData:extendedData streamID:streamID];
+    }
+}
+
+- (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
+    if ([sHandler respondsToSelector:@selector(onCapturedSoundLevelUpdate:)]) {
+        [sHandler onCapturedSoundLevelUpdate:soundLevel];
+    }
+}
+
+- (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    if ([sHandler respondsToSelector:@selector(onRemoteSoundLevelUpdate:)]) {
+        [sHandler onRemoteSoundLevelUpdate:soundLevels];
+    }
+}
+
+- (void)onPlayerStateUpdate:(ZegoPlayerState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData streamID:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPlayerStateUpdate:errorCode:extendedData:streamID:)]) {
+        [sHandler onPlayerStateUpdate:state errorCode:errorCode extendedData:extendedData streamID:streamID];
+    }
+}
+
+- (void)onRoomStateChanged:(ZegoRoomStateChangedReason)reason errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomStateChanged:errorCode:extendedData:roomID:)]) {
+        [sHandler onRoomStateChanged:reason errorCode:errorCode extendedData:extendedData roomID:roomID];
+    }
+}
+
+- (void)onRoomStateUpdate:(ZegoRoomState)state errorCode:(int)errorCode extendedData:(NSDictionary *)extendedData roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomStateUpdate:errorCode:extendedData:roomID:)]) {
+        [sHandler onRoomStateUpdate:state errorCode:errorCode extendedData:extendedData roomID:roomID];
+    }
+}
+
+- (void)onRoomOnlineUserCountUpdate:(int)count roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomOnlineUserCountUpdate:roomID:)]) {
+        [sHandler onRoomOnlineUserCountUpdate:count roomID:roomID];
+    }
+}
+
+- (void)onRoomExtraInfoUpdate:(NSArray<ZegoRoomExtraInfo *> *)roomExtraInfoList roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomExtraInfoUpdate:roomID:)]) {
+        [sHandler onRoomExtraInfoUpdate:roomExtraInfoList roomID:roomID];
+    }
+}
+
+- (void)onNetworkQuality:(NSString *)userID upstreamQuality:(ZegoStreamQualityLevel)upstreamQuality downstreamQuality:(ZegoStreamQualityLevel)downstreamQuality {
+    if ([sHandler respondsToSelector:@selector(onNetworkQuality:upstreamQuality:downstreamQuality:)]) {
+        [sHandler onNetworkQuality:userID upstreamQuality:upstreamQuality downstreamQuality:downstreamQuality];
+    }
+}
+
+- (void)onIMRecvBroadcastMessage:(NSArray<ZegoBroadcastMessageInfo *> *)messageList roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onIMRecvBroadcastMessage:roomID:)]) {
+        [sHandler onIMRecvBroadcastMessage:messageList roomID:roomID];
+    }
 }
 
 #pragma mark -
@@ -142,6 +219,10 @@
     profile.scenario = ZegoScenarioStandardVideoCall;
     [ZegoExpressEngine createEngineWithProfile:profile eventHandler:self];
     [[ZegoExpressEngine sharedEngine] enableCamera:NO];
+}
+
++ (void)setEventHandler:(id<ZegoEventHandler>)handler {
+    sHandler = handler;
 }
 
 - (NSString *)streamIdWithRoomId:(NSString *)roomId
@@ -161,4 +242,5 @@
     return userId;
 }
 
+static id<ZegoEventHandler> sHandler;
 @end

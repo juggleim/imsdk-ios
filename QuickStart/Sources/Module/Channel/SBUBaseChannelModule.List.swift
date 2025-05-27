@@ -546,6 +546,7 @@ extension SBUBaseChannelModule {
                         self?.reloadTableView()
                     }
                 }
+                SBULog.info("SBUBaseChannelViewController reloadTableView")
                 self?.tableView.reloadData()
                 if needsToLayout {
                     self?.tableView.layoutIfNeeded()

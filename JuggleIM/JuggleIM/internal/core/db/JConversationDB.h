@@ -24,10 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
 - (void)deleteConversationInfoBy:(JConversation *)conversation;
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
-- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
-                                                             count:(int)count
-                                                         timestamp:(long long)ts
-                                                         direction:(JPullDirection)direction;
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
                                                                 count:(int)count
                                                             timestamp:(long long)ts
@@ -47,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearUnreadTag;
 - (int)getTotalUnreadCount;
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
+- (int)getUnreadCountWithTag:(NSString *)tagId;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
    forConversation:(JConversation *)conversation;
@@ -59,6 +56,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateLastMessageState:(JConversation *)conversation
                          state:(JMessageState)state
                withClientMsgNo:(long long)clientMsgNo;
+
+- (void)updateConversationTag:(NSArray <JConcreteConversationInfo *> *)conversations;
+- (void)addConversations:(NSArray <JConversation *> *)conversations
+                   toTag:(NSString *)tagId;
+- (void)removeConversations:(NSArray <JConversation *> *)conversations
+                    fromTag:(NSString *)tagId;
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
+
++ (NSString *)createConversationTagTable;
++ (NSString *)createConversationTagIndex;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
 @property (nonatomic, copy) NSArray <JUserInfo *> * mentionUserList;
+/// 会话标签数组
+@property (nonatomic, copy) NSArray <NSString *> *tagIdList;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,6 +10,7 @@
 #import "JConcreteMessage.h"
 #import "JGroupMessageReadInfo.h"
 #import "JSearchConversationsResult.h"
+#import "JGetConversationOptions.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -35,14 +36,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable JConcreteConversationInfo *)getConversationInfo:(JConversation *)conversation;
 - (void)deleteConversationInfoBy:(JConversation *)conversation;
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList;
-- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
-                                                             count:(int)count
-                                                         timestamp:(long long)ts
-                                                         direction:(JPullDirection)direction;
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
                                                                 count:(int)count
                                                             timestamp:(long long)ts
                                                             direction:(JPullDirection)direction;
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 - (void)clearDraftInConversation:(JConversation *)conversation;
@@ -59,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearUnreadTag;
 - (int)getTotalUnreadCount;
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
+- (int)getUnreadCountWithTag:(NSString *)tagId;
 - (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson;
 - (void)clearMentionInfo;
@@ -72,6 +71,14 @@ NS_ASSUME_NONNULL_BEGIN
                          state:(JMessageState)state
                withClientMsgNo:(long long)clientMsgNo;
 - (void)setTopConversationsOrderType:(JTopConversationsOrderType)type;
+
+#pragma mark - conversation tag table
+- (void)updateConversationTag:(NSArray <JConcreteConversationInfo *>*)conversations;
+- (void)addConversations:(NSArray <JConversation *> *)conversations
+                   toTag:(NSString *)tagId;
+- (void)removeConversations:(NSArray <JConversation *> *)conversations
+                    fromTag:(NSString *)tagId;
+
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
 - (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
@@ -126,12 +133,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;
-
 - (JGroupInfo *)getGroupInfo:(NSString *)groupId;
-
+- (JGroupMember *)getGroupMember:(NSString *)groupId
+                          userId:(NSString *)userId;
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos;
-
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
+- (void)insertGroupMembers:(NSArray <JGroupMember *> *)members;
+
+#pragma mark - reaction table
+- (NSArray <JMessageReaction *> *)getMessageReactions:(NSArray <NSString *> *)messageIds;
+- (void)setMessageReactions:(NSArray <JMessageReaction *> *)reactions;
 @end
 
 NS_ASSUME_NONNULL_END

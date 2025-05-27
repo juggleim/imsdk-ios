@@ -11,7 +11,9 @@
 #import "JConversationDB.h"
 #import "JProfileDB.h"
 #import "JUserInfoDB.h"
+#import "JReactionDB.h"
 #import "JUtility.h"
+#import "JVersionDB.h"
 
 #define kJetIMDBName @"jetimdb"
 
@@ -21,6 +23,8 @@
 @property (nonatomic, strong) JConversationDB *conversationDb;
 @property (nonatomic, strong) JProfileDB *profileDb;
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
+@property (nonatomic, strong) JReactionDB *reactionDB;
+@property (nonatomic, strong) JVersionDB *versionDB;
 @end
 
 @implementation JDBManager
@@ -92,16 +96,6 @@
     return [self.conversationDb getConversationInfoList];
 }
 
-- (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
-                                                             count:(int)count
-                                                         timestamp:(long long)ts
-                                                         direction:(JPullDirection)direction {
-    return [self.conversationDb getConversationInfoListWithTypes:conversationTypes
-                                                           count:count
-                                                       timestamp:ts
-                                                       direction:direction];
-}
-
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
                                                                 count:(int)count
                                                             timestamp:(long long)ts
@@ -110,6 +104,10 @@
                                                               count:count
                                                           timestamp:ts
                                                           direction:direction];
+}
+
+- (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options {
+    return [self.conversationDb getConversationInfoListWith:options];
 }
 
 - (void)setDraft:(NSString *)draft inConversation:(JConversation *)conversation {
@@ -159,6 +157,10 @@
     return [self.conversationDb getUnreadCountWithTypes:conversationTypes];
 }
 
+- (int)getUnreadCountWithTag:(NSString *)tagId {
+    return [self.conversationDb getUnreadCountWithTag:tagId];
+}
+
 - (void)clearTotalUnreadCount{
     [self.conversationDb clearTotalUnreadCount];
 }
@@ -186,6 +188,21 @@
 
 - (void)setTopConversationsOrderType:(JTopConversationsOrderType)type {
     self.conversationDb.topConversationsOrderType = type;
+}
+
+#pragma mark - conversation tag table
+- (void)updateConversationTag:(NSArray<JConcreteConversationInfo *> *)conversations {
+    [self.conversationDb updateConversationTag:conversations];
+}
+
+- (void)addConversations:(NSArray <JConversation *> *)conversations
+                   toTag:(NSString *)tagId {
+    [self.conversationDb addConversations:conversations toTag:tagId];
+}
+
+- (void)removeConversations:(NSArray <JConversation *> *)conversations
+                    fromTag:(NSString *)tagId {
+    [self.conversationDb removeConversations:conversations fromTag:tagId];
 }
 
 #pragma mark - message table
@@ -348,12 +365,29 @@
     return [self.userInfoDB getGroupInfo:groupId];
 }
 
+- (JGroupMember *)getGroupMember:(NSString *)groupId userId:(NSString *)userId {
+    return [self.userInfoDB getGroupMemberIn:groupId userId:userId];
+}
+
 - (void)insertUserInfos:(NSArray<JUserInfo *> *)userInfos {
     [self.userInfoDB insertUserInfos:userInfos];
 }
 
 - (void)insertGroupInfos:(NSArray<JGroupInfo *> *)groupInfos {
     [self.userInfoDB insertGroupInfos:groupInfos];
+}
+
+- (void)insertGroupMembers:(NSArray<JGroupMember *> *)members {
+    [self.userInfoDB insertGroupMembers:members];
+}
+
+#pragma mark - reaction table
+- (NSArray<JMessageReaction *> *)getMessageReactions:(NSArray<NSString *> *)messageIds {
+    return [self.reactionDB getMessageReactions:messageIds];
+}
+
+- (void)setMessageReactions:(NSArray<JMessageReaction *> *)reactions {
+    [self.reactionDB setMessageReactions:reactions];
 }
 
 #pragma mark - internal
@@ -384,6 +418,8 @@
     [self.conversationDb createTables];
     [self.profileDb createTables];
     [self.userInfoDB createTables];
+    [self.reactionDB createTables];
+    [self.versionDB createTables];
 }
 
 - (void)updateTables {
@@ -391,6 +427,8 @@
     [self.conversationDb updateTables];
     [self.profileDb updateTables];
     [self.userInfoDB updateTables];
+    [self.reactionDB updateTables];
+    [self.versionDB updateTables];
 }
 
 //DB 目录
@@ -423,6 +461,8 @@
         self.conversationDb = [[JConversationDB alloc] initWithDBHelper:self.dbHelper];
         self.conversationDb.messageDB = self.messageDb;
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
+        self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
+        self.versionDB = [[JVersionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;
 }

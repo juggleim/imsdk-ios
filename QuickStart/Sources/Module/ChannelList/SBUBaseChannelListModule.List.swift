@@ -25,7 +25,7 @@ public protocol SBUBaseChannelListModuleListDelegate: SBUCommonDelegate {
     /// - Parameters:
     ///    - listComponent: `SBUBaseChannelListModule.List` object.
     ///    - indexPath: An index path locating the row in table view of `listComponent
-    func baseChannelListModule(_ listComponent: SBUBaseChannelListModule.List, didDetectPreloadingPosition indexPath: IndexPath)
+    func baseChannelListModuledidDetectPreloading(_ listComponent: SBUBaseChannelListModule.List)
     
     /// Called when the retry button was selected from the `listComponent`.
     /// - Parameter listComponent: `SBUOpenChannelListModule.List` object.
@@ -101,7 +101,6 @@ extension SBUBaseChannelListModule {
             
             // table view
             self.tableView.delegate = self
-            self.tableView.dataSource = self
             
             self.tableView.alwaysBounceVertical = false
             self.tableView.separatorStyle = .none
@@ -129,17 +128,11 @@ extension SBUBaseChannelListModule {
         }
         
         // MARK: - TableView: Cell
-        
-        /// Configures cell for a particular row.
-        /// - Parameters:
-        ///   - channelCell: `SBUBaseChannelCell` object
-        ///   - indexPath: An index path representing the `channelCell`
-        open func configureCell(_ channelCell: SBUBaseChannelCell?, indexPath: IndexPath) {
-            guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return }
+        open func configureCell(_ channelCell: SBUBaseChannelCell?, conversationInfoWrapper: ConversationInfoWrapper) {
+            guard let conversationInfo = conversationInfoWrapper.conversationInfo else { return }
             
             channelCell?.setupStyles()
             channelCell?.configure(conversationInfo: conversationInfo)
-            
         }
         
         /// Registers a custom cell as a channel cell based on `SBUBaseChannelCell`.
@@ -207,9 +200,6 @@ extension SBUBaseChannelListModule {
         
         /// Reloads table view. This method corresponds to `UITableView reloadData()`.
         public func reloadTableView() {
-            Thread.executeOnMain { [weak self] in
-                self?.tableView.reloadData()
-            }
         }
         
         // MARK: - EmptyView
@@ -234,9 +224,9 @@ extension SBUBaseChannelListModule.List: SBUEmptyViewDelegate {
 }
 
 // MARK: - UITableView relations
-extension SBUBaseChannelListModule.List: UITableViewDataSource, UITableViewDelegate {
-    open func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+extension SBUBaseChannelListModule.List: UITableViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
     }
     
     open func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -251,17 +241,8 @@ extension SBUBaseChannelListModule.List: UITableViewDataSource, UITableViewDeleg
     }
     
     open func tableView(_ tableView: UITableView,
-                        cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
-    }
-    
-    open func tableView(_ tableView: UITableView,
                         willDisplay cell: UITableViewCell,
                         forRowAt indexPath: IndexPath) {
-    }
-    
-    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
     }
     
     open func tableView(_ tableView: UITableView,

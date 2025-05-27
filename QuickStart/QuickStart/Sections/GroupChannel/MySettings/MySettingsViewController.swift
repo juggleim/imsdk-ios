@@ -199,7 +199,8 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
                 nickname.trimmingCharacters(in: .whitespacesAndNewlines).count > 0
                 else { return }
             
-            HttpManager.shared.updateUserInfo(userId: JIM.shared().currentUserId, name: nickname) { code in
+            let current = ProfileManager.shared.currentUserInfo
+            HttpManager.shared.updateUserInfo(userId: JIM.shared().currentUserId, name: nickname, portrait: current?.portrait) { code in
                 if code != HttpManager.success {
                     return
                 }
@@ -460,8 +461,10 @@ extension MySettingsViewController: UIImagePickerControllerDelegate {
             self?.userInfoView.coverImage.image = originalImage
             
             JIM.shared().messageManager.uploadImage(originalImage) { url in
+                let current = ProfileManager.shared.currentUserInfo
                 HttpManager.shared.updateUserInfo(
                     userId: JIM.shared().currentUserId,
+                    name: current?.userName,
                     portrait: url) { code in
                         if code != HttpManager.success {
                             return

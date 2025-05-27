@@ -96,7 +96,8 @@
 - (void)clickRightBtn {
     [self.hud showAnimated:YES];
     NSString *name = self.userNameTextField.text;
-    [HttpManager.shared updateUserInfoWithUserId:ProfileManager.shared.currentUserInfo.userId name:name portrait:nil completion:^(NSInteger code) {
+    JCUser *current = ProfileManager.shared.currentUserInfo;
+    [HttpManager.shared updateUserInfoWithUserId:ProfileManager.shared.currentUserInfo.userId name:name portrait:current.portrait completion:^(NSInteger code) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (code == 0) {
                 ProfileManager.shared.currentUserInfo.userName = name;

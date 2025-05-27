@@ -28,6 +28,7 @@
 @property (nonatomic, strong) JMessageManager *messageManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
 @property (nonatomic, strong) JCallManager *callManager;
+@property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) NSHashTable <id<JConnectionDelegate>> *delegates;
 @property (nonatomic, strong) NSTimer *reconnectTimer;
 @property (nonatomic, copy) NSString *pushToken;
@@ -50,7 +51,8 @@
          conversationManager:(nonnull JConversationManager *)conversationManager
               messageManager:(nonnull JMessageManager *)messageManager
              chatroomManager:(nonnull JChatroomManager *)chatroomManager
-                 callManager:(nonnull JCallManager *)callManager {
+                 callManager:(nonnull JCallManager *)callManager
+             userInfoManager:(JUserInfoManager *)userInfoManager {
     self = [super init];
     if (self) {
         [core.webSocket setConnectDelegate:self];
@@ -60,6 +62,7 @@
         self.messageManager = messageManager;
         self.chatroomManager = chatroomManager;
         self.callManager = callManager;
+        self.userInfoManager = userInfoManager;
         [self addObserver];
         [self stateMachine];
     }
@@ -200,13 +203,7 @@
         [self.intervalGenerator reset];
         self.core.userId = userId;
         self.core.session = session;
-        if (!self.core.dbManager.isOpen) {
-            if ([self.core.dbManager openIMDB:self.core.appKey userId:userId]) {
-                [self dbOpenNotice:YES];
-            } else {
-                JLogE(@"CON-Db", @"open fail");
-            }
-        }
+        [self openDB];
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];
         [self.chatroomManager connectSuccess];
@@ -261,13 +258,7 @@
 }
 
 - (void)connect {
-    if (![self.core.dbManager isOpen]) {
-        if (self.core.userId.length > 0) {
-            if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
-                [self dbOpenNotice:YES];
-            }
-        }
-    }
+    [self openDB];
     
     [self.core.webSocket connect:self.core.appKey
                            token:self.core.token
@@ -396,7 +387,23 @@
 }
 
 #pragma mark - internal
+- (void)openDB {
+    if (!self.core.dbManager.isOpen) {
+        [self.userInfoManager clearCache];
+        if (self.core.userId.length > 0) {
+            if ([self.core.dbManager openIMDB:self.core.appKey userId:self.core.userId]) {
+                [self dbOpenNotice:YES];
+            } else {
+                JLogE(@"CON-Db", @"open fail");
+            }
+        } else {
+            JLogE(@"CON-Db", @"open fail, userId is empty");
+        }
+    }
+}
+
 - (void)closeDB {
+    [self.userInfoManager clearCache];
     [self.core.dbManager closeIMDB];
     [self dbOpenNotice:NO];
 }
