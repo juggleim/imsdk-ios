@@ -754,9 +754,9 @@ NSString *const jFlags = @"flags";
     }
     
     NSString * referMsgId;
-    if(message.referredMsg){
+    if (message.referredMsg) {
         referMsgId = message.referredMsg.messageId;
-        if(referMsgId == nil){
+        if (referMsgId == nil) {
             referMsgId = @"";
         }
     }

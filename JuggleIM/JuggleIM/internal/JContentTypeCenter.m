@@ -7,6 +7,7 @@
 
 #import "JContentTypeCenter.h"
 #import <objc/runtime.h>
+#import "JUnknownMessage.h"
 
 @interface JContentTypeCenter ()
 @property (nonatomic, strong) NSMutableDictionary *contentTypeDic;
@@ -37,14 +38,20 @@ static JContentTypeCenter *_instance;
 
 - (JMessageContent *)contentWithData:(NSData *)data
                          contentType:(NSString *)type {
-    id content = nil;
+    Class cls = nil;
     @synchronized (self) {
-        Class cls = self.contentTypeDic[type];
-        content = [[cls alloc] init];
+        cls = self.contentTypeDic[type];
     }
-    [content decode:data];
-
-    return content;
+    if (cls) {
+        id content = [[cls alloc] init];
+        [content decode:data];
+        return content;
+    } else {
+        JUnknownMessage *content = [[JUnknownMessage alloc] init];
+        [content decode:data];
+        content.messageType = type;
+        return content;
+    }
 }
 
 - (int)flagsWithType:(NSString *)type {

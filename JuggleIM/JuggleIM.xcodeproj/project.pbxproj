@@ -64,6 +64,8 @@
 		A03B3A0D2CCA4044003D150A /* JRtcRoom.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A0A2CCA4044003D150A /* JRtcRoom.h */; };
 		A03B3A1A2CCF8924003D150A /* JSearchConversationsResult.h in Headers */ = {isa = PBXBuildFile; fileRef = A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A03B3A1B2CCF8924003D150A /* JSearchConversationsResult.m in Sources */ = {isa = PBXBuildFile; fileRef = A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */; };
+		A05143542DF80201004413F3 /* JUnknownMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A05143532DF80201004413F3 /* JUnknownMessage.m */; };
+		A05143552DF80201004413F3 /* JUnknownMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A05143522DF80201004413F3 /* JUnknownMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0574BF42D56275B00632625 /* JReactionDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0574BF32D56275B00632625 /* JReactionDB.m */; };
 		A0574BF52D56275B00632625 /* JReactionDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0574BF22D56275B00632625 /* JReactionDB.h */; };
 		A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */; };
@@ -460,6 +462,8 @@
 		A03B3A0B2CCA4044003D150A /* JRtcRoom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JRtcRoom.m; sourceTree = "<group>"; };
 		A03B3A182CCF8924003D150A /* JSearchConversationsResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSearchConversationsResult.h; sourceTree = "<group>"; };
 		A03B3A192CCF8924003D150A /* JSearchConversationsResult.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JSearchConversationsResult.m; sourceTree = "<group>"; };
+		A05143522DF80201004413F3 /* JUnknownMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUnknownMessage.h; sourceTree = "<group>"; };
+		A05143532DF80201004413F3 /* JUnknownMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUnknownMessage.m; sourceTree = "<group>"; };
 		A0574BF22D56275B00632625 /* JReactionDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JReactionDB.h; sourceTree = "<group>"; };
 		A0574BF32D56275B00632625 /* JReactionDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JReactionDB.m; sourceTree = "<group>"; };
 		A0596E042CD12F1000914FEA /* Chatroom.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chatroom.pbobjc.h; sourceTree = "<group>"; };
@@ -1376,6 +1380,8 @@
 				A096458B2BF252DB00290775 /* JThumbnailPackedImageMessage.m */,
 				A096458E2BF339EA00290775 /* JSnapshotPackedVideoMessage.h */,
 				A096458F2BF339EA00290775 /* JSnapshotPackedVideoMessage.m */,
+				A05143522DF80201004413F3 /* JUnknownMessage.h */,
+				A05143532DF80201004413F3 /* JUnknownMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1557,6 +1563,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A05143552DF80201004413F3 /* JUnknownMessage.h in Headers */,
 				A0752D7C2D65D97D009B7E0F /* JGetConversationOptions.h in Headers */,
 				A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */,
 				A0752D842D66F8AA009B7E0F /* JTagDelConvMessage.h in Headers */,
@@ -1809,6 +1816,7 @@
 				TargetAttributes = {
 					A08AA1E22B148B68008B114C = {
 						CreatedOnToolsVersion = 14.2;
+						LastSwiftMigration = 1620;
 					};
 				};
 			};
@@ -1999,6 +2007,7 @@
 				A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */,
 				A06A2F142B233351009B9588 /* JDBHelper.m in Sources */,
 				A05EED5F2B207D5200809F13 /* JUtility.m in Sources */,
+				A05143542DF80201004413F3 /* JUnknownMessage.m in Sources */,
 				A096457E2BECE42200290775 /* JMediaMessageContent.m in Sources */,
 				A08AA3672B19CB77008B114C /* GPBEmpty.pbobjc.m in Sources */,
 				A0574BF42D56275B00632625 /* JReactionDB.m in Sources */,
@@ -2144,6 +2153,7 @@
 		A08AA1EB2B148B68008B114C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2169,6 +2179,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -2176,6 +2188,7 @@
 		A08AA1EC2B148B68008B114C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2200,6 +2213,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

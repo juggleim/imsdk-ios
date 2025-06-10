@@ -151,7 +151,15 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData = [self encodeContentData:content];
-        NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
+        NSString *contentType;
+        if ([content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)content;
+            contentType = unknown.messageType;
+        } else {
+            contentType = [[content class] contentType];
+        }
+
+        NSData *d = [self.pbData sendMessageDataWithType:contentType
                                                  msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
@@ -213,8 +221,16 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *contentData = [self encodeContentData:content];
+        NSString *contentType;
+        if ([content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)content;
+            contentType = unknown.messageType;
+        } else {
+            contentType = [[content class] contentType];
+        }
+
         NSData *d = [self.pbData updateMessageData:messageId
-                                           msgType:[[content class] contentType]
+                                           msgType:contentType
                                            msgData:contentData
                                       conversation:conversation
                                          timestamp:timestamp

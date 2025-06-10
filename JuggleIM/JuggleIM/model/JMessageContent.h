@@ -49,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// 本地模糊搜索内容
 - (NSString *)searchContent;
 
-
-
 @end
 
 NS_ASSUME_NONNULL_END

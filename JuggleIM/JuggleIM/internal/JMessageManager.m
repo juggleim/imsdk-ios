@@ -1789,7 +1789,12 @@
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Update", @"success");
             [self updateSendSyncTime:timestamp];
-            m.contentType = [[content class] contentType];
+            if ([content isKindOfClass:[JUnknownMessage class]]) {
+                JUnknownMessage *unknown = (JUnknownMessage *)content;
+                m.contentType = unknown.messageType;
+            } else {
+                m.contentType = [[content class] contentType];
+            }
             m.content = content;
             [self.core.dbManager updateMessageContent:content
                                           contentType:m.contentType
@@ -2195,8 +2200,13 @@
 }
 
 -(void)updateMessageWithContent:(JConcreteMessage *)message{
-    if(message.content != nil){
-        message.contentType = [[message.content class] contentType];
+    if (message.content != nil) {
+        if ([message.content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)message.content;
+            message.contentType = unknown.messageType;
+        } else {
+            message.contentType = [[message.content class] contentType];
+        }
     }
     if (message.referredMsg) {
         message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
@@ -2213,7 +2223,12 @@
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
-    message.contentType = [[content class] contentType];
+    if ([message.content isKindOfClass:[JUnknownMessage class]]) {
+        JUnknownMessage *unknown = (JUnknownMessage *)message.content;
+        message.contentType = unknown.messageType;
+    } else {
+        message.contentType = [[message.content class] contentType];
+    }
     message.direction = direction;
     message.messageState = state;
     message.senderUserId = self.core.userId;
