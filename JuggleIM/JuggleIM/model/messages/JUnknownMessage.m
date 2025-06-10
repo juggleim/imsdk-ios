@@ -8,8 +8,6 @@
 #import "JUnknownMessage.h"
 
 #define jUnknownType @"jg:unknown"
-#define jType @"type"
-#define jContent @"content"
 
 @implementation JUnknownMessage
 

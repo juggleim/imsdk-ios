@@ -2223,11 +2223,11 @@
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
-    if ([message.content isKindOfClass:[JUnknownMessage class]]) {
-        JUnknownMessage *unknown = (JUnknownMessage *)message.content;
+    if ([content isKindOfClass:[JUnknownMessage class]]) {
+        JUnknownMessage *unknown = (JUnknownMessage *)content;
         message.contentType = unknown.messageType;
     } else {
-        message.contentType = [[message.content class] contentType];
+        message.contentType = [[content class] contentType];
     }
     message.direction = direction;
     message.messageState = state;
