@@ -18,19 +18,11 @@
 }
 
 - (NSData *)encode {
-    NSDictionary *dic = @{jContent:self.content?:@""};
-    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
-    return data;
+    return [self.content dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)decode:(NSData *)data {
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    id content = json[jContent];
-    if ([content isKindOfClass:[NSString class]]) {
-        self.content = content;
-    } else {
-        self.content = @"";
-    }
+    self.content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
 }
 
 
