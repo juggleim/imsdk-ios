@@ -146,7 +146,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
@@ -1453,7 +1453,8 @@ inConversation:(JConversation *)conversation
                                        seqNo:ack.seqNo
                                    clientUid:ack.clientUid
                                  contentType:ack.contentType
-                                     content:ack.content];
+                                     content:ack.content
+                            groupMemberCount:ack.groupMemberCount];
         return;
     }
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
@@ -1461,7 +1462,7 @@ inConversation:(JConversation *)conversation
         if (ack.code != 0) {
             sendMessageObj.errorBlock(ack.code, sendMessageObj.clientMsgNo);
         } else {
-            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo, ack.contentType, ack.content);
+            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo, ack.contentType, ack.content, ack.groupMemberCount);
         }
     }
 }

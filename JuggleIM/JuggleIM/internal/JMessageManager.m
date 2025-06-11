@@ -1902,14 +1902,16 @@
                  seqNo:(long long)seqNo
              clientUid:(NSString *)clientUid
            contentType:(nullable NSString *)contentType
-               content:(nullable JMessageContent *)content {
+               content:(nullable JMessageContent *)content
+      groupMemberCount:(int)count {
     if (clientUid.length == 0) {
         return;
     }
     [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
                                                    messageId:messageId
                                                    timestamp:timestamp
-                                                       seqNo:seqNo];
+                                                       seqNo:seqNo
+                                            groupMemberCount:count];
     if (contentType && content) {
         [self.core.dbManager updateMessageContent:content
                                       contentType:contentType
@@ -2130,16 +2132,23 @@
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
                               pushData:message.pushData
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content) {
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
-                                              seqNo:seqNo];
+                                              seqNo:seqNo
+                                   groupMemberCount:groupMemberCount];
         message.messageId = msgId;
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        if (message.conversation.conversationType == JConversationTypeGroup) {
+            JGroupMessageReadInfo *info = [JGroupMessageReadInfo new];
+            info.readCount = 0;
+            info.memberCount = groupMemberCount;
+            message.groupReadInfo = info;
+        }
         
         if (contentType && content) {
             [self.core.dbManager updateMessageContent:content contentType:contentType withMessageId:msgId];

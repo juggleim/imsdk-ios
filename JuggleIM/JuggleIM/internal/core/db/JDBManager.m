@@ -216,21 +216,25 @@
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
-                         seqNo:(long long)seqNo {
+                         seqNo:(long long)seqNo
+              groupMemberCount:(int)count {
     [self.messageDb updateMessageAfterSend:clientMsgNo
                                  messageId:messageId
                                  timestamp:timestamp
-                                     seqNo:seqNo];
+                                     seqNo:seqNo
+                          groupMemberCount:count];
 }
 
 - (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
                                   messageId:(NSString *)messageId
                                   timestamp:(long long)timestamp
-                                      seqNo:(long long)seqNo {
+                                      seqNo:(long long)seqNo
+                           groupMemberCount:(int)count {
     [self.messageDb updateMessageAfterSendWithClientUid:clientUid
                                               messageId:messageId
                                               timestamp:timestamp
-                                                  seqNo:seqNo];
+                                                  seqNo:seqNo
+                                       groupMemberCount:count];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content
