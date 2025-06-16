@@ -1828,7 +1828,25 @@ inConversation:(JConversation *)conversation
 
 - (NSData *)encodeContentData:(JMessageContent *)content {
     NSData *encodeData;
-    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+    if ([content isKindOfClass:[JImageMessage class]]) {
+        JImageMessage *image = (JImageMessage *)content;
+        NSString *local = image.localPath;
+        NSString *thumbnailLocal = image.thumbnailLocalPath;
+        image.localPath = nil;
+        image.thumbnailLocalPath = @"";
+        encodeData = [image encode];
+        image.localPath = local;
+        image.thumbnailLocalPath = thumbnailLocal;
+    } else if ([content isKindOfClass:[JVideoMessage class]]) {
+        JVideoMessage *video = (JVideoMessage *)content;
+        NSString *local = video.localPath;
+        NSString *snapshotLocal = video.snapshotLocalPath;
+        video.localPath = nil;
+        video.snapshotLocalPath = @"";
+        encodeData = [video encode];
+        video.localPath = local;
+        video.snapshotLocalPath = snapshotLocal;
+    } else if ([content isKindOfClass:[JMediaMessageContent class]]) {
         JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
         NSString *local = mediaContent.localPath;
         mediaContent.localPath = nil;
