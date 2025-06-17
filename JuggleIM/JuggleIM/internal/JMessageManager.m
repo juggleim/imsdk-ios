@@ -998,7 +998,22 @@
                 BOOL isContain = NO;
                 for (JMessage *remoteMessage in messagesArray) {
                     if (localMessage.clientMsgNo == remoteMessage.clientMsgNo) {
-                        if ([localMessage.content isKindOfClass:[JMediaMessageContent class]]
+                        if ([[localMessage.content class] isEqual:[remoteMessage.content class]]) {
+                            remoteMessage.localAttribute = localMessage.localAttribute;
+                        }
+                        if ([localMessage.content isKindOfClass:[JImageMessage class]]
+                            && [remoteMessage.content isKindOfClass:[JImageMessage class]]) {
+                            JImageMessage *localImage = (JImageMessage *)localMessage.content;
+                            JImageMessage *remoteImage = (JImageMessage *)remoteMessage.content;
+                            remoteImage.thumbnailLocalPath = localImage.thumbnailLocalPath;
+                            remoteImage.localPath = localImage.localPath;
+                        } else if ([localMessage.content isKindOfClass:[JVideoMessage class]]
+                                   && [remoteMessage.content isKindOfClass:[JVideoMessage class]]) {
+                            JVideoMessage *localVideo = (JVideoMessage *)localMessage.content;
+                            JVideoMessage *remoteVideo = (JVideoMessage *)remoteMessage.content;
+                            remoteVideo.localPath = localVideo.localPath;
+                            remoteVideo.snapshotLocalPath = localVideo.snapshotLocalPath;
+                       } else if ([localMessage.content isKindOfClass:[JMediaMessageContent class]]
                             && [remoteMessage.content isKindOfClass:[JMediaMessageContent class]]) {
                             JMediaMessageContent *localContent = (JMediaMessageContent *)localMessage.content;
                             JMediaMessageContent *remoteContent = (JMediaMessageContent *)remoteMessage.content;
