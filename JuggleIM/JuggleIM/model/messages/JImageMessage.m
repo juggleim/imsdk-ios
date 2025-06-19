@@ -60,39 +60,23 @@
     return kImageType;
 }
 
-- (NSData *)encode{
-    //绝对路径转换成相对路径
-    NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
-    
-    NSString * thumbnailLocalPath = [self.thumbnailLocalPath stringByAbbreviatingWithTildeInPath];
-
-    
+- (NSData *)encode {
     NSDictionary * dic = @{jURL:self.url?:@"",
                            jThumbnail:self.thumbnailUrl?:@"",
-                           jLocalPath:localPath?:@"",
+                           jLocalPath:self.localPath?:@"",
                            jImageWidth:@(self.width),
                            jImageHeight:@(self.height),
                            jImageSize:@(self.size),
                            jImageExtra:self.extra?:@"",
-                           jThumbnailLocalPath:thumbnailLocalPath?:@""};
+                           jThumbnailLocalPath:self.thumbnailLocalPath?:@""};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
 
 - (void)decode:(NSData *)data{
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
-    
-    //相对路径转换成绝对路径
-
-    NSString * localPath = json[jLocalPath]?:@"";
-    if(localPath.length > 0){
-        self.localPath = [localPath stringByExpandingTildeInPath];
-    }
-    NSString * thumbnailLocalPath = json[jThumbnailLocalPath]?:@"";
-    if(thumbnailLocalPath.length > 0){
-        self.thumbnailLocalPath = [thumbnailLocalPath stringByExpandingTildeInPath];
-    }
-    
+    self.localPath = json[jLocalPath]?:@"";
+    self.thumbnailLocalPath = json[jThumbnailLocalPath]?:@"";
     self.url = json[jURL]?:@"";
     self.thumbnailUrl = json[jThumbnail]?:@"";
     id obj = json[jImageWidth];

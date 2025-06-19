@@ -53,12 +53,8 @@
         thumbnailString = [JUtility base64EncodedStringFrom:thumbnailData];
     }
     
-    //绝对路径转换成相对路径
-    NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
-    
-    
     NSDictionary * dic = @{jTPURL:self.url?:@"",
-                           jLocalPath:localPath?:@"",
+                           jLocalPath:self.localPath?:@"",
                            jTPThumbnailContent:thumbnailString?:@"",
                            jTPImageWidth:@(self.width),
                            jTPImageHeight:@(self.height),
@@ -71,12 +67,7 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jTPURL]?:@"";
-
-    NSString * localPath = json[jLocalPath]?:@"";
-    if(localPath.length > 0){
-        self.localPath = [localPath stringByExpandingTildeInPath];
-    }
-    
+    self.localPath = json[jLocalPath]?:@"";
     NSString *thumbnailString = json[jTPThumbnailContent]?:@"";
     NSData *thumbnailData = nil;
     if (class_getInstanceMethod([NSData class], @selector(initWithBase64EncodedString:options:))) {
