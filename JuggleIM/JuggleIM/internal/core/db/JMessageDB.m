@@ -178,7 +178,7 @@ NSString *const jFlags = @"flags";
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(clientMsgNo), @(count)]];
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(clientMsgNo)]]; 
 }
 
 - (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
