@@ -1507,9 +1507,9 @@
 				A0CE9A272CD4BDC5008B405C /* JCallMediaRoom.h */,
 				A0CE9A282CD4BDC5008B405C /* JCallMediaRoom.m */,
 				A0CE9A2B2CD4BDF4008B405C /* JCallMediaUser.h */,
+				A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */,
 				A0CE9A2F2CD4BE19008B405C /* JCallMediaRoomConfig.h */,
 				A0CE9A302CD4BE19008B405C /* JCallMediaRoomConfig.m */,
-				A0CE9A2C2CD4BDF4008B405C /* JCallMediaUser.m */,
 				A0A3A5232CFF2703009AD7C3 /* JCallMediaDelegate.h */,
 			);
 			path = media;

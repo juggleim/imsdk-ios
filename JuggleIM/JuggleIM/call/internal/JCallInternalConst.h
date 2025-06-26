@@ -9,7 +9,8 @@
 #define JCallInternalConst_h
 
 typedef NS_ENUM(NSUInteger, JCallEngineType) {
-    JCallEngineTypeZego = 0
+    JCallEngineTypeZego = 0,
+    JCallEngineTypeAgora = 1
 };
 
 #endif /* JCallInternalConst_h */

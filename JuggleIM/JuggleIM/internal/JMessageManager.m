@@ -1980,6 +1980,24 @@
     [self.chatroomManager setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
     
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        //recall message
+        if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
+            JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
+            JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId extra:cmd.extra];
+            //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
+            if (recallMessage) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageDidRecall:)]) {
+                            [dlg messageDidRecall:recallMessage];
+                        }
+                    }];
+                });
+            }
+            return;
+        }
+        
         if (obj.flags & JMessageFlagIsCmd) {
             return;
         }
