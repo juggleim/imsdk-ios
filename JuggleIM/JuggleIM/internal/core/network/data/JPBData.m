@@ -1557,6 +1557,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.timestamp = body.timestamp;
             a.seqNo = body.msgSeqNo;
             a.clientUid = body.clientMsgId;
+            a.groupMemberCount = body.memberCount;
             if (body.hasModifiedMsg) {
                 JMessage *modifiedMsg = [self messageWithDownMsg:body.modifiedMsg];
                 a.contentType = modifiedMsg.contentType;

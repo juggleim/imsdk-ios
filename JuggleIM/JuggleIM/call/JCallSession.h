@@ -120,7 +120,7 @@
 /// - Parameter isEnable: YES 使用前置摄像头；NO 使用后置摄像头
 - (void)useFrontCamera:(BOOL)isEnable;
 
-#pragma mark - TODO:
+#pragma mark -
 /// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
 /// - Parameter userIdList: 呼叫的用户 id 列表
 - (void)inviteUsers:(NSArray <NSString *> *)userIdList;

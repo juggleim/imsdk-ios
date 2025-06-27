@@ -30,7 +30,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "seq_no INTEGER,"
                                         "message_index INTEGER,"
                                         "read_count INTEGER DEFAULT 0,"
-                                        "member_count INTEGER DEFAULT -1,"
+                                        "member_count INTEGER DEFAULT 0,"
                                         "is_deleted BOOLEAN DEFAULT 0,"
                                         "search_content TEXT,"
                                         "local_attribute TEXT,"
@@ -62,8 +62,8 @@ NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE id = ?";
-NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ? WHERE client_uid = ?";
+NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE id = ?";
+NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
 NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
@@ -172,23 +172,25 @@ NSString *const jFlags = @"flags";
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
-                         seqNo:(long long)seqNo {
+                         seqNo:(long long)seqNo
+              groupMemberCount:(int)count {
     if (messageId.length == 0) {
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(clientMsgNo)]];
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(clientMsgNo)]]; 
 }
 
 - (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
                                   messageId:(NSString *)messageId
                                   timestamp:(long long)timestamp
-                                      seqNo:(long long)seqNo {
+                                      seqNo:(long long)seqNo
+                           groupMemberCount:(int)count {
     if (messageId.length == 0) {
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSendWithClientUid
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), clientUid]];
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), clientUid]];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content
@@ -754,9 +756,9 @@ NSString *const jFlags = @"flags";
     }
     
     NSString * referMsgId;
-    if(message.referredMsg){
+    if (message.referredMsg) {
         referMsgId = message.referredMsg.messageId;
-        if(referMsgId == nil){
+        if (referMsgId == nil) {
             referMsgId = @"";
         }
     }

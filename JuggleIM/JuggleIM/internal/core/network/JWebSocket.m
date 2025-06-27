@@ -146,12 +146,20 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
-              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content))successBlock
+              success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData = [self encodeContentData:content];
-        NSData *d = [self.pbData sendMessageDataWithType:[[content class] contentType]
+        NSString *contentType;
+        if ([content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)content;
+            contentType = unknown.messageType;
+        } else {
+            contentType = [[content class] contentType];
+        }
+
+        NSData *d = [self.pbData sendMessageDataWithType:contentType
                                                  msgData:encodeData
                                                    flags:[[content class] flags]
                                                clientUid:clientUid
@@ -213,8 +221,16 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *contentData = [self encodeContentData:content];
+        NSString *contentType;
+        if ([content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)content;
+            contentType = unknown.messageType;
+        } else {
+            contentType = [[content class] contentType];
+        }
+
         NSData *d = [self.pbData updateMessageData:messageId
-                                           msgType:[[content class] contentType]
+                                           msgType:contentType
                                            msgData:contentData
                                       conversation:conversation
                                          timestamp:timestamp
@@ -1437,7 +1453,8 @@ inConversation:(JConversation *)conversation
                                        seqNo:ack.seqNo
                                    clientUid:ack.clientUid
                                  contentType:ack.contentType
-                                     content:ack.content];
+                                     content:ack.content
+                            groupMemberCount:ack.groupMemberCount];
         return;
     }
     if ([obj isKindOfClass:[JSendMessageObj class]]) {
@@ -1445,7 +1462,7 @@ inConversation:(JConversation *)conversation
         if (ack.code != 0) {
             sendMessageObj.errorBlock(ack.code, sendMessageObj.clientMsgNo);
         } else {
-            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo, ack.contentType, ack.content);
+            sendMessageObj.successBlock(sendMessageObj.clientMsgNo, ack.msgId, ack.timestamp, ack.seqNo, ack.contentType, ack.content, ack.groupMemberCount);
         }
     }
 }
@@ -1811,7 +1828,25 @@ inConversation:(JConversation *)conversation
 
 - (NSData *)encodeContentData:(JMessageContent *)content {
     NSData *encodeData;
-    if ([content isKindOfClass:[JMediaMessageContent class]]) {
+    if ([content isKindOfClass:[JImageMessage class]]) {
+        JImageMessage *image = (JImageMessage *)content;
+        NSString *local = image.localPath;
+        NSString *thumbnailLocal = image.thumbnailLocalPath;
+        image.localPath = nil;
+        image.thumbnailLocalPath = @"";
+        encodeData = [image encode];
+        image.localPath = local;
+        image.thumbnailLocalPath = thumbnailLocal;
+    } else if ([content isKindOfClass:[JVideoMessage class]]) {
+        JVideoMessage *video = (JVideoMessage *)content;
+        NSString *local = video.localPath;
+        NSString *snapshotLocal = video.snapshotLocalPath;
+        video.localPath = nil;
+        video.snapshotLocalPath = @"";
+        encodeData = [video encode];
+        video.localPath = local;
+        video.snapshotLocalPath = snapshotLocal;
+    } else if ([content isKindOfClass:[JMediaMessageContent class]]) {
         JMediaMessageContent *mediaContent = (JMediaMessageContent *)content;
         NSString *local = mediaContent.localPath;
         mediaContent.localPath = nil;

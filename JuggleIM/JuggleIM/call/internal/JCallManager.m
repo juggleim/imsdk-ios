@@ -154,9 +154,9 @@
     } else {
         BOOL isInvite = NO;
         for (JUserInfo *userInfo in targetUsers) {
-            [userDic setObject:userInfo forKey:userInfo.userId];
             if ([userInfo.userId isEqualToString:self.core.userId]) {
                 isInvite = YES;
+                break;
             }
         }
         

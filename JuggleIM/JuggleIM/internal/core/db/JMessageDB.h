@@ -26,12 +26,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
-                         seqNo:(long long)seqNo;
+                         seqNo:(long long)seqNo
+              groupMemberCount:(int)count;
 
 - (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
                                   messageId:(NSString *)messageId
                                   timestamp:(long long)timestamp
-                                      seqNo:(long long)seqNo;
+                                      seqNo:(long long)seqNo
+                           groupMemberCount:(int)count;
 
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(nonnull NSString *)type

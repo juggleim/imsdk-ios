@@ -998,7 +998,22 @@
                 BOOL isContain = NO;
                 for (JMessage *remoteMessage in messagesArray) {
                     if (localMessage.clientMsgNo == remoteMessage.clientMsgNo) {
-                        if ([localMessage.content isKindOfClass:[JMediaMessageContent class]]
+                        if ([[localMessage.content class] isEqual:[remoteMessage.content class]]) {
+                            remoteMessage.localAttribute = localMessage.localAttribute;
+                        }
+                        if ([localMessage.content isKindOfClass:[JImageMessage class]]
+                            && [remoteMessage.content isKindOfClass:[JImageMessage class]]) {
+                            JImageMessage *localImage = (JImageMessage *)localMessage.content;
+                            JImageMessage *remoteImage = (JImageMessage *)remoteMessage.content;
+                            remoteImage.thumbnailLocalPath = localImage.thumbnailLocalPath;
+                            remoteImage.localPath = localImage.localPath;
+                        } else if ([localMessage.content isKindOfClass:[JVideoMessage class]]
+                                   && [remoteMessage.content isKindOfClass:[JVideoMessage class]]) {
+                            JVideoMessage *localVideo = (JVideoMessage *)localMessage.content;
+                            JVideoMessage *remoteVideo = (JVideoMessage *)remoteMessage.content;
+                            remoteVideo.localPath = localVideo.localPath;
+                            remoteVideo.snapshotLocalPath = localVideo.snapshotLocalPath;
+                       } else if ([localMessage.content isKindOfClass:[JMediaMessageContent class]]
                             && [remoteMessage.content isKindOfClass:[JMediaMessageContent class]]) {
                             JMediaMessageContent *localContent = (JMediaMessageContent *)localMessage.content;
                             JMediaMessageContent *remoteContent = (JMediaMessageContent *)remoteMessage.content;
@@ -1789,7 +1804,12 @@
                                    success:^(long long timestamp) {
             JLogI(@"MSG-Update", @"success");
             [self updateSendSyncTime:timestamp];
-            m.contentType = [[content class] contentType];
+            if ([content isKindOfClass:[JUnknownMessage class]]) {
+                JUnknownMessage *unknown = (JUnknownMessage *)content;
+                m.contentType = unknown.messageType;
+            } else {
+                m.contentType = [[content class] contentType];
+            }
             m.content = content;
             [self.core.dbManager updateMessageContent:content
                                           contentType:m.contentType
@@ -1897,14 +1917,16 @@
                  seqNo:(long long)seqNo
              clientUid:(NSString *)clientUid
            contentType:(nullable NSString *)contentType
-               content:(nullable JMessageContent *)content {
+               content:(nullable JMessageContent *)content
+      groupMemberCount:(int)count {
     if (clientUid.length == 0) {
         return;
     }
     [self.core.dbManager updateMessageAfterSendWithClientUid:clientUid
                                                    messageId:messageId
                                                    timestamp:timestamp
-                                                       seqNo:seqNo];
+                                                       seqNo:seqNo
+                                            groupMemberCount:count];
     if (contentType && content) {
         [self.core.dbManager updateMessageContent:content
                                       contentType:contentType
@@ -1958,6 +1980,24 @@
     [self.chatroomManager setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
     
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        //recall message
+        if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
+            JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
+            JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId extra:cmd.extra];
+            //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
+            if (recallMessage) {
+                dispatch_async(self.core.delegateQueue, ^{
+                    [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                        if ([dlg respondsToSelector:@selector(messageDidRecall:)]) {
+                            [dlg messageDidRecall:recallMessage];
+                        }
+                    }];
+                });
+            }
+            return;
+        }
+        
         if (obj.flags & JMessageFlagIsCmd) {
             return;
         }
@@ -2125,16 +2165,23 @@
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
                               pushData:message.pushData
-                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType,  JMessageContent * _Nullable content) {
+                               success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
                                           messageId:msgId
                                           timestamp:timestamp
-                                              seqNo:seqNo];
+                                              seqNo:seqNo
+                                   groupMemberCount:groupMemberCount];
         message.messageId = msgId;
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        if (message.conversation.conversationType == JConversationTypeGroup) {
+            JGroupMessageReadInfo *info = [JGroupMessageReadInfo new];
+            info.readCount = 0;
+            info.memberCount = groupMemberCount;
+            message.groupReadInfo = info;
+        }
         
         if (contentType && content) {
             [self.core.dbManager updateMessageContent:content contentType:contentType withMessageId:msgId];
@@ -2195,8 +2242,13 @@
 }
 
 -(void)updateMessageWithContent:(JConcreteMessage *)message{
-    if(message.content != nil){
-        message.contentType = [[message.content class] contentType];
+    if (message.content != nil) {
+        if ([message.content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)message.content;
+            message.contentType = unknown.messageType;
+        } else {
+            message.contentType = [[message.content class] contentType];
+        }
     }
     if (message.referredMsg) {
         message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
@@ -2213,7 +2265,12 @@
     JConcreteMessage *message = [[JConcreteMessage alloc] init];
     message.content = content;
     message.conversation = conversation;
-    message.contentType = [[content class] contentType];
+    if ([content isKindOfClass:[JUnknownMessage class]]) {
+        JUnknownMessage *unknown = (JUnknownMessage *)content;
+        message.contentType = unknown.messageType;
+    } else {
+        message.contentType = [[content class] contentType];
+    }
     message.direction = direction;
     message.messageState = state;
     message.senderUserId = self.core.userId;

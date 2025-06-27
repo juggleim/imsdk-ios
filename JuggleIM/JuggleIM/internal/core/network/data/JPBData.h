@@ -96,6 +96,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *clientUid;
 @property (nonatomic, copy) NSString *contentType;
 @property (nonatomic, strong) JMessageContent *content;
+@property (nonatomic, assign) int groupMemberCount;
 @end
 
 @interface JPublishMsgBody : NSObject
