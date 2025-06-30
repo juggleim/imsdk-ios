@@ -301,6 +301,7 @@
     NSString *callId = [JUtility getUUID];
     JCallSessionImpl *callSession = [self createCallSessionImpl:callId
                                                     isMultiCall:isMulti];
+    callSession.callStatus = JCallStatusOutgoing;
     callSession.owner = JIM.shared.currentUserId;
     callSession.mediaType = mediaType;
     if (callSession.mediaType == JCallMediaTypeVideo) {
