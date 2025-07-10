@@ -23,7 +23,7 @@
     ZegoUser *zegoUser = [ZegoUser userWithUserID:user.userId];
     ZegoRoomConfig *zegoConfig = [[ZegoRoomConfig alloc] init];
     zegoConfig.isUserStatusNotify = config.isUserStatusNotify;
-    zegoConfig.token = config.zegoToken;
+    zegoConfig.token = config.token;
     [[ZegoExpressEngine sharedEngine] loginRoom:room.roomId
                                            user:zegoUser
                                          config:zegoConfig

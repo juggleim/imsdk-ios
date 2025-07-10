@@ -16,6 +16,8 @@
 - (void)initZegoEngineWith:(int)appId
                    appSign:(NSString *)appSign;
 
+- (void)initLiveKitEngine;
+
 - (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock;
 

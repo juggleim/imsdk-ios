@@ -60,7 +60,7 @@
     } else if (self.callSession.callStatus == JCallStatusOutgoing) {
         self.mainModel = self.callSession.currentCallMember;
         self.subUserModelList = [self.callSession.members mutableCopy];
-    } else if (self.callSession.callStatus == JCallStatusConnected) {
+    } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
         if ([self.callSession.inviterId isEqualToString:JIM.shared.currentUserId] || [self inviterHasHangup]) {
             self.mainModel = self.callSession.currentCallMember;
             self.subUserModelList = [self.callSession.members mutableCopy];
@@ -308,7 +308,7 @@
             [self.userCollectionView setCollectionViewLayout:userCollectionViewLayout animated:YES];
         }
         self.userCollectionView.hidden = NO;
-    } else if (self.callSession.callStatus == JCallStatusOutgoing || self.callSession.callStatus == JCallStatusConnected) {
+    } else if (self.callSession.callStatus == JCallStatusOutgoing || self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
         self.userCollectionView.frame = CGRectMake(0, (self.view.frame.size.height - CallButtonLength * 3) / 2,
                                                    self.view.frame.size.width, CallButtonLength * 3);
 
@@ -334,7 +334,7 @@
 //    }
 //    [self userCollectionView];
 //    [self updateAllSubUserLayout];
-//    [self resetLayout];
+    [self resetLayout];
 }
 
 - (void)usersDidInvite:(NSArray<NSString *> *)userIdList

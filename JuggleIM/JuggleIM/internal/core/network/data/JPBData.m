@@ -152,6 +152,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JQryMsgExtAck
 @end
 
+@implementation JRtcAuthAck
+@end
+
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
     self.index = body.index;
@@ -1357,6 +1360,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.roomId = callId;
     if (engineType == 0) {
         req.rtcChannel = RtcChannel_Zego;
+    } else if (engineType == 1) {
+        req.rtcChannel = RtcChannel_LivekitRtc;
     }
     req.rtcMediaType = (int32_t)mediaType;
     
@@ -2226,11 +2231,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeCallAuthAck;
-    JStringAck *a = [[JStringAck alloc] init];
+    JRtcAuthAck *a = [[JRtcAuthAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
-    ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
-    a.str = zegoAuth.token;
-    obj.stringAck = a;
+    if (rtcAuth.hasZegoAuth) {
+        ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
+        a.token = zegoAuth.token;
+    } else if (rtcAuth.hasLivekitRtcAuth) {
+        LivekitRtcAuth *liveKitAuth = rtcAuth.livekitRtcAuth;
+        a.token = liveKitAuth.token;
+        a.url = liveKitAuth.serviceURL;
+    }
+    obj.rtcAuthAck = a;
     return obj;
 }
 

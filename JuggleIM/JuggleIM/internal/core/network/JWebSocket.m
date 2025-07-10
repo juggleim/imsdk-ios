@@ -889,7 +889,7 @@ inConversation:(JConversation *)conversation
          mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray<NSString *> *)userIdList
         engineType:(NSUInteger)engineType
-           success:(nonnull void (^)(NSString *))successBlock
+           success:(nonnull void (^)(NSString *, NSString *))successBlock
              error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"call invite, callId is %@, isMultiCall is %d", callId, isMultiCall);
@@ -900,7 +900,7 @@ inConversation:(JConversation *)conversation
                                targetIdList:userIdList
                                  engineType:engineType
                                       index:self.cmdIndex++];
-        JStringObj *obj = [[JStringObj alloc] init];
+        JRtcAuthObj *obj = [[JRtcAuthObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -926,14 +926,14 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)callAccept:(NSString *)callId
-           success:(void (^)(NSString * _Nonnull))successBlock
+           success:(void (^)(NSString * _Nonnull token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"call accept, callId is %@", callId);
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData callAccept:callId
                                       index:self.cmdIndex++];
-        JStringObj *obj = [[JStringObj alloc] init];
+        JRtcAuthObj *obj = [[JRtcAuthObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -1325,7 +1325,7 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeCallAuthAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeCallAuthAck");
-            [self handleRtcInviteAck:obj.stringAck];
+            [self handleRtcInviteAck:obj.rtcAuthAck];
             break;
         case JPBRcvTypeQryCallRoomsAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomsAck");
@@ -1398,6 +1398,9 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JMessageReactionObj class]]) {
         JMessageReactionObj *s = (JMessageReactionObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JRtcAuthObj class]]) {
+        JRtcAuthObj *s = (JRtcAuthObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1731,14 +1734,14 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleRtcInviteAck:(JStringAck *)ack {
+- (void)handleRtcInviteAck:(JRtcAuthAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JStringObj class]]) {
-        JStringObj *inviteObj = (JStringObj *)obj;
+    if ([obj isKindOfClass:[JRtcAuthObj class]]) {
+        JRtcAuthObj *inviteObj = (JRtcAuthObj *)obj;
         if (ack.code != 0) {
             inviteObj.errorBlock(ack.code);
         } else {
-            inviteObj.successBlock(ack.str);
+            inviteObj.successBlock(ack.token, ack.url);
         }
     }
 }

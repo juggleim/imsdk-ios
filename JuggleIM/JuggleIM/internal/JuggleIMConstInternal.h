@@ -70,7 +70,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalLogNotExist = 22004,
     
     //批量设置聊天室属性失败
-    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001
+    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001,
+    
+    //加入 LiveKit 房间失败
+    JErrorCodeInternalJoinLiveKitFail = 25001
 };
 
 typedef NS_ENUM(NSUInteger, JMediaType) {

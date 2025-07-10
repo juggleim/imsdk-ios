@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A04266722E1BC03E007F4AB7 /* JLiveKitCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04266712E1BC03E007F4AB7 /* JLiveKitCall.framework */; };
 		A079E88A2CE4E98E00A1008F /* ZegoExpressEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */; };
 		A079E88B2CE4E98E00A1008F /* ZegoExpressEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A08AA1FB2B148B9C008B114C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA1FA2B148B9C008B114C /* AppDelegate.m */; };
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A04266712E1BC03E007F4AB7 /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZegoExpressEngine.xcframework; path = ../JZegoCall/framework/ZegoExpressEngine.xcframework; sourceTree = "<group>"; };
 		A08AA1F62B148B9C008B114C /* JetIMDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JetIMDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F92B148B9C008B114C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A04266722E1BC03E007F4AB7 /* JLiveKitCall.framework in Frameworks */,
 				A079E88A2CE4E98E00A1008F /* ZegoExpressEngine.xcframework in Frameworks */,
 				A0CE9A342CD4C103008B405C /* JZegoCall.framework in Frameworks */,
 				A0F3DEDA2C4A6BAD006F2D58 /* JuggleIM.framework in Frameworks */,
@@ -105,6 +108,7 @@
 		A08AA2182B148BD9008B114C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A04266712E1BC03E007F4AB7 /* JLiveKitCall.framework */,
 				A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */,
 				A0CE9A332CD4C103008B405C /* JZegoCall.framework */,
 				A09727622CB6EC0400E08BC4 /* JuggleCall.framework */,

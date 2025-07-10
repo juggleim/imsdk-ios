@@ -51,3 +51,6 @@
 
 @implementation JMessageReactionObj
 @end
+
+@implementation JRtcAuthObj
+@end

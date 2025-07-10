@@ -381,7 +381,7 @@
                            CallButtonLength);
             [self layoutTextUnderImageButton:self.acceptButton];
             self.acceptButton.hidden = NO;
-        } else if (self.callSession.callStatus == JCallStatusConnected) {
+        } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
             self.hangupButton.frame =
                 CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                            self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
@@ -497,7 +497,7 @@
                            CallButtonLength);
             [self layoutTextUnderImageButton:self.acceptButton];
             self.acceptButton.hidden = NO;
-        } else if (self.callSession.callStatus == JCallStatusConnected) {
+        } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
             self.hangupButton.frame =
                 CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                            self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,

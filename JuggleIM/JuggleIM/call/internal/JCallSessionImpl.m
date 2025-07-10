@@ -66,14 +66,14 @@
     if (userId.length == 0) {
         return;
     }
+    if (view) {
+        [self.viewDic setObject:view forKey:userId];
+    } else {
+        [self.viewDic removeObjectForKey:userId];
+    }
     if ([userId isEqualToString:JIM.shared.currentUserId]) {
         [[JCallMediaManager shared] startPreview:view];
     } else {
-        if (view) {
-            [self.viewDic setObject:view forKey:userId];
-        } else {
-            [self.viewDic removeObjectForKey:userId];
-        }
         if (self.callStatus == JCallStatusConnected) {
             [[JCallMediaManager shared] setVideoView:view roomId:self.callId userId:userId];
         }
@@ -82,6 +82,11 @@
 
 - (void)startPreview:(UIView *)view {
     [[JCallMediaManager shared] startPreview:view];
+    if (view) {
+        [self.viewDic setObject:view forKey:JIM.shared.currentUserId];
+    } else {
+        [self.viewDic removeObjectForKey:JIM.shared.currentUserId];
+    }
 }
 
 - (void)muteMicrophone:(BOOL)isMute {
@@ -295,9 +300,10 @@
                           mediaType:self.mediaType
                        targetIdList:userIdList
                          engineType:(NSUInteger)self.engineType
-                            success:^(NSString *zegoToken){
+                            success:^(NSString *token, NSString *url){
         JLogI(@"Call-Signal", @"send invite success");
-        self.zegoToken = zegoToken;
+        self.token = token;
+        self.url = url;
         [self event:JCallEventInviteDone userInfo:@{@"userIdList":userIdList}];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
@@ -316,9 +322,10 @@
 
 - (void)signalAccept {
     [self.core.webSocket callAccept:self.callId
-                            success:^(NSString * _Nonnull zegoToken) {
+                            success:^(NSString * _Nonnull token, NSString *url) {
         JLogI(@"Call-Signal", @"send accept success");
-        self.zegoToken = zegoToken;
+        self.token = token;
+        self.url = url;
         [self event:JCallEventAcceptDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send accept error, code is %ld", code);
@@ -407,6 +414,10 @@
 #pragma mark - JCallMediaDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     return self.viewDic[userId];
+}
+
+- (UIView *)viewForSelf {
+    return self.viewDic[JIM.shared.currentUserId];
 }
 
 - (void)usersDidJoin:(NSArray<NSString *> *)userIdList {

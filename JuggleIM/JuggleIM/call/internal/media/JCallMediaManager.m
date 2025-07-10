@@ -40,6 +40,12 @@ static JCallMediaManager *_instance;
     [self.engine setDelegate:self];
 }
 
+- (void)initLiveKitEngine {
+    Class liveKitEngineClass = NSClassFromString(@"JCallMediaLiveKitEngine");
+    self.engine = [[liveKitEngineClass alloc] init];
+    [self.engine setDelegate:self];
+}
+
 - (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock {
     JCallMediaRoom *room = [[JCallMediaRoom alloc] init];
@@ -48,7 +54,8 @@ static JCallMediaManager *_instance;
     user.userId = JIM.shared.currentUserId;
     JCallMediaRoomConfig *config = [[JCallMediaRoomConfig alloc] init];
     config.isUserStatusNotify = YES;
-    config.zegoToken = callSession.zegoToken;
+    config.token = callSession.token;
+    config.url = callSession.url;
     
     [self.engine joinRoom:room
                      user:user
@@ -104,6 +111,13 @@ static JCallMediaManager *_instance;
 - (UIView *)viewForUserId:(NSString *)userId {
     if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
         return [self.delegate viewForUserId:userId];
+    }
+    return nil;
+}
+
+- (UIView *)viewForSelf {
+    if ([self.delegate respondsToSelector:@selector(viewForSelf)]) {
+        return [self.delegate viewForSelf];
     }
     return nil;
 }

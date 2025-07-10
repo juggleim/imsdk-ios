@@ -34,6 +34,10 @@ static CallCenter *_instance;
                                        appSign:appSign];
 }
 
+- (void)initLiveKitEngine {
+    [JIM.shared.callManager initLiveKitEngine];
+}
+
 - (void)startSingleCall:(id<JCallSession>)callSession {
     SingleCallViewController *vc = [[SingleCallViewController alloc] initWithOutgoingCall:callSession];
     [self presentCallViewController:vc];

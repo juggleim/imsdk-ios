@@ -346,7 +346,7 @@ inConversation:(JConversation *)conversation
          mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
-           success:(void (^)(NSString * zegoToken))successBlock
+           success:(void (^)(NSString * token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callHangup:(NSString *)callId
@@ -354,7 +354,7 @@ inConversation:(JConversation *)conversation
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callAccept:(NSString *)callId
-           success:(void (^)(NSString * zegoToken))successBlock
+           success:(void (^)(NSString * token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callConnected:(NSString *)callId

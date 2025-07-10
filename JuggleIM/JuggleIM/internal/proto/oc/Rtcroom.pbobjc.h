@@ -30,6 +30,8 @@
 
 CF_EXTERN_C_BEGIN
 
+@class JuggleRtcAuth;
+@class LivekitRtcAuth;
 @class MemberState;
 @class RtcMember;
 @class RtcMemberRoom;
@@ -48,6 +50,10 @@ typedef GPB_ENUM(RtcChannel) {
    **/
   RtcChannel_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
   RtcChannel_Zego = 0,
+  RtcChannel_LivekitRtc = 1,
+
+  /** 自建音视频，保留 */
+  RtcChannel_JuggleRtc = 11,
 };
 
 GPBEnumDescriptor *RtcChannel_EnumDescriptor(void);
@@ -657,6 +663,8 @@ void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t valu
 
 typedef GPB_ENUM(RtcAuth_FieldNumber) {
   RtcAuth_FieldNumber_ZegoAuth = 1,
+  RtcAuth_FieldNumber_LivekitRtcAuth = 2,
+  RtcAuth_FieldNumber_JuggleRtcAuth = 11,
 };
 
 GPB_FINAL @interface RtcAuth : GPBMessage
@@ -664,6 +672,14 @@ GPB_FINAL @interface RtcAuth : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) ZegoAuth *zegoAuth;
 /** Test to see if @c zegoAuth has been set. */
 @property(nonatomic, readwrite) BOOL hasZegoAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) LivekitRtcAuth *livekitRtcAuth;
+/** Test to see if @c livekitRtcAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasLivekitRtcAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) JuggleRtcAuth *juggleRtcAuth;
+/** Test to see if @c juggleRtcAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasJuggleRtcAuth;
 
 @end
 
@@ -727,6 +743,33 @@ typedef GPB_ENUM(RtcAnswer_FieldNumber) {
 GPB_FINAL @interface RtcAnswer : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@end
+
+#pragma mark - JuggleRtcAuth
+
+typedef GPB_ENUM(JuggleRtcAuth_FieldNumber) {
+  JuggleRtcAuth_FieldNumber_Token = 1,
+};
+
+GPB_FINAL @interface JuggleRtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@end
+
+#pragma mark - LivekitRtcAuth
+
+typedef GPB_ENUM(LivekitRtcAuth_FieldNumber) {
+  LivekitRtcAuth_FieldNumber_Token = 1,
+  LivekitRtcAuth_FieldNumber_ServiceURL = 2,
+};
+
+GPB_FINAL @interface LivekitRtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceURL;
 
 @end
 

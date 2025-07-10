@@ -18,7 +18,8 @@
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, assign) JCallEngineType engineType;
 @property (nonatomic, weak) id<JCallSessionLifeCycleDelegate> sessionLifeCycleDelegate;
-@property (nonatomic, copy) NSString *zegoToken;
+@property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *url;
 
 - (void)error:(JCallErrorCode)code;
 - (void)notifyReceiveCall;

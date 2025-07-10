@@ -27,6 +27,11 @@
     self.engineType = JCallEngineTypeZego;
 }
 
+- (void)initLiveKitEngine {
+    [JCallMediaManager.shared initLiveKitEngine];
+    self.engineType = JCallEngineTypeLiveKit;
+}
+
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!receiveDelegate) {

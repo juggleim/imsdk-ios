@@ -15,6 +15,8 @@
 - (void)initZegoEngineWith:(int)appId
                    appSign:(NSString *)appSign;
 
+- (void)initLiveKitEngine;
+
 - (void)startSingleCall:(id<JCallSession>)callSession;
 
 - (void)startMultiCall:(id<JCallSession>)callSession

@@ -191,6 +191,11 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSArray <JMessageReaction *> *reactionList;
 @end
 
+@interface JRtcAuthAck : JQryAck
+@property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *url;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -212,6 +217,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JStringAck *stringAck;
 @property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @property (nonatomic, strong) JQryMsgExtAck *qryMsgExtAck;
+@property (nonatomic, strong) JRtcAuthAck *rtcAuthAck;
 @end
 
 @interface JPBData : NSObject

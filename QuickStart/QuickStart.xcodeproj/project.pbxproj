@@ -28,6 +28,7 @@
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
 		A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */; };
 		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
+		A042667C2E1CF987007F4AB7 /* JLiveKitCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A042667B2E1CF987007F4AB7 /* JLiveKitCall.framework */; };
 		A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */; };
 		A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */; };
 		A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7372D2691C900710683 /* SettingsPushViewController.swift */; };
@@ -379,6 +380,9 @@
 		A02FA3BD2D19A175002A4E0B /* BaseSettingTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSettingTableViewCell.h; sourceTree = "<group>"; };
 		A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSettingTableViewCell.m; sourceTree = "<group>"; };
 		A02FA3C02D19A5F6002A4E0B /* OCConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OCConst.h; sourceTree = "<group>"; };
+		A042667B2E1CF987007F4AB7 /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A042667D2E1CF9FF007F4AB7 /* LiveKitWebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LiveKitWebRTC.xcframework; path = ../JLiveKitCall/framework/LiveKitWebRTC.xcframework; sourceTree = "<group>"; };
+		A042667F2E1CFB1D007F4AB7 /* LiveKitClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LiveKitClient.framework; path = ../JLiveKitCall/framework/LiveKitClient.framework; sourceTree = "<group>"; };
 		A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLanguageViewController.swift; sourceTree = "<group>"; };
 		A047B7342D2685E000710683 /* BaseSelectTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSelectTableViewCell.h; sourceTree = "<group>"; };
 		A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSelectTableViewCell.m; sourceTree = "<group>"; };
@@ -716,6 +720,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A042667C2E1CF987007F4AB7 /* JLiveKitCall.framework in Frameworks */,
 				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
@@ -1368,6 +1373,9 @@
 		A07F3CB02BF74F3E0087920B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A042667F2E1CFB1D007F4AB7 /* LiveKitClient.framework */,
+				A042667D2E1CF9FF007F4AB7 /* LiveKitWebRTC.xcframework */,
+				A042667B2E1CF987007F4AB7 /* JLiveKitCall.framework */,
 				A0A3A53A2D0C265C009AD7C3 /* PushKit.framework */,
 				A05661C22CDA0BF70070EBC2 /* ZegoExpressEngine.xcframework */,
 				A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */,

@@ -35,6 +35,8 @@
 // Forward declarations of Objective-C classes that we can use as
 // static values in struct initializers.
 // We don't use [Foo class] because it is not a static value.
+GPBObjCClassDeclaration(JuggleRtcAuth);
+GPBObjCClassDeclaration(LivekitRtcAuth);
 GPBObjCClassDeclaration(MemberState);
 GPBObjCClassDeclaration(RtcAnswer);
 GPBObjCClassDeclaration(RtcAuth);
@@ -72,11 +74,13 @@ GPBEnumDescriptor *RtcChannel_EnumDescriptor(void) {
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
-        "Zego\000";
+        "Zego\000LivekitRtc\000JuggleRtc\000";
     static const int32_t values[] = {
         RtcChannel_Zego,
+        RtcChannel_LivekitRtc,
+        RtcChannel_JuggleRtc,
     };
-    static const char *extraTextFormatInfo = "\001\000\004\000";
+    static const char *extraTextFormatInfo = "\003\000\004\000\001\n\000\002\t\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RtcChannel)
                                        valueNames:valueNames
@@ -96,6 +100,8 @@ GPBEnumDescriptor *RtcChannel_EnumDescriptor(void) {
 BOOL RtcChannel_IsValidValue(int32_t value__) {
   switch (value__) {
     case RtcChannel_Zego:
+    case RtcChannel_LivekitRtc:
+    case RtcChannel_JuggleRtc:
       return YES;
     default:
       return NO;
@@ -1391,10 +1397,14 @@ void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t valu
 @implementation RtcAuth
 
 @dynamic hasZegoAuth, zegoAuth;
+@dynamic hasLivekitRtcAuth, livekitRtcAuth;
+@dynamic hasJuggleRtcAuth, juggleRtcAuth;
 
 typedef struct RtcAuth__storage_ {
   uint32_t _has_storage_[1];
   ZegoAuth *zegoAuth;
+  LivekitRtcAuth *livekitRtcAuth;
+  JuggleRtcAuth *juggleRtcAuth;
 } RtcAuth__storage_;
 
 // This method is threadsafe because it is initially called
@@ -1413,6 +1423,24 @@ typedef struct RtcAuth__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "livekitRtcAuth",
+        .dataTypeSpecific.clazz = GPBObjCClass(LivekitRtcAuth),
+        .number = RtcAuth_FieldNumber_LivekitRtcAuth,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(RtcAuth__storage_, livekitRtcAuth),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "juggleRtcAuth",
+        .dataTypeSpecific.clazz = GPBObjCClass(JuggleRtcAuth),
+        .number = RtcAuth_FieldNumber_JuggleRtcAuth,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RtcAuth__storage_, juggleRtcAuth),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(RtcAuth)
@@ -1424,7 +1452,7 @@ typedef struct RtcAuth__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\001\010\000";
+        "\003\001\010\000\002\016\000\013\r\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1618,6 +1646,114 @@ typedef struct RtcAnswer__storage_ {
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\001\001\006\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - JuggleRtcAuth
+
+@implementation JuggleRtcAuth
+
+@dynamic token;
+
+typedef struct JuggleRtcAuth__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *token;
+} JuggleRtcAuth__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "token",
+        .dataTypeSpecific.clazz = Nil,
+        .number = JuggleRtcAuth_FieldNumber_Token,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(JuggleRtcAuth__storage_, token),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(JuggleRtcAuth)
+                                   messageName:@"JuggleRtcAuth"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(JuggleRtcAuth__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - LivekitRtcAuth
+
+@implementation LivekitRtcAuth
+
+@dynamic token;
+@dynamic serviceURL;
+
+typedef struct LivekitRtcAuth__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *token;
+  NSString *serviceURL;
+} LivekitRtcAuth__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "token",
+        .dataTypeSpecific.clazz = Nil,
+        .number = LivekitRtcAuth_FieldNumber_Token,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(LivekitRtcAuth__storage_, token),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "serviceURL",
+        .dataTypeSpecific.clazz = Nil,
+        .number = LivekitRtcAuth_FieldNumber_ServiceURL,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(LivekitRtcAuth__storage_, serviceURL),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(LivekitRtcAuth)
+                                   messageName:@"LivekitRtcAuth"
+                               fileDescription:&RtcroomRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(LivekitRtcAuth__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\002\010!!\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

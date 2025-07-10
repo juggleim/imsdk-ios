@@ -10,7 +10,7 @@
 
 typedef NS_ENUM(NSUInteger, JCallEngineType) {
     JCallEngineTypeZego = 0,
-    JCallEngineTypeAgora = 1
+    JCallEngineTypeLiveKit = 1
 };
 
 #endif /* JCallInternalConst_h */

@@ -104,7 +104,10 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeDownloadCanceled = 23009,
     
     //批量设置聊天室属性失败
-    JErrorCodeChatroomBatchSetAttributeFail = 24001
+    JErrorCodeChatroomBatchSetAttributeFail = 24001,
+    
+    //加入 LiveKit 房间失败
+    JErrorCodeJoinLiveKitFail = 25001
 };
 
 /*!
