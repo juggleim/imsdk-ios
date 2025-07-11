@@ -134,4 +134,10 @@ static JCallMediaManager *_instance;
     }
 }
 
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+        [self.delegate soundLevelDidUpdate:soundLevels];
+    }
+}
+
 @end

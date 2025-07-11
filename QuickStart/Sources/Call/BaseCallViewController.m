@@ -581,6 +581,15 @@
     
 }
 
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    NSLog(@"soundLevelDidUpdate start");
+    [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+        NSLog(@"userId is %@, level is %@", key, obj);
+    }];
+    
+    NSLog(@"soundLevelDidUpdate end");
+}
+
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
 - (void)errorDidOccur:(JCallErrorCode)errorCode {

@@ -38,6 +38,8 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventParticipantEnableCamera] = @"participant enable camera",
     [JCallEventParticipantEnableMic] = @"participant enable mic",
     
+    [JCallEventSoundLevelUpdate] = @"sound level update",
+    
     [30] = @"unknown"
 };
 

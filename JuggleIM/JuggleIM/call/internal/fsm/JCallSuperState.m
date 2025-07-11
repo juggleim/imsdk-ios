@@ -167,6 +167,13 @@
         case JCallEventParticipantEnableMic:
             break;
             
+        case JCallEventSoundLevelUpdate:
+        {
+            NSDictionary *soundLevelDic = userInfo;
+            [self.callSessionImpl soundLevelUpdate:soundLevelDic];
+            break;
+        }
+            
         default:
             break;
     }

@@ -6,6 +6,7 @@
 //
 
 #import "JCallMediaZegoEngine.h"
+#import <JuggleIM/JIM.h>
 
 #define jSeperator @"+++"
 
@@ -45,7 +46,8 @@
 
 - (void)startPreview:(UIView *)view {
     if (view) {
-        [[ZegoExpressEngine sharedEngine] startPreview:[ZegoCanvas canvasWithView:view]];
+        ZegoCanvas *canvas = [self createCanvasWithView:view];
+        [[ZegoExpressEngine sharedEngine] startPreview:canvas];
     }
 }
 
@@ -70,7 +72,7 @@
     NSString *streamId = [self streamIdWithRoomId:roomId
                                            userId:userId];
     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId
-                                                  canvas:[ZegoCanvas canvasWithView:view]];
+                                                  canvas:[self createCanvasWithView:view]];
 }
 
 - (void)muteMicrophone:(BOOL)isMute {
@@ -98,7 +100,8 @@
             if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
                 view = [self.delegate viewForUserId:userId];
             }
-            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[ZegoCanvas canvasWithView:view]];
+            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[self createCanvasWithView:view]];
+            [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
         }
     }
     if ([sHandler respondsToSelector:@selector(onRoomStreamUpdate:streamList:extendedData:roomID:)]) {
@@ -157,12 +160,26 @@
 }
 
 - (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
+    NSString *userId = JIM.shared.currentUserId;
+    if (userId.length > 0) {
+        if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+            [self.delegate soundLevelDidUpdate:@{userId: soundLevel}];
+        }
+    }
     if ([sHandler respondsToSelector:@selector(onCapturedSoundLevelUpdate:)]) {
         [sHandler onCapturedSoundLevelUpdate:soundLevel];
     }
 }
 
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull streamId, NSNumber * _Nonnull soundLevel, BOOL * _Nonnull stop) {
+            NSString *userId = [self userIdWithStreamId:streamId];
+            [dic setObject:soundLevel forKey:userId];
+        }];
+        [self.delegate soundLevelDidUpdate:dic];
+    }
     if ([sHandler respondsToSelector:@selector(onRemoteSoundLevelUpdate:)]) {
         [sHandler onRemoteSoundLevelUpdate:soundLevels];
     }
@@ -246,6 +263,12 @@
         userId = array[length-1];
     }
     return userId;
+}
+
+- (ZegoCanvas *)createCanvasWithView:(UIView *)view {
+    ZegoCanvas *canvas = [ZegoCanvas canvasWithView:view];
+    canvas.viewMode = ZegoViewModeAspectFill;
+    return canvas;
 }
 
 static id<ZegoEventHandler> sHandler;

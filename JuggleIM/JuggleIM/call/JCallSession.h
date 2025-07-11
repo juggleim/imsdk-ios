@@ -49,6 +49,10 @@
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId;
 
+/// 用户声音大小变化回调
+/// - Parameter soundLevels: 由 userId 为 key，声音大小为 value 的字典
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
 - (void)errorDidOccur:(JCallErrorCode)errorCode;

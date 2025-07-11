@@ -35,6 +35,7 @@
 - (void)membersConnected:(NSArray <NSString *> *)userIdList;
 - (void)cameraEnable:(BOOL)enable
               userId:(NSString *)userId;
+- (void)soundLevelUpdate:(NSDictionary<NSString *, NSNumber *> *)soundLevels;
 
 #pragma mark - signal
 - (void)signalInvite;

@@ -285,6 +285,16 @@
     });
 }
 
+- (void)soundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+                [obj soundLevelDidUpdate:soundLevels];
+            }
+        }];
+    });
+}
+
 #pragma mark - signal
 - (void)signalInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
@@ -426,6 +436,10 @@
 
 - (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
     [self event:JCallEventParticipantEnableCamera userInfo:@{@"enable":@(enable), @"userId":userId}];
+}
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    [self event:JCallEventSoundLevelUpdate userInfo:soundLevels];
 }
 
 #pragma mark - private

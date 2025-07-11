@@ -25,6 +25,8 @@
 //暂不处理
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
 
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
 @end
 
 @protocol JCallMediaEngineProtocol <NSObject>

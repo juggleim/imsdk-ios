@@ -46,6 +46,8 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventParticipantEnableCamera,
     JCallEventParticipantEnableMic,
     
+    JCallEventSoundLevelUpdate,
+    
     /// Error
     
 };

@@ -19,6 +19,8 @@
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;
 
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
 @end
 
 #endif /* JCallMediaDelegate_h */

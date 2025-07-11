@@ -199,6 +199,16 @@
     }
 }
 
+- (void)room:(Room *)room didUpdateSpeakingParticipants:(NSArray<Participant *> *)participants {
+    if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        for (Participant *participant in participants) {
+            [dic setObject:@(participant.audioLevel) forKey:participant.identity.stringValue];
+        }
+        [self.delegate soundLevelDidUpdate:[dic copy]];
+    }
+}
+
 #pragma mark -
 - (Room *)room {
     if (!_room) {
