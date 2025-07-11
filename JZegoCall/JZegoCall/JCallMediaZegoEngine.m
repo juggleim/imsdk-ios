@@ -210,6 +210,12 @@
     }
 }
 
+- (void)onRoomTokenWillExpire:(int)remainTimeInSecond roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomTokenWillExpire:roomID:)]) {
+        [sHandler onRoomTokenWillExpire:remainTimeInSecond roomID:roomID];
+    }
+}
+
 #pragma mark -
 - (void)createEngineWith:(NSNumber *)appId appSign:(NSString *)appSign {
     [ZegoExpressEngine destroyEngine:nil];
