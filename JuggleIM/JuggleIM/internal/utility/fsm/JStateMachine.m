@@ -28,7 +28,9 @@
          name:(NSString *)eventName
      userInfo:(NSDictionary *)userInfo {
     dispatch_async(self.fsmQueue, ^{
-        JLogI(@"FSM-Sm", @"state %@, event %@", self.currentState.name, eventName);
+        if (![eventName isEqualToString:@"sound level update"]) {
+            JLogI(@"FSM-Sm", @"state %@, event %@", self.currentState.name, eventName);
+        }
         JState *state = self.currentState;
         while (state) {
             if ([state event:event userInfo:userInfo]) {
