@@ -22,7 +22,7 @@
     id actionId = json[jAction];
     if ([actionId isKindOfClass:[NSNumber class]]) {
         int action = [actionId intValue];
-        self.isTop = action == 0 ? YES : NO;
+        self.isTop = action == 0;
     }
     self.messageId = json[jMessageId];
 }

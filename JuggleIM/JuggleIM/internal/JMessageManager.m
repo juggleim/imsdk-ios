@@ -1403,6 +1403,10 @@
         [weakSelf updateSendSyncTime:timestamp];
         JMessage *message = [weakSelf.core.dbManager getMessageWithMessageId:messageId];
         JUserInfo *user = [weakSelf.userInfoManager getUserInfo:weakSelf.core.userId];
+        if (!user) {
+            user = [JUserInfo new];
+            user.userId = weakSelf.core.userId;
+        }
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock();
