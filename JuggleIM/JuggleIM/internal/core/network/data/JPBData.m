@@ -2426,6 +2426,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
     long long timestamp = topMsg.createdTime;
     JGetTopMsgAck *ack = [[JGetTopMsgAck alloc] init];
     [ack encodeWithQueryAckMsgBody:body];
+    if (!topMsg.hasMsg) {
+        ack.code = JErrorCodeInternalMessageNotExist;
+        obj.getTopMsgAck = ack;
+        return obj;
+    }
     ack.message = concreteMessage;
     ack.userInfo = userInfo;
     ack.createdTime = timestamp;
