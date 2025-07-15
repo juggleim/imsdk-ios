@@ -36,6 +36,7 @@
 #import "JMsgExSetMessage.h"
 #import "JTagAddConvMessage.h"
 #import "JTagDelConvMessage.h"
+#import "JTopMsgMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -1379,6 +1380,83 @@
     }];
 }
 
+- (void)setTop:(BOOL)isTop
+     messageId:(NSString *)messageId
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode))errorBlock {
+    if (messageId.length == 0 || conversation.conversationId.length == 0) {
+        JLogE(@"MSG-SetTop", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket setMessageTop:isTop
+                             messageId:messageId
+                          conversation:conversation
+                               success:^(long long timestamp) {
+        JLogI(@"MSG-SetTop", @"success");
+        [weakSelf updateSendSyncTime:timestamp];
+        JMessage *message = [weakSelf.core.dbManager getMessageWithMessageId:messageId];
+        JUserInfo *user = [weakSelf.userInfoManager getUserInfo:weakSelf.core.userId];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(messageDidSetTop:message:user:)]) {
+                    [obj messageDidSetTop:isTop message:message user:user];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-SetTop", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (conversation.conversationId.length == 0) {
+        JLogE(@"MSG-GetTop", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket getTopMessage:conversation
+                               success:^(JConcreteMessage * _Nonnull message, JUserInfo * _Nonnull userInfo, long long timestamp) {
+        JLogI(@"MSG-GetTop", @"success");
+        [weakSelf insertRemoteMessages:@[message]];
+        [weakSelf.userInfoManager insertUserInfoList:@[userInfo]];
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(message, userInfo, timestamp);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetTop", @"error code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+    
+}
+
 - (void)downloadMediaMessage:(NSString *)messageId
                     progress:(void (^)(JMessage *, int))progressBlock
                      success:(void (^)(JMessage *))successBlock
@@ -1518,7 +1596,7 @@
             if (successBlock) {
                 successBlock();
             }
-            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            JUserInfo *currentUser = [weakSelf.userInfoManager getUserInfo:weakSelf.core.userId];
             if (!currentUser) {
                 currentUser = [[JUserInfo alloc] init];
                 currentUser.userId = weakSelf.core.userId;
@@ -1625,7 +1703,7 @@
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
             item.reactionId = reactionId;
-            JUserInfo *currentUser = [JIM.shared.userInfoManager getUserInfo:weakSelf.core.userId];
+            JUserInfo *currentUser = [weakSelf.userInfoManager getUserInfo:weakSelf.core.userId];
             if (!currentUser) {
                 currentUser = [[JUserInfo alloc] init];
                 currentUser.userId = weakSelf.core.userId;
@@ -2073,6 +2151,7 @@
     [self registerContentType:[JMsgExSetMessage class]];
     [self registerContentType:[JTagAddConvMessage class]];
     [self registerContentType:[JTagDelConvMessage class]];
+    [self registerContentType:[JTopMsgMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2397,6 +2476,33 @@
     [self notifyMessageRemoved:message.conversation removedMessages:messageList];
 }
 
+- (void)handleTopMsgMessage:(JConcreteMessage *)message {
+    JTopMsgMessage *topMsg = (JTopMsgMessage *)message.content;
+    //延时操作有可能导致乱序，但是针对这个业务，回调延迟也不会造成太大影响
+    [self getMessagesByMessageIds:@[topMsg.messageId]
+                   inConversation:message.conversation
+                          success:^(NSArray<JMessage *> *messages) {
+        if (messages.count > 0) {
+            JMessage *m = messages[0];
+            JUserInfo *userInfo = [self.userInfoManager getUserInfo:message.senderUserId];
+            if (!userInfo) {
+                userInfo = [[JUserInfo alloc] init];
+                userInfo.userId = message.senderUserId;
+            }
+            dispatch_async(self.core.delegateQueue, ^{
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(messageDidSetTop:message:user:)]) {
+                        [obj messageDidSetTop:topMsg.isTop
+                                      message:m
+                                         user:userInfo];
+                    }
+                }];
+            });
+        }
+    } error:^(JErrorCode errorCode) {
+    }];
+}
+
 - (void)handleClearHistoryMessageCmdMessage:(JConcreteMessage *)message {
     JCleanMsgMessage * content = (JCleanMsgMessage *)message.content;
     
@@ -2616,6 +2722,12 @@
             if ([self.sendReceiveDelegate respondsToSelector:@selector(conversationsDidUpdate:)]) {
                 [self.sendReceiveDelegate conversationsDidUpdate:obj];
             }
+            return;
+        }
+        
+        //top message
+        if ([obj.contentType isEqualToString:[JTopMsgMessage contentType]]) {
+            [self handleTopMsgMessage:obj];
             return;
         }
         

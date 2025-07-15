@@ -3485,6 +3485,85 @@ int32_t OnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message);
  **/
 void SetOnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message, int32_t value);
 
+#pragma mark - TopMsgReq
+
+typedef GPB_ENUM(TopMsgReq_FieldNumber) {
+  TopMsgReq_FieldNumber_TargetId = 1,
+  TopMsgReq_FieldNumber_ChannelType = 2,
+  TopMsgReq_FieldNumber_MsgId = 3,
+};
+
+GPB_FINAL @interface TopMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@end
+
+/**
+ * Fetches the raw value of a @c TopMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t TopMsgReq_ChannelType_RawValue(TopMsgReq *message);
+/**
+ * Sets the raw value of an @c TopMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetTopMsgReq_ChannelType_RawValue(TopMsgReq *message, int32_t value);
+
+#pragma mark - GetTopMsgReq
+
+typedef GPB_ENUM(GetTopMsgReq_FieldNumber) {
+  GetTopMsgReq_FieldNumber_TargetId = 1,
+  GetTopMsgReq_FieldNumber_ChannelType = 2,
+};
+
+GPB_FINAL @interface GetTopMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c GetTopMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t GetTopMsgReq_ChannelType_RawValue(GetTopMsgReq *message);
+/**
+ * Sets the raw value of an @c GetTopMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetGetTopMsgReq_ChannelType_RawValue(GetTopMsgReq *message, int32_t value);
+
+#pragma mark - TopMsg
+
+typedef GPB_ENUM(TopMsg_FieldNumber) {
+  TopMsg_FieldNumber_Msg = 1,
+  TopMsg_FieldNumber_Operator_p = 2,
+  TopMsg_FieldNumber_CreatedTime = 3,
+};
+
+GPB_FINAL @interface TopMsg : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *operator_p;
+/** Test to see if @c operator_p has been set. */
+@property(nonatomic, readwrite) BOOL hasOperator_p;
+
+@property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
 NS_ASSUME_NONNULL_END
 
 CF_EXTERN_C_END

@@ -56,7 +56,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeQryCallRoomsAck,
     JPBRcvTypeQryCallRoomAck,
     JPBRcvTypeGetUserInfoAck,
-    JPBRcvTypeQryMsgExtAck
+    JPBRcvTypeQryMsgExtAck,
+    JPBRcvTypeGetTopMsgAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -196,6 +197,12 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *url;
 @end
 
+@interface JGetTopMsgAck : JQryAck
+@property (nonatomic, strong) JConcreteMessage *message;
+@property (nonatomic, strong) JUserInfo *userInfo;
+@property (nonatomic, assign) long long createdTime;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
@@ -218,6 +225,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @property (nonatomic, strong) JQryMsgExtAck *qryMsgExtAck;
 @property (nonatomic, strong) JRtcAuthAck *rtcAuthAck;
+@property (nonatomic, strong) JGetTopMsgAck *getTopMsgAck;
 @end
 
 @interface JPBData : NSObject
@@ -317,6 +325,14 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                          userId:(NSString *)userId
                           isTop:(BOOL)isTop
                           index:(int)index;
+
+- (NSData *)topMessageData:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                     isTop:(BOOL)isTop
+                     index:(int)index;
+
+- (NSData *)getTopMessageData:(JConversation *)conversation
+                        index:(int)index;
 
 - (NSData *)markUnread:(JConversation *)conversation
                 userId:(NSString *)userId

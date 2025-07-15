@@ -441,11 +441,47 @@ inConversation:(JConversation *)conversation
                                               userId:userId
                                                isTop:isTop
                                                index:self.cmdIndex++];
-        JLogI(@"WS-Send", @"set top, top is %d, type is %lu, id is %@", isTop, (unsigned long)conversation.conversationType, conversation.conversationId);
+        JLogI(@"WS-Send", @"set conversation top, top is %d, type is %lu, id is %@", isTop, (unsigned long)conversation.conversationType, conversation.conversationId);
         [self timestampSendData:d
                             key:key
                         success:successBlock
                           error:errorBlock];
+    });
+}
+
+- (void)setMessageTop:(BOOL)isTop
+            messageId:(NSString *)messageId
+         conversation:(JConversation *)conversation
+              success:(void (^)(long long))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData topMessageData:messageId
+                                   conversation:conversation
+                                          isTop:isTop
+                                          index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"set message top, top is %d, messageId is %@", isTop, messageId);
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JConcreteMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getTopMessageData:conversation index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get top message, conversationType is %lu, conversationId is %@", conversation.conversationType, conversation.conversationId);
+        JGetTopMsgObj *obj = [[JGetTopMsgObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -1344,6 +1380,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeQryMsgExtAck");
             [self handleQryMsgExtAck:obj.qryMsgExtAck];
             break;
+        case JPBRcvTypeGetTopMsgAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetTopMsgAck");
+            [self handleGetTopMsgAck:obj.getTopMsgAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1401,6 +1441,9 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JRtcAuthObj class]]) {
         JRtcAuthObj *s = (JRtcAuthObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JGetTopMsgObj class]]) {
+        JGetTopMsgObj *s = (JGetTopMsgObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1778,6 +1821,18 @@ inConversation:(JConversation *)conversation
             stringObj.errorBlock(ack.code);
         } else {
             stringObj.successBlock(ack.reactionList);
+        }
+    }
+}
+
+- (void)handleGetTopMsgAck:(JGetTopMsgAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JGetTopMsgObj class]]) {
+        JGetTopMsgObj *getTopObj = (JGetTopMsgObj *)obj;
+        if (ack.code != 0) {
+            getTopObj.errorBlock(ack.code);
+        } else {
+            getTopObj.successBlock(ack.message, ack.userInfo, ack.createdTime);
         }
     }
 }

@@ -52,6 +52,16 @@
 /// - Parameter conversation: 所属会话
 - (void)messageReactionDidRemove:(JMessageReaction *)reaction
                   inConversation:(JConversation *)conversation;
+
+/// 消息置顶的回调
+/// - Parameters:
+///   - isTop: YES 表示置顶，NO 表示取消置顶
+///   - message: 对应的消息
+///   - userInfo: 操作置顶的用户
+- (void)messageDidSetTop:(BOOL)isTop
+                 message:(JMessage *)message
+                    user:(JUserInfo *)userInfo;
+
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -418,6 +428,28 @@
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
+
+/// 设置置顶
+/// - Parameters:
+///   - isTop: YES 表示置顶，NO 表示不置顶
+///   - messageId: 消息 id
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)setTop:(BOOL)isTop
+     messageId:(NSString *)messageId
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取置顶消息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCode code))errorBlock;
 
 /// 获取会话中第一条未读消息
 /// - Parameters:

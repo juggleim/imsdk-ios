@@ -209,6 +209,16 @@ inConversation:(JConversation *)conversation
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)setMessageTop:(BOOL)isTop
+            messageId:(NSString *)messageId
+         conversation:(JConversation *)conversation
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JConcreteMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId
                   success:(void (^)(void))successBlock

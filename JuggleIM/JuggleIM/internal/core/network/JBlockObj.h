@@ -14,6 +14,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JRtcRoom.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -91,6 +92,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRtcAuthObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSString *token, NSString *url);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JGetTopMsgObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(JConcreteMessage *message, JUserInfo *user, long long timestamp);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

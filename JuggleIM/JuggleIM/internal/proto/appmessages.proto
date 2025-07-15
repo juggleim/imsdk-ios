@@ -858,3 +858,20 @@ message OnlineOfflineMsg {
   string connectionExt = 8;
   string instanceId = 9;
 }
+
+message TopMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+  string msgId = 3;
+}
+
+message GetTopMsgReq{
+  string targetId = 1;
+  ChannelType channelType = 2;
+}
+
+message TopMsg{
+  DownMsg msg = 1;
+  UserInfo operator = 2;
+  int64 createdTime = 3;
+}

@@ -54,3 +54,6 @@
 
 @implementation JRtcAuthObj
 @end
+
+@implementation JGetTopMsgObj
+@end

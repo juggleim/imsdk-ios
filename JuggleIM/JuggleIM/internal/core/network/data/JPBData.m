@@ -56,6 +56,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jClearUnread @"clear_unread"
 #define jUndisturb @"undisturb_convers"
 #define jTopConvers @"top_convers"
+#define jSetTopMsg @"set_top_msg"
+#define jDelTopMsg @"del_top_msg"
+#define jGetTopMsg @"get_top_msg"
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
@@ -153,6 +156,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JRtcAuthAck
+@end
+
+@implementation JGetTopMsgAck
 @end
 
 @implementation JQryAck
@@ -696,6 +702,48 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.targetId = userId;
     body.data_p = req.data;
     
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)topMessageData:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                     isTop:(BOOL)isTop
+                     index:(int)index {
+    TopMsgReq *req = [[TopMsgReq alloc] init];
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.targetId = conversation.conversationId;
+    req.msgId = messageId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    if (isTop) {
+        body.topic = jSetTopMsg;
+    } else {
+        body.topic = jDelTopMsg;
+    }
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getTopMessageData:(JConversation *)conversation index:(int)index {
+    GetTopMsgReq *req = [[GetTopMsgReq alloc] init];
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.targetId = conversation.conversationId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jGetTopMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -1657,6 +1705,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeQryMsgExtAck:
                     obj = [self qryMsgExtAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetTopMsgAck:
+                    obj = [self getTopMsgAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2360,6 +2411,28 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getTopMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    TopMsg *topMsg = [[TopMsg alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get top msg ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetTopMsgAck;
+    JConcreteMessage *concreteMessage = [self messageWithDownMsg:topMsg.msg];
+    JUserInfo *userInfo = [self userInfoWithPBUserInfo:topMsg.operator_p];
+    long long timestamp = topMsg.createdTime;
+    JGetTopMsgAck *ack = [[JGetTopMsgAck alloc] init];
+    [ack encodeWithQueryAckMsgBody:body];
+    ack.message = concreteMessage;
+    ack.userInfo = userInfo;
+    ack.createdTime = timestamp;
+    obj.getTopMsgAck = ack;
+    return obj;
+}
+
 - (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
@@ -2678,7 +2751,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jDelMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryMsgExSet:@(JPBRcvTypeQryMsgExtAck),
              jTagAddConvers:@(JPBRcvTypeSimpleQryAck),
-             jTagDelConvers:@(JPBRcvTypeSimpleQryAck)
+             jTagDelConvers:@(JPBRcvTypeSimpleQryAck),
+             jSetTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jGetTopMsg:@(JPBRcvTypeGetTopMsgAck)
     };
 }
 @end
