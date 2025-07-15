@@ -1411,11 +1411,13 @@
             if (successBlock) {
                 successBlock();
             }
-            [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(messageDidSetTop:message:user:)]) {
-                    [obj messageDidSetTop:isTop message:message user:user];
-                }
-            }];
+            if (message && user) {
+                [weakSelf.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(messageDidSetTop:message:user:)]) {
+                        [obj messageDidSetTop:isTop message:message user:user];
+                    }
+                }];
+            }
         });
     } error:^(JErrorCodeInternal code) {
         JLogE(@"MSG-SetTop", @"error code is %lu", code);
