@@ -925,6 +925,7 @@ inConversation:(JConversation *)conversation
          mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray<NSString *> *)userIdList
         engineType:(NSUInteger)engineType
+             extra:(NSString *)extra
            success:(nonnull void (^)(NSString *, NSString *))successBlock
              error:(nonnull void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -935,6 +936,7 @@ inConversation:(JConversation *)conversation
                                   mediaType:mediaType
                                targetIdList:userIdList
                                  engineType:engineType
+                                      extra:extra
                                       index:self.cmdIndex++];
         JRtcAuthObj *obj = [[JRtcAuthObj alloc] init];
         obj.successBlock = successBlock;

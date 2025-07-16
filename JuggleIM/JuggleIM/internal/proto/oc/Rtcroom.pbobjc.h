@@ -283,6 +283,7 @@ typedef GPB_ENUM(RtcRoom_FieldNumber) {
   RtcRoom_FieldNumber_Owner = 3,
   RtcRoom_FieldNumber_RtcChannel = 4,
   RtcRoom_FieldNumber_RtcMediaType = 5,
+  RtcRoom_FieldNumber_Ext = 6,
   RtcRoom_FieldNumber_MembersArray = 51,
 };
 
@@ -299,6 +300,8 @@ GPB_FINAL @interface RtcRoom : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
@@ -511,6 +514,7 @@ typedef GPB_ENUM(RtcInviteReq_FieldNumber) {
   RtcInviteReq_FieldNumber_RoomId = 3,
   RtcInviteReq_FieldNumber_RtcChannel = 4,
   RtcInviteReq_FieldNumber_RtcMediaType = 5,
+  RtcInviteReq_FieldNumber_Ext = 6,
 };
 
 GPB_FINAL @interface RtcInviteReq : GPBMessage
@@ -526,6 +530,8 @@ GPB_FINAL @interface RtcInviteReq : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @end
 

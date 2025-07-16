@@ -356,6 +356,7 @@ inConversation:(JConversation *)conversation
          mediaType:(JCallMediaType)mediaType
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
+             extra:(NSString *)extra
            success:(void (^)(NSString * token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 

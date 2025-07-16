@@ -470,6 +470,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
              mediaType:(JCallMediaType)mediaType
           targetIdList:(NSArray <NSString *>*)userIdList
             engineType:(NSUInteger)engineType
+                 extra:(NSString *)extra
                  index:(int)index;
 
 - (NSData *)callHangup:(NSString *)callId

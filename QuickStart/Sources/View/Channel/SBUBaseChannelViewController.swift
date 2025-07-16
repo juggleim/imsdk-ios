@@ -1112,12 +1112,12 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func startSingleVoiceCall() {
-        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, delegate: nil)
+        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .voice, extra: "extra", delegate: nil)
         CallCenter.shared().startSingleCall(callSession)
     }
     
     open func startSingleVideoCall() {
-        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, delegate: nil)
+        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, extra: "extra", delegate: nil)
         CallCenter.shared().startSingleCall(callSession)
     }
     

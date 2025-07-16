@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) JCallStatus callStatus;
 @property (nonatomic, copy) NSArray <JCallMember *> *members;
 @property (nonatomic, assign) JCallMediaType mediaType;
+@property (nonatomic, copy) NSString *extra;
 @end
 
 NS_ASSUME_NONNULL_END

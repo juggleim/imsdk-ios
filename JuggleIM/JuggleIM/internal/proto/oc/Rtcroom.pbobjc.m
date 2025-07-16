@@ -500,6 +500,7 @@ void SetRtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message, int32_t value) {
 @dynamic hasOwner, owner;
 @dynamic rtcChannel;
 @dynamic rtcMediaType;
+@dynamic ext;
 @dynamic membersArray, membersArray_Count;
 
 typedef struct RtcRoom__storage_ {
@@ -509,6 +510,7 @@ typedef struct RtcRoom__storage_ {
   RtcMediaType rtcMediaType;
   NSString *roomId;
   UserInfo *owner;
+  NSString *ext;
   NSMutableArray *membersArray;
 } RtcRoom__storage_;
 
@@ -563,6 +565,15 @@ typedef struct RtcRoom__storage_ {
         .offset = (uint32_t)offsetof(RtcRoom__storage_, rtcMediaType),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "ext",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RtcRoom_FieldNumber_Ext,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(RtcRoom__storage_, ext),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
       },
       {
         .name = "membersArray",
@@ -1059,6 +1070,7 @@ void SetRtcRoomEvent_Reason_RawValue(RtcRoomEvent *message, int32_t value) {
 @dynamic roomId;
 @dynamic rtcChannel;
 @dynamic rtcMediaType;
+@dynamic ext;
 
 typedef struct RtcInviteReq__storage_ {
   uint32_t _has_storage_[1];
@@ -1067,6 +1079,7 @@ typedef struct RtcInviteReq__storage_ {
   RtcMediaType rtcMediaType;
   NSMutableArray *targetIdsArray;
   NSString *roomId;
+  NSString *ext;
 } RtcInviteReq__storage_;
 
 // This method is threadsafe because it is initially called
@@ -1120,6 +1133,15 @@ typedef struct RtcInviteReq__storage_ {
         .offset = (uint32_t)offsetof(RtcInviteReq__storage_, rtcMediaType),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "ext",
+        .dataTypeSpecific.clazz = Nil,
+        .number = RtcInviteReq_FieldNumber_Ext,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RtcInviteReq__storage_, ext),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =

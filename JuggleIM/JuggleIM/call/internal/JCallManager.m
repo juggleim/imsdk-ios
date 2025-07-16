@@ -51,6 +51,16 @@
 - (id<JCallSession>)startSingleCall:(NSString *)userId
                           mediaType:(JCallMediaType)mediaType
                            delegate:(id<JCallSessionDelegate>)delegate {
+    return [self startSingleCall:userId
+                       mediaType:mediaType
+                           extra:nil
+                        delegate:delegate];
+}
+
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                          mediaType:(JCallMediaType)mediaType
+                              extra:(NSString *)extra
+                           delegate:(id<JCallSessionDelegate>)delegate {
     if (userId.length == 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
@@ -62,11 +72,23 @@
     return [self startCall:@[userId]
                    isMulti:NO
                  mediaType:mediaType
+                     extra:extra
                   delegate:delegate];
+    
 }
 
 - (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
                          mediaType:(JCallMediaType)mediaType
+                          delegate:(id<JCallSessionDelegate>)delegate {
+    return [self startMultiCall:userIdList
+                      mediaType:mediaType
+                          extra:nil
+                       delegate:delegate];
+}
+
+- (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
+                         mediaType:(JCallMediaType)mediaType
+                             extra:(NSString *)extra
                           delegate:(id<JCallSessionDelegate>)delegate {
     if (userIdList.count == 0) {
         dispatch_async(self.core.delegateQueue, ^{
@@ -79,6 +101,7 @@
     return [self startCall:userIdList
                    isMulti:YES
                  mediaType:mediaType
+                     extra:extra
                   delegate:delegate];
 }
 
@@ -114,6 +137,7 @@
                     JRtcRoom *singleRoom = singleRooms[0];
                     JCallSessionImpl *callSession = [self createCallSessionImpl:singleRoom.roomId isMultiCall:singleRoom.isMultiCall];
                     callSession.owner = singleRoom.owner.userId;
+                    callSession.extra = singleRoom.extra;
                     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
                     for (JCallMember *member in singleRoom.members) {
                         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
@@ -171,6 +195,7 @@
             callSession.owner = room.owner.userId;
             callSession.inviterId = inviter.userId;
             callSession.mediaType = room.mediaType;
+            callSession.extra = room.extra;
             if (callSession.mediaType == JCallMediaTypeVideo) {
                 [[JCallMediaManager shared] enableCamera:YES];
             } else {
@@ -282,6 +307,7 @@
 - (id<JCallSession>)startCall:(NSArray<NSString *> *)userIdList
                       isMulti:(BOOL)isMulti
                     mediaType:(JCallMediaType)mediaType
+                        extra:(NSString *)extra
                      delegate:(id<JCallSessionDelegate>)delegate {
     @synchronized (self) {
         if (self.callSessionList.count > 0) {
@@ -309,6 +335,7 @@
     callSession.callStatus = JCallStatusOutgoing;
     callSession.owner = JIM.shared.currentUserId;
     callSession.mediaType = mediaType;
+    callSession.extra = extra;
     if (callSession.mediaType == JCallMediaTypeVideo) {
         [[JCallMediaManager shared] enableCamera:YES];
     } else {

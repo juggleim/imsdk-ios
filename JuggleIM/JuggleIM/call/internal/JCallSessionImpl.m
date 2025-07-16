@@ -310,6 +310,7 @@
                           mediaType:self.mediaType
                        targetIdList:userIdList
                          engineType:(NSUInteger)self.engineType
+                              extra:self.extra
                             success:^(NSString *token, NSString *url){
         JLogI(@"Call-Signal", @"send invite success");
         self.token = token;
@@ -549,5 +550,6 @@
 @synthesize members = _members;
 @synthesize startTime;
 @synthesize mediaType;
+@synthesize extra;
 
 @end

@@ -1397,6 +1397,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              mediaType:(JCallMediaType)mediaType
           targetIdList:(nonnull NSArray<NSString *> *)userIdList
             engineType:(NSUInteger)engineType
+                 extra:(NSString *)extra
                  index:(int)index {
     RtcInviteReq *req = [[RtcInviteReq alloc] init];
     req.targetIdsArray = [userIdList mutableCopy];
@@ -1412,6 +1413,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         req.rtcChannel = RtcChannel_LivekitRtc;
     }
     req.rtcMediaType = (int32_t)mediaType;
+    req.ext = extra;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -2061,6 +2063,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.owner = [self userInfoWithPBUserInfo:pbRoom.owner];
     result.isMultiCall = pbRoom.roomType == RtcRoomType_OneMore;
     result.mediaType = (int)pbRoom.rtcMediaType;
+    result.extra = pbRoom.ext;
     
     NSMutableArray <JCallMember *> *members = [NSMutableArray array];
     for (RtcMember *member in pbRoom.membersArray) {

@@ -84,6 +84,8 @@
 @property (nonatomic, copy, readonly) NSArray <JCallMember *> *members;
 /// 当前用户
 @property (nonatomic, strong, readonly) JCallMember *currentCallMember;
+/// 扩展字段
+@property (nonatomic, copy) NSString *extra;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 
