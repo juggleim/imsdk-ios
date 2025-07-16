@@ -675,6 +675,9 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_ConverTagsArray = 27,
   DownMsg_FieldNumber_SearchText = 29,
   DownMsg_FieldNumber_GrpMemberInfo = 30,
+  DownMsg_FieldNumber_DestroyTime = 31,
+  DownMsg_FieldNumber_LifeTimeAfterRead = 32,
+  DownMsg_FieldNumber_IsDelete = 33,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -758,6 +761,14 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) GrpMemberInfo *grpMemberInfo;
 /** Test to see if @c grpMemberInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasGrpMemberInfo;
+
+/** 消息默认的销毁时间点，单位毫秒，如 1752551449037，为0时，表示消息不自动销毁 */
+@property(nonatomic, readwrite) int64_t destroyTime;
+
+/** 消息已读后生存周期，例如60000，即消息已读1分钟后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
+
+@property(nonatomic, readwrite) BOOL isDelete;
 
 @end
 

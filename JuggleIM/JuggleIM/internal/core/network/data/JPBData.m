@@ -1922,7 +1922,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if(downMsg.hasReferMsg && downMsg.referMsg != nil){
         JConcreteMessage * referMsg = [self messageWithDownMsg:downMsg.referMsg];
         msg.referredMsg = referMsg;
+        msg.referMsgId = referMsg.messageId;
     }
+    msg.isDeleted = downMsg.isDelete;
     
     return msg;
 }

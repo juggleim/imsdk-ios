@@ -44,6 +44,7 @@ NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS i
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
+NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
 NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND conversation_type = ? AND conversation_id = ? ";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
@@ -61,7 +62,7 @@ NSString *const jOr = @" OR";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE id = ?";
 NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
@@ -134,7 +135,25 @@ NSString *const jFlags = @"flags";
         }
     }];
     if(message.referMsgId.length > 0){
-        message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
+    }
+    return message;
+}
+
+- (JConcreteMessage *)getMessageWithMessageIdEvenDelete:(NSString *)messageId {
+    if (messageId.length == 0) {
+        return nil;
+    }
+    __block JConcreteMessage *message;
+    [self.dbHelper executeQuery:kGetMessageWithMessageIdEvenDelete
+           withArgumentsInArray:@[messageId]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            message = [self messageWith:resultSet];
+        }
+    }];
+    if(message.referMsgId.length > 0){
+        message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
     }
     return message;
 }
@@ -293,7 +312,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in messages) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     
@@ -360,7 +379,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in result) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
@@ -392,7 +411,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in result) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
@@ -569,7 +588,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in messages) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSArray *result;
@@ -658,7 +677,7 @@ NSString *const jFlags = @"flags";
     if(messages.count >= 1){
         lastMessage = messages.firstObject;
             if(lastMessage.referMsgId.length > 0){
-                lastMessage.referredMsg = [self getMessageWithMessageId:lastMessage.referMsgId];
+                lastMessage.referredMsg = [self getMessageWithMessageIdEvenDelete:lastMessage.referMsgId];
             }
     }
     
@@ -782,7 +801,8 @@ NSString *const jFlags = @"flags";
                       message.content.searchContent,
                       mentionInfo,
                       referMsgId,
-                      @(flags)
+                      @(flags),
+                      @(message.isDeleted)
     ];
 }
 
@@ -867,6 +887,7 @@ NSString *const jFlags = @"flags";
     message.localAttribute = [rs stringForColumn:jLocalAttribute];
     message.flags = [rs intForColumn:jFlags];
     message.isEdit = message.flags & JMessageFlagIsModified;
+    message.isDeleted = [rs boolForColumn:jIsDeleted];
     return message;
 }
 

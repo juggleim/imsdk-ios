@@ -1582,6 +1582,9 @@ void SetPushData_ChannelType_RawValue(PushData *message, int32_t value) {
 @dynamic converTagsArray, converTagsArray_Count;
 @dynamic searchText;
 @dynamic hasGrpMemberInfo, grpMemberInfo;
+@dynamic destroyTime;
+@dynamic lifeTimeAfterRead;
+@dynamic isDelete;
 
 typedef struct DownMsg__storage_ {
   uint32_t _has_storage_[1];
@@ -1612,6 +1615,8 @@ typedef struct DownMsg__storage_ {
   int64_t msgSeqNo;
   int64_t msgTime;
   int64_t unreadIndex;
+  int64_t destroyTime;
+  int64_t lifeTimeAfterRead;
 } DownMsg__storage_;
 
 // This method is threadsafe because it is initially called
@@ -1882,6 +1887,33 @@ typedef struct DownMsg__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "destroyTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DownMsg_FieldNumber_DestroyTime,
+        .hasIndex = 27,
+        .offset = (uint32_t)offsetof(DownMsg__storage_, destroyTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "lifeTimeAfterRead",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DownMsg_FieldNumber_LifeTimeAfterRead,
+        .hasIndex = 28,
+        .offset = (uint32_t)offsetof(DownMsg__storage_, lifeTimeAfterRead),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "isDelete",
+        .dataTypeSpecific.clazz = Nil,
+        .number = DownMsg_FieldNumber_IsDelete,
+        .hasIndex = 29,
+        .offset = 30,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(DownMsg)
@@ -1893,9 +1925,10 @@ typedef struct DownMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\033\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
+        "\036\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
         "\020\010\000\021\016\000\022\t\000\023\n\000\024\r\000\025\013\000\026\t\000\027\013\000\030\000msgItems\000\031\000msg"
-        "ExSet\000\032\000msgExts\000\033\000converTags\000\035J\000\036\r\000";
+        "ExSet\000\032\000msgExts\000\033\000converTags\000\035J\000\036\r\000\037\013\000 \021"
+        "\000!\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

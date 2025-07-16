@@ -60,5 +60,6 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, copy) NSString *localAttribute;
 /// 是否被编辑
 @property (nonatomic, assign) BOOL isEdit;
-
+/// 是否被删除
+@property (nonatomic, assign) BOOL isDeleted;
 @end
