@@ -1117,7 +1117,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
     }
     
     open func startSingleVideoCall() {
-        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, extra: "extra", delegate: nil)
+        let callSession = JIM.shared().callManager.startSingleCall(self.baseViewModel?.conversationInfo?.conversation.conversationId, mediaType: .video, extra: nil, delegate: nil)
         CallCenter.shared().startSingleCall(callSession)
     }
     
