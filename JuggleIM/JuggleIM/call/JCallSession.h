@@ -53,6 +53,10 @@
 /// - Parameter soundLevels: 由 userId 为 key，声音大小为 value 的字典
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
 
+/// 视频渲染第一祯回调
+/// - Parameter userId: 用户 id
+- (void)videoFirstFrameDidRender:(NSString *)userId;
+
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
 - (void)errorDidOccur:(JCallErrorCode)errorCode;

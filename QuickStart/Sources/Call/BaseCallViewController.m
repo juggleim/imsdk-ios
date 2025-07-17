@@ -590,6 +590,10 @@
     NSLog(@"soundLevelDidUpdate end");
 }
 
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    NSLog(@"videoFirstFrameDidRender, userId is %@", userId);
+}
+
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
 - (void)errorDidOccur:(JCallErrorCode)errorCode {

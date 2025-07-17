@@ -174,6 +174,13 @@
             break;
         }
             
+        case JCallEventVideoFirstFrameRender:
+        {
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl videoFirstFrameRender:userId];
+            break;
+        }
+            
         default:
             break;
     }

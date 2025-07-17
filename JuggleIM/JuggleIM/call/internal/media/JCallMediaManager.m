@@ -140,4 +140,10 @@ static JCallMediaManager *_instance;
     }
 }
 
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+        [self.delegate videoFirstFrameDidRender:userId];
+    }
+}
+
 @end

@@ -171,6 +171,16 @@
     }
 }
 
+- (void)onPlayerRenderVideoFirstFrame:(NSString *)streamID {
+    NSString *userId = [self userIdWithStreamId:streamID];
+    if ([self.delegate respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+        [self.delegate videoFirstFrameDidRender:userId];
+    }
+    if ([sHandler respondsToSelector:@selector(onPlayerRenderVideoFirstFrame:)]) {
+        [sHandler onPlayerRenderVideoFirstFrame:streamID];
+    }
+}
+
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];

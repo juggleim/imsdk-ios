@@ -39,6 +39,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventParticipantEnableMic] = @"participant enable mic",
     
     [JCallEventSoundLevelUpdate] = @"sound level update",
+    [JCallEventVideoFirstFrameRender] = @"video first frame render",
     
     [30] = @"unknown"
 };

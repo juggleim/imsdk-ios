@@ -36,6 +36,7 @@
 - (void)cameraEnable:(BOOL)enable
               userId:(NSString *)userId;
 - (void)soundLevelUpdate:(NSDictionary<NSString *, NSNumber *> *)soundLevels;
+- (void)videoFirstFrameRender:(NSString *)userId;
 
 #pragma mark - signal
 - (void)signalInvite;

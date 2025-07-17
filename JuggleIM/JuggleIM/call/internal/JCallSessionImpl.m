@@ -295,6 +295,16 @@
     });
 }
 
+- (void)videoFirstFrameRender:(NSString *)userId {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+                [obj videoFirstFrameDidRender:userId];
+            }
+        }];
+    });
+}
+
 #pragma mark - signal
 - (void)signalInvite {
     NSMutableArray *targetIds = [NSMutableArray array];
@@ -441,6 +451,10 @@
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     [self event:JCallEventSoundLevelUpdate userInfo:soundLevels];
+}
+
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    [self event:JCallEventVideoFirstFrameRender userInfo:@{@"userId": userId}];
 }
 
 #pragma mark - private

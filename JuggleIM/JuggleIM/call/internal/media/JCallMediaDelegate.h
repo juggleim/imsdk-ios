@@ -21,6 +21,8 @@
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
 
+- (void)videoFirstFrameDidRender:(NSString *)userId;
+
 @end
 
 #endif /* JCallMediaDelegate_h */

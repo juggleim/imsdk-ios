@@ -27,6 +27,8 @@
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
 
+- (void)videoFirstFrameDidRender:(NSString *)userId;
+
 @end
 
 @protocol JCallMediaEngineProtocol <NSObject>
