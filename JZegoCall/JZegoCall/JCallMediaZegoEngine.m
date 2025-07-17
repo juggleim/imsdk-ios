@@ -103,6 +103,10 @@
             [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[self createCanvasWithView:view]];
             [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
         }
+    } else if (updateType == ZegoUpdateTypeDelete) {
+        for (ZegoStream *stream in streamList) {
+            [[ZegoExpressEngine sharedEngine] stopPlayingStream:stream.streamID];
+        }
     }
     if ([sHandler respondsToSelector:@selector(onRoomStreamUpdate:streamList:extendedData:roomID:)]) {
         [sHandler onRoomStreamUpdate:updateType streamList:streamList extendedData:extendedData roomID:roomID];

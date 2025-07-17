@@ -1488,7 +1488,14 @@ extension SBUBaseChannelViewController: GroupMemberSelectVCDelegate {
         if type == .videoCall {
             mediaType = .video
         }
-        let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, delegate: nil)
+        let extraDic = ["conversationType": self.baseViewModel?.conversationInfo?.conversation.conversationType.rawValue ?? 0, "conversationId": self.baseViewModel?.conversationInfo?.conversation.conversationId ?? ""] as [String : Any]
+        var extra = ""
+        if let data = try?  JSONSerialization.data(withJSONObject: extraDic), let jsonStr = String(data: data, encoding: .utf8) {
+            extra = jsonStr
+        }
+        
+        
+        let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, extra: extra, delegate: nil)
         CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
     }
 }
