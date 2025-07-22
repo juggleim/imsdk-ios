@@ -23,8 +23,12 @@
 }
 
 - (NSData *)encode{
+    
+    
+    NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
+
     NSDictionary * dic = @{kURL:self.url?:@"",
-                           jLocalPath:self.localPath?:@"",
+                           jLocalPath:localPath?:@"",
                            kName:self.name?:@"",
                            kSize:@(self.size),
                            kType:self.type?:@"",
@@ -36,7 +40,11 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     
-    self.localPath = json[jLocalPath]?:@"";
+    NSString * localPath = json[jLocalPath]?:@"";
+    if(localPath.length > 0){
+        self.localPath = [localPath stringByExpandingTildeInPath];
+    }
+    
     self.url = json[kURL]?:@"";
     self.name = json[kName]?:@"";
     id obj = json[kSize];

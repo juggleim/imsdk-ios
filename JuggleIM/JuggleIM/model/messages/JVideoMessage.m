@@ -69,15 +69,23 @@
 }
 
 -(NSData *)encode{
+    
+    //绝对路径转换成相对路径
+    NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
+    
+    NSString * snapshotLocalPath = [self.snapshotLocalPath stringByAbbreviatingWithTildeInPath];
+
+    
+    
     NSDictionary * dic = @{jVideoUrl:self.url?:@"",
-                           jLocalPath:self.localPath?:@"",
+                           jLocalPath:localPath?:@"",
                            jSnapshotUrl:self.snapshotUrl?:@"",
                            jVideoHeight:@(self.height),
                            jVideoWidth:@(self.width),
                            jVideoSize:@(self.size),
                            jVideoDuration:@(self.duration),
                            jVideoExtra:self.extra?:@"",
-                           jSnapshotLocalPath:self.snapshotLocalPath?:@""
+                           jSnapshotLocalPath:snapshotLocalPath?:@""
                   };
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
@@ -86,8 +94,16 @@
 - (void)decode:(NSData *)data {
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jVideoUrl]?:@"";
-    self.localPath = json[jLocalPath]?:@"";
-    self.snapshotLocalPath = json[jSnapshotLocalPath]?:@"";
+    
+    NSString * localPath = json[jLocalPath]?:@"";
+    if(localPath.length > 0){
+        self.localPath = [localPath stringByExpandingTildeInPath];
+    }
+    NSString * snapshotLocalPath = json[jSnapshotLocalPath]?:@"";
+    if(snapshotLocalPath.length > 0){
+        self.snapshotLocalPath = [snapshotLocalPath stringByExpandingTildeInPath];
+    }
+    
     self.snapshotUrl = json[jSnapshotUrl]?:@"";
     id obj = json[jVideoHeight];
     if ([obj isKindOfClass:[NSNumber class]]) {

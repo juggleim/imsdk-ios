@@ -37,8 +37,13 @@
         snapshotString = [JUtility base64EncodedStringFrom:snapshotData];
     }
     
+    
+    //绝对路径转换成相对路径
+    NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
+    
+    
     NSDictionary * dic = @{jSPVideoUrl:self.url?:@"",
-                           jLocalPath:self.localPath?:@"",
+                           jLocalPath:localPath?:@"",
                            jSPSnapshotImage:snapshotString?:@"",
                            jSPVideoHeight:@(self.height),
                            jSPVideoWidth:@(self.width),
@@ -54,7 +59,11 @@
 - (void)decode:(NSData *)data{
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.url = json[jSPVideoUrl]?:@"";
-    self.localPath = json[jLocalPath]?:@"";    
+    NSString * localPath = json[jLocalPath]?:@"";
+    if(localPath.length > 0){
+        self.localPath = [localPath stringByExpandingTildeInPath];
+    }
+    
     NSString *snapshotString = json[jSPSnapshotImage]?:@"";
     NSData *snapshotData = nil;
     if (class_getInstanceMethod([NSData class], @selector(initWithBase64EncodedString:options:))) {
