@@ -808,6 +808,9 @@
         JMessageOptions * messageOptions = [[JMessageOptions alloc] init];
         messageOptions.mentionInfo = message.mentionInfo;
         messageOptions.referredMsgId = message.referredMsg.messageId;
+        JConcreteMessage *concreteMessage = (JConcreteMessage *)message;
+        messageOptions.lifeTime = concreteMessage.lifeTime;
+        messageOptions.lifeTimeAfterRead = concreteMessage.lifeTimeAfterRead;
         return [self sendMessage:message.content
                    messageOption:messageOptions
                   inConversation:message.conversation
@@ -2250,6 +2253,8 @@
                            mentionInfo:message.mentionInfo
                        referredMessage:(JConcreteMessage *)message.referredMsg
                               pushData:message.pushData
+                              lifeTime:message.lifeTime
+                     lifeTimeAfterRead:message.lifeTimeAfterRead
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
@@ -2375,6 +2380,12 @@
     if (messageOption.pushData) {
         message.pushData = messageOption.pushData;
     }
+    message.lifeTime = messageOption.lifeTime;
+    message.lifeTimeAfterRead = messageOption.lifeTimeAfterRead;
+    // TODO: timestamp
+//    if (message.lifeTime > 0) {
+//        message.destroyTime =
+//    }
     
     if (message.flags & JMessageFlagIsSave) {
         [self.core.dbManager insertMessages:@[message]];

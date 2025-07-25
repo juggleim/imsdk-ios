@@ -86,6 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)alterTableAddFlags;
 + (NSString *)addConversationTSIndex;
 + (NSString *)addMessageClientUidIndex;
++ (NSString *)alterTableAddLifeTime;
 @end
 
 NS_ASSUME_NONNULL_END

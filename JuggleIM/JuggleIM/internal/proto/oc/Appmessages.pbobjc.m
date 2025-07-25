@@ -1091,6 +1091,10 @@ void SetRpcMessageWraper_RpcMsgType_RawValue(RpcMessageWraper *message, int32_t 
 @dynamic hasReferMsg, referMsg;
 @dynamic toUserIdsArray, toUserIdsArray_Count;
 @dynamic hasMergedMsgs, mergedMsgs;
+@dynamic searchText;
+@dynamic lifeTime;
+@dynamic lifeTimeAfterRead;
+@dynamic subChannel;
 @dynamic msgTime;
 
 typedef struct UpMsg__storage_ {
@@ -1104,6 +1108,10 @@ typedef struct UpMsg__storage_ {
   DownMsg *referMsg;
   NSMutableArray *toUserIdsArray;
   MergedMsgs *mergedMsgs;
+  NSString *searchText;
+  NSString *subChannel;
+  int64_t lifeTime;
+  int64_t lifeTimeAfterRead;
   int64_t msgTime;
 } UpMsg__storage_;
 
@@ -1196,10 +1204,46 @@ typedef struct UpMsg__storage_ {
         .dataType = GPBDataTypeMessage,
       },
       {
+        .name = "searchText",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UpMsg_FieldNumber_SearchText,
+        .hasIndex = 8,
+        .offset = (uint32_t)offsetof(UpMsg__storage_, searchText),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "lifeTime",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UpMsg_FieldNumber_LifeTime,
+        .hasIndex = 9,
+        .offset = (uint32_t)offsetof(UpMsg__storage_, lifeTime),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "lifeTimeAfterRead",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UpMsg_FieldNumber_LifeTimeAfterRead,
+        .hasIndex = 10,
+        .offset = (uint32_t)offsetof(UpMsg__storage_, lifeTimeAfterRead),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "subChannel",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UpMsg_FieldNumber_SubChannel,
+        .hasIndex = 11,
+        .offset = (uint32_t)offsetof(UpMsg__storage_, subChannel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
         .name = "msgTime",
         .dataTypeSpecific.clazz = Nil,
         .number = UpMsg_FieldNumber_MsgTime,
-        .hasIndex = 8,
+        .hasIndex = 12,
         .offset = (uint32_t)offsetof(UpMsg__storage_, msgTime),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
@@ -1215,7 +1259,8 @@ typedef struct UpMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\t\001\007\000\002\n\000\004\t\000\005\010\000\006\013\000\007\010\000\010\000toUserIds\000\t\n\0003\007\000";
+        "\r\001\007\000\002\n\000\004\t\000\005\010\000\006\013\000\007\010\000\010\000toUserIds\000\t\n\000\nJ\000\013\010\000"
+        "\014\021\000\r\n\0003\007\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

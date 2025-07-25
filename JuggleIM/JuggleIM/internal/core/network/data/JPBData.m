@@ -268,7 +268,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(nonnull JPushData *)pushData {
+                           pushData:(nonnull JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead {
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -317,6 +319,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         pbPushData.pushExtraData = pushData.extra;
         upMsg.pushData = pbPushData;
     }
+    upMsg.lifeTime = lifeTime;
+    upMsg.lifeTimeAfterRead = lifeTimeAfterRead;
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
@@ -1925,6 +1929,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         msg.referMsgId = referMsg.messageId;
     }
     msg.isDeleted = downMsg.isDelete;
+    msg.destroyTime = downMsg.destroyTime;
+    msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
     
     return msg;
 }

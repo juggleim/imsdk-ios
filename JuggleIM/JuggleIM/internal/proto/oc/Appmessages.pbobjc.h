@@ -481,6 +481,10 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
   UpMsg_FieldNumber_ReferMsg = 7,
   UpMsg_FieldNumber_ToUserIdsArray = 8,
   UpMsg_FieldNumber_MergedMsgs = 9,
+  UpMsg_FieldNumber_SearchText = 10,
+  UpMsg_FieldNumber_LifeTime = 11,
+  UpMsg_FieldNumber_LifeTimeAfterRead = 12,
+  UpMsg_FieldNumber_SubChannel = 13,
   UpMsg_FieldNumber_MsgTime = 51,
 };
 
@@ -524,6 +528,16 @@ GPB_FINAL @interface UpMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) MergedMsgs *mergedMsgs;
 /** Test to see if @c mergedMsgs has been set. */
 @property(nonatomic, readwrite) BOOL hasMergedMsgs;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *searchText;
+
+/** 消息默认生存周期，单位毫秒，例如：86400000，即该消息1天后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTime;
+
+/** 消息已读后的生存周期，通常小于lifeTime，例如60000，即消息已读1分钟后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @property(nonatomic, readwrite) int64_t msgTime;
 

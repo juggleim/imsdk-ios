@@ -258,7 +258,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(JPushData *)pushData;
+                           pushData:(JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                        extras:(NSDictionary *)extras
