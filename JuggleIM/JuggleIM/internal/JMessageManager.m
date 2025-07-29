@@ -429,13 +429,15 @@
 
 -(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRemove:removedMessages:lastMessage:)]) {
-        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation];
+        long long now = [self.core getCurrentTime];
+        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation currentTime:now];
         [self.sendReceiveDelegate messageDidRemove:conversation removedMessages:removedMessages lastMessage:lastMessage];
     }
 }
 -(void)notifyMessageCleared:(JConversation *)conversation startTime:(long long)startTime sendUserId:(NSString *)sendUserId{
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidClear:startTime:sendUserId:lastMessage:)]) {
-        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation];
+        long long now = [self.core getCurrentTime];
+        JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation currentTime:now];
         [self.sendReceiveDelegate messageDidClear:conversation startTime:startTime sendUserId:sendUserId lastMessage:lastMessage];
 
     }
@@ -486,6 +488,7 @@
     if (count > 100) {
         count = 100;
     }
+    long long now = [self.core getCurrentTime];
     return [self.core.dbManager searchMessagesWithContent:option.searchContent
                                                     count:count
                                                      time:time
@@ -494,7 +497,8 @@
                                                   senders:option.senderUserIds
                                                    states:option.states
                                             conversations:option.conversations
-                                        conversationTypes:option.conversationTypes];
+                                        conversationTypes:option.conversationTypes
+                                              currentTime:now];
 }
 
 - (JMessage *)saveMessage:(JMessageContent *)content
@@ -545,6 +549,7 @@
     if (count > 100) {
         count = 100;
     }
+    long long now = [self.core getCurrentTime];
     return [self.core.dbManager searchMessagesWithContent:searchContent
                                                     count:count
                                                      time:time
@@ -553,13 +558,15 @@
                                                   senders:nil
                                                    states:nil
                                             conversations:@[conversation]
-                                        conversationTypes:nil];
+                                        conversationTypes:nil
+                                              currentTime:now];
 }
 
 - (void)searchConversationsWithMessageContent:(JQueryMessageOptions *)option
                                      complete:(void (^)(NSArray<JSearchConversationsResult *> *))completeBlock {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        NSArray *result = [self.core.dbManager searchMessageInConversations:option];
+        long long now = [self.core getCurrentTime];
+        NSArray *result = [self.core.dbManager searchMessageInConversations:option currentTime:now];
         dispatch_async(self.core.delegateQueue, ^{
             if (completeBlock) {
                 completeBlock(result);
@@ -944,6 +951,7 @@
     if (option.count <= 0 || option.count > 100) {
         option.count = 100;
     }
+    long long now = [self.core getCurrentTime];
     NSArray *localMessages = [self.core.dbManager searchMessagesWithContent:nil
                                                                       count:option.count+1
                                                                        time:option.startTime
@@ -952,7 +960,8 @@
                                                                     senders:nil
                                                                      states:nil
                                                               conversations:@[conversation]
-                                                          conversationTypes:nil];
+                                                          conversationTypes:nil
+                                                                currentTime:now];
     
     __block BOOL needRemote = NO;
     if (localMessages.count < option.count+1) {
@@ -1404,7 +1413,8 @@
                                success:^(long long timestamp) {
         JLogI(@"MSG-SetTop", @"success");
         [weakSelf updateSendSyncTime:timestamp];
-        JMessage *message = [weakSelf.core.dbManager getMessageWithMessageId:messageId];
+        long long now = [weakSelf.core getCurrentTime];
+        JMessage *message = [weakSelf.core.dbManager getMessageWithMessageId:messageId currentTime:now];
         JUserInfo *user = [weakSelf.userInfoManager getUserInfo:weakSelf.core.userId];
         if (!user) {
             user = [JUserInfo new];
@@ -1470,7 +1480,8 @@
                     progress:(void (^)(JMessage *, int))progressBlock
                      success:(void (^)(JMessage *))successBlock
                        error:(void (^)(JErrorCode))errorBlock {
-    JMessage *message = [self.core.dbManager getMessageWithMessageId:messageId];
+    JMessage *message = [self.core.dbManager getMessageWithMessageId:messageId
+                                                         currentTime:[self.core getCurrentTime]];
     if (!message) {
         JLogE(@"MSG-Download", @"can't find message with messageId %@", messageId);
         dispatch_async(self.core.delegateQueue, ^{
@@ -2266,6 +2277,7 @@
         message.timestamp = timestamp;
         message.seqNo = seqNo;
         message.messageState = JMessageStateSent;
+        message.destroyTime = timestamp + message.lifeTime;
         if (message.conversation.conversationType == JConversationTypeGroup) {
             JGroupMessageReadInfo *info = [JGroupMessageReadInfo new];
             info.readCount = 0;
@@ -2341,7 +2353,8 @@
         }
     }
     if (message.referredMsg) {
-        message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
+        message.referredMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId
+                                                               currentTime:[self.core getCurrentTime]];
     }
     [self.core.dbManager updateMessage:message];
 }
@@ -2365,7 +2378,8 @@
     message.messageState = state;
     message.senderUserId = self.core.userId;
     message.clientUid = [self createClientUid];
-    message.timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
+    long long now = [[NSDate date] timeIntervalSince1970] * 1000;
+    message.timestamp = now;
     message.flags = [[content class] flags];
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
@@ -2374,7 +2388,7 @@
         message.mentionInfo = messageOption.mentionInfo;
     }
     if (messageOption.referredMsgId) {
-        JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId];
+        JConcreteMessage * referredMsg = [self.core.dbManager getMessageWithMessageId:messageOption.referredMsgId currentTime:[self.core getCurrentTime]];
         message.referredMsg = referredMsg;
     }
     if (messageOption.pushData) {
@@ -2382,10 +2396,9 @@
     }
     message.lifeTime = messageOption.lifeTime;
     message.lifeTimeAfterRead = messageOption.lifeTimeAfterRead;
-    // TODO: timestamp
-//    if (message.lifeTime > 0) {
-//        message.destroyTime =
-//    }
+    if (message.lifeTime > 0) {
+        message.destroyTime = [self.core getCurrentTime] + message.lifeTime;
+    }
     
     if (message.flags & JMessageFlagIsSave) {
         [self.core.dbManager insertMessages:@[message]];
@@ -2415,7 +2428,7 @@
     if(message.referredMsg == nil){
         return;
     }
-    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId];
+    JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId currentTime:[self.core getCurrentTime]];
     if(localReferMsg != nil){
         message.referredMsg = localReferMsg;
     }else{

@@ -84,6 +84,15 @@
     }
 }
 
+- (long long)getTimeDifference {
+    return self.webSocket.timeDifference;
+}
+
+- (long long)getCurrentTime {
+    long long now = [[NSDate date] timeIntervalSince1970];
+    return now + self.webSocket.timeDifference;
+}
+
 - (NSArray<NSString *> *)naviUrls {
     if (!_naviUrls) {
         _naviUrls = @[];

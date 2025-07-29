@@ -92,7 +92,7 @@ static JIM *_instance;
 }
 
 - (long long)getTimeDifference {
-    return self.core.webSocket.timeDifference;
+    return [self.core getTimeDifference];
 }
 
 @end

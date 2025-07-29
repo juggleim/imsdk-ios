@@ -19,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper;
 
-- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                           currentTime:(long long)now;
 
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
 
@@ -47,11 +48,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)updateMessage:(JConcreteMessage *)message;
 
-- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
-                                   count:(int)count
-                                    time:(long long)time
-                               direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSString *> *)contentTypes;
+//- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+//                                   count:(int)count
+//                                    time:(long long)time
+//                               direction:(JPullDirection)direction
+//                            contentTypes:(NSArray<NSString *> *)contentTypes
+//                             currentTime:(long long)now;
 
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
 - (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
@@ -70,13 +72,16 @@ NS_ASSUME_NONNULL_BEGIN
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
                                      conversations:(NSArray<JConversation *> *)conversations
-                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes;
-- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option;
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes
+                                       currentTime:(long long)now;
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
+                                                             currentTime:(long long)now;
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
-- (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation
+                         currentTime:(long long)now;
 - (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds;
 - (void)clearChatroomMessage:(NSString *)chatroomId;
 #pragma mark - operation with db
