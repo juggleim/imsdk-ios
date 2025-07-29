@@ -456,7 +456,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         guard let conversationInfo = self.conversationInfo else { return nil }
         var lastUpdatedAt: Int64
         
-        if let lastMessage = conversationInfo.lastMessage {
+        if let lastMessage = conversationInfo.lastMessage, lastMessage.timestamp > 0 {
             lastUpdatedAt = Int64(lastMessage.timestamp / 1000)
         } else {
             lastUpdatedAt = Int64(conversationInfo.sortTime / 1000)
