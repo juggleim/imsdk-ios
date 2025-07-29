@@ -46,7 +46,9 @@ NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
-NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0, ADD COLUMN life_time_after_read INTEGER DEFAULT 0, ADD COLUMN destroy_time INTEGER DEFAULT 0";
+NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
+NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
+NSString *const kAlterAddDestroyTime = @"ALTER TABLE message ADD COLUMN destroy_time INTEGER DEFAULT 0";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
 NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
@@ -847,6 +849,14 @@ NSString *const jDestroyTime = @"destroy_time";
 
 + (NSString *)alterTableAddLifeTime {
     return kAlterAddLifeTime;
+}
+
++ (NSString *)alterTableAddLifeTimeAfterRead {
+    return kAlterAddLifeTimeAfterRead;
+}
+
++ (NSString *)alterTableAddDestroyTime {
+    return kAlterAddDestroyTime;
 }
 
 #pragma mark - internal

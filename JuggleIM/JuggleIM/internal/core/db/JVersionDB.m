@@ -55,6 +55,8 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
             }
             if (version < 4) {
                 [db executeUpdate:[JMessageDB alterTableAddLifeTime]];
+                [db executeUpdate:[JMessageDB alterTableAddLifeTimeAfterRead]];
+                [db executeUpdate:[JMessageDB alterTableAddDestroyTime]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];
