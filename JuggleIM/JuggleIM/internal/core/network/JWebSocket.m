@@ -1257,6 +1257,9 @@ inConversation:(JConversation *)conversation
     }
     [self.heartbeatManager updateLastMessageReceiveTime];
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
+    if (obj.timestamp > 0) {
+        self.timeDifference = obj.timestamp - [[NSDate date] timeIntervalSince1970] * 1000;
+    }
     switch (obj.rcvType) {
         case JPBRcvTypeParseError:
             JLogI(@"WS-Receive", @"JPBRcvTypeParseError");

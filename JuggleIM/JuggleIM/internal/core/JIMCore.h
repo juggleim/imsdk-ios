@@ -44,8 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) long long conversationSyncTime;
 @property (nonatomic, assign) long long messageSendSyncTime;
 @property (nonatomic, assign) long long messageReceiveSyncTime;
-//服务端时间与本地时间的差值（服务端时间 - 本地时间）
-@property (nonatomic, assign) long long differenceTime;
 
 - (void)getSyncTimeFromDB;
 

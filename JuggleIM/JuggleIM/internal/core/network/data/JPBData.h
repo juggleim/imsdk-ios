@@ -204,6 +204,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @end
 
 @interface JPBRcvObj : NSObject
+@property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;

@@ -75,6 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JWebSocket : NSObject
+@property (nonatomic, assign) long long timeDifference;
+
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(NSString *)appKey

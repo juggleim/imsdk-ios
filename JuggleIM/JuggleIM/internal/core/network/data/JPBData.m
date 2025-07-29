@@ -1585,6 +1585,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.session = body.session;
             a.extra = body.ext;
             obj.connectAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1623,6 +1624,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 a.content = modifiedMsg.content;
             }
             obj.publishMsgAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1717,6 +1719,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 default:
                     break;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1823,6 +1826,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 n.targetUsers = [targetUserList copy];
                 obj.rtcInviteEventNtf = n;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1842,6 +1846,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             m.timestamp = body.timestamp;
             m.extra = body.ext;
             obj.disconnectMsg = m;
+            obj.timestamp = body.timestamp;
         }
             break;
             

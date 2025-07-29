@@ -87,8 +87,12 @@ static JIM *_instance;
     return self.core.userId;
 }
 
--(NSString *)getDeviceId{
+- (NSString *)getDeviceId {
     return [JUtility getDeviceId];
+}
+
+- (long long)getTimeDifference {
+    return self.core.webSocket.timeDifference;
 }
 
 @end
