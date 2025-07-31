@@ -70,7 +70,7 @@ NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
 NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags, is_deleted, life_time, life_time_after_read, destroy_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE id = ?";
-NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE client_uid = ?";
+NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
 NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_uid = ?";
 NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE message_uid = ?";
@@ -220,7 +220,7 @@ NSString *const jDestroyTime = @"destroy_time";
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSendWithClientUid
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), clientUid]];
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), clientUid]];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content
