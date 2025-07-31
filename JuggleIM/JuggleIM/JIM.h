@@ -51,6 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)getDeviceId;
 
+//服务端时间与本地时间的差值（服务端时间 - 本地时间）
+- (long long)getTimeDifference;
+
 /// 连接管理类
 @property (nonatomic, strong) id<JConnectionProtocol> connectionManager;
 /// 消息管理类

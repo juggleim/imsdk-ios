@@ -146,6 +146,8 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
+             lifeTime:(long long)lifeTime
+    lifeTimeAfterRead:(long long)lifeTimeAfterRead
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -171,7 +173,9 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                                           conversationId:conversation.conversationId
                                              mentionInfo:mentionInfo
                                          referredMessage:referredMessage
-                                                pushData:pushData];
+                                                pushData:pushData
+                                                lifeTime:lifeTime
+                                       lifeTimeAfterRead:lifeTimeAfterRead];
         JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];
@@ -1253,6 +1257,9 @@ inConversation:(JConversation *)conversation
     }
     [self.heartbeatManager updateLastMessageReceiveTime];
     JPBRcvObj *obj = [self.pbData rcvObjWithData:data];
+    if (obj.timestamp > 0) {
+        self.timeDifference = obj.timestamp - [[NSDate date] timeIntervalSince1970] * 1000;
+    }
     switch (obj.rcvType) {
         case JPBRcvTypeParseError:
             JLogI(@"WS-Receive", @"JPBRcvTypeParseError");

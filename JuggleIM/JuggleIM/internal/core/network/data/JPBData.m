@@ -268,7 +268,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(nonnull JPushData *)pushData {
+                           pushData:(nonnull JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead {
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -317,6 +319,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         pbPushData.pushExtraData = pushData.extra;
         upMsg.pushData = pbPushData;
     }
+    upMsg.lifeTime = lifeTime;
+    upMsg.lifeTimeAfterRead = lifeTimeAfterRead;
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
@@ -1581,6 +1585,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.session = body.session;
             a.extra = body.ext;
             obj.connectAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1619,6 +1624,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 a.content = modifiedMsg.content;
             }
             obj.publishMsgAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1713,6 +1719,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 default:
                     break;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1819,6 +1826,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 n.targetUsers = [targetUserList copy];
                 obj.rtcInviteEventNtf = n;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1838,6 +1846,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             m.timestamp = body.timestamp;
             m.extra = body.ext;
             obj.disconnectMsg = m;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1925,6 +1934,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         msg.referMsgId = referMsg.messageId;
     }
     msg.isDeleted = downMsg.isDelete;
+    msg.destroyTime = downMsg.destroyTime;
+    msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
     
     return msg;
 }

@@ -75,6 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface JWebSocket : NSObject
+@property (nonatomic, assign) long long timeDifference;
+
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(NSString *)appKey
@@ -111,6 +113,8 @@ NS_ASSUME_NONNULL_BEGIN
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
+             lifeTime:(long long)lifeTime
+    lifeTimeAfterRead:(long long)lifeTimeAfterRead
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 

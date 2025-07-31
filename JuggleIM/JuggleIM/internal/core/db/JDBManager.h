@@ -81,7 +81,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - message table
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages;
-- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId;
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                           currentTime:(long long)now;
 - (void)updateMessageAfterSend:(long long)clientMsgNo
                      messageId:(NSString *)messageId
                      timestamp:(long long)timestamp
@@ -100,14 +101,17 @@ NS_ASSUME_NONNULL_BEGIN
              withClientMsgNo:(long long)clientMsgNo;
 - (void)setMessageFlags:(int)flags
           withMessageId:(NSString *)messageId;
+- (void)updateDestroyTime:(long long)destroyTime
+            withMessageId:(NSString *)messageId;
 - (void)updateMessage:(JConcreteMessage *)message;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
-- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
-                                   count:(int)count
-                                    time:(long long)time
-                               direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSString *> *)contentTypes;
+//- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+//                                   count:(int)count
+//                                    time:(long long)time
+//                               direction:(JPullDirection)direction
+//                            contentTypes:(NSArray<NSString *> *)contentTypes
+//                             currentTime:(long long)now;
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
 - (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
@@ -123,15 +127,18 @@ NS_ASSUME_NONNULL_BEGIN
                                            senders:(nullable NSArray<NSString *> *)senderUserIds
                                             states:(nullable NSArray<NSNumber *> *)messageStates
                                      conversations:(nullable NSArray<JConversation *> *)conversations
-                                 conversationTypes:(nullable NSArray<NSNumber *> *)conversationTypes;
+                                 conversationTypes:(nullable NSArray<NSNumber *> *)conversationTypes
+                                       currentTime:(long long)now;
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
-- (JConcreteMessage *)getLastMessage:(JConversation *)conversation;
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation
+                         currentTime:(long long)now;
 - (void)clearChatroomMessageExclude:(NSArray <NSString *> *)chatroomIds;
 - (void)clearChatroomMessage:(NSString *)chatroomId;
-- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option;
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
+                                                             currentTime:(long long)now;
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;

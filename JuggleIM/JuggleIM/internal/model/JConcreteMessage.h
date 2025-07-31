@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JGroupMember *groupMemberInfo;
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
+@property (nonatomic, assign) long long lifeTime;
 @end
 
 NS_ASSUME_NONNULL_END

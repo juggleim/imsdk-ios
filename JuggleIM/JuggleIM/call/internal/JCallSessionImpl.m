@@ -128,7 +128,7 @@
 - (void)memberHangup:(NSString *)userId {
     [self removeMember:userId];
     if (!self.isMultiCall) {
-        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        self.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
         if (self.callStatus == JCallStatusOutgoing) {
             self.finishReason = JCallFinishReasonOtherSideDecline;
         } else if (self.callStatus == JCallStatusIncoming) {
@@ -152,7 +152,7 @@
         [self removeMember:userId];
     }
     if (!self.isMultiCall) {
-        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        self.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
         self.finishReason = JCallFinishReasonOtherSideNoResponse;
     } else {
         dispatch_async(self.core.delegateQueue, ^{

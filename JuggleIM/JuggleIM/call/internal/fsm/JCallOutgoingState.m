@@ -97,12 +97,12 @@
 }
 
 - (void)inviteFail {
-    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970];
+    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
     self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
 }
 
 - (void)inviteTimeOut {
-    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970];
+    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
     self.callSessionImpl.finishReason = JCallFinishReasonOtherSideNoResponse;
 }
 

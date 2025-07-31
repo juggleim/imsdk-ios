@@ -669,7 +669,8 @@
 }
 
 - (void)messageDidUpdate:(JConcreteMessage *)message {
-    JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:message.conversation];
+    long long now = [self.core getCurrentTime];
+    JConcreteMessage *lastMessage = [self.core.dbManager getLastMessage:message.conversation currentTime:now];
     if (lastMessage.clientMsgNo == message.clientMsgNo) {
         [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
         JConversationInfo *info = [self.core.dbManager getConversationInfo:message.conversation];

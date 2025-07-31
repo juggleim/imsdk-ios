@@ -204,6 +204,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @end
 
 @interface JPBRcvObj : NSObject
+@property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;
@@ -258,7 +259,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(JPushData *)pushData;
+                           pushData:(JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                        extras:(NSDictionary *)extras
