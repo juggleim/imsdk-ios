@@ -101,6 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
              withClientMsgNo:(long long)clientMsgNo;
 - (void)setMessageFlags:(int)flags
           withMessageId:(NSString *)messageId;
+- (void)updateDestroyTime:(long long)destroyTime
+            withMessageId:(NSString *)messageId;
 - (void)updateMessage:(JConcreteMessage *)message;
 - (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;

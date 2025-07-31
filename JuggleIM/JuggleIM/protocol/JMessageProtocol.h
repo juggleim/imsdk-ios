@@ -85,6 +85,17 @@
               inConversation:(JConversation *)conversation;
 @end
 
+@protocol JMessageDestroyDelegate <NSObject>
+/// 消息销毁时间更新回调（一般发生在阅后即焚之类的场景）
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 所在会话
+///   - destroyTime: 更新后的销毁时间
+- (void)messageDestroyTimeDidUpdate:(NSString *)messageId
+                     inConversation:(JConversation *)conversation
+                        destroyTime:(long long)destroyTime;
+@end
+
 @protocol JMessageProtocol <NSObject>
 
 /// 发送消息
@@ -331,6 +342,8 @@
 - (void)addSyncDelegate:(id<JMessageSyncDelegate>)delegate;
 
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
+
+- (void)addDestroyDelegate:(id<JMessageDestroyDelegate>)delegate;
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 

@@ -46,6 +46,7 @@
 @property (nonatomic, strong) NSHashTable <id<JMessageDelegate>> *delegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageSyncDelegate>> *syncDelegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
+@property (nonatomic, strong) NSHashTable <id<JMessageDestroyDelegate>> *destroyDelegates;
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
@@ -109,6 +110,15 @@
             return;
         }
         [self.readReceiptDelegates addObject:delegate];
+    });
+}
+
+- (void)addDestroyDelegate:(id<JMessageDestroyDelegate>)delegate {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.destroyDelegates addObject:delegate];
     });
 }
 
@@ -742,6 +752,10 @@
         if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRead:messageIds:)]) {
             [self.sendReceiveDelegate messageDidRead:conversation messageIds:messageIds];
         }
+        NSArray <JMessage *> *readMessages = [self.core.dbManager getMessagesByMessageIds:messageIds];
+        [readMessages enumerateObjectsUsingBlock:^(JMessage * _Nonnull readMessage, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self checkAndNotifyDestroyTime:readMessage time:timestamp];
+        }];
     } error:^(JErrorCodeInternal code) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
@@ -2727,6 +2741,10 @@
             if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRead:messageIds:)]) {
                 [self.sendReceiveDelegate messageDidRead:obj.conversation messageIds:readNtfMsg.messageIds];
             }
+            NSArray <JMessage *> *readMessages = [self.core.dbManager getMessagesByMessageIds:readNtfMsg.messageIds];
+            [readMessages enumerateObjectsUsingBlock:^(JMessage * _Nonnull readMessage, NSUInteger idx, BOOL * _Nonnull stop) {
+                [self checkAndNotifyDestroyTime:readMessage time:obj.timestamp];
+            }];
             return;
         }
         
@@ -2742,6 +2760,15 @@
                     }
                 }];
             });
+            [groupReadNtfMsg.msgs enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull messageId, JGroupMessageReadInfo * _Nonnull readInfo, BOOL * _Nonnull stop) {
+                if (readInfo.readCount >= readInfo.memberCount) {
+                    NSArray <JMessage *> *readMessages = [self.core.dbManager getMessagesByMessageIds:@[messageId]];
+                    if (readMessages.count > 0) {
+                        JMessage *readMessage = readMessages[0];
+                        [self checkAndNotifyDestroyTime:readMessage time:obj.timestamp];
+                    }
+                }
+            }];
             return;
         }
         
@@ -2976,6 +3003,26 @@
     });
 }
 
+- (void)checkAndNotifyDestroyTime:(JMessage *)readMessage
+                             time:(long long)timestamp {
+    if (readMessage.lifeTimeAfterRead > 0 && !readMessage.isDeleted) {
+        long long destroyTime = timestamp + readMessage.lifeTimeAfterRead;
+        if (destroyTime < readMessage.destroyTime) {
+            readMessage.destroyTime = destroyTime;
+            [self.core.dbManager updateDestroyTime:destroyTime withMessageId:readMessage.messageId];
+            dispatch_async(self.core.delegateQueue, ^{
+                [self.destroyDelegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDestroyDelegate>  _Nonnull destroyDelegate, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([destroyDelegate respondsToSelector:@selector(messageDestroyTimeDidUpdate:inConversation:destroyTime:)]) {
+                        [destroyDelegate messageDestroyTimeDidUpdate:readMessage.messageId
+                                                      inConversation:readMessage.conversation
+                                                         destroyTime:destroyTime];
+                    }
+                }];
+            });
+        }
+    }
+}
+
 #pragma mark - getter
 - (NSHashTable<id<JMessageDelegate>> *)delegates {
     if (!_delegates) {
@@ -2997,6 +3044,13 @@
         _readReceiptDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _readReceiptDelegates;
+}
+
+- (NSHashTable<id<JMessageDestroyDelegate>> *)destroyDelegates {
+    if (!_destroyDelegates) {
+        _destroyDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _destroyDelegates;
 }
 
 - (JDownloadManager *)downloadManager {

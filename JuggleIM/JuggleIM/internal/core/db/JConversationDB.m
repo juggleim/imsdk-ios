@@ -7,6 +7,7 @@
 
 #import "JConversationDB.h"
 #import "JContentTypeCenter.h"
+#import "JIM.h"
 
 //conversation_info 最新版本
 #define jConversationTableVersion 2
@@ -217,6 +218,7 @@ NSString *const jHasUnread = @"unread_tag";
             info = [self conversationInfoWith:resultSet];
         }
     }];
+    info = [self checkLastMessage:info];
     return info;
 }
 
@@ -239,6 +241,9 @@ NSString *const jHasUnread = @"unread_tag";
             JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
             [array addObject:info];
         }
+    }];
+    [array enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj = [self checkLastMessage:obj];
     }];
     return array;
 }
@@ -283,6 +288,9 @@ NSString *const jHasUnread = @"unread_tag";
             [array addObject:info];
         }
     }];
+    [array enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj = [self checkLastMessage:obj];
+    }];
     return array;
 }
 
@@ -326,6 +334,9 @@ NSString *const jHasUnread = @"unread_tag";
             JConcreteConversationInfo *info = [self conversationInfoWith:resultSet];
             [array addObject:info];
         }
+    }];
+    [array enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj = [self checkLastMessage:obj];
     }];
     return array;
 }
@@ -671,6 +682,26 @@ NSString *const jHasUnread = @"unread_tag";
     lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];
     info.lastMessage = lastMessage;
     info.hasUnread = [rs boolForColumn:jHasUnread];
+    return info;
+}
+
+- (JConcreteConversationInfo *)checkLastMessage:(JConcreteConversationInfo *)info {
+    BOOL needUpdate = NO;
+    long long timeDifference = [JIM.shared getTimeDifference];
+    long long now = [[NSDate date] timeIntervalSince1970] * 1000 + timeDifference;
+    // 当 lastMessage 存在的时候，检查它是否被删除或者过期了。不存在的时候不做处理
+    if ([info.lastMessage isKindOfClass:[JConcreteMessage class]]) {
+        JConcreteMessage *conversationLastMessage = (JConcreteMessage *)info.lastMessage;
+        JConcreteMessage *lastMessage = [self.messageDB getMessageWithClientUid:conversationLastMessage.clientUid];
+        if (lastMessage.isDeleted || (lastMessage.destroyTime > 0 && lastMessage.destroyTime <= now)) {
+            needUpdate = YES;
+        }
+    }
+    if (needUpdate) {
+        JMessage *newLast = [self.messageDB getLastMessage:info.conversation currentTime:now];
+        info.lastMessage = newLast;
+    }
+    
     return info;
 }
 

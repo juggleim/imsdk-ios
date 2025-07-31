@@ -251,6 +251,10 @@
     [self.messageDb setMessageFlags:flags withMessageId:messageId];
 }
 
+- (void)updateDestroyTime:(long long)destroyTime withMessageId:(NSString *)messageId {
+    [self.messageDb updateDestroyTime:destroyTime withMessageId:messageId];
+}
+
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo {

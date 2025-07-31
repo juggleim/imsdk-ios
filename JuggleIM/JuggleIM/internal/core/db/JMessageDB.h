@@ -46,6 +46,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMessageFlags:(int)flags withMessageId:(NSString *)messageId;
 
+- (void)updateDestroyTime:(long long)destroyTime
+            withMessageId:(NSString *)messageId;
+
 -(void)updateMessage:(JConcreteMessage *)message;
 
 //- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
@@ -60,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
+- (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid;
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
 - (void)setMessagesRead:(NSArray<NSString *> *)messageIds;

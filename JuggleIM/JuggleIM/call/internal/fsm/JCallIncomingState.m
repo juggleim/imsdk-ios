@@ -139,7 +139,7 @@
 }
 
 - (void)incomingTimeOut {
-    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970];
+    self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
     self.callSessionImpl.finishReason = JCallFinishReasonNoResponse;
 }
 

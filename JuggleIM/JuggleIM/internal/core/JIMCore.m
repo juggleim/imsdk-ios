@@ -89,7 +89,7 @@
 }
 
 - (long long)getCurrentTime {
-    long long now = [[NSDate date] timeIntervalSince1970];
+    long long now = [[NSDate date] timeIntervalSince1970] * 1000;
     return now + self.webSocket.timeDifference;
 }
 

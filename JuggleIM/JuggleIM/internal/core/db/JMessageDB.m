@@ -49,10 +49,10 @@ NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER"
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
 NSString *const kAlterAddDestroyTime = @"ALTER TABLE message ADD COLUMN destroy_time INTEGER DEFAULT 0";
-NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0 AND destroy_time > ?";
+NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
-NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND destroy_time > ? AND conversation_type = ? AND conversation_id = ? ";
+NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?) AND conversation_type = ? AND conversation_id = ? ";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jAndTypeIn = @" AND type IN ";
@@ -73,6 +73,7 @@ NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, 
 NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
 NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_uid = ?";
+NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
@@ -89,14 +90,14 @@ NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
 //NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
-NSString *const jGetMessagesNotDeleted = @"SELECT * FROM message WHERE is_deleted = 0 AND destroy_time > ?";
+NSString *const jGetMessagesNotDeleted = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const jAndSearchContentIs = @" AND search_content LIKE ?";
 NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
-NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0 AND destroy_time > ?";
+NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const jGroupByConversationTypeAndId = @" GROUP BY conversation_type, conversation_id";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -250,6 +251,12 @@ NSString *const jDestroyTime = @"destroy_time";
 - (void)setMessageFlags:(int)flags withMessageId:(NSString *)messageId {
     NSString *sql = jSetMessageFlags;
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(flags), messageId]];
+}
+
+- (void)updateDestroyTime:(long long)destroyTime
+            withMessageId:(NSString *)messageId {
+    NSString *sql = jUpdateDestroyTime;
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(destroyTime), messageId]];
 }
 
 -(void)updateMessage:(JConcreteMessage *)message{
@@ -434,6 +441,21 @@ NSString *const jDestroyTime = @"destroy_time";
         }
     }
     return [messages copy];
+}
+
+- (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid {
+    if (clientUid.length == 0) {
+        return nil;
+    }
+    __block JConcreteMessage *message = nil;
+    [self.dbHelper executeQuery:kGetMessageWithClientUid
+           withArgumentsInArray:@[clientUid]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            message = [self messageWith:resultSet];
+        }
+    }];
+    return message;
 }
 
 - (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
