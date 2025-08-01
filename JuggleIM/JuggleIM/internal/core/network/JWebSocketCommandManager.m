@@ -7,8 +7,8 @@
 
 #import "JWebSocketCommandManager.h"
 
-#define jCommandTimeOutInterval 5000
-#define jCommandDetectInterval 5000
+#define jCommandTimeOutInterval 5
+#define jCommandDetectInterval 5
 
 @interface JBlockTimeObj : NSObject
 @property (nonatomic, strong) JBlockObj *blockObj;
