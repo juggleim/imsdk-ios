@@ -96,6 +96,24 @@
                         destroyTime:(long long)destroyTime;
 @end
 
+@protocol JMessagePreprocessor <NSObject>
+/// 消息入库之后，发送之前的回调
+/// - Parameter content: 待发送的消息内容
+/// - Parameter conversation: 所在会话
+/// - Return: 处理后的消息内容。如果返回为空，会导致发送失败。
+- (JMessageContent *)messagePrepareForSend:(JMessageContent *)content
+                            inConversation:(JConversation *)conversation;
+
+
+/// 接收到消息，入库之前的回调
+/// - Parameter content: 接收到的消息内容
+/// - Parameter conversation: 所在会话
+/// - Return: 处理后的消息内容。如果返回为空，会将原内容回调上去。
+- (JMessageContent *)messagePrepareForReceive:(JMessageContent *)content
+                               inConversation:(JConversation *)conversation;
+
+@end
+
 @protocol JMessageProtocol <NSObject>
 
 /// 发送消息
@@ -344,6 +362,8 @@
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 - (void)addDestroyDelegate:(id<JMessageDestroyDelegate>)delegate;
+
+- (void)setPreprocessor:(id<JMessagePreprocessor>)preprocessor;
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
