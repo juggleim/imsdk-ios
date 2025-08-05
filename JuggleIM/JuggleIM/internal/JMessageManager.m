@@ -2277,6 +2277,15 @@
     if ([_preprocessor respondsToSelector:@selector(messagePrepareForSend:inConversation:)]) {
         content = [_preprocessor messagePrepareForSend:message.content inConversation:message.conversation];
     }
+    if (!content) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                message.content = content;
+                errorBlock(JErrorCodeInvalidParam, message);
+            }
+        });
+        return;
+    }
     [self.core.webSocket sendIMMessage:content
                         inConversation:message.conversation
                            clientMsgNo:message.clientMsgNo
@@ -2608,7 +2617,10 @@
                        isSync:(BOOL)isSync {
     if ([_preprocessor respondsToSelector:@selector(messagePrepareForReceive:inConversation:)]) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-            message.content = [_preprocessor messagePrepareForReceive:message.content inConversation:message.conversation];
+            JMessageContent *content = [_preprocessor messagePrepareForReceive:message.content inConversation:message.conversation];
+            if (content) {
+                message.content = content;
+            }
         }];
     }
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
