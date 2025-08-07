@@ -695,6 +695,9 @@ NSString *const jHasUnread = @"unread_tag";
         JConcreteMessage *lastMessage = [self.messageDB getMessageWithClientUid:conversationLastMessage.clientUid];
         if (lastMessage.isDeleted || (lastMessage.destroyTime > 0 && lastMessage.destroyTime <= now)) {
             needUpdate = YES;
+        } else {
+            info.lastMessage.destroyTime = lastMessage.destroyTime;
+            info.lastMessage.lifeTimeAfterRead = lastMessage.lifeTimeAfterRead;
         }
     }
     if (needUpdate) {
