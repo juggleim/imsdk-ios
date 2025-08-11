@@ -84,6 +84,7 @@ static GPBFileDescription ConnectRoot_FileDescription = {
 @dynamic language;
 @dynamic isBackend;
 @dynamic voipToken;
+@dynamic secretNegotiate;
 
 typedef struct ConnectMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -106,6 +107,7 @@ typedef struct ConnectMsgBody__storage_ {
   NSString *instanceId;
   NSString *language;
   NSString *voipToken;
+  NSData *secretNegotiate;
 } ConnectMsgBody__storage_;
 
 // This method is threadsafe because it is initially called
@@ -295,6 +297,15 @@ typedef struct ConnectMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "secretNegotiate",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectMsgBody_FieldNumber_SecretNegotiate,
+        .hasIndex = 21,
+        .offset = (uint32_t)offsetof(ConnectMsgBody__storage_, secretNegotiate),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBytes,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ConnectMsgBody)
@@ -306,8 +317,8 @@ typedef struct ConnectMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\016\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000\017\013\000\021\n\000\023\t\000"
-        "\024\t\000";
+        "\017\001\007\000\002\n\000\005\010\000\007\r\000\010\013\000\t\017\000\n\t\000\013\t\000\r\010\000\016\013\000\017\013\000\021\n\000\023\t\000"
+        "\024\t\000e\017\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -329,6 +340,7 @@ typedef struct ConnectMsgBody__storage_ {
 @dynamic session;
 @dynamic timestamp;
 @dynamic ext;
+@dynamic secretNegotiateAck;
 
 typedef struct ConnectAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
@@ -336,6 +348,7 @@ typedef struct ConnectAckMsgBody__storage_ {
   NSString *userId;
   NSString *session;
   NSString *ext;
+  NSData *secretNegotiateAck;
   int64_t timestamp;
 } ConnectAckMsgBody__storage_;
 
@@ -391,6 +404,15 @@ typedef struct ConnectAckMsgBody__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "secretNegotiateAck",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectAckMsgBody_FieldNumber_SecretNegotiateAck,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(ConnectAckMsgBody__storage_, secretNegotiateAck),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBytes,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(ConnectAckMsgBody)
@@ -402,7 +424,7 @@ typedef struct ConnectAckMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\002\006\000";
+        "\002\002\006\000e\022\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

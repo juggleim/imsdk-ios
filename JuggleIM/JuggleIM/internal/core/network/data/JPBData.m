@@ -20,6 +20,7 @@
 #import "JDataConverterProtocol.h"
 #import "JSimpleDataConverter.h"
 #import "JuggleIMConstInternal.h"
+#import "JDataConverter.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -182,6 +183,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) NSMutableDictionary *msgCmdDic;
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @property (nonatomic, strong) id<JDataConverterProtocol> converter;
+@property (nonatomic, strong) JDataConverter *converter2;
 @end
 
 @implementation JPBData
@@ -190,12 +192,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (self) {
         self.msgCmdDic = [[NSMutableDictionary alloc] init];
         self.converter = [JSimpleDataConverter converter];
+        self.converter2 = [JDataConverter converter];
     }
     return self;
 }
 
 - (void)resetDataConverter {
     self.converter = [JSimpleDataConverter converter];
+    self.converter2 = [JDataConverter converter];
 }
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
@@ -230,6 +234,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApple;
 //    connectMsg.language = language;
+    connectMsg.secretNegotiate = [self.converter2 getPubKey];
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
@@ -248,7 +253,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     body.timestamp = [[NSDate date] timeIntervalSince1970]*1000;
     
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypeDisconnect;
     sm.qos = JQosNo;
@@ -1208,7 +1213,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)publishAckData:(int)index {
     PublishAckMsgBody *body = [[PublishAckMsgBody alloc] init];
     body.index = index;
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePublishAck;
@@ -1580,6 +1585,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 obj.rcvType = JPBRcvTypeParseError;
                 return obj;
             }
+            [self.converter2 storeSharedKey:body.secretNegotiateAck];
             a.userId = body.userId;
             a.code = body.code;
             a.session = body.session;
@@ -1591,7 +1597,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JCmdTypePublishAck:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             PublishAckMsgBody *body = [[PublishAckMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"PublishAck decode message parse error, msg is %@", err.description);
@@ -1630,7 +1636,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JCmdTypeQueryAck:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             QueryAckMsgBody *body = [[QueryAckMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"QueryAck decode message parse error, msg is %@", err.description);
@@ -1725,7 +1731,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JCmdTypePublish:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             PublishMsgBody *body = [[PublishMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"publish decode message parse error, msg is %@", err.description);
@@ -1832,7 +1838,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case JCmdTypeDisconnect:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             DisconnectMsgBody *body = [[DisconnectMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"disconnect decode message parse error, msg is %@", err.description);
@@ -1858,7 +1864,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 #pragma mark - internal
 - (ImWebsocketMsg *)createImWebSocketMsgWithPublishMsg:(PublishMsgBody *)body {
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypePublish;
     sm.qos = JQosYes;
@@ -1867,7 +1873,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (ImWebsocketMsg *)createImWebSocketMsgWithQueryMsg:(QueryMsgBody *)body {
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypeQuery;
     m.qos = JQosYes;
@@ -2666,6 +2672,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     a.unreadMembers = unreadMembers;
     obj.qryReadDetailAck = a;
     return obj;
+}
+
+- (NSData *)encodePayload:(NSData *)data {
+    NSData *d = [self.converter encode:data];
+    d = [self.converter2 encode:d];
+    return d;
+}
+
+- (NSData *)decodePayload:(NSData *)data {
+    NSData *d = [self.converter2 decode:data];
+    d = [self.converter decode:d];
+    return d;
 }
 
 #pragma mark - helper
