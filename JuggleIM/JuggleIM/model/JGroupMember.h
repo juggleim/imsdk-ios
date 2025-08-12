@@ -13,5 +13,7 @@
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *groupDisplayName;
 @property (nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
+// 更新时间
+@property (nonatomic, assign) long long updatedTime;
 
 @end

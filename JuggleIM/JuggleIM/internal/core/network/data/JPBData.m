@@ -1974,6 +1974,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbGroupInfo.updatedTime;
     return result;
 }
 
@@ -2012,6 +2013,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbUserInfo.updatedTime;
     return result;
 }
 
@@ -2035,6 +2037,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbGroupMember.updatedTime;
     return result;
 }
 

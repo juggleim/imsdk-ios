@@ -21,6 +21,8 @@ typedef NS_ENUM(NSUInteger, JUserType) {
 @property (nullable, nonatomic, copy) NSString *portrait;
 @property (nullable, nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
 @property (nonatomic, assign) JUserType type;
+// 更新时间
+@property (nonatomic, assign) long long updatedTime;
 
 @end
 
