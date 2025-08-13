@@ -16,6 +16,8 @@
 #import <JuggleIM/JSearchConversationsResult.h>
 #import <JuggleIM/JMessageReaction.h>
 #import <UIKit/UIImage.h>
+#import <JuggleIM/JGetFavoriteMessageOption.h>
+#import <JuggleIM/JFavoriteMessage.h>
 
 @class JMergeMessage;
 
@@ -483,6 +485,33 @@
 - (void)getTopMessage:(JConversation *)conversation
               success:(void (^)(JMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
                 error:(void (^)(JErrorCode code))errorBlock;
+
+/// 添加消息收藏
+/// - Parameters:
+///   - messageIdList: 待收藏的消息 id 列表
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)addFavorite:(NSArray <NSString *> *)messageIdList
+            success:(void (^)(void))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
+
+/// 移除消息收藏
+/// - Parameters:
+///   - messageIdList: 待移除的消息 id 列表
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)removeFavorite:(NSArray <NSString *> *)messageIdList
+               success:(void (^)(void))successBlock
+                 error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取收藏的消息
+/// - Parameters:
+///   - option: 查询参数
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getFavorite:(JGetFavoriteMessageOption *)option
+            success:(void (^)(NSArray <JFavoriteMessage *> *messageList, NSString *offset))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
 
 /// 获取会话中第一条未读消息
 /// - Parameters:

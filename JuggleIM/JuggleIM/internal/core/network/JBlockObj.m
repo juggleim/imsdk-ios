@@ -57,3 +57,6 @@
 
 @implementation JGetTopMsgObj
 @end
+
+@implementation JGetFavoriteMsgObj
+@end

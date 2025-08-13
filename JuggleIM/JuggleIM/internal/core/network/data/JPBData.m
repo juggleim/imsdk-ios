@@ -59,6 +59,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jSetTopMsg @"set_top_msg"
 #define jDelTopMsg @"del_top_msg"
 #define jGetTopMsg @"get_top_msg"
+#define jAddFavoriteMsgs @"add_favorite_msgs"
+#define jDelFavoriteMsgs @"del_favorite_msgs"
+#define jQryFavoriteMsgs @"qry_favorite_msgs"
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
@@ -159,6 +162,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JGetTopMsgAck
+@end
+
+@implementation JGetFavoriteMsgAck
 @end
 
 @implementation JQryAck
@@ -747,6 +753,63 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.index = index;
     body.topic = jGetTopMsg;
     body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)favoriteMessagesData:(NSArray<JMessage *> *)messages
+                           isAdd:(BOOL)isAdd
+                          userId:(NSString *)userId
+                           index:(int)index {
+    NSMutableArray *items = [NSMutableArray array];
+    for (JMessage *message in messages) {
+        FavoriteMsgIdItem *item = [FavoriteMsgIdItem new];
+        item.senderId = message.senderUserId;
+        if (message.direction == JMessageDirectionSend) {
+            item.receiverId = message.conversation.conversationId;
+        } else {
+            item.receiverId = userId;
+        }
+        item.channelType = [self channelTypeFromConversationType:message.conversation.conversationType];
+        item.msgId = message.messageId;
+        [items addObject:item];
+    }
+    
+    FavoriteMsgIds *ids = [[FavoriteMsgIds alloc] init];
+    ids.itemsArray = items;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    if (isAdd) {
+        body.topic = jAddFavoriteMsgs;
+    } else {
+        body.topic = jDelFavoriteMsgs;
+    }
+    body.targetId = userId;
+    body.data_p = ids.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getFavoriteMessagesData:(NSString *)userId
+                              limit:(int)limit
+                             offset:(NSString *)offset
+                              index:(int)index {
+    QryFavoriteMsgsReq *req = [QryFavoriteMsgsReq new];
+    req.limit = limit;
+    req.offset = offset;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryFavoriteMsgs;
+    body.targetId = userId;
     body.data_p = req.data;
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
@@ -1716,6 +1779,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeGetTopMsgAck:
                     obj = [self getTopMsgAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetFavoriteMsgAck:
+                    obj = [self getFavoriteMsgAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2458,6 +2524,31 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getFavoriteMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    FavoriteMsgs *msgs = [[FavoriteMsgs alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get favorite msg ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetFavoriteMsgAck;
+    JGetFavoriteMsgAck *ack = [JGetFavoriteMsgAck new];
+    [ack encodeWithQueryAckMsgBody:body];
+    ack.offset = msgs.offset;
+    NSMutableArray <JFavoriteMessage *> *arr = [NSMutableArray array];
+    for (FavoriteMsg *msg in msgs.itemsArray) {
+        JFavoriteMessage *favMessage = [JFavoriteMessage new];
+        favMessage.message = [self messageWithDownMsg:msg.msg];
+        favMessage.createdTime = msg.createdTime;
+        [arr addObject:favMessage];
+    }
+    ack.favoriteMsgs = arr;
+    obj.getFavoriteMsgAck = ack;
+    return obj;
+}
+
 - (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
@@ -2779,7 +2870,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jTagDelConvers:@(JPBRcvTypeSimpleQryAck),
              jSetTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jGetTopMsg:@(JPBRcvTypeGetTopMsgAck)
+             jGetTopMsg:@(JPBRcvTypeGetTopMsgAck),
+             jAddFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jQryFavoriteMsgs:@(JPBRcvTypeGetFavoriteMsgAck)
     };
 }
 @end

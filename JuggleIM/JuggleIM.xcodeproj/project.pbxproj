@@ -358,6 +358,10 @@
 		A09728122CC7783B00E08BC4 /* JCallState.m in Sources */ = {isa = PBXBuildFile; fileRef = A09728102CC7783B00E08BC4 /* JCallState.m */; };
 		A09824402C4FABE8001852A6 /* JDownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A098243E2C4FABE8001852A6 /* JDownloadManager.h */; };
 		A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A098243F2C4FABE8001852A6 /* JDownloadManager.m */; };
+		A09D207B2E4C7538001F1DC2 /* JGetFavoriteMessageOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A09D20792E4C7538001F1DC2 /* JGetFavoriteMessageOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09D207C2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A09D207A2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m */; };
+		A09D207F2E4C7637001F1DC2 /* JFavoriteMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A09D207D2E4C7637001F1DC2 /* JFavoriteMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A09D20802E4C7637001F1DC2 /* JFavoriteMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A09D207E2E4C7637001F1DC2 /* JFavoriteMessage.m */; };
 		A0A1B0F72C47B25C00DAD93C /* JDownloader.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A1B0F52C47B25C00DAD93C /* JDownloader.h */; };
 		A0A1B0F82C47B25C00DAD93C /* JDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = A0A1B0F62C47B25C00DAD93C /* JDownloader.m */; };
 		A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A0A701FD2C09A91B0032D9F1 /* JWebSocketCommandManager.h */; };
@@ -764,6 +768,10 @@
 		A09728102CC7783B00E08BC4 /* JCallState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallState.m; sourceTree = "<group>"; };
 		A098243E2C4FABE8001852A6 /* JDownloadManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDownloadManager.h; sourceTree = "<group>"; };
 		A098243F2C4FABE8001852A6 /* JDownloadManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloadManager.m; sourceTree = "<group>"; };
+		A09D20792E4C7538001F1DC2 /* JGetFavoriteMessageOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGetFavoriteMessageOption.h; sourceTree = "<group>"; };
+		A09D207A2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetFavoriteMessageOption.m; sourceTree = "<group>"; };
+		A09D207D2E4C7637001F1DC2 /* JFavoriteMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JFavoriteMessage.h; sourceTree = "<group>"; };
+		A09D207E2E4C7637001F1DC2 /* JFavoriteMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JFavoriteMessage.m; sourceTree = "<group>"; };
 		A0A1B0F52C47B25C00DAD93C /* JDownloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDownloader.h; sourceTree = "<group>"; };
 		A0A1B0F62C47B25C00DAD93C /* JDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDownloader.m; sourceTree = "<group>"; };
 		A0A3A5232CFF2703009AD7C3 /* JCallMediaDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallMediaDelegate.h; sourceTree = "<group>"; };
@@ -1089,6 +1097,10 @@
 				A08A9A562D5DE532009EE779 /* JGroupMember.m */,
 				A0752D792D65D97D009B7E0F /* JGetConversationOptions.h */,
 				A0752D7A2D65D97D009B7E0F /* JGetConversationOptions.m */,
+				A09D20792E4C7538001F1DC2 /* JGetFavoriteMessageOption.h */,
+				A09D207A2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m */,
+				A09D207D2E4C7637001F1DC2 /* JFavoriteMessage.h */,
+				A09D207E2E4C7637001F1DC2 /* JFavoriteMessage.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1569,6 +1581,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A09D207F2E4C7637001F1DC2 /* JFavoriteMessage.h in Headers */,
+				A09D207B2E4C7538001F1DC2 /* JGetFavoriteMessageOption.h in Headers */,
 				A05143552DF80201004413F3 /* JUnknownMessage.h in Headers */,
 				A0752D7C2D65D97D009B7E0F /* JGetConversationOptions.h in Headers */,
 				A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */,
@@ -1975,6 +1989,7 @@
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
 				A024C39C2D353814005C369C /* JMessageReaction.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
+				A09D207C2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m in Sources */,
 				A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
 				A08AA2732B162A11008B114C /* JFMDatabasePool.m in Sources */,
@@ -2003,6 +2018,7 @@
 				A08AA3992B19CB78008B114C /* GPBWrappers.pbobjc.m in Sources */,
 				5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */,
 				A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */,
+				A09D20802E4C7637001F1DC2 /* JFavoriteMessage.m in Sources */,
 				A08AA2862B1756E3008B114C /* JMessageManager.m in Sources */,
 				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,

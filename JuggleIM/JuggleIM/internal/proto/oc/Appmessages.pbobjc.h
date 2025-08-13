@@ -35,6 +35,8 @@ CF_EXTERN_C_BEGIN
 @class ConverTag;
 @class Conversation;
 @class DownMsg;
+@class FavoriteMsg;
+@class FavoriteMsgIdItem;
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
@@ -3584,6 +3586,105 @@ GPB_FINAL @interface TopMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) UserInfo *operator_p;
 /** Test to see if @c operator_p has been set. */
 @property(nonatomic, readwrite) BOOL hasOperator_p;
+
+@property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
+#pragma mark - FavoriteMsgIds
+
+typedef GPB_ENUM(FavoriteMsgIds_FieldNumber) {
+  FavoriteMsgIds_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface FavoriteMsgIds : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FavoriteMsgIdItem*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - FavoriteMsgIdItem
+
+typedef GPB_ENUM(FavoriteMsgIdItem_FieldNumber) {
+  FavoriteMsgIdItem_FieldNumber_SenderId = 1,
+  FavoriteMsgIdItem_FieldNumber_ReceiverId = 2,
+  FavoriteMsgIdItem_FieldNumber_ChannelType = 3,
+  FavoriteMsgIdItem_FieldNumber_MsgId = 4,
+  FavoriteMsgIdItem_FieldNumber_SubChannel = 5,
+};
+
+GPB_FINAL @interface FavoriteMsgIdItem : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *receiverId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@end
+
+/**
+ * Fetches the raw value of a @c FavoriteMsgIdItem's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t FavoriteMsgIdItem_ChannelType_RawValue(FavoriteMsgIdItem *message);
+/**
+ * Sets the raw value of an @c FavoriteMsgIdItem's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetFavoriteMsgIdItem_ChannelType_RawValue(FavoriteMsgIdItem *message, int32_t value);
+
+#pragma mark - QryFavoriteMsgsReq
+
+typedef GPB_ENUM(QryFavoriteMsgsReq_FieldNumber) {
+  QryFavoriteMsgsReq_FieldNumber_Limit = 1,
+  QryFavoriteMsgsReq_FieldNumber_Offset = 2,
+};
+
+GPB_FINAL @interface QryFavoriteMsgsReq : GPBMessage
+
+@property(nonatomic, readwrite) int64_t limit;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *offset;
+
+@end
+
+#pragma mark - FavoriteMsgs
+
+typedef GPB_ENUM(FavoriteMsgs_FieldNumber) {
+  FavoriteMsgs_FieldNumber_ItemsArray = 1,
+  FavoriteMsgs_FieldNumber_Offset = 2,
+};
+
+GPB_FINAL @interface FavoriteMsgs : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FavoriteMsg*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *offset;
+
+@end
+
+#pragma mark - FavoriteMsg
+
+typedef GPB_ENUM(FavoriteMsg_FieldNumber) {
+  FavoriteMsg_FieldNumber_Msg = 1,
+  FavoriteMsg_FieldNumber_CreatedTime = 2,
+};
+
+GPB_FINAL @interface FavoriteMsg : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
 
 @property(nonatomic, readwrite) int64_t createdTime;
 

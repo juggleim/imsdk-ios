@@ -489,6 +489,64 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)addFavoriteMessages:(NSArray<JMessage *> *)messageList
+                     userId:(NSString *)userId
+                    success:(void (^)(long long))successBlock
+                      error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData favoriteMessagesData:messageList
+                                                isAdd:YES
+                                               userId:userId
+                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"add favorite messages");
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)removeFavoriteMessages:(NSArray<JMessage *> *)messageList
+                        userId:(NSString *)userId
+                       success:(void (^)(long long))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData favoriteMessagesData:messageList
+                                                isAdd:NO
+                                               userId:userId
+                                                index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"add favorite messages");
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
+    });
+}
+
+- (void)getFavoriteMessagesWithOffset:(NSString *)offset
+                                limit:(int)limit
+                               userId:(NSString *)userId
+                              success:(void (^)(NSArray<JFavoriteMessage *> * _Nonnull, NSString * _Nonnull))successBlock
+                                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getFavoriteMessagesData:userId
+                                                   limit:limit
+                                                  offset:offset
+                                                   index:self.cmdIndex++];
+        JLogI(@"WS-Send", @"get favorite messages");
+        JGetFavoriteMsgObj *obj = [JGetFavoriteMsgObj new];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)setUnread:(JConversation *)conversation
            userId:(NSString *)userId
           success:(void (^)(long long timestamp))successBlock
@@ -1393,6 +1451,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeGetTopMsgAck");
             [self handleGetTopMsgAck:obj.getTopMsgAck];
             break;
+        case JPBRcvTypeGetFavoriteMsgAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetFavoriteMsgAck");
+            [self handleGetFavoriteMsgAck:obj.getFavoriteMsgAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1453,6 +1515,9 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JGetTopMsgObj class]]) {
         JGetTopMsgObj *s = (JGetTopMsgObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JGetFavoriteMsgObj class]]) {
+        JGetFavoriteMsgObj *s = (JGetFavoriteMsgObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1842,6 +1907,18 @@ inConversation:(JConversation *)conversation
             getTopObj.errorBlock(ack.code);
         } else {
             getTopObj.successBlock(ack.message, ack.userInfo, ack.createdTime);
+        }
+    }
+}
+
+- (void)handleGetFavoriteMsgAck:(JGetFavoriteMsgAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JGetFavoriteMsgObj class]]) {
+        JGetFavoriteMsgObj *getFavoriteObj = (JGetFavoriteMsgObj *)obj;
+        if (ack.code != 0) {
+            getFavoriteObj.errorBlock(ack.code);
+        } else {
+            getFavoriteObj.successBlock(ack.favoriteMsgs, ack.offset);
         }
     }
 }

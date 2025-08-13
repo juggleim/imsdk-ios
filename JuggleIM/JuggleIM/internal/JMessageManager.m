@@ -1492,7 +1492,105 @@
             }
         });
     }];
-    
+}
+
+- (void)addFavorite:(NSArray<NSString *> *)messageIdList
+            success:(void (^)(void))successBlock
+              error:(void (^)(JErrorCode))errorBlock {
+    if (messageIdList.count == 0) {
+        JLogE(@"MSG-AddFvr", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    NSArray <JMessage *> *messageList = [self getMessagesByMessageIds:messageIdList];
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket addFavoriteMessages:messageList
+                                      userId:self.core.userId
+                                     success:^(long long timestamp) {
+        JLogI(@"MSG-AddFvr", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-AddFvr", @"error, code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)removeFavorite:(NSArray<NSString *> *)messageIdList
+               success:(void (^)(void))successBlock
+                 error:(void (^)(JErrorCode))errorBlock {
+    if (messageIdList.count == 0) {
+        JLogE(@"MSG-RmFvr", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    NSArray <JMessage *> *messageList = [self getMessagesByMessageIds:messageIdList];
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket removeFavoriteMessages:messageList
+                                         userId:self.core.userId
+                                        success:^(long long timestamp) {
+        JLogI(@"MSG-RmFvr", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-RmFvr", @"error, code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getFavorite:(JGetFavoriteMessageOption *)option
+            success:(void (^)(NSArray<JFavoriteMessage *> *, NSString *))successBlock
+              error:(void (^)(JErrorCode))errorBlock {
+    if (option.count <= 0) {
+        JLogE(@"MSG-GetFvr", @"invalid parameter");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    [self.core.webSocket getFavoriteMessagesWithOffset:option.offset
+                                                 limit:option.count
+                                                userId:self.core.userId
+                                               success:^(NSArray<JFavoriteMessage *> * _Nonnull messageList, NSString * _Nonnull offset) {
+        JLogI(@"MSG-GetFvr", @"success");
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(messageList, offset);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetFvr", @"error, code is %lu", code);
+        dispatch_async(weakSelf.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
 }
 
 - (void)downloadMediaMessage:(NSString *)messageId

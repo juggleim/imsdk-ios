@@ -223,6 +223,22 @@ inConversation:(JConversation *)conversation
               success:(void (^)(JConcreteMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)addFavoriteMessages:(NSArray <JMessage *> *)messageList
+                     userId:(NSString *)userId
+                    success:(void (^)(long long timestamp))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)removeFavoriteMessages:(NSArray <JMessage *> *)messageList
+                        userId:(NSString *)userId
+                       success:(void (^)(long long timestamp))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getFavoriteMessagesWithOffset:(NSString *)offset
+                                limit:(int)limit
+                               userId:(NSString *)userId
+                              success:(void (^)(NSArray <JFavoriteMessage *> *messageList, NSString *offset))successBlock
+                                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId
                   success:(void (^)(void))successBlock

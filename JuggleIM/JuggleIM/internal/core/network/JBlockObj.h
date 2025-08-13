@@ -100,4 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
+@interface JGetFavoriteMsgObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray <JFavoriteMessage *> *messageList, NSString *offset);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
 NS_ASSUME_NONNULL_END
