@@ -2067,6 +2067,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         userInfo.extraDic = [dic copy];
     }
+    userInfo.updatedTime = item.member.updatedTime;
     return userInfo;
 }
 
