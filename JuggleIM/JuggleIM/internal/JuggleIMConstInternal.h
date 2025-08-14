@@ -38,6 +38,15 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //用户注销下线
     JErrorCodeInternalUserLogOut = 11012,
     
+    //非好友关系
+    JErrorCodeInternalNotFriend = 12009,
+    //没有操作权限
+    JErrorCodeInternalNoOperationPermission = 12010,
+    //消息不存在
+    JErrorCodeInternalRemoteMessageNotExist = 12011,
+    //收藏重复消息
+    JErrorCodeInternalAddDuplicateFavoriteMessage = 12012,
+    
     //群组不存在
     JErrorCodeInternalGroupNotExist = 13001,
     //不是群成员
