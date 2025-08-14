@@ -1578,6 +1578,11 @@
                                                 userId:self.core.userId
                                                success:^(NSArray<JFavoriteMessage *> * _Nonnull messageList, NSString * _Nonnull offset) {
         JLogI(@"MSG-GetFvr", @"success");
+        NSMutableArray *messages = [NSMutableArray array];
+        for (JFavoriteMessage *favMessage in messageList) {
+            [messages addObject:favMessage.message];
+        }
+        [self updateUserInfos:messages];
         dispatch_async(weakSelf.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messageList, offset);
