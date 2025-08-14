@@ -769,9 +769,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     for (JMessage *message in messages) {
         FavoriteMsgIdItem *item = [FavoriteMsgIdItem new];
         item.senderId = message.senderUserId;
-        if (message.direction == JMessageDirectionSend) {
-            item.receiverId = message.conversation.conversationId;
-        } else {
+        item.receiverId = message.conversation.conversationId;
+        if (message.conversation.conversationType == JConversationTypePrivate
+            && message.direction == JMessageDirectionReceive) {
             item.receiverId = userId;
         }
         item.channelType = [self channelTypeFromConversationType:message.conversation.conversationType];
