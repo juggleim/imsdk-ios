@@ -135,6 +135,10 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     _callDelegate = delegate;
 }
 
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor {
+    [self.pbData setMessagePreprocessor:preprocessor];
+}
+
 #pragma mark - send pb
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation

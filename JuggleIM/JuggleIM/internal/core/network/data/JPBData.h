@@ -239,6 +239,8 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @interface JPBData : NSObject
 - (void)resetDataConverter;
 
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
+
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
                          deviceId:(NSString *)deviceId

@@ -188,6 +188,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) NSMutableDictionary *msgCmdDic;
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @property (nonatomic, strong) id<JDataConverterProtocol> converter;
+@property (nonatomic, weak) id<JMessagePreprocessor> messagePreprocessor;
 @end
 
 @implementation JPBData
@@ -202,6 +203,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (void)resetDataConverter {
     self.converter = [JSimpleDataConverter converter];
+}
+
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor {
+    _messagePreprocessor = preprocessor;
 }
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
@@ -277,6 +282,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
                            pushData:(nonnull JPushData *)pushData
                            lifeTime:(long long)lifeTime
                   lifeTimeAfterRead:(long long)lifeTimeAfterRead {
+    if ([self.messagePreprocessor respondsToSelector:@selector(encryptMessageContent:inConversation:contentType:)]) {
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:conversationType conversationId:conversationId];
+        msgData = [self.messagePreprocessor encryptMessageContent:msgData inConversation:conversation contentType:contentType];
+    }
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -1962,6 +1971,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.senderUserId = downMsg.senderId;
     msg.seqNo = downMsg.msgSeqNo;
     msg.msgIndex = downMsg.unreadIndex;
+    NSData *msgContent = downMsg.msgContent;
+    if ([self.messagePreprocessor respondsToSelector:@selector(decryptMessageContent:inConversation:contentType:)]) {
+        msgContent = [self.messagePreprocessor decryptMessageContent:msgContent inConversation:conversation contentType:msg.contentType];
+    }
     msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
                                                    contentType:downMsg.msgType];
     if([msg.content isKindOfClass:[JMergeMessage class]]){

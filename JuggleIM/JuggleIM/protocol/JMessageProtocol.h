@@ -99,20 +99,25 @@
 @end
 
 @protocol JMessagePreprocessor <NSObject>
-/// 消息入库之后，发送之前的回调
-/// - Parameter content: 待发送的消息内容
+/// 消息加密的回调
+/// 回调时机：消息入库之后，发送之前
+/// - Parameter content: 待发送的消息内容，已序列化成 NSData
 /// - Parameter conversation: 所在会话
-/// - Return: 处理后的消息内容。如果返回为空，会导致发送失败。
-- (JMessageContent *)messagePrepareForSend:(JMessageContent *)content
-                            inConversation:(JConversation *)conversation;
+/// - Parameter contentType: 消息类型
+/// - Return: 处理后的消息内容。
+- (NSData *)encryptMessageContent:(NSData *)content
+                   inConversation:(JConversation *)conversation
+                      contentType:(NSString *)contentType;
 
-
-/// 接收到消息，入库之前的回调
-/// - Parameter content: 接收到的消息内容
+/// 消息解密的回调
+/// 回调时机：接收到消息，入库之前
+/// - Parameter content: 接收到的消息内容，NSData 格式，还没反序列化
 /// - Parameter conversation: 所在会话
-/// - Return: 处理后的消息内容。如果返回为空，会将原内容回调上去。
-- (JMessageContent *)messagePrepareForReceive:(JMessageContent *)content
-                               inConversation:(JConversation *)conversation;
+/// - Parameter contentType: 消息类型
+/// - Return: 处理后的消息内容。
+- (NSData *)decryptMessageContent:(NSData *)content
+                   inConversation:(JConversation *)conversation
+                      contentType:(NSString *)contentType;
 
 @end
 

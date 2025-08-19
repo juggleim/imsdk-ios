@@ -103,6 +103,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate;
 
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
+
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo

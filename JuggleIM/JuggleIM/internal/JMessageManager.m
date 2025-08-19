@@ -41,7 +41,6 @@
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
     id<JMessageUploadProvider> _uploadProvider;
-    id<JMessagePreprocessor> _preprocessor;
 }
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) NSHashTable <id<JMessageDelegate>> *delegates;
@@ -128,7 +127,7 @@
 }
 
 - (void)setPreprocessor:(id<JMessagePreprocessor>)preprocessor {
-    _preprocessor = preprocessor;
+    [self.core.webSocket setMessagePreprocessor:preprocessor];
 }
 
 - (id<JMessageUploadProvider>)uploadProvider{
@@ -2377,13 +2376,9 @@
         mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
     JMessageContent *content = message.content;
-    if ([_preprocessor respondsToSelector:@selector(messagePrepareForSend:inConversation:)]) {
-        content = [_preprocessor messagePrepareForSend:message.content inConversation:message.conversation];
-    }
     if (!content) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
-                message.content = content;
                 errorBlock(JErrorCodeInvalidParam, message);
             }
         });
@@ -2718,14 +2713,6 @@
 
 - (void)handleReceiveMessages:(NSArray<JConcreteMessage *> *)messages
                        isSync:(BOOL)isSync {
-    if ([_preprocessor respondsToSelector:@selector(messagePrepareForReceive:inConversation:)]) {
-        [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
-            JMessageContent *content = [_preprocessor messagePrepareForReceive:message.content inConversation:message.conversation];
-            if (content) {
-                message.content = content;
-            }
-        }];
-    }
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self insertRemoteMessages:messagesToSave];
     
