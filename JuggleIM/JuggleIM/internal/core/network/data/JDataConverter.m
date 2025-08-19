@@ -12,6 +12,7 @@
 
 @interface JDataConverter ()
 @property (nonatomic, strong) NSString *session;
+@property (nonatomic, assign) BOOL active;
 @end
 
 @implementation JDataConverter
@@ -35,6 +36,12 @@
 }
 
 - (void)storeSharedKey:(NSData *)key {
+    if (key.length == 0) {
+        self.active = NO;
+        JLogI(@"CON-Enc", @"storeSharedKey key is null");
+        return;
+    }
+    self.active = YES;
     int r = store_shared_key_with_payload_ffi([self.session UTF8String], key.bytes, key.length);
     if (r != 0) {
         JLogE(@"CON-Enc", @"store_shared_key_with_payload_ffi error, %d", r);
@@ -42,33 +49,41 @@
 }
 
 - (NSData *)decode:(NSData *)data {
-    NSMutableData *md = [NSMutableData dataWithLength:data.length];
-    unsigned char *payload = (unsigned char *)md.mutableBytes;
-    memset(payload, 0, data.length);
-    
-    uintptr_t len;
-    int r = decrypt_with_session_ffi([self.session UTF8String], data.bytes, data.length, payload, &len, data.length);
-    if (r != 0) {
-        JLogE(@"CON-Enc", @"decode error, %d", r);
-        return nil;
+    if (self.active) {
+        NSMutableData *md = [NSMutableData dataWithLength:data.length];
+        unsigned char *payload = (unsigned char *)md.mutableBytes;
+        memset(payload, 0, data.length);
+        
+        uintptr_t len;
+        int r = decrypt_with_session_ffi([self.session UTF8String], data.bytes, data.length, payload, &len, data.length);
+        if (r != 0) {
+            JLogE(@"CON-Enc", @"decode error, %d", r);
+            return nil;
+        } else {
+            NSData *d = [NSData dataWithBytes:payload length:len];
+            return d;
+        }
     } else {
-        NSData *d = [NSData dataWithBytes:payload length:len];
-        return d;
+        return data;
     }
 }
 
 - (NSData *)encode:(NSData *)data {
-    NSMutableData *md = [NSMutableData dataWithLength:data.length+100];
-    unsigned char *payload = (unsigned char *)md.mutableBytes;
-    memset(payload, 0, data.length+100);
-    uintptr_t len;
-    int r = encrypt_with_session_ffi([self.session UTF8String], data.bytes, data.length, payload, &len, data.length+100);
-    if (r != 0) {
-        JLogE(@"CON-Enc", @"encode error, %d", r);
-        return nil;
+    if (self.active) {
+        NSMutableData *md = [NSMutableData dataWithLength:data.length+100];
+        unsigned char *payload = (unsigned char *)md.mutableBytes;
+        memset(payload, 0, data.length+100);
+        uintptr_t len;
+        int r = encrypt_with_session_ffi([self.session UTF8String], data.bytes, data.length, payload, &len, data.length+100);
+        if (r != 0) {
+            JLogE(@"CON-Enc", @"encode error, %d", r);
+            return nil;
+        } else {
+            NSData *d = [NSData dataWithBytes:payload length:len];
+            return d;
+        }
     } else {
-        NSData *d = [NSData dataWithBytes:payload length:len];
-        return d;
+        return data;
     }
 }
 
