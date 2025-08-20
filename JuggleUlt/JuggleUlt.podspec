@@ -1,8 +1,8 @@
 
 Pod::Spec.new do |s|
-  s.name             = 'JuggleIM'
+  s.name             = 'JuggleUlt'
   s.version          = '1.8.19'
-  s.summary          = 'Juggle IM SDK.'
+  s.summary          = 'Juggle Ultimate.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -11,15 +11,17 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-Juggle IM SDK for iOS.
+  Juggle Ultimate for iOS.
                        DESC
 
   s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JuggleIM_v1_8_19.zip' }
+  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JuggleUlt/JuggleUlt_v1_8_19.zip' }
 
   s.ios.deployment_target = '12.0'
   
-  s.vendored_frameworks = 'JuggleIM.xcframework'
+  s.vendored_frameworks = 'JuggleUlt.xcframework'
+  
+  s.dependency "JuggleIM"
 end

@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		A07E4D272E55AE820099E8BF /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07E4D262E55AE820099E8BF /* JuggleIM.framework */; };
+		A07E4D6A2E55D0A20099E8BF /* JuggleUlt.podspec in Resources */ = {isa = PBXBuildFile; fileRef = A07E4D692E55D0A20099E8BF /* JuggleUlt.podspec */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A07E4CAF2E55A8A90099E8BF /* JuggleUlt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JuggleUlt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A07E4D262E55AE820099E8BF /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A07E4D692E55D0A20099E8BF /* JuggleUlt.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = JuggleUlt.podspec; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -51,6 +53,7 @@
 		A07E4CA52E55A8A90099E8BF = {
 			isa = PBXGroup;
 			children = (
+				A07E4D692E55D0A20099E8BF /* JuggleUlt.podspec */,
 				A07E4CB12E55A8A90099E8BF /* JuggleUlt */,
 				A07E4D252E55AE820099E8BF /* Frameworks */,
 				A07E4CB02E55A8A90099E8BF /* Products */,
@@ -147,6 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A07E4D6A2E55D0A20099E8BF /* JuggleUlt.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
