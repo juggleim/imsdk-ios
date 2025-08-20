@@ -1,8 +1,8 @@
 //
 //  JDataConverter.m
-//  JuggleIM
+//  JuggleUlt
 //
-//  Created by Fei Li on 2025/8/8.
+//  Created by Fei Li on 2025/8/20.
 //
 
 #import "JDataConverter.h"
@@ -48,7 +48,7 @@
     }
 }
 
-- (NSData *)decode:(NSData *)data {
+- (NSData *)decrypt:(NSData *)data {
     if (self.active) {
         NSMutableData *md = [NSMutableData dataWithLength:data.length];
         unsigned char *payload = (unsigned char *)md.mutableBytes;
@@ -68,7 +68,7 @@
     }
 }
 
-- (NSData *)encode:(NSData *)data {
+- (NSData *)encrypt:(NSData *)data {
     if (self.active) {
         NSMutableData *md = [NSMutableData dataWithLength:data.length+100];
         unsigned char *payload = (unsigned char *)md.mutableBytes;
@@ -85,6 +85,13 @@
     } else {
         return data;
     }
+}
+
+- (NSString *)session {
+    if (!_session) {
+        _session = [JUtility getUUID];
+    }
+    return _session;
 }
 
 @end

@@ -64,3 +64,4 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JGroupMember.h>
 #import <JuggleIM/JGetConversationOptions.h>
 #import <JuggleIM/JUnknownMessage.h>
+#import <JuggleIM/JUltEncryptProtocol.h>

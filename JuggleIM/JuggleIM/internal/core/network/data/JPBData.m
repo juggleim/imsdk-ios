@@ -20,7 +20,7 @@
 #import "JDataConverterProtocol.h"
 #import "JSimpleDataConverter.h"
 #import "JuggleIMConstInternal.h"
-#import "JDataConverter.h"
+#import "JUltEncryptProtocol.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -183,7 +183,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) NSMutableDictionary *msgCmdDic;
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @property (nonatomic, strong) id<JDataConverterProtocol> converter;
-@property (nonatomic, strong) JDataConverter *converter2;
+@property (nonatomic, strong) id<JUltEncryptProtocol> converter2;
 @end
 
 @implementation JPBData
@@ -192,14 +192,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (self) {
         self.msgCmdDic = [[NSMutableDictionary alloc] init];
         self.converter = [JSimpleDataConverter converter];
-        self.converter2 = [JDataConverter converter];
+        self.converter2 = [self fetchUltConverter];
     }
     return self;
 }
 
 - (void)resetDataConverter {
     self.converter = [JSimpleDataConverter converter];
-    self.converter2 = [JDataConverter converter];
+    self.converter2 = [self fetchUltConverter];
 }
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
@@ -234,7 +234,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApple;
 //    connectMsg.language = language;
-    connectMsg.secretNegotiate = [self.converter2 getPubKey];
+    if (self.converter2) {
+        connectMsg.secretNegotiate = [self.converter2 getPubKey];
+    }
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
@@ -1585,7 +1587,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 obj.rcvType = JPBRcvTypeParseError;
                 return obj;
             }
-            [self.converter2 storeSharedKey:body.secretNegotiateAck];
+            if (self.converter2) {
+                [self.converter2 storeSharedKey:body.secretNegotiateAck];
+            }
             a.userId = body.userId;
             a.code = body.code;
             a.session = body.session;
@@ -2676,14 +2680,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (NSData *)encodePayload:(NSData *)data {
     NSData *d = [self.converter encode:data];
-    d = [self.converter2 encode:d];
+    if (self.converter2) {
+        d = [self.converter2 encrypt:d];
+    }
     return d;
 }
 
 - (NSData *)decodePayload:(NSData *)data {
-    NSData *d = [self.converter2 decode:data];
-    d = [self.converter decode:d];
-    return d;
+    if (self.converter2) {
+        data = [self.converter2 decrypt:data];
+    }
+    data = [self.converter decode:data];
+    return data;
+}
+
+- (id<JUltEncryptProtocol>)fetchUltConverter {
+    Class cls = NSClassFromString(@"JDataConverter");
+    id<JUltEncryptProtocol> converter = [[cls alloc] init];
+    return converter;
 }
 
 #pragma mark - helper
