@@ -79,6 +79,7 @@ typedef GPB_ENUM(ConnectMsgBody_FieldNumber) {
   ConnectMsgBody_FieldNumber_Language = 18,
   ConnectMsgBody_FieldNumber_IsBackend = 19,
   ConnectMsgBody_FieldNumber_VoipToken = 20,
+  ConnectMsgBody_FieldNumber_SecretNegotiate = 101,
 };
 
 GPB_FINAL @interface ConnectMsgBody : GPBMessage
@@ -136,6 +137,9 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 /** voip token of iOS */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *voipToken;
 
+/** 密钥协商 */
+@property(nonatomic, readwrite, copy, null_resettable) NSData *secretNegotiate;
+
 @end
 
 #pragma mark - ConnectAckMsgBody
@@ -146,6 +150,7 @@ typedef GPB_ENUM(ConnectAckMsgBody_FieldNumber) {
   ConnectAckMsgBody_FieldNumber_Session = 3,
   ConnectAckMsgBody_FieldNumber_Timestamp = 4,
   ConnectAckMsgBody_FieldNumber_Ext = 5,
+  ConnectAckMsgBody_FieldNumber_SecretNegotiateAck = 101,
 };
 
 GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
@@ -159,6 +164,9 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 @property(nonatomic, readwrite) int64_t timestamp;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+/** 密钥协商应答 */
+@property(nonatomic, readwrite, copy, null_resettable) NSData *secretNegotiateAck;
 
 @end
 
