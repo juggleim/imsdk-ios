@@ -32,6 +32,7 @@
         JLogE(@"CON-Enc", @"generate_client_pubkey_payload_ffi error, %d", r);
     }
     NSData *pubKey = [NSData dataWithBytes:payload length:len];
+    JLogI(@"CON-Enc", @"getPubKey");
     return pubKey;
 }
 
@@ -43,6 +44,7 @@
     }
     self.active = YES;
     int r = store_shared_key_with_payload_ffi([self.session UTF8String], key.bytes, key.length);
+    JLogI(@"CON-Enc", @"storeSharedKey");
     if (r != 0) {
         JLogE(@"CON-Enc", @"store_shared_key_with_payload_ffi error, %d", r);
     }

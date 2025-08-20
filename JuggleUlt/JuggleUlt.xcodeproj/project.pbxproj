@@ -19,7 +19,6 @@
 		A07E4CB42E55A8A90099E8BF /* Exceptions for "JuggleUlt" folder in "JuggleUlt" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			publicHeaders = (
-				JDataConverter.h,
 				JuggleUlt.h,
 			);
 			target = A07E4CAE2E55A8A90099E8BF /* JuggleUlt */;
