@@ -87,7 +87,6 @@
 		A07950232D1E8FD00045EFE9 /* UserListCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950222D1E8FD00045EFE9 /* UserListCollectionView.m */; };
 		A07950262D1E92170045EFE9 /* UserListCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A07950252D1E92170045EFE9 /* UserListCollectionItem.m */; };
 		A07950282D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07950272D1EB4C70045EFE9 /* SelectMultiFriendViewController.swift */; };
-		A07E4D332E55BF690099E8BF /* JuggleUlt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07E4D322E55BF690099E8BF /* JuggleUlt.framework */; };
 		A07F35D72BF4624F0087920B /* UserDefaults+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35D62BF4624F0087920B /* UserDefaults+Ext.swift */; };
 		A07F35DB2BF4650D0087920B /* JuggleUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DA2BF4650D0087920B /* JuggleUI.swift */; };
 		A07F35DD2BF48F190087920B /* UIView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A07F35DC2BF48F190087920B /* UIView+Ext.swift */; };
@@ -723,7 +722,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A042667C2E1CF987007F4AB7 /* JLiveKitCall.framework in Frameworks */,
-				A07E4D332E55BF690099E8BF /* JuggleUlt.framework in Frameworks */,
 				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
