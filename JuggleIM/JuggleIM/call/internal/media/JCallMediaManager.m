@@ -134,6 +134,12 @@ static JCallMediaManager *_instance;
     }
 }
 
+- (void)userMicrophoneDidChange:(BOOL)enable userId:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+        [self.delegate userMicrophoneDidChange:enable userId:userId];
+    }
+}
+
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
         [self.delegate soundLevelDidUpdate:soundLevels];

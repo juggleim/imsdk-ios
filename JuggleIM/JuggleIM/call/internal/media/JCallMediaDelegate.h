@@ -19,6 +19,9 @@
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;
 
+- (void)userMicrophoneDidChange:(BOOL)enable
+                         userId:(NSString *)userId;
+
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
 
 - (void)videoFirstFrameDidRender:(NSString *)userId;

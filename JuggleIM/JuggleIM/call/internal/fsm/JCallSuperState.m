@@ -165,7 +165,12 @@
         }
             
         case JCallEventParticipantEnableMic:
+        {
+            BOOL enable = [(NSNumber *)userInfo[@"enable"] boolValue];
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl microphoneEnable:enable userId:userId];
             break;
+        }
             
         case JCallEventSoundLevelUpdate:
         {

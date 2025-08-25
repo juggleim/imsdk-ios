@@ -285,6 +285,16 @@
     });
 }
 
+- (void)microphoneEnable:(BOOL)enable userId:(NSString *)userId {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+                [obj userMicrophoneDidChange:enable userId:userId];
+            }
+        }];
+    });
+}
+
 - (void)soundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -447,6 +457,10 @@
 
 - (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
     [self event:JCallEventParticipantEnableCamera userInfo:@{@"enable":@(enable), @"userId":userId}];
+}
+
+- (void)userMicrophoneDidChange:(BOOL)enable userId:(NSString *)userId {
+    [self event:JCallEventParticipantEnableMic userInfo:@{@"enable":@(enable), @"userId":userId}];
 }
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {

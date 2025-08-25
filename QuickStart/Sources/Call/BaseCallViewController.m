@@ -578,7 +578,7 @@
 ///   - userId: 用户 id
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId {
-    
+    [self resetLayout];
 }
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {

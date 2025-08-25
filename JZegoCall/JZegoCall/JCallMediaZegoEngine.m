@@ -126,6 +126,19 @@
     }
 }
 
+- (void)onRemoteMicStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    NSString *userId = [self userIdWithStreamId:streamID];
+    if (state == ZegoRemoteDeviceStateOpen) {
+        if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+            [self.delegate userMicrophoneDidChange:YES userId:userId];
+        }
+    } else if (state == ZegoRemoteDeviceStateMute) {
+        if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+            [self.delegate userMicrophoneDidChange:NO userId:userId];
+        }
+    }
+}
+
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType
                 userList:(NSArray<ZegoUser *> *)userList
                   roomID:(NSString *)roomID {

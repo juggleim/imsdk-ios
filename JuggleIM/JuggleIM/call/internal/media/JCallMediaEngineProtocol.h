@@ -22,6 +22,9 @@
                      userId:(NSString *)userId;
 
 @optional
+- (void)userMicrophoneDidChange:(BOOL)enable
+                         userId:(NSString *)userId;
+
 //暂不处理
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
 
