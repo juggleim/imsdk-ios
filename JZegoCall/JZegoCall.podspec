@@ -24,5 +24,5 @@ Pod::Spec.new do |s|
   s.vendored_frameworks = 'JZegoCall.xcframework'
   
   s.dependency "JuggleIM"
-  s.dependency "ZegoExpressEngine"
+  s.dependency "ZegoExpressEngine", "3.21.0"
 end

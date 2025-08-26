@@ -86,7 +86,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_test_network_connectivity)(zego_seq
 /// Available since: 1.20.0
 /// Description: This function supports uplink/downlink network speed test when the network can be connected.
 /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
-/// When to call: It needs to be called after [createEngine], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
+/// When to call: It needs to be called after [loginRoom]. If you call [startPublishingStream]/[startPlayingStream] while speed testing, the speed test will automatically stop.
 /// Restrictions: The default maximum allowable test time for a single network speed test is 30 seconds.
 /// Caution: Developers can register [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be triggered every 3 seconds. If an error occurs during the speed test process, [onNetworkSpeedTestError] callback will be triggered. If this function is repeatedly called multiple times, the last functioh call's configuration will be used.
 /// Related APIs: Call [stopNetworkSpeedTest] to stop network speed test.
@@ -287,7 +287,9 @@ typedef void(EXP_CALL *pfnzego_register_network_speed_test_quality_update_callba
 ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
 ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
 ///   Version 2.22.0 and above:
-///   1. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
+///   1. As long as you publish or play a stream, you will receive your own network quality callback.
+///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
+///   3. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
 /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
 /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
 ///
@@ -306,6 +308,27 @@ zego_register_network_quality_callback(zego_on_network_quality callback_func, vo
 #else
 typedef void(EXP_CALL *pfnzego_register_network_quality_callback)(
     zego_on_network_quality callback_func, void *user_context);
+#endif
+
+/// RTC network statistics callback.
+///
+/// Available since: 3.20.0
+/// Description: RTC network statistics callback.
+/// Use cases: When a developer wants to analyze the local network situation.
+/// When to Trigger: After calling [startPublishingStream] to start pushing the RTC stream, it will call back the upstream statistics. After calling [startPlayingStream] to start playing the RTC or L3 stream, it will call back the downlink statistics. The default callback period is 3 seconds.
+/// Restrictions: None.
+/// Caution: None.
+///
+/// @param info statistical information.
+/// @param user_context Context of user.
+typedef void (*zego_on_rtc_stats)(const struct zego_rtc_stats_info info, void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_rtc_stats_callback(zego_on_rtc_stats callback_func,
+                                                           void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_rtc_stats_callback)(zego_on_rtc_stats callback_func,
+                                                            void *user_context);
 #endif
 
 /// Successful callback of network time synchronization.

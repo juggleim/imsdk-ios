@@ -25,6 +25,9 @@ namespace EXPRESS {
 #define oInternalCallbackCenter ZegoSingleton<ZegoInternalCallbackCenter>::CreateInstance()
 class ZegoInternalCallbackCenter {
   public:
+    struct ZegoEngineConfig engineConfig;
+
+  public:
     declearSingleShareMember(IZegoEventHandler);
     declearSingleShareMember(IZegoApiCalledEventHandler);
     declearMultiRawMember(zego_seq, ZegoRoomSetRoomExtraInfoCallback);
@@ -115,11 +118,19 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerOnApiCalledResultCallback(nullptr, nullptr);
     }
 
-    void registerCallback() {
-#if defined(_WIN32)
-        oInternalOriginBridge->registerRecvWindowsMessageCallback(
-            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_recv_win_massage), nullptr);
+    void registerCallback(bool callbackSwitchToMainThread) {
+        if (!callbackSwitchToMainThread) {
+#if defined(_WIN32) || TARGET_OS_OSX
+            oInternalOriginBridge->registerRecvZegoCallbackTask(
+                ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_recv_callback_task), nullptr);
 #endif
+        } else {
+#if defined(_WIN32)
+            oInternalOriginBridge->registerRecvWindowsMessageCallback(
+                ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_recv_win_massage), nullptr);
+#endif
+        }
+
         oInternalOriginBridge->registerEngineUninitCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_engine_uninit), nullptr);
 
@@ -538,6 +549,8 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(this));
         oInternalOriginBridge->registerNetworkQualityCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_network_quality), ZegoVoidPtr(this));
+        oInternalOriginBridge->registerRtcStatsCallback(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_rtc_stats), ZegoVoidPtr(this));
 
         oInternalOriginBridge->registerCopyrightedMusicDownloadProcessUpdateCallback(
             ZegoVoidPtr(
@@ -593,6 +606,10 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerScreenCaptureSourceExceptionOccurredCallback(
             ZegoVoidPtr(
                 &ZegoInternalCallbackCenter::zego_on_screen_capture_source_exception_occurred),
+            ZegoVoidPtr(this));
+        oInternalOriginBridge->registerScreenCaptureSourceCaptureTypeExceptionOccurredCallback(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::
+                            zego_on_screen_capture_source_capture_type_exception_occurred),
             ZegoVoidPtr(this));
         oInternalOriginBridge->registerScreenCaptureSourceWindowStateCallback(
             ZegoVoidPtr(
@@ -912,6 +929,8 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerScreenCaptureSourceAvailableFrameCallback(nullptr, nullptr);
         oInternalOriginBridge->registerScreenCaptureSourceExceptionOccurredCallback(nullptr,
                                                                                     nullptr);
+        oInternalOriginBridge->registerScreenCaptureSourceCaptureTypeExceptionOccurredCallback(
+            nullptr, nullptr);
         oInternalOriginBridge->registerScreenCaptureSourceWindowStateCallback(nullptr, nullptr);
 
         oInternalOriginBridge->registerNetworkTimeSynchronizedCallback(nullptr, nullptr);
@@ -992,6 +1011,21 @@ class ZegoInternalCallbackCenter {
             (*pFunc)();
             delete pFunc;
         }
+    }
+#endif
+
+#if defined(_WIN32) || TARGET_OS_OSX
+    static void zego_on_recv_callback_task(void *call_back_task, bool excute) {
+        if (nullptr == call_back_task) {
+            return;
+        }
+
+        std::function<void(void)> *pFunc = (std::function<void(void)> *)call_back_task;
+        if (excute) {
+            (*pFunc)();
+        }
+
+        delete pFunc;
     }
 #endif
 
@@ -2958,6 +2992,26 @@ class ZegoInternalCallbackCenter {
         ZEGO_SWITCH_THREAD_ING
     }
 
+    static void zego_on_rtc_stats(const struct zego_rtc_stats_info info, void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto weakHandler =
+            std::weak_ptr<IZegoEventHandler>(oInternalCallbackCenter->getIZegoEventHandler());
+        ZegoRtcStatsInfo stats;
+        stats.totalTxBandwidth = info.total_tx_bandwidth;
+        stats.avgTxRtt = info.avg_tx_rtt;
+        stats.avgTxPacketLostRate = info.avg_tx_packet_lost_rate;
+        stats.totalRxBandwidth = info.total_rx_bandwidth;
+        stats.avgRxRtt = info.avg_rx_rtt;
+        stats.avgRxPacketLostRate = info.avg_rx_packet_lost_rate;
+        stats.avgPeerToPeerDelay = info.avg_peer_to_peer_delay;
+        ZEGO_SWITCH_THREAD_PRE_STATIC
+        auto handler = weakHandler.lock();
+        if (handler) {
+            handler->onRtcStats(stats);
+        }
+        ZEGO_SWITCH_THREAD_ING
+    }
+
     static void zego_on_copyrighted_music_download_progress_update(zego_seq seq,
                                                                    const char *resource_id,
                                                                    float progress_rate,
@@ -3145,6 +3199,20 @@ class ZegoInternalCallbackCenter {
 
         if (screenCaptureSource) {
             screenCaptureSource->zego_on_screen_capture_source_exception_occurred(exception_type);
+        }
+    }
+
+    static void zego_on_screen_capture_source_capture_type_exception_occurred(
+        enum zego_screen_capture_source_type source_type,
+        enum zego_screen_capture_source_exception_type exception_type, int instance_index,
+        void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto screenCaptureSource =
+            oInternalCallbackCenter->getZegoExpressScreenCaptureSourceImp(instance_index);
+
+        if (screenCaptureSource) {
+            screenCaptureSource->zego_on_screen_capture_source_capture_type_exception_occurred(
+                source_type, exception_type);
         }
     }
 

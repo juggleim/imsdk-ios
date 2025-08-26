@@ -61,6 +61,10 @@
 
 - (void)useFrontCamera:(BOOL)isEnable;
 
+- (void)enableAEC:(BOOL)isEnable;
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
+
 // 当前 active 的 CallSession
 - (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
 

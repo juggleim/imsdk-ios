@@ -56,6 +56,7 @@
 #define ZEGO_EXPRESS_MAX_URL_COUNT (10)
 #define ZEGO_EXPRESS_MAX_URL_LEN (1024)
 #define ZEGO_EXPRESS_MAX_MEDIA_URL_LEN (2048)
+#define ZEGO_EXPRESS_MAX_PATH_LEN (2048)
 #define ZEGO_EXPRESS_MAX_IMAGE_PATH (512)
 #define ZEGO_EXPRESS_MAX_MESSAGE_LEN (10240)
 #define ZEGO_EXPRESS_MAX_CUSTOM_CMD_LEN (1024)
@@ -67,6 +68,8 @@
 #define ZEGO_EXPRESS_MAX_ROOM_EXTRA_INFO_VALUE_LEN (4096)
 #define ZEGO_EXPRESS_MAX_ROOM_TOKEN_VALUE_LEN (2048)
 #define ZEGO_EXPRESS_MAX_SET_CONFIG_VALUE_LEN (2048)
+#define ZEGO_EXPRESS_MAX_STREAM_TITLE_LEN (256)
+#define ZEGO_EXPRESS_MAX_DEVICE_EXTRA_INFO_LEN (2048)
 
 /// Room scenario.
 enum zego_scenario {
@@ -252,6 +255,16 @@ enum zego_engine_state {
 
     /// The engine has stoped
     zego_engine_state_stop = 1
+
+};
+
+/// Video backend type.
+enum zego_video_backend_type {
+    /// OpenGL2.0. For iOS and Android, it corresponds to OpenGLES2.0.
+    zego_video_backend_type_open_gl2 = 0,
+
+    /// OpenGL3.0. For iOS and Android, it corresponds to OpenGLES3.0.
+    zego_video_backend_type_open_gl3 = 1
 
 };
 
@@ -493,22 +506,22 @@ enum zego_voice_changer_preset {
     /// Minions effect
     zego_voice_changer_preset_minions = 23,
 
-    /// Sunshine effect, only support iOS
+    /// Sunshine effect
     zego_voice_changer_preset_sunshine = 24,
 
-    /// Gentle effect, only support iOS
+    /// Gentle effect
     zego_voice_changer_preset_gentle = 25,
 
-    /// Sweet effect, only support iOS
+    /// Sweet effect
     zego_voice_changer_preset_sweet = 26,
 
-    /// Sweet male effect, only support iOS
+    /// Sweet male effect
     zego_voice_changer_preset_sweet_male = 27,
 
-    /// Sweet female effect, only support iOS
+    /// Sweet female effec
     zego_voice_changer_preset_sweet_female = 28,
 
-    /// Bright effect, only support iOS
+    /// Bright effect
     zego_voice_changer_preset_bright = 29,
 
     /// Autobot effect
@@ -564,7 +577,16 @@ enum zego_reverb_preset {
     zego_reverb_preset_enhanced_rock = 13,
 
     /// Enhanced misty reverb effect
-    zego_reverb_preset_enhanced_misty = 14
+    zego_reverb_preset_enhanced_misty = 14,
+
+    /// Hip Hop reverb effect
+    zego_reverb_preset_hip_hop = 15,
+
+    /// Misty reverb effect
+    zego_reverb_preset_misty = 16,
+
+    /// 3D voice reverb effect
+    zego_reverb_preset_three_dimensional_voice = 17
 
 };
 
@@ -737,7 +759,10 @@ enum zego_aec_mode {
     zego_aec_mode_medium = 1,
 
     /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
-    zego_aec_mode_soft = 2
+    zego_aec_mode_soft = 2,
+
+    /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
+    zego_aec_mode_ai = 3
 
 };
 
@@ -759,7 +784,10 @@ enum zego_ans_mode {
     zego_ans_mode_ai_balanced = 4,
 
     /// Low latency AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-    zego_ans_mode_ai_low_latency = 5
+    zego_ans_mode_ai_low_latency = 5,
+
+    /// Aggressive AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+    zego_ans_mode_ai_aggressive = 6
 
 };
 
@@ -1102,6 +1130,16 @@ enum zego_device_exception_type {
 
     /// Audio session category change (Apple platform only).
     zego_device_exception_type_audio_session_category_change = 13
+
+};
+
+/// Mode for notifying the local device state.
+enum zego_exp_notify_device_state_mode {
+    /// Notify the local device state.
+    zego_exp_notify_device_state_mode_open = 0,
+
+    /// Do not notify the local device state. Only valid for disable device.
+    zego_exp_notify_device_state_mode_close = 1
 
 };
 
@@ -1876,16 +1914,16 @@ enum zego_audio_vad_stable_state_monitor_type {
 
 /// Orientation mode of the video.
 enum zego_orientation_mode {
-    /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
+    /// Custom mode. The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
     zego_orientation_mode_custom = 0,
 
-    /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+    /// Description: Player self adaption mode. The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
     zego_orientation_mode_adaption = 1,
 
-    /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
+    /// Description: Player adapt to pulisher mode. Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
     zego_orientation_mode_alignment = 2,
 
-    /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
+    /// Description: Fixed resolution ratio mode. Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
     zego_orientation_mode_fixed_resolution_ratio = 3
 
 };
@@ -1985,6 +2023,42 @@ enum zego_low_light_enhancement_mode {
 
     /// Automatic low-light enhancement, the brightness enhancement value of the captured picture is dynamically adjusted with the ambient brightness.
     zego_lowlight_enhancement_mode_auto = 2
+
+};
+
+/// Low light enhanced type.
+enum zego_exp_low_light_enhancement_type {
+    /// Normal low light enhancement.
+    zego_exp_lowlight_enhancement_type_normal = 0,
+
+    /// AI low light enhancement. If you want to use this function, contact ZEGO technical support.
+    zego_exp_lowlight_enhancement_type_ai = 1
+
+};
+
+/// Video denoise mode.
+enum zego_video_denoise_mode {
+    /// Turn off video denoise.
+    zego_video_denoise_mode_off = 0,
+
+    /// Turn on video denoise.
+    zego_video_denoise_mode_on = 1,
+
+    /// Automatic video noise reduction, where the SDK internally determines whether to enable noise reduction based on the level of noise in the captured footage.
+    zego_video_denoise_mode_auto = 2
+
+};
+
+/// Video denoise strength.
+enum zego_video_denoise_strength {
+    /// Light denoise strength.
+    zego_video_denoise_strength_light = 1,
+
+    /// Medium denoise strength.
+    zego_video_denoise_strength_medium = 2,
+
+    /// Heavy denoise strength.
+    zego_video_denoise_strength_heavy = 3
 
 };
 
@@ -2378,6 +2452,16 @@ enum zego_processed_data_usage_type {
 
 };
 
+/// Dummy capture image mode.
+enum zego_dummy_capture_image_mode {
+    /// Manual mode. The user needs to call the [EnableCamera] interface to turn off camera capture, and the SDK will use dummy capture image.
+    zego_dummy_capture_image_mode_manual = 0,
+
+    /// Auto mode. After the SDK detects that the camera is unavailable, it uses dummy capture image to puublish the stream.
+    zego_dummy_capture_image_mode_auto = 1
+
+};
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -2508,7 +2592,7 @@ struct zego_video_config {
     /// Encode resolution height, control the image height of the encoder when publishing stream. SDK requires this member to be set to an even number. The settings before and after publishing stream can be effective
     int encode_height;
 
-    /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
+    /// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
     int fps;
 
     /// Bit rate in kbps. The settings before and after publishing stream can be effective. The SDK will automatically set the bit rate suitable for the scenario selected by the developer. If the bit rate manually set by the developer exceeds the reasonable range, the SDK will automatically process the bit rate according to the reasonable range. If you need to configure a high bit rate due to business needs, please contact ZEGO Business.
@@ -2517,7 +2601,7 @@ struct zego_video_config {
     /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
     enum zego_video_codec_id codec_id;
 
-    /// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
+    /// Video keyframe interval, in seconds. Description: Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
     int key_frame_interval;
 };
 
@@ -2722,6 +2806,12 @@ struct zego_roi_rect {
     int strength;
 };
 
+/// Position information used by the face detection.
+struct zego_face_position_info {
+    /// Coordinates used by the face detection.
+    struct zego_rect position;
+};
+
 /// View object.
 ///
 /// Configure view object, view Mode, background color
@@ -2757,6 +2847,9 @@ struct zego_publisher_config {
 
     /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
     enum zego_capability_negotiation_type codec_negotiation_type;
+
+    /// Stream title, a utf8 string with a maximum length of 255 bytes or less.
+    char stream_title[ZEGO_EXPRESS_MAX_STREAM_TITLE_LEN];
 };
 
 /// Advanced scene publisher configuration.
@@ -2836,6 +2929,9 @@ struct zego_cdn_config {
 
     /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
     int quic_connect_mode;
+
+    /// custom param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+    char custom_params[ZEGO_EXPRESS_MAX_COMMON_LEN];
 };
 
 /// Relay to CDN info.
@@ -2853,6 +2949,23 @@ struct zego_stream_relay_cdn_info {
 
     /// The timestamp when the state changed, UNIX timestamp, in milliseconds.
     unsigned long long state_time;
+};
+
+/// Face detection info.
+///
+/// Face detection info.
+struct zego_face_detection_info {
+    /// The image width captured by the camera
+    int image_width;
+
+    /// The image height captured by the camera
+    int image_height;
+
+    /// Face position information list
+    struct zego_face_position_info *face_position_list;
+
+    /// Length of face position information list
+    unsigned int face_position_count;
 };
 
 /// Custom play stream resource type configuration.
@@ -3054,6 +3167,9 @@ struct zego_media_side_info {
 
     /// timestamp
     long long timestamp_ns;
+
+    /// SEI source module. Please contact ZEGO technical support.
+    int module_type;
 };
 
 /// Device Info.
@@ -3065,6 +3181,9 @@ struct zego_device_info {
 
     /// Device name
     char device_name[ZEGO_EXPRESS_MAX_COMMON_LEN];
+
+    /// Device extra info, Format: key="value"\nkey2="value2"..., use line break \n to separate key-value pairs, and use equal sign = to separate key and "value", and there are double quotes around the value
+    char device_extra_info[ZEGO_EXPRESS_MAX_DEVICE_EXTRA_INFO_LEN];
 };
 
 /// System performance monitoring status
@@ -3177,6 +3296,20 @@ struct zego_mixer_output_video_config {
     bool enable_low_bitrate_hd;
 };
 
+/// Room information for the output stream in a mixed stream.
+///
+/// Available since: 3.18.0
+/// Description: Setting room information for a single output stream; the mixed output stream can be added to the specified room, allowing users in the room to receive notifications of increased stream in the room.
+/// Use cases: Manual mixed stream scenario, such as Co-hosting.
+/// Restrictions: Dynamic updates during mixed stream are not supported.
+struct zego_mixer_output_room_info {
+    /// Specifies the room ID of the output stream. You need to ensure that the room is already present when mixing starts.
+    char room_id[ZEGO_EXPRESS_MAX_ROOMID_LEN];
+
+    /// Specifies the user ID of the output stream. It is not recommended to use the same userID as the actual user in the room to avoid conflicts with the SDK's stream addition behavior.
+    char userid[ZEGO_EXPRESS_MAX_USERID_LEN];
+};
+
 /// Font style.
 ///
 /// Description: Font style configuration, can be used to configure font type, font size, font color, font transparency.
@@ -3285,6 +3418,9 @@ struct zego_mixer_output {
 
     /// Mix stream output video config. On web platforms, this property does not take effect.
     zego_mixer_output_video_config *video_config;
+
+    /// Specifies the room information for the output stream.
+    zego_mixer_output_room_info *target_room;
 };
 
 /// Watermark object.
@@ -3564,6 +3700,9 @@ struct zego_video_encoded_frame_param {
 
     /// Length of the SEI data (Optional, if you don't need to send SEI, set it to 0. Deprecated, use [sendSEI] instead). Useful when set format as [AVCC] or [AnnexB]
     unsigned int sei_data_length;
+
+    /// Whether to use the external timestamp completely. The default is false. When set to false, the SDK will adjust based on the timestamps of the audio frame and video frame to ensure audio-video synchronization. When set to true, the SDK does not adjust the timestamp and uses the external timestamp completely.
+    bool is_external_clock;
 };
 
 /// Parameter object for audio frame.
@@ -3742,6 +3881,30 @@ struct zego_network_speed_test_quality {
     enum zego_stream_quality_level quality;
 };
 
+/// RTC Network Statistics
+struct zego_rtc_stats_info {
+    /// total upstream bandwidth, in kbps
+    double total_tx_bandwidth;
+
+    /// upstream average rtt, in milliseconds
+    unsigned int avg_tx_rtt;
+
+    /// upstream average packet lost rate. in percentage, 0.0 ~ 1.0
+    double avg_tx_packet_lost_rate;
+
+    /// total downlink bandwidth, in kbps
+    double total_rx_bandwidth;
+
+    /// downlink average rtt, in milliseconds
+    unsigned int avg_rx_rtt;
+
+    /// downlink average packet lost rate. in percentage, 0.0 ~ 1.0
+    double avg_rx_packet_lost_rate;
+
+    /// average peer to peer delay, in milliseconds
+    unsigned int avg_peer_to_peer_delay;
+};
+
 /// The NTP info
 struct zego_network_time_info {
     /// Network timestamp after synchronization, 0 indicates not yet synchronized
@@ -3768,10 +3931,10 @@ struct zego_accurate_seek_config {
 
 /// Media player network cache information
 struct zego_network_resource_cache {
-    /// Cached duration, unit ms
+    /// Cached playable duration, unit ms
     unsigned int time;
 
-    /// Cached size, unit byte
+    /// Cached playable size, unit byte
     unsigned int size;
 };
 
@@ -3816,10 +3979,10 @@ struct zego_copyrighted_music_request_config_v2 {
     /// the ID of the song.
     char song_id[ZEGO_EXPRESS_MAX_COMMON_LEN];
 
-    /// VOD billing mode.
+    /// VOD billing mode. Refer to the value of [ZegoCopyrightedMusicBillingMode].
     int mode;
 
-    /// Copyright music resource song copyright provider.
+    /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
     int vendor_id;
 
     /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
@@ -3831,7 +3994,7 @@ struct zego_copyrighted_music_request_config_v2 {
     /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
     int scene_id;
 
-    /// The resource type of music.
+    /// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
     int resource_type;
 };
 
@@ -3852,7 +4015,7 @@ struct zego_copyrighted_music_get_shared_config_v2 {
     /// the ID of the song.
     char song_id[ZEGO_EXPRESS_MAX_COMMON_LEN];
 
-    /// Copyright music resource song copyright provider.
+    /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
     int vendor_id;
 
     /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
@@ -3882,13 +4045,13 @@ struct zego_copyrighted_music_query_cache_config_v2 {
     /// the ID of the song.
     char song_id[ZEGO_EXPRESS_MAX_COMMON_LEN];
 
-    /// The resource type of music.
+    /// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
     int resource_type;
 
-    /// The resource quality type of music.
+    /// The resource quality type of music. Refer to the value of [ZegoCopyrightedMusicResourceQualityType].
     int resource_quality_type;
 
-    /// Copyright music resource song copyright provider.
+    /// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
     int vendor_id;
 };
 
@@ -4004,6 +4167,9 @@ struct zego_screen_capture_config {
 
     /// Set the audio capture parameters during screen capture. (only for Android)
     struct zego_audio_frame_param audio_param;
+
+    /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
+    struct zego_rect crop_rect;
 };
 
 /// The screen captures source information.
@@ -4022,6 +4188,17 @@ struct zego_screen_capture_source_info {
 
     /// The image content of the icon.
     struct zego_image_buffer icon_image;
+};
+
+/// Layer border configuration.
+///
+/// Customize the size, color, etc. of the layer border.
+struct zego_layer_border_config {
+    /// Border size, default value 4, the maximum value is 100.
+    unsigned int width;
+
+    /// Background color, the format is 0xRRGGBB, default is green, which is 0x00FF00
+    int color;
 };
 
 /// Audio source mix config
@@ -4055,7 +4232,7 @@ struct zego_media_player_resource {
     enum zego_multimedia_load_type load_type;
 
     /// The progress at which the plaback started.
-    long start_position;
+    long long start_position;
 
     /// If the specified resource has a transparent effect, you need to specify the layout position of the alpha data.
     enum zego_alpha_layout_type alpha_layout;
@@ -4071,6 +4248,12 @@ struct zego_media_player_resource {
 
     /// The resource ID obtained from the copyrighted music module.
     char resource_id[ZEGO_EXPRESS_MAX_COMMON_LEN];
+
+    /// Online resource cache path, in utf8 encoding format.
+    char online_resource_cache_path[ZEGO_EXPRESS_MAX_MEDIA_URL_LEN];
+
+    /// The maximum length of online resource cache to be used, in bytes, with a minimum setting of 10M (10 * 1024 * 1024). The default value is 0 - no limit, and try to cache the entire file.
+    long long max_cache_pending_length;
 };
 
 /// Background config.
@@ -4160,7 +4343,7 @@ struct zego_unity_texture {
     void *texture;
 
     /// Texture timestamp.
-    long timestamp;
+    long long timestamp;
 
     /// Texture width.
     int width;
@@ -4221,6 +4404,33 @@ struct zego_color_enhancement_params {
 
     /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
     float lip_color_protection_level;
+};
+
+/// Video denoise params.
+struct zego_video_denoise_params {
+    /// Description: Video denoise mode. Default value: Off.
+    enum zego_video_denoise_mode mode;
+
+    /// Description: Video denoise strength. Default value: Light.
+    enum zego_video_denoise_strength strength;
+};
+
+/// Dummy capture image params.
+struct zego_dummy_capture_image_params {
+    /// Picture file path.
+    char path[ZEGO_EXPRESS_MAX_PATH_LEN];
+
+    /// Dummy capture image mode.
+    enum zego_dummy_capture_image_mode mode;
+};
+
+/// Low light enhancement params.
+struct zego_exp_low_light_enhancement_params {
+    /// Description: Low light enhancement mode. Default value: Off.
+    enum zego_low_light_enhancement_mode mode;
+
+    /// Description: Low light enhancement type. Default value: Normal.
+    enum zego_exp_low_light_enhancement_type type;
 };
 
 #endif /* __ZEGO_EXPRESS_DEFINE_H__ */

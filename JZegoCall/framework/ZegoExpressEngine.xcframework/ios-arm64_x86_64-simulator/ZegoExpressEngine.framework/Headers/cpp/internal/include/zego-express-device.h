@@ -280,7 +280,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_audio_device_muted)(
 /// Enables or disables the audio capture device.
 ///
 /// Available since: 1.1.0
-/// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming.
+/// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming. not support Linux.
 /// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
 /// Default value: The default is `true`.
 /// When to call: After creating the engine [createEngine].
@@ -328,7 +328,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_route_to_speaker)(bool de
 
 /// Turns on/off the camera (for the specified channel).
 ///
-/// Available since: 1.1.0
+/// Available since: 3.20.0
 /// Description: This function is used to control whether to start the capture of the camera. After the camera is turned off, the video capture will not be performed. At this time, there will be no video data for local preview and push streaming.
 /// Default value: The default is `true` which means the camera is turned on.
 /// When to call: After creating the engine [createEngine].
@@ -337,13 +337,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_route_to_speaker)(bool de
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param enable Whether to turn on the camera, `true`: turn on camera, `false`: turn off camera
+/// @param notify_mode Mode for notifying the local device status.
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_camera(bool enable,
-                                                           enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_enable_camera(bool enable, enum zego_exp_notify_device_state_mode notify_mode,
+                           enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_camera)(bool enable,
-                                                            enum zego_publish_channel channel);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_camera)(
+    bool enable, enum zego_exp_notify_device_state_mode notify_mode,
+    enum zego_publish_channel channel);
 #endif
 
 /// Switches to the front or the rear camera (for the specified channel).
@@ -370,7 +373,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_use_front_camera)(bool enable,
 ///
 /// Available since: 2.14.0
 /// Description: Whether the camera supports focusing.
-/// Trigger: Called after turn on preview [startPreivew].
+/// Trigger: Called after turn on preview [startPreview].
 /// Caution: Need to start the camera successfully.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -388,7 +391,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_camera_focus_supported)(
 ///
 /// Available since: 2.14.0
 /// Description: Set the camera focus mode.
-/// Trigger: Called after turn on preview [startPreivew].
+/// Trigger: Called after turn on preview [startPreview].
 /// Restrictions: Currently only supports iOS and Android platforms.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -406,7 +409,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_mode)(
 ///
 /// Available since: 2.14.0
 /// Description: Set the focus point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the focus point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
-/// Trigger: Called after turn on preview [startPreivew].
+/// Trigger: Called after turn on preview [startPreview].
 /// Restrictions: Currently only supports iOS and Android platforms.
 /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
 /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -426,7 +429,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_point_in_preview)(
 ///
 /// Available since: 2.14.0
 /// Description: Set the camera exposure mode.
-/// Trigger: Called after turn on preview [startPreivew].
+/// Trigger: Called after turn on preview [startPreview].
 /// Restrictions: Currently only supports iOS and Android platforms.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -444,7 +447,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_mode)(
 ///
 /// Available since: 2.14.0
 /// Description: Set the exposure point in the preview view. (x, y) are the normalized coordinates in the preview view, that is, the ratio of the position of the exposure point relative to the preview view and the width and height of the preview view. The upper left corner is (0, 0).
-/// Trigger: Called after turn on preview [startPreivew].
+/// Trigger: Called after turn on preview [startPreview].
 /// Restrictions: Currently only supports iOS and Android platforms.
 /// Caution: Every time the camera restarts the acquisition, the settings will become invalid and need to be reset.
 /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -649,7 +652,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_sound_level_monitor)();
 /// When to call: After the engine is created [createEngine].
 /// Caution: [onCapturedAudioSpectrumUpdate] and [onRemoteAudioSpectrumUpdate] callback notification period is the value set by the parameter.
 ///
-/// @param millisecond Monitoring time period of the audio spectrum, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
+/// @param millisecond Monitoring time period of the audio spectrum, in milliseconds, the minimum value is 10. Default is 500 ms.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_spectrum_monitor(unsigned int millisecond);
 #else

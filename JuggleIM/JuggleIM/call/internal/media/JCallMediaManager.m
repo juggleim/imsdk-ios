@@ -107,6 +107,14 @@ static JCallMediaManager *_instance;
     [self.engine useFrontCamera:isEnable];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+    [self.engine enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    [self.engine setVideoDenoiseParams:params];
+}
+
 #pragma mark - JCallMediaEngineDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {

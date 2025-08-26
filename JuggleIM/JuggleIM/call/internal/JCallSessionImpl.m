@@ -105,6 +105,14 @@
     [[JCallMediaManager shared] useFrontCamera:isEnable];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+    [[JCallMediaManager shared] enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    [[JCallMediaManager shared] setVideoDenoiseParams:params];
+}
+
 #pragma mark - JCallSessionImpl
 /// 下面方法都在状态机中调用
 - (void)error:(JCallErrorCode)code {

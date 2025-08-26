@@ -629,7 +629,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_sound_level_mon
 /// Related APIs: After it is turned on, user can use the [onMediaPlayerFrequencySpectrumUpdate] callback to monitor frequency spectrum updates.
 ///
 /// @param enable Whether to enable monitoring, true is enabled, false is disabled.
-/// @param millisecond Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
+/// @param millisecond Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [10, 3000]. Note that on v3.19.0 and older version, the value range is [100, 3000].
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_frequency_spectrum_monitor(
     bool enable, unsigned int millisecond, enum zego_media_player_instance_index instance_index);
@@ -730,7 +730,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_http_header)(
 ///
 /// Available since: 3.10.0
 /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
-/// Use cases: When the network resource needs to set special header information.
+/// Use cases: When only the video stream or audio stream needs to be played.
 /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
 /// Caution: Changing the media stream type during playing will take effect in the next playing.
 ///

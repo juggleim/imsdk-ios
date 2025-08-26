@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
 /// @param message The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
 /// @param message The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param command Custom command content. Required: Yes. Value range: The maximum length is 1024 bytes. Caution: To protect privacy, please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
 /// @param toUserList List of recipients of signaling. Required: Yes. Value range: user list or [nil]. Caution: When it is [nil], the SDK will send custom signaling back to all users in the room
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -115,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
 ///
 /// @param message ZegoRoomSendTransparentMessage
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.

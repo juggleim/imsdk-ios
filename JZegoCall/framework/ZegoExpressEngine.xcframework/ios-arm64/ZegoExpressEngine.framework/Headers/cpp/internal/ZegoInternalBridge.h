@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <string>
 
 #include "./ZegoInternalPrivate.h"
@@ -56,6 +57,8 @@ class ZegoExpressEngineBridge {
     bool getLibraryReady() { return library_ready; }
 
     void setAndroidEnv(void *jvm, void *ctx) { zego_express_set_android_env(jvm, ctx); }
+
+    void setOhosEnv(void *env, void *exports) { zego_express_set_ohos_env(env, exports); }
 
     void setEngineConfig(zego_engine_config config) { zego_express_set_engine_config(config); }
 
@@ -123,6 +126,10 @@ class ZegoExpressEngineBridge {
         return result;
     }
 
+#if defined(_WIN32) || TARGET_OS_OSX
+    bool isCallbackSwitchToMainThread() { return callback_switch_to_main_thread_; }
+#endif
+
     int init(const ZegoEngineProfile &profile) {
         // reset the locals
         pri->init();
@@ -141,6 +148,13 @@ class ZegoExpressEngineBridge {
         config.scenario = static_cast<zego_scenario>(profile.scenario);
 
         int result = zego_express_engine_init_with_profile(config);
+
+        if (result == 0) {
+#if defined(_WIN32) || TARGET_OS_OSX
+            callback_switch_to_main_thread_ = profile.callbackSwitchToMainThread;
+#endif
+        }
+
         return result;
     }
 
@@ -159,6 +173,11 @@ class ZegoExpressEngineBridge {
     void setDummyCaptureImagePath(const std::string &filePath,
                                   ZegoPublishChannel channel = ZEGO_PUBLISH_CHANNEL_MAIN) {
         zego_express_set_dummy_capture_image_path(filePath.c_str(), (zego_publish_channel)channel);
+    }
+
+    void setDummyCaptureImageParams(const zego_dummy_capture_image_params &params,
+                                    ZegoPublishChannel channel) {
+        zego_express_set_dummy_capture_image_params(params, (zego_publish_channel)channel);
     }
 
     int uploadLog() {
@@ -308,6 +327,12 @@ class ZegoExpressEngineBridge {
 
     void setCaptureVolume(int volume) { zego_express_set_capture_volume(volume); }
 
+    int getCaptureVolume() {
+        int volume = 0;
+        zego_express_get_capture_volume(&volume);
+        return volume;
+    }
+
     void setAudioCaptureStereoMode(zego_audio_capture_stereo_mode mode) {
         zego_express_set_audio_capture_stereo_mode(mode);
     }
@@ -350,6 +375,8 @@ class ZegoExpressEngineBridge {
         zego_express_is_video_encoder_supported(codecID, codecBackend, &ret);
         return ret;
     }
+
+    void enableAuxBgmBalance(bool enable) { zego_express_enable_aux_bgm_balance(enable); }
 
     void setSEIConfig(zego_sei_config config) { zego_express_set_sei_config(config); }
 
@@ -395,6 +422,10 @@ class ZegoExpressEngineBridge {
 
     void setAppOrientation(zego_orientation orientation, zego_publish_channel channel) {
         zego_express_set_app_orientation(orientation, channel);
+    }
+
+    void setAppOrientationMode(zego_orientation_mode mode) {
+        zego_express_set_app_orientation_mode(mode);
     }
 
     void startPlayingStream(const char *streamID, zego_canvas *canvas) {
@@ -446,6 +477,10 @@ class ZegoExpressEngineBridge {
                                                            maxBufferInterval);
     }
 
+    void setAudioMixMode(zego_audio_mix_mode mode, const char **streamList, int num) {
+        zego_express_set_audio_mix_mode(mode, streamList, num);
+    }
+
     void setPlayStreamFocusOn(const char *streamID) {
         zego_express_set_play_stream_focus_on(streamID);
     }
@@ -480,6 +515,11 @@ class ZegoExpressEngineBridge {
     void setLowlightEnhancement(zego_low_light_enhancement_mode mode,
                                 zego_publish_channel channel) {
         zego_express_set_low_light_enhancement(mode, channel);
+    }
+
+    void setLowlightEnhancementParams(const zego_exp_low_light_enhancement_params &params,
+                                      zego_publish_channel channel) {
+        zego_express_set_low_light_enhancement_params(params, channel);
     }
 
     zego_error setVideoSource(zego_video_source_type source, unsigned int instanceID,
@@ -517,7 +557,7 @@ class ZegoExpressEngineBridge {
     }
 
     void enableCamera(bool enable, zego_publish_channel channel) {
-        zego_express_enable_camera(enable, channel);
+        zego_express_enable_camera(enable, zego_exp_notify_device_state_mode_open, channel);
     }
 
     void enableAudioCaptureDevice(bool enable) { zego_express_enable_audio_capture_device(enable); }
@@ -1037,6 +1077,18 @@ class ZegoExpressEngineBridge {
     int mediaPlayerSetAudioTrackIndex(unsigned int index,
                                       zego_media_player_instance_index instance_index) {
         int result = zego_express_media_player_set_audio_track_index(index, instance_index);
+        return result;
+    }
+
+    int mediaPlayerSetAudioTrackMode(zego_media_player_audio_track_mode mode,
+                                     zego_media_player_instance_index instance_index) {
+        int result = zego_express_media_player_set_audio_track_mode(mode, instance_index);
+        return result;
+    }
+
+    int mediaPlayerSetAudioTrackPublishIndex(unsigned int index,
+                                             zego_media_player_instance_index instance_index) {
+        int result = zego_express_media_player_set_audio_track_publish_index(index, instance_index);
         return result;
     }
 
@@ -1911,6 +1963,16 @@ class ZegoExpressEngineBridge {
         return result;
     }
 
+    int screenCaptureEnableHightLight(bool enable, ZegoLayerBorderConfig config,
+                                      int instance_index) {
+        zego_layer_border_config border_config;
+        border_config.color = config.color;
+        border_config.width = config.width;
+        int result =
+            zego_express_screen_capture_enable_hight_light(enable, border_config, instance_index);
+        return result;
+    }
+
     int screenCaptureEnableAudioCapture(bool enable, ZegoAudioFrameParam audioParam,
                                         int instance_index) {
         zego_audio_frame_param audio_param;
@@ -2148,6 +2210,16 @@ class ZegoExpressEngineBridge {
     // eventHandler
     void registerRecvWindowsMessageCallback(void *callback, void *user_context) {
         zego_register_recv_windows_message_callback(callback, user_context);
+    }
+
+    void postZegoCallbackTask(void *callback_task) {
+        zego_express_post_zego_callback_task(callback_task);
+    }
+
+    //win and mac
+    void registerRecvZegoCallbackTask(void *callback, void *user_context) {
+
+        zego_register_recv_zego_callback_task(callback, user_context);
     }
 
     void registerEngineStateCallback(void *callback_func, void *user_context) {
@@ -2820,6 +2892,10 @@ class ZegoExpressEngineBridge {
                                                user_context);
     }
 
+    void registerRtcStatsCallback(void *callback_func, void *user_context) {
+        zego_register_rtc_stats_callback(zego_on_rtc_stats(callback_func), user_context);
+    }
+
     void registerCopyrightedMusicDownloadProcessUpdateCallback(void *callback_func,
                                                                void *user_context) {
         zego_register_copyrighted_music_download_progress_update_callback(
@@ -2907,6 +2983,13 @@ class ZegoExpressEngineBridge {
                                                               void *user_context) {
         zego_register_screen_capture_source_exception_occurred_callback(
             zego_on_screen_capture_source_exception_occurred(callback_func), user_context);
+    }
+
+    void registerScreenCaptureSourceCaptureTypeExceptionOccurredCallback(void *callback_func,
+                                                                         void *user_context) {
+        zego_register_screen_capture_source_capture_type_exception_occurred_callback(
+            zego_on_screen_capture_source_capture_type_exception_occurred(callback_func),
+            user_context);
     }
 
     void registerScreenCaptureSourceWindowStateCallback(void *callback_func, void *user_context) {
@@ -3136,6 +3219,10 @@ class ZegoExpressEngineBridge {
     ZEGOEXP_DECLARE_FUNC
 #else
     bool library_ready = true;
+#endif
+
+#if defined(_WIN32) || TARGET_OS_OSX
+    std::atomic<bool> callback_switch_to_main_thread_ = {true}; //only win and mac
 #endif
 };
 #define oInternalOriginBridge ZegoExpressEngineBridge::GetInstance()

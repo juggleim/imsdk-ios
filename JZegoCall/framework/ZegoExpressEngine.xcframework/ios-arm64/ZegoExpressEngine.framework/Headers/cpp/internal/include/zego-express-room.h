@@ -28,7 +28,7 @@ ZEGO_BEGIN_DECLS
 ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
 ///   3. Calling [destroyEngine] will also automatically log out.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -66,7 +66,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_login_room)(const char *room_id, st
 ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
 ///   3. Calling [destroyEngine] will also automatically log out.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.

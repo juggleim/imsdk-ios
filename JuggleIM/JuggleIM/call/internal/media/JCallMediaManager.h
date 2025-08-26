@@ -41,5 +41,9 @@
 
 - (void)useFrontCamera:(BOOL)isEnable;
 
+- (void)enableAEC:(BOOL)isEnable;
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
+
 @end
 

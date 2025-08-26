@@ -263,9 +263,6 @@
     return _subVideoView;
 }
 
-
-
-
 - (void)subVideoViewClicked {
     NSString *currentId = JIM.shared.currentUserId;
     JUserInfo *currentUserInfo = [JIM.shared.userInfoManager getUserInfo:currentId];

@@ -10,6 +10,7 @@
 #import <JuggleIM/JCallConst.h>
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JCallMember.h>
+#import <JuggleIM/JCallVideoDenoiseParams.h>
 
 @protocol JCallSessionDelegate <NSObject>
 
@@ -134,5 +135,14 @@
 /// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
 /// - Parameter userIdList: 呼叫的用户 id 列表
 - (void)inviteUsers:(NSArray <NSString *> *)userIdList;
+
+#pragma mark - only for Zego
+/// 开启回声消除
+/// - Parameter isEnable: 是否开启
+- (void)enableAEC:(BOOL)isEnable;
+
+/// 设置视频降噪参数
+/// - Parameter params: 视频降噪参数
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end

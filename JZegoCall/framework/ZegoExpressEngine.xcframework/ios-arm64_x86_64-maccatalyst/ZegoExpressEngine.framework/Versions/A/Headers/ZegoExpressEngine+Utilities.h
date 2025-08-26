@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 1.20.0
 /// Description: This function supports uplink/downlink network speed test when the network can be connected.
 /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
-/// When to call: It needs to be called after [createEngine], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
+/// When to call: It needs to be called after [loginRoom]. If you call [startPublishingStream]/[startPlayingStream] while speed testing, the speed test will automatically stop.
 /// Restrictions: The default maximum allowable test time for a single network speed test is 30 seconds.
 /// Caution: Developers can register [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be triggered every 3 seconds. If an error occurs during the speed test process, [onNetworkSpeedTestError] callback will be triggered. If this function is repeatedly called multiple times, the last functioh call's configuration will be used.
 /// Related APIs: Call [stopNetworkSpeedTest] to stop network speed test.
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 1.20.0
 /// Description: This function supports uplink/downlink network speed test when the network can be connected.
 /// Use cases: This function can be used to detect whether the network environment is suitable for pushing/pulling streams with specified bitrates.
-/// When to call: It needs to be called after [createEngine], and before [startPublishingStream]. If you call [startPublishingStream] while speed testing, the speed test will automatically stop.
+/// When to call: It needs to be called after [loginRoom]. If you call [startPublishingStream]/[startPlayingStream] while speed testing, the speed test will automatically stop.
 /// Restrictions: The default maximum allowable test time for a single network speed test is 30 seconds.
 /// Caution: Developers can register [onNetworkSpeedTestQualityUpdate] callback to get the speed test result, which will be triggered every 3 seconds. If an error occurs during the speed test process, [onNetworkSpeedTestError] callback will be triggered. If this function is repeatedly called multiple times, the last functioh call's configuration will be used.
 /// Related APIs: Call [stopNetworkSpeedTest] to stop network speed test.

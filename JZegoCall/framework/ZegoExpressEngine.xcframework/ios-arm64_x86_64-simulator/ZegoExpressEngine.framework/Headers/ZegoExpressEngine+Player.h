@@ -231,7 +231,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 2.1.0
 /// Description: Set the range of adaptive adjustment of the internal buffer of the sdk when streaming is 0-4000ms.
 /// Use cases: Generally, in the case of a poor network environment, adjusting and increasing the playback buffer of the pull stream will significantly reduce the audio and video freezes, but will increase the delay.
-/// When to call: after called [createEngine].
+/// When to call: after called [createEngine], if it has been set, you need to reset it every time you play the stream again.
 /// Restrictions: None.
 /// Caution: When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms. When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
 ///
@@ -288,7 +288,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param streamID Stream ID.
 - (void)mutePlayStreamVideo:(BOOL)mute streamID:(NSString *)streamID;
 
-/// Can the pull stream receive all audio data.
+/// Can the pull stream receive all audio data. (When set to YES, calling [mutePlayStreamAudio] will not take effect)
 ///
 /// Available since: 2.4.0
 /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
@@ -312,7 +312,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param mute Whether it is possible to receive audio data from all remote users when streaming, "YES" means prohibition, "NO" means receiving, and the default value is "NO".
 - (void)muteAllPlayAudioStreams:(BOOL)mute;
 
-/// Can the pull stream receive all video data.
+/// Can the pull stream receive all video data. (When set to YES, calling [mutePlayStreamVideo] will not take effect)
 ///
 /// Available since: 2.4.0
 /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.

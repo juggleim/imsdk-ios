@@ -87,6 +87,17 @@
     [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:isEnable];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+    [[ZegoExpressEngine sharedEngine] enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    ZegoVideoDenoiseParams *zp = [ZegoVideoDenoiseParams new];
+    zp.mode = (ZegoVideoDenoiseMode)params.mode;
+    zp.strength = (ZegoVideoDenoiseStrength)params.strenth;
+    [[ZegoExpressEngine sharedEngine] setVideoDenoiseParams:zp channel:ZegoPublishChannelMain];
+}
+
 #pragma mark - ZegoEventHandler
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType
                 streamList:(NSArray<ZegoStream *> *)streamList

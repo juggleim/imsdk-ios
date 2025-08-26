@@ -186,6 +186,22 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_set_android_env(void *jvm, void *co
 typedef zego_error(EXP_CALL *pfnzego_express_set_android_env)(void *jvm, void *context);
 #endif
 
+/// Config the Environment for the OpenHarmony platform.
+///
+/// Available since: 3.18.0
+/// Description: Config the Environment for the OpenHarmony platform.
+/// When to call: It must be called before calling [createEngine] function.
+/// Restrictions: Only available on OpenHarmony platform.
+/// Caution: None.
+///
+/// @param env napi_env Object.
+/// @param exports napi_value exports Object.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_ohos_env(void *env, void *exports);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_set_ohos_env)(void *env, void *exports);
+#endif
+
 /// Get the previously set Android context.
 ///
 /// Available since: 1.1.0
@@ -429,6 +445,27 @@ ZEGOEXP_API void EXP_CALL zego_register_fatal_error_callback(zego_on_fatal_error
 #else
 typedef void(EXP_CALL *pfnzego_register_fatal_error_callback)(zego_on_fatal_error callback_func,
                                                               void *user_context);
+#endif
+
+/// Callback notification for video backend changes.
+///
+/// Available since: 3.18.0
+/// Description: Callback notification for changes in the video backend used by the engine.
+/// Caution:
+///   1. When the developer calls [destroyEngine], this notification will not be triggered because the resources of the SDK are completely released.
+///   2. If there is no special need, the developer does not need to pay attention to this callback.
+///
+/// @param type Video backend type.
+/// @param user_context context of user.
+typedef void (*zego_on_video_backend_type_changed)(enum zego_video_backend_type type,
+                                                   void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_video_backend_type_changed_callback(
+    zego_on_video_backend_type_changed callback_func, void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_video_backend_type_changed_callback)(
+    zego_on_video_backend_type_changed callback_func, void *user_context);
 #endif
 
 /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
