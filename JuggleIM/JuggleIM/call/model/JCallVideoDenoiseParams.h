@@ -31,7 +31,7 @@ typedef NS_ENUM(NSUInteger, JCallVideoDenoiseStrength) {
 
 @interface JCallVideoDenoiseParams : NSObject
 @property (nonatomic, assign) JCallVideoDenoiseMode mode;
-@property (nonatomic, assign) JCallVideoDenoiseStrength strenth;
+@property (nonatomic, assign) JCallVideoDenoiseStrength strength;
 @end
 
 NS_ASSUME_NONNULL_END

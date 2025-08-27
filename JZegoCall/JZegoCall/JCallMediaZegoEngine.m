@@ -94,7 +94,7 @@
 - (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
     ZegoVideoDenoiseParams *zp = [ZegoVideoDenoiseParams new];
     zp.mode = (ZegoVideoDenoiseMode)params.mode;
-    zp.strength = (ZegoVideoDenoiseStrength)params.strenth;
+    zp.strength = (ZegoVideoDenoiseStrength)params.strength;
     [[ZegoExpressEngine sharedEngine] setVideoDenoiseParams:zp channel:ZegoPublishChannelMain];
 }
 
