@@ -42,8 +42,10 @@
     NSArray *members = json[@"members"];
     NSMutableArray *arr = [NSMutableArray array];
     for (NSDictionary *memberDic in members) {
-        JUserInfo *member = [self decodeUserInfo:memberDic];
-        [arr addObject:member];
+        JUserInfo *userInfo = [self decodeUserInfo:memberDic];
+        JCallMember *callMember = [JCallMember new];
+        callMember.userInfo = userInfo;
+        [arr addObject:callMember];
     }
     callInfo.members = arr;
     self.callInfo = callInfo;
