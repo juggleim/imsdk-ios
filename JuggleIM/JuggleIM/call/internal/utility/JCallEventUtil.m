@@ -31,9 +31,12 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventRoomDestroy] = @"room destroy",
     
     [JCallEventJoin] = @"join",
+    [JCallEventJoinDone] = @"join done",
+    [JCallEventJoinFail] = @"join fail",
+    [JCallEventReceiveJoin] = @"receive join",
+    
     [JCallEventJoinChannelDone] = @"join channel done",
     [JCallEventJoinChannelFail] = @"join channel fail",
-    [JCallEventReceiveJoin] = @"receive join",
     
     [JCallEventParticipantJoinChannel] = @"participant join channel",
     [JCallEventParticipantLeaveChannel] = @"participant leave channel",
