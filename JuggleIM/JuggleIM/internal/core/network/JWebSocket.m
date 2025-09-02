@@ -989,6 +989,7 @@ inConversation:(JConversation *)conversation
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
          mediaType:(JCallMediaType)mediaType
+      conversation:(JConversation *)conversation
       targetIdList:(NSArray<NSString *> *)userIdList
         engineType:(NSUInteger)engineType
              extra:(NSString *)extra
@@ -1000,6 +1001,7 @@ inConversation:(JConversation *)conversation
         NSData *d = [self.pbData callInvite:callId
                                 isMultiCall:isMultiCall
                                   mediaType:mediaType
+                               conversation:conversation
                                targetIdList:userIdList
                                  engineType:engineType
                                       extra:extra
@@ -1058,6 +1060,44 @@ inConversation:(JConversation *)conversation
                          key:key
                      success:successBlock
                        error:errorBlock];
+    });
+}
+
+- (void)callJoin:(NSString *)callId
+         success:(void (^)(NSArray <JRtcRoom *> *))successBlock
+           error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"call join, callId is %@", callId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData callJoin:callId
+                                    index:self.cmdIndex++];
+        JRtcRoomArrayObj *obj = [[JRtcRoomArrayObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)getConversationCallInfo:(JConversation *)conversation
+                         userId:(NSString *)userId
+                        success:(void (^)(JTemplateData<JCallInfo *> *))successBlock
+                          error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get conversation call info");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getConversationCallInfo:conversation
+                                                  userId:userId
+                                                   index:self.cmdIndex++];
+        JTemplateObj *obj = [[JTemplateObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
     });
 }
 
@@ -1459,6 +1499,10 @@ inConversation:(JConversation *)conversation
             JLogI(@"WS-Receive", @"JPBRcvTypeGetFavoriteMsgAck");
             [self handleGetFavoriteMsgAck:obj.getFavoriteMsgAck];
             break;
+        case JPBRcvTypeGetConversationConfAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetConversationConfAck");
+            [self handleGetConversationConfAck:obj.templateAck];
+            break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
             break;
@@ -1522,6 +1566,9 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JGetFavoriteMsgObj class]]) {
         JGetFavoriteMsgObj *s = (JGetFavoriteMsgObj *)obj;
+        s.errorBlock(code);
+    } else if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *s = (JTemplateObj *)obj;
         s.errorBlock(code);
     }
 }
@@ -1819,7 +1866,13 @@ inConversation:(JConversation *)conversation
             }
             break;
             
-        //TODO: join 只在用户主动加入房间时触发，暂未开发；statechange 只在用户 connecting 变成 connected 时触发，暂不处理
+        case JPBRtcRoomEventTypeJoin:
+            if ([self.callDelegate respondsToSelector:@selector(userDidJoin:inRoom:)]) {
+                [self.callDelegate userDidJoin:ntf.members inRoom:ntf.room];
+            }
+            break;
+            
+        //TODO: statechange 只在用户 connecting 变成 connected 时触发，暂不处理
             
         default:
             break;
@@ -1923,6 +1976,21 @@ inConversation:(JConversation *)conversation
             getFavoriteObj.errorBlock(ack.code);
         } else {
             getFavoriteObj.successBlock(ack.favoriteMsgs, ack.offset);
+        }
+    }
+}
+
+- (void)handleGetConversationConfAck:(JTemplateAck *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            JCallInfo *callInfo = (JCallInfo *)ack.t;
+            JTemplateData *data = [JTemplateData new];
+            data.t = callInfo;
+            templateObj.successBlock(data);
         }
     }
 }

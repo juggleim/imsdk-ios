@@ -58,7 +58,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeGetUserInfoAck,
     JPBRcvTypeQryMsgExtAck,
     JPBRcvTypeGetTopMsgAck,
-    JPBRcvTypeGetFavoriteMsgAck
+    JPBRcvTypeGetFavoriteMsgAck,
+    JPBRcvTypeGetConversationConfAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -209,6 +210,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *offset;
 @end
 
+@interface JTemplateAck<T> : JQryAck
+@property (nonatomic, strong) T t;
+@end
+
 @interface JPBRcvObj : NSObject
 @property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) JPBRcvType rcvType;
@@ -234,6 +239,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JRtcAuthAck *rtcAuthAck;
 @property (nonatomic, strong) JGetTopMsgAck *getTopMsgAck;
 @property (nonatomic, strong) JGetFavoriteMsgAck *getFavoriteMsgAck;
+@property (nonatomic, strong) JTemplateAck *templateAck;
 @end
 
 @interface JPBData : NSObject
@@ -490,6 +496,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
              mediaType:(JCallMediaType)mediaType
+          conversation:(JConversation *)conversation
           targetIdList:(NSArray <NSString *>*)userIdList
             engineType:(NSUInteger)engineType
                  extra:(NSString *)extra
@@ -503,6 +510,13 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)callConnected:(NSString *)callId
                     index:(int)index;
+
+- (NSData *)callJoin:(NSString *)callId
+               index:(int)index;
+
+- (NSData *)getConversationCallInfo:(JConversation *)conversation
+                             userId:(NSString *)userId
+                              index:(int)index;
 
 - (NSData *)queryCallRooms:(NSString *)userId
                      index:(int)index;

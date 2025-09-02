@@ -186,6 +186,33 @@
             break;
         }
             
+        case JCallEventJoin:
+        {
+            // do nothing
+            // idle 状态处理
+            // 其它状态下忽略
+            break;
+        }
+            
+        case JCallEventJoinDone:
+            // do nothing
+            // join 状态处理
+            // 其它状态下忽略
+            break;
+            
+        case JCallEventJoinFail:
+            // do nothing
+            // join 状态处理
+            // 其它状态下忽略
+            break;
+            
+        case JCallEventReceiveJoin:
+        {
+            NSArray <JUserInfo *> *userList = userInfo[@"users"];
+            [self.callSessionImpl membersJoin:userList];
+            break;
+        }
+            
         default:
             break;
     }

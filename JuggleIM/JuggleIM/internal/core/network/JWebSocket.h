@@ -19,6 +19,7 @@
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
 #import "JRtcRoom.h"
+#import "JTemplateData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -72,6 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)callDidAccept:(JRtcRoom *)room
                  user:(JUserInfo *)user;
 - (void)roomDidDestroy:(JRtcRoom *)room;
+- (void)userDidJoin:(NSArray <JCallMember *> *)users
+             inRoom:(JRtcRoom *)room;
 @end
 
 @interface JWebSocket : NSObject
@@ -376,6 +379,7 @@ inConversation:(JConversation *)conversation
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
          mediaType:(JCallMediaType)mediaType
+      conversation:(JConversation *)conversation
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
              extra:(NSString *)extra
@@ -393,6 +397,15 @@ inConversation:(JConversation *)conversation
 - (void)callConnected:(NSString *)callId
               success:(void (^)(void))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callJoin:(NSString *)callId
+         success:(void (^)(NSArray <JRtcRoom *> *))successBlock
+           error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getConversationCallInfo:(JConversation *)conversation
+                         userId:(NSString *)userId
+                        success:(void (^)(JTemplateData<JCallInfo *> *))successBlock
+                          error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)queryCallRooms:(NSString *)userId
                success:(void (^)(NSArray <JRtcRoom *>*))successBlock

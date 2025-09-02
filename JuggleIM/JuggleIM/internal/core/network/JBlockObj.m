@@ -60,3 +60,6 @@
 
 @implementation JGetFavoriteMsgObj
 @end
+
+@implementation JTemplateObj
+@end

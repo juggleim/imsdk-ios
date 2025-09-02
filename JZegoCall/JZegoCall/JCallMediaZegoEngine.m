@@ -158,8 +158,8 @@
         [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
             [userIdList addObject:zegoUser.userID];
         }];
-        if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
-            [self.delegate usersDidJoin:userIdList];
+        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+            [self.delegate usersDidConnect:userIdList];
         }
     } else if (updateType == ZegoUpdateTypeDelete) {
         //暂不处理

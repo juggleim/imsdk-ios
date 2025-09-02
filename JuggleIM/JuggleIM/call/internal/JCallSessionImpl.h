@@ -20,6 +20,7 @@
 @property (nonatomic, weak) id<JCallSessionLifeCycleDelegate> sessionLifeCycleDelegate;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *url;
+@property (nonatomic, strong) JConversation *conversation;
 
 - (void)error:(JCallErrorCode)code;
 - (void)notifyReceiveCall;
@@ -33,6 +34,7 @@
 - (void)membersInviteBySelf:(NSArray <NSString *> *)userIdList;
 - (void)removeMember:(NSString *)userId;
 - (void)membersConnected:(NSArray <NSString *> *)userIdList;
+- (void)membersJoin:(NSArray <JUserInfo *> *)userList;
 - (void)cameraEnable:(BOOL)enable
               userId:(NSString *)userId;
 - (void)microphoneEnable:(BOOL)enable
@@ -46,6 +48,7 @@
 - (void)signalHangup;
 - (void)signalAccept;
 - (void)signalConnected;
+- (void)signalJoin;
 - (void)ping;
 
 #pragma mark - media
@@ -60,6 +63,6 @@
 - (void)transitionToIdleState;
 - (void)transitionToIncomingState;
 - (void)transitionToOutgoingState;
-
+- (void)transitionToJoinState;
 
 @end

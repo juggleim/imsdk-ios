@@ -94,6 +94,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcAccept @"rtc_accept"
 #define jRtcQuit @"rtc_quit"
 #define jRtcUpdState @"rtc_upd_state"
+#define jRtcJoin @"rtc_join"
+#define jQryConverConf @"qry_conver_conf"
 #define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcQry @"rtc_qry"
 #define jSetUserSettings @"set_user_settings"
@@ -166,6 +168,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JGetFavoriteMsgAck
+@end
+
+@implementation JTemplateAck
 @end
 
 @implementation JQryAck
@@ -1478,6 +1483,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
              mediaType:(JCallMediaType)mediaType
+          conversation:(JConversation *)conversation
           targetIdList:(nonnull NSArray<NSString *> *)userIdList
             engineType:(NSUInteger)engineType
                  extra:(NSString *)extra
@@ -1497,6 +1503,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     req.rtcMediaType = (int32_t)mediaType;
     req.ext = extra;
+    if (conversation) {
+        ConverIndex *convIndex = [[ConverIndex alloc] init];
+        convIndex.targetId = conversation.conversationId;
+        convIndex.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+        req.attachedConver = convIndex;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -1546,6 +1558,42 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.topic = jRtcUpdState;
     body.targetId = callId;
     body.data_p = [member data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callJoin:(NSString *)callId index:(int)index {
+    RtcRoomReq *req = [[RtcRoomReq alloc] init];
+    req.roomType = RtcRoomType_OneMore;
+    req.roomId = callId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcJoin;
+    body.targetId = callId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getConversationCallInfo:(JConversation *)conversation
+                             userId:(NSString *)userId
+                              index:(int)index {
+    ConverIndex *ci = [ConverIndex new];
+    ci.targetId = conversation.conversationId;
+    ci.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryConverConf;
+    body.targetId = userId;
+    body.data_p = [ci data];
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -1800,6 +1848,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeGetFavoriteMsgAck:
                     obj = [self getFavoriteMsgAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetConversationConfAck:
+                    obj = [self getConversationConfAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -2177,7 +2228,39 @@ typedef NS_ENUM(NSUInteger, JQos) {
         [members addObject:outMember];
     }
     result.members = members;
+    
+    if (pbRoom.hasAuth) {
+        RtcAuth *auth = pbRoom.auth;
+        if (auth.hasZegoAuth) {
+            ZegoAuth *zegoAuth = auth.zegoAuth;
+            result.token = zegoAuth.token;
+        } else if (auth.hasLivekitRtcAuth) {
+            LivekitRtcAuth *liveKitAuth = auth.livekitRtcAuth;
+            result.token = liveKitAuth.token;
+            result.url = liveKitAuth.serviceURL;
+        }
+    }
     return result;
+}
+
+- (JCallInfo *)callInfoWithPBActiveRtcRoom:(ActivedRtcRoom *)room {
+    if (!room) {
+        return nil;
+    }
+    JCallInfo *callInfo = [JCallInfo new];
+    callInfo.callId = room.roomId;
+    callInfo.isMultiCall = room.roomType == RtcRoomType_OneMore;
+    callInfo.mediaType = (int)room.rtcMediaType;
+    callInfo.owner = [self userInfoWithPBUserInfo:room.owner];
+    
+    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
+    for (RtcMember *member in room.membersArray) {
+        JCallMember *outMember = [self callMemberWithPBRtcMember:member];
+        [members addObject:outMember];
+    }
+    callInfo.members = members;
+    callInfo.extra = room.ext;
+    return callInfo;
 }
 
 - (JConcreteConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
@@ -2572,6 +2655,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getConversationConfAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    ConverConf *converConf = [[ConverConf alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get conversation config ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetConversationConfAck;
+    JTemplateAck<JCallInfo *> *ack = [JTemplateAck new];
+    [ack encodeWithQueryAckMsgBody:body];
+    if (converConf.hasActivedRtcRoom) {
+        ack.t = [self callInfoWithPBActiveRtcRoom:converConf.activedRtcRoom];
+    }
+    obj.templateAck = ack;
+    return obj;
+}
+
 - (JPBRcvObj *)qryFirstUnreadMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     obj.rcvType = JPBRcvTypeQryFirstUnreadMsgAck;
@@ -2918,7 +3020,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jGetTopMsg:@(JPBRcvTypeGetTopMsgAck),
              jAddFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jQryFavoriteMsgs:@(JPBRcvTypeGetFavoriteMsgAck)
+             jQryFavoriteMsgs:@(JPBRcvTypeGetFavoriteMsgAck),
+             jRtcJoin:@(JPBRcvTypeQryCallRoomAck),
+             jQryConverConf:@(JPBRcvTypeGetConversationConfAck)
     };
 }
 @end

@@ -1493,10 +1493,20 @@ extension SBUBaseChannelViewController: GroupMemberSelectVCDelegate {
         if let data = try?  JSONSerialization.data(withJSONObject: extraDic), let jsonStr = String(data: data, encoding: .utf8) {
             extra = jsonStr
         }
-        
-        
-        let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, extra: extra, delegate: nil)
-        CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
+        JIM.shared().callManager.getConversationCallInfo(self.baseViewModel?.conversationInfo?.conversation) { callInfo in
+            if let callInfo = callInfo {
+                let callSession = JIM.shared().callManager.joinCall(callInfo.callId, delegate: nil)
+                CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
+            } else {
+                let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, conversation: self.baseViewModel?.conversationInfo?.conversation, extra: extra, delegate: nil)
+                CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
+            }
+        } error: { code in
+            
+        }
+
+//        let callSession = JIM.shared().callManager.startMultiCall(userIds, mediaType: mediaType, conversation: self.baseViewModel?.conversationInfo?.conversation, extra: extra, delegate: nil)
+//        CallCenter.shared().startMultiCall(callSession, groupId: self.baseViewModel?.conversationInfo?.conversation.conversationId)
     }
 }
 

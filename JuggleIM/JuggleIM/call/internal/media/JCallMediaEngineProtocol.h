@@ -16,7 +16,7 @@
 
 - (UIView *)viewForSelf;
 
-- (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
+- (void)usersDidConnect:(NSArray <NSString *> *)userIdList;
 
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;

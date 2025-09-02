@@ -38,6 +38,11 @@
             result = YES;
             break;
             
+        case JCallEventJoin:
+            [self.callSessionImpl transitionToJoinState];
+            result = YES;
+            break;
+            
         default:
             break;
     }

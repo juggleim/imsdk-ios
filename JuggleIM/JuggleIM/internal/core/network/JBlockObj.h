@@ -15,6 +15,7 @@
 #import "JChatroomAttributeItem.h"
 #import "JRtcRoom.h"
 #import "JConcreteMessage.h"
+#import "JTemplateData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -102,6 +103,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JGetFavoriteMsgObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSArray <JFavoriteMessage *> *messageList, NSString *offset);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JTemplateObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(JTemplateData *t);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

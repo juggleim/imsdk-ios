@@ -30,8 +30,10 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventReceiveQuit] = @"receive quit",
     [JCallEventRoomDestroy] = @"room destroy",
     
+    [JCallEventJoin] = @"join",
     [JCallEventJoinChannelDone] = @"join channel done",
     [JCallEventJoinChannelFail] = @"join channel fail",
+    [JCallEventReceiveJoin] = @"receive join",
     
     [JCallEventParticipantJoinChannel] = @"participant join channel",
     [JCallEventParticipantLeaveChannel] = @"participant leave channel",
@@ -41,7 +43,7 @@ static NSString *JCallEventNameMap[] = {
     [JCallEventSoundLevelUpdate] = @"sound level update",
     [JCallEventVideoFirstFrameRender] = @"video first frame render",
     
-    [30] = @"unknown"
+    [40] = @"unknown"
 };
 
 + (NSString *)nameOfEvent:(NSInteger)event {

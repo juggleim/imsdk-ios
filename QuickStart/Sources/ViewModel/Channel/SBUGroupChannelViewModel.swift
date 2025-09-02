@@ -91,6 +91,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
         self.markAsRead()
         JIM.shared().messageManager.add(self as JMessageDelegate)
         JIM.shared().messageManager.add(self as JMessageReadReceiptDelegate)
+        JIM.shared().callManager.add(self as JConversationCallDelegate)
         self.loadPrevMessages()
         self.loadGroupInfo()
     }
@@ -628,5 +629,11 @@ extension SBUGroupChannelViewModel: JMessageReadReceiptDelegate {
     
     public func groupMessagesDidRead(_ msgs: [String : JGroupMessageReadInfo]!, in conversation: JConversation!) {
         
+    }
+}
+
+extension SBUGroupChannelViewModel: JConversationCallDelegate {
+    public func callInfoDidUpdate(_ callInfo: JCallInfo!, in conversation: JConversation!, isFinished: Bool) {
+        SBULog.info("callInfoDidUpdate")
     }
 }

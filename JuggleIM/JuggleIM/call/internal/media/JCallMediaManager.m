@@ -130,9 +130,9 @@ static JCallMediaManager *_instance;
     return nil;
 }
 
-- (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
-    if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
-        [self.delegate usersDidJoin:userIdList];
+- (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
+    if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+        [self.delegate usersDidConnect:userIdList];
     }
 }
 

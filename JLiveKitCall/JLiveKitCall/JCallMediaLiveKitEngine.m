@@ -194,8 +194,8 @@
 }
 
 - (void)room:(Room *)room participantDidConnect:(RemoteParticipant *)participant {
-    if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
-        [self.delegate usersDidJoin:@[participant.identity.stringValue]];
+    if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+        [self.delegate usersDidConnect:@[participant.identity.stringValue]];
     }
 }
 

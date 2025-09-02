@@ -37,6 +37,7 @@
 #import "JTagAddConvMessage.h"
 #import "JTagDelConvMessage.h"
 #import "JTopMsgMessage.h"
+#import "JCallActiveCallMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -51,6 +52,7 @@
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
 @property (nonatomic, strong) JUserInfoManager *userInfoManager;
+@property (nonatomic, strong) JCallManager *callManager;
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
@@ -71,11 +73,13 @@
 
 - (instancetype)initWithCore:(JIMCore *)core
              chatroomManager:(nonnull JChatroomManager *)chatroomManager
-             userInfoManager:(nonnull JUserInfoManager *)userInfoManager {
+             userInfoManager:(nonnull JUserInfoManager *)userInfoManager
+                 callManager:(nonnull JCallManager *)callManager {
     if (self = [super init]) {
         self.core = core;
         self.chatroomManager = chatroomManager;
         self.userInfoManager = userInfoManager;
+        self.callManager = callManager;
         [self.chatroomManager addDelegate:self];
         [self.core.webSocket setMessageDelegate:self];
         [self registerMessages];
@@ -2293,6 +2297,7 @@
     [self registerContentType:[JTagAddConvMessage class]];
     [self registerContentType:[JTagDelConvMessage class]];
     [self registerContentType:[JTopMsgMessage class]];
+    [self registerContentType:[JCallActiveCallMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2724,6 +2729,12 @@
             sendTime = obj.timestamp;
         } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
+        }
+        
+        // call related
+        if ([obj.contentType isEqualToString:[JCallActiveCallMessage contentType]]) {
+            [self.callManager handleActiveCallMessage:obj];
+            return;
         }
         
         // tag add conversation

@@ -13,6 +13,7 @@
 #import "JCallIdleState.h"
 #import "JCallIncomingState.h"
 #import "JCallOutgoingState.h"
+#import "JCallJoinState.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
 #import "JCallEventUtil.h"
@@ -26,6 +27,7 @@
 @property (nonatomic, strong) JCallIdleState *idleState;
 @property (nonatomic, strong) JCallIncomingState *incomingState;
 @property (nonatomic, strong) JCallOutgoingState *outgoingState;
+@property (nonatomic, strong) JCallJoinState *joinState;
 @property (nonatomic, strong) NSHashTable <id<JCallSessionDelegate>> *delegates;
 @property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
 //@property (nonatomic, assign) BOOL cameraEnable;
@@ -283,6 +285,29 @@
     });
 }
 
+- (void)membersJoin:(NSArray<JUserInfo *> *)userList {
+    for (JUserInfo *userInfo in userList) {
+        if ([userInfo.userId isEqualToString:self.core.userId]) {
+            continue;
+        }
+        BOOL isExist = NO;
+        for (JCallMember *member in self.members) {
+            if ([userInfo.userId isEqualToString:member.userInfo.userId]) {
+                isExist = YES;
+                break;
+            }
+        }
+        if (!isExist) {
+            JCallMember *newMember = [[JCallMember alloc] init];
+            newMember.userInfo = userInfo;
+            newMember.callStatus = JCallStatusJoin;
+            newMember.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+            [self.members addObject:newMember];
+        }
+    }
+    // 主动加入没有回调，最终会在 media 加入成功之后走 usersDidConnect
+}
+
 - (void)cameraEnable:(BOOL)enable userId:(NSString *)userId {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -336,6 +361,7 @@
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:self.isMultiCall
                           mediaType:self.mediaType
+                       conversation:self.conversation
                        targetIdList:userIdList
                          engineType:(NSUInteger)self.engineType
                               extra:self.extra
@@ -378,6 +404,37 @@
         JLogI(@"Call-Signal", @"call connected success");
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"call connected error, code is %ld", code);
+    }];
+}
+
+- (void)signalJoin {
+    [self.core.webSocket callJoin:self.callId
+                          success:^(NSArray <JRtcRoom *> *rooms) {
+        if (rooms.count > 0) {
+            JLogI(@"Call-Signal", @"join success");
+            JRtcRoom *room = rooms[0];
+            self.owner = room.owner.userId;
+            self.extra = room.extra;
+            NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+            for (JCallMember *member in room.members) {
+                [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+                if (![member.userInfo.userId isEqualToString:self.core.userId]) {
+                    [self addMember:member];
+                }
+            }
+            self.token = room.token;
+            self.url = room.url;
+            [self event:JCallEventJoinDone userInfo:nil];
+            
+//            [self.userInfoManager insertUserInfoList:userDic.allValues];
+            
+        } else {
+            JLogE(@"Call-Signal", @"join error, room is nil");
+            [self event:JCallEventJoinFail userInfo:nil];
+        }
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Signal", @"join error, code is %ld", code);
+        [self event:JCallEventJoinFail userInfo:nil];
     }];
 }
 
@@ -450,6 +507,10 @@
     [self.stateMachine transitionTo:self.outgoingState];
 }
 
+- (void)transitionToJoinState {
+    [self.stateMachine transitionTo:self.joinState];
+}
+
 #pragma mark - JCallMediaDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     return self.viewDic[userId];
@@ -459,7 +520,7 @@
     return self.viewDic[JIM.shared.currentUserId];
 }
 
-- (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
+- (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
     [self event:JCallEventParticipantJoinChannel userInfo:@{@"userIdList":userIdList}];
 }
 
@@ -547,6 +608,14 @@
         _outgoingState.callSessionImpl = self;
     }
     return _outgoingState;
+}
+
+- (JCallJoinState *)joinState {
+    if (!_joinState) {
+        _joinState = [[JCallJoinState alloc] initWithName:@"callJoin" superState:self.superState];
+        _joinState.callSessionImpl = self;
+    }
+    return _joinState;
 }
 
 - (NSMutableArray<JCallMember *> *)members {

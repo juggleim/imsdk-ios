@@ -582,12 +582,12 @@
 }
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
-    NSLog(@"soundLevelDidUpdate start");
-    [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
-        NSLog(@"userId is %@, level is %@", key, obj);
-    }];
-    
-    NSLog(@"soundLevelDidUpdate end");
+//    NSLog(@"soundLevelDidUpdate start");
+//    [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+//        NSLog(@"userId is %@, level is %@", key, obj);
+//    }];
+//    
+//    NSLog(@"soundLevelDidUpdate end");
 }
 
 - (void)videoFirstFrameDidRender:(NSString *)userId {
