@@ -10,7 +10,7 @@
 #import "JCallSessionImpl.h"
 #import "JLogger.h"
 
-#define JOutgoingInterval 60
+#define JOutgoingInterval 35
 
 @interface JCallOutgoingState ()
 @property (nonatomic, strong) NSTimer *outgoingTimer;
