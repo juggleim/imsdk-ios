@@ -70,6 +70,7 @@ NSString *const jTimestampGreaterThan = @" timestamp > ?";
 NSString *const jTimestampLessThan = @" timestamp < ?";
 NSString *const jConversationAnd = @" AND ";
 NSString *const jConversationTypeIn = @" conversation_type in ";
+NSString *const jConversationInfoTypeIn = @" conversation_info.conversation_type in ";
 NSString *const jConversationOrderByTopTopTimeTimestamp = @" ORDER BY is_top DESC, top_time DESC, timestamp DESC";
 NSString *const jConversationOrderByTopTimestamp = @" ORDER BY is_top DESC, timestamp DESC";
 NSString *const jConversationOrderByTopTime = @" ORDER BY top_time DESC";
@@ -271,7 +272,7 @@ NSString *const jHasUnread = @"unread_tag";
     [args addObject:@(ts)];
     if (options.conversationTypes.count > 0) {
         sql = [sql stringByAppendingString:jConversationAnd];
-        sql = [sql stringByAppendingString:jConversationTypeIn];
+        sql = [sql stringByAppendingString:jConversationInfoTypeIn];
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:options.conversationTypes.count]];
         [args addObjectsFromArray:options.conversationTypes];
     }
