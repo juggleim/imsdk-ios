@@ -19,7 +19,6 @@
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
 #import "JRtcRoom.h"
-#import "JTemplateData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -404,7 +403,7 @@ inConversation:(JConversation *)conversation
 
 - (void)getConversationCallInfo:(JConversation *)conversation
                          userId:(NSString *)userId
-                        success:(void (^)(JTemplateData<JCallInfo *> *))successBlock
+                        success:(void (^)(JCallInfo *))successBlock
                           error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)queryCallRooms:(NSString *)userId

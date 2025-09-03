@@ -15,7 +15,6 @@
 #import "JChatroomAttributeItem.h"
 #import "JRtcRoom.h"
 #import "JConcreteMessage.h"
-#import "JTemplateData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -106,8 +105,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
-@interface JTemplateObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(JTemplateData *t);
+@interface JTemplateObj<T> : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(T t);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

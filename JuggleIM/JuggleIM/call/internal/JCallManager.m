@@ -162,6 +162,7 @@
                         success:(void (^)(JCallInfo *))successBlock
                           error:(void (^)(JErrorCode))errorBlock {
     if (conversation.conversationId.length == 0) {
+        JLogE(@"Call-GetConvCall", @"error, invalid param");
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam);
@@ -170,11 +171,11 @@
     }
     [self.core.webSocket getConversationCallInfo:conversation
                                           userId:self.core.userId
-                                         success:^(JTemplateData<JCallInfo *> * _Nonnull data) {
+                                         success:^(JCallInfo * _Nonnull callInfo) {
         JLogI(@"Call-GetConvCall", @"success");
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
-                successBlock(data.t);
+                successBlock(callInfo);
             }
         });
     } error:^(JErrorCodeInternal code) {

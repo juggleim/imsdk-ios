@@ -1083,7 +1083,7 @@ inConversation:(JConversation *)conversation
 
 - (void)getConversationCallInfo:(JConversation *)conversation
                          userId:(NSString *)userId
-                        success:(void (^)(JTemplateData<JCallInfo *> *))successBlock
+                        success:(void (^)(JCallInfo *))successBlock
                           error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"get conversation call info");
@@ -1988,9 +1988,7 @@ inConversation:(JConversation *)conversation
             templateObj.errorBlock(ack.code);
         } else {
             JCallInfo *callInfo = (JCallInfo *)ack.t;
-            JTemplateData *data = [JTemplateData new];
-            data.t = callInfo;
-            templateObj.successBlock(data);
+            templateObj.successBlock(callInfo);
         }
     }
 }

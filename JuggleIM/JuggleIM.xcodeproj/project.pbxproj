@@ -70,8 +70,6 @@
 		A057125E2E6002B7006F66A3 /* JCallJoinState.h in Headers */ = {isa = PBXBuildFile; fileRef = A057125B2E6002B7006F66A3 /* JCallJoinState.h */; };
 		A05712612E619260006F66A3 /* JCallInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A05712602E619260006F66A3 /* JCallInfo.m */; };
 		A05712622E619260006F66A3 /* JCallInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A057125F2E619260006F66A3 /* JCallInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A05712652E61A1FA006F66A3 /* JTemplateData.m in Sources */ = {isa = PBXBuildFile; fileRef = A05712642E61A1FA006F66A3 /* JTemplateData.m */; };
-		A05712662E61A1FA006F66A3 /* JTemplateData.h in Headers */ = {isa = PBXBuildFile; fileRef = A05712632E61A1FA006F66A3 /* JTemplateData.h */; };
 		A05712692E65BD0F006F66A3 /* JCallActiveCallMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A05712682E65BD0F006F66A3 /* JCallActiveCallMessage.m */; };
 		A057126A2E65BD0F006F66A3 /* JCallActiveCallMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A05712672E65BD0F006F66A3 /* JCallActiveCallMessage.h */; };
 		A0574BF42D56275B00632625 /* JReactionDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0574BF32D56275B00632625 /* JReactionDB.m */; };
@@ -485,8 +483,6 @@
 		A057125C2E6002B7006F66A3 /* JCallJoinState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallJoinState.m; sourceTree = "<group>"; };
 		A057125F2E619260006F66A3 /* JCallInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallInfo.h; sourceTree = "<group>"; };
 		A05712602E619260006F66A3 /* JCallInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallInfo.m; sourceTree = "<group>"; };
-		A05712632E61A1FA006F66A3 /* JTemplateData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTemplateData.h; sourceTree = "<group>"; };
-		A05712642E61A1FA006F66A3 /* JTemplateData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTemplateData.m; sourceTree = "<group>"; };
 		A05712672E65BD0F006F66A3 /* JCallActiveCallMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallActiveCallMessage.h; sourceTree = "<group>"; };
 		A05712682E65BD0F006F66A3 /* JCallActiveCallMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallActiveCallMessage.m; sourceTree = "<group>"; };
 		A0574BF22D56275B00632625 /* JReactionDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JReactionDB.h; sourceTree = "<group>"; };
@@ -954,8 +950,6 @@
 				A0F3761E2B3A689E0076CB84 /* JHeartBeatManager.m */,
 				A0A702022C09AB700032D9F1 /* JBlockObj.h */,
 				A0A702032C09AB700032D9F1 /* JBlockObj.m */,
-				A05712632E61A1FA006F66A3 /* JTemplateData.h */,
-				A05712642E61A1FA006F66A3 /* JTemplateData.m */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -1753,7 +1747,6 @@
 				A0574BF52D56275B00632625 /* JReactionDB.h in Headers */,
 				A0834F772C19B67B0074AE93 /* JAddConvMessage.h in Headers */,
 				A06CF0F62B96080B00B5CD89 /* JReadNtfMessage.h in Headers */,
-				A05712662E61A1FA006F66A3 /* JTemplateData.h in Headers */,
 				A08AA38D2B19CB78008B114C /* GPBRuntimeTypes.h in Headers */,
 				A08AA4042B19EEDB008B114C /* SRMutex.h in Headers */,
 				A08AA3F12B19EEDA008B114C /* SRProxyConnect.h in Headers */,
@@ -1929,7 +1922,6 @@
 				A085189F2DC10F430001F699 /* JLRUCache.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
-				A05712652E61A1FA006F66A3 /* JTemplateData.m in Sources */,
 				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
 				5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
