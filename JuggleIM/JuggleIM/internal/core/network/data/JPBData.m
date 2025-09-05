@@ -2036,7 +2036,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if ([self.messagePreprocessor respondsToSelector:@selector(decryptMessageContent:inConversation:contentType:)]) {
         msgContent = [self.messagePreprocessor decryptMessageContent:msgContent inConversation:conversation contentType:msg.contentType];
     }
-    msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
+    msg.content = [[JContentTypeCenter shared] contentWithData:msgContent
                                                    contentType:downMsg.msgType];
     if([msg.content isKindOfClass:[JMergeMessage class]]){
         JMergeMessage * mergeMessage = (JMergeMessage *)msg.content;
