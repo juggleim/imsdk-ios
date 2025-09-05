@@ -203,7 +203,6 @@
 /// 保存消息
 /// - Parameters:
 ///   - content: 消息实体
-///   - messageOption: 消息扩展选项
 ///   - conversation: 会话
 ///   - direction: 消息方向
 - (JMessage *)saveMessage:(JMessageContent *)content
