@@ -34,6 +34,11 @@
     self.engineType = JCallEngineTypeLiveKit;
 }
 
+- (void)initAgoraEngineWith:(NSString *)appId {
+    [JCallMediaManager.shared initAgoraEngineWith:appId];
+    self.engineType = JCallEngineTypeAgora;
+}
+
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!receiveDelegate) {

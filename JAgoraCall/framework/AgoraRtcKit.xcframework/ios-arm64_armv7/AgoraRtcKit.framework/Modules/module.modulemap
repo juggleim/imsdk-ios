@@ -1,0 +1,116 @@
+framework module AgoraRtcKit {
+  header "AgoraRtcKit.h"
+  module AgoraConstants {
+    header "AgoraConstants.h"
+    export *
+  }
+  module AgoraEnumerates {
+    header "AgoraEnumerates.h"
+    export *
+  }
+  module AgoraObjects {
+    header "AgoraObjects.h"
+    export *
+  }
+  module AgoraRtcEngineKit {
+    header "AgoraRtcEngineKit.h"
+    export *
+  }
+  module AgoraRtcEngineKitEx {
+    header "AgoraRtcEngineKitEx.h"
+    export *
+  }
+  module AgoraRtcEngineDelegate {
+    header "AgoraRtcEngineDelegate.h"
+    export *
+  }
+  module AgoraAudioFrameDelegate {
+    header "AgoraAudioFrameDelegate.h"
+    export *
+  }
+  module AgoraAudioEncodedFrameDelegate {
+    header "AgoraAudioEncodedFrameDelegate.h"
+    export *
+  }
+  module AgoraRtcAudioSpectrumDelegate {
+    header "AgoraRtcAudioSpectrumDelegate.h"
+    export *
+  }
+  module AgoraVideoFrameDelegate {
+    header "AgoraVideoFrameDelegate.h"
+    export *
+  }
+  module AgoraFaceInfoDelegate {
+    header "AgoraFaceInfoDelegate.h"
+    export *
+  }
+  module AgoraEncodedVideoFrameDelegate {
+    header "AgoraEncodedVideoFrameDelegate.h"
+    export *
+  }
+  module AgoraRtcMediaPlayerProtocol {
+    header "AgoraRtcMediaPlayerProtocol.h"
+    export *
+  }
+  module AgoraRtcMediaPlayerDelegate {
+    header "AgoraRtcMediaPlayerDelegate.h"
+    export *
+  }
+  module AgoraRtcMediaPlayerAudioFrameDelegate {
+    header "AgoraRtcMediaPlayerAudioFrameDelegate.h"
+    export *
+  }
+  module AgoraRtcMediaPlayerVideoFrameDelegate {
+    header "AgoraRtcMediaPlayerVideoFrameDelegate.h"
+    export *
+  }
+  module AgoraH265TranscoderProtocol {
+    header "AgoraH265TranscoderProtocol.h"
+    export *
+  }
+  module AgoraH265TranscoderDelegate {
+    header "AgoraH265TranscoderDelegate.h"
+    export *
+  }
+  module AgoraMediaRecorder {
+    header "AgoraMediaRecorder.h"
+    export *
+  }
+  module AgoraMediaRecorderDelegate {
+    header "AgoraMediaRecorderDelegate.h"
+    export *
+  }
+  module AgoraVideoEffectObject {
+    header "AgoraVideoEffectObject.h"
+    export *
+  }
+  module AgoraMediaMetadataDelegate {
+    header "AgoraMediaMetadataDelegate.h"
+    export *
+  }
+  module AgoraMediaMetadataDataSource {
+    header "AgoraMediaMetadataDataSource.h"
+    export *
+  }
+  module AgoraDirectCdnStreamingEventDelegate {
+    header "AgoraDirectCdnStreamingEventDelegate.h"
+    export *
+  }
+  module AgoraMediaFilterEventDelegate {
+    header "AgoraMediaFilterEventDelegate.h"
+    export *
+  }
+  module AgoraSpatialAudioKit {
+    header "AgoraSpatialAudioKit.h"
+    export *
+  }
+  module AgoraMusicContentCenter {
+    header "AgoraMusicContentCenter.h"
+    export *
+  }
+  module AgoraRtcMediaPlayerCacheManagerProtocol {
+    header "AgoraRtcMediaPlayerCacheManagerProtocol.h"
+    export *
+  }
+  export *
+}

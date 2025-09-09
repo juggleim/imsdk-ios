@@ -61,12 +61,17 @@
 
 - (void)useFrontCamera:(BOOL)isEnable;
 
+// 当前 active 的 CallSession
+- (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
+
+@optional
+- (void)createZegoEngineWith:(NSNumber *)appId appSign:(NSString *)appSign;
+
+- (void)createAgoraEngineWith:(NSString *)appId;
+
 - (void)enableAEC:(BOOL)isEnable;
 
 - (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
-
-// 当前 active 的 CallSession
-- (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
 
 @end
 

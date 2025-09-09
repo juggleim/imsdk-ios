@@ -326,6 +326,7 @@
 		A0C80D312C60C23200E55080 /* BaseUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D302C60C23200E55080 /* BaseUserCell.swift */; };
 		A0C80D332C60ECC800E55080 /* GroupListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D322C60ECC800E55080 /* GroupListViewController.swift */; };
 		A0C80D352C60F5C000E55080 /* GroupCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C80D342C60F5C000E55080 /* GroupCell.swift */; };
+		A0CCBF6F2E6ED06100746174 /* JAgoraCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CCBF6E2E6ED06100746174 /* JAgoraCall.framework */; };
 		A0CE9A392CD4D45F008B405C /* SingleCallViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */; };
 		A0CE9A402CD8A465008B405C /* CallCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A0CE9A3F2CD8A1F9008B405C /* CallCenter.m */; };
 		A0E68E602D2F8AA600640324 /* ContactCardMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E5F2D2F8AA600640324 /* ContactCardMessage.swift */; };
@@ -702,6 +703,7 @@
 		A0C80D302C60C23200E55080 /* BaseUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseUserCell.swift; sourceTree = "<group>"; };
 		A0C80D322C60ECC800E55080 /* GroupListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupListViewController.swift; sourceTree = "<group>"; };
 		A0C80D342C60F5C000E55080 /* GroupCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCell.swift; sourceTree = "<group>"; };
+		A0CCBF6E2E6ED06100746174 /* JAgoraCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JAgoraCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CE9A362CD4D45F008B405C /* QuickStart-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QuickStart-Bridging-Header.h"; sourceTree = "<group>"; };
 		A0CE9A372CD4D45F008B405C /* SingleCallViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SingleCallViewController.h; sourceTree = "<group>"; };
 		A0CE9A382CD4D45F008B405C /* SingleCallViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SingleCallViewController.m; sourceTree = "<group>"; };
@@ -724,6 +726,7 @@
 				A042667C2E1CF987007F4AB7 /* JLiveKitCall.framework in Frameworks */,
 				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
+				A0CCBF6F2E6ED06100746174 /* JAgoraCall.framework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
 				A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */,
 				3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */,
@@ -1374,6 +1377,7 @@
 		A07F3CB02BF74F3E0087920B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A0CCBF6E2E6ED06100746174 /* JAgoraCall.framework */,
 				A07E4D322E55BF690099E8BF /* JuggleUlt.framework */,
 				A042667F2E1CFB1D007F4AB7 /* LiveKitClient.framework */,
 				A042667D2E1CF9FF007F4AB7 /* LiveKitWebRTC.xcframework */,

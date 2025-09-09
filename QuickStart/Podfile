@@ -20,5 +20,6 @@ target 'QuickStart' do
   pod 'Masonry', '1.1.0'
   pod 'SDWebImage', '5.20.0'
   pod 'LiveKitClient', '2.0.18'
+  pod 'ShengwangRtcEngine_iOS', '4.6.0'
 
 end

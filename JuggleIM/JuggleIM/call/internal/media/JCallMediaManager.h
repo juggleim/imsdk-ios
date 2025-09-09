@@ -18,6 +18,8 @@
 
 - (void)initLiveKitEngine;
 
+- (void)initAgoraEngineWith:(NSString *)appId;
+
 - (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock;
 

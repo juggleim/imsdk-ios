@@ -42,6 +42,10 @@
 /// 初始化 LiveKit
 - (void)initLiveKitEngine;
 
+/// 提供 Agora 初始化必需的参数
+/// - Parameter appId: Agora APP ID
+- (void)initAgoraEngineWith:(NSString *)appId;
+
 /// 发起 1v1 语音通话
 /// - Parameters:
 ///   - userId: 对方的 userId
