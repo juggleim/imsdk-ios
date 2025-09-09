@@ -12,7 +12,8 @@
 @interface JCallMediaAgoraEngine () <AgoraRtcEngineDelegate>
 @property (nonatomic, strong) AgoraRtcEngineKit *engine;
 @property (nonatomic, weak) id<JCallMediaEngineDelegate> delegate;
-@property (nonatomic, copy) NSMutableDictionary <NSString *, NSNumber *> *userDic;
+@property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *userDic;
+@property (nonatomic, assign) BOOL enableCamera;
 @end
 
 @implementation JCallMediaAgoraEngine
@@ -20,16 +21,14 @@
 - (void)createAgoraEngineWith:(NSString *)appId {
     [AgoraRtcEngineKit destroy];
     self.engine = [AgoraRtcEngineKit sharedEngineWithAppId:appId delegate:self];
-    [self.engine disableVideo];
+    self.userDic = [NSMutableDictionary dictionary];
+    [self.engine enableVideo];
 }
 
 #pragma mark - JCallMediaEnginProtocol
 - (void)enableCamera:(BOOL)isEnable {
-    if (isEnable) {
-        [self.engine enableVideo];
-    } else {
-        [self.engine disableVideo];
-    }
+    self.enableCamera = isEnable;
+    [self.engine muteLocalVideoStream:!isEnable];
 }
 
 - (void)joinRoom:(JCallMediaRoom *)room
@@ -40,7 +39,7 @@
     o.channelProfile = AgoraChannelProfileLiveBroadcasting;
     o.clientRoleType = AgoraClientRoleBroadcaster;
     o.publishMicrophoneTrack = YES;
-    o.publishCameraTrack = NO;
+    o.publishCameraTrack = self.enableCamera;
     o.autoSubscribeAudio = YES;
     o.autoSubscribeVideo = YES;
     
@@ -50,6 +49,9 @@
                                        mediaOptions:o
                                         joinSuccess:^(NSString * _Nonnull channel, NSUInteger uid, NSInteger elapsed) {
         [self.userDic removeAllObjects];
+        [self.engine enableAudioVolumeIndication:1000
+                                          smooth:3
+                                       reportVad:NO];
         if (completeBlock) {
             completeBlock(0, nil);
         }
@@ -65,8 +67,8 @@
 }
 
 
-- (void)muteMicrophone:(BOOL)isMute { 
-    [self.engine disableAudio];
+- (void)muteMicrophone:(BOOL)isMute {
+    [self.engine enableLocalAudio:!isMute];
 }
 
 

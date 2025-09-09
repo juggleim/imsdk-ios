@@ -17,6 +17,8 @@
 
 - (void)initLiveKitEngine;
 
+- (void)initAgoraEngineWith:(NSString *)appId;
+
 - (void)startSingleCall:(id<JCallSession>)callSession;
 
 - (void)startMultiCall:(id<JCallSession>)callSession

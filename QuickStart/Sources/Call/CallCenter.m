@@ -38,6 +38,10 @@ static CallCenter *_instance;
     [JIM.shared.callManager initLiveKitEngine];
 }
 
+- (void)initAgoraEngineWith:(NSString *)appId {
+    [JIM.shared.callManager initAgoraEngineWith:appId];
+}
+
 - (void)startSingleCall:(id<JCallSession>)callSession {
     SingleCallViewController *vc = [[SingleCallViewController alloc] initWithOutgoingCall:callSession];
     [self presentCallViewController:vc];

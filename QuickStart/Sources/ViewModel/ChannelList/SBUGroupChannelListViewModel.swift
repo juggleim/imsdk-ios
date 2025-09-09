@@ -214,7 +214,8 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
     
     private func updateConversationInfoList(_ conversationInfoList: [JConversationInfo]) {
         var tempList = Array(self.conversationInfoList)
-        conversationInfoList.forEach { conversationInfo in
+        for i in 0..<conversationInfoList.count {
+            let conversationInfo = conversationInfoList[i]
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
                 return
@@ -224,6 +225,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             }
             tempList.insert(conversationInfo, at: 0)
         }
+        
         var topConversationInfoList: [JConversationInfo] = []
         var notTopConversationInfoList: [JConversationInfo] = []
         for conversationInfo in tempList {
