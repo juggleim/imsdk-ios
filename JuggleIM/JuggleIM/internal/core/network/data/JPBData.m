@@ -1500,6 +1500,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         req.rtcChannel = RtcChannel_Zego;
     } else if (engineType == 1) {
         req.rtcChannel = RtcChannel_LivekitRtc;
+    } else if (engineType == 2) {
+        req.rtcChannel = RtcChannel_Agora;
     }
     req.rtcMediaType = (int32_t)mediaType;
     req.ext = extra;
@@ -2238,6 +2240,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
             LivekitRtcAuth *liveKitAuth = auth.livekitRtcAuth;
             result.token = liveKitAuth.token;
             result.url = liveKitAuth.serviceURL;
+        } else if (auth.hasAgoraAuth) {
+            AgoraAuth *agoraAuth = auth.agoraAuth;
+            result.token = agoraAuth.token;
         }
     }
     return result;
@@ -2483,6 +2488,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         LivekitRtcAuth *liveKitAuth = rtcAuth.livekitRtcAuth;
         a.token = liveKitAuth.token;
         a.url = liveKitAuth.serviceURL;
+    } else if (rtcAuth.hasAgoraAuth) {
+        AgoraAuth *agoraAuth = rtcAuth.agoraAuth;
+        a.token = agoraAuth.token;
     }
     obj.rtcAuthAck = a;
     return obj;

@@ -31,6 +31,7 @@
 CF_EXTERN_C_BEGIN
 
 @class ActivedRtcRoom;
+@class AgoraAuth;
 @class ConverIndex;
 @class JuggleRtcAuth;
 @class LivekitRtcAuth;
@@ -54,6 +55,7 @@ typedef GPB_ENUM(RtcChannel) {
   RtcChannel_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
   RtcChannel_Zego = 0,
   RtcChannel_LivekitRtc = 1,
+  RtcChannel_Agora = 2,
 
   /** 自建音视频，保留 */
   RtcChannel_JuggleRtc = 11,
@@ -721,6 +723,7 @@ void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t valu
 typedef GPB_ENUM(RtcAuth_FieldNumber) {
   RtcAuth_FieldNumber_ZegoAuth = 1,
   RtcAuth_FieldNumber_LivekitRtcAuth = 2,
+  RtcAuth_FieldNumber_AgoraAuth = 3,
   RtcAuth_FieldNumber_JuggleRtcAuth = 11,
 };
 
@@ -733,6 +736,10 @@ GPB_FINAL @interface RtcAuth : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) LivekitRtcAuth *livekitRtcAuth;
 /** Test to see if @c livekitRtcAuth has been set. */
 @property(nonatomic, readwrite) BOOL hasLivekitRtcAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) AgoraAuth *agoraAuth;
+/** Test to see if @c agoraAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasAgoraAuth;
 
 @property(nonatomic, readwrite, strong, null_resettable) JuggleRtcAuth *juggleRtcAuth;
 /** Test to see if @c juggleRtcAuth has been set. */
@@ -810,6 +817,18 @@ typedef GPB_ENUM(JuggleRtcAuth_FieldNumber) {
 };
 
 GPB_FINAL @interface JuggleRtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@end
+
+#pragma mark - AgoraAuth
+
+typedef GPB_ENUM(AgoraAuth_FieldNumber) {
+  AgoraAuth_FieldNumber_Token = 1,
+};
+
+GPB_FINAL @interface AgoraAuth : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *token;
 
