@@ -73,7 +73,7 @@
 
 
 - (void)muteSpeaker:(BOOL)isMute { 
-    [self.engine muteAllRemoteAudioStreams:YES];
+    [self.engine muteAllRemoteAudioStreams:isMute];
 }
 
 
@@ -134,6 +134,7 @@
             if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
                 [self.delegate usersDidConnect:@[userId]];
             }
+            *stop = YES;
         }
     }];
 }
@@ -199,8 +200,8 @@
             if ([self.delegate respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
                 [self.delegate videoFirstFrameDidRender:userId];
             }
+            *stop = YES;
         }
-        *stop = YES;
     }];
 }
 
