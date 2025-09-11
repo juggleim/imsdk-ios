@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A0CCBF502E6EBD5900746174 /* JAgoraCall.podspec in Resources */ = {isa = PBXBuildFile; fileRef = A0CCBF4F2E6EBD5900746174 /* JAgoraCall.podspec */; };
 		A0CCBF6B2E6ECFCF00746174 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CCBF6A2E6ECFCF00746174 /* JuggleIM.framework */; };
 		A0CCBF722E6ED27000746174 /* AgoraRtcKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0CCBF712E6ED27000746174 /* AgoraRtcKit.xcframework */; };
 /* End PBXBuildFile section */
@@ -154,7 +153,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0CCBF502E6EBD5900746174 /* JAgoraCall.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
