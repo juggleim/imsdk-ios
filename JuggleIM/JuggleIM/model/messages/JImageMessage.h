@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int height;
 /// 图片宽度
 @property (nonatomic, assign) int width;
-/// 图片大小，单位：KB
+/// 图片大小，单位：Byte
 @property (nonatomic, assign) long long size;
 /// 扩展字段
 @property (nonatomic, copy) NSString *extra;

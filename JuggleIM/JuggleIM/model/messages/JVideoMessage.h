@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int height;
 /// 视频宽度
 @property (nonatomic, assign) int width;
-/// 视频大小，单位：KB
+/// 视频大小，单位：Byte
 @property (nonatomic, assign) long long size;
 /// 视频时长，单位：秒
 @property (nonatomic, assign) int duration;
