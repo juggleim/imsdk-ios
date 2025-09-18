@@ -104,6 +104,7 @@
               extendedData:(NSDictionary *)extendedData
                     roomID:(NSString *)roomID {
     if (updateType == ZegoUpdateTypeAdd) {
+        NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
         for (ZegoStream *stream in streamList) {
             NSString *streamId = stream.streamID;
             NSString *userId = [self userIdWithStreamId:streamId];
@@ -113,6 +114,10 @@
             }
             [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[self createCanvasWithView:view]];
             [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
+            [userIdList addObject:userId];
+        }
+        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+            [self.delegate usersDidConnect:userIdList];
         }
     } else if (updateType == ZegoUpdateTypeDelete) {
         for (ZegoStream *stream in streamList) {
@@ -153,17 +158,19 @@
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType
                 userList:(NSArray<ZegoUser *> *)userList
                   roomID:(NSString *)roomID {
-    if (updateType == ZegoUpdateTypeAdd) {
-        NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
-        [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
-            [userIdList addObject:zegoUser.userID];
-        }];
-        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
-            [self.delegate usersDidConnect:userIdList];
-        }
-    } else if (updateType == ZegoUpdateTypeDelete) {
-        //暂不处理
-    }
+//    NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
+//    [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
+//        [userIdList addObject:zegoUser.userID];
+//    }];
+//    if (updateType == ZegoUpdateTypeAdd) {
+//        [self addUserList:userIdList];
+//        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+//            [self.delegate usersDidConnect:userIdList];
+//        }
+//    } else if (updateType == ZegoUpdateTypeDelete) {
+//        [self removeUserList:userIdList];
+//        //暂不处理
+//    }
     if ([sHandler respondsToSelector:@selector(onRoomUserUpdate:userList:roomID:)]) {
         [sHandler onRoomUserUpdate:updateType userList:userList roomID:roomID];
     }
