@@ -42,12 +42,18 @@
             fileName = [NSString stringWithFormat:@"%lld.jpg", (long long)[NSDate date].timeIntervalSince1970];
         }
         NSString *localPath = [mediaPath stringByAppendingPathComponent:fileName];
+        while ([[NSFileManager defaultManager] fileExistsAtPath:localPath]) {
+            localPath = [self appendFileName:localPath];
+        }
         [imgData writeToFile:localPath atomically:YES];
         self.localPath = localPath;
         UIImage *thumbnail = [JUtility generateThumbnail:image targetSize:CGSizeMake(JThumbnailWidth, JThumbnailHeight)];
         NSData *thumbData = UIImageJPEGRepresentation(thumbnail, jThumbnailQuality);
         NSString *thumbName = [NSString stringWithFormat:@"thumb_%@", fileName];
         NSString *thumbPath = [mediaPath stringByAppendingPathComponent:thumbName];
+        while ([[NSFileManager defaultManager] fileExistsAtPath:thumbPath]) {
+            thumbPath = [self appendFileName:thumbPath];
+        }
         [thumbData writeToFile:thumbPath atomically:YES];
         self.thumbnailLocalPath = thumbPath;
         self.width = image.size.width;
@@ -112,6 +118,21 @@
 
 - (NSString *)conversationDigest {
     return kDigest;
+}
+
+- (NSString *)appendFileName:(NSString *)filePath {
+    // 获取文件扩展名
+    NSString *extension = [filePath pathExtension];
+    
+    if (extension.length == 0) {
+        // 如果没有扩展名，直接在末尾添加"1"
+        return [filePath stringByAppendingString:@"1"];
+    } else {
+        // 去掉扩展名的文件路径
+        NSString *pathWithoutExtension = [filePath stringByDeletingPathExtension];
+        // 在文件名后添加"1"，再加上原来的扩展名
+        return [pathWithoutExtension stringByAppendingFormat:@"1.%@", extension];
+    }
 }
 
 @end
