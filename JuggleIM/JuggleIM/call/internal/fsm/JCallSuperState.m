@@ -70,7 +70,11 @@
                 self.callSessionImpl.finishReason = JCallFinishReasonHangup;
             }
             [self.callSessionImpl signalHangup];
-            [self.callSessionImpl transitionToIdleState];
+            if (self.callSessionImpl.callStatus == JCallStatusIncoming) {
+                [self.callSessionImpl transitionToIdleStateWithoutMediaQuit];
+            } else {
+                [self.callSessionImpl transitionToIdleState];
+            }
             break;
             
         case JCallEventReceiveSelfQuit:
