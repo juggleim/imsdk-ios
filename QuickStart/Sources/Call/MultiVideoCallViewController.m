@@ -81,7 +81,7 @@
         self.mainModel = self.callSession.currentCallMember;
         [self.callSession setVideoView:self.backgroundView forUserId:self.mainModel.userInfo.userId];
         self.subUserModelList = [self.callSession.members mutableCopy];
-    } else if (self.callSession.callStatus == JCallStatusConnected) {
+    } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
         if ([self.callSession.inviterId isEqualToString:JIM.shared.currentUserId] || [self inviterHasHangup]) {
             self.mainModel = self.callSession.currentCallMember;
             [self.callSession setVideoView:self.backgroundView forUserId:self.mainModel.userInfo.userId];

@@ -18,7 +18,9 @@
 @property (nonatomic, strong) NSMapTable *viewTable;
 @property (nonatomic, strong) VideoView *previewVideoView;
 @property (nonatomic, strong) LocalVideoTrack *frontTrack;
-@property (nonatomic, strong) LocalVideoTrack *backTrack;
+//@property (nonatomic, strong) LocalVideoTrack *backTrack;
+//@property (nonatomic, strong) LocalVideoTrack *currentTrack;
+//@property (nonatomic, assign) BOOL useBackCamera;
 @end
 
 @implementation JCallMediaLiveKitEngine
@@ -35,6 +37,7 @@
             completionHandler:^(NSError * _Nullable error) {
         int errorCode = 0;
         if (!error) {
+            __weak typeof(self) ws = self;
             [self.room.localParticipant setMicrophoneWithEnabled:YES
                                                   captureOptions:nil
                                                   publishOptions:nil
@@ -42,23 +45,25 @@
                 if (error) {
                     NSLog(@"setMicrophoneWithEnabled after connect error, %@", error);
                 }
+                if (ws.enableCamera) {
+                    [ws stopPreview];
+    //                CameraCaptureOptions *options = [[CameraCaptureOptions alloc] initWithDeviceType:nil
+    //                                                                                          device:nil
+    //                                                                                        position:AVCaptureDevicePositionFront
+    //                                                                                 preferredFormat:nil
+    //                                                                                      dimensions:[[Dimensions alloc] initWithWidth:1280 height:720]
+    //                                                                                             fps:30];
+                    [ws.room.localParticipant setCameraWithEnabled:YES
+                                                      captureOptions:nil
+                                                      publishOptions:nil
+                                                   completionHandler:^(LocalTrackPublication * _Nullable publication, NSError * _Nullable error) {
+                        if (error) {
+                            NSLog(@"setCameraWithEnabled after connect error, %@", error);
+                        }
+                    }];
+                }
             }];
-            if (self.enableCamera) {
-                CameraCaptureOptions *options = [[CameraCaptureOptions alloc] initWithDeviceType:nil
-                                                                                          device:nil
-                                                                                        position:AVCaptureDevicePositionFront
-                                                                                 preferredFormat:nil
-                                                                                      dimensions:[[Dimensions alloc] initWithWidth:1280 height:720]
-                                                                                             fps:30];
-                [self.room.localParticipant setCameraWithEnabled:YES
-                                                  captureOptions:options
-                                                  publishOptions:nil
-                                               completionHandler:^(LocalTrackPublication * _Nullable publication, NSError * _Nullable error) {
-                    if (error) {
-                        NSLog(@"setCameraWithEnabled after connect error, %@", error);
-                    }
-                }];
-            }
+            
         } else {
             NSLog(@"join livekit room error, %@", error);
             errorCode = JErrorCodeJoinLiveKitFail;
@@ -78,7 +83,9 @@
     }
 }
 
-- (void)leaveRoom:(NSString *)roomId { 
+- (void)leaveRoom:(NSString *)roomId {
+    [self.frontTrack stopWithCompletionHandler:^(NSError * _Nullable e) {
+    }];
     [self.room disconnectWithCompletionHandler:^{
     }];
 }
@@ -108,6 +115,7 @@
         if (!videoView) {
             return;
         }
+        [videoView removeFromSuperview];
         for (UIView *subView in view.subviews) {
             [subView removeFromSuperview];
         }
@@ -121,26 +129,39 @@
         for (UIView *subView in view.subviews) {
             [subView removeFromSuperview];
         }
+        [self.previewVideoView removeFromSuperview];
         self.previewVideoView.frame = view.bounds;
         [view addSubview:self.previewVideoView];
-//        [self.frontTrack startWithCompletionHandler:^(NSError * _Nullable error) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                self.previewView.frame = view.frame;
-//            });
-//        }];
-//        self.previewView.track = self.frontTrack;
+        [self.frontTrack startWithCompletionHandler:^(NSError * _Nullable error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.previewVideoView.frame = view.bounds;
+                if (!self.previewVideoView.track) {
+                    self.previewVideoView.track = self.frontTrack;
+                }
+            });
+        }];
     });
 }
 
 - (void)stopPreview {
-//    [self.frontTrack stopWithCompletionHandler:^(NSError * _Nullable error) {
-//    }];
+    CameraCapturer *capturer = (CameraCapturer *)self.frontTrack.capturer;
+    [capturer stopCaptureWithCompletionHandler:^(BOOL b, NSError * _Nullable e) {
+    }];
 }
 
 - (void)useFrontCamera:(BOOL)isEnable {
+//    self.useBackCamera = !isEnable;
+    if (self.room.localParticipant.videoTracks.count == 0) {
+        return;
+    }
     LocalVideoTrack *track = (LocalVideoTrack *)self.room.localParticipant.videoTracks[0].track;
     CameraCapturer *capturer = (CameraCapturer *)track.capturer;
-    [capturer switchCameraPositionWithCompletionHandler:^(BOOL b, NSError * _Nullable error) {
+    AVCaptureDevicePosition p = AVCaptureDevicePositionBack;
+    if (isEnable) {
+        p = AVCaptureDevicePositionFront;
+    }
+    [capturer setWithCameraPosition:p completionHandler:^(BOOL b, NSError * _Nullable e) {
+        
     }];
 }
 
@@ -150,7 +171,19 @@
 
 - (void)room:(Room *)room didDisconnectWithError:(LiveKitError *)error {
     [self.viewTable removeAllObjects];
-    self.previewVideoView = nil;
+    [self.room.localParticipant setMicrophoneWithEnabled:NO
+                                          captureOptions:nil
+                                          publishOptions:nil
+                                       completionHandler:^(LocalTrackPublication * _Nullable p, NSError * _Nullable e) {
+    }];
+    [self.room.localParticipant setCameraWithEnabled:NO
+                                      captureOptions:nil
+                                      publishOptions:nil
+                                   completionHandler:^(LocalTrackPublication * _Nullable p, NSError * _Nullable e) {
+    }];
+    [self.frontTrack stopWithCompletionHandler:^(NSError * _Nullable e) {
+        
+    }];
 }
 
 - (void)room:(Room *)room localParticipant:(LocalParticipant *)participant didPublishTrack:(LocalTrackPublication *)publication {
@@ -184,7 +217,7 @@
                 for (UIView *subView in view.subviews) {
                     [subView removeFromSuperview];
                 }
-                videoView.frame = view.frame;
+                videoView.frame = view.bounds;
                 [view addSubview:videoView];
             }
             videoView.track = (id<VideoTrack>)publication.track;
@@ -240,20 +273,27 @@
     return _frontTrack;
 }
 
-- (LocalVideoTrack *)backTrack {
-    if (!_backTrack) {
-        CameraCaptureOptions *options = [[CameraCaptureOptions alloc] initWithDeviceType:nil
-                                                                                  device:nil
-                                                                                position:AVCaptureDevicePositionBack
-                                                                         preferredFormat:nil
-                                                                              dimensions:[[Dimensions alloc] initWithWidth:1280 height:720]
-                                                                                     fps:30];
-        _backTrack = [LocalVideoTrack createCameraTrackWithName:nil
-                                                        options:options
-                                               reportStatistics:NO];
-    }
-    return _backTrack;
-}
+//- (LocalVideoTrack *)backTrack {
+//    if (!_backTrack) {
+//        CameraCaptureOptions *options = [[CameraCaptureOptions alloc] initWithDeviceType:nil
+//                                                                                  device:nil
+//                                                                                position:AVCaptureDevicePositionBack
+//                                                                         preferredFormat:nil
+//                                                                              dimensions:[[Dimensions alloc] initWithWidth:1280 height:720]
+//                                                                                     fps:30];
+//        _backTrack = [LocalVideoTrack createCameraTrackWithName:nil
+//                                                        options:options
+//                                               reportStatistics:NO];
+//    }
+//    return _backTrack;
+//}
+//
+//- (LocalVideoTrack *)currentTrack {
+//    if (self.useBackCamera) {
+//        return self.backTrack;
+//    }
+//    return self.frontTrack;
+//}
 
 - (VideoView *)previewVideoView {
     if (!_previewVideoView) {
