@@ -28,6 +28,7 @@
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
 		A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */; };
 		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
+		A04799A72E812F0C00A97F5C /* JLiveKitCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04799A62E812F0C00A97F5C /* JLiveKitCall.framework */; };
 		A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */; };
 		A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */; };
 		A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7372D2691C900710683 /* SettingsPushViewController.swift */; };
@@ -383,6 +384,7 @@
 		A042667B2E1CF987007F4AB7 /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A042667D2E1CF9FF007F4AB7 /* LiveKitWebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = LiveKitWebRTC.xcframework; path = ../JLiveKitCall/framework/LiveKitWebRTC.xcframework; sourceTree = "<group>"; };
 		A042667F2E1CFB1D007F4AB7 /* LiveKitClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LiveKitClient.framework; path = ../JLiveKitCall/framework/LiveKitClient.framework; sourceTree = "<group>"; };
+		A04799A62E812F0C00A97F5C /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLanguageViewController.swift; sourceTree = "<group>"; };
 		A047B7342D2685E000710683 /* BaseSelectTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseSelectTableViewCell.h; sourceTree = "<group>"; };
 		A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseSelectTableViewCell.m; sourceTree = "<group>"; };
@@ -722,6 +724,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A04799A72E812F0C00A97F5C /* JLiveKitCall.framework in Frameworks */,
 				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A0CCBF6F2E6ED06100746174 /* JAgoraCall.framework in Frameworks */,
@@ -1375,6 +1378,7 @@
 		A07F3CB02BF74F3E0087920B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A04799A62E812F0C00A97F5C /* JLiveKitCall.framework */,
 				A0CCBF6E2E6ED06100746174 /* JAgoraCall.framework */,
 				A07E4D322E55BF690099E8BF /* JuggleUlt.framework */,
 				A042667F2E1CFB1D007F4AB7 /* LiveKitClient.framework */,
