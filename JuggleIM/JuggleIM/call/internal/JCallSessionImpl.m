@@ -499,6 +499,18 @@
     });
 }
 
+- (void)transitionToIdleStateWithoutMediaQuit {
+    [self.stateMachine transitionTo:self.idleState];
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(callDidFinish:)]) {
+                [obj callDidFinish:self.finishReason];
+            }
+        }];
+        [self destroy];
+    });
+}
+
 - (void)transitionToIncomingState {
     [self.stateMachine transitionTo:self.incomingState];
 }

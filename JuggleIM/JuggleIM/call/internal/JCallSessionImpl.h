@@ -61,6 +61,7 @@
 - (void)transitionToConnectedState;
 - (void)transitionToConnectingState;
 - (void)transitionToIdleState;
+- (void)transitionToIdleStateWithoutMediaQuit;
 - (void)transitionToIncomingState;
 - (void)transitionToOutgoingState;
 - (void)transitionToJoinState;
