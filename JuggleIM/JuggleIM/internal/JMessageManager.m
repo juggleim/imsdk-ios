@@ -2506,8 +2506,10 @@
     if ([content isKindOfClass:[JUnknownMessage class]]) {
         JUnknownMessage *unknown = (JUnknownMessage *)content;
         message.contentType = unknown.messageType;
+        message.flags = unknown.flags;
     } else {
         message.contentType = [[content class] contentType];
+        message.flags = [[content class] flags];
     }
     message.direction = direction;
     message.messageState = state;
@@ -2515,7 +2517,6 @@
     message.clientUid = [self createClientUid];
     long long now = [[NSDate date] timeIntervalSince1970] * 1000;
     message.timestamp = now;
-    message.flags = [[content class] flags];
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }

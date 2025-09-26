@@ -158,16 +158,19 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
         NSNumber *key = @(self.cmdIndex);
         NSData *encodeData = [self encodeContentData:content];
         NSString *contentType;
+        JMessageFlag flag;
         if ([content isKindOfClass:[JUnknownMessage class]]) {
             JUnknownMessage *unknown = (JUnknownMessage *)content;
             contentType = unknown.messageType;
+            flag = unknown.flags;
         } else {
             contentType = [[content class] contentType];
+            flag = [[content class] flags];
         }
 
         NSData *d = [self.pbData sendMessageDataWithType:contentType
                                                  msgData:encodeData
-                                                   flags:[[content class] flags]
+                                                   flags:flag
                                                clientUid:clientUid
                                                mergeInfo:mergeInfo
                                              isBroadcast:isBroadcast

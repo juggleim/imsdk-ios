@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy) NSString *content;
 
+/// 消息属性
+@property (nonatomic, assign) JMessageFlag flags;
+
 @end
 
 NS_ASSUME_NONNULL_END
