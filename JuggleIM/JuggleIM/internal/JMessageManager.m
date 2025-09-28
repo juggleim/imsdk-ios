@@ -2547,6 +2547,8 @@
                 [self.sendReceiveDelegate messageDidSave:message];
             }
         }
+    } else {
+        message.clientMsgNo = now;
     }
     
     return message;
