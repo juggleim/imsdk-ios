@@ -2436,9 +2436,13 @@
                                         withMessageId:message.messageId];
         }
         if (message.conversation.conversationType != JConversationTypeChatroom) {
-            [self updateSendSyncTime:timestamp];
-            if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
-                [self.sendReceiveDelegate messageDidSend:message];
+            if (! (message.flags & JMessageFlagIsStatus)) {
+                [self updateSendSyncTime:timestamp];
+            }
+            if (message.flags & JMessageFlagIsSave) {
+                if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidSend:)]) {
+                    [self.sendReceiveDelegate messageDidSend:message];
+                }
             }
         }
         
