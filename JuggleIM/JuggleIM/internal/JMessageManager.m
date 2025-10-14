@@ -2968,9 +2968,9 @@
             return;
         }
         dispatch_async(self.core.delegateQueue, ^{
+            JLogI(@"MSG-Rcv", @"receive message is %@", obj.messageId);
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([dlg respondsToSelector:@selector(messageDidReceive:)]) {
-                    JLogI(@"MSG-Rcv", @"receive message is %@", obj.messageId);
                     [dlg messageDidReceive:obj];
                 }
             }];
