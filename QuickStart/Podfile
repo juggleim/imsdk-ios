@@ -22,7 +22,7 @@ target 'QuickStart' do
   pod 'MBProgressHUD', '1.1.0'
   pod 'Masonry', '1.1.0'
   pod 'SDWebImage', '5.20.0'
-#  pod 'LiveKitClient', '2.8.0'
+#  pod 'LiveKitClient', '2.8.1'
   pod 'ShengwangRtcEngine_iOS', '4.6.0'
   pod 'JLiveKitCall', :path => '../JLiveKitCall'
 
