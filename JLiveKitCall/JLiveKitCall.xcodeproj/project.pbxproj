@@ -8,15 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		A0F5AB082E852241002930B4 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F5AB072E852241002930B4 /* JuggleIM.framework */; };
-		A0F5AB0A2E85224E002930B4 /* LiveKitClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F5AB092E85224E002930B4 /* LiveKitClient.framework */; platformFilter = ios; };
-		A0F5AB0C2E8532B5002930B4 /* JLiveKitCall.podspec in Resources */ = {isa = PBXBuildFile; fileRef = A0F5AB0B2E8532B5002930B4 /* JLiveKitCall.podspec */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A042665D2E1BB460007F4AB7 /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0F5AB072E852241002930B4 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A0F5AB092E85224E002930B4 /* LiveKitClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LiveKitClient.framework; path = framework/LiveKitClient.framework; sourceTree = "<group>"; };
-		A0F5AB0B2E8532B5002930B4 /* JLiveKitCall.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = JLiveKitCall.podspec; sourceTree = "<group>"; };
+		A0F5AB0B2E8532B5002930B4 /* JLiveKitCall.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = JLiveKitCall.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0F5AB0A2E85224E002930B4 /* LiveKitClient.framework in Frameworks */,
 				A0F5AB082E852241002930B4 /* JuggleIM.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,7 +70,6 @@
 		A04266682E1BBEFC007F4AB7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A0F5AB092E85224E002930B4 /* LiveKitClient.framework */,
 				A0F5AB072E852241002930B4 /* JuggleIM.framework */,
 			);
 			name = Frameworks;
@@ -154,7 +149,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A0F5AB0C2E8532B5002930B4 /* JLiveKitCall.podspec in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

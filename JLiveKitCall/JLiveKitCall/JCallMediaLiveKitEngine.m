@@ -6,7 +6,7 @@
 //
 
 #import "JCallMediaLiveKitEngine.h"
-#import <LiveKitClient/LiveKitClient-Swift.h>
+@import LiveKitClient;
 #import <JuggleIM/JuggleIMConst.h>
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
@@ -268,7 +268,8 @@
                                                                                      fps:30];
         _frontTrack = [LocalVideoTrack createCameraTrackWithName:nil
                                                          options:options
-                                                reportStatistics:NO];
+                                                reportStatistics:NO
+                                                       processor:nil];
     }
     return _frontTrack;
 }

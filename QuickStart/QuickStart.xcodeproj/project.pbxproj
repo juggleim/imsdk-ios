@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46652C36834AAD292F03E628 /* Pods_QuickStart.framework */; };
 		A024C3A32D366FBE005C369C /* SBUEmojiListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39D2D366FBE005C369C /* SBUEmojiListViewController.swift */; };
 		A024C3A42D366FBE005C369C /* SBUMessageReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39E2D366FBE005C369C /* SBUMessageReactionView.swift */; };
 		A024C3A52D366FBE005C369C /* SBUParentMessageInfoReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A024C39F2D366FBE005C369C /* SBUParentMessageInfoReactionView.swift */; };
@@ -28,7 +27,6 @@
 		A02FA3BA2D157FED002A4E0B /* QRCodeScannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3B92D157FED002A4E0B /* QRCodeScannerView.m */; };
 		A02FA3BC2D194F55002A4E0B /* GroupSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BB2D194F55002A4E0B /* GroupSettingViewController.swift */; };
 		A02FA3BF2D19A175002A4E0B /* BaseSettingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A02FA3BE2D19A175002A4E0B /* BaseSettingTableViewCell.m */; };
-		A04799A72E812F0C00A97F5C /* JLiveKitCall.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A04799A62E812F0C00A97F5C /* JLiveKitCall.framework */; };
 		A047B7322D2682D100710683 /* SettingsLanguageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7312D2682D100710683 /* SettingsLanguageViewController.swift */; };
 		A047B7362D2685E000710683 /* BaseSelectTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A047B7352D2685E000710683 /* BaseSelectTableViewCell.m */; };
 		A047B7382D2691C900710683 /* SettingsPushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A047B7372D2691C900710683 /* SettingsPushViewController.swift */; };
@@ -333,6 +331,7 @@
 		A0E68E622D2FA94400640324 /* ContactCardMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */; };
 		A0E68E642D2FB6BE00640324 /* SelectSingleFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
+		DC2D390516BEA0D0DB7E8AD6 /* libPods-QuickStart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B432E44EB399ACFFD7C716A0 /* libPods-QuickStart.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -350,7 +349,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		46652C36834AAD292F03E628 /* Pods_QuickStart.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QuickStart.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A024C39D2D366FBE005C369C /* SBUEmojiListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUEmojiListViewController.swift; sourceTree = "<group>"; };
 		A024C39E2D366FBE005C369C /* SBUMessageReactionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUMessageReactionView.swift; sourceTree = "<group>"; };
 		A024C39F2D366FBE005C369C /* SBUParentMessageInfoReactionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SBUParentMessageInfoReactionView.swift; sourceTree = "<group>"; };
@@ -715,6 +713,7 @@
 		A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardMessageCell.swift; sourceTree = "<group>"; };
 		A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSingleFriendViewController.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B432E44EB399ACFFD7C716A0 /* libPods-QuickStart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QuickStart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.debug.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.debug.xcconfig"; sourceTree = "<group>"; };
 		E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.release.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -724,13 +723,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A04799A72E812F0C00A97F5C /* JLiveKitCall.framework in Frameworks */,
 				A0A3A53B2D0C265C009AD7C3 /* PushKit.framework in Frameworks */,
 				A05661C62CDA0C180070EBC2 /* ZegoExpressEngine.xcframework in Frameworks */,
 				A0CCBF6F2E6ED06100746174 /* JAgoraCall.framework in Frameworks */,
 				A05661BF2CDA07B50070EBC2 /* JZegoCall.framework in Frameworks */,
 				A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */,
-				3552D877F3AD33BD57DC0A65 /* Pods_QuickStart.framework in Frameworks */,
+				DC2D390516BEA0D0DB7E8AD6 /* libPods-QuickStart.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1389,7 +1387,7 @@
 				A05661B72CDA00BE0070EBC2 /* JZegoCall.framework */,
 				A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */,
 				A07F3CB12BF74F3E0087920B /* JetIM.framework */,
-				46652C36834AAD292F03E628 /* Pods_QuickStart.framework */,
+				B432E44EB399ACFFD7C716A0 /* libPods-QuickStart.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1819,6 +1817,7 @@
 				A09645C42BF36BD000290775 /* Resources */,
 				A05661C82CDA0C180070EBC2 /* Embed Frameworks */,
 				137DAC17AF6959D9E4C731C8 /* [CP] Embed Pods Frameworks */,
+				359D6F74E1E33F4D9967897E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1900,6 +1899,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		359D6F74E1E33F4D9967897E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-QuickStart/Pods-QuickStart-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		67D4B33EE44D84586F793B29 /* [CP] Check Pods Manifest.lock */ = {

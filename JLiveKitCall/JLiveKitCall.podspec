@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JLiveKitCall'
-  s.version          = '1.8.24.2'
+  s.version          = '1.8.24.3'
   s.summary          = 'Juggle Call With LiveKit.'
 
 # This description is used to generate tags and improve search results.
@@ -17,12 +17,13 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JLiveKitCall/JLiveKitCall_v1_8_24_2.zip' }
+  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JLiveKitCall/JLiveKitCall_v1_8_24_3.zip' }
 
-  s.ios.deployment_target = '12.0'
+  s.ios.deployment_target = '13.0'
   
   s.vendored_frameworks = 'JLiveKitCall.xcframework'
+  s.source_files = 'JLiveKitCall/*.{h,m}'
   
   s.dependency "JuggleIM"
-  s.dependency "LiveKitClient", "2.0.18"
+  s.dependency "LiveKitClient", "2.8.1"
 end
