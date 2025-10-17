@@ -303,13 +303,6 @@
                       success:(void (^)(JUploadOssType ossType, JUploadQiNiuCred * _Nonnull qiNiuCred, JUploadPreSignCred * _Nonnull preSignCred))successBlock
                         error:(void (^)(JErrorCodeInternal code))errorBlock {
     NSString * ext = [filePath pathExtension];
-    if (ext == nil || ext.length == 0) {
-        JLogE(@"J-Uploader", @"requestUploadFileCred fail, ext is null, path = %@", filePath);
-        if (errorBlock) {
-            errorBlock(JErrorCodeInternalInvalidParam);
-        }
-        return;
-    }
     if (self.core.webSocket == nil) {
         JLogE(@"J-Uploader", @"requestUploadFileCred fail, webSocket is null, path is %@", filePath);
         if (errorBlock) {
