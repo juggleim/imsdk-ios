@@ -990,9 +990,40 @@
         //本地数据小于需要拉取的数量
         needRemote = YES;
     } else {
+        //查询逆向的消息，用于判断是否断档
+        NSMutableArray *fullLocalMessages = [localMessages mutableCopy];
+        if (option.startTime != 0) {
+            JPullDirection reverseDirection;
+            long long reverseTimestamp;
+            if (direction == JPullDirectionNewer) {
+                reverseDirection = JPullDirectionOlder;
+                reverseTimestamp = option.startTime + 1;
+            } else {
+                reverseDirection = JPullDirectionNewer;
+                reverseTimestamp = option.startTime - 1;
+            }
+            NSArray *exMessages = [self.core.dbManager searchMessagesWithContent:nil
+                                                                           count:5
+                                                                            time:reverseTimestamp
+                                                                   pullDirection:reverseDirection
+                                                                    contentTypes:option.contentTypes
+                                                                         senders:nil
+                                                                          states:nil
+                                                                   conversations:@[conversation]
+                                                               conversationTypes:nil
+                                                                     currentTime:now];
+            if (exMessages.count > 0) {
+                if (direction == JPullDirectionNewer) {
+                    fullLocalMessages = [NSMutableArray arrayWithArray:[exMessages arrayByAddingObjectsFromArray:localMessages]];
+                } else {
+                    fullLocalMessages = [NSMutableArray arrayWithArray:[localMessages arrayByAddingObjectsFromArray:exMessages]];
+                }
+            }
+        }
+        
         //判断是否连续
         __block long long seqNo = -1;
-        [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [fullLocalMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.seqNo < 0) {
                 return;
             }
@@ -1107,101 +1138,101 @@
     }
 }
 
-- (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
-                            startTime:(long long)startTime
-                                count:(int)count
-                            direction:(JPullDirection)direction
-                    localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
-                   remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
-                                error:(void (^)(JErrorCode code))errorBlock{
-    if (conversation.conversationId.length == 0) {
-        dispatch_async(self.core.delegateQueue, ^{
-            if (errorBlock) {
-                errorBlock(JErrorCodeInvalidParam);
-            }
-        });
-        return;
-    }
-    if (count <= 0) {
-        dispatch_async(self.core.delegateQueue, ^{
-            if (localMessageBlock) {
-                NSArray *arr = [NSArray array];
-                localMessageBlock(arr, NO);
-            }
-        });
-        return;
-    }
-    if (count > 100) {
-        count = 100;
-    }
-    NSArray *localMessages = [self getMessagesFrom:conversation
-                                             count:count
-                                              time:startTime
-                                         direction:direction];
-    __block BOOL needRemote = NO;
-    //本地数据为空
-    if (localMessages.count == 0) {
-        needRemote = YES;
-    } else {
-        JConcreteMessage *message = localMessages[0];
-        __block long long seqNo = message.seqNo;
-        if(localMessages.count < count){
-            //本地数据小于需要拉取的数量
-            needRemote = YES;
-        } else {
-            //本地数据等于需要拉取的数据
-            //判断是否连续
-            [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if (idx > 0 && obj.messageState == JMessageStateSent && obj.seqNo != 0) {
-                    if (obj.seqNo > ++seqNo) {
-                        needRemote = YES;
-                        *stop = YES;
-                        return;
-                    }
-                }
-            }];
-        }
-    }
-    
-    dispatch_async(self.core.delegateQueue, ^{
-        if (localMessageBlock) {
-            localMessageBlock(localMessages, needRemote);
-        }
-    });
-    
-    if (needRemote) {
-        [self getRemoteMessagesFrom:conversation
-                          startTime:startTime
-                              count:count
-                          direction:direction
-                            success:^(NSArray *messages, BOOL isFinished) {
-            //合并
-            NSMutableArray * messagesArray = [NSMutableArray array];
-            [messagesArray addObjectsFromArray:localMessages];
-            for (JMessage * message in messages) {
-                if(![messagesArray containsObject:message]){
-                    [messagesArray addObject:message];
-                }
-            }
-            //正序排序
-            NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
-                if(msg1.timestamp < msg2.timestamp){
-                    return NSOrderedAscending;
-                }else if(msg1.timestamp > msg2.timestamp){
-                    return NSOrderedDescending;
-                }else{
-                    return NSOrderedSame;
-                }
-            }];
-            dispatch_async(self.core.delegateQueue, ^{
-                if (remoteMessageBlock) {
-                    remoteMessageBlock(ascArray);
-                }
-            });
-            
-        } error:errorBlock];
-    }
-}
+//- (void)getLocalAndRemoteMessagesFrom:(JConversation *)conversation
+//                            startTime:(long long)startTime
+//                                count:(int)count
+//                            direction:(JPullDirection)direction
+//                    localMessageBlock:(void (^)(NSArray <JMessage *> *messages,BOOL needRemote))localMessageBlock
+//                   remoteMessageBlock:(void (^)(NSArray <JMessage *> *messages))remoteMessageBlock
+//                                error:(void (^)(JErrorCode code))errorBlock{
+//    if (conversation.conversationId.length == 0) {
+//        dispatch_async(self.core.delegateQueue, ^{
+//            if (errorBlock) {
+//                errorBlock(JErrorCodeInvalidParam);
+//            }
+//        });
+//        return;
+//    }
+//    if (count <= 0) {
+//        dispatch_async(self.core.delegateQueue, ^{
+//            if (localMessageBlock) {
+//                NSArray *arr = [NSArray array];
+//                localMessageBlock(arr, NO);
+//            }
+//        });
+//        return;
+//    }
+//    if (count > 100) {
+//        count = 100;
+//    }
+//    NSArray *localMessages = [self getMessagesFrom:conversation
+//                                             count:count
+//                                              time:startTime
+//                                         direction:direction];
+//    __block BOOL needRemote = NO;
+//    //本地数据为空
+//    if (localMessages.count == 0) {
+//        needRemote = YES;
+//    } else {
+//        JConcreteMessage *message = localMessages[0];
+//        __block long long seqNo = message.seqNo;
+//        if(localMessages.count < count){
+//            //本地数据小于需要拉取的数量
+//            needRemote = YES;
+//        } else {
+//            //本地数据等于需要拉取的数据
+//            //判断是否连续
+//            [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                if (idx > 0 && obj.messageState == JMessageStateSent && obj.seqNo != 0) {
+//                    if (obj.seqNo > ++seqNo) {
+//                        needRemote = YES;
+//                        *stop = YES;
+//                        return;
+//                    }
+//                }
+//            }];
+//        }
+//    }
+//    
+//    dispatch_async(self.core.delegateQueue, ^{
+//        if (localMessageBlock) {
+//            localMessageBlock(localMessages, needRemote);
+//        }
+//    });
+//    
+//    if (needRemote) {
+//        [self getRemoteMessagesFrom:conversation
+//                          startTime:startTime
+//                              count:count
+//                          direction:direction
+//                            success:^(NSArray *messages, BOOL isFinished) {
+//            //合并
+//            NSMutableArray * messagesArray = [NSMutableArray array];
+//            [messagesArray addObjectsFromArray:localMessages];
+//            for (JMessage * message in messages) {
+//                if(![messagesArray containsObject:message]){
+//                    [messagesArray addObject:message];
+//                }
+//            }
+//            //正序排序
+//            NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
+//                if(msg1.timestamp < msg2.timestamp){
+//                    return NSOrderedAscending;
+//                }else if(msg1.timestamp > msg2.timestamp){
+//                    return NSOrderedDescending;
+//                }else{
+//                    return NSOrderedSame;
+//                }
+//            }];
+//            dispatch_async(self.core.delegateQueue, ^{
+//                if (remoteMessageBlock) {
+//                    remoteMessageBlock(ascArray);
+//                }
+//            });
+//            
+//        } error:errorBlock];
+//    }
+//}
 
 - (void)getMessages:(JConversation *)conversation
           direction:(JPullDirection)direction
