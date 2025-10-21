@@ -11,7 +11,7 @@
 #import "JReactionDB.h"
 #import "JConversationDB.h"
 
-#define jDBVersion 5
+#define jDBVersion 6
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -62,6 +62,9 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
                 [db executeUpdate:[JUserInfoDB alterUserTableAddUpdatedTime]];
                 [db executeUpdate:[JUserInfoDB alterGroupTableAddUpdatedTime]];
                 [db executeUpdate:[JUserInfoDB alterGroupMemberTableAddUpdatedTime]];
+            }
+            if (version < 6) {
+                [db executeUpdate:[JMessageDB addDTConversationTSIndex]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];

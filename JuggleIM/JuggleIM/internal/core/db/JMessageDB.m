@@ -45,6 +45,7 @@ NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_me
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
+NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts ON message(destroy_time, conversation_type, conversation_id, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -759,6 +760,7 @@ NSString *const jDestroyTime = @"destroy_time";
     [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageConversationTSIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -869,6 +871,10 @@ NSString *const jDestroyTime = @"destroy_time";
 
 + (NSString *)addConversationTSIndex {
     return jCreateMessageConversationTSIndex;
+}
+
++ (NSString *)addDTConversationTSIndex {
+    return jCreateMessageDTConversationTSIndex;
 }
 
 + (NSString *)addMessageClientUidIndex {
