@@ -45,6 +45,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kPMsg @"p_msg"
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
+#define kPcMsg @"pc_msg"
 #define kRecallMsg @"recall_msg"
 #define kModifyMsg @"modify_msg"
 #define kQryHisMsgs @"qry_hismsgs"
@@ -367,6 +368,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
         case JConversationTypeSystem:
             break;
             
+        case JConversationTypePublicService:
+            publishMsg.topic = kPcMsg;
+            break;
+            
         default:
             break;
     }
@@ -380,7 +385,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return sm.data;
 }
 
--(DownMsg *)downMsgWithMessage:(JConcreteMessage *)message{
+- (DownMsg *)downMsgWithMessage:(JConcreteMessage *)message {
     if(message == nil){
         return nil;
     }
@@ -2961,6 +2966,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case ChannelType_System:
             result = JConversationTypeSystem;
+            break;
+            
+        case ChannelType_PublicService:
+            result = JConversationTypePublicService;
             break;
             
         default:

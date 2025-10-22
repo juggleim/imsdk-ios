@@ -322,7 +322,7 @@ GPBEnumDescriptor *ChannelType_EnumDescriptor(void) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
         "Unknown\000Private\000Group\000Chatroom\000System\000Gr"
-        "oupCast\000BroadCast\000";
+        "oupCast\000BroadCast\000PublicService\000";
     static const int32_t values[] = {
         ChannelType_Unknown,
         ChannelType_Private,
@@ -331,8 +331,9 @@ GPBEnumDescriptor *ChannelType_EnumDescriptor(void) {
         ChannelType_System,
         ChannelType_GroupCast,
         ChannelType_BroadCast,
+        ChannelType_PublicService,
     };
-    static const char *extraTextFormatInfo = "\007\000\007\000\001\007\000\002\005\000\003\010\000\004\006\000\005\t\000\006\t\000";
+    static const char *extraTextFormatInfo = "\010\000\007\000\001\007\000\002\005\000\003\010\000\004\006\000\005\t\000\006\t\000\007\r\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(ChannelType)
                                        valueNames:valueNames
@@ -358,6 +359,7 @@ BOOL ChannelType_IsValidValue(int32_t value__) {
     case ChannelType_System:
     case ChannelType_GroupCast:
     case ChannelType_BroadCast:
+    case ChannelType_PublicService:
       return YES;
     default:
       return NO;

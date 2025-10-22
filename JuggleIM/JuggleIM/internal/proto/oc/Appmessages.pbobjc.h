@@ -152,6 +152,7 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_System = 4,
   ChannelType_GroupCast = 5,
   ChannelType_BroadCast = 6,
+  ChannelType_PublicService = 7,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
