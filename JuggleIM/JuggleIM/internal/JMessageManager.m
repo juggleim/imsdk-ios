@@ -1973,6 +1973,7 @@
     [self.core.webSocket getFirstUnreadMessage:conversation
                                        success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-FirstUnread", @"success");
+        [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (!successBlock) {
                 return;

@@ -693,7 +693,7 @@ NSString *const jDestroyTime = @"destroy_time";
 
 - (JConcreteMessage *)getLastMessage:(JConversation *)conversation
                          currentTime:(long long)now {
-    if(conversation.conversationId.length == 0){
+    if (conversation.conversationId.length == 0) {
         return nil;
     }
     NSString * sql = jGetMessagesInConversation;
@@ -711,11 +711,11 @@ NSString *const jDestroyTime = @"destroy_time";
         }
     }];
     JConcreteMessage * lastMessage;
-    if(messages.count >= 1){
+    if (messages.count >= 1) {
         lastMessage = messages.firstObject;
-            if(lastMessage.referMsgId.length > 0){
-                lastMessage.referredMsg = [self getMessageWithMessageIdEvenDelete:lastMessage.referMsgId];
-            }
+        if (lastMessage.referMsgId.length > 0) {
+            lastMessage.referredMsg = [self getMessageWithMessageIdEvenDelete:lastMessage.referMsgId];
+        }
     }
     
     return lastMessage;
