@@ -22,9 +22,6 @@
 @implementation JTimestampBlockObj
 @end
 
-@implementation JQryReadDetailObj
-@end
-
 @implementation JSimpleBlockObj
 @end
 

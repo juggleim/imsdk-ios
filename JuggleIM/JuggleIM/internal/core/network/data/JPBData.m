@@ -126,9 +126,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JDisconnectMsg
 @end
 
-@implementation JQryReadDetailAck
-@end
-
 @implementation JConversationInfoAck
 @end
 
@@ -2202,7 +2199,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return result;
 }
 
-- (JUserInfo *)userInfoWithMemberReadDetailItem:(MemberReadDetailItem *)item {
+- (JGroupMessageMemberReadDetail *)groupMessageMemberReadDetailWithPbItem:(MemberReadDetailItem *)item {
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = item.member.userId;
     userInfo.userName = item.member.nickname;
@@ -2215,7 +2212,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
         userInfo.extraDic = [dic copy];
     }
     userInfo.updatedTime = item.member.updatedTime;
-    return userInfo;
+    JGroupMessageMemberReadDetail *detail = [[JGroupMessageMemberReadDetail alloc] init];
+    detail.userInfo = userInfo;
+    detail.readTime = item.time;
+    return detail;
 }
 
 - (JRtcRoom *)rtcRoomWithPBRtcRoom:(RtcRoom *)pbRoom {
@@ -2883,21 +2883,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeQryReadDetailAck;
-    JQryReadDetailAck *a = [[JQryReadDetailAck alloc] init];
+    
+    JTemplateAck <JGroupMessageReadInfoDetail *> *a = [[JTemplateAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     NSMutableArray *readMembers = [[NSMutableArray alloc] init];
     NSMutableArray *unreadMembers = [[NSMutableArray alloc] init];
     [resp.readMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
-        [readMembers addObject:userInfo];
+        JGroupMessageMemberReadDetail *d = [self groupMessageMemberReadDetailWithPbItem:obj];
+        [readMembers addObject:d];
     }];
     [resp.unreadMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
-        [unreadMembers addObject:userInfo];
+        JGroupMessageMemberReadDetail *d = [self groupMessageMemberReadDetailWithPbItem:obj];
+        [unreadMembers addObject:d];
     }];
-    a.readMembers = readMembers;
-    a.unreadMembers = unreadMembers;
-    obj.qryReadDetailAck = a;
+    JGroupMessageReadInfoDetail *detail = [JGroupMessageReadInfoDetail new];
+    detail.readCount = resp.readCount;
+    detail.memberCount = resp.memberCount;
+    detail.readMembers = readMembers;
+    detail.unreadMembers = unreadMembers;
+    
+    a.t = detail;
+    obj.templateAck = a;
     return obj;
 }
 

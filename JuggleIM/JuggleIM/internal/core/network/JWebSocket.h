@@ -19,6 +19,7 @@
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
 #import "JRtcRoom.h"
+#import "JGroupMessageReadInfoDetail.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -180,10 +181,10 @@ NS_ASSUME_NONNULL_BEGIN
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
-                            error:(void (^)(JErrorCodeInternal code))errorBlock;
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail *detail))successBlock
+                                error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)setMute:(BOOL)isMute
  inConversation:(JConversation *)conversation

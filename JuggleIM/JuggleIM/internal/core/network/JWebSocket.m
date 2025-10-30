@@ -272,17 +272,17 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     });
 }
 
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
-                            error:(void (^)(JErrorCodeInternal code))errorBlock {
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail * _Nonnull))successBlock
+                                error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
         NSData *d = [self.pbData getGroupMessageReadDetail:messageId
                                             inConversation:conversation
                                                      index:self.cmdIndex++];
-        JLogI(@"WS-Send", @"get group message read detail, id is %@", messageId);
-        JQryReadDetailObj *obj = [[JQryReadDetailObj alloc] init];
+        JLogI(@"WS-Send", @"get group message read info detail, id is %@", messageId);
+        JTemplateObj <JGroupMessageReadInfoDetail *> *obj = [[JTemplateObj alloc] init];
         obj.successBlock = successBlock;
         obj.errorBlock = errorBlock;
         [self sendData:d
@@ -1423,7 +1423,7 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeQryReadDetailAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryReadDetailAck");
-            [self handleQryReadDetailAck:obj.qryReadDetailAck];
+            [self handleQryReadDetailAck:obj.templateAck];
             break;
         case JPBRcvTypeSimpleQryAckCallbackTimestamp:
             JLogI(@"WS-Receive", @"JPBRcvTypeSimpleQryAckCallbackTimestamp");
@@ -1533,9 +1533,6 @@ inConversation:(JConversation *)conversation
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JTimestampBlockObj class]]) {
         JTimestampBlockObj *s = (JTimestampBlockObj *)obj;
-        s.errorBlock(code);
-    } else if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
-        JQryReadDetailObj *s = (JQryReadDetailObj *)obj;
         s.errorBlock(code);
     } else if ([obj isKindOfClass:[JSimpleBlockObj class]]) {
         JSimpleBlockObj *s = (JSimpleBlockObj *)obj;
@@ -1768,14 +1765,15 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleQryReadDetailAck:(JQryReadDetailAck *)ack {
+- (void)handleQryReadDetailAck:(JTemplateAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    if ([obj isKindOfClass:[JQryReadDetailObj class]]) {
-        JQryReadDetailObj *qryReadDetailObj = (JQryReadDetailObj *)obj;
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj <JGroupMessageReadInfoDetail *> *templateObj = (JTemplateObj *)obj;
         if (ack.code != 0) {
-            qryReadDetailObj.errorBlock(ack.code);
+            templateObj.errorBlock(ack.code);
         } else {
-            qryReadDetailObj.successBlock(ack.readMembers, ack.unreadMembers);
+            JGroupMessageReadInfoDetail *detail = ack.t;
+            templateObj.successBlock(detail);
         }
     }
 }

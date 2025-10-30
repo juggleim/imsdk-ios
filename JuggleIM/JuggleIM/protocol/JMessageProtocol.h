@@ -18,6 +18,7 @@
 #import <UIKit/UIImage.h>
 #import <JuggleIM/JGetFavoriteMessageOption.h>
 #import <JuggleIM/JFavoriteMessage.h>
+#import <JuggleIM/JGroupMessageReadInfoDetail.h>
 
 @class JMergeMessage;
 
@@ -415,12 +416,12 @@
 /// - Parameters:
 ///   - messageId: 需要查询的群消息 id
 ///   - conversation: 消息所在会话
-///   - successBlock: 成功回调，readMemberIds 存放已读用户 id 列表，unreadMemberIds 存放未读用户 id 列表
+///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
-                            error:(void (^)(JErrorCode code))errorBlock;
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail * detail))successBlock
+                                error:(void (^)(JErrorCode code))errorBlock;
 
 /// 获取被合并的消息列表
 /// - Parameters:
