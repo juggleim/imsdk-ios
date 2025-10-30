@@ -125,11 +125,6 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *deletedConvs;
 @end
 
-@interface JQryReadDetailAck : JQryAck
-@property (nonatomic, copy) NSArray<JUserInfo *> *readMembers;
-@property (nonatomic, copy) NSArray<JUserInfo *> *unreadMembers;
-@end
-
 @interface JConversationInfoAck : JQryAck
 @property (nonatomic, strong) JConcreteConversationInfo *conversationInfo;
 @end
@@ -224,7 +219,6 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JPublishMsgBody *publishMsgBody;
 @property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @property (nonatomic, strong) JDisconnectMsg *disconnectMsg;
-@property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
 @property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;

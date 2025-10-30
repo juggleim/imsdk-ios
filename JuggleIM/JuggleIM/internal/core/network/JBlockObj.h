@@ -42,11 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
-@interface JQryReadDetailObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
 @interface JSimpleBlockObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(void);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);

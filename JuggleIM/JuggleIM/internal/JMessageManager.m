@@ -773,25 +773,25 @@
     }];
 }
 
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *, NSArray<JUserInfo *> *))successBlock
-                            error:(void (^)(JErrorCode))errorBlock {
-    [self.core.webSocket getGroupMessageReadDetail:messageId
-                                    inConversation:conversation
-                                           success:^(NSArray<JUserInfo *> * _Nonnull readMembers, NSArray<JUserInfo *> * _Nonnull unreadMembers) {
-        JLogI(@"MSG-GroupReadDetail", @"success");
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail *))successBlock
+                                error:(void (^)(JErrorCode))errorBlock {
+    [self.core.webSocket getGroupMessageReadInfoDetail:messageId
+                                        inConversation:conversation
+                                               success:^(JGroupMessageReadInfoDetail * _Nonnull detail) {
+        JLogI(@"MSG-GroupReadInfoDetail", @"success");
         JGroupMessageReadInfo *info = [[JGroupMessageReadInfo alloc] init];
-        info.readCount = (int)readMembers.count;
-        info.memberCount = (int)readMembers.count + (int)unreadMembers.count;
+        info.readCount = detail.readCount;
+        info.memberCount = detail.memberCount;
         [self.core.dbManager setGroupMessageReadInfo:@{messageId:info}];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
-                successBlock(readMembers, unreadMembers);
+                successBlock(detail);
             }
         });
     } error:^(JErrorCodeInternal code) {
-        JLogE(@"MSG-GroupReadDetail", @"error code is %lu", code);
+        JLogE(@"MSG-GroupReadInfoDetail", @"error code is %lu", code);
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock((JErrorCode)code);

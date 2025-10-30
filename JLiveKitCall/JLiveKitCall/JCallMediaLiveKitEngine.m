@@ -6,7 +6,7 @@
 //
 
 #import "JCallMediaLiveKitEngine.h"
-#import <LiveKitClient/LiveKitClient-Swift.h>
+@import LiveKitClient;
 #import <JuggleIM/JuggleIMConst.h>
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
