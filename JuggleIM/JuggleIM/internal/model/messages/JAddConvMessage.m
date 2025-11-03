@@ -10,6 +10,7 @@
 #define jAddConvType @"jg:addconver"
 #define jConversation @"conversation"
 #define jTargetId @"target_id"
+#define jSubChannel @"sub_channel"
 #define jChannelType @"channel_type"
 #define jSortTime @"sort_time"
 #define jSyncTime @"sync_time"
@@ -39,6 +40,10 @@
         conversationType = [(NSNumber *)type intValue];
     }
     JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:conversationDic[jTargetId]];
+    NSString *subChannel = conversationDic[jSubChannel];
+    if (subChannel.length > 0) {
+        c.subChannel = subChannel;
+    }
     conversationInfo.conversation = c;
     id sortTime = conversationDic[jSortTime];
     if ([sortTime isKindOfClass:[NSNumber class]]) {

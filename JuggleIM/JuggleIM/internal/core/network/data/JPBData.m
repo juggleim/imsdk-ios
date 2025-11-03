@@ -1590,6 +1590,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         ConverIndex *convIndex = [[ConverIndex alloc] init];
         convIndex.targetId = conversation.conversationId;
         convIndex.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+        if (conversation.subChannel.length > 0) {
+            convIndex.subChannel = conversation.subChannel;
+        }
         req.attachedConver = convIndex;
     }
     
@@ -1671,6 +1674,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     ConverIndex *ci = [ConverIndex new];
     ci.targetId = conversation.conversationId;
     ci.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        ci.subChannel = conversation.subChannel;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
