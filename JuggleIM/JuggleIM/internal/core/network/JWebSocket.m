@@ -176,8 +176,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
                                              isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++
-                                        conversationType:conversation.conversationType
-                                          conversationId:conversation.conversationId
+                                            conversation:conversation
                                              mentionInfo:mentionInfo
                                          referredMessage:referredMessage
                                                 pushData:pushData

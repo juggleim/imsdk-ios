@@ -52,6 +52,9 @@ typedef NS_ENUM(NSUInteger, JConversationType) {
 - (instancetype)initWithConversationType:(JConversationType)type
                           conversationId:(NSString *)conversationId;
 
+// 会话子频道，默认为空。
+@property(nonatomic, copy) NSString *subChannel;
+
 @end
 
 NS_ASSUME_NONNULL_END

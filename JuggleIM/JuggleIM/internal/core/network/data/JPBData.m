@@ -285,15 +285,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
-                   conversationType:(JConversationType)conversationType
-                     conversationId:(NSString *)conversationId
+                       conversation:(JConversation *)conversation
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
                            pushData:(nonnull JPushData *)pushData
                            lifeTime:(long long)lifeTime
                   lifeTimeAfterRead:(long long)lifeTimeAfterRead {
     if ([self.messagePreprocessor respondsToSelector:@selector(encryptMessageContent:inConversation:contentType:)]) {
-        JConversation *conversation = [[JConversation alloc] initWithConversationType:conversationType conversationId:conversationId];
         msgData = [self.messagePreprocessor encryptMessageContent:msgData inConversation:conversation contentType:contentType];
     }
     UpMsg *upMsg = [[UpMsg alloc] init];
@@ -307,6 +305,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         pbMsgs.channelType = (int32_t)mergeInfo.conversation.conversationType;
         pbMsgs.userId = userId;
         pbMsgs.targetId = mergeInfo.conversation.conversationId;
+        if (mergeInfo.conversation.subChannel.length > 0) {
+            pbMsgs.subChannel = mergeInfo.conversation.subChannel;
+        }
         NSMutableArray <SimpleMsg *> *pbMsgArr = [NSMutableArray array];
         for (JConcreteMessage *msg in mergeInfo.messages) {
             SimpleMsg *simpleMsg = [[SimpleMsg alloc] init];
@@ -346,10 +347,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     upMsg.lifeTime = lifeTime;
     upMsg.lifeTimeAfterRead = lifeTimeAfterRead;
+    if (conversation.subChannel.length > 0) {
+        upMsg.subChannel = conversation.subChannel;
+    }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
-    switch (conversationType) {
+    switch (conversation.conversationType) {
         case JConversationTypePrivate:
             publishMsg.topic = kPMsg;
             break;
@@ -372,7 +376,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         default:
             break;
     }
-    publishMsg.targetId = conversationId;
+    publishMsg.targetId = conversation.conversationId;
     publishMsg.data_p = [upMsg data];
 
     @synchronized (self) {
@@ -392,6 +396,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     DownMsg * downMsg = [[DownMsg alloc] init];
     downMsg.targetId = message.conversation.conversationId;
     downMsg.channelType = (int32_t)message.conversation.conversationType;
+    if (message.conversation.subChannel.length > 0) {
+        downMsg.subChannel = message.conversation.subChannel;
+    }
     downMsg.msgType = message.contentType;
     downMsg.senderId = message.senderUserId;
     downMsg.msgId = message.messageId;
@@ -440,6 +447,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.msgId = messageId;
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgTime = timestamp;
     req.msgSeqNo = msgSeqNo;
     req.msgContent = msgData;
@@ -467,6 +477,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.msgId = messageId;
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgTime = msgTime;
     NSMutableArray * extsArray = [NSMutableArray array];
     for (NSString * key in extras) {
@@ -503,6 +516,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     MarkReadReq *req = [[MarkReadReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgsArray = arr;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -524,6 +540,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryReadDetailReq *req = [[QryReadDetailReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgId = messageId;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -570,6 +589,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryHisMsgsReq *r = [[QryHisMsgsReq alloc] init];
     r.targetId = conversation.conversationId;
     r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        r.subChannel = conversation.subChannel;
+    }
     r.startTime = startTime;
     r.count = count;
     if (direction == JPullDirectionOlder) {
@@ -600,6 +622,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryHisMsgByIdsReq *r = [[QryHisMsgByIdsReq alloc] init];
     r.targetId = conversation.conversationId;
     r.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        r.subChannel = conversation.subChannel;
+    }
     r.msgIdsArray = [messageIds mutableCopy];
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -643,6 +668,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        c.subChannel = conversation.subChannel;
+    }
     NSMutableArray *arr = [NSMutableArray arrayWithObject:c];
     req.conversationsArray = arr;
     
@@ -669,6 +697,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *c = [[Conversation alloc] init];
     c.targetId = conversation.conversationId;
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        c.subChannel = conversation.subChannel;
+    }
     c.latestReadIndex = msgIndex;
     if (msgId.length > 0) {
         c.latestReadMsgId = msgId;
@@ -697,6 +728,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     UndisturbConverItem *item = [[UndisturbConverItem alloc] init];
     item.targetId = conversation.conversationId;
     item.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        item.subChannel = conversation.subChannel;
+    }
     item.undisturbType = isMute?1:0;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:item];
     
@@ -723,6 +757,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *pbConversation = [[Conversation alloc] init];
     pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     pbConversation.targetId = conversation.conversationId;
+    if (conversation.subChannel.length > 0) {
+        pbConversation.subChannel = conversation.subChannel;
+    }
     pbConversation.isTop = isTop?1:0;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:pbConversation];
     
@@ -749,6 +786,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     TopMsgReq *req = [[TopMsgReq alloc] init];
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     req.targetId = conversation.conversationId;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgId = messageId;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -771,6 +811,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     GetTopMsgReq *req = [[GetTopMsgReq alloc] init];
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     req.targetId = conversation.conversationId;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -798,6 +841,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
             item.receiverId = userId;
         }
         item.channelType = [self channelTypeFromConversationType:message.conversation.conversationType];
+        if (message.conversation.subChannel.length > 0) {
+            item.subChannel = message.conversation.subChannel;
+        }
         item.msgId = message.messageId;
         [items addObject:item];
     }
@@ -845,6 +891,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *pbConversation = [[Conversation alloc] init];
     pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     pbConversation.targetId = conversation.conversationId;
+    if (conversation.subChannel.length > 0) {
+        pbConversation.subChannel = conversation.subChannel;
+    }
     pbConversation.unreadTag = 1;
     NSMutableArray *arr = [NSMutableArray arrayWithObject:pbConversation];
     
@@ -950,6 +999,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryMentionMsgsReq *req = [[QryMentionMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.startTime = time;
     req.count = count;
     if (direction == JPullDirectionOlder) {
@@ -1077,6 +1129,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryFirstUnreadMsgReq *req = [[QryFirstUnreadMsgReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -1156,6 +1211,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     MsgExt *ext = [[MsgExt alloc] init];
     ext.targetId = conversation.conversationId;
     ext.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        ext.subChannel = conversation.subChannel;
+    }
     ext.msgId = messageId;
     ext.ext = item;
     
@@ -1184,6 +1242,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     MsgExt *ext = [[MsgExt alloc] init];
     ext.targetId = conversation.conversationId;
     ext.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        ext.subChannel = conversation.subChannel;
+    }
     ext.msgId = messageId;
     ext.ext = item;
     
@@ -1211,6 +1272,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     QryMsgExtReq *req = [[QryMsgExtReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = (int32_t)conversation.conversationType;
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.msgIdsArray = array;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -1235,6 +1299,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
         pbConversation.targetId = conversation.conversationId;
         pbConversation.channelType = (int32_t)conversation.conversationType;
+        if (conversation.subChannel.length > 0) {
+            pbConversation.subChannel = conversation.subChannel;
+        }
         [pbConversations addObject:pbConversation];
     }
     
@@ -1264,6 +1331,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
         SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
         pbConversation.targetId = conversation.conversationId;
         pbConversation.channelType = (int32_t)conversation.conversationType;
+        if (conversation.subChannel.length > 0) {
+            pbConversation.subChannel = conversation.subChannel;
+        }
         [pbConversations addObject:pbConversation];
     }
     
@@ -1311,6 +1381,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     DelHisMsgsReq * req = [[DelHisMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     if (forAllUsers) {
         req.delScope = 1;
     }
@@ -1344,6 +1417,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     CleanHisMsgReq * req = [[CleanHisMsgReq alloc] init];
     req.targetId = conversation.conversationId;
     req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    if (conversation.subChannel.length > 0) {
+        req.subChannel = conversation.subChannel;
+    }
     req.cleanMsgTime = time;
     req.cleanScope = scope;
     
@@ -1367,6 +1443,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     Conversation *c = [[Conversation alloc] init];
     c.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     c.targetId = conversation.conversationId;
+    if (conversation.subChannel.length > 0) {
+        c.subChannel = conversation.subChannel;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -2025,6 +2104,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConcreteMessage *msg = [[JConcreteMessage alloc] init];
     JConversation *conversation = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:downMsg.channelType]
                                                                    conversationId:downMsg.targetId];
+    conversation.subChannel = downMsg.subChannel;
     msg.conversation = conversation;
     msg.contentType = downMsg.msgType;
     msg.messageId = downMsg.msgId;
@@ -2277,6 +2357,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JConcreteConversationInfo *info = [[JConcreteConversationInfo alloc] init];
     JConversation *c = [[JConversation alloc] initWithConversationType:[self conversationTypeFromChannelType:conversation.channelType]
                                                                    conversationId:conversation.targetId];
+    c.subChannel = conversation.subChannel;
     info.conversation = c;
     info.sortTime = conversation.sortTime;
     JConcreteMessage *lastMessage = [self messageWithDownMsg:conversation.msg];
