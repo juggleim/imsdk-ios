@@ -39,7 +39,8 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "flags INTEGER,"
                                         "life_time INTEGER DEFAULT 0,"
                                         "life_time_after_read INTEGER DEFAULT 0,"
-                                        "destroy_time INTEGER DEFAULT 0"
+                                        "destroy_time INTEGER DEFAULT 0,"
+                                        "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
@@ -50,6 +51,7 @@ NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER"
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
 NSString *const kAlterAddDestroyTime = @"ALTER TABLE message ADD COLUMN destroy_time INTEGER DEFAULT 0";
+NSString *const jAlterAddSubChannel = @"ALTER TABLE message ADD COLUMN subchannel VARCHAR (64) DEFAULT ''";
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
@@ -891,6 +893,10 @@ NSString *const jDestroyTime = @"destroy_time";
 
 + (NSString *)alterTableAddDestroyTime {
     return kAlterAddDestroyTime;
+}
+
++ (NSString *)alterTableAddSubChannel {
+    return jAlterAddSubChannel;
 }
 
 #pragma mark - internal

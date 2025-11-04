@@ -66,6 +66,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)createConversationTagTable;
 + (NSString *)createConversationTagIndex;
++ (NSString *)alterConversationInfoAddSubChannel;
++ (NSString *)alterConversationTagAddSubChannel;
 @end
 
 NS_ASSUME_NONNULL_END

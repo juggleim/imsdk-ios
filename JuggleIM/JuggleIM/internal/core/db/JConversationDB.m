@@ -38,14 +38,15 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_content TEXT,"
                                         "last_message_mention_info TEXT,"
                                         "last_message_seq_no INTEGER,"//最后一条消息的排序号
-                                        "unread_tag BOOLEAN"
-//                                        "extra TEXT"
+                                        "unread_tag BOOLEAN,"
+                                        "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
 NSString *const jCreateConversationTagTable = @"CREATE TABLE IF NOT EXISTS conversation_tag ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "tag_id VARCHAR (64),"
                                         "conversation_type SMALLINT,"
-                                        "conversation_id VARCHAR (64)"
+                                        "conversation_id VARCHAR (64),"
+                                        "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
 NSString *const jCreateConversationTagIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag ON conversation_tag(tag_id, conversation_type, conversation_id)";
 NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
@@ -135,6 +136,8 @@ NSString *const jLastMessageClientMsgNo = @"last_message_client_msg_no";
 NSString *const jLastMessageSeqNo = @"last_message_seq_no";
 NSString *const jTotalCount = @"total_count";
 NSString *const jHasUnread = @"unread_tag";
+NSString *const jAlterConversationInfoAddSubChannel = @"ALTER TABLE conversation_info ADD COLUMN subchannel VARCHAR (64) DEFAULT ''";
+NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_tag ADD COLUMN subchannel VARCHAR (64) DEFAULT ''";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -633,6 +636,14 @@ NSString *const jHasUnread = @"unread_tag";
 
 + (nonnull NSString *)createConversationTagIndex {
     return jCreateConversationTagIndex;
+}
+
++ (NSString *)alterConversationInfoAddSubChannel {
+    return jAlterConversationInfoAddSubChannel;
+}
+
++ (NSString *)alterConversationTagAddSubChannel {
+    return jAlterConversationTagAddSubChannel;
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
