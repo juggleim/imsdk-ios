@@ -1335,6 +1335,7 @@
                                 inConversation:conversation
                                        success:^(NSArray<JConcreteMessage *> * _Nonnull remoteMessages, BOOL isFinished) {
             JLogI(@"MSG-Get", @"by id, success");
+            [self insertRemoteMessages:remoteMessages];
             NSMutableArray <JMessage *> *result = [[NSMutableArray alloc] init];
             for (NSString *messageId in messageIds) {
                 BOOL isMatch = NO;
