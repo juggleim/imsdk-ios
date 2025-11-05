@@ -654,8 +654,8 @@ NSString *const jReadTime = @"read_time";
         }
     }];
     return localAttribute;
-    
 }
+
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
     if (messageId.length == 0) {
         return;
@@ -669,6 +669,7 @@ NSString *const jReadTime = @"read_time";
             withArgumentsInArray:@[attribute, messageId]];
     
 }
+
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo{
     NSString *sql = jGetMessageLocalAttribute;
     sql = [sql stringByAppendingString:jClientMsgNoIs];
@@ -683,6 +684,7 @@ NSString *const jReadTime = @"read_time";
     return localAttribute;
     
 }
+
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     if (!attribute) {
         attribute = @"";
@@ -817,9 +819,9 @@ NSString *const jReadTime = @"read_time";
     int memberCount = message.groupReadInfo.memberCount?:-1;
     
     NSString * mentionInfo;
-    if(message.mentionInfo){
+    if (message.mentionInfo) {
         mentionInfo = [message.mentionInfo encodeToJson];
-    }else{
+    } else {
         mentionInfo = @"";
     }
     
