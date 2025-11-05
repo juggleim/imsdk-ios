@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Use cases: Recommended configuration in different business scenarios https://docs.zegocloud.com/article/12122.
 /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
 /// When to call: After [createEngine].
-/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
+/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution, the bit rate and the frame rate after [startPreview].
 /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -226,7 +226,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
 /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
 /// When to call: After [createEngine].
-/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
+/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution, the bit rate and the frame rate after [startPreview].
 /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -624,7 +624,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Set audio capture stereo mode.
 ///
-/// Available since: 1.15.0 (iOS/Android/Windows); support macOS since 2.16.0
+/// Available since: 1.15.0 (iOS/Android/Windows/OHOS); support macOS since 2.16.0
 /// Description: This function is used to set the audio capture channel mode. When the developer turns on the stereo capture, using a special stereo capture device, the stereo audio data can be captured and streamed.
 /// Use cases: In some professional scenes, users are particularly sensitive to sound effects, such as voice radio and musical instrument performance. At this time, support for stereo and high-quality sound is required.
 /// Default value: The default is None, which means mono capture.
@@ -766,7 +766,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Use cases: Generally used in scenes such as synchronizing music lyrics or precise video layout, you can choose to send SEI.
 /// When to call: After starting to push the stream [startPublishingStream].
 /// Restrictions: Do not exceed 30 times per second, and the SEI data length is limited to 4096 bytes.
-/// Caution: Since the SEI information follows the video frame, there may be frame loss due to network problems, so the SEI information may also be lost. In order to solve this situation, it should be sent several times within the restricted frequency.
+/// Caution: 1. Due to network issues, frame loss may occur, which means SEI information may also be lost. To address this situation, it is advisable to send it multiple times within a limited frequency. 2. Even if the [enableCamera] interface is called to turn off the camera or [mutePublishStreamVideo] is used to stop sending video data, SEI can still be successfully sent; as long as the playback side does not call the [mutePlayStreamVideo] interface to stop pulling audio data, SEI can still be received normally. 3. If the SDK does not support the video module but does support the SEI functional module, SEI information can still be sent normally.
 /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
 ///
 /// @param data SEI data.
@@ -779,7 +779,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Use cases: Generally used in scenes such as synchronizing music lyrics or precise video layout, you can choose to send SEI.
 /// When to call: After starting to push the stream [startPublishingStream].
 /// Restrictions: Do not exceed 30 times per second, and the SEI data length is limited to 4096 bytes.
-/// Caution: Since the SEI information follows the video frame, there may be frame loss due to network problems, so the SEI information may also be lost. In order to solve this situation, it should be sent several times within the restricted frequency.
+/// Caution: 1. Due to network issues, frame loss may occur, which means SEI information may also be lost. To address this situation, it is advisable to send it multiple times within a limited frequency. 2. Even if the [enableCamera] interface is called to turn off the camera or [mutePublishStreamVideo] is used to stop sending video data, SEI can still be successfully sent; as long as the playback side does not call the [mutePlayStreamVideo] interface to stop pulling audio data, SEI can still be received normally. 3. If the SDK does not support the video module but does support the SEI functional module, SEI information can still be sent normally.
 /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
 ///
 /// @param data SEI data.
@@ -865,6 +865,32 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param channel Publish channel.
 - (void)setDummyCaptureImagePath:(NSString *)filePath channel:(ZegoPublishChannel)channel;
 
+/// Set the params of the static picture would be published when the camera is closed.
+///
+/// Available: since 3.19.0
+/// Description: Set the params of the static picture would be published when enableCamera(NO) is called, it would start to publish static pictures, and when enableCamera(YES) is called, it would end publishing static pictures.
+/// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
+/// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
+/// Restrictions:
+///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+///   3. Not supported that the filePath is a network link.
+/// Caution:
+///   1. The static picture cannot be seen in the local preview.
+///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+/// Platform differences:
+///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
+///
+/// @param params Dummy capture image params.
+/// @param channel Publish channel.
+- (void)setDummyCaptureImageParams:(ZegoDummyCaptureImageParams *)params
+                           channel:(ZegoPublishChannel)channel;
+
 /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
 ///
 /// Available since: 2.12.0
@@ -883,7 +909,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 2.12.0 and above
 /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
 /// When to call: After creating the engine.
-/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
 ///
 /// @param codecID Video codec id. Required: Yes.
 /// @return Whether the specified video encoding is supported.Value range: YES means support, you can use this encoding format for publish; NO means the is not supported, and the encoding format cannot be used for publish.
@@ -894,7 +920,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 3.0.0 and above
 /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
 /// When to call: After creating the engine.
-/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
 ///
 /// @param codecID Video codec id. Required: Yes.
 /// @param codecBackend Backend implementation of encoder. Required: Yes.
@@ -1097,6 +1123,27 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param mode The camera stabilization mode. \niOS:See Apple AVCaptureVideoStabilizationMode definition for details. The default value is 0. \nAndroid:AUTO:-1, OFF:0. The default value is 0.
 /// @param channel Publish stream channel.
 - (void)setCameraStabilizationMode:(int)mode channel:(ZegoPublishChannel)channel;
+
+/// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+///
+/// Available since: 3.18.0
+/// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM. Default is off.
+/// When to call: Called after the engine is created [createEngine].
+/// Restrictions: This interface will take effect only when the [EnableAux] interface of the media player is called to enable aux.
+///
+/// @param enable Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+- (void)enableAuxBgmBalance:(BOOL)enable;
+
+/// Turn on or off the face detection.
+///
+/// Available since: 3.20.0
+/// Description: Turn on or off the face detection. Default is on.
+/// When to call: Called after the engine is created [createEngine].
+/// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
+///
+/// @param enable Turn on or off the face detection.
+/// @param channel Publish stream channel.
+- (void)enableFaceDetection:(BOOL)enable channel:(ZegoPublishChannel)channel;
 
 @end
 

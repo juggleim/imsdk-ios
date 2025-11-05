@@ -184,7 +184,7 @@ typedef void(EXP_CALL *pfnzego_register_receive_real_time_sequential_data_callba
 /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
 /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -211,7 +211,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_broadcast_message)(const char 
 /// Related callbacks: The room barrage message can be received through [onIMRecvBarrageMessage].
 /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -239,7 +239,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_barrage_message)(const char *r
 /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and barrage messages can be sent through the [sendBarrageMessage] function.
 /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -271,7 +271,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_command)(const char *ro
 /// Related callbacks: When sending a message, Mode is specified for ZegoRoomTransparentMessageModeOnlyClient or ZegoRoomTransparentMessageModeClientAndServer can pass [onRecvRoomTransparentMessage] received sends the message content.
 /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
 ///
-/// @param room_id Room ID, a string of up to 128 bytes in length.
+/// @param room_id Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.

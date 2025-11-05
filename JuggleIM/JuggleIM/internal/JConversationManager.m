@@ -669,17 +669,20 @@
 }
 
 - (void)messageDidUpdate:(JConcreteMessage *)message {
-    JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:message.conversation];
+    long long now = [self.core getCurrentTime];
+    JConcreteMessage *lastMessage = [self.core.dbManager getLastMessage:message.conversation currentTime:now];
     if (lastMessage.clientMsgNo == message.clientMsgNo) {
         [self.core.dbManager updateLastMessageWithoutIndex:lastMessage];
         JConversationInfo *info = [self.core.dbManager getConversationInfo:message.conversation];
-        dispatch_async(self.core.delegateQueue, ^{
-            [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
-                    [obj conversationInfoDidUpdate:@[info]];
-                }
-            }];
-        });
+        if (info) {
+            dispatch_async(self.core.delegateQueue, ^{
+                [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
+                        [obj conversationInfoDidUpdate:@[info]];
+                    }
+                }];
+            });
+        }
     }
 }
 

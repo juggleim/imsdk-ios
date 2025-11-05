@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZegoExpressEngine (ReplayKit)
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Initialize the Express ReplayKit module.
 ///
 /// Only use in the ReplayKit sub-process, don't use it in the main App process
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)prepareForReplayKit;
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Set ReplayKit Microphone volume
 ///
 /// Available since: 2.13.0
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setReplayKitMicrophoneVolume:(int)volume;
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Set ReplayKit Application volume
 ///
 /// Available since: 2.13.0
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setReplayKitApplicationVolume:(int)volume;
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Handles ReplayKit's SampleBuffer, supports receiving video and audio buffer.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///

@@ -20,6 +20,7 @@
 #import "JDataConverterProtocol.h"
 #import "JSimpleDataConverter.h"
 #import "JuggleIMConstInternal.h"
+#import "JUltEncryptProtocol.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -44,6 +45,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kPMsg @"p_msg"
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
+#define kPcMsg @"pc_msg"
 #define kRecallMsg @"recall_msg"
 #define kModifyMsg @"modify_msg"
 #define kQryHisMsgs @"qry_hismsgs"
@@ -56,6 +58,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jClearUnread @"clear_unread"
 #define jUndisturb @"undisturb_convers"
 #define jTopConvers @"top_convers"
+#define jSetTopMsg @"set_top_msg"
+#define jDelTopMsg @"del_top_msg"
+#define jGetTopMsg @"get_top_msg"
+#define jAddFavoriteMsgs @"add_favorite_msgs"
+#define jDelFavoriteMsgs @"del_favorite_msgs"
+#define jQryFavoriteMsgs @"qry_favorite_msgs"
 #define jQryMergedMsgs @"qry_merged_msgs"
 #define jRegPushToken @"reg_push_token"
 #define jQryMentionMsgs @"qry_mention_msgs"
@@ -87,6 +95,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jRtcAccept @"rtc_accept"
 #define jRtcQuit @"rtc_quit"
 #define jRtcUpdState @"rtc_upd_state"
+#define jRtcJoin @"rtc_join"
+#define jQryConverConf @"qry_conver_conf"
 #define jRtcMemberRooms @"rtc_member_rooms"
 #define jRtcQry @"rtc_qry"
 #define jSetUserSettings @"set_user_settings"
@@ -114,9 +124,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @end
 
 @implementation JDisconnectMsg
-@end
-
-@implementation JQryReadDetailAck
 @end
 
 @implementation JConversationInfoAck
@@ -152,6 +159,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @implementation JQryMsgExtAck
 @end
 
+@implementation JRtcAuthAck
+@end
+
+@implementation JGetTopMsgAck
+@end
+
+@implementation JGetFavoriteMsgAck
+@end
+
+@implementation JTemplateAck
+@end
+
 @implementation JQryAck
 - (void)encodeWithQueryAckMsgBody:(QueryAckMsgBody *)body {
     self.index = body.index;
@@ -173,6 +192,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) NSMutableDictionary *msgCmdDic;
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @property (nonatomic, strong) id<JDataConverterProtocol> converter;
+@property (nonatomic, weak) id<JMessagePreprocessor> messagePreprocessor;
+@property (nonatomic, strong) id<JUltEncryptProtocol> converter2;
 @end
 
 @implementation JPBData
@@ -181,12 +202,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (self) {
         self.msgCmdDic = [[NSMutableDictionary alloc] init];
         self.converter = [JSimpleDataConverter converter];
+        self.converter2 = [self fetchUltConverter];
     }
     return self;
 }
 
 - (void)resetDataConverter {
     self.converter = [JSimpleDataConverter converter];
+    self.converter2 = [self fetchUltConverter];
+}
+
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor {
+    _messagePreprocessor = preprocessor;
 }
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
@@ -221,6 +248,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     connectMsg.packageName = packageName;
     connectMsg.pushChannel = jApple;
 //    connectMsg.language = language;
+    if (self.converter2) {
+        connectMsg.secretNegotiate = [self.converter2 getPubKey];
+    }
     
     NSData *data = [self.converter encode:connectMsg.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
@@ -239,7 +269,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     body.timestamp = [[NSDate date] timeIntervalSince1970]*1000;
     
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypeDisconnect;
     sm.qos = JQosNo;
@@ -259,7 +289,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(nonnull JPushData *)pushData {
+                           pushData:(nonnull JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead {
+    if ([self.messagePreprocessor respondsToSelector:@selector(encryptMessageContent:inConversation:contentType:)]) {
+        JConversation *conversation = [[JConversation alloc] initWithConversationType:conversationType conversationId:conversationId];
+        msgData = [self.messagePreprocessor encryptMessageContent:msgData inConversation:conversation contentType:contentType];
+    }
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
@@ -308,6 +344,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         pbPushData.pushExtraData = pushData.extra;
         upMsg.pushData = pbPushData;
     }
+    upMsg.lifeTime = lifeTime;
+    upMsg.lifeTimeAfterRead = lifeTimeAfterRead;
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
@@ -327,6 +365,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
         case JConversationTypeSystem:
             break;
             
+        case JConversationTypePublicService:
+            publishMsg.topic = kPcMsg;
+            break;
+            
         default:
             break;
     }
@@ -340,7 +382,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return sm.data;
 }
 
--(DownMsg *)downMsgWithMessage:(JConcreteMessage *)message{
+- (DownMsg *)downMsgWithMessage:(JConcreteMessage *)message {
     if(message == nil){
         return nil;
     }
@@ -693,6 +735,105 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.targetId = userId;
     body.data_p = req.data;
     
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)topMessageData:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                     isTop:(BOOL)isTop
+                     index:(int)index {
+    TopMsgReq *req = [[TopMsgReq alloc] init];
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.targetId = conversation.conversationId;
+    req.msgId = messageId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    if (isTop) {
+        body.topic = jSetTopMsg;
+    } else {
+        body.topic = jDelTopMsg;
+    }
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getTopMessageData:(JConversation *)conversation index:(int)index {
+    GetTopMsgReq *req = [[GetTopMsgReq alloc] init];
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    req.targetId = conversation.conversationId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jGetTopMsg;
+    body.targetId = conversation.conversationId;
+    body.data_p = req.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)favoriteMessagesData:(NSArray<JMessage *> *)messages
+                           isAdd:(BOOL)isAdd
+                          userId:(NSString *)userId
+                           index:(int)index {
+    NSMutableArray *items = [NSMutableArray array];
+    for (JMessage *message in messages) {
+        FavoriteMsgIdItem *item = [FavoriteMsgIdItem new];
+        item.senderId = message.senderUserId;
+        item.receiverId = message.conversation.conversationId;
+        if (message.conversation.conversationType == JConversationTypePrivate
+            && message.direction == JMessageDirectionReceive) {
+            item.receiverId = userId;
+        }
+        item.channelType = [self channelTypeFromConversationType:message.conversation.conversationType];
+        item.msgId = message.messageId;
+        [items addObject:item];
+    }
+    
+    FavoriteMsgIds *ids = [[FavoriteMsgIds alloc] init];
+    ids.itemsArray = items;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    if (isAdd) {
+        body.topic = jAddFavoriteMsgs;
+    } else {
+        body.topic = jDelFavoriteMsgs;
+    }
+    body.targetId = userId;
+    body.data_p = ids.data;
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getFavoriteMessagesData:(NSString *)userId
+                              limit:(int)limit
+                             offset:(NSString *)offset
+                              index:(int)index {
+    QryFavoriteMsgsReq *req = [QryFavoriteMsgsReq new];
+    req.limit = limit;
+    req.offset = offset;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryFavoriteMsgs;
+    body.targetId = userId;
+    body.data_p = req.data;
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -1153,7 +1294,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)publishAckData:(int)index {
     PublishAckMsgBody *body = [[PublishAckMsgBody alloc] init];
     body.index = index;
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePublishAck;
@@ -1344,8 +1485,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
              mediaType:(JCallMediaType)mediaType
+          conversation:(JConversation *)conversation
           targetIdList:(nonnull NSArray<NSString *> *)userIdList
             engineType:(NSUInteger)engineType
+                 extra:(NSString *)extra
                  index:(int)index {
     RtcInviteReq *req = [[RtcInviteReq alloc] init];
     req.targetIdsArray = [userIdList mutableCopy];
@@ -1357,8 +1500,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
     req.roomId = callId;
     if (engineType == 0) {
         req.rtcChannel = RtcChannel_Zego;
+    } else if (engineType == 1) {
+        req.rtcChannel = RtcChannel_LivekitRtc;
+    } else if (engineType == 2) {
+        req.rtcChannel = RtcChannel_Agora;
     }
     req.rtcMediaType = (int32_t)mediaType;
+    req.ext = extra;
+    if (conversation) {
+        ConverIndex *convIndex = [[ConverIndex alloc] init];
+        convIndex.targetId = conversation.conversationId;
+        convIndex.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+        req.attachedConver = convIndex;
+    }
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -1408,6 +1562,42 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.topic = jRtcUpdState;
     body.targetId = callId;
     body.data_p = [member data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)callJoin:(NSString *)callId index:(int)index {
+    RtcRoomReq *req = [[RtcRoomReq alloc] init];
+    req.roomType = RtcRoomType_OneMore;
+    req.roomId = callId;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jRtcJoin;
+    body.targetId = callId;
+    body.data_p = [req data];
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getConversationCallInfo:(JConversation *)conversation
+                             userId:(NSString *)userId
+                              index:(int)index {
+    ConverIndex *ci = [ConverIndex new];
+    ci.targetId = conversation.conversationId;
+    ci.channelType = [self channelTypeFromConversationType:conversation.conversationType];
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jQryConverConf;
+    body.targetId = userId;
+    body.data_p = [ci data];
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(body.index)];
     }
@@ -1521,17 +1711,21 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 obj.rcvType = JPBRcvTypeParseError;
                 return obj;
             }
+            if (self.converter2) {
+                [self.converter2 storeSharedKey:body.secretNegotiateAck];
+            }
             a.userId = body.userId;
             a.code = body.code;
             a.session = body.session;
             a.extra = body.ext;
             obj.connectAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
         case JCmdTypePublishAck:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             PublishAckMsgBody *body = [[PublishAckMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"PublishAck decode message parse error, msg is %@", err.description);
@@ -1564,12 +1758,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 a.content = modifiedMsg.content;
             }
             obj.publishMsgAck = a;
+            obj.timestamp = body.timestamp;
         }
             break;
             
         case JCmdTypeQueryAck:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             QueryAckMsgBody *body = [[QueryAckMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"QueryAck decode message parse error, msg is %@", err.description);
@@ -1652,15 +1847,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeQryMsgExtAck:
                     obj = [self qryMsgExtAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetTopMsgAck:
+                    obj = [self getTopMsgAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetFavoriteMsgAck:
+                    obj = [self getFavoriteMsgAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetConversationConfAck:
+                    obj = [self getConversationConfAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
         case JCmdTypePublish:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             PublishMsgBody *body = [[PublishMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"publish decode message parse error, msg is %@", err.description);
@@ -1761,12 +1966,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 n.targetUsers = [targetUserList copy];
                 obj.rtcInviteEventNtf = n;
             }
+            obj.timestamp = body.timestamp;
         }
             break;
             
         case JCmdTypeDisconnect:
         {
-            NSData *decodeData = [self.converter decode:msg.payload];
+            NSData *decodeData = [self decodePayload:msg.payload];
             DisconnectMsgBody *body = [[DisconnectMsgBody alloc] initWithData:decodeData error:&err];
             if (err != nil) {
                 JLogE(@"PB-Parse", @"disconnect decode message parse error, msg is %@", err.description);
@@ -1780,6 +1986,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             m.timestamp = body.timestamp;
             m.extra = body.ext;
             obj.disconnectMsg = m;
+            obj.timestamp = body.timestamp;
         }
             break;
             
@@ -1791,7 +1998,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 #pragma mark - internal
 - (ImWebsocketMsg *)createImWebSocketMsgWithPublishMsg:(PublishMsgBody *)body {
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *sm = [self createImWebsocketMsg];
     sm.cmd = JCmdTypePublish;
     sm.qos = JQosYes;
@@ -1800,7 +2007,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (ImWebsocketMsg *)createImWebSocketMsgWithQueryMsg:(QueryMsgBody *)body {
-    NSData *data = [self.converter encode:body.data];
+    NSData *data = [self encodePayload:body.data];
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypeQuery;
     m.qos = JQosYes;
@@ -1829,7 +2036,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.senderUserId = downMsg.senderId;
     msg.seqNo = downMsg.msgSeqNo;
     msg.msgIndex = downMsg.unreadIndex;
-    msg.content = [[JContentTypeCenter shared] contentWithData:downMsg.msgContent
+    NSData *msgContent = downMsg.msgContent;
+    if ([self.messagePreprocessor respondsToSelector:@selector(decryptMessageContent:inConversation:contentType:)]) {
+        msgContent = [self.messagePreprocessor decryptMessageContent:msgContent inConversation:conversation contentType:msg.contentType];
+    }
+    msg.content = [[JContentTypeCenter shared] contentWithData:msgContent
                                                    contentType:downMsg.msgType];
     if([msg.content isKindOfClass:[JMergeMessage class]]){
         JMergeMessage * mergeMessage = (JMergeMessage *)msg.content;
@@ -1864,7 +2075,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if(downMsg.hasReferMsg && downMsg.referMsg != nil){
         JConcreteMessage * referMsg = [self messageWithDownMsg:downMsg.referMsg];
         msg.referredMsg = referMsg;
+        msg.referMsgId = referMsg.messageId;
     }
+    msg.isDeleted = downMsg.isDelete;
+    msg.destroyTime = downMsg.destroyTime;
+    msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
+    msg.readTime = downMsg.readTime;
     
     return msg;
 }
@@ -1903,6 +2119,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbGroupInfo.updatedTime;
     return result;
 }
 
@@ -1941,6 +2158,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbUserInfo.updatedTime;
     return result;
 }
 
@@ -1964,6 +2182,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         result.extraDic = [dic copy];
     }
+    result.updatedTime = pbGroupMember.updatedTime;
     return result;
 }
 
@@ -1981,7 +2200,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return result;
 }
 
-- (JUserInfo *)userInfoWithMemberReadDetailItem:(MemberReadDetailItem *)item {
+- (JGroupMessageMemberReadDetail *)groupMessageMemberReadDetailWithPbItem:(MemberReadDetailItem *)item {
     JUserInfo *userInfo = [[JUserInfo alloc] init];
     userInfo.userId = item.member.userId;
     userInfo.userName = item.member.nickname;
@@ -1993,7 +2212,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         userInfo.extraDic = [dic copy];
     }
-    return userInfo;
+    userInfo.updatedTime = item.member.updatedTime;
+    JGroupMessageMemberReadDetail *detail = [[JGroupMessageMemberReadDetail alloc] init];
+    detail.userInfo = userInfo;
+    detail.readTime = item.time;
+    return detail;
 }
 
 - (JRtcRoom *)rtcRoomWithPBRtcRoom:(RtcRoom *)pbRoom {
@@ -2005,6 +2228,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     result.owner = [self userInfoWithPBUserInfo:pbRoom.owner];
     result.isMultiCall = pbRoom.roomType == RtcRoomType_OneMore;
     result.mediaType = (int)pbRoom.rtcMediaType;
+    result.extra = pbRoom.ext;
     
     NSMutableArray <JCallMember *> *members = [NSMutableArray array];
     for (RtcMember *member in pbRoom.membersArray) {
@@ -2012,7 +2236,42 @@ typedef NS_ENUM(NSUInteger, JQos) {
         [members addObject:outMember];
     }
     result.members = members;
+    
+    if (pbRoom.hasAuth) {
+        RtcAuth *auth = pbRoom.auth;
+        if (auth.hasZegoAuth) {
+            ZegoAuth *zegoAuth = auth.zegoAuth;
+            result.token = zegoAuth.token;
+        } else if (auth.hasLivekitRtcAuth) {
+            LivekitRtcAuth *liveKitAuth = auth.livekitRtcAuth;
+            result.token = liveKitAuth.token;
+            result.url = liveKitAuth.serviceURL;
+        } else if (auth.hasAgoraAuth) {
+            AgoraAuth *agoraAuth = auth.agoraAuth;
+            result.token = agoraAuth.token;
+        }
+    }
     return result;
+}
+
+- (JCallInfo *)callInfoWithPBActiveRtcRoom:(ActivedRtcRoom *)room {
+    if (!room) {
+        return nil;
+    }
+    JCallInfo *callInfo = [JCallInfo new];
+    callInfo.callId = room.roomId;
+    callInfo.isMultiCall = room.roomType == RtcRoomType_OneMore;
+    callInfo.mediaType = (int)room.rtcMediaType;
+    callInfo.owner = [self userInfoWithPBUserInfo:room.owner];
+    
+    NSMutableArray <JCallMember *> *members = [NSMutableArray array];
+    for (RtcMember *member in room.membersArray) {
+        JCallMember *outMember = [self callMemberWithPBRtcMember:member];
+        [members addObject:outMember];
+    }
+    callInfo.members = members;
+    callInfo.extra = room.ext;
+    return callInfo;
 }
 
 - (JConcreteConversationInfo *)conversationWithPBConversation:(Conversation *)conversation {
@@ -2226,11 +2485,20 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeCallAuthAck;
-    JStringAck *a = [[JStringAck alloc] init];
+    JRtcAuthAck *a = [[JRtcAuthAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
-    ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
-    a.str = zegoAuth.token;
-    obj.stringAck = a;
+    if (rtcAuth.hasZegoAuth) {
+        ZegoAuth *zegoAuth = rtcAuth.zegoAuth;
+        a.token = zegoAuth.token;
+    } else if (rtcAuth.hasLivekitRtcAuth) {
+        LivekitRtcAuth *liveKitAuth = rtcAuth.livekitRtcAuth;
+        a.token = liveKitAuth.token;
+        a.url = liveKitAuth.serviceURL;
+    } else if (rtcAuth.hasAgoraAuth) {
+        AgoraAuth *agoraAuth = rtcAuth.agoraAuth;
+        a.token = agoraAuth.token;
+    }
+    obj.rtcAuthAck = a;
     return obj;
 }
 
@@ -2346,6 +2614,77 @@ typedef NS_ENUM(NSUInteger, JQos) {
     [ack encodeWithQueryAckMsgBody:body];
     ack.reactionList = reactionList;
     obj.qryMsgExtAck = ack;
+    return obj;
+}
+
+- (JPBRcvObj *)getTopMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [[JPBRcvObj alloc] init];
+    NSError *e = nil;
+    TopMsg *topMsg = [[TopMsg alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get top msg ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetTopMsgAck;
+    JConcreteMessage *concreteMessage = [self messageWithDownMsg:topMsg.msg];
+    JUserInfo *userInfo = [self userInfoWithPBUserInfo:topMsg.operator_p];
+    long long timestamp = topMsg.createdTime;
+    JGetTopMsgAck *ack = [[JGetTopMsgAck alloc] init];
+    [ack encodeWithQueryAckMsgBody:body];
+    if (!topMsg.hasMsg) {
+        ack.code = JErrorCodeInternalMessageNotExist;
+        obj.getTopMsgAck = ack;
+        return obj;
+    }
+    ack.message = concreteMessage;
+    ack.userInfo = userInfo;
+    ack.createdTime = timestamp;
+    obj.getTopMsgAck = ack;
+    return obj;
+}
+
+- (JPBRcvObj *)getFavoriteMsgAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    FavoriteMsgs *msgs = [[FavoriteMsgs alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get favorite msg ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetFavoriteMsgAck;
+    JGetFavoriteMsgAck *ack = [JGetFavoriteMsgAck new];
+    [ack encodeWithQueryAckMsgBody:body];
+    ack.offset = msgs.offset;
+    NSMutableArray <JFavoriteMessage *> *arr = [NSMutableArray array];
+    for (FavoriteMsg *msg in msgs.itemsArray) {
+        JFavoriteMessage *favMessage = [JFavoriteMessage new];
+        favMessage.message = [self messageWithDownMsg:msg.msg];
+        favMessage.createdTime = msg.createdTime;
+        [arr addObject:favMessage];
+    }
+    ack.favoriteMsgs = arr;
+    obj.getFavoriteMsgAck = ack;
+    return obj;
+}
+
+- (JPBRcvObj *)getConversationConfAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    ConverConf *converConf = [[ConverConf alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get conversation config ack parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetConversationConfAck;
+    JTemplateAck<JCallInfo *> *ack = [JTemplateAck new];
+    [ack encodeWithQueryAckMsgBody:body];
+    if (converConf.hasActivedRtcRoom) {
+        ack.t = [self callInfoWithPBActiveRtcRoom:converConf.activedRtcRoom];
+    }
+    obj.templateAck = ack;
     return obj;
 }
 
@@ -2545,22 +2884,50 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeQryReadDetailAck;
-    JQryReadDetailAck *a = [[JQryReadDetailAck alloc] init];
+    
+    JTemplateAck <JGroupMessageReadInfoDetail *> *a = [[JTemplateAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     NSMutableArray *readMembers = [[NSMutableArray alloc] init];
     NSMutableArray *unreadMembers = [[NSMutableArray alloc] init];
     [resp.readMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
-        [readMembers addObject:userInfo];
+        JGroupMessageMemberReadDetail *d = [self groupMessageMemberReadDetailWithPbItem:obj];
+        [readMembers addObject:d];
     }];
     [resp.unreadMembersArray enumerateObjectsUsingBlock:^(MemberReadDetailItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        JUserInfo *userInfo = [self userInfoWithMemberReadDetailItem:obj];
-        [unreadMembers addObject:userInfo];
+        JGroupMessageMemberReadDetail *d = [self groupMessageMemberReadDetailWithPbItem:obj];
+        [unreadMembers addObject:d];
     }];
-    a.readMembers = readMembers;
-    a.unreadMembers = unreadMembers;
-    obj.qryReadDetailAck = a;
+    JGroupMessageReadInfoDetail *detail = [JGroupMessageReadInfoDetail new];
+    detail.readCount = resp.readCount;
+    detail.memberCount = resp.memberCount;
+    detail.readMembers = readMembers;
+    detail.unreadMembers = unreadMembers;
+    
+    a.t = detail;
+    obj.templateAck = a;
     return obj;
+}
+
+- (NSData *)encodePayload:(NSData *)data {
+    NSData *d = [self.converter encode:data];
+    if (self.converter2) {
+        d = [self.converter2 encrypt:d];
+    }
+    return d;
+}
+
+- (NSData *)decodePayload:(NSData *)data {
+    if (self.converter2) {
+        data = [self.converter2 decrypt:data];
+    }
+    data = [self.converter decode:data];
+    return data;
+}
+
+- (id<JUltEncryptProtocol>)fetchUltConverter {
+    Class cls = NSClassFromString(@"JDataConverter");
+    id<JUltEncryptProtocol> converter = [[cls alloc] init];
+    return converter;
 }
 
 #pragma mark - helper
@@ -2606,6 +2973,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
             
         case ChannelType_System:
             result = JConversationTypeSystem;
+            break;
+            
+        case ChannelType_PublicService:
+            result = JConversationTypePublicService;
             break;
             
         default:
@@ -2667,7 +3038,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jDelMsgExSet:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryMsgExSet:@(JPBRcvTypeQryMsgExtAck),
              jTagAddConvers:@(JPBRcvTypeSimpleQryAck),
-             jTagDelConvers:@(JPBRcvTypeSimpleQryAck)
+             jTagDelConvers:@(JPBRcvTypeSimpleQryAck),
+             jSetTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelTopMsg:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jGetTopMsg:@(JPBRcvTypeGetTopMsgAck),
+             jAddFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelFavoriteMsgs:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jQryFavoriteMsgs:@(JPBRcvTypeGetFavoriteMsgAck),
+             jRtcJoin:@(JPBRcvTypeQryCallRoomAck),
+             jQryConverConf:@(JPBRcvTypeGetConversationConfAck)
     };
 }
 @end

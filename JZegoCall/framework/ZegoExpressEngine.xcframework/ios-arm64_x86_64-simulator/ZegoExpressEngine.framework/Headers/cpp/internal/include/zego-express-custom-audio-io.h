@@ -100,7 +100,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_remote_processi
 /// Enable custom audio processing for SDK playback audio data.
 ///
 /// Available since: 1.13.0
-/// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
+/// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessPlaybackAudioData], and can modify the audio data.
 /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
 /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
 /// Restrictions: None.
@@ -255,11 +255,28 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_reference_audio_pcm_data)(
     unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param);
 #endif
 
+/// Set the audio route after enabling the custom audio IO function.
+///
+/// Available since: 3.21.0
+/// Description: Set the audio route after enabling the custom audio IO function.
+/// Use cases：The current audio route is specified by the APP to optimize the AEC effect.
+/// When to call: After [enableCustomAudioIO] and [startPublishingStream].
+/// Restrictions: Only support iOS and Android.
+///
+/// @param audio_route Audio route.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_custom_audio_io_audio_route(enum zego_audio_route audio_route);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_set_custom_audio_io_audio_route)(
+    enum zego_audio_route audio_route);
+#endif
+
 /// Custom audio processing local captured PCM audio frame callback.
 ///
 /// Available: Since 2.13.0
 /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
-/// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+/// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
 /// Restrictions: None.
 /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 ///
@@ -284,7 +301,7 @@ typedef void(EXP_CALL *pfnzego_register_process_captured_audio_data_callback)(
 ///
 /// Available: Since 2.13.0
 /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
-/// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+/// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
 /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 ///
 /// @param data Audio data in PCM format
@@ -437,7 +454,7 @@ typedef void(EXP_CALL *pfnzego_register_captured_audio_data_callback)(
 ///
 /// Available: Since 1.1.0
 /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreview] or [startPlayingStream] or [startPublishingStream]).
 /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
 /// Caution: This callback is a high-frequency callback. Please do not perform time-consuming operations in this callback. When the engine is not in the stream publishing state and the media player is not used to play media files, the audio data in the callback is muted audio data.
 ///

@@ -18,7 +18,9 @@
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, assign) JCallEngineType engineType;
 @property (nonatomic, weak) id<JCallSessionLifeCycleDelegate> sessionLifeCycleDelegate;
-@property (nonatomic, copy) NSString *zegoToken;
+@property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *url;
+@property (nonatomic, strong) JConversation *conversation;
 
 - (void)error:(JCallErrorCode)code;
 - (void)notifyReceiveCall;
@@ -32,8 +34,13 @@
 - (void)membersInviteBySelf:(NSArray <NSString *> *)userIdList;
 - (void)removeMember:(NSString *)userId;
 - (void)membersConnected:(NSArray <NSString *> *)userIdList;
+- (void)membersJoin:(NSArray <JUserInfo *> *)userList;
 - (void)cameraEnable:(BOOL)enable
               userId:(NSString *)userId;
+- (void)microphoneEnable:(BOOL)enable
+                  userId:(NSString *)userId;
+- (void)soundLevelUpdate:(NSDictionary<NSString *, NSNumber *> *)soundLevels;
+- (void)videoFirstFrameRender:(NSString *)userId;
 
 #pragma mark - signal
 - (void)signalInvite;
@@ -41,6 +48,7 @@
 - (void)signalHangup;
 - (void)signalAccept;
 - (void)signalConnected;
+- (void)signalJoin;
 - (void)ping;
 
 #pragma mark - media
@@ -53,8 +61,9 @@
 - (void)transitionToConnectedState;
 - (void)transitionToConnectingState;
 - (void)transitionToIdleState;
+- (void)transitionToIdleStateWithoutMediaQuit;
 - (void)transitionToIncomingState;
 - (void)transitionToOutgoingState;
-
+- (void)transitionToJoinState;
 
 @end

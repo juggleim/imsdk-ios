@@ -269,8 +269,6 @@
         NSLog(@"AppDelegate, file messageDidReceive, name is %@, url is %@, size is %lld, type is %@, extra is %@", ((JFileMessage *)content).name, ((JFileMessage *)content).url, ((JFileMessage *)content).size, ((JFileMessage *)content).type, ((JFileMessage *)content).extra);
     } else if ([content isKindOfClass:[JVoiceMessage class]]) {
         NSLog(@"AppDelegate, voice messageDidReceive, url is %@, duration is %ld, extra is %@", ((JVoiceMessage *)content).url, ((JVoiceMessage *)content).duration, ((JVoiceMessage *)content).extra);
-    } else if ([content isKindOfClass:[JStreamTextMessage class]]) {
-        NSLog(@"AppDelegate, JStreamTextMessage messageDidReceive, content is %@", ((JStreamTextMessage *)content).content);
     }
     
 ////    if ([content isKindOfClass:[JMediaMessageContent class]]) {
@@ -286,9 +284,6 @@
 //    }
 }
 
-- (void)streamTextMessageDidAppend:(JStreamAppend *)streamAppend {
-    NSLog(@"AppDelegate, streamMessageDidAppend");
-}
 
 - (void)messageDidRecall:(JMessage *)message {
     NSLog(@"AppDelegate, messageDidRecall");

@@ -14,14 +14,23 @@
 
 - (UIView *)viewForUserId:(NSString *)userId;
 
-- (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
+- (UIView *)viewForSelf;
+
+- (void)usersDidConnect:(NSArray <NSString *> *)userIdList;
 
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;
 
 @optional
+- (void)userMicrophoneDidChange:(BOOL)enable
+                         userId:(NSString *)userId;
+
 //暂不处理
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
+- (void)videoFirstFrameDidRender:(NSString *)userId;
 
 @end
 
@@ -54,6 +63,15 @@
 
 // 当前 active 的 CallSession
 - (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
+
+@optional
+- (void)createZegoEngineWith:(NSNumber *)appId appSign:(NSString *)appSign;
+
+- (void)createAgoraEngineWith:(NSString *)appId;
+
+- (void)enableAEC:(BOOL)isEnable;
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end
 

@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)connectSuccess;
 // IM 被踢下线
 - (void)imKick;
+- (void)handleActiveCallMessage:(JMessage *)message;
 @end
 
 NS_ASSUME_NONNULL_END

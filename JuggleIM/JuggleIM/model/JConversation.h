@@ -34,6 +34,11 @@ typedef NS_ENUM(NSUInteger, JConversationType) {
      系统会话
      */
     JConversationTypeSystem = 4,
+    
+    /*!
+     公众号
+     */
+    JConversationTypePublicService = 7
 };
 
 

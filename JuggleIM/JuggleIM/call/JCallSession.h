@@ -10,6 +10,7 @@
 #import <JuggleIM/JCallConst.h>
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JCallMember.h>
+#import <JuggleIM/JCallVideoDenoiseParams.h>
 
 @protocol JCallSessionDelegate <NSObject>
 
@@ -49,6 +50,14 @@
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId;
 
+/// 用户声音大小变化回调
+/// - Parameter soundLevels: 由 userId 为 key，声音大小为 value 的字典
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
+/// 视频渲染第一祯回调
+/// - Parameter userId: 用户 id
+- (void)videoFirstFrameDidRender:(NSString *)userId;
+
 /// 通话中的错误回调
 /// - Parameter errorCode: 错误码
 - (void)errorDidOccur:(JCallErrorCode)errorCode;
@@ -80,6 +89,8 @@
 @property (nonatomic, copy, readonly) NSArray <JCallMember *> *members;
 /// 当前用户
 @property (nonatomic, strong, readonly) JCallMember *currentCallMember;
+/// 扩展字段
+@property (nonatomic, copy) NSString *extra;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 
@@ -124,5 +135,14 @@
 /// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
 /// - Parameter userIdList: 呼叫的用户 id 列表
 - (void)inviteUsers:(NSArray <NSString *> *)userIdList;
+
+#pragma mark - only for Zego
+/// 开启回声消除
+/// - Parameter isEnable: 是否开启
+- (void)enableAEC:(BOOL)isEnable;
+
+/// 设置视频降噪参数
+/// - Parameter params: 视频降噪参数
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end

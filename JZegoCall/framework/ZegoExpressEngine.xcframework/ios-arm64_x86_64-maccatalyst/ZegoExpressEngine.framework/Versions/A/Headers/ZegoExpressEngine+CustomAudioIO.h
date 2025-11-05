@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Enable custom audio processing for SDK playback audio data.
 ///
 /// Available since: 1.13.0
-/// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessRemoteAudioData], and can modify the audio data.
+/// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessPlaybackAudioData], and can modify the audio data.
 /// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
 /// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
 /// Restrictions: None.
@@ -250,6 +250,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)sendReferenceAudioPCMData:(unsigned char *)data
                        dataLength:(unsigned int)dataLength
                             param:(ZegoAudioFrameParam *)param;
+
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
+/// Set the audio route after enabling the custom audio IO function.
+///
+/// Available since: 3.21.0
+/// Description: Set the audio route after enabling the custom audio IO function.
+/// Use cases：The current audio route is specified by the APP to optimize the AEC effect.
+/// When to call: After [enableCustomAudioIO] and [startPublishingStream].
+/// Restrictions: Only support iOS and Android.
+///
+/// @param audioRoute Audio route.
+- (void)setCustomAudioIOAudioRoute:(ZegoAudioRoute)audioRoute;
+#endif
 
 @end
 

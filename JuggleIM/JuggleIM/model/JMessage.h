@@ -44,7 +44,7 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 /// 对接收方而言，用来标识自己是否已经读过该消息
 /// 对发送方而言，用来标识对方是否读过该消息（仅对单聊生效）
 @property (nonatomic, assign) BOOL hasRead;
-/// 消息发送的时间戳（服务端时间）
+/// 消息发送的时间戳（服务端时间，单位毫秒）
 @property (nonatomic, assign) long long timestamp;
 /// 发送者 userId
 @property (nonatomic, copy) NSString *senderUserId;
@@ -60,5 +60,13 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 @property (nonatomic, copy) NSString *localAttribute;
 /// 是否被编辑
 @property (nonatomic, assign) BOOL isEdit;
-
+/// 是否被删除
+@property (nonatomic, assign) BOOL isDeleted;
+/// 消息销毁时间戳（服务器时间，单位毫秒）。
+/// 由消息的发送时间，加上发送消息时 JMessageOptions 的 lifeTime 和 lifeTimeAfterRead 共同决定，取其中较小的那个时间戳。
+/// 默认值为 0，表示不自动销毁。
+@property (nonatomic, assign) long long destroyTime;
+/// 消息已读后的生存周期，单位毫秒。
+/// 默认值为 0，表示读后不自动销毁。
+@property (nonatomic, assign) long long lifeTimeAfterRead;
 @end

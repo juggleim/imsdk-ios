@@ -12,12 +12,14 @@
 #import "JCallMediaManager.h"
 #import "JCallInternalConst.h"
 #import "JLogger.h"
+#import "JCallActiveCallMessage.h"
 
 @interface JCallManager () <JCallSessionLifeCycleDelegate, JWebSocketCallDelegate>
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) NSMutableArray <JCallSessionImpl *> *callSessionList;
 @property (nonatomic, strong) NSHashTable <id<JCallReceiveDelegate>> *callReceiveDelegates;
+@property (nonatomic, strong) NSHashTable <id<JConversationCallDelegate>> *conversationCallDelegates;
 @property (nonatomic, assign) JCallEngineType engineType;
 @end
 
@@ -27,12 +29,31 @@
     self.engineType = JCallEngineTypeZego;
 }
 
+- (void)initLiveKitEngine {
+    [JCallMediaManager.shared initLiveKitEngine];
+    self.engineType = JCallEngineTypeLiveKit;
+}
+
+- (void)initAgoraEngineWith:(NSString *)appId {
+    [JCallMediaManager.shared initAgoraEngineWith:appId];
+    self.engineType = JCallEngineTypeAgora;
+}
+
 - (void)addReceiveDelegate:(id<JCallReceiveDelegate>)receiveDelegate {
     dispatch_async(self.core.delegateQueue, ^{
         if (!receiveDelegate) {
             return;
         }
         [self.callReceiveDelegates addObject:receiveDelegate];
+    });
+}
+
+- (void)addConversationCallDelegate:(id<JConversationCallDelegate>)conversationCallDelegate {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!conversationCallDelegate) {
+            return;
+        }
+        [self.conversationCallDelegates addObject:conversationCallDelegate];
     });
 }
 
@@ -46,6 +67,16 @@
 - (id<JCallSession>)startSingleCall:(NSString *)userId
                           mediaType:(JCallMediaType)mediaType
                            delegate:(id<JCallSessionDelegate>)delegate {
+    return [self startSingleCall:userId
+                       mediaType:mediaType
+                           extra:nil
+                        delegate:delegate];
+}
+
+- (id<JCallSession>)startSingleCall:(NSString *)userId
+                          mediaType:(JCallMediaType)mediaType
+                              extra:(NSString *)extra
+                           delegate:(id<JCallSessionDelegate>)delegate {
     if (userId.length == 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
@@ -57,11 +88,24 @@
     return [self startCall:@[userId]
                    isMulti:NO
                  mediaType:mediaType
+              conversation:nil
+                     extra:extra
                   delegate:delegate];
+    
 }
 
 - (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
                          mediaType:(JCallMediaType)mediaType
+                          delegate:(id<JCallSessionDelegate>)delegate {
+    return [self startMultiCall:userIdList
+                      mediaType:mediaType
+                          extra:nil
+                       delegate:delegate];
+}
+
+- (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
+                         mediaType:(JCallMediaType)mediaType
+                             extra:(NSString *)extra
                           delegate:(id<JCallSessionDelegate>)delegate {
     if (userIdList.count == 0) {
         dispatch_async(self.core.delegateQueue, ^{
@@ -71,10 +115,82 @@
         });
         return nil;
     }
+    return [self startMultiCall:userIdList
+                      mediaType:mediaType
+                   conversation:nil
+                          extra:extra
+                       delegate:delegate];
+}
+
+- (id<JCallSession>)startMultiCall:(NSArray<NSString *> *)userIdList
+                         mediaType:(JCallMediaType)mediaType
+                      conversation:(JConversation *)conversation
+                             extra:(NSString *)extra
+                          delegate:(id<JCallSessionDelegate>)delegate {
     return [self startCall:userIdList
                    isMulti:YES
                  mediaType:mediaType
+              conversation:conversation
+                     extra:extra
                   delegate:delegate];
+}
+
+- (id<JCallSession>)joinCall:(NSString *)callId
+                    delegate:(id<JCallSessionDelegate>)delegate {
+    if (callId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                [delegate errorDidOccur:JCallErrorCodeInvalidParameter];
+            }
+        });
+        return nil;
+    }
+    @synchronized (self) {
+        if (self.callSessionList.count > 0) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if ([delegate respondsToSelector:@selector(errorDidOccur:)]) {
+                    [delegate errorDidOccur:JCallErrorCodeCallExist];
+                }
+            });
+            return nil;
+        }
+    }
+    JCallSessionImpl *callSession = [self createCallSessionImpl:callId isMultiCall:YES];
+    [callSession addDelegate:delegate];
+    [callSession event:JCallEventJoin userInfo:nil];
+    
+    [self addCallSession:callSession];
+    return callSession;
+}
+
+- (void)getConversationCallInfo:(JConversation *)conversation
+                        success:(void (^)(JCallInfo *))successBlock
+                          error:(void (^)(JErrorCode))errorBlock {
+    if (conversation.conversationId.length == 0) {
+        JLogE(@"Call-GetConvCall", @"error, invalid param");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+    }
+    [self.core.webSocket getConversationCallInfo:conversation
+                                          userId:self.core.userId
+                                         success:^(JCallInfo * _Nonnull callInfo) {
+        JLogI(@"Call-GetConvCall", @"success");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(callInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-GetConvCall", @"error, code is %ld", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
 }
 
 - (id<JCallSession>)getCallSession:(NSString *)callId {
@@ -109,6 +225,7 @@
                     JRtcRoom *singleRoom = singleRooms[0];
                     JCallSessionImpl *callSession = [self createCallSessionImpl:singleRoom.roomId isMultiCall:singleRoom.isMultiCall];
                     callSession.owner = singleRoom.owner.userId;
+                    callSession.extra = singleRoom.extra;
                     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
                     for (JCallMember *member in singleRoom.members) {
                         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
@@ -136,6 +253,17 @@
             [loopSession event:JCallEventHangup userInfo:nil];
         }
     }
+}
+
+- (void)handleActiveCallMessage:(JMessage *)message {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.conversationCallDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationCallDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(callInfoDidUpdate:inConversation:isFinished:)]) {
+                JCallActiveCallMessage *activeCallMessage = (JCallActiveCallMessage *)message.content;
+                [obj callInfoDidUpdate:activeCallMessage.callInfo inConversation:message.conversation isFinished:activeCallMessage.isFinished];
+            }
+        }];
+    });
 }
 
 #pragma mark - JWebSocketCallDelegate
@@ -166,6 +294,7 @@
             callSession.owner = room.owner.userId;
             callSession.inviterId = inviter.userId;
             callSession.mediaType = room.mediaType;
+            callSession.extra = room.extra;
             if (callSession.mediaType == JCallMediaTypeVideo) {
                 [[JCallMediaManager shared] enableCamera:YES];
             } else {
@@ -241,6 +370,19 @@
     [callSession event:JCallEventRoomDestroy userInfo:nil];
 }
 
+- (void)userDidJoin:(NSArray<JCallMember *> *)users inRoom:(JRtcRoom *)room {
+    NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+    for (JCallMember *member in users) {
+        [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+    }
+    [self.userInfoManager insertUserInfoList:userDic.allValues];
+    JCallSessionImpl *callSession = [self getCallSessionImpl:room.roomId];
+    if (!callSession) {
+        return;
+    }
+    [callSession event:JCallEventReceiveJoin userInfo:@{@"users":userDic.allValues}];
+}
+
 #pragma mark - JCallSessionLifeCycleDelegate
 - (void)sessionDidfinish:(JCallSessionImpl *)session {
     @synchronized (self) {
@@ -277,6 +419,8 @@
 - (id<JCallSession>)startCall:(NSArray<NSString *> *)userIdList
                       isMulti:(BOOL)isMulti
                     mediaType:(JCallMediaType)mediaType
+                 conversation:(JConversation *)conversation
+                        extra:(NSString *)extra
                      delegate:(id<JCallSessionDelegate>)delegate {
     @synchronized (self) {
         if (self.callSessionList.count > 0) {
@@ -301,8 +445,11 @@
     NSString *callId = [JUtility getUUID];
     JCallSessionImpl *callSession = [self createCallSessionImpl:callId
                                                     isMultiCall:isMulti];
+    callSession.callStatus = JCallStatusOutgoing;
     callSession.owner = JIM.shared.currentUserId;
     callSession.mediaType = mediaType;
+    callSession.extra = extra;
+    callSession.conversation = conversation;
     if (callSession.mediaType == JCallMediaTypeVideo) {
         [[JCallMediaManager shared] enableCamera:YES];
     } else {
@@ -375,6 +522,13 @@
         _callReceiveDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _callReceiveDelegates;
+}
+
+- (NSHashTable<id<JConversationCallDelegate>> *)conversationCallDelegates {
+    if (!_conversationCallDelegates) {
+        _conversationCallDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _conversationCallDelegates;
 }
 
 - (NSMutableArray<JCallSessionImpl *> *)callSessionList {

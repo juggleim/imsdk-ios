@@ -13,6 +13,7 @@
 #import "JCallIdleState.h"
 #import "JCallIncomingState.h"
 #import "JCallOutgoingState.h"
+#import "JCallJoinState.h"
 #import "JLogger.h"
 #import "JCallEvent.h"
 #import "JCallEventUtil.h"
@@ -26,6 +27,7 @@
 @property (nonatomic, strong) JCallIdleState *idleState;
 @property (nonatomic, strong) JCallIncomingState *incomingState;
 @property (nonatomic, strong) JCallOutgoingState *outgoingState;
+@property (nonatomic, strong) JCallJoinState *joinState;
 @property (nonatomic, strong) NSHashTable <id<JCallSessionDelegate>> *delegates;
 @property (nonatomic, copy, readwrite) NSMutableArray <JCallMember *> *members;
 //@property (nonatomic, assign) BOOL cameraEnable;
@@ -66,14 +68,14 @@
     if (userId.length == 0) {
         return;
     }
+    if (view) {
+        [self.viewDic setObject:view forKey:userId];
+    } else {
+        [self.viewDic removeObjectForKey:userId];
+    }
     if ([userId isEqualToString:JIM.shared.currentUserId]) {
         [[JCallMediaManager shared] startPreview:view];
     } else {
-        if (view) {
-            [self.viewDic setObject:view forKey:userId];
-        } else {
-            [self.viewDic removeObjectForKey:userId];
-        }
         if (self.callStatus == JCallStatusConnected) {
             [[JCallMediaManager shared] setVideoView:view roomId:self.callId userId:userId];
         }
@@ -82,6 +84,11 @@
 
 - (void)startPreview:(UIView *)view {
     [[JCallMediaManager shared] startPreview:view];
+    if (view) {
+        [self.viewDic setObject:view forKey:JIM.shared.currentUserId];
+    } else {
+        [self.viewDic removeObjectForKey:JIM.shared.currentUserId];
+    }
 }
 
 - (void)muteMicrophone:(BOOL)isMute {
@@ -98,6 +105,14 @@
 
 - (void)useFrontCamera:(BOOL)isEnable {
     [[JCallMediaManager shared] useFrontCamera:isEnable];
+}
+
+- (void)enableAEC:(BOOL)isEnable {
+    [[JCallMediaManager shared] enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    [[JCallMediaManager shared] setVideoDenoiseParams:params];
 }
 
 #pragma mark - JCallSessionImpl
@@ -123,7 +138,7 @@
 - (void)memberHangup:(NSString *)userId {
     [self removeMember:userId];
     if (!self.isMultiCall) {
-        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        self.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
         if (self.callStatus == JCallStatusOutgoing) {
             self.finishReason = JCallFinishReasonOtherSideDecline;
         } else if (self.callStatus == JCallStatusIncoming) {
@@ -147,7 +162,7 @@
         [self removeMember:userId];
     }
     if (!self.isMultiCall) {
-        self.finishTime = [[NSDate date] timeIntervalSince1970];
+        self.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
         self.finishReason = JCallFinishReasonOtherSideNoResponse;
     } else {
         dispatch_async(self.core.delegateQueue, ^{
@@ -270,11 +285,64 @@
     });
 }
 
+- (void)membersJoin:(NSArray<JUserInfo *> *)userList {
+    for (JUserInfo *userInfo in userList) {
+        if ([userInfo.userId isEqualToString:self.core.userId]) {
+            continue;
+        }
+        BOOL isExist = NO;
+        for (JCallMember *member in self.members) {
+            if ([userInfo.userId isEqualToString:member.userInfo.userId]) {
+                isExist = YES;
+                break;
+            }
+        }
+        if (!isExist) {
+            JCallMember *newMember = [[JCallMember alloc] init];
+            newMember.userInfo = userInfo;
+            newMember.callStatus = JCallStatusJoin;
+            newMember.startTime = [[NSDate date] timeIntervalSince1970] * 1000;
+            [self.members addObject:newMember];
+        }
+    }
+    // 主动加入没有回调，最终会在 media 加入成功之后走 usersDidConnect
+}
+
 - (void)cameraEnable:(BOOL)enable userId:(NSString *)userId {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
                 [obj userCamaraDidChange:enable userId:userId];
+            }
+        }];
+    });
+}
+
+- (void)microphoneEnable:(BOOL)enable userId:(NSString *)userId {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+                [obj userMicrophoneDidChange:enable userId:userId];
+            }
+        }];
+    });
+}
+
+- (void)soundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+                [obj soundLevelDidUpdate:soundLevels];
+            }
+        }];
+    });
+}
+
+- (void)videoFirstFrameRender:(NSString *)userId {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+                [obj videoFirstFrameDidRender:userId];
             }
         }];
     });
@@ -293,11 +361,14 @@
     [self.core.webSocket callInvite:self.callId
                         isMultiCall:self.isMultiCall
                           mediaType:self.mediaType
+                       conversation:self.conversation
                        targetIdList:userIdList
                          engineType:(NSUInteger)self.engineType
-                            success:^(NSString *zegoToken){
+                              extra:self.extra
+                            success:^(NSString *token, NSString *url){
         JLogI(@"Call-Signal", @"send invite success");
-        self.zegoToken = zegoToken;
+        self.token = token;
+        self.url = url;
         [self event:JCallEventInviteDone userInfo:@{@"userIdList":userIdList}];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
@@ -316,9 +387,10 @@
 
 - (void)signalAccept {
     [self.core.webSocket callAccept:self.callId
-                            success:^(NSString * _Nonnull zegoToken) {
+                            success:^(NSString * _Nonnull token, NSString *url) {
         JLogI(@"Call-Signal", @"send accept success");
-        self.zegoToken = zegoToken;
+        self.token = token;
+        self.url = url;
         [self event:JCallEventAcceptDone userInfo:nil];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send accept error, code is %ld", code);
@@ -332,6 +404,37 @@
         JLogI(@"Call-Signal", @"call connected success");
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"call connected error, code is %ld", code);
+    }];
+}
+
+- (void)signalJoin {
+    [self.core.webSocket callJoin:self.callId
+                          success:^(NSArray <JRtcRoom *> *rooms) {
+        if (rooms.count > 0) {
+            JLogI(@"Call-Signal", @"join success");
+            JRtcRoom *room = rooms[0];
+            self.owner = room.owner.userId;
+            self.extra = room.extra;
+            NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
+            for (JCallMember *member in room.members) {
+                [userDic setObject:member.userInfo forKey:member.userInfo.userId];
+                if (![member.userInfo.userId isEqualToString:self.core.userId]) {
+                    [self addMember:member];
+                }
+            }
+            self.token = room.token;
+            self.url = room.url;
+            [self event:JCallEventJoinDone userInfo:nil];
+            
+//            [self.userInfoManager insertUserInfoList:userDic.allValues];
+            
+        } else {
+            JLogE(@"Call-Signal", @"join error, room is nil");
+            [self event:JCallEventJoinFail userInfo:nil];
+        }
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"Call-Signal", @"join error, code is %ld", code);
+        [self event:JCallEventJoinFail userInfo:nil];
     }];
 }
 
@@ -396,6 +499,18 @@
     });
 }
 
+- (void)transitionToIdleStateWithoutMediaQuit {
+    [self.stateMachine transitionTo:self.idleState];
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(callDidFinish:)]) {
+                [obj callDidFinish:self.finishReason];
+            }
+        }];
+        [self destroy];
+    });
+}
+
 - (void)transitionToIncomingState {
     [self.stateMachine transitionTo:self.incomingState];
 }
@@ -404,17 +519,37 @@
     [self.stateMachine transitionTo:self.outgoingState];
 }
 
+- (void)transitionToJoinState {
+    [self.stateMachine transitionTo:self.joinState];
+}
+
 #pragma mark - JCallMediaDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     return self.viewDic[userId];
 }
 
-- (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
+- (UIView *)viewForSelf {
+    return self.viewDic[JIM.shared.currentUserId];
+}
+
+- (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
     [self event:JCallEventParticipantJoinChannel userInfo:@{@"userIdList":userIdList}];
 }
 
 - (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
     [self event:JCallEventParticipantEnableCamera userInfo:@{@"enable":@(enable), @"userId":userId}];
+}
+
+- (void)userMicrophoneDidChange:(BOOL)enable userId:(NSString *)userId {
+    [self event:JCallEventParticipantEnableMic userInfo:@{@"enable":@(enable), @"userId":userId}];
+}
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    [self event:JCallEventSoundLevelUpdate userInfo:soundLevels];
+}
+
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    [self event:JCallEventVideoFirstFrameRender userInfo:@{@"userId": userId}];
 }
 
 #pragma mark - private
@@ -487,6 +622,14 @@
     return _outgoingState;
 }
 
+- (JCallJoinState *)joinState {
+    if (!_joinState) {
+        _joinState = [[JCallJoinState alloc] initWithName:@"callJoin" superState:self.superState];
+        _joinState.callSessionImpl = self;
+    }
+    return _joinState;
+}
+
 - (NSMutableArray<JCallMember *> *)members {
     if (!_members) {
         _members = [NSMutableArray array];
@@ -524,5 +667,6 @@
 @synthesize members = _members;
 @synthesize startTime;
 @synthesize mediaType;
+@synthesize extra;
 
 @end

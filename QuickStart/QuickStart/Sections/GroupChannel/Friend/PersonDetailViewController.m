@@ -208,7 +208,10 @@
 }
 
 - (void)audioCall {
-    id<JCallSession> session = [JIM.shared.callManager startSingleCall:self.userId delegate:nil];
+    id<JCallSession> session = [JIM.shared.callManager startSingleCall:self.userId
+                                                             mediaType:JCallMediaTypeVoice
+                                                                 extra:@"extra"
+                                                              delegate:nil];
     [CallCenter.shared startSingleCall:session];
 }
 

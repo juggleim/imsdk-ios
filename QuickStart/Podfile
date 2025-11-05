@@ -1,6 +1,9 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
+source "https://cdn.cocoapods.org/"
+source "https://github.com/livekit/podspecs.git"
+
 post_install do |installer|
     installer.generated_projects.each do |project|
         project.targets.each do |target|
@@ -13,11 +16,14 @@ end
 
 target 'QuickStart' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+#  use_frameworks!
 
   # Pods for QuickStart
   pod 'MBProgressHUD', '1.1.0'
   pod 'Masonry', '1.1.0'
   pod 'SDWebImage', '5.20.0'
+#  pod 'LiveKitClient', '2.8.1'
+  pod 'ShengwangRtcEngine_iOS', '4.6.0'
+  pod 'JLiveKitCall', :path => '../JLiveKitCall'
 
 end

@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
 ///   3. Calling [destroyEngine] will also automatically log out.
 ///
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
 ///   3. Calling [destroyEngine] will also automatically log out.
 ///
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   2. SDK supports multi-room login, please call [setRoomMode] function to select multi-room mode before engine initialization, and then call [loginRoom] to log in to multi-room.
 ///   3. Calling [destroyEngine] will also automatically log out.
 ///
-/// @param roomID Room ID, a string of up to 128 bytes in length.
+/// @param roomID Room ID, a string of less 128 bytes in length.
 ///   Caution:
 ///   1. room ID is defined by yourself.
 ///   2. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.

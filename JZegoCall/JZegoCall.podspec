@@ -1,14 +1,7 @@
-#
-# Be sure to run `pod lib lint JugglePre.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
 
 Pod::Spec.new do |s|
   s.name             = 'JZegoCall'
-  s.version          = '1.8.13'
+  s.version          = '1.8.27'
   s.summary          = 'Juggle Call With Zego.'
 
 # This description is used to generate tags and improve search results.
@@ -24,7 +17,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JZegoCall/JZegoCall_v1_8_13.zip' }
+  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JZegoCall/JZegoCall_v1_8_27.zip' }
 
   s.ios.deployment_target = '12.0'
   

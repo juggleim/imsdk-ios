@@ -30,7 +30,13 @@
 
 CF_EXTERN_C_BEGIN
 
+@class ActivedRtcRoom;
+@class AgoraAuth;
+@class ConverIndex;
+@class JuggleRtcAuth;
+@class LivekitRtcAuth;
 @class MemberState;
+@class RtcAuth;
 @class RtcMember;
 @class RtcMemberRoom;
 @class RtcRoom;
@@ -48,6 +54,11 @@ typedef GPB_ENUM(RtcChannel) {
    **/
   RtcChannel_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
   RtcChannel_Zego = 0,
+  RtcChannel_LivekitRtc = 1,
+  RtcChannel_Agora = 2,
+
+  /** 自建音视频，保留 */
+  RtcChannel_JuggleRtc = 11,
 };
 
 GPBEnumDescriptor *RtcChannel_EnumDescriptor(void);
@@ -215,6 +226,8 @@ typedef GPB_ENUM(RtcRoomReq_FieldNumber) {
   RtcRoomReq_FieldNumber_JoinMember = 3,
   RtcRoomReq_FieldNumber_RtcChannel = 4,
   RtcRoomReq_FieldNumber_RtcMediaType = 5,
+  RtcRoomReq_FieldNumber_Ext = 6,
+  RtcRoomReq_FieldNumber_AttachedConver = 7,
 };
 
 GPB_FINAL @interface RtcRoomReq : GPBMessage
@@ -230,6 +243,12 @@ GPB_FINAL @interface RtcRoomReq : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+@property(nonatomic, readwrite, strong, null_resettable) ConverIndex *attachedConver;
+/** Test to see if @c attachedConver has been set. */
+@property(nonatomic, readwrite) BOOL hasAttachedConver;
 
 @end
 
@@ -269,6 +288,36 @@ int32_t RtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message);
  **/
 void SetRtcRoomReq_RtcMediaType_RawValue(RtcRoomReq *message, int32_t value);
 
+#pragma mark - ConverIndex
+
+typedef GPB_ENUM(ConverIndex_FieldNumber) {
+  ConverIndex_FieldNumber_TargetId = 1,
+  ConverIndex_FieldNumber_ChannelType = 2,
+  ConverIndex_FieldNumber_SubChannel = 3,
+};
+
+GPB_FINAL @interface ConverIndex : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@end
+
+/**
+ * Fetches the raw value of a @c ConverIndex's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ConverIndex_ChannelType_RawValue(ConverIndex *message);
+/**
+ * Sets the raw value of an @c ConverIndex's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetConverIndex_ChannelType_RawValue(ConverIndex *message, int32_t value);
+
 #pragma mark - RtcRoom
 
 typedef GPB_ENUM(RtcRoom_FieldNumber) {
@@ -277,6 +326,8 @@ typedef GPB_ENUM(RtcRoom_FieldNumber) {
   RtcRoom_FieldNumber_Owner = 3,
   RtcRoom_FieldNumber_RtcChannel = 4,
   RtcRoom_FieldNumber_RtcMediaType = 5,
+  RtcRoom_FieldNumber_Ext = 6,
+  RtcRoom_FieldNumber_Auth = 7,
   RtcRoom_FieldNumber_MembersArray = 51,
 };
 
@@ -293,6 +344,12 @@ GPB_FINAL @interface RtcRoom : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+@property(nonatomic, readwrite, strong, null_resettable) RtcAuth *auth;
+/** Test to see if @c auth has been set. */
+@property(nonatomic, readwrite) BOOL hasAuth;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
@@ -505,6 +562,8 @@ typedef GPB_ENUM(RtcInviteReq_FieldNumber) {
   RtcInviteReq_FieldNumber_RoomId = 3,
   RtcInviteReq_FieldNumber_RtcChannel = 4,
   RtcInviteReq_FieldNumber_RtcMediaType = 5,
+  RtcInviteReq_FieldNumber_Ext = 6,
+  RtcInviteReq_FieldNumber_AttachedConver = 7,
 };
 
 GPB_FINAL @interface RtcInviteReq : GPBMessage
@@ -520,6 +579,12 @@ GPB_FINAL @interface RtcInviteReq : GPBMessage
 @property(nonatomic, readwrite) RtcChannel rtcChannel;
 
 @property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+@property(nonatomic, readwrite, strong, null_resettable) ConverIndex *attachedConver;
+/** Test to see if @c attachedConver has been set. */
+@property(nonatomic, readwrite) BOOL hasAttachedConver;
 
 @end
 
@@ -657,6 +722,9 @@ void SetRtcMemberRoom_RtcMediaType_RawValue(RtcMemberRoom *message, int32_t valu
 
 typedef GPB_ENUM(RtcAuth_FieldNumber) {
   RtcAuth_FieldNumber_ZegoAuth = 1,
+  RtcAuth_FieldNumber_LivekitRtcAuth = 2,
+  RtcAuth_FieldNumber_AgoraAuth = 3,
+  RtcAuth_FieldNumber_JuggleRtcAuth = 11,
 };
 
 GPB_FINAL @interface RtcAuth : GPBMessage
@@ -664,6 +732,18 @@ GPB_FINAL @interface RtcAuth : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) ZegoAuth *zegoAuth;
 /** Test to see if @c zegoAuth has been set. */
 @property(nonatomic, readwrite) BOOL hasZegoAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) LivekitRtcAuth *livekitRtcAuth;
+/** Test to see if @c livekitRtcAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasLivekitRtcAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) AgoraAuth *agoraAuth;
+/** Test to see if @c agoraAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasAgoraAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) JuggleRtcAuth *juggleRtcAuth;
+/** Test to see if @c juggleRtcAuth has been set. */
+@property(nonatomic, readwrite) BOOL hasJuggleRtcAuth;
 
 @end
 
@@ -729,6 +809,129 @@ GPB_FINAL @interface RtcAnswer : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
 
 @end
+
+#pragma mark - JuggleRtcAuth
+
+typedef GPB_ENUM(JuggleRtcAuth_FieldNumber) {
+  JuggleRtcAuth_FieldNumber_Token = 1,
+};
+
+GPB_FINAL @interface JuggleRtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@end
+
+#pragma mark - AgoraAuth
+
+typedef GPB_ENUM(AgoraAuth_FieldNumber) {
+  AgoraAuth_FieldNumber_Token = 1,
+};
+
+GPB_FINAL @interface AgoraAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@end
+
+#pragma mark - LivekitRtcAuth
+
+typedef GPB_ENUM(LivekitRtcAuth_FieldNumber) {
+  LivekitRtcAuth_FieldNumber_Token = 1,
+  LivekitRtcAuth_FieldNumber_ServiceURL = 2,
+};
+
+GPB_FINAL @interface LivekitRtcAuth : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *token;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceURL;
+
+@end
+
+#pragma mark - ConverConf
+
+typedef GPB_ENUM(ConverConf_FieldNumber) {
+  ConverConf_FieldNumber_ActivedRtcRoom = 1,
+};
+
+GPB_FINAL @interface ConverConf : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) ActivedRtcRoom *activedRtcRoom;
+/** Test to see if @c activedRtcRoom has been set. */
+@property(nonatomic, readwrite) BOOL hasActivedRtcRoom;
+
+@end
+
+#pragma mark - ActivedRtcRoom
+
+typedef GPB_ENUM(ActivedRtcRoom_FieldNumber) {
+  ActivedRtcRoom_FieldNumber_RoomType = 1,
+  ActivedRtcRoom_FieldNumber_RoomId = 2,
+  ActivedRtcRoom_FieldNumber_Owner = 3,
+  ActivedRtcRoom_FieldNumber_RtcChannel = 4,
+  ActivedRtcRoom_FieldNumber_RtcMediaType = 5,
+  ActivedRtcRoom_FieldNumber_Ext = 6,
+  ActivedRtcRoom_FieldNumber_MembersArray = 51,
+};
+
+GPB_FINAL @interface ActivedRtcRoom : GPBMessage
+
+@property(nonatomic, readwrite) RtcRoomType roomType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *roomId;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *owner;
+/** Test to see if @c owner has been set. */
+@property(nonatomic, readwrite) BOOL hasOwner;
+
+@property(nonatomic, readwrite) RtcChannel rtcChannel;
+
+@property(nonatomic, readwrite) RtcMediaType rtcMediaType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
+/** The number of items in @c membersArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger membersArray_Count;
+
+@end
+
+/**
+ * Fetches the raw value of a @c ActivedRtcRoom's @c roomType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ActivedRtcRoom_RoomType_RawValue(ActivedRtcRoom *message);
+/**
+ * Sets the raw value of an @c ActivedRtcRoom's @c roomType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetActivedRtcRoom_RoomType_RawValue(ActivedRtcRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c ActivedRtcRoom's @c rtcChannel property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ActivedRtcRoom_RtcChannel_RawValue(ActivedRtcRoom *message);
+/**
+ * Sets the raw value of an @c ActivedRtcRoom's @c rtcChannel property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetActivedRtcRoom_RtcChannel_RawValue(ActivedRtcRoom *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c ActivedRtcRoom's @c rtcMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t ActivedRtcRoom_RtcMediaType_RawValue(ActivedRtcRoom *message);
+/**
+ * Sets the raw value of an @c ActivedRtcRoom's @c rtcMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetActivedRtcRoom_RtcMediaType_RawValue(ActivedRtcRoom *message, int32_t value);
 
 NS_ASSUME_NONNULL_END
 

@@ -373,6 +373,17 @@ NS_ASSUME_NONNULL_BEGIN
                                          path:(NSString *)path
                                       channel:(ZegoPublishChannel)channel;
 
+/// Face detection information update notification.
+///
+/// Available since: 3.20.0
+/// Description: The notification for face detection.
+/// When to trigger: Turn on face detection through the [enableFaceDetection] interface, and this callback will be triggered when the camera is started or the number of faces changes.
+/// Caution: The callback is low-frequency and cannot be used with the custom video pre-processing function.
+///
+/// @param info Face detection information.
+/// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+- (void)onPublisherFaceDetectInfo:(ZegoFaceDetectionInfo *)info channel:(ZegoPublishChannel)channel;
+
 #pragma mark Player Callback
 
 /// The callback triggered when the state of stream playing changes.
@@ -491,7 +502,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Description: After the [startPlayingStream] function is called successfully, the play resolution will change when the first frame of video data is received, or when the publisher changes the encoding resolution by calling [setVideoConfig], or when the network traffic control strategies work.
 /// Use cases: Developers can update or switch the UI components that actually play the stream based on the final resolution of the stream.
 /// Trigger: After the [startPlayingStream] function is called successfully, this callback is triggered when the video resolution changes while playing the stream.
-/// Caution: If the stream is only audio data, the callback will not be triggered.
+/// Caution:
+///  1. If the stream is only audio data, the callback will not be triggered.
+///  2. If the user enables custom video rendering of the ZegoVideoBufferTypeEncodedData type, the SDK is not responsible for video decoding and will not trigger this callback.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param size Video decoding resolution
@@ -941,7 +954,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///   1. As long as you publish or play a stream, you will receive your own network quality callback.
 ///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
 ///   Version 2.22.0 and above:
-///   1. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
+///   1. As long as you publish or play a stream, you will receive your own network quality callback.
+///   2. When you play a stream, the publish end is in the room where you are, and you will receive the user's network quality.
+///   3. Estimate the network conditions of the remote stream publishing user. If the remote stream publishing user loses one heartbeat, the network quality will be called back as unknown; if the remote stream publishing user's heartbeat loss reaches 3 Second, call back its network quality to die.
 /// Use case: When the developer wants to analyze the network condition on the link, or wants to know the network condition of local and remote users.
 /// When to Trigger: After publishing a stream by called [startPublishingStream] or playing a stream by called [startPlayingStream].
 ///
@@ -951,6 +966,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)onNetworkQuality:(NSString *)userID
          upstreamQuality:(ZegoStreamQualityLevel)upstreamQuality
        downstreamQuality:(ZegoStreamQualityLevel)downstreamQuality;
+
+/// RTC network statistics callback.
+///
+/// Available since: 3.20.0
+/// Description: RTC network statistics callback.
+/// Use cases: When a developer wants to analyze the local network situation.
+/// When to Trigger: After calling [startPublishingStream] to start pushing the RTC stream, it will call back the upstream statistics. After calling [startPlayingStream] to start playing the RTC or L3 stream, it will call back the downlink statistics. The default callback period is 3 seconds.
+/// Restrictions: None.
+/// Caution: None.
+///
+/// @param info statistical information.
+- (void)onRtcStats:(ZegoRtcStatsInfo *)info;
 
 /// Successful callback of network time synchronization.
 ///
@@ -1648,7 +1675,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Available: Since 2.13.0
 /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc. If you need the data after used headphone monitor, please use the [onProcessCapturedAudioDataAfterUsedHeadphoneMonitor] callback.
-/// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+/// When to trigger: You need to call [enableCustomAudioCaptureProcessing] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
 /// Restrictions: None.
 /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 ///
@@ -1665,7 +1692,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Available: Since 2.13.0
 /// Description: In this callback, you can receive the PCM audio frames captured locally after used headphone monitor. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
-/// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreivew] or [startPublishingStream] to trigger this callback function.
+/// When to trigger: You need to call [enableCustomAudioCaptureProcessingAfterHeadphoneMonitor] to enable the function first, and call [startPreview] or [startPublishingStream] to trigger this callback function.
 /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 ///
 /// @param data Audio data in PCM format
@@ -1770,7 +1797,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Available: Since 1.1.0
 /// Description: This function will callback all the mixed audio data to be playback. This callback can be used for that you needs to fetch all the mixed audio data to be playback to proccess.
-/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreivew] or [startPlayingStream] or [startPublishingStream]).
+/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b10 that means 1 << 1, this callback will be triggered only when it is in the SDK inner audio and video engine started(called the [startPreview] or [startPlayingStream] or [startPublishingStream]).
 /// Restrictions: When playing copyrighted music, this callback will be disabled by default. If necessary, please contact ZEGO technical support.
 /// Caution: This callback is a high-frequency callback. Please do not perform time-consuming operations in this callback. When the engine is not in the stream publishing state and the media player is not used to play media files, the audio data in the callback is muted audio data.
 ///
@@ -2231,6 +2258,23 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 #if TARGET_OS_OSX
+/// The callback triggered when a screen capture source capture type exception occurred
+///
+/// Available since: 3.21.0
+/// Description: The callback triggered when a screen capture source capture type exception occurred.
+/// Trigger: This callback is triggered when an exception occurs after the screen start capture.
+/// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+/// Restrictions: Only available on Windows/macOS.
+///
+/// @param source Callback screen capture source object.
+/// @param sourceType Capture source type.
+/// @param exceptionType Capture source exception type.
+- (void)screenCapture:(ZegoScreenCaptureSource *)source
+          captureType:(ZegoScreenCaptureSourceType)sourceType
+    exceptionOccurred:(ZegoScreenCaptureSourceExceptionType)exceptionType;
+#endif
+
+#if TARGET_OS_OSX
 /// The callback will be triggered when the state of the capture target window change.
 ///
 /// Available since: 3.4.0
@@ -2265,7 +2309,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Screen capture finished callback.
 ///
 /// Available since: 3.1.0

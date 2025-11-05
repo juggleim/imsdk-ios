@@ -55,6 +55,15 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     //用户注销下线
     JErrorCodeUserLogOut = 11012,
     
+    //非好友关系
+    JErrorCodeNotFriend = 12009,
+    //没有操作权限
+    JErrorCodeNoOperationPermission = 12010,
+    //消息不存在
+    JErrorCodeRemoteMessageNotExist = 12011,
+    //收藏重复消息
+    JErrorCodeAddDuplicateFavoriteMessage = 12012,
+    
     //群组不存在
     JErrorCodeGroupNotExist = 13001,
     //不是群成员
@@ -104,7 +113,10 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeDownloadCanceled = 23009,
     
     //批量设置聊天室属性失败
-    JErrorCodeChatroomBatchSetAttributeFail = 24001
+    JErrorCodeChatroomBatchSetAttributeFail = 24001,
+    
+    //加入 LiveKit 房间失败
+    JErrorCodeJoinLiveKitFail = 25001
 };
 
 /*!

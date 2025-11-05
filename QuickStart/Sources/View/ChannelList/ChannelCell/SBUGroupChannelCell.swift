@@ -326,11 +326,11 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             let range = NSRange(location: 0, length: 4)
             attributeString.addAttribute(.foregroundColor, value: UIColor.red, range: range)
             self.messageLabel.attributedText = attributeString
-        } else if conversationInfo.lastMessage.content is JRecallInfoMessage {
+        } else if let lastMessage = conversationInfo.lastMessage, lastMessage.content is JRecallInfoMessage {
             var tip = ""
-            if conversationInfo.lastMessage.direction == .receive {
-                var userName = conversationInfo.lastMessage.senderUserId ?? ""
-                if let user = JIM.shared().userInfoManager.getUserInfo(conversationInfo.lastMessage.senderUserId) {
+            if lastMessage.direction == .receive {
+                var userName = lastMessage.senderUserId ?? ""
+                if let user = JIM.shared().userInfoManager.getUserInfo(lastMessage.senderUserId) {
                     userName = user.userName ?? userName
                 }
                 tip = "\(userName) 撤回了一条消息"
@@ -456,7 +456,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         guard let conversationInfo = self.conversationInfo else { return nil }
         var lastUpdatedAt: Int64
         
-        if let lastMessage = conversationInfo.lastMessage {
+        if let lastMessage = conversationInfo.lastMessage, lastMessage.timestamp > 0 {
             lastUpdatedAt = Int64(lastMessage.timestamp / 1000)
         } else {
             lastUpdatedAt = Int64(conversationInfo.sortTime / 1000)

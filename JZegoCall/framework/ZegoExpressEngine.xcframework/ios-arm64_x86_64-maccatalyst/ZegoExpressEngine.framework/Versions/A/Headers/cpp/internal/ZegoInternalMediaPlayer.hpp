@@ -247,6 +247,17 @@ class ZegoExpressMediaPlayerImp : public IZegoMediaPlayer,
             index, zego_media_player_instance_index(instanceIndex));
     }
 
+    void setAudioTrackMode(ZegoMediaPlayerAudioTrackMode mode) override {
+        oInternalOriginBridge->mediaPlayerSetAudioTrackMode(
+            zego_media_player_audio_track_mode(mode),
+            zego_media_player_instance_index(instanceIndex));
+    }
+
+    void setAudioTrackPublishIndex(unsigned int index) override {
+        oInternalOriginBridge->mediaPlayerSetAudioTrackPublishIndex(
+            index, zego_media_player_instance_index(instanceIndex));
+    }
+
     void setVoiceChangerParam(ZegoMediaPlayerAudioChannel audioChannel,
                               ZegoVoiceChangerParam param) override {
         oInternalOriginBridge->mediaPlayerSetVoiceChangerParam(

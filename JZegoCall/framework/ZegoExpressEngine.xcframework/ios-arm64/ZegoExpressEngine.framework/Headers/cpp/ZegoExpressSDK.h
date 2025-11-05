@@ -170,6 +170,20 @@ class ZegoExpressSDK {
         ZegoExpressSDKInternal::setAndroidEnv(jvm, context);
     }
 
+    /// Config the Environment for the OpenHarmony platform.
+    ///
+    /// Available since: 3.18.0
+    /// Description: Config the Environment for the OpenHarmony platform.
+    /// When to call: It must be called before calling [createEngine] function.
+    /// Restrictions: Only available on OpenHarmony platform.
+    /// Caution: None.
+    ///
+    /// @param env napi_env Object.
+    /// @param exports napi_value exports Object.
+    static void setOhosEnv(void *env, void *exports) {
+        ZegoExpressSDKInternal::setOhosEnv(env, exports);
+    }
+
     /// Set method execution result callback.
     ///
     /// Available since: 2.3.0

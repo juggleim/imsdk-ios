@@ -58,6 +58,13 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         return oInternalOriginBridge->setDummyCaptureImagePath(filePath, channel);
     }
 
+    void
+    setDummyCaptureImageParams(ZegoDummyCaptureImageParams params,
+                               ZegoPublishChannel channel = ZEGO_PUBLISH_CHANNEL_MAIN) override {
+        auto i_params = ZegoExpressConvert::O2IDummyCaptureImageParams(params);
+        oInternalOriginBridge->setDummyCaptureImageParams(i_params, channel);
+    }
+
     ///===================================================================================================
     void loginRoom(const std::string &roomID, ZegoUser user) override {
         ZegoRoomConfig config;
@@ -290,6 +297,10 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         oInternalOriginBridge->setAppOrientation((zego_orientation)orientation,
                                                  zego_publish_channel(channel));
     }
+
+    void setAppOrientationMode(ZegoOrientationMode mode) override {
+        oInternalOriginBridge->setAppOrientationMode((zego_orientation_mode)mode);
+    }
 #endif
 
     void setAudioConfig(ZegoAudioConfig audioConfig, ZegoPublishChannel channel) override {
@@ -363,6 +374,8 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
     }
 
     void setCaptureVolume(int volume) override { oInternalOriginBridge->setCaptureVolume(volume); }
+
+    int getCaptureVolume() override { return oInternalOriginBridge->getCaptureVolume(); }
 
     void setAudioCaptureStereoMode(ZegoAudioCaptureStereoMode mode) override {
         oInternalOriginBridge->setAudioCaptureStereoMode(zego_audio_capture_stereo_mode(mode));
@@ -464,6 +477,10 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         return oInternalOriginBridge->isVideoEncoderSupported(
             static_cast<zego_video_codec_id>(codecID),
             static_cast<zego_video_codec_backend>(codecBackend));
+    }
+
+    void enableAuxBgmBalance(bool enable) override {
+        oInternalOriginBridge->enableAuxBgmBalance(enable);
     }
 
     ///===================================================================================================
@@ -666,6 +683,16 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
                                                                 maxBufferInterval);
     }
 
+    void setAudioMixMode(ZegoAudioMixMode mode,
+                         const std::vector<std::string> &streamList) override {
+        std::vector<const char *> stream_list_;
+        for (auto &item : streamList) {
+            stream_list_.push_back(item.c_str());
+        }
+        oInternalOriginBridge->setAudioMixMode(static_cast<zego_audio_mix_mode>(mode),
+                                               stream_list_.data(), stream_list_.size());
+    }
+
     void setPlayStreamFocusOn(const std::string &streamID) override {
         oInternalOriginBridge->setPlayStreamFocusOn(streamID.c_str());
     }
@@ -718,6 +745,17 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         oInternalOriginBridge->setLowlightEnhancement(
             static_cast<zego_low_light_enhancement_mode>(mode),
             static_cast<zego_publish_channel>(channel));
+    }
+
+    void
+    setLowlightEnhancementParams(ZegoExpLowlightEnhancementParams params,
+                                 ZegoPublishChannel channel = ZEGO_PUBLISH_CHANNEL_MAIN) override {
+        struct zego_exp_low_light_enhancement_params p;
+        memset(&p, 0, sizeof(struct zego_exp_low_light_enhancement_params));
+        p.mode = static_cast<zego_low_light_enhancement_mode>(params.mode);
+        p.type = static_cast<zego_exp_low_light_enhancement_type>(params.type);
+        oInternalOriginBridge->setLowlightEnhancementParams(
+            p, static_cast<zego_publish_channel>(channel));
     }
 
     int setVideoSource(ZegoVideoSourceType source) override { return setVideoSource(source, 0); }
@@ -965,7 +1003,7 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
                                                mute);
     }
 
-#if TARGET_OS_IPHONE || defined(ANDROID)
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     void setAudioDeviceMode(ZegoAudioDeviceMode deviceMode) override {
         oInternalOriginBridge->setAudioDeviceMode(zego_audio_device_mode(deviceMode));
     }
@@ -1033,7 +1071,7 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
     //     oInternalOriginBridge->enableAEC(enable, zego_publish_channel(channel));
     // }
 
-#if TARGET_OS_IPHONE || defined(ANDROID)
+#if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
     void enableHeadphoneAEC(bool enable) override {
         oInternalOriginBridge->enableHeadphoneAEC(enable);
     }
@@ -1226,6 +1264,7 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
 
         std::vector<zego_mixer_output> output_list;
         std::vector<std::shared_ptr<zego_mixer_output_video_config>> output_video_config_list;
+        std::vector<std::shared_ptr<zego_mixer_output_room_info>> output_room_info_list;
         {
             unsigned int cnt = 0;
             for (auto &output : task.outputList) {
@@ -1248,6 +1287,18 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
                 zego_mixer_output _output = ZegoExpressConvert::O2IMixerOutput(output);
                 output_video_config_list.push_back(videoConfig);
                 _output.video_config = output_video_config_list.at(cnt).get();
+
+                std::shared_ptr<zego_mixer_output_room_info> output_room_info =
+                    std::make_shared<zego_mixer_output_room_info>();
+                strncpy(output_room_info->room_id, output.targetRoom.roomID.c_str(),
+                        sizeof(output_room_info->room_id) - 1);
+                output_room_info->room_id[sizeof(output_room_info->room_id) - 1] = '\0';
+                strncpy(output_room_info->userid, output.targetRoom.userID.c_str(),
+                        sizeof(output_room_info->userid) - 1);
+                output_room_info->userid[sizeof(output_room_info->userid) - 1] = '\0';
+                output_room_info_list.push_back(output_room_info);
+                _output.target_room = output_room_info.get();
+
                 output_list.push_back(_output);
                 cnt++;
             }
@@ -2012,6 +2063,10 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         oInternalOriginBridge->setAndroidEnv(jvm, ctx);
     }
 
+    static void setOhosEnv(void *env, void *exports) {
+        oInternalOriginBridge->setOhosEnv(env, exports);
+    }
+
     static void setEngineConfig(ZegoEngineConfig engineConfig) {
         if (!oInternalOriginBridge->getLibraryReady()) {
             return;
@@ -2037,6 +2092,9 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
                 ZEGO_EXPRESS_MAX_SET_CONFIG_VALUE_LEN);
 
         oInternalOriginBridge->setEngineConfig(_engineConfig);
+
+        // Used to handle callback
+        oInternalCallbackCenter->engineConfig = engineConfig;
     }
 
     static void setLogConfig(ZegoLogConfig config) {
@@ -2130,32 +2188,39 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         if (!oInternalOriginBridge->getLibraryReady()) {
             return false;
         }
-        oInternalCallbackCenter->registerCallback();
+        oInternalCallbackCenter->registerCallback(true);
         oInternalCallbackCenter->setIZegoEventHandler(eventHandler);
 
-        bool initSucceed =
-            0 == oInternalOriginBridge->init(appID, appSign.c_str(), isTestEnvironment,
-                                             zego_scenario(scenario));
-        if (!initSucceed) {
+        int errorCode = oInternalOriginBridge->init(appID, appSign.c_str(), isTestEnvironment,
+                                                    zego_scenario(scenario));
+        if (errorCode != ZegoErrorCode::ZEGO_ERROR_CODE_COMMON_SUCCESS) {
+            if (eventHandler) {
+                eventHandler->onDebugError(errorCode, "CreateEngine", "CreateEngine failed");
+            }
+
             oInternalCallbackCenter->unregisterCallback();
             oInternalCallbackCenter->clearHandlerData();
         }
-        return initSucceed;
+        return errorCode == ZegoErrorCode::ZEGO_ERROR_CODE_COMMON_SUCCESS;
     }
 
     bool init(const ZegoEngineProfile &profile, std::shared_ptr<IZegoEventHandler> eventHandler) {
         if (!oInternalOriginBridge->getLibraryReady()) {
             return false;
         }
-        oInternalCallbackCenter->registerCallback();
+        oInternalCallbackCenter->registerCallback(profile.callbackSwitchToMainThread);
         oInternalCallbackCenter->setIZegoEventHandler(eventHandler);
 
-        bool initSucceed = 0 == oInternalOriginBridge->init(profile);
-        if (!initSucceed) {
+        int errorCode = oInternalOriginBridge->init(profile);
+        if (errorCode != ZegoErrorCode::ZEGO_ERROR_CODE_COMMON_SUCCESS) {
+            if (eventHandler) {
+                eventHandler->onDebugError(errorCode, "CreateEngine", "CreateEngine failed");
+            }
+
             oInternalCallbackCenter->unregisterCallback();
             oInternalCallbackCenter->clearHandlerData();
         }
-        return initSucceed;
+        return errorCode == ZegoErrorCode::ZEGO_ERROR_CODE_COMMON_SUCCESS;
     }
 
     void uinitAsync(ZegoDestroyCompletionCallback afterDestroyed) {
@@ -2245,6 +2310,11 @@ class ZegoExpressSDKInternal {
     static void setAndroidEnv(void *jvm, void *ctx) {
         return ZegoExpressEngineImp::setAndroidEnv(jvm, ctx);
     }
+
+    static void setOhosEnv(void *env, void *exports) {
+        return ZegoExpressEngineImp::setOhosEnv(env, exports);
+    }
+
     static void setApiCalledCallback(std::shared_ptr<IZegoApiCalledEventHandler> callback) {
         ZegoExpressEngineImp::setApiCalledCallback(callback);
     }

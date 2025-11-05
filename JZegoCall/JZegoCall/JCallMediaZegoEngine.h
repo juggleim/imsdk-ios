@@ -13,8 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JCallMediaZegoEngine : NSObject <JCallMediaEngineProtocol>
 
-- (void)createEngineWith:(NSNumber *)appId appSign:(NSString *)appSign;
-
 + (void)setEventHandler:(id<ZegoEventHandler>)handler;
 
 @end

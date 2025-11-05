@@ -16,6 +16,9 @@
 #import <JuggleIM/JSearchConversationsResult.h>
 #import <JuggleIM/JMessageReaction.h>
 #import <UIKit/UIImage.h>
+#import <JuggleIM/JGetFavoriteMessageOption.h>
+#import <JuggleIM/JFavoriteMessage.h>
+#import <JuggleIM/JGroupMessageReadInfoDetail.h>
 
 @class JMergeMessage;
 
@@ -52,6 +55,16 @@
 /// - Parameter conversation: 所属会话
 - (void)messageReactionDidRemove:(JMessageReaction *)reaction
                   inConversation:(JConversation *)conversation;
+
+/// 消息置顶的回调
+/// - Parameters:
+///   - isTop: YES 表示置顶，NO 表示取消置顶
+///   - message: 对应的消息
+///   - userInfo: 操作置顶的用户
+- (void)messageDidSetTop:(BOOL)isTop
+                 message:(JMessage *)message
+                    user:(JUserInfo *)userInfo;
+
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
@@ -73,6 +86,40 @@
 ///   - conversation: 所在会话
 - (void)groupMessagesDidRead:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs
               inConversation:(JConversation *)conversation;
+@end
+
+@protocol JMessageDestroyDelegate <NSObject>
+/// 消息销毁时间更新回调（一般发生在阅后即焚之类的场景）
+/// - Parameters:
+///   - messageId: 消息 id
+///   - conversation: 所在会话
+///   - destroyTime: 更新后的销毁时间
+- (void)messageDestroyTimeDidUpdate:(NSString *)messageId
+                     inConversation:(JConversation *)conversation
+                        destroyTime:(long long)destroyTime;
+@end
+
+@protocol JMessagePreprocessor <NSObject>
+/// 消息加密的回调
+/// 回调时机：消息入库之后，发送之前
+/// - Parameter content: 待发送的消息内容，已序列化成 NSData
+/// - Parameter conversation: 所在会话
+/// - Parameter contentType: 消息类型
+/// - Return: 处理后的消息内容。
+- (NSData *)encryptMessageContent:(NSData *)content
+                   inConversation:(JConversation *)conversation
+                      contentType:(NSString *)contentType;
+
+/// 消息解密的回调
+/// 回调时机：接收到消息，入库之前
+/// - Parameter content: 接收到的消息内容，NSData 格式，还没反序列化
+/// - Parameter conversation: 所在会话
+/// - Parameter contentType: 消息类型
+/// - Return: 处理后的消息内容。
+- (NSData *)decryptMessageContent:(NSData *)content
+                   inConversation:(JConversation *)conversation
+                      contentType:(NSString *)contentType;
+
 @end
 
 @protocol JMessageProtocol <NSObject>
@@ -157,7 +204,6 @@
 /// 保存消息
 /// - Parameters:
 ///   - content: 消息实体
-///   - messageOption: 消息扩展选项
 ///   - conversation: 会话
 ///   - direction: 消息方向
 - (JMessage *)saveMessage:(JMessageContent *)content
@@ -322,6 +368,10 @@
 
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
+- (void)addDestroyDelegate:(id<JMessageDestroyDelegate>)delegate;
+
+- (void)setPreprocessor:(id<JMessagePreprocessor>)preprocessor;
+
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
 /// 从远端拉取历史消息，结果按照消息时间正序排列（旧的在前，新的在后）
@@ -366,12 +416,16 @@
 /// - Parameters:
 ///   - messageId: 需要查询的群消息 id
 ///   - conversation: 消息所在会话
-///   - successBlock: 成功回调，readMemberIds 存放已读用户 id 列表，unreadMemberIds 存放未读用户 id 列表
+///   - successBlock: 成功回调
 ///   - errorBlock: 失败回调
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
-                            error:(void (^)(JErrorCode code))errorBlock;
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail * detail))successBlock
+                                error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取单聊消息阅读时间（群消息阅读状态请使用 getGroupMessageReadInfoDetail:inConversation:success:error:）
+/// - Parameter clientMsgNo: 本端消息唯一编号
+- (long long)getMessageReadTime:(long long)clientMsgNo;
 
 /// 获取被合并的消息列表
 /// - Parameters:
@@ -418,6 +472,55 @@
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
+
+/// 设置置顶
+/// - Parameters:
+///   - isTop: YES 表示置顶，NO 表示不置顶
+///   - messageId: 消息 id
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)setTop:(BOOL)isTop
+     messageId:(NSString *)messageId
+  conversation:(JConversation *)conversation
+       success:(void (^)(void))successBlock
+         error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取置顶消息
+/// - Parameters:
+///   - conversation: 会话标识
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCode code))errorBlock;
+
+/// 添加消息收藏
+/// - Parameters:
+///   - messageIdList: 待收藏的消息 id 列表
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)addFavorite:(NSArray <NSString *> *)messageIdList
+            success:(void (^)(void))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
+
+/// 移除消息收藏
+/// - Parameters:
+///   - messageIdList: 待移除的消息 id 列表
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)removeFavorite:(NSArray <NSString *> *)messageIdList
+               success:(void (^)(void))successBlock
+                 error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取收藏的消息
+/// - Parameters:
+///   - option: 查询参数
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getFavorite:(JGetFavoriteMessageOption *)option
+            success:(void (^)(NSArray <JFavoriteMessage *> *messageList, NSString *offset))successBlock
+              error:(void (^)(JErrorCode code))errorBlock;
 
 /// 获取会话中第一条未读消息
 /// - Parameters:

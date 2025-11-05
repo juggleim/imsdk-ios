@@ -70,7 +70,11 @@
                 self.callSessionImpl.finishReason = JCallFinishReasonHangup;
             }
             [self.callSessionImpl signalHangup];
-            [self.callSessionImpl transitionToIdleState];
+            if (self.callSessionImpl.callStatus == JCallStatusIncoming) {
+                [self.callSessionImpl transitionToIdleStateWithoutMediaQuit];
+            } else {
+                [self.callSessionImpl transitionToIdleState];
+            }
             break;
             
         case JCallEventReceiveSelfQuit:
@@ -165,7 +169,53 @@
         }
             
         case JCallEventParticipantEnableMic:
+        {
+            BOOL enable = [(NSNumber *)userInfo[@"enable"] boolValue];
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl microphoneEnable:enable userId:userId];
             break;
+        }
+            
+        case JCallEventSoundLevelUpdate:
+        {
+            NSDictionary *soundLevelDic = userInfo;
+            [self.callSessionImpl soundLevelUpdate:soundLevelDic];
+            break;
+        }
+            
+        case JCallEventVideoFirstFrameRender:
+        {
+            NSString *userId = userInfo[@"userId"];
+            [self.callSessionImpl videoFirstFrameRender:userId];
+            break;
+        }
+            
+        case JCallEventJoin:
+        {
+            // do nothing
+            // idle 状态处理
+            // 其它状态下忽略
+            break;
+        }
+            
+        case JCallEventJoinDone:
+            // do nothing
+            // join 状态处理
+            // 其它状态下忽略
+            break;
+            
+        case JCallEventJoinFail:
+            // do nothing
+            // join 状态处理
+            // 其它状态下忽略
+            break;
+            
+        case JCallEventReceiveJoin:
+        {
+            NSArray <JUserInfo *> *userList = userInfo[@"users"];
+            [self.callSessionImpl membersJoin:userList];
+            break;
+        }
             
         default:
             break;

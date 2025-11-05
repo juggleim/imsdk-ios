@@ -19,7 +19,9 @@ typedef NS_ENUM(NSInteger, JCallStatus) {
     /// 连接中
     JCallStatusConnecting = 3,
     /// 连接成功
-    JCallStatusConnected = 4
+    JCallStatusConnected = 4,
+    /// 主动加入
+    JCallStatusJoin = 5
 };
 
 typedef NS_ENUM(NSInteger, JCallMediaType) {
@@ -77,7 +79,9 @@ typedef NS_ENUM(NSInteger, JCallErrorCode) {
     /// 参数错误
     JCallErrorCodeInvalidParameter = 5,
     /// 邀请失败
-    JCallErrorCodeInviteFail = 6
+    JCallErrorCodeInviteFail = 6,
+    /// 加入房间失败
+    JCallErrorCodeJoinRoomFail = 7
 };
 
 #endif /* JCallConst_h */

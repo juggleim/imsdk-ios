@@ -230,7 +230,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_video_type)(
 /// Available since: 2.1.0
 /// Description: Set the range of adaptive adjustment of the internal buffer of the sdk when streaming is 0-4000ms.
 /// Use cases: Generally, in the case of a poor network environment, adjusting and increasing the playback buffer of the pull stream will significantly reduce the audio and video freezes, but will increase the delay.
-/// When to call: after called [createEngine].
+/// When to call: after called [createEngine], if it has been set, you need to reset it every time you play the stream again.
 /// Restrictions: None.
 /// Caution: When the upper limit of the cache interval set by the developer exceeds 4000ms, the value will be 4000ms. When the upper limit of the cache interval set by the developer is less than the lower limit of the cache interval, the upper limit will be automatically set as the lower limit.
 ///
@@ -243,6 +243,23 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_buffer_interval_ran
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_buffer_interval_range)(
     const char *stream_id, unsigned int min_buffer_interval, unsigned int max_buffer_interval);
+#endif
+
+/// Set the playing stream ID to highlight when multiple streams are mixed. Streams in the stream list will be highlighted when multiple streams sound at the same time.
+///
+/// Available since: 3.15.0
+/// Set the playing stream ID to highlight when multiple streams are mixed. Streams in the stream list will be highlighted when multiple streams sound at the same time.
+/// When to call: after called [createEngine].
+/// Restrictions: None.
+///
+/// @param mode audio mix mode.
+/// @param stream_list stream list.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mix_mode(enum zego_audio_mix_mode mode,
+                                                                const char **stream_list, int num);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mix_mode)(enum zego_audio_mix_mode mode,
+                                                                 const char **stream_list, int num);
 #endif
 
 /// Set the weight of the pull stream priority.
@@ -307,7 +324,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_video)(const char 
                                                                      bool mute);
 #endif
 
-/// Can the pull stream receive all audio data.
+/// Can the pull stream receive all audio data. (When set to true, calling [mutePlayStreamAudio] will not take effect)
 ///
 /// Available since: 2.4.0
 /// Description: In the process of real-time audio and video interaction, local users can use this function to control whether to receive audio data from all remote users when pulling streams (including the audio streams pushed by users who have newly joined the room after calling this function). By default, users can receive audio data pushed by all remote users after joining the room. When the developer does not receive the audio receipt, the hardware and network overhead can be reduced.
@@ -339,7 +356,7 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_audio_streams(bool mu
 typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_audio_streams)(bool mute);
 #endif
 
-/// Can the pull stream receive all video data.
+/// Can the pull stream receive all video data. (When set to true, calling [mutePlayStreamVideo] will not take effect)
 ///
 /// Available since: 2.4.0
 /// Description: In the process of real-time video and video interaction, local users can use this function to control whether to receive all remote users' video data when pulling the stream (including the video stream pushed by the new user who joins the room after calling this function). By default, users can receive video data pushed by all remote users after joining the room. When the developer does not receive the video data, the hardware and network overhead can be reduced.
@@ -702,7 +719,9 @@ typedef void(EXP_CALL *pfnzego_register_player_render_camera_video_first_frame_c
 /// Description: After the [startPlayingStream] function is called successfully, the play resolution will change when the first frame of video data is received, or when the publisher changes the encoding resolution by calling [setVideoConfig], or when the network traffic control strategies work.
 /// Use cases: Developers can update or switch the UI components that actually play the stream based on the final resolution of the stream.
 /// Trigger: After the [startPlayingStream] function is called successfully, this callback is triggered when the video resolution changes while playing the stream.
-/// Caution: If the stream is only audio data, the callback will not be triggered.
+/// Caution:
+///  1. If the stream is only audio data, the callback will not be triggered.
+///  2. If the user enables custom video rendering of the ZegoVideoBufferTypeEncodedData type, the SDK is not responsible for video decoding and will not trigger this callback.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param stream_id Stream ID.

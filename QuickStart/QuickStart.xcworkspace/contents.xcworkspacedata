@@ -8,6 +8,12 @@
       location = "group:../JetIMDemo/JetIMDemo.xcodeproj">
    </FileRef>
    <FileRef
+      location = "container:../JAgoraCall/JAgoraCall.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:../JLiveKitCall/JLiveKitCall.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:../JZegoCall/JZegoCall.xcodeproj">
    </FileRef>
    <FileRef

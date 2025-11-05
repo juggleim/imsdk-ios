@@ -27,16 +27,24 @@ static JCallMediaManager *_instance;
 }
 
 - (void)initZegoEngineWith:(int)appId appSign:(NSString *)appSign {
-//    NSDictionary *dic = @{@"appId":@(appId),
-//                          @"appSign":appSign};
-//    NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
-//    NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    
     Class zegoEngineClass = NSClassFromString(@"JCallMediaZegoEngine");
     self.engine = [[zegoEngineClass alloc] init];
-    if ([self.engine respondsToSelector:@selector(createEngineWith:appSign:)]) {
-        [self.engine performSelector:@selector(createEngineWith:appSign:) withObject:@(appId) withObject:appSign];
+    if ([self.engine respondsToSelector:@selector(createZegoEngineWith:appSign:)]) {
+        [self.engine performSelector:@selector(createZegoEngineWith:appSign:) withObject:@(appId) withObject:appSign];
     }
+    [self.engine setDelegate:self];
+}
+
+- (void)initLiveKitEngine {
+    Class liveKitEngineClass = NSClassFromString(@"JCallMediaLiveKitEngine");
+    self.engine = [[liveKitEngineClass alloc] init];
+    [self.engine setDelegate:self];
+}
+
+- (void)initAgoraEngineWith:(NSString *)appId {
+    Class agoraEngineClass = NSClassFromString(@"JCallMediaAgoraEngine");
+    self.engine = [[agoraEngineClass alloc] init];
+    [self.engine createAgoraEngineWith:appId];
     [self.engine setDelegate:self];
 }
 
@@ -48,7 +56,8 @@ static JCallMediaManager *_instance;
     user.userId = JIM.shared.currentUserId;
     JCallMediaRoomConfig *config = [[JCallMediaRoomConfig alloc] init];
     config.isUserStatusNotify = YES;
-    config.zegoToken = callSession.zegoToken;
+    config.token = callSession.token;
+    config.url = callSession.url;
     
     [self.engine joinRoom:room
                      user:user
@@ -100,6 +109,14 @@ static JCallMediaManager *_instance;
     [self.engine useFrontCamera:isEnable];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+    [self.engine enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    [self.engine setVideoDenoiseParams:params];
+}
+
 #pragma mark - JCallMediaEngineDelegate
 - (UIView *)viewForUserId:(NSString *)userId {
     if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
@@ -108,15 +125,40 @@ static JCallMediaManager *_instance;
     return nil;
 }
 
-- (void)usersDidJoin:(NSArray<NSString *> *)userIdList {
-    if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
-        [self.delegate usersDidJoin:userIdList];
+- (UIView *)viewForSelf {
+    if ([self.delegate respondsToSelector:@selector(viewForSelf)]) {
+        return [self.delegate viewForSelf];
+    }
+    return nil;
+}
+
+- (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
+    if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+        [self.delegate usersDidConnect:userIdList];
     }
 }
 
 - (void)userCamaraDidChange:(BOOL)enable userId:(NSString *)userId {
     if ([self.delegate respondsToSelector:@selector(userCamaraDidChange:userId:)]) {
         [self.delegate userCamaraDidChange:enable userId:userId];
+    }
+}
+
+- (void)userMicrophoneDidChange:(BOOL)enable userId:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+        [self.delegate userMicrophoneDidChange:enable userId:userId];
+    }
+}
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+        [self.delegate soundLevelDidUpdate:soundLevels];
+    }
+}
+
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    if ([self.delegate respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+        [self.delegate videoFirstFrameDidRender:userId];
     }
 }
 

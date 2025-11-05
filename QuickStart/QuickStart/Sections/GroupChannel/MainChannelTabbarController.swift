@@ -236,7 +236,8 @@ class MainChannelTabbarController: UITabBarController {
     }
     
     private func updateFriendBadgeCount(_ conversationInfoList: [JConversationInfo]) {
-        for conversationInfo in conversationInfoList {
+        for i in 0..<conversationInfoList.count {
+            let conversationInfo = conversationInfoList[i]
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
                 self.setFriendBadgeCount(conversationInfo.unreadCount)

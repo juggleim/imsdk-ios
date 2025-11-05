@@ -33,7 +33,10 @@
 
 - (void)putUserInfo:(JUserInfo *)userInfo {
     if (userInfo.userId.length > 0) {
-        [self.userInfoCache put:userInfo.userId value:userInfo];
+        JUserInfo *old = [self.userInfoCache get:userInfo.userId];
+        if (!old || userInfo.updatedTime >= old.updatedTime) {
+            [self.userInfoCache put:userInfo.userId value:userInfo];
+        }
     }
 }
 
@@ -52,7 +55,10 @@
 
 - (void)putGroupInfo:(JGroupInfo *)groupInfo {
     if (groupInfo.groupId.length > 0) {
-        [self.groupInfoCache put:groupInfo.groupId value:groupInfo];
+        JGroupInfo *old = [self.groupInfoCache get:groupInfo.groupId];
+        if (!old || groupInfo.updatedTime >= old.updatedTime) {
+            [self.groupInfoCache put:groupInfo.groupId value:groupInfo];
+        }
     }
 }
 
@@ -71,7 +77,10 @@
 
 - (void)putGroupMember:(JGroupMember *)groupMember {
     if (groupMember.groupId.length > 0 && groupMember.userId.length > 0) {
-        [self.groupMemberCache put:[self keyForGroupId:groupMember.groupId userId:groupMember.userId] value:groupMember];
+        JGroupMember *old = [self.groupMemberCache get:[self keyForGroupId:groupMember.groupId userId:groupMember.userId]];
+        if (!old || groupMember.updatedTime >= old.updatedTime) {
+            [self.groupMemberCache put:[self keyForGroupId:groupMember.groupId userId:groupMember.userId] value:groupMember];
+        }
     }
 }
 

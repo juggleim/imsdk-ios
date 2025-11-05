@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JGroupMember *groupMemberInfo;
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
+@property (nonatomic, assign) long long lifeTime;
+/// 消息阅读时间（仅对单聊生效）
+@property (nonatomic, assign) long long readTime;
 @end
 
 NS_ASSUME_NONNULL_END

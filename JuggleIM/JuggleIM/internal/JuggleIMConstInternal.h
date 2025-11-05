@@ -7,7 +7,7 @@
 
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
-#define JIMVersion @"1.8.13"
+#define JIMVersion @"1.8.27"
 #define jNaviAppKey @"x-appkey"
 #define jNaviToken @"x-token"
 
@@ -37,6 +37,15 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalUserKickedByOtherClient = 11011,
     //用户注销下线
     JErrorCodeInternalUserLogOut = 11012,
+    
+    //非好友关系
+    JErrorCodeInternalNotFriend = 12009,
+    //没有操作权限
+    JErrorCodeInternalNoOperationPermission = 12010,
+    //消息不存在
+    JErrorCodeInternalRemoteMessageNotExist = 12011,
+    //收藏重复消息
+    JErrorCodeInternalAddDuplicateFavoriteMessage = 12012,
     
     //群组不存在
     JErrorCodeInternalGroupNotExist = 13001,
@@ -70,7 +79,10 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalLogNotExist = 22004,
     
     //批量设置聊天室属性失败
-    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001
+    JErrorCodeInternalChatroomBatchSetAttributeFail = 24001,
+    
+    //加入 LiveKit 房间失败
+    JErrorCodeInternalJoinLiveKitFail = 25001
 };
 
 typedef NS_ENUM(NSUInteger, JMediaType) {

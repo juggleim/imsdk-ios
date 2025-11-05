@@ -36,16 +36,26 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "local_attribute TEXT,"
                                         "mention_info TEXT,"
                                         "refer_msg_id VARCHAR (64),"
-                                        "flags INTEGER"
+                                        "flags INTEGER,"
+                                        "life_time INTEGER DEFAULT 0,"
+                                        "life_time_after_read INTEGER DEFAULT 0,"
+                                        "destroy_time INTEGER DEFAULT 0,"
+                                        "read_time INTEGER"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
+NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts ON message(destroy_time, conversation_type, conversation_id, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
-NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0";
+NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
+NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
+NSString *const kAlterAddDestroyTime = @"ALTER TABLE message ADD COLUMN destroy_time INTEGER DEFAULT 0";
+NSString *const kAlterAddReadTime = @"ALTER TABLE message ADD COLUMN read_time INTEGER";
+NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
+NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
-NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND conversation_type = ? AND conversation_id = ? ";
+NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?) AND conversation_type = ? AND conversation_id = ? ";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jAndTypeIn = @" AND type IN ";
@@ -61,11 +71,12 @@ NSString *const jOr = @" OR";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE id = ?";
-NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ? WHERE client_uid = ?";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags, is_deleted, life_time, life_time_after_read, destroy_time, read_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE id = ?";
+NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
 NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_uid = ?";
+NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
@@ -73,7 +84,7 @@ NSString *const jAndSenderIs = @" AND sender = ?";
 NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
 NSString *const jUpdateMessageState = @"UPDATE message SET state = ? WHERE id = ?";
-NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1 WHERE message_uid IN ";
+NSString *const jSetMessagesRead = @"UPDATE message SET has_read = 1, read_time = ? WHERE message_uid IN ";
 NSString *const jSetGroupReadInfo = @"UPDATE message SET read_count = ?, member_count = ? WHERE message_uid = ?";
 NSString *const jClientMsgNoIs = @" id = ?";
 NSString *const jClientMsgNoIn = @" id in ";
@@ -81,15 +92,15 @@ NSString *const jMessageIdIs = @" message_uid = ?";
 NSString *const jMessageIdIn = @" message_uid in ";
 NSString *const jGetMessagesByMessageIds = @"SELECT * FROM message WHERE message_uid in ";
 NSString *const jGetMessagesByClientMsgNos = @"SELECT * FROM message WHERE id in ";
-NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
-NSString *const jGetMessagesNotDeleted = @"SELECT * FROM message WHERE is_deleted = 0";
+//NSString *const jGetMessagesBySearchContent = @"SELECT * FROM message WHERE search_content LIKE ? AND is_deleted = 0";
+NSString *const jGetMessagesNotDeleted = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const jAndSearchContentIs = @" AND search_content LIKE ?";
 NSString *const jAndInConversation = @" AND conversation_id = ?";
 NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM message WHERE";
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
-NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0";
+NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const jGroupByConversationTypeAndId = @" GROUP BY conversation_type, conversation_id";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -114,6 +125,10 @@ NSString *const jMessageMentionInfo = @"mention_info";
 NSString *const jReferMsgId = @"refer_msg_id";
 NSString *const jMatchCount = @"match_count";
 NSString *const jFlags = @"flags";
+NSString *const jLifeTime = @"life_time";
+NSString *const jLifeTimeAfterRead = @"life_time_after_read";
+NSString *const jDestroyTime = @"destroy_time";
+NSString *const jReadTime = @"read_time";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -121,12 +136,31 @@ NSString *const jFlags = @"flags";
 
 @implementation JMessageDB
 
-- (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId {
+- (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                  currentTime:(long long)now {
     if (messageId.length == 0) {
         return nil;
     }
     __block JConcreteMessage *message;
     [self.dbHelper executeQuery:kGetMessageWithMessageId
+           withArgumentsInArray:@[messageId, @(now)]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            message = [self messageWith:resultSet];
+        }
+    }];
+    if(message.referMsgId.length > 0){
+        message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
+    }
+    return message;
+}
+
+- (JConcreteMessage *)getMessageWithMessageIdEvenDelete:(NSString *)messageId {
+    if (messageId.length == 0) {
+        return nil;
+    }
+    __block JConcreteMessage *message;
+    [self.dbHelper executeQuery:kGetMessageWithMessageIdEvenDelete
            withArgumentsInArray:@[messageId]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
@@ -134,7 +168,7 @@ NSString *const jFlags = @"flags";
         }
     }];
     if(message.referMsgId.length > 0){
-        message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+        message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
     }
     return message;
 }
@@ -145,7 +179,7 @@ NSString *const jFlags = @"flags";
             JConcreteMessage *m = nil;
             //messageId 排重
             if (obj.messageId.length > 0) {
-                m = [self getMessageWithMessageId:obj.messageId inDb:db];
+                m = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
             }
             //clientUid 排重
             if (!m && obj.clientUid.length > 0) {
@@ -160,7 +194,7 @@ NSString *const jFlags = @"flags";
             }
             
             if(obj.referredMsg != nil) {
-                JConcreteMessage * ref = [self getMessageWithMessageId:obj.referredMsg.messageId inDb:db];
+                JConcreteMessage * ref = [self getMessageWithMessageId:obj.referredMsg.messageId currentTime:0 inDb:db];
                 if (ref == nil) {
                     [self insertMessage:obj.referredMsg inDb:db];
                 }
@@ -178,7 +212,7 @@ NSString *const jFlags = @"flags";
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSend
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(clientMsgNo)]]; 
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), @(clientMsgNo)]]; 
 }
 
 - (void)updateMessageAfterSendWithClientUid:(NSString *)clientUid
@@ -190,7 +224,7 @@ NSString *const jFlags = @"flags";
         return;
     }
     [self.dbHelper executeUpdate:jUpdateMessageAfterSendWithClientUid
-            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), clientUid]];
+            withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), clientUid]];
 }
 
 - (void)updateMessageContent:(JMessageContent *)content
@@ -223,6 +257,12 @@ NSString *const jFlags = @"flags";
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(flags), messageId]];
 }
 
+- (void)updateDestroyTime:(long long)destroyTime
+            withMessageId:(NSString *)messageId {
+    NSString *sql = jUpdateDestroyTime;
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(destroyTime), messageId]];
+}
+
 -(void)updateMessage:(JConcreteMessage *)message{
     NSMutableArray *args = [NSMutableArray array];
     [args addObject:message.contentType];
@@ -247,64 +287,64 @@ NSString *const jFlags = @"flags";
     [args addObject:@(message.clientMsgNo)];
     [self.dbHelper executeUpdate:jUpdateMessage
             withArgumentsInArray:args];
-    
 }
 
-- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
-                                   count:(int)count
-                                    time:(long long)time
-                               direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSString *> *)contentTypes {
-    if (conversation.conversationId.length == 0) {
-        return [NSArray array];
-    }
-    if (time == 0) {
-        time = INT64_MAX;
-    }
-    NSString *sql = jGetMessagesInConversation;
-    if (direction == JPullDirectionNewer) {
-        sql = [sql stringByAppendingString:jAndGreaterThan];
-    } else {
-        sql = [sql stringByAppendingString:jAndLessThan];
-    }
-    if (contentTypes.count > 0) {
-        sql = [sql stringByAppendingString:jAndTypeIn];
-        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
-    }
-    sql = [sql stringByAppendingString:jOrderByTimestamp];
-    if (direction == JPullDirectionNewer) {
-        sql = [sql stringByAppendingString:jASC];
-    } else {
-        sql = [sql stringByAppendingString:jDESC];
-    }
-    sql = [sql stringByAppendingString:jLimit];
-    
-    NSMutableArray *messages = [[NSMutableArray alloc] init];
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(time)]];
-    [args addObjectsFromArray:contentTypes];
-    [args addObject:@(count)];
-    [self.dbHelper executeQuery:sql
-           withArgumentsInArray:args
-                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
-        while ([resultSet next]) {
-            JConcreteMessage *m = [self messageWith:resultSet];
-            [messages addObject:m];
-        }
-    }];
-    for (JConcreteMessage * message in messages) {
-        if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
-        }
-    }
-    
-    NSArray *result;
-    if (direction == JPullDirectionOlder) {
-        result = [[messages reverseObjectEnumerator] allObjects];
-    } else {
-        result = [messages copy];
-    }
-    return result;
-}
+//- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+//                                   count:(int)count
+//                                    time:(long long)time
+//                               direction:(JPullDirection)direction
+//                            contentTypes:(NSArray<NSString *> *)contentTypes
+//                             currentTime:(long long)now {
+//    if (conversation.conversationId.length == 0) {
+//        return [NSArray array];
+//    }
+//    if (time == 0) {
+//        time = INT64_MAX;
+//    }
+//    NSString *sql = jGetMessagesInConversation;
+//    if (direction == JPullDirectionNewer) {
+//        sql = [sql stringByAppendingString:jAndGreaterThan];
+//    } else {
+//        sql = [sql stringByAppendingString:jAndLessThan];
+//    }
+//    if (contentTypes.count > 0) {
+//        sql = [sql stringByAppendingString:jAndTypeIn];
+//        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:contentTypes.count]];
+//    }
+//    sql = [sql stringByAppendingString:jOrderByTimestamp];
+//    if (direction == JPullDirectionNewer) {
+//        sql = [sql stringByAppendingString:jASC];
+//    } else {
+//        sql = [sql stringByAppendingString:jDESC];
+//    }
+//    sql = [sql stringByAppendingString:jLimit];
+//    
+//    NSMutableArray *messages = [[NSMutableArray alloc] init];
+//    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(now), @(conversation.conversationType), conversation.conversationId, @(time)]];
+//    [args addObjectsFromArray:contentTypes];
+//    [args addObject:@(count)];
+//    [self.dbHelper executeQuery:sql
+//           withArgumentsInArray:args
+//                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+//        while ([resultSet next]) {
+//            JConcreteMessage *m = [self messageWith:resultSet];
+//            [messages addObject:m];
+//        }
+//    }];
+//    for (JConcreteMessage * message in messages) {
+//        if(message.referMsgId.length > 0){
+//            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
+//        }
+//    }
+//    
+//    NSArray *result;
+//    if (direction == JPullDirectionOlder) {
+//        result = [[messages reverseObjectEnumerator] allObjects];
+//    } else {
+//        result = [messages copy];
+//    }
+//    return result;
+//}
 
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
     if (clientMsgNos == nil || clientMsgNos.count == 0) {
@@ -360,7 +400,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in result) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
@@ -392,7 +432,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in result) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSMutableArray *messages = [[NSMutableArray alloc] init];
@@ -407,10 +447,26 @@ NSString *const jFlags = @"flags";
     return [messages copy];
 }
 
-- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option {
+- (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid {
+    if (clientUid.length == 0) {
+        return nil;
+    }
+    __block JConcreteMessage *message = nil;
+    [self.dbHelper executeQuery:kGetMessageWithClientUid
+           withArgumentsInArray:@[clientUid]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            message = [self messageWith:resultSet];
+        }
+    }];
+    return message;
+}
+
+- (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
+                                                             currentTime:(long long)now {
     __block NSString *sql = jSearchMessageInConversations;
     NSMutableArray *args = [NSMutableArray array];
-    
+    [args addObject:@(now)];
     if (option) {
         if (option.searchContent.length > 0) {
             sql = [sql stringByAppendingString:jAndSearchContentIs];
@@ -485,7 +541,8 @@ NSString *const jFlags = @"flags";
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
                                      conversations:(NSArray<JConversation *> *)conversations
-                                 conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationTypes
+                                        currentTime:(long long)now {
     if (count < 1) {
         return [NSArray array];
     }
@@ -497,6 +554,7 @@ NSString *const jFlags = @"flags";
     }
     __block NSString *sql = jGetMessagesNotDeleted;
     NSMutableArray *args = [NSMutableArray array];
+    [args addObject:@(now)];
     
     if (conversations.count > 0) {
         sql = [sql stringByAppendingString:jAnd];
@@ -569,7 +627,7 @@ NSString *const jFlags = @"flags";
     }];
     for (JConcreteMessage * message in messages) {
         if(message.referMsgId.length > 0){
-            message.referredMsg = [self getMessageWithMessageId:message.referMsgId];
+            message.referredMsg = [self getMessageWithMessageIdEvenDelete:message.referMsgId];
         }
     }
     NSArray *result;
@@ -596,8 +654,8 @@ NSString *const jFlags = @"flags";
         }
     }];
     return localAttribute;
-    
 }
+
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId{
     if (messageId.length == 0) {
         return;
@@ -611,6 +669,7 @@ NSString *const jFlags = @"flags";
             withArgumentsInArray:@[attribute, messageId]];
     
 }
+
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo{
     NSString *sql = jGetMessageLocalAttribute;
     sql = [sql stringByAppendingString:jClientMsgNoIs];
@@ -625,6 +684,7 @@ NSString *const jFlags = @"flags";
     return localAttribute;
     
 }
+
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     if (!attribute) {
         attribute = @"";
@@ -636,8 +696,9 @@ NSString *const jFlags = @"flags";
     
 }
 
-- (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
-    if(conversation.conversationId.length == 0){
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation
+                         currentTime:(long long)now {
+    if (conversation.conversationId.length == 0) {
         return nil;
     }
     NSString * sql = jGetMessagesInConversation;
@@ -645,7 +706,7 @@ NSString *const jFlags = @"flags";
     sql = [sql stringByAppendingString:jDESC];
     sql = [sql stringByAppendingString:jLimit];
     NSMutableArray *messages = [[NSMutableArray alloc] init];
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(1)]];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(now), @(conversation.conversationType), conversation.conversationId, @(1)]];
     [self.dbHelper executeQuery:sql
            withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
@@ -655,11 +716,11 @@ NSString *const jFlags = @"flags";
         }
     }];
     JConcreteMessage * lastMessage;
-    if(messages.count >= 1){
+    if (messages.count >= 1) {
         lastMessage = messages.firstObject;
-            if(lastMessage.referMsgId.length > 0){
-                lastMessage.referredMsg = [self getMessageWithMessageId:lastMessage.referMsgId];
-            }
+        if (lastMessage.referMsgId.length > 0) {
+            lastMessage.referredMsg = [self getMessageWithMessageIdEvenDelete:lastMessage.referMsgId];
+        }
     }
     
     return lastMessage;
@@ -671,10 +732,14 @@ NSString *const jFlags = @"flags";
             withArgumentsInArray:@[@(state), @(clientMsgNo)]];
 }
 
-- (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds
+               readTime:(long long)readTime {
+    NSMutableArray *a = [NSMutableArray new];
+    [a addObject:@(readTime)];
+    [a addObjectsFromArray:messageIds];
     NSString *sql = [jSetMessagesRead stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:messageIds.count]];
     [self.dbHelper executeUpdate:sql
-            withArgumentsInArray:messageIds];
+            withArgumentsInArray:a];
 }
 
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs {
@@ -704,6 +769,7 @@ NSString *const jFlags = @"flags";
     [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageConversationTSIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -738,20 +804,24 @@ NSString *const jFlags = @"flags";
     long long msgIndex = 0;
     NSString *clientUid = @"";
     int flags = 0;
+    long long lifeTime = 0;
+    long long readTime = 0;
     if ([message isKindOfClass:[JConcreteMessage class]]) {
         seqNo = ((JConcreteMessage *)message).seqNo;
         msgIndex = ((JConcreteMessage *)message).msgIndex;
         clientUid = ((JConcreteMessage *)message).clientUid;
         flags = ((JConcreteMessage *)message).flags;
+        lifeTime = ((JConcreteMessage *)message).lifeTime;
+        readTime = ((JConcreteMessage *)message).readTime;
     }
     NSData *data = [message.content encode];
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     int memberCount = message.groupReadInfo.memberCount?:-1;
     
     NSString * mentionInfo;
-    if(message.mentionInfo){
+    if (message.mentionInfo) {
         mentionInfo = [message.mentionInfo encodeToJson];
-    }else{
+    } else {
         mentionInfo = @"";
     }
     
@@ -782,17 +852,23 @@ NSString *const jFlags = @"flags";
                       message.content.searchContent,
                       mentionInfo,
                       referMsgId,
-                      @(flags)
+                      @(flags),
+                      @(message.isDeleted),
+                      @(lifeTime),
+                      @(message.lifeTimeAfterRead),
+                      @(message.destroyTime),
+                      @(readTime)
     ];
 }
 
 - (JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                  currentTime:(long long)now
                                          inDb:(JFMDatabase *)db {
     if (messageId.length == 0) {
         return nil;
     }
     JConcreteMessage *message = nil;
-    JFMResultSet *resultSet = [db executeQuery:kGetMessageWithMessageId, messageId];
+    JFMResultSet *resultSet = [db executeQuery:kGetMessageWithMessageId, messageId, @(now)];
     if ([resultSet next]) {
         message = [self messageWith:resultSet];
     }
@@ -809,8 +885,28 @@ NSString *const jFlags = @"flags";
     return jCreateMessageConversationTSIndex;
 }
 
++ (NSString *)addDTConversationTSIndex {
+    return jCreateMessageDTConversationTSIndex;
+}
+
 + (NSString *)addMessageClientUidIndex {
     return kCreateClientUidIndex;
+}
+
++ (NSString *)alterTableAddLifeTime {
+    return kAlterAddLifeTime;
+}
+
++ (NSString *)alterTableAddLifeTimeAfterRead {
+    return kAlterAddLifeTimeAfterRead;
+}
+
++ (NSString *)alterTableAddDestroyTime {
+    return kAlterAddDestroyTime;
+}
+
++ (NSString *)alterTableAddReadTime {
+    return kAlterAddReadTime;
 }
 
 #pragma mark - internal
@@ -867,6 +963,11 @@ NSString *const jFlags = @"flags";
     message.localAttribute = [rs stringForColumn:jLocalAttribute];
     message.flags = [rs intForColumn:jFlags];
     message.isEdit = message.flags & JMessageFlagIsModified;
+    message.isDeleted = [rs boolForColumn:jIsDeleted];
+    message.lifeTime = [rs longLongIntForColumn:jLifeTime];
+    message.lifeTimeAfterRead = [rs longLongIntForColumn:jLifeTimeAfterRead];
+    message.destroyTime = [rs longLongIntForColumn:jDestroyTime];
+    message.readTime = [rs longLongIntForColumn:jReadTime];
     return message;
 }
 

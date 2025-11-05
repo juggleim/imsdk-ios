@@ -36,6 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)alterUserTableAddType;
 + (NSString *)createGroupMemberTable;
 + (NSString *)createGroupMemberIndex;
++ (NSString *)alterUserTableAddUpdatedTime;
++ (NSString *)alterGroupTableAddUpdatedTime;
++ (NSString *)alterGroupMemberTableAddUpdatedTime;
 
 @end
 

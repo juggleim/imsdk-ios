@@ -6,6 +6,7 @@
 //
 
 #import "JCallMediaZegoEngine.h"
+#import <JuggleIM/JIM.h>
 
 #define jSeperator @"+++"
 
@@ -23,7 +24,7 @@
     ZegoUser *zegoUser = [ZegoUser userWithUserID:user.userId];
     ZegoRoomConfig *zegoConfig = [[ZegoRoomConfig alloc] init];
     zegoConfig.isUserStatusNotify = config.isUserStatusNotify;
-    zegoConfig.token = config.zegoToken;
+    zegoConfig.token = config.token;
     [[ZegoExpressEngine sharedEngine] loginRoom:room.roomId
                                            user:zegoUser
                                          config:zegoConfig
@@ -45,7 +46,8 @@
 
 - (void)startPreview:(UIView *)view {
     if (view) {
-        [[ZegoExpressEngine sharedEngine] startPreview:[ZegoCanvas canvasWithView:view]];
+        ZegoCanvas *canvas = [self createCanvasWithView:view];
+        [[ZegoExpressEngine sharedEngine] startPreview:canvas];
     }
 }
 
@@ -70,7 +72,7 @@
     NSString *streamId = [self streamIdWithRoomId:roomId
                                            userId:userId];
     [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId
-                                                  canvas:[ZegoCanvas canvasWithView:view]];
+                                                  canvas:[self createCanvasWithView:view]];
 }
 
 - (void)muteMicrophone:(BOOL)isMute {
@@ -85,12 +87,24 @@
     [[ZegoExpressEngine sharedEngine] setAudioRouteToSpeaker:isEnable];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+    [[ZegoExpressEngine sharedEngine] enableAEC:isEnable];
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+    ZegoVideoDenoiseParams *zp = [ZegoVideoDenoiseParams new];
+    zp.mode = (ZegoVideoDenoiseMode)params.mode;
+    zp.strength = (ZegoVideoDenoiseStrength)params.strength;
+    [[ZegoExpressEngine sharedEngine] setVideoDenoiseParams:zp channel:ZegoPublishChannelMain];
+}
+
 #pragma mark - ZegoEventHandler
 - (void)onRoomStreamUpdate:(ZegoUpdateType)updateType
                 streamList:(NSArray<ZegoStream *> *)streamList
               extendedData:(NSDictionary *)extendedData
                     roomID:(NSString *)roomID {
     if (updateType == ZegoUpdateTypeAdd) {
+        NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
         for (ZegoStream *stream in streamList) {
             NSString *streamId = stream.streamID;
             NSString *userId = [self userIdWithStreamId:streamId];
@@ -98,7 +112,16 @@
             if ([self.delegate respondsToSelector:@selector(viewForUserId:)]) {
                 view = [self.delegate viewForUserId:userId];
             }
-            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[ZegoCanvas canvasWithView:view]];
+            [[ZegoExpressEngine sharedEngine] startPlayingStream:streamId canvas:[self createCanvasWithView:view]];
+            [[ZegoExpressEngine sharedEngine] startSoundLevelMonitor];
+            [userIdList addObject:userId];
+        }
+        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+            [self.delegate usersDidConnect:userIdList];
+        }
+    } else if (updateType == ZegoUpdateTypeDelete) {
+        for (ZegoStream *stream in streamList) {
+            [[ZegoExpressEngine sharedEngine] stopPlayingStream:stream.streamID];
         }
     }
     if ([sHandler respondsToSelector:@selector(onRoomStreamUpdate:streamList:extendedData:roomID:)]) {
@@ -119,20 +142,35 @@
     }
 }
 
+- (void)onRemoteMicStateUpdate:(ZegoRemoteDeviceState)state streamID:(NSString *)streamID {
+    NSString *userId = [self userIdWithStreamId:streamID];
+    if (state == ZegoRemoteDeviceStateOpen) {
+        if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+            [self.delegate userMicrophoneDidChange:YES userId:userId];
+        }
+    } else if (state == ZegoRemoteDeviceStateMute) {
+        if ([self.delegate respondsToSelector:@selector(userMicrophoneDidChange:userId:)]) {
+            [self.delegate userMicrophoneDidChange:NO userId:userId];
+        }
+    }
+}
+
 - (void)onRoomUserUpdate:(ZegoUpdateType)updateType
                 userList:(NSArray<ZegoUser *> *)userList
                   roomID:(NSString *)roomID {
-    if (updateType == ZegoUpdateTypeAdd) {
-        NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
-        [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
-            [userIdList addObject:zegoUser.userID];
-        }];
-        if ([self.delegate respondsToSelector:@selector(usersDidJoin:)]) {
-            [self.delegate usersDidJoin:userIdList];
-        }
-    } else if (updateType == ZegoUpdateTypeDelete) {
-        //暂不处理
-    }
+//    NSMutableArray <NSString *> *userIdList = [NSMutableArray array];
+//    [userList enumerateObjectsUsingBlock:^(ZegoUser * _Nonnull zegoUser, NSUInteger idx, BOOL * _Nonnull stop) {
+//        [userIdList addObject:zegoUser.userID];
+//    }];
+//    if (updateType == ZegoUpdateTypeAdd) {
+//        [self addUserList:userIdList];
+//        if ([self.delegate respondsToSelector:@selector(usersDidConnect:)]) {
+//            [self.delegate usersDidConnect:userIdList];
+//        }
+//    } else if (updateType == ZegoUpdateTypeDelete) {
+//        [self removeUserList:userIdList];
+//        //暂不处理
+//    }
     if ([sHandler respondsToSelector:@selector(onRoomUserUpdate:userList:roomID:)]) {
         [sHandler onRoomUserUpdate:updateType userList:userList roomID:roomID];
     }
@@ -157,12 +195,36 @@
 }
 
 - (void)onCapturedSoundLevelUpdate:(NSNumber *)soundLevel {
+    NSString *userId = JIM.shared.currentUserId;
+    if (userId.length > 0) {
+        if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+            [self.delegate soundLevelDidUpdate:@{userId: soundLevel}];
+        }
+    }
     if ([sHandler respondsToSelector:@selector(onCapturedSoundLevelUpdate:)]) {
         [sHandler onCapturedSoundLevelUpdate:soundLevel];
     }
 }
 
+- (void)onPlayerRenderVideoFirstFrame:(NSString *)streamID {
+    NSString *userId = [self userIdWithStreamId:streamID];
+    if ([self.delegate respondsToSelector:@selector(videoFirstFrameDidRender:)]) {
+        [self.delegate videoFirstFrameDidRender:userId];
+    }
+    if ([sHandler respondsToSelector:@selector(onPlayerRenderVideoFirstFrame:)]) {
+        [sHandler onPlayerRenderVideoFirstFrame:streamID];
+    }
+}
+
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+    if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
+        NSMutableDictionary *dic = [NSMutableDictionary dictionary];
+        [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull streamId, NSNumber * _Nonnull soundLevel, BOOL * _Nonnull stop) {
+            NSString *userId = [self userIdWithStreamId:streamId];
+            [dic setObject:soundLevel forKey:userId];
+        }];
+        [self.delegate soundLevelDidUpdate:dic];
+    }
     if ([sHandler respondsToSelector:@selector(onRemoteSoundLevelUpdate:)]) {
         [sHandler onRemoteSoundLevelUpdate:soundLevels];
     }
@@ -210,8 +272,14 @@
     }
 }
 
+- (void)onRoomTokenWillExpire:(int)remainTimeInSecond roomID:(NSString *)roomID {
+    if ([sHandler respondsToSelector:@selector(onRoomTokenWillExpire:roomID:)]) {
+        [sHandler onRoomTokenWillExpire:remainTimeInSecond roomID:roomID];
+    }
+}
+
 #pragma mark -
-- (void)createEngineWith:(NSNumber *)appId appSign:(NSString *)appSign {
+- (void)createZegoEngineWith:(NSNumber *)appId appSign:(NSString *)appSign {
     [ZegoExpressEngine destroyEngine:nil];
     ZegoEngineProfile *profile = [[ZegoEngineProfile alloc] init];
     profile.appID = appId.intValue;
@@ -240,6 +308,12 @@
         userId = array[length-1];
     }
     return userId;
+}
+
+- (ZegoCanvas *)createCanvasWithView:(UIView *)view {
+    ZegoCanvas *canvas = [ZegoCanvas canvasWithView:view];
+    canvas.viewMode = ZegoViewModeAspectFill;
+    return canvas;
 }
 
 static id<ZegoEventHandler> sHandler;

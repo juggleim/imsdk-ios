@@ -34,10 +34,10 @@ static JIM *_instance;
         JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
         _instance.chatroomManager = chatroomManager;
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
-        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager userInfoManager:userInfoManager];
+        JCallManager *callManager = [[JCallManager alloc] initWithCore:core userInfoManager:userInfoManager];
+        JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager userInfoManager:userInfoManager callManager:callManager];
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager userInfoManager:userInfoManager];
         messageManager.sendReceiveDelegate = conversationManager;
-        JCallManager *callManager = [[JCallManager alloc] initWithCore:core userInfoManager:userInfoManager];
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
         _instance.userInfoManager = userInfoManager;
@@ -87,8 +87,12 @@ static JIM *_instance;
     return self.core.userId;
 }
 
--(NSString *)getDeviceId{
+- (NSString *)getDeviceId {
     return [JUtility getDeviceId];
+}
+
+- (long long)getTimeDifference {
+    return [self.core getTimeDifference];
 }
 
 @end

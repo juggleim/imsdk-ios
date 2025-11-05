@@ -35,7 +35,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A04266712E1BC03E007F4AB7 /* JLiveKitCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JLiveKitCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZegoExpressEngine.xcframework; path = ../JZegoCall/framework/ZegoExpressEngine.xcframework; sourceTree = "<group>"; };
+		A07E4D2A2E55AEC40099E8BF /* JuggleUlt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleUlt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F62B148B9C008B114C /* JetIMDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JetIMDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1F92B148B9C008B114C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A08AA1FA2B148B9C008B114C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -105,6 +107,8 @@
 		A08AA2182B148BD9008B114C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A07E4D2A2E55AEC40099E8BF /* JuggleUlt.framework */,
+				A04266712E1BC03E007F4AB7 /* JLiveKitCall.framework */,
 				A079E8892CE4E98E00A1008F /* ZegoExpressEngine.xcframework */,
 				A0CE9A332CD4C103008B405C /* JZegoCall.framework */,
 				A09727622CB6EC0400E08BC4 /* JuggleCall.framework */,

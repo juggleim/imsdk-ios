@@ -268,6 +268,7 @@ class ZegoExpressConvert {
         ZegoDeviceInfo deviceInfo;
         deviceInfo.deviceID = _deviceInfo.device_id;
         deviceInfo.deviceName = _deviceInfo.device_name;
+        deviceInfo.deviceExtraInfo = _deviceInfo.device_extra_info;
         return deviceInfo;
     }
 
@@ -319,6 +320,7 @@ class ZegoExpressConvert {
         config.encodeHeight = _config.encode_height;
         config.encodeWidth = _config.encode_width;
         config.codecID = ZegoVideoCodecID(_config.codec_id);
+        config.keyFrameInterval = _config.key_frame_interval;
         return config;
     }
 
@@ -386,7 +388,7 @@ class ZegoExpressConvert {
 
     static zego_video_encoded_frame_param
     O2IVideoEncodedFrameParam(const ZegoVideoEncodedFrameParam &param) {
-        zego_video_encoded_frame_param _param;
+        zego_video_encoded_frame_param _param{};
         _param.format = zego_video_encoded_frame_format(param.format);
         _param.is_key_frame = param.isKeyFrame;
         _param.height = param.height;
@@ -394,12 +396,13 @@ class ZegoExpressConvert {
         _param.rotation = param.rotation;
         _param.sei_data = param.SEIData;
         _param.sei_data_length = param.SEIDataLength;
+        _param.is_external_clock = param.isExternalClock;
         return _param;
     }
 
     static ZegoVideoEncodedFrameParam
     I2OVideoEncodedFrameParam(const zego_video_encoded_frame_param &_param) {
-        ZegoVideoEncodedFrameParam param;
+        ZegoVideoEncodedFrameParam param{};
         param.format = ZegoVideoEncodedFrameFormat(_param.format);
         param.isKeyFrame = _param.is_key_frame;
         param.height = _param.height;
@@ -407,6 +410,7 @@ class ZegoExpressConvert {
         param.rotation = _param.rotation;
         param.SEIData = _param.sei_data;
         param.SEIDataLength = _param.sei_data_length;
+        param.isExternalClock = _param.is_external_clock;
         return param;
     }
 
@@ -442,6 +446,7 @@ class ZegoExpressConvert {
         zego_cdn_config _config;
         strncpy(_config.url, config.url.c_str(), ZEGO_EXPRESS_MAX_URL_LEN);
         strncpy(_config.auth_param, config.authParam.c_str(), ZEGO_EXPRESS_MAX_COMMON_LEN);
+        strncpy(_config.custom_params, config.customParams.c_str(), ZEGO_EXPRESS_MAX_COMMON_LEN);
         strncpy(_config.protocol, config.protocol.c_str(), ZEGO_EXPRESS_MAX_COMMON_LEN);
         strncpy(_config.quic_version, config.quicVersion.c_str(), ZEGO_EXPRESS_MAX_COMMON_LEN);
         _config.http_dns = static_cast<zego_http_dns_type>(config.httpdns);
@@ -578,6 +583,8 @@ class ZegoExpressConvert {
         _config.stream_censor_flag = config.streamCensorFlag;
         _config.codec_negotiation_type =
             (zego_capability_negotiation_type)config.codecNegotiationType;
+        strncpy(_config.stream_title, config.streamTitle.c_str(),
+                ZEGO_EXPRESS_MAX_STREAM_TITLE_LEN);
         return _config;
     }
 
@@ -688,11 +695,23 @@ class ZegoExpressConvert {
         oResource.load_type = static_cast<zego_multimedia_load_type>(resource.loadType);
         oResource.start_position = resource.startPosition;
         oResource.alpha_layout = static_cast<zego_alpha_layout_type>(resource.alphaLayout);
-        ZegoStrncpy(oResource.file_path, resource.filePath.c_str(), ZEGO_EXPRESS_MAX_URL_LEN);
+
+        ZegoStrncpy(oResource.file_path, resource.filePath.c_str(),
+                    sizeof(oResource.file_path) - 1);
+        oResource.file_path[sizeof(oResource.file_path) - 1] = '\0';
+
         oResource.memory = resource.memory;
         oResource.memory_length = resource.memoryLength;
+
         ZegoStrncpy(oResource.resource_id, resource.resourceID.c_str(),
-                    ZEGO_EXPRESS_MAX_COMMON_LEN);
+                    sizeof(oResource.resource_id) - 1);
+        oResource.resource_id[sizeof(oResource.resource_id) - 1] = '\0';
+
+        ZegoStrncpy(oResource.online_resource_cache_path, resource.onlineResourceCachePath.c_str(),
+                    sizeof(oResource.online_resource_cache_path) - 1);
+        oResource.online_resource_cache_path[sizeof(oResource.online_resource_cache_path) - 1] =
+            '\0';
+        oResource.max_cache_pending_length = resource.maxCachePendingLength;
 
         return oResource;
     }
@@ -703,7 +722,19 @@ class ZegoExpressConvert {
         info.SEIData = _info.sei_data;
         info.SEIDataLength = _info.sei_data_length;
         info.timestampNs = _info.timestamp_ns;
+        info.moduleType = _info.module_type;
         return info;
+    }
+
+    static zego_dummy_capture_image_params
+    O2IDummyCaptureImageParams(const ZegoDummyCaptureImageParams &o_params) {
+        zego_dummy_capture_image_params i_params;
+        memset(&i_params, 0, sizeof(zego_dummy_capture_image_params));
+        strncpy(i_params.path, o_params.path.c_str(), sizeof(i_params.path) - 1);
+        i_params.path[sizeof(i_params.path) - 1] = '\0';
+        i_params.mode = static_cast<zego_dummy_capture_image_mode>(o_params.mode);
+
+        return i_params;
     }
 };
 

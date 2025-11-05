@@ -12,10 +12,19 @@
 
 - (UIView *)viewForUserId:(NSString *)userId;
 
-- (void)usersDidJoin:(NSArray <NSString *> *)userIdList;
+- (UIView *)viewForSelf;
+
+- (void)usersDidConnect:(NSArray <NSString *> *)userIdList;
 
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;
+
+- (void)userMicrophoneDidChange:(BOOL)enable
+                         userId:(NSString *)userId;
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
+
+- (void)videoFirstFrameDidRender:(NSString *)userId;
 
 @end
 

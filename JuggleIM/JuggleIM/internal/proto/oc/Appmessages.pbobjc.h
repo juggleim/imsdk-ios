@@ -35,6 +35,8 @@ CF_EXTERN_C_BEGIN
 @class ConverTag;
 @class Conversation;
 @class DownMsg;
+@class FavoriteMsg;
+@class FavoriteMsgIdItem;
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
@@ -150,6 +152,7 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_System = 4,
   ChannelType_GroupCast = 5,
   ChannelType_BroadCast = 6,
+  ChannelType_PublicService = 7,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
@@ -481,6 +484,10 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
   UpMsg_FieldNumber_ReferMsg = 7,
   UpMsg_FieldNumber_ToUserIdsArray = 8,
   UpMsg_FieldNumber_MergedMsgs = 9,
+  UpMsg_FieldNumber_SearchText = 10,
+  UpMsg_FieldNumber_LifeTime = 11,
+  UpMsg_FieldNumber_LifeTimeAfterRead = 12,
+  UpMsg_FieldNumber_SubChannel = 13,
   UpMsg_FieldNumber_MsgTime = 51,
 };
 
@@ -524,6 +531,16 @@ GPB_FINAL @interface UpMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) MergedMsgs *mergedMsgs;
 /** Test to see if @c mergedMsgs has been set. */
 @property(nonatomic, readwrite) BOOL hasMergedMsgs;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *searchText;
+
+/** 消息默认生存周期，单位毫秒，例如：86400000，即该消息1天后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTime;
+
+/** 消息已读后的生存周期，通常小于lifeTime，例如60000，即消息已读1分钟后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @property(nonatomic, readwrite) int64_t msgTime;
 
@@ -675,6 +692,12 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_ConverTagsArray = 27,
   DownMsg_FieldNumber_SearchText = 29,
   DownMsg_FieldNumber_GrpMemberInfo = 30,
+  DownMsg_FieldNumber_DestroyTime = 31,
+  DownMsg_FieldNumber_LifeTimeAfterRead = 32,
+  DownMsg_FieldNumber_IsDelete = 33,
+  DownMsg_FieldNumber_SubChannel = 34,
+  DownMsg_FieldNumber_ToUserIdsArray = 35,
+  DownMsg_FieldNumber_ReadTime = 36,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -758,6 +781,22 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) GrpMemberInfo *grpMemberInfo;
 /** Test to see if @c grpMemberInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasGrpMemberInfo;
+
+/** 消息默认的销毁时间点，单位毫秒，如 1752551449037，为0时，表示消息不自动销毁 */
+@property(nonatomic, readwrite) int64_t destroyTime;
+
+/** 消息已读后生存周期，例如60000，即消息已读1分钟后会被自动删除 */
+@property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
+
+@property(nonatomic, readwrite) BOOL isDelete;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
+/** The number of items in @c toUserIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
+
+@property(nonatomic, readwrite) int64_t readTime;
 
 @end
 
@@ -3484,6 +3523,184 @@ int32_t OnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message);
  * was generated.
  **/
 void SetOnlineOfflineMsg_Type_RawValue(OnlineOfflineMsg *message, int32_t value);
+
+#pragma mark - TopMsgReq
+
+typedef GPB_ENUM(TopMsgReq_FieldNumber) {
+  TopMsgReq_FieldNumber_TargetId = 1,
+  TopMsgReq_FieldNumber_ChannelType = 2,
+  TopMsgReq_FieldNumber_MsgId = 3,
+};
+
+GPB_FINAL @interface TopMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@end
+
+/**
+ * Fetches the raw value of a @c TopMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t TopMsgReq_ChannelType_RawValue(TopMsgReq *message);
+/**
+ * Sets the raw value of an @c TopMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetTopMsgReq_ChannelType_RawValue(TopMsgReq *message, int32_t value);
+
+#pragma mark - GetTopMsgReq
+
+typedef GPB_ENUM(GetTopMsgReq_FieldNumber) {
+  GetTopMsgReq_FieldNumber_TargetId = 1,
+  GetTopMsgReq_FieldNumber_ChannelType = 2,
+};
+
+GPB_FINAL @interface GetTopMsgReq : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@end
+
+/**
+ * Fetches the raw value of a @c GetTopMsgReq's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t GetTopMsgReq_ChannelType_RawValue(GetTopMsgReq *message);
+/**
+ * Sets the raw value of an @c GetTopMsgReq's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetGetTopMsgReq_ChannelType_RawValue(GetTopMsgReq *message, int32_t value);
+
+#pragma mark - TopMsg
+
+typedef GPB_ENUM(TopMsg_FieldNumber) {
+  TopMsg_FieldNumber_Msg = 1,
+  TopMsg_FieldNumber_Operator_p = 2,
+  TopMsg_FieldNumber_CreatedTime = 3,
+};
+
+GPB_FINAL @interface TopMsg : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *operator_p;
+/** Test to see if @c operator_p has been set. */
+@property(nonatomic, readwrite) BOOL hasOperator_p;
+
+@property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
+#pragma mark - FavoriteMsgIds
+
+typedef GPB_ENUM(FavoriteMsgIds_FieldNumber) {
+  FavoriteMsgIds_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface FavoriteMsgIds : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FavoriteMsgIdItem*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - FavoriteMsgIdItem
+
+typedef GPB_ENUM(FavoriteMsgIdItem_FieldNumber) {
+  FavoriteMsgIdItem_FieldNumber_SenderId = 1,
+  FavoriteMsgIdItem_FieldNumber_ReceiverId = 2,
+  FavoriteMsgIdItem_FieldNumber_ChannelType = 3,
+  FavoriteMsgIdItem_FieldNumber_MsgId = 4,
+  FavoriteMsgIdItem_FieldNumber_SubChannel = 5,
+};
+
+GPB_FINAL @interface FavoriteMsgIdItem : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *receiverId;
+
+@property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@end
+
+/**
+ * Fetches the raw value of a @c FavoriteMsgIdItem's @c channelType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t FavoriteMsgIdItem_ChannelType_RawValue(FavoriteMsgIdItem *message);
+/**
+ * Sets the raw value of an @c FavoriteMsgIdItem's @c channelType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetFavoriteMsgIdItem_ChannelType_RawValue(FavoriteMsgIdItem *message, int32_t value);
+
+#pragma mark - QryFavoriteMsgsReq
+
+typedef GPB_ENUM(QryFavoriteMsgsReq_FieldNumber) {
+  QryFavoriteMsgsReq_FieldNumber_Limit = 1,
+  QryFavoriteMsgsReq_FieldNumber_Offset = 2,
+};
+
+GPB_FINAL @interface QryFavoriteMsgsReq : GPBMessage
+
+@property(nonatomic, readwrite) int64_t limit;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *offset;
+
+@end
+
+#pragma mark - FavoriteMsgs
+
+typedef GPB_ENUM(FavoriteMsgs_FieldNumber) {
+  FavoriteMsgs_FieldNumber_ItemsArray = 1,
+  FavoriteMsgs_FieldNumber_Offset = 2,
+};
+
+GPB_FINAL @interface FavoriteMsgs : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FavoriteMsg*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *offset;
+
+@end
+
+#pragma mark - FavoriteMsg
+
+typedef GPB_ENUM(FavoriteMsg_FieldNumber) {
+  FavoriteMsg_FieldNumber_Msg = 1,
+  FavoriteMsg_FieldNumber_CreatedTime = 2,
+};
+
+GPB_FINAL @interface FavoriteMsg : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *msg;
+/** Test to see if @c msg has been set. */
+@property(nonatomic, readwrite) BOOL hasMsg;
+
+@property(nonatomic, readwrite) int64_t createdTime;
+
+@end
 
 NS_ASSUME_NONNULL_END
 

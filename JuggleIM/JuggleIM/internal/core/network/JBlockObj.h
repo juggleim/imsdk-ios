@@ -14,6 +14,7 @@
 #import "JUploadPreSignCred.h"
 #import "JChatroomAttributeItem.h"
 #import "JRtcRoom.h"
+#import "JConcreteMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,11 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JTimestampBlockObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(long long timestamp);
-@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
-@end
-
-@interface JQryReadDetailObj : JBlockObj
-@property (nonatomic, copy) void (^successBlock)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 
@@ -86,6 +82,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JRtcRoomArrayObj : JBlockObj
 @property (nonatomic, copy) void (^successBlock)(NSArray <JRtcRoom *> *);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JRtcAuthObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSString *token, NSString *url);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JGetTopMsgObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(JConcreteMessage *message, JUserInfo *user, long long timestamp);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JGetFavoriteMsgObj : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(NSArray <JFavoriteMessage *> *messageList, NSString *offset);
+@property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
+@end
+
+@interface JTemplateObj<T> : JBlockObj
+@property (nonatomic, copy) void (^successBlock)(T t);
 @property (nonatomic, copy) void (^errorBlock)(JErrorCodeInternal errorCode);
 @end
 

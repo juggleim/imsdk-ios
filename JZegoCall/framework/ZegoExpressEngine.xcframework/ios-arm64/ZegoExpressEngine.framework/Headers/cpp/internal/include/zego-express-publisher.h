@@ -165,7 +165,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_preview)(enum zego_publish_cha
 /// Description: Set the video frame rate, bit rate, video capture resolution, and video encoding output resolution.
 /// Default value: The default video capture resolution is 360p, the video encoding output resolution is 360p, the bit rate is 600 kbps, and the frame rate is 15 fps.
 /// When to call: After [createEngine].
-/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution and the bit rate after [startPreview].
+/// Restrictions: It is necessary to set the relevant video configuration before [startPreview], and only support the modification of the encoding resolution, the bit rate and the frame rate after [startPreview].
 /// Caution: Developers should note that the wide and high resolution of the mobile end is opposite to the wide and high resolution of the PC. For example, in the case of 360p, the resolution of the mobile end is 360x640, and the resolution of the PC end is 640x360.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -615,9 +615,24 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_set_capture_volume(int volume);
 typedef zego_error(EXP_CALL *pfnzego_express_set_capture_volume)(int volume);
 #endif
 
+/// Gets the audio recording volume for stream publishing.
+///
+/// Available since: 1.13.0
+/// Description: This function is used to get the device's collected volume.
+/// When to call: After creating the engine [createEngine].
+/// Related APIs: Set the capture stream volume [setCaptureVolume].
+///
+/// @param volume Audio recording volume for stream publishing.
+/// @return The volume gain percentage.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API int EXP_CALL zego_express_get_capture_volume(int *volume);
+#else
+typedef int(EXP_CALL *pfnzego_express_get_capture_volume)(int *volume);
+#endif
+
 /// Set audio capture stereo mode.
 ///
-/// Available since: 1.15.0 (iOS/Android/Windows); support macOS since 2.16.0
+/// Available since: 1.15.0 (iOS/Android/Windows/OHOS); support macOS since 2.16.0
 /// Description: This function is used to set the audio capture channel mode. When the developer turns on the stereo capture, using a special stereo capture device, the stereo audio data can be captured and streamed.
 /// Use cases: In some professional scenes, users are particularly sensitive to sound effects, such as voice radio and musical instrument performance. At this time, support for stereo and high-quality sound is required.
 /// Default value: The default is None, which means mono capture.
@@ -768,7 +783,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_sei_config)(struct zego_sei_con
 /// Use cases: Generally used in scenes such as synchronizing music lyrics or precise video layout, you can choose to send SEI.
 /// When to call: After starting to push the stream [startPublishingStream].
 /// Restrictions: Do not exceed 30 times per second, and the SEI data length is limited to 4096 bytes.
-/// Caution: Since the SEI information follows the video frame, there may be frame loss due to network problems, so the SEI information may also be lost. In order to solve this situation, it should be sent several times within the restricted frequency.
+/// Caution: 1. Due to network issues, frame loss may occur, which means SEI information may also be lost. To address this situation, it is advisable to send it multiple times within a limited frequency. 2. Even if the [enableCamera] interface is called to turn off the camera or [mutePublishStreamVideo] is used to stop sending video data, SEI can still be successfully sent; as long as the playback side does not call the [mutePlayStreamVideo] interface to stop pulling audio data, SEI can still be received normally. 3. If the SDK does not support the video module but does support the SEI functional module, SEI information can still be sent normally.
 /// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
 ///
 /// @param data SEI data.
@@ -893,6 +908,37 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_path)(
     const char *file_path, enum zego_publish_channel channel);
 #endif
 
+/// Set the params of the static picture would be published when the camera is closed.
+///
+/// Available: since 3.19.0
+/// Description: Set the params of the static picture would be published when enableCamera(false) is called, it would start to publish static pictures, and when enableCamera(true) is called, it would end publishing static pictures.
+/// Use case: The developer wants to display a static picture when the camera is closed. For example, when the anchor exits the background, the camera would be actively closed. At this time, the audience side needs to display the image of the anchor temporarily leaving.
+/// When to call: After the engine is initialized, call this API to configure the parameters before closing the camera.
+/// Restrictions:
+///   1. Supported picture types are JPEG/JPG, PNG, BMP, HEIF.
+///   2. The function is only for SDK video capture and does not take effect for custom video capture.
+///   3. Not supported that the filePath is a network link.
+/// Caution:
+///   1. The static picture cannot be seen in the local preview.
+///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
+///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+/// Platform differences:
+///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
+///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
+///   3. Android: If it is a full path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets directory path, add the prefix "asset:", such as "asset:watermark.png".
+///   4. Flutter: If it is a absolute path, add the prefix "file:", such as "file:/sdcard/image.png"; If it is a assets resources directory path, add the prefix "flutter-asset://", such as "flutter-asset://assets/watermark.png".
+///   5. UniApp: Only absolute paths are supported. You need to add a "file:" prefix, such as: "file:/sdcard/image.png".
+///
+/// @param params Dummy capture image params.
+/// @param channel Publish channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_dummy_capture_image_params(
+    struct zego_dummy_capture_image_params params, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_params)(
+    struct zego_dummy_capture_image_params params, enum zego_publish_channel channel);
+#endif
+
 /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
 ///
 /// Available since: 2.12.0
@@ -915,7 +961,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_h_265_encode_fallback)(bool 
 /// Available since: 3.0.0 and above
 /// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
 /// When to call: After creating the engine.
-/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities. You need to call the [enableHardwareEncoder] function to enable hardware encoding, and then use this function to determine whether H.265 hardware encoding is supported.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
 ///
 /// @param codec_id Video codec id. Required: Yes.
 /// @param codec_backend Backend implementation of encoder. Required: Yes.
@@ -1104,6 +1150,37 @@ zego_express_set_camera_stabilization_mode(int mode, enum zego_publish_channel c
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_stabilization_mode)(
     int mode, enum zego_publish_channel channel);
+#endif
+
+/// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+///
+/// Available since: 3.18.0
+/// Description: Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM to balance the volume of the human voice and the BGM. Default is off.
+/// When to call: Called after the engine is created [createEngine].
+/// Restrictions: This interface will take effect only when the [EnableAux] interface of the media player is called to enable aux.
+///
+/// @param enable Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aux_bgm_balance(bool enable);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(bool enable);
+#endif
+
+/// Turn on or off the face detection.
+///
+/// Available since: 3.20.0
+/// Description: Turn on or off the face detection. Default is on.
+/// When to call: Called after the engine is created [createEngine].
+/// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
+///
+/// @param enable Turn on or off the face detection.
+/// @param channel Publish stream channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_enable_face_detection(bool enable, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_face_detection)(
+    bool enable, enum zego_publish_channel channel);
 #endif
 
 /// The callback triggered when the state of stream publishing changes.
@@ -1415,6 +1492,28 @@ ZEGOEXP_API void EXP_CALL zego_register_publisher_dummy_capture_image_path_error
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_dummy_capture_image_path_error_callback)(
     zego_on_publisher_dummy_capture_image_path_error callback_func, void *user_context);
+#endif
+
+/// Face detection information update notification.
+///
+/// Available since: 3.20.0
+/// Description: The notification for face detection.
+/// When to trigger: Turn on face detection through the [enableFaceDetection] interface, and this callback will be triggered when the camera is started or the number of faces changes.
+/// Caution: The callback is low-frequency and cannot be used with the custom video pre-processing function.
+///
+/// @param info Face detection information.
+/// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
+/// @param user_context Context of user.
+typedef void (*zego_on_publisher_face_detect_info)(struct zego_face_detection_info info,
+                                                   enum zego_publish_channel channel,
+                                                   void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_publisher_face_detect_info_callback(
+    zego_on_publisher_face_detect_info callback_func, void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_publisher_face_detect_info_callback)(
+    zego_on_publisher_face_detect_info callback_func, void *user_context);
 #endif
 
 /// Callback for setting stream extra information.

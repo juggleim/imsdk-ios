@@ -381,7 +381,7 @@
                            CallButtonLength);
             [self layoutTextUnderImageButton:self.acceptButton];
             self.acceptButton.hidden = NO;
-        } else if (self.callSession.callStatus == JCallStatusConnected) {
+        } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
             self.hangupButton.frame =
                 CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                            self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
@@ -497,7 +497,7 @@
                            CallButtonLength);
             [self layoutTextUnderImageButton:self.acceptButton];
             self.acceptButton.hidden = NO;
-        } else if (self.callSession.callStatus == JCallStatusConnected) {
+        } else if (self.callSession.callStatus == JCallStatusConnected || self.callSession.callStatus == JCallStatusConnecting) {
             self.hangupButton.frame =
                 CGRectMake((self.view.frame.size.width - CallButtonLength) / 2,
                            self.view.frame.size.height - CallVerticalMargin - CallButtonLength - CallExtraSpace, CallButtonLength,
@@ -578,7 +578,20 @@
 ///   - userId: 用户 id
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId {
-    
+    [self resetLayout];
+}
+
+- (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
+//    NSLog(@"soundLevelDidUpdate start");
+//    [soundLevels enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSNumber * _Nonnull obj, BOOL * _Nonnull stop) {
+//        NSLog(@"userId is %@, level is %@", key, obj);
+//    }];
+//    
+//    NSLog(@"soundLevelDidUpdate end");
+}
+
+- (void)videoFirstFrameDidRender:(NSString *)userId {
+    NSLog(@"videoFirstFrameDidRender, userId is %@", userId);
 }
 
 /// 通话中的错误回调

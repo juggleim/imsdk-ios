@@ -34,6 +34,12 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventReceiveQuit,
     JCallEventRoomDestroy,
     
+    /// Signal join
+    JCallEventJoin,
+    JCallEventJoinDone,
+    JCallEventJoinFail,
+    JCallEventReceiveJoin,
+    
     /// Media outgoing
     
     /// Media outgoing callback
@@ -45,6 +51,9 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     JCallEventParticipantLeaveChannel,
     JCallEventParticipantEnableCamera,
     JCallEventParticipantEnableMic,
+    
+    JCallEventSoundLevelUpdate,
+    JCallEventVideoFirstFrameRender
     
     /// Error
     

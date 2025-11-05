@@ -22,32 +22,39 @@ NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("
                                         "name VARCHAR (64),"
                                         "portrait TEXT,"
                                         "extension TEXT,"
-                                        "type SMALLINT"
+                                        "type SMALLINT,"
+                                        "updated_time INTEGER"
                                         ")";
 NSString *const jCreateGroupTable = @"CREATE TABLE IF NOT EXISTS group_info ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "group_id VARCHAR (64),"
                                         "name VARCHAR (64),"
                                         "portrait TEXT,"
-                                        "extension TEXT"
+                                        "extension TEXT,"
+                                        "updated_time INTEGER"
                                         ")";
 NSString *const jCreateGroupMemberTable = @"CREATE TABLE IF NOT EXISTS group_member ("
                                         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                                         "group_id VARCHAR (64),"
                                         "user_id VARCHAR (64),"
                                         "display_name VARCHAR (64),"
-                                        "extension TEXT"
+                                        "extension TEXT,"
+                                        "updated_time INTERGER"
                                         ")";
 NSString *const jCreateUserIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_user ON user(user_id)";
 NSString *const jCreateGroupIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_group ON group_info(group_id)";
 NSString *const jCreateGroupMemberIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_group_member ON group_member(group_id, user_id)";
 NSString *const kAlterAddUserType = @"ALTER TABLE user ADD COLUMN type SMALLINT";
+NSString *const jAlterAddUserUpdatedTime = @"ALTER TABLE user ADD COLUMN updated_time INTEGER";
+NSString *const jAlterAddGroupUpdatedTime = @"ALTER TABLE group_info ADD COLUMN updated_time INTEGER";
+NSString *const jAlterAddGroupMemberUpdatedTime = @"ALTER TABLE group_member ADD COLUMN updated_time INTEGER";
+
 NSString *const jGetUserInfo = @"SELECT * FROM user WHERE user_id = ?";
 NSString *const jGetGroupInfo = @"SELECT * FROM group_info WHERE group_id = ?";
 NSString *const jGetGroupMember = @"SELECT * FROM group_member WHERE group_id = ? AND user_id = ?";
-NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension, type) VALUES (?, ?, ?, ?, ?)";
-NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension) VALUES (?, ?, ?, ?)";
-NSString *const jInsertGroupMembers = @"INSERT OR REPLACE INTO group_member (group_id, user_id, display_name, extension) VALUES ";
+NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension, type, updated_time) VALUES (?, ?, ?, ?, ?, ?)";
+NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
+NSString *const jInsertGroupMembers = @"INSERT OR REPLACE INTO group_member (group_id, user_id, display_name, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
 NSString *const jColUserId = @"user_id";
 NSString *const jColGroupId = @"group_id";
 NSString *const jColName = @"name";
@@ -55,6 +62,7 @@ NSString *const jColPortrait = @"portrait";
 NSString *const jColExtension = @"extension";
 NSString *const jColType = @"type";
 NSString *const jColDisplayName = @"display_name";
+NSString *const jColUpdatedTime = @"updated_time";
 
 @interface JUserInfoDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -147,8 +155,15 @@ NSString *const jColDisplayName = @"display_name";
             NSString *name = obj.userName?:@"";
             NSString *portrait = obj.portrait?:@"";
             NSString *extension = [self stringFromDic:obj.extraDic];
-            
-            [db executeUpdate:jInsertUserInfo withArgumentsInArray:@[userId, name, portrait, extension, @(obj.type)]];
+            JUserInfo *userInfo = nil;
+            JFMResultSet *resultSet = [db executeQuery:jGetUserInfo, userId];
+            if ([resultSet next]) {
+                userInfo = [self userInfoWith:resultSet];
+            }
+            [resultSet close];
+            if (!userInfo || obj.updatedTime > userInfo.updatedTime) {
+                [db executeUpdate:jInsertUserInfo withArgumentsInArray:@[userId, name, portrait, extension, @(obj.type), @(obj.updatedTime)]];
+            }
         }];
     }];
 }
@@ -160,7 +175,15 @@ NSString *const jColDisplayName = @"display_name";
             NSString *name = obj.groupName?:@"";
             NSString *portrait = obj.portrait?:@"";
             NSString *extension = [self stringFromDic:obj.extraDic];
-            [db executeUpdate:jInsertGroupInfo withArgumentsInArray:@[groupId, name, portrait, extension]];
+            JGroupInfo *groupInfo = nil;
+            JFMResultSet *resultSet = [db executeQuery:jGetGroupInfo, groupId];
+            if ([resultSet next]) {
+                groupInfo = [self groupInfoWith:resultSet];
+            }
+            [resultSet close];
+            if (!groupInfo || obj.updatedTime > groupInfo.updatedTime) {
+                [db executeUpdate:jInsertGroupInfo withArgumentsInArray:@[groupId, name, portrait, extension, @(obj.updatedTime)]];
+            }
         }];
     }];
 }
@@ -169,21 +192,23 @@ NSString *const jColDisplayName = @"display_name";
     if (members.count == 0) {
         return;
     }
-    NSString *sql = jInsertGroupMembers;
-    NSMutableArray *arguments = [NSMutableArray array];
-    for (int i = 0; i < members.count; i++) {
-        sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:4]];
-        if (i != members.count - 1) {
-            sql = [sql stringByAppendingFormat:@", "];
-        }
-        JGroupMember *member = members[i];
-        [arguments addObject:member.groupId];
-        [arguments addObject:member.userId];
-        [arguments addObject:member.groupDisplayName];
-        [arguments addObject:[self stringFromDic:member.extraDic]];
-    }
-    
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:arguments];
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        [members enumerateObjectsUsingBlock:^(JGroupMember * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *groupId = obj.groupId?:@"";
+            NSString *userId = obj.userId?:@"";
+            NSString *displayName = obj.groupDisplayName?:@"";
+            NSString *extension = [self stringFromDic:obj.extraDic];
+            JGroupMember *member = nil;
+            JFMResultSet *rs = [db executeQuery:jGetGroupMember, groupId, userId];
+            if ([rs next]) {
+                member = [self groupMemberWith:rs];
+            }
+            [rs close];
+            if (!member || obj.updatedTime > member.updatedTime) {
+                [db executeUpdate:jInsertGroupMembers withArgumentsInArray:@[groupId, userId, displayName, extension, @(obj.updatedTime)]];
+            }
+        }];
+    }];
 }
 
 + (NSString *)alterUserTableAddType {
@@ -198,6 +223,18 @@ NSString *const jColDisplayName = @"display_name";
     return jCreateGroupMemberIndex;
 }
 
++ (NSString *)alterUserTableAddUpdatedTime {
+    return jAlterAddUserUpdatedTime;
+}
+
++ (NSString *)alterGroupTableAddUpdatedTime {
+    return jAlterAddGroupUpdatedTime;
+}
+
++ (NSString *)alterGroupMemberTableAddUpdatedTime {
+    return jAlterAddGroupMemberUpdatedTime;
+}
+
 #pragma mark - internal
 - (JUserInfo *)userInfoWith:(JFMResultSet *)rs {
     JUserInfo *userInfo = [[JUserInfo alloc] init];
@@ -207,6 +244,7 @@ NSString *const jColDisplayName = @"display_name";
     NSString *extra = [rs stringForColumn:jColExtension];
     userInfo.extraDic = [self dicFromString:extra];
     userInfo.type = [rs intForColumn:jColType];
+    userInfo.updatedTime = [rs longLongIntForColumn:jColUpdatedTime];
     return userInfo;
 }
 
@@ -217,6 +255,7 @@ NSString *const jColDisplayName = @"display_name";
     groupInfo.portrait = [rs stringForColumn:jColPortrait];
     NSString *extra = [rs stringForColumn:jColExtension];
     groupInfo.extraDic = [self dicFromString:extra];
+    groupInfo.updatedTime = [rs longLongIntForColumn:jColUpdatedTime];
     return groupInfo;
 }
 
@@ -227,6 +266,7 @@ NSString *const jColDisplayName = @"display_name";
     groupMember.groupDisplayName = [rs stringForColumn:jColDisplayName];
     NSString *extra = [rs stringForColumn:jColExtension];
     groupMember.extraDic = [self dicFromString:extra];
+    groupMember.updatedTime = [rs longLongIntForColumn:jColUpdatedTime];
     return groupMember;
 }
 

@@ -637,17 +637,17 @@ typedef NS_ENUM(NSUInteger, ZegoVoiceChangerPreset) {
     ZegoVoiceChangerPresetLoudClear = 22,
     /// Minions effect
     ZegoVoiceChangerPresetMinions = 23,
-    /// Sunshine effect, only support iOS
+    /// Sunshine effect
     ZegoVoiceChangerPresetSunshine = 24,
-    /// Gentle effect, only support iOS
+    /// Gentle effect
     ZegoVoiceChangerPresetGentle = 25,
-    /// Sweet effect, only support iOS
+    /// Sweet effect
     ZegoVoiceChangerPresetSweet = 26,
-    /// Sweet male effect, only support iOS
+    /// Sweet male effect
     ZegoVoiceChangerPresetSweetMale = 27,
-    /// Sweet female effect, only support iOS
+    /// Sweet female effec
     ZegoVoiceChangerPresetSweetFemale = 28,
-    /// Bright effect, only support iOS
+    /// Bright effect
     ZegoVoiceChangerPresetBright = 29,
     /// Autobot effect
     ZegoVoiceChangerPresetAutobot = 30,
@@ -686,7 +686,13 @@ typedef NS_ENUM(NSUInteger, ZegoReverbPreset) {
     /// Enhanced Rock reverb effect
     ZegoReverbPresetEnhancedRock = 13,
     /// Enhanced misty reverb effect
-    ZegoReverbPresetEnhancedMisty = 14
+    ZegoReverbPresetEnhancedMisty = 14,
+    /// Hip Hop reverb effect
+    ZegoReverbPresetHipHop = 15,
+    /// Misty reverb effect
+    ZegoReverbPresetMisty = 16,
+    /// 3D voice reverb effect
+    ZegoReverbPresetThreeDimensionalVoice = 17
 };
 
 /// Mode of Electronic Effects.
@@ -820,7 +826,9 @@ typedef NS_ENUM(NSUInteger, ZegoAECMode) {
     /// Moderate echo cancellation, which may slightly affect a little bit of sound, but the residual echo will be less.
     ZegoAECModeMedium = 1,
     /// Comfortable echo cancellation, that is, echo cancellation does not affect the sound quality of the sound, and sometimes there may be a little echo, but it will not affect the normal listening.
-    ZegoAECModeSoft = 2
+    ZegoAECModeSoft = 2,
+    /// AI echo cancellation. Supports intelligent recognition and elimination of echo, with a significant improvement in vocal fidelity compared to traditional AEC algorithms, without additional delay or power consumption increase.
+    ZegoAECModeAI = 3
 };
 
 /// Active Noise Suppression mode.
@@ -836,7 +844,9 @@ typedef NS_ENUM(NSUInteger, ZegoANSMode) {
     /// Balanced AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
     ZegoANSModeAIBalanced = 4,
     /// Low latency AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
-    ZegoANSModeAILowLatency = 5
+    ZegoANSModeAILowLatency = 5,
+    /// Aggressive AI mode ANS. It will cause great damage to music, so it can not be used for noise suppression of sound sources that need to collect background sound. Please contact ZEGO technical support before use.
+    ZegoANSModeAIAggressive = 6
 };
 
 /// video encode profile.
@@ -1093,6 +1103,14 @@ typedef NS_ENUM(NSUInteger, ZegoDeviceExceptionType) {
     ZegoDeviceExceptionTypeAudioSessionDeactive = 12,
     /// Audio session category change (Apple platform only).
     ZegoDeviceExceptionTypeAudioSessionCategoryChange = 13
+};
+
+/// Mode for notifying the local device state.
+typedef NS_ENUM(NSUInteger, ZegoExpNotifyDeviceStateMode) {
+    /// Notify the local device state.
+    ZegoExpNotifyDeviceStateModeOpen = 0,
+    /// Do not notify the local device state. Only valid for disable device.
+    ZegoExpNotifyDeviceStateModeClose = 1
 };
 
 /// Remote device status.
@@ -1615,13 +1633,13 @@ typedef NS_ENUM(NSUInteger, ZegoAudioVADStableStateMonitorType) {
 
 /// Orientation mode of the video.
 typedef NS_ENUM(NSUInteger, ZegoOrientationMode) {
-    /// Custom mode.Description: The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
+    /// Custom mode. The default is the custom mode. In this mode, the user needs to set the orientation through [SetAppOrientation], and set the video resolution through [SetVideoConfig] to control the video ratio. The SDK rotates the video at the stream publishing end.
     ZegoOrientationModeCustom = 0,
-    /// Player self adaption mode.Description: The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
+    /// Description: Player self adaption mode. The video orientation of the stream playing end is automatically vertically upward, and the user of the stream publishing end no longer needs to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Both the stream publishing end and the stream playing end need to be set to [ZegoOrientationModeAdaption] mode. 2. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.  3. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual orientation of the device.
     ZegoOrientationModeAdaption = 1,
-    /// Player adapt to pulisher mode.Description: Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
+    /// Description: Player adapt to pulisher mode. Taking the Status Bar as a reference, the video direction of the stream playing end is the same as the preview video direction of the stream publishing end. The SDK will use the Status Bar as a reference to rotate the image on the stream playing end, and the rotation angle is the same as the rotation angle of the preview on the stream publishing end. Stream publishing end users no longer need to set the orientation through [SetAppOrientation], and no longer need to set the video resolution to control the video ratio through [SetVideoConfig]. Caution: 1. Media players, cloud recording, local recording, and publish or play streaming scenarios via CDN are not supported.2. In this mode, the SDK will automatically swap the width and height of the encoding resolution according to the actual position of the Status Bar.
     ZegoOrientationModeAlignment = 2,
-    /// Fixed resolution ratio mode.Description: Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
+    /// Description: Fixed resolution ratio mode. Taking the Status Bar as a reference, the video orientation of the stream playing end is the same as the previewed video direction of the stream publishing end, and the video resolution is the same as the encoding resolution. Users of the streaming end no longer need to set the orientation through [SetAppOrientation].
     ZegoOrientationModeFixedResolutionRatio = 3
 };
 
@@ -1695,6 +1713,34 @@ typedef NS_ENUM(NSUInteger, ZegoLowlightEnhancementMode) {
     ZegoLowlightEnhancementModeOn = 1,
     /// Automatic low-light enhancement, the brightness enhancement value of the captured picture is dynamically adjusted with the ambient brightness.
     ZegoLowlightEnhancementModeAuto = 2
+};
+
+/// Low light enhanced type.
+typedef NS_ENUM(NSUInteger, ZegoExpLowlightEnhancementType) {
+    /// Normal low light enhancement.
+    ZegoExpLowlightEnhancementTypeNormal = 0,
+    /// AI low light enhancement. If you want to use this function, contact ZEGO technical support.
+    ZegoExpLowlightEnhancementTypeAI = 1
+};
+
+/// Video denoise mode.
+typedef NS_ENUM(NSUInteger, ZegoVideoDenoiseMode) {
+    /// Turn off video denoise.
+    ZegoVideoDenoiseModeOff = 0,
+    /// Turn on video denoise.
+    ZegoVideoDenoiseModeOn = 1,
+    /// Automatic video noise reduction, where the SDK internally determines whether to enable noise reduction based on the level of noise in the captured footage.
+    ZegoVideoDenoiseModeAuto = 2
+};
+
+/// Video denoise strength.
+typedef NS_ENUM(NSUInteger, ZegoVideoDenoiseStrength) {
+    /// Light denoise strength.
+    ZegoVideoDenoiseStrengthLight = 1,
+    /// Medium denoise strength.
+    ZegoVideoDenoiseStrengthMedium = 2,
+    /// Heavy denoise strength.
+    ZegoVideoDenoiseStrengthHeavy = 3
 };
 
 /// Range scene state change reason.
@@ -1974,6 +2020,14 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
     ZegoProcessedDataUsageTypeBoth = 2
 };
 
+/// Dummy capture image mode.
+typedef NS_ENUM(NSUInteger, ZegoDummyCaptureImageMode) {
+    /// Manual mode. The user needs to call the [EnableCamera] interface to turn off camera capture, and the SDK will use dummy capture image.
+    ZegoDummyCaptureImageModeManual = 0,
+    /// Auto mode. After the SDK detects that the camera is unavailable, it uses dummy capture image to puublish the stream.
+    ZegoDummyCaptureImageModeAuto = 1
+};
+
 /// Log config.
 ///
 /// Description: This parameter is required when calling [setlogconfig] to customize log configuration.
@@ -2124,7 +2178,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Encode resolution, control the image resolution of the encoder when publishing stream. SDK requires the width and height to be set to even numbers. The settings before and after publishing stream can be effective
 @property (nonatomic, assign) CGSize encodeResolution;
 
-/// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Only the camera is not started, the setting is effective. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
+/// Frame rate, control the frame rate of the camera and the frame rate of the encoder. Publishing stream set to 60 fps, playing stream to take effect need contact technical support
 @property (nonatomic, assign) int fps;
 
 /// Bit rate in kbps. The settings before and after publishing stream can be effective. The SDK will automatically set the bit rate suitable for the scenario selected by the developer. If the bit rate manually set by the developer exceeds the reasonable range, the SDK will automatically process the bit rate according to the reasonable range. If you need to configure a high bit rate due to business needs, please contact ZEGO Business.
@@ -2133,7 +2187,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// The codec id to be used, the default value is [default]. Settings only take effect before publishing stream
 @property (nonatomic, assign) ZegoVideoCodecID codecID;
 
-/// Video keyframe interval, in seconds. Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
+/// Video keyframe interval, in seconds. Description: Required: No. Default value: 2 seconds. Value range: [2, 5]. Caution: The setting is only valid before pushing.
 @property (nonatomic, assign) int keyFrameInterval;
 
 /// Create default video configuration(360p, 15fps, 600kbps)
@@ -2390,6 +2444,14 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 @end
 
+/// Position information used by the face detection.
+@interface ZegoFacePositionInfo : NSObject
+
+/// Coordinates used by the face detection.
+@property (nonatomic, assign) CGRect position;
+
+@end
+
 /// View object.
 ///
 /// Configure view object, view Mode, background color
@@ -2438,6 +2500,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// Codec capability negotiation type. By default, no reference to the outcome of the capability negotiation. If you want to use this function, contact ZEGO technical support.
 @property (nonatomic, assign) ZegoCapabilityNegotiationType codecNegotiationType;
+
+/// Stream title, a utf8 string with a maximum length of 255 bytes or less.
+@property (nonatomic, copy) NSString *streamTitle;
 
 @end
 
@@ -2524,6 +2589,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
 @property int quicConnectMode;
 
+/// custom param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+@property (nonatomic, copy) NSString *customParams;
+
 @end
 
 /// Relay to CDN info.
@@ -2542,6 +2610,22 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// The timestamp when the state changed, UNIX timestamp, in milliseconds.
 @property (nonatomic, assign) unsigned long long stateTime;
+
+@end
+
+/// Face detection info.
+///
+/// Face detection info.
+@interface ZegoFaceDetectionInfo : NSObject
+
+/// The image width captured by the camera
+@property (nonatomic, assign) int imageWidth;
+
+/// The image height captured by the camera
+@property (nonatomic, assign) int imageHeight;
+
+/// Face position information list
+@property (nonatomic, strong) NSArray<ZegoFacePositionInfo *> *facePositionList;
 
 @end
 
@@ -2593,7 +2677,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Whether to enable adaptive switching of streams, 1 means on, 0 means off. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
 @property (nonatomic, assign) int adaptiveSwitch;
 
-/// Stream adaptive transcoding template ID list. Valid only if [resourceMode] is ZegoStreamResourceModeOnlyL3. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
+/// Stream adaptive transcoding template ID list. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored.
 @property (nonatomic, copy) NSArray<NSNumber *> *adaptiveTemplateIDList;
 
 /// Play stream resource type configuration when [resourceMode] is ZegoStreamResourceModeCustom.
@@ -2750,6 +2834,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// timestamp
 @property (nonatomic, assign) long long timestampNs;
 
+/// SEI source module. Please contact ZEGO technical support.
+@property int moduleType;
+
 @end
 
 /// Device Info.
@@ -2762,6 +2849,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// Device name
 @property (nonatomic, copy) NSString *deviceName;
+
+/// Device extra info, Format: key="value"\nkey2="value2"..., use line break \n to separate key-value pairs, and use equal sign = to separate key and "value", and there are double quotes around the value
+@property (nonatomic, copy) NSString *deviceExtraInfo;
 
 @end
 
@@ -2917,6 +3007,37 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
             encodeProfile:(ZegoEncodeProfile)profile
             encodeLatency:(int)latency
        enableLowBitrateHD:(BOOL)enableLowBitrateHD;
+
+@end
+
+/// Room information for the output stream in a mixed stream.
+///
+/// Available since: 3.18.0
+/// Description: Setting room information for a single output stream; the mixed output stream can be added to the specified room, allowing users in the room to receive notifications of increased stream in the room.
+/// Use cases: Manual mixed stream scenario, such as Co-hosting.
+/// Restrictions: Dynamic updates during mixed stream are not supported.
+@interface ZegoMixerOutputRoomInfo : NSObject
+
+/// Specifies the room ID of the output stream. You need to ensure that the room is already present when mixing starts.
+@property (nonatomic, copy) NSString *roomID;
+
+/// Specifies the user ID of the output stream. It is not recommended to use the same userID as the actual user in the room to avoid conflicts with the SDK's stream addition behavior.
+@property (nonatomic, copy) NSString *userID;
+
+/// This function is unavaialble.
+///
+/// Please use [initWithRoomID:userID:] instead
++ (instancetype)new NS_UNAVAILABLE;
+
+/// This function is unavaialble.
+///
+/// Please use [initWithRoomID:userID:] instead
+- (instancetype)init NS_UNAVAILABLE;
+
+/// Construct the room information of an output stream in a mixed stream by using roomID and userID.
+///
+/// @return ZegoMixerOutputRoomInfo instance.
+- (instancetype)initWithRoomID:(NSString *)roomID userID:(NSString *)userID;
 
 @end
 
@@ -3086,6 +3207,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Mix stream output video config. On web platforms, this property does not take effect.
 @property (nonatomic, strong) ZegoMixerOutputVideoConfig *videoConfig;
 
+/// Specifies the room information for the output stream.
+@property (nonatomic, strong) ZegoMixerOutputRoomInfo *targetRoom;
+
 /// Create a mix stream output object
 ///
 /// @return ZegoMixerOutput instance
@@ -3093,6 +3217,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// Set the video configuration of the mix stream output
 - (void)setVideoConfig:(ZegoMixerOutputVideoConfig *)videoConfig;
+
+/// Set the room information of the mix stream output
+- (void)setTargetRoom:(ZegoMixerOutputRoomInfo *)targetRoom;
 
 @end
 
@@ -3379,6 +3506,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// SEI data (Optional, if you don't need to send SEI, set it to null. Deprecated, use [sendSEI] instead). Useful when set format as [AVCC] or [AnnexB]
 @property (nonatomic, strong, nullable) NSData *SEIData;
 
+/// Whether to use the external timestamp completely. The default is false. When set to false, the SDK will adjust based on the timestamps of the audio frame and video frame to ensure audio-video synchronization. When set to true, the SDK does not adjust the timestamp and uses the external timestamp completely.
+@property (nonatomic, assign) BOOL isExternalClock;
+
 @end
 
 /// Parameter object for audio frame.
@@ -3598,6 +3728,32 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 @end
 
+/// RTC Network Statistics
+@interface ZegoRtcStatsInfo : NSObject
+
+/// total upstream bandwidth, in kbps
+@property (nonatomic, assign) double totalTxBandwidth;
+
+/// upstream average rtt, in milliseconds
+@property (nonatomic, assign) unsigned int avgTxRtt;
+
+/// upstream average packet lost rate. in percentage, 0.0 ~ 1.0
+@property (nonatomic, assign) double avgTxPacketLostRate;
+
+/// total downlink bandwidth, in kbps
+@property (nonatomic, assign) double totalRxBandwidth;
+
+/// downlink average rtt, in milliseconds
+@property (nonatomic, assign) unsigned int avgRxRtt;
+
+/// downlink average packet lost rate. in percentage, 0.0 ~ 1.0
+@property (nonatomic, assign) double avgRxPacketLostRate;
+
+/// average peer to peer delay, in milliseconds
+@property (nonatomic, assign) unsigned int avgPeerToPeerDelay;
+
+@end
+
 /// The NTP info
 @interface ZegoNetworkTimeInfo : NSObject
 
@@ -3631,10 +3787,10 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Media player network cache information
 @interface ZegoNetWorkResourceCache : NSObject
 
-/// Cached duration, unit ms
+/// Cached playable duration, unit ms
 @property (nonatomic, assign) unsigned int time;
 
-/// Cached size, unit byte
+/// Cached playable size, unit byte
 @property (nonatomic, assign) unsigned int size;
 
 @end
@@ -3687,10 +3843,10 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// the ID of the song.
 @property (nonatomic, copy) NSString *songID;
 
-/// VOD billing mode.
+/// VOD billing mode. Refer to the value of [ZegoCopyrightedMusicBillingMode].
 @property (nonatomic, assign) int mode;
 
-/// Copyright music resource song copyright provider.
+/// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
 @property (nonatomic, assign) int vendorID;
 
 /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicate in which room to order song/accompaniment/accompaniment clip/accompaniment segment.
@@ -3702,7 +3858,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// The scene ID, indicate the actual business. For details, please consult ZEGO technical support.
 @property (nonatomic, assign) int sceneID;
 
-/// The resource type of music.
+/// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
 @property (nonatomic, assign) int resourceType;
 
 @end
@@ -3727,7 +3883,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// the ID of the song.
 @property (nonatomic, copy) NSString *songID;
 
-/// Copyright music resource song copyright provider.
+/// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
 @property (nonatomic, assign) int vendorID;
 
 /// The room ID, the single-room mode can not be passed, and the corresponding room ID must be passed in the multi-room mode. Indicates which room to get resources from.
@@ -3761,13 +3917,13 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// the ID of the song.
 @property (nonatomic, copy) NSString *songID;
 
-/// The resource type of music.
+/// The resource type of music. Refer to the value of [ZegoCopyrightedMusicResourceType].
 @property (nonatomic, assign) int resourceType;
 
-/// The resource quality type of music.
+/// The resource quality type of music. Refer to the value of [ZegoCopyrightedMusicResourceQualityType].
 @property (nonatomic, assign) int resourceQualityType;
 
-/// Copyright music resource song copyright provider.
+/// Copyright music resource song copyright provider. Refer to the value of [ZegoCopyrightedMusicVendorID].
 @property (nonatomic, assign) int vendorID;
 
 @end
@@ -3882,6 +4038,9 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
 @property (nonatomic, assign) unsigned int applicationVolume;
 
+/// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
+@property (nonatomic, assign) CGRect cropRect;
+
 @end
 
 /// The screen captures source information.
@@ -3901,6 +4060,19 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// The image content of the icon.
 @property (nonatomic, copy) ZGImage *_Nullable iconImage;
+
+@end
+
+/// Layer border configuration.
+///
+/// Customize the size, color, etc. of the layer border.
+@interface ZegoLayerBorderConfig : NSObject
+
+/// Border size, default value 4, the maximum value is 100.
+@property (nonatomic, assign) unsigned int width;
+
+/// Background color, the format is 0xRRGGBB, default is green, which is 0x00FF00
+@property (nonatomic, assign) int color;
 
 @end
 
@@ -3953,6 +4125,12 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// The resource ID obtained from the copyrighted music module.
 @property (nonatomic, copy) NSString *resourceID;
+
+/// Online resource cache path, in utf8 encoding format.
+@property (nonatomic, copy) NSString *onlineResourceCachePath;
+
+/// The maximum length of online resource cache to be used, in bytes, with a minimum setting of 10M (10 * 1024 * 1024). The default value is 0 - no limit, and try to cache the entire file.
+@property (nonatomic, assign) long long maxCachePendingLength;
 
 @end
 
@@ -4097,6 +4275,39 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 /// Description: Lip color protection level. Value range: [0,1], the larger the value, the greater the level of lip color protection. Default value: 0.
 @property (nonatomic, assign) float lipColorProtectionLevel;
+
+@end
+
+/// Video denoise params.
+@interface ZegoVideoDenoiseParams : NSObject
+
+/// Description: Video denoise mode. Default value: Off.
+@property (nonatomic, assign) ZegoVideoDenoiseMode mode;
+
+/// Description: Video denoise strength. Default value: Light.
+@property (nonatomic, assign) ZegoVideoDenoiseStrength strength;
+
+@end
+
+/// Dummy capture image params.
+@interface ZegoDummyCaptureImageParams : NSObject
+
+/// Picture file path.
+@property (nonatomic, copy) NSString *path;
+
+/// Dummy capture image mode.
+@property (nonatomic, assign) ZegoDummyCaptureImageMode mode;
+
+@end
+
+/// Low light enhancement params.
+@interface ZegoExpLowlightEnhancementParams : NSObject
+
+/// Description: Low light enhancement mode. Default value: Off.
+@property (nonatomic, assign) ZegoLowlightEnhancementMode mode;
+
+/// Description: Low light enhancement type. Default value: Normal.
+@property (nonatomic, assign) ZegoExpLowlightEnhancementType type;
 
 @end
 
@@ -4573,7 +4784,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Related APIs: After it is turned on, user can use the [onMediaPlayerFrequencySpectrumUpdate] callback to monitor frequency spectrum updates.
 ///
 /// @param enable Whether to enable monitoring, YES is enabled, NO is disabled.
-/// @param millisecond Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [100, 3000].
+/// @param millisecond Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [10, 3000]. Note that on v3.19.0 and older version, the value range is [100, 3000].
 - (void)enableFrequencySpectrumMonitor:(BOOL)enable millisecond:(unsigned int)millisecond;
 
 /// Set the playback channel.
@@ -4628,7 +4839,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 ///
 /// Available since: 3.10.0
 /// Description: Configure the media stream type to be played. You can only play video streams or audio streams. This will take effect during the life cycle of the media player.
-/// Use cases: When the network resource needs to set special header information.
+/// Use cases: When only the video stream or audio stream needs to be played.
 /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
 /// Caution: Changing the media stream type during playing will take effect in the next playing.
 ///
@@ -5574,7 +5785,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 /// Available since: 2.15.0
 /// Description: Get standard pitch data.
 /// Use case: Can be used to display standard pitch lines on the view.
-/// Cation: Only accompaniment or climactic clip assets have pitch lines.
+/// Caution: Only accompaniment or climactic clip assets have pitch lines.
 ///
 /// @param resourceID the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param callback get standard pitch data result.
@@ -6320,6 +6531,19 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 #endif
 
 #if TARGET_OS_OSX
+/// Set whether to highlight the capture area
+///
+/// Available since: 3.21.0
+/// Description: Set whether to highlight the capture area.
+/// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+/// Restrictions: Only available on Windows/macOS.
+///
+/// @param enable Whether to highlight the capture area. YES to highlight, NO to not highlight, the default is NO.
+/// @param config Highlight capture area border configuration.
+- (void)enableHightLight:(BOOL)enable config:(ZegoLayerBorderConfig *)config;
+#endif
+
+#if TARGET_OS_OSX
 /// Get screen capture source index.
 ///
 /// @return Index of the screen capture source.
@@ -6340,7 +6564,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 
 @interface ZegoReplayKitExt : NSObject
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Create a screen capture extension singleton.
 ///
 /// Available since: 3.1.0
@@ -6350,7 +6574,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 + (ZegoReplayKitExt *)sharedInstance;
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Initialize the extension app.
 ///
 /// Available since: 3.1.0
@@ -6361,7 +6585,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 - (void)setupWithDelegate:(id<ZegoReplayKitExtHandler>)delegate API_AVAILABLE(ios(12.0));
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Use App Group to initialize the extension process, which can provide better performance and stability when sharing screens.
 ///
 /// Available since: 3.3.0
@@ -6374,7 +6598,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
                  appGroup:(NSString *)groupID API_AVAILABLE(ios(12.0));
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Finish screen capture.
 ///
 /// Available since: 3.1.0
@@ -6382,7 +6606,7 @@ typedef NS_ENUM(NSUInteger, ZegoProcessedDataUsageType) {
 - (void)finished API_AVAILABLE(ios(12.0));
 #endif
 
-#if TARGET_OS_IPHONE
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
 /// Media data sending method
 ///
 /// Available since: 3.1.0

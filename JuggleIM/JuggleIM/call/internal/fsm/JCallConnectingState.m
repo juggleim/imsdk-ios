@@ -12,11 +12,6 @@
 
 - (BOOL)stateDidEnter {
     self.callSessionImpl.callStatus = JCallStatusConnecting;
-    if (self.callSessionImpl.mediaType == JCallMediaTypeVideo) {
-        [self.callSessionImpl enableCamera:YES];
-    } else {
-        [self.callSessionImpl enableCamera:NO];
-    }
     [self.callSessionImpl mediaJoin];
     return YES;
 }

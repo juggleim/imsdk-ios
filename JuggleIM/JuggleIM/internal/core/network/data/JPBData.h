@@ -56,7 +56,10 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeQryCallRoomsAck,
     JPBRcvTypeQryCallRoomAck,
     JPBRcvTypeGetUserInfoAck,
-    JPBRcvTypeQryMsgExtAck
+    JPBRcvTypeQryMsgExtAck,
+    JPBRcvTypeGetTopMsgAck,
+    JPBRcvTypeGetFavoriteMsgAck,
+    JPBRcvTypeGetConversationConfAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -120,11 +123,6 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, assign) BOOL isFinished;
 @property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *convs;
 @property (nonatomic, copy) NSArray<JConcreteConversationInfo *> *deletedConvs;
-@end
-
-@interface JQryReadDetailAck : JQryAck
-@property (nonatomic, copy) NSArray<JUserInfo *> *readMembers;
-@property (nonatomic, copy) NSArray<JUserInfo *> *unreadMembers;
 @end
 
 @interface JConversationInfoAck : JQryAck
@@ -191,7 +189,28 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSArray <JMessageReaction *> *reactionList;
 @end
 
+@interface JRtcAuthAck : JQryAck
+@property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *url;
+@end
+
+@interface JGetTopMsgAck : JQryAck
+@property (nonatomic, strong) JConcreteMessage *message;
+@property (nonatomic, strong) JUserInfo *userInfo;
+@property (nonatomic, assign) long long createdTime;
+@end
+
+@interface JGetFavoriteMsgAck : JQryAck
+@property (nonatomic, copy) NSArray <JFavoriteMessage *> *favoriteMsgs;
+@property (nonatomic, copy) NSString *offset;
+@end
+
+@interface JTemplateAck<T> : JQryAck
+@property (nonatomic, strong) T t;
+@end
+
 @interface JPBRcvObj : NSObject
+@property (nonatomic, assign) long long timestamp;
 @property (nonatomic, assign) JPBRcvType rcvType;
 @property (nonatomic, strong) JConnectAck *connectAck;
 @property (nonatomic, strong) JPublishMsgAck *publishMsgAck;
@@ -200,7 +219,6 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JPublishMsgBody *publishMsgBody;
 @property (nonatomic, strong) JPublishMsgNtf *publishMsgNtf;
 @property (nonatomic, strong) JDisconnectMsg *disconnectMsg;
-@property (nonatomic, strong) JQryReadDetailAck *qryReadDetailAck;
 @property (nonatomic, strong) JSimpleQryAck *simpleQryAck;
 @property (nonatomic, strong) JTimestampQryAck *timestampQryAck;
 @property (nonatomic, strong) JConversationInfoAck *conversationInfoAck;
@@ -212,10 +230,16 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JStringAck *stringAck;
 @property (nonatomic, strong) JRtcQryCallRoomsAck *rtcQryCallRoomsAck;
 @property (nonatomic, strong) JQryMsgExtAck *qryMsgExtAck;
+@property (nonatomic, strong) JRtcAuthAck *rtcAuthAck;
+@property (nonatomic, strong) JGetTopMsgAck *getTopMsgAck;
+@property (nonatomic, strong) JGetFavoriteMsgAck *getFavoriteMsgAck;
+@property (nonatomic, strong) JTemplateAck *templateAck;
 @end
 
 @interface JPBData : NSObject
 - (void)resetDataConverter;
+
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
@@ -244,7 +268,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                      conversationId:(NSString *)conversationId
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(JPushData *)pushData;
+                           pushData:(JPushData *)pushData
+                           lifeTime:(long long)lifeTime
+                  lifeTimeAfterRead:(long long)lifeTimeAfterRead;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                        extras:(NSDictionary *)extras
@@ -311,6 +337,24 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                          userId:(NSString *)userId
                           isTop:(BOOL)isTop
                           index:(int)index;
+
+- (NSData *)topMessageData:(NSString *)messageId
+              conversation:(JConversation *)conversation
+                     isTop:(BOOL)isTop
+                     index:(int)index;
+
+- (NSData *)getTopMessageData:(JConversation *)conversation
+                        index:(int)index;
+
+- (NSData *)favoriteMessagesData:(NSArray <JMessage *> *)messages
+                           isAdd:(BOOL)isAdd
+                          userId:(NSString *)userId
+                           index:(int)index;
+
+- (NSData *)getFavoriteMessagesData:(NSString *)userId
+                              limit:(int)limit
+                             offset:(NSString *)offset
+                              index:(int)index;
 
 - (NSData *)markUnread:(JConversation *)conversation
                 userId:(NSString *)userId
@@ -446,8 +490,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)callInvite:(NSString *)callId
            isMultiCall:(BOOL)isMultiCall
              mediaType:(JCallMediaType)mediaType
+          conversation:(JConversation *)conversation
           targetIdList:(NSArray <NSString *>*)userIdList
             engineType:(NSUInteger)engineType
+                 extra:(NSString *)extra
                  index:(int)index;
 
 - (NSData *)callHangup:(NSString *)callId
@@ -458,6 +504,13 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)callConnected:(NSString *)callId
                     index:(int)index;
+
+- (NSData *)callJoin:(NSString *)callId
+               index:(int)index;
+
+- (NSData *)getConversationCallInfo:(JConversation *)conversation
+                             userId:(NSString *)userId
+                              index:(int)index;
 
 - (NSData *)queryCallRooms:(NSString *)userId
                      index:(int)index;

@@ -22,9 +22,6 @@
 @implementation JTimestampBlockObj
 @end
 
-@implementation JQryReadDetailObj
-@end
-
 @implementation JSimpleBlockObj
 @end
 
@@ -50,4 +47,16 @@
 @end
 
 @implementation JMessageReactionObj
+@end
+
+@implementation JRtcAuthObj
+@end
+
+@implementation JGetTopMsgObj
+@end
+
+@implementation JGetFavoriteMsgObj
+@end
+
+@implementation JTemplateObj
 @end

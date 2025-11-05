@@ -43,26 +43,6 @@
 
 @implementation SingleCallViewController
 
-- (instancetype)initWithOutgoingCall:(id<JCallSession>)callSession {
-    self = [super initWithOutgoingCall:callSession];
-    
-    if (self.callSession.mediaType == JCallMediaTypeVideo) {
-        [self.callSession startPreview:self.mainVideoView];
-        self.mainVideoView.hidden = NO;
-    }
-    return self;
-}
-
-- (instancetype)initWithIncomingCall:(id<JCallSession>)callSession {
-    self = [super initWithIncomingCall:callSession];
-    
-    if (self.callSession.mediaType == JCallMediaTypeVideo) {
-        [self.callSession startPreview:self.mainVideoView];
-        self.mainVideoView.hidden = NO;
-    }
-    return self;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -71,7 +51,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    [self resetLayout];
+//    [self resetLayout];
 }
 
 - (void)resetLayout {
@@ -109,8 +89,11 @@
     } else {
         if (self.callSession.callStatus == JCallStatusOutgoing) {
             self.mainVideoView.hidden = NO;
-            [self.callSession setVideoView:self.mainVideoView forUserId:JIM.shared.currentUserId];
+            [self.callSession startPreview:self.mainVideoView];
             self.blurView.hidden = YES;
+        } else if (self.callSession.callStatus == JCallStatusIncoming) {
+            [self.callSession startPreview:self.mainVideoView];
+            self.mainVideoView.hidden = NO;
         } else if (self.callSession.callStatus == JCallStatusConnected) {
             self.mainVideoView.hidden = NO;
             if (self.callSession.members.count > 0) {
@@ -279,9 +262,6 @@
     }
     return _subVideoView;
 }
-
-
-
 
 - (void)subVideoViewClicked {
     NSString *currentId = JIM.shared.currentUserId;

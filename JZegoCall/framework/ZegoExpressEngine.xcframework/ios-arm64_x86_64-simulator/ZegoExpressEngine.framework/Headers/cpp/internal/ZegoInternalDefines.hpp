@@ -50,13 +50,32 @@
 #define ZEGO_SWITCH_THREAD_ING                                                                     \
     }                                                                                              \
     ;                                                                                              \
-    oInternalOriginBridge->postWindowsMessage(pFunc);
-#elif TARGET_OS_OSX || TARGET_OS_IPHONE
+    if (oInternalOriginBridge->isCallbackSwitchToMainThread()) {                                   \
+        oInternalOriginBridge->postWindowsMessage(pFunc);                                          \
+    } else {                                                                                       \
+        oInternalOriginBridge->postZegoCallbackTask(pFunc);                                        \
+    }
+#elif TARGET_OS_IPHONE
 #import <Foundation/Foundation.h>
-#define ZEGO_SWITCH_THREAD_PRE_STATIC dispatch_async(dispatch_get_main_queue(), ^{;
+#define ZEGO_SWITCH_THREAD_PRE_STATIC dispatch_async(dispatch_get_main_queue(), ^{
 #define ZEGO_SWITCH_THREAD_PRE ZEGO_SWITCH_THREAD_PRE_STATIC
 #define ZEGO_SWITCH_THREAD_ING                                                                     \
     });
+#elif TARGET_OS_OSX
+#import <Foundation/Foundation.h>
+#include <functional>
+#define ZEGO_SWITCH_THREAD_PRE_STATIC auto task = [=]() {
+#define ZEGO_SWITCH_THREAD_PRE ZEGO_SWITCH_THREAD_PRE_STATIC
+#define ZEGO_SWITCH_THREAD_ING                                                                     \
+    }                                                                                              \
+    ;                                                                                              \
+    if (oInternalOriginBridge->isCallbackSwitchToMainThread()) {                                   \
+        dispatch_async(dispatch_get_main_queue(), ^{                                               \
+          task();                                                                                  \
+        });                                                                                        \
+    } else {                                                                                       \
+        oInternalOriginBridge->postZegoCallbackTask(new std::function<void(void)>(task));          \
+    }
 #else
 #define ZEGO_SWITCH_THREAD_PRE_STATIC {
 #define ZEGO_SWITCH_THREAD_PRE ZEGO_SWITCH_THREAD_PRE_STATIC

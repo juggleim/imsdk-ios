@@ -19,6 +19,7 @@
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
 #import "JRtcRoom.h"
+#import "JGroupMessageReadInfoDetail.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -72,9 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)callDidAccept:(JRtcRoom *)room
                  user:(JUserInfo *)user;
 - (void)roomDidDestroy:(JRtcRoom *)room;
+- (void)userDidJoin:(NSArray <JCallMember *> *)users
+             inRoom:(JRtcRoom *)room;
 @end
 
 @interface JWebSocket : NSObject
+@property (nonatomic, assign) long long timeDifference;
+
 - (instancetype)initWithSendQueque:(dispatch_queue_t)sendQueue
                       receiveQueue:(dispatch_queue_t)receiveQueue;
 - (void)connect:(NSString *)appKey
@@ -101,6 +106,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setCallDelegate:(id<JWebSocketCallDelegate>)delegate;
 
+- (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
+
 - (void)sendIMMessage:(JMessageContent *)content
        inConversation:(JConversation *)conversation
           clientMsgNo:(long long)clientMsgNo
@@ -111,6 +118,8 @@ NS_ASSUME_NONNULL_BEGIN
           mentionInfo:(JMessageMentionInfo *)mentionInfo
       referredMessage:(JConcreteMessage *)referredMessage
              pushData:(JPushData *)pushData
+             lifeTime:(long long)lifeTime
+    lifeTimeAfterRead:(long long)lifeTimeAfterRead
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
@@ -172,10 +181,10 @@ NS_ASSUME_NONNULL_BEGIN
                  success:(void (^)(long long timestamp))successBlock
                    error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-- (void)getGroupMessageReadDetail:(NSString *)messageId
-                   inConversation:(JConversation *)conversation
-                          success:(void (^)(NSArray<JUserInfo *> *readMembers, NSArray<JUserInfo *> *unreadMembers))successBlock
-                            error:(void (^)(JErrorCodeInternal code))errorBlock;
+- (void)getGroupMessageReadInfoDetail:(NSString *)messageId
+                       inConversation:(JConversation *)conversation
+                              success:(void (^)(JGroupMessageReadInfoDetail *detail))successBlock
+                                error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)setMute:(BOOL)isMute
  inConversation:(JConversation *)conversation
@@ -208,6 +217,32 @@ inConversation:(JConversation *)conversation
              lastReadIndex:(long long)lastReadIndex
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)setMessageTop:(BOOL)isTop
+            messageId:(NSString *)messageId
+         conversation:(JConversation *)conversation
+              success:(void (^)(long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getTopMessage:(JConversation *)conversation
+              success:(void (^)(JConcreteMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)addFavoriteMessages:(NSArray <JMessage *> *)messageList
+                     userId:(NSString *)userId
+                    success:(void (^)(long long timestamp))successBlock
+                      error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)removeFavoriteMessages:(NSArray <JMessage *> *)messageList
+                        userId:(NSString *)userId
+                       success:(void (^)(long long timestamp))successBlock
+                         error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getFavoriteMessagesWithOffset:(NSString *)offset
+                                limit:(int)limit
+                               userId:(NSString *)userId
+                              success:(void (^)(NSArray <JFavoriteMessage *> *messageList, NSString *offset))successBlock
+                                error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)registerPushToken:(NSString *)token
                    userId:(NSString *)userId
@@ -344,9 +379,11 @@ inConversation:(JConversation *)conversation
 - (void)callInvite:(NSString *)callId
        isMultiCall:(BOOL)isMultiCall
          mediaType:(JCallMediaType)mediaType
+      conversation:(JConversation *)conversation
       targetIdList:(NSArray <NSString *>*)userIdList
         engineType:(NSUInteger)engineType
-           success:(void (^)(NSString * zegoToken))successBlock
+             extra:(NSString *)extra
+           success:(void (^)(NSString * token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callHangup:(NSString *)callId
@@ -354,12 +391,21 @@ inConversation:(JConversation *)conversation
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callAccept:(NSString *)callId
-           success:(void (^)(NSString * zegoToken))successBlock
+           success:(void (^)(NSString * token, NSString *url))successBlock
              error:(void (^)(JErrorCodeInternal code))errorBlock;
 
 - (void)callConnected:(NSString *)callId
               success:(void (^)(void))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)callJoin:(NSString *)callId
+         success:(void (^)(NSArray <JRtcRoom *> *))successBlock
+           error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getConversationCallInfo:(JConversation *)conversation
+                         userId:(NSString *)userId
+                        success:(void (^)(JCallInfo *))successBlock
+                          error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)queryCallRooms:(NSString *)userId
                success:(void (^)(NSArray <JRtcRoom *>*))successBlock

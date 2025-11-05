@@ -17,10 +17,8 @@
 #define jPreviewList @"previewList"
 #define jPreviewContent @"content"
 #define jPreviewUserId @"userId"
-#define jPreviewUserName @"name"
+#define jPreviewUserName @"userName"
 #define jPreviewPortrait @"portrait"
-
-
 
 #define jMergeDigest @"[Merge]"
 

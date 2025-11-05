@@ -209,8 +209,10 @@
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.messageDb insertMessages:messages];
 }
-- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId{
-    return [self.messageDb getMessageWithMessageId:messageId];
+- (nullable JConcreteMessage *)getMessageWithMessageId:(NSString *)messageId
+                                           currentTime:(long long)now {
+    return [self.messageDb getMessageWithMessageId:messageId
+                                       currentTime:now];
 }
 
 - (void)updateMessageAfterSend:(long long)clientMsgNo
@@ -249,6 +251,10 @@
     [self.messageDb setMessageFlags:flags withMessageId:messageId];
 }
 
+- (void)updateDestroyTime:(long long)destroyTime withMessageId:(NSString *)messageId {
+    [self.messageDb updateDestroyTime:destroyTime withMessageId:messageId];
+}
+
 - (void)updateMessageContent:(JMessageContent *)content
                  contentType:(NSString *)type
              withClientMsgNo:(long long)clientMsgNo {
@@ -261,25 +267,29 @@
     [self.messageDb updateMessage:message];
 }
 
-- (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
-    [self.messageDb setMessagesRead:messageIds];
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds
+               readTime:(long long)readTime {
+    [self.messageDb setMessagesRead:messageIds
+                           readTime:readTime];
 }
 
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs {
     [self.messageDb setGroupMessageReadInfo:msgs];
 }
 
-- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
-                                   count:(int)count
-                                    time:(long long)time
-                               direction:(JPullDirection)direction
-                            contentTypes:(NSArray<NSString *> *)contentTypes {
-    return [self.messageDb getMessagesFrom:conversation
-                                     count:count
-                                      time:time
-                                 direction:direction
-                              contentTypes:(NSArray<NSString *> *)contentTypes];
-}
+//- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
+//                                   count:(int)count
+//                                    time:(long long)time
+//                               direction:(JPullDirection)direction
+//                            contentTypes:(NSArray<NSString *> *)contentTypes
+//                             currentTime:(long long)now {
+//    return [self.messageDb getMessagesFrom:conversation
+//                                     count:count
+//                                      time:time
+//                                 direction:direction
+//                              contentTypes:(NSArray<NSString *> *)contentTypes
+//                               currentTime:now];
+//}
 
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos{
     [self.messageDb deleteMessageByClientIds:clientMsgNos];
@@ -319,7 +329,8 @@
                                            senders:(NSArray<NSString *> *)senderUserIds
                                             states:(NSArray<NSNumber *> *)messageStates
                                      conversations:(NSArray<JConversation *> *)conversations
-                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes {
+                                 conversationTypes:(NSArray<NSNumber *> *)conversationtypes
+                                       currentTime:(long long)now {
     return [self.messageDb searchMessagesWithContent:searchContent
                                                count:count
                                                 time:time
@@ -328,11 +339,13 @@
                                              senders:senderUserIds
                                               states:messageStates
                                        conversations:conversations
-                                   conversationTypes:conversationtypes];
+                                   conversationTypes:conversationtypes
+                                         currentTime:now];
 }
 
-- (NSArray<JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option {
-    NSArray <JSearchConversationsResult *> *resultList = [self.messageDb searchMessageInConversations:option];
+- (NSArray<JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
+                                                            currentTime:(long long)now {
+    NSArray <JSearchConversationsResult *> *resultList = [self.messageDb searchMessageInConversations:option currentTime:now];
     [resultList enumerateObjectsUsingBlock:^(JSearchConversationsResult * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         JConversationInfo *info = [self.conversationDb getConversationInfo:obj.conversationInfo.conversation];
         obj.conversationInfo = info;
@@ -352,8 +365,9 @@
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo{
     [self.messageDb setLocalAttribute:attribute forClientMsgNo:clientMsgNo];
 }
-- (JConcreteMessage *)getLastMessage:(JConversation *)conversation{
-    return [self.messageDb getLastMessage:conversation];;
+- (JConcreteMessage *)getLastMessage:(JConversation *)conversation
+                         currentTime:(long long)now {
+    return [self.messageDb getLastMessage:conversation currentTime:now];
 }
 - (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds {
     return [self.messageDb clearChatroomMessageExclude:chatroomIds];

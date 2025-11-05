@@ -16,6 +16,10 @@
 - (void)initZegoEngineWith:(int)appId
                    appSign:(NSString *)appSign;
 
+- (void)initLiveKitEngine;
+
+- (void)initAgoraEngineWith:(NSString *)appId;
+
 - (void)joinRoom:(JCallSessionImpl *)callSession
         complete:(void (^)(int, NSDictionary *))completeBlock;
 
@@ -38,6 +42,10 @@
 - (void)setSpeakerEnable:(BOOL)isEnable;
 
 - (void)useFrontCamera:(BOOL)isEnable;
+
+- (void)enableAEC:(BOOL)isEnable;
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end
 

@@ -9,5 +9,6 @@
 
 @interface JCallMediaRoomConfig : NSObject
 @property (nonatomic, assign) BOOL isUserStatusNotify;
-@property (nonatomic, copy) NSString *zegoToken;
+@property (nonatomic, copy) NSString *token;
+@property (nonatomic, copy) NSString *url;
 @end
