@@ -695,6 +695,9 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_DestroyTime = 31,
   DownMsg_FieldNumber_LifeTimeAfterRead = 32,
   DownMsg_FieldNumber_IsDelete = 33,
+  DownMsg_FieldNumber_SubChannel = 34,
+  DownMsg_FieldNumber_ToUserIdsArray = 35,
+  DownMsg_FieldNumber_ReadTime = 36,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -786,6 +789,14 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite) BOOL isDelete;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
+/** The number of items in @c toUserIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
+
+@property(nonatomic, readwrite) int64_t readTime;
 
 @end
 

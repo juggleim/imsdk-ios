@@ -104,7 +104,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updateDestroyTime:(long long)destroyTime
             withMessageId:(NSString *)messageId;
 - (void)updateMessage:(JConcreteMessage *)message;
-- (void)setMessagesRead:(NSArray <NSString *> *)messageIds;
+- (void)setMessagesRead:(NSArray <NSString *> *)messageIds
+               readTime:(long long)readTime;
 - (void)setGroupMessageReadInfo:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs;
 //- (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
 //                                   count:(int)count

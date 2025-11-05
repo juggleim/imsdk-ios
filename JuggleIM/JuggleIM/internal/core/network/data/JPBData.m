@@ -2080,6 +2080,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.isDeleted = downMsg.isDelete;
     msg.destroyTime = downMsg.destroyTime;
     msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
+    msg.readTime = downMsg.readTime;
     
     return msg;
 }

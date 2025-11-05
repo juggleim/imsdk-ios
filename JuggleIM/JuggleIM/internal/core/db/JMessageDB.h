@@ -66,7 +66,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid;
 - (void)setMessageState:(JMessageState)state
         withClientMsgNo:(long long)clientMsgNo;
-- (void)setMessagesRead:(NSArray<NSString *> *)messageIds;
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds
+               readTime:(long long)readTime;
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs;
 - (NSArray<JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                              count:(int)count
@@ -99,6 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)alterTableAddLifeTime;
 + (NSString *)alterTableAddLifeTimeAfterRead;
 + (NSString *)alterTableAddDestroyTime;
++ (NSString *)alterTableAddReadTime;
 @end
 
 NS_ASSUME_NONNULL_END

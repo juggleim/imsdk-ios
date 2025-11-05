@@ -751,7 +751,8 @@
                           inConversation:conversation
                                  success:^(long long timestamp) {
         [self updateSendSyncTime:timestamp];
-        [self.core.dbManager setMessagesRead:messageIds];
+        [self.core.dbManager setMessagesRead:messageIds
+                                    readTime:timestamp];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock();
@@ -798,6 +799,15 @@
             }
         });
     }];
+}
+
+- (long long)getMessageReadTime:(long long)clientMsgNo {
+    NSArray <JMessage *> *messages = [self getMessagesByClientMsgNos:@[@(clientMsgNo)]];
+    if (messages.count > 0) {
+        JConcreteMessage *m = (JConcreteMessage *)messages[0];
+        return m.readTime;
+    }
+    return 0;
 }
 
 - (JMessage *)resend:(JMessage *)message
@@ -2896,17 +2906,19 @@
         //read ntf
         if ([obj.contentType isEqualToString:[JReadNtfMessage contentType]]) {
             JReadNtfMessage *readNtfMsg = (JReadNtfMessage *)obj.content;
-            [self.core.dbManager setMessagesRead:readNtfMsg.messageIds];
+            [self.core.dbManager setMessagesRead:readNtfMsg.messageIds
+                                        readTime:obj.timestamp];
             dispatch_async(self.core.delegateQueue, ^{
                 [self.readReceiptDelegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageReadReceiptDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
                     if ([dlg respondsToSelector:@selector(messagesDidRead:inConversation:)]) {
                         [dlg messagesDidRead:readNtfMsg.messageIds
-                                                   inConversation:obj.conversation];
+                              inConversation:obj.conversation];
                     }
                 }];
             });
             if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRead:messageIds:)]) {
-                [self.sendReceiveDelegate messageDidRead:obj.conversation messageIds:readNtfMsg.messageIds];
+                [self.sendReceiveDelegate messageDidRead:obj.conversation
+                                              messageIds:readNtfMsg.messageIds];
             }
             NSArray <JMessage *> *readMessages = [self.core.dbManager getMessagesByMessageIds:readNtfMsg.messageIds];
             [readMessages enumerateObjectsUsingBlock:^(JMessage * _Nonnull readMessage, NSUInteger idx, BOOL * _Nonnull stop) {
