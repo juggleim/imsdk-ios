@@ -699,6 +699,8 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_LifeTimeAfterRead = 32,
   DownMsg_FieldNumber_IsDelete = 33,
   DownMsg_FieldNumber_SubChannel = 34,
+  DownMsg_FieldNumber_ToUserIdsArray = 35,
+  DownMsg_FieldNumber_ReadTime = 36,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -792,6 +794,12 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readwrite) BOOL isDelete;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
+/** The number of items in @c toUserIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
+
+@property(nonatomic, readwrite) int64_t readTime;
 
 @end
 
@@ -2529,6 +2537,7 @@ typedef GPB_ENUM(QryConverReq_FieldNumber) {
   QryConverReq_FieldNumber_ChannelType = 2,
   QryConverReq_FieldNumber_IsInner = 3,
   QryConverReq_FieldNumber_UserIdsArray = 4,
+  QryConverReq_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface QryConverReq : GPBMessage
@@ -2542,6 +2551,8 @@ GPB_FINAL @interface QryConverReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *userIdsArray;
 /** The number of items in @c userIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger userIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 

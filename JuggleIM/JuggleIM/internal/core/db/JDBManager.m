@@ -267,8 +267,10 @@
     [self.messageDb updateMessage:message];
 }
 
-- (void)setMessagesRead:(NSArray<NSString *> *)messageIds {
-    [self.messageDb setMessagesRead:messageIds];
+- (void)setMessagesRead:(NSArray<NSString *> *)messageIds
+               readTime:(long long)readTime {
+    [self.messageDb setMessagesRead:messageIds
+                           readTime:readTime];
 }
 
 - (void)setGroupMessageReadInfo:(NSDictionary<NSString *,JGroupMessageReadInfo *> *)msgs {

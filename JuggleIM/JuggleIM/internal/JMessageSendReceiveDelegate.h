@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
                 conversation:(JConversation *)conversation
                  clientMsgNo:(long long)clientMsgNo;
 - (void)messageDidRead:(JConversation *)conversation
-           messageIds:(NSArray <NSString *> *)messageIds;
+            messageIds:(NSArray <NSString *> *)messageIds;
 - (void)conversationDidSetUnread:(JConversation *)conversation;
 - (void)conversationsDidAddToTag:(NSString *)tagId
                    conversations:(NSArray<JConversation *> *)conversationList;

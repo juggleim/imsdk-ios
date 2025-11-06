@@ -423,6 +423,10 @@
                               success:(void (^)(JGroupMessageReadInfoDetail * detail))successBlock
                                 error:(void (^)(JErrorCode code))errorBlock;
 
+/// 获取单聊消息阅读时间（群消息阅读状态请使用 getGroupMessageReadInfoDetail:inConversation:success:error:）
+/// - Parameter clientMsgNo: 本端消息唯一编号
+- (long long)getMessageReadTime:(long long)clientMsgNo;
+
 /// 获取被合并的消息列表
 /// - Parameters:
 ///   - messageId: 合并消息 id
