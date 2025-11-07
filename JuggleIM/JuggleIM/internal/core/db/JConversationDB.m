@@ -49,21 +49,23 @@ NSString *const jCreateConversationTagTable = @"CREATE TABLE IF NOT EXISTS conve
                                         "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
 NSString *const jCreateConversationTagIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag ON conversation_tag(tag_id, conversation_type, conversation_id)";
-NSString *const kCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
+NSString *const jCreateConversationTagIndex2 = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag2 ON conversation_tag(tag_id, conversation_type, conversation_id, subchannel)";
+NSString *const jCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
+NSString *const jCreateConversationIndex2 = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation2 ON conversation_info(conversation_type, conversation_id, subchannel)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
-                                       "(conversation_type, conversation_id, timestamp, last_message_id,"
+                                       "(conversation_type, conversation_id, subchannel, timestamp, last_message_id,"
                                        "last_read_message_index, last_message_index, is_top, top_time, mute, mention_info,"
                                        "last_message_type, last_message_client_uid, last_message_client_msg_no, last_message_direction, last_message_state,"
                                        "last_message_has_read, last_message_timestamp, last_message_sender, last_message_content, last_message_mention_info,"
                                        "last_message_seq_no, unread_tag)"
-                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateConversation = @"UPDATE conversation_info SET timestamp=?, last_message_id=?, last_read_message_index=?, "
                                        "last_message_index=?, is_top=?, top_time=?, mute=?, mention_info=?, last_message_type=?,  "
                                        "last_message_client_uid=?, last_message_client_msg_no=?, last_message_direction=?, last_message_state=?, "
                                        "last_message_has_read=?, last_message_timestamp=?, last_message_sender=?, "
                                        "last_message_content=?, last_message_mention_info=?, last_message_seq_no=?, unread_tag =?  WHERE conversation_type = ? "
-                                       "AND conversation_id = ?";
-NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
+                                       "AND conversation_id = ? AND subchannel = ?";
+NSString *const kGetConversation = @"SELECT * FROM conversation_info WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jGetConversations = @"SELECT * FROM conversation_info";
 NSString *const jGetConversationsBy = @"SELECT * FROM conversation_info WHERE";
 NSString *const jIsTopEqualsTrue = @" is_top = 1";
@@ -77,9 +79,9 @@ NSString *const jConversationOrderByTopTimestamp = @" ORDER BY is_top DESC, time
 NSString *const jConversationOrderByTopTime = @" ORDER BY top_time DESC";
 NSString *const jConversationOrderByTimestamp = @" ORDER BY timestamp DESC";
 NSString *const jConversationLimit = @" LIMIT ?";
-NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jDeleteConversation = @"DELETE FROM conversation_info WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
+NSString *const jSetDraft = @"UPDATE conversation_info SET draft = ? WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
+NSString *const jClearUnreadCount = @"UPDATE conversation_info SET last_read_message_index = ? WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jUpdateLastMessage = @"UPDATE conversation_info SET last_message_id=?, last_message_type=?,"
                                       "last_message_client_uid=?, last_message_client_msg_no=?, "
                                       "last_message_direction=?, last_message_state=?, last_message_has_read=?, last_message_timestamp=?, "
@@ -92,28 +94,30 @@ NSString *const jClearLastMessage = @"UPDATE conversation_info SET "
                                      "mention_info=NULL";
 NSString *const jTimestampEqualsQuestion = @", timestamp=?";
 NSString *const jLastMessageIndexEqualsQuestion = @", last_message_index=?";
-NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jSetMute = @"UPDATE conversation_info SET mute = ? WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jSetTop = @"UPDATE conversation_info SET is_top = ?, top_time = ?";
 NSString *const jSetUnread = @"UPDATE conversation_info SET unread_tag = ?";
 NSString *const jGetTotalUnreadCount = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info WHERE mute = 0";
-NSString *const jGetUnreadCountWithTag = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info INNER JOIN conversation_tag ON conversation_info.conversation_type = conversation_tag.conversation_type AND conversation_info.conversation_id = conversation_tag.conversation_id WHERE tag_id = ?";
-NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jGetUnreadCountWithTag = @"SELECT SUM(CASE WHEN last_message_index = last_read_message_index AND unread_tag = 1 THEN 1 WHEN last_message_index - last_read_message_index > 0 THEN last_message_index - last_read_message_index ELSE 0 END) AS total_count FROM conversation_info INNER JOIN conversation_tag ON conversation_info.conversation_type = conversation_tag.conversation_type AND conversation_info.conversation_id = conversation_tag.conversation_id AND conversation_info.subchannel = conversation_tag.subchannel WHERE tag_id = ?";
+NSString *const jWhereConversationIs = @" WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jClearTotalUnreadCount = @"UPDATE conversation_info SET last_read_message_index = last_message_index";
 NSString *const jUpdateConversationTime = @"UPDATE conversation_info SET timestamp = ?";
-NSString *const jUpdateConversationMentionInfo = @"UPDATE conversation_info SET mention_info = ? WHERE conversation_type = ? AND conversation_id = ?";
+NSString *const jUpdateConversationMentionInfo = @"UPDATE conversation_info SET mention_info = ? WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jClearConversationMentionInfo = @"UPDATE conversation_info SET mention_info = NULL";
-NSString *const jUpdateConversationLastMessageHasRead = @"UPDATE conversation_info SET last_message_has_read = 1 WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jUpdateConversationLastMessageState = @"UPDATE conversation_info SET last_message_state = ? WHERE conversation_type = ? AND conversation_id = ? AND last_message_client_msg_no = ?";
-NSString *const jClearTagByConversation = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ?";
-NSString *const jInsertConversationTag = @"INSERT INTO conversation_tag (tag_id, conversation_type, conversation_id) VALUES ";
-NSString *const jRemoveConversationFromTag = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ? AND tag_id = ?";
+NSString *const jUpdateConversationLastMessageHasRead = @"UPDATE conversation_info SET last_message_has_read = 1 WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
+NSString *const jUpdateConversationLastMessageState = @"UPDATE conversation_info SET last_message_state = ? WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ? AND last_message_client_msg_no = ?";
+NSString *const jClearTagByConversation = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ?";
+NSString *const jInsertConversationTag = @"INSERT INTO conversation_tag (tag_id, conversation_type, conversation_id, subchannel) VALUES ";
+NSString *const jRemoveConversationFromTag = @"DELETE FROM conversation_tag WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ? AND tag_id = ?";
 NSString *const jGetConversationsByTag = @"SELECT * FROM conversation_info INNER JOIN conversation_tag"
                                             " ON conversation_info.conversation_type = conversation_tag.conversation_type"
                                             " AND conversation_info.conversation_id = conversation_tag.conversation_id"
+                                            " AND conversation_info.subchannel = conversation_tag.subchannel"
                                             " WHERE tag_id = ? ";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
+NSString *const jSubChannel = @"subchannel";
 NSString *const jDraft = @"draft";
 NSString *const jConversationTimestamp = @"timestamp";
 NSString *const jLastMessageId = @"last_message_id";
@@ -138,6 +142,8 @@ NSString *const jTotalCount = @"total_count";
 NSString *const jHasUnread = @"unread_tag";
 NSString *const jAlterConversationInfoAddSubChannel = @"ALTER TABLE conversation_info ADD COLUMN subchannel VARCHAR (64) DEFAULT ''";
 NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_tag ADD COLUMN subchannel VARCHAR (64) DEFAULT ''";
+NSString *const jDropConversationIndex1 = @"DROP INDEX IF EXISTS idx_conversation";
+NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversation_tag";
 
 @interface JConversationDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -147,9 +153,9 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
 
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
-    [self.dbHelper executeUpdate:kCreateConversationIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateConversationIndex2 withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
-    [self.dbHelper executeUpdate:jCreateConversationTagIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateConversationTagIndex2 withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
 }
 
@@ -179,7 +185,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
             NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             
             JConcreteConversationInfo *info = nil;
-            JFMResultSet *resultSet = [db executeQuery:kGetConversation, @(obj.conversation.conversationType), obj.conversation.conversationId];
+            JFMResultSet *resultSet = [db executeQuery:kGetConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, obj.conversation.subChannel];
             if ([resultSet next]) {
                 info = [self conversationInfoWith:resultSet];
             }
@@ -198,10 +204,10 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
             }
             if (info) {
                 [updateConversations addObject:obj];
-                [db executeUpdate:jUpdateConversation, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread), @(obj.conversation.conversationType), obj.conversation.conversationId];
+                [db executeUpdate:jUpdateConversation, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread), @(obj.conversation.conversationType), obj.conversation.conversationId, obj.conversation.subChannel];
             } else {
                 [insertConversations addObject:obj];
-                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread)];
+                [db executeUpdate:kInsertConversation, @(obj.conversation.conversationType), obj.conversation.conversationId, obj.conversation.subChannel, @(obj.sortTime), lastMessage.messageId, @(obj.lastReadMessageIndex), @(obj.lastMessageIndex), @(obj.isTop), @(obj.topTime), @(obj.mute), mentionInfo, lastMessage.contentType, lastMessage.clientUid, @(lastMessage.clientMsgNo),@(lastMessage.direction), @(lastMessage.messageState), @(lastMessage.hasRead), @(lastMessage.timestamp), lastMessage.senderUserId, content, lastMsgMentionInfo, @(lastMessage.seqNo), @(obj.hasUnread)];
             }
         }];
     }];
@@ -216,7 +222,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     }
     __block JConcreteConversationInfo *info = nil;
     [self.dbHelper executeQuery:kGetConversation
-           withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]
+           withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
         if ([resultSet next]) {
             info = [self conversationInfoWith:resultSet];
@@ -231,7 +237,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
         return;
     }
     [self.dbHelper executeUpdate:jDeleteConversation
-            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+            withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
@@ -352,7 +358,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     if (!draft) {
         draft = @"";
     }
-    [self.dbHelper executeUpdate:jSetDraft withArgumentsInArray:@[draft, @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jSetDraft withArgumentsInArray:@[draft, @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)clearDraftInConversation:(JConversation *)conversation {
@@ -364,7 +370,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     if (conversation.conversationId.length == 0) {
         return;
     }
-    [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jClearUnreadCount withArgumentsInArray:@[@(msgIndex), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)updateLastMessage:(JConcreteMessage *)message {
@@ -411,6 +417,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     }
     [args addObject:@(message.conversation.conversationType)];
     [args addObject:message.conversation.conversationId];
+    [args addObject:message.conversation.subChannel];
     
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 } 
@@ -419,7 +426,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     if (conversation.conversationId.length == 0) {
         return;
     }
-    [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jSetMute withArgumentsInArray:@[@(isMute), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)setTop:(BOOL)isTop time:(long long)time conversation:(JConversation *)conversation {
@@ -432,7 +439,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
         time = 0;
     }
     sql = [sql stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(time), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isTop), @(time), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)setUnread:(BOOL)isUnread
@@ -442,7 +449,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     }
     NSString *sql;
     sql = [jSetUnread stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isUnread), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(isUnread), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)clearUnreadTag {
@@ -503,7 +510,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
         return;
     }
     NSString *sql = [jUpdateConversationTime stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 
@@ -512,7 +519,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     if (conversation.conversationId.length == 0) {
         return;
     }
-    [self.dbHelper executeUpdate:jUpdateConversationMentionInfo withArgumentsInArray:@[mentionInfoJson, @(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jUpdateConversationMentionInfo withArgumentsInArray:@[mentionInfoJson, @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)clearMentionInfo{
@@ -525,9 +532,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     }
     NSString *sql = jClearLastMessage;
     sql = [sql stringByAppendingString:jWhereConversationIs];
-    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
-
-
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
 - (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
@@ -557,11 +562,12 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
                                                                    mentionInfo?:@"",
                                                                    @(message.seqNo),
                                                                    @(message.conversation.conversationType),
-                                                                   message.conversation.conversationId?:@""]];
+                                                                   message.conversation.conversationId?:@"",
+                                                                   message.conversation.subChannel]];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 }
 - (void)setLastMessageHasRead:(JConversation *)conversation{
-    [self.dbHelper executeUpdate:jUpdateConversationLastMessageHasRead withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId]];
+    [self.dbHelper executeUpdate:jUpdateConversationLastMessageHasRead withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 - (void)updateLastMessageState:(JConversation *)conversation
                          state:(JMessageState)state
@@ -570,6 +576,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(state),
                                                                    @(conversation.conversationType),
                                                                    conversation.conversationId,
+                                                                   conversation.subChannel,
                                                                    @(clientMsgNo)]];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 
@@ -581,13 +588,14 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         for (JConcreteConversationInfo *info in conversations) {
             if (info.tagIdList.count > 0) {
-                [db executeUpdate:jClearTagByConversation, @(info.conversation.conversationType), info.conversation.conversationId];
+                [db executeUpdate:jClearTagByConversation, @(info.conversation.conversationType), info.conversation.conversationId, info.conversation.subChannel];
                 for (NSString *tagId in info.tagIdList) {
-                    sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:3]];
+                    sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:4]];
                     sql = [sql stringByAppendingFormat:@", "];
                     [arguments addObject:tagId];
                     [arguments addObject:@(info.conversation.conversationType)];
                     [arguments addObject:info.conversation.conversationId];
+                    [arguments addObject:info.conversation.subChannel];
                 }
             }
         }
@@ -607,13 +615,14 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     NSMutableArray *arguments = [NSMutableArray array];
     for (int i = 0; i < conversations.count; i++) {
         JConversation *conversation = conversations[i];
-        sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:3]];
+        sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:4]];
         if (i != conversations.count - 1) {
             sql = [sql stringByAppendingFormat:@", "];
         }
         [arguments addObject:tagId];
         [arguments addObject:@(conversation.conversationType)];
         [arguments addObject:conversation.conversationId];
+        [arguments addObject:conversation.subChannel];
     }
     [self.dbHelper executeUpdate:sql withArgumentsInArray:arguments];
 }
@@ -625,7 +634,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     }
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         for (JConversation *conversation in conversations) {
-            [db executeUpdate:jRemoveConversationFromTag withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, tagId]];
+            [db executeUpdate:jRemoveConversationFromTag withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel, tagId]];
         }
     }];
 }
@@ -646,6 +655,22 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     return jAlterConversationTagAddSubChannel;
 }
 
++ (NSString *)dropConversationIndex1 {
+    return jDropConversationIndex1;
+}
+
++ (NSString *)dropConversationTagIndex1 {
+    return jDropConversationTagIndex1;
+}
+
++ (NSString *)addConversationIndex2 {
+    return jCreateConversationIndex2;
+}
+
++ (NSString *)addConversationTagIndex2 {
+    return jCreateConversationTagIndex2;
+}
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {
         self.dbHelper = dbHelper;
@@ -660,6 +685,7 @@ NSString *const jAlterConversationTagAddSubChannel = @"ALTER TABLE conversation_
     JConversation *c = [[JConversation alloc] init];
     c.conversationType = [rs intForColumn:jConversationType];
     c.conversationId = [rs stringForColumn:jConversationId];
+    c.subChannel = [rs stringForColumn:jSubChannel];
     info.conversation = c;
     info.draft = [rs stringForColumn:jDraft];
     info.sortTime = [rs longLongIntForColumn:jConversationTimestamp];

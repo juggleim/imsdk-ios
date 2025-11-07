@@ -218,7 +218,7 @@ open class SBUGroupChannelListViewModel: SBUBaseChannelListViewModel {
             let conversationInfo = conversationInfoList[i]
             if conversationInfo.conversation.conversationType == .system
                 && conversationInfo.conversation.conversationId == GlobalConst.friendConversationId {
-                return
+                break
             }
             if let index = SBUUtils.findIndex(ofConversationInfo: conversationInfo, in: tempList) {
                 tempList.remove(at: index)

@@ -40,7 +40,7 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "life_time INTEGER DEFAULT 0,"
                                         "life_time_after_read INTEGER DEFAULT 0,"
                                         "destroy_time INTEGER DEFAULT 0,"
-                                        "subchannel VARCHAR (64) DEFAULT ''"
+                                        "subchannel VARCHAR (64) DEFAULT '',"
                                         "read_time INTEGER"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
@@ -48,6 +48,7 @@ NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
 NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts ON message(destroy_time, conversation_type, conversation_id, timestamp)";
+NSString *const jCreateMessageDTConversationTSIndex2 = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts2 ON message(destroy_time, conversation_type, conversation_id, subchannel, timestamp)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -57,7 +58,7 @@ NSString *const kAlterAddReadTime = @"ALTER TABLE message ADD COLUMN read_time I
 NSString *const kGetMessageWithMessageId = @"SELECT * FROM message WHERE message_uid = ? AND is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
 NSString *const kGetMessageWithMessageIdEvenDelete = @"SELECT * FROM message WHERE message_uid = ?";
 NSString *const kGetMessageWithClientUid = @"SELECT * FROM message WHERE client_uid = ?";
-NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?) AND conversation_type = ? AND conversation_id = ? ";
+NSString *const jGetMessagesInConversation = @"SELECT * FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?) AND conversation_type = ? AND conversation_id = ? AND subchannel = ? ";
 NSString *const jAndGreaterThan = @" AND timestamp > ?";
 NSString *const jAndLessThan = @" AND timestamp < ?";
 NSString *const jAndTypeIn = @" AND type IN ";
@@ -68,12 +69,12 @@ NSString *const jOrderByTimestamp = @" ORDER BY timestamp";
 NSString *const jAnd = @" AND";
 NSString *const jLeftBracket = @" (";
 NSString *const jRightBracket = @")";
-NSString *const jConversationIs = @" conversation_type = ? AND conversation_id = ?";
+NSString *const jConversationIs = @" conversation_type = ? AND conversation_id = ? AND subchannel = ?";
 NSString *const jOr = @" OR";
 NSString *const jASC = @" ASC";
 NSString *const jDESC = @" DESC";
 NSString *const jLimit = @" LIMIT ?";
-NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags, is_deleted, life_time, life_time_after_read, destroy_time, read_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jInsertMessage = @"INSERT INTO message (conversation_type, conversation_id, subchannel, type, message_uid, client_uid, direction, state, has_read, timestamp, sender, content, seq_no, message_index, read_count, member_count, search_content, mention_info, refer_msg_id, flags, is_deleted, life_time, life_time_after_read, destroy_time, read_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 NSString *const jUpdateMessageAfterSend = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE id = ?";
 NSString *const jUpdateMessageAfterSendWithClientUid = @"UPDATE message SET message_uid = ?, state = ?, timestamp = ?, seq_no = ?, member_count = ?, destroy_time = CASE WHEN life_time != 0 THEN ? + life_time ELSE destroy_time END WHERE client_uid = ?";
 NSString *const jUpdateMessageContent = @"UPDATE message SET content = ?, type = ?, search_content = ? WHERE ";
@@ -81,7 +82,7 @@ NSString *const jSetMessageFlags = @"UPDATE message SET flags = ? WHERE message_
 NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE message_uid = ?";
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
-NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND timestamp <= ?";
+NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ? AND timestamp <= ?";
 NSString *const jAndSenderIs = @" AND sender = ?";
 NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
@@ -102,8 +103,8 @@ NSString *const jGetMessageLocalAttribute = @"SELECT local_attribute FROM messag
 NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attribute = ? WHERE";
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
-NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
-NSString *const jGroupByConversationTypeAndId = @" GROUP BY conversation_type, conversation_id";
+NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, subchannel, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
+NSString *const jGroupByConversation = @" GROUP BY conversation_type, conversation_id, subchannel";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
 NSString *const jMessageId = @"id";
@@ -131,6 +132,7 @@ NSString *const jLifeTime = @"life_time";
 NSString *const jLifeTimeAfterRead = @"life_time_after_read";
 NSString *const jDestroyTime = @"destroy_time";
 NSString *const jReadTime = @"read_time";
+NSString *const jMessageSubChannel = @"subchannel";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -190,6 +192,14 @@ NSString *const jReadTime = @"read_time";
             if (m) {
                 obj.clientMsgNo = m.clientMsgNo;
                 obj.existed = YES;
+                if (m.messageId.length == 0) {
+                    [self updateMessageAfterSend:obj.clientMsgNo
+                                       messageId:obj.messageId
+                                       timestamp:obj.timestamp
+                                           seqNo:obj.seqNo
+                                groupMemberCount:obj.groupReadInfo.memberCount
+                                            inDb:db];
+                }
             } else {
                 [self insertMessage:obj inDb:db];
                 obj.clientMsgNo = db.lastInsertRowId;
@@ -376,7 +386,7 @@ NSString *const jReadTime = @"read_time";
         return;
     }
     NSString *sql = jClearMessages;
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, @(startTime)]];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel, @(startTime)]];
     if(senderId.length > 0) {
         sql = [sql stringByAppendingString:jAndSenderIs];
         [args addObject:senderId];
@@ -494,6 +504,7 @@ NSString *const jReadTime = @"read_time";
                 sql = [sql stringByAppendingString:jRightBracket];
                 [args addObject:@(obj.conversationType)];
                 [args addObject:obj.conversationId];
+                [args addObject:obj.subChannel];
                 if (idx < option.conversations.count - 1) {
                     sql = [sql stringByAppendingString:jOr];
                 }
@@ -512,7 +523,7 @@ NSString *const jReadTime = @"read_time";
         }
     }
     
-    sql = [sql stringByAppendingString:jGroupByConversationTypeAndId];
+    sql = [sql stringByAppendingString:jGroupByConversation];
     sql = [sql stringByAppendingString:jOrderByTimestamp];
     sql = [sql stringByAppendingString:jDESC];
     
@@ -525,6 +536,7 @@ NSString *const jReadTime = @"read_time";
             JConversation *c = [[JConversation alloc] init];
             c.conversationType = [resultSet intForColumn:jMessageConversationType];
             c.conversationId = [resultSet stringForColumn:jMessageConversationId];
+            c.subChannel = [resultSet stringForColumn:jMessageSubChannel];
             JConversationInfo *conversationInfo = [[JConversationInfo alloc] init];
             conversationInfo.conversation = c;
             result.conversationInfo = conversationInfo;
@@ -571,6 +583,7 @@ NSString *const jReadTime = @"read_time";
                 conversationId = obj.conversationId;
             }
             [args addObject:conversationId];
+            [args addObject:obj.subChannel];
             if (idx < conversations.count - 1) {
                 sql = [sql stringByAppendingString:jOr];
             }
@@ -708,7 +721,7 @@ NSString *const jReadTime = @"read_time";
     sql = [sql stringByAppendingString:jDESC];
     sql = [sql stringByAppendingString:jLimit];
     NSMutableArray *messages = [[NSMutableArray alloc] init];
-    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(now), @(conversation.conversationType), conversation.conversationId, @(1)]];
+    NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(now), @(conversation.conversationType), conversation.conversationId, conversation.subChannel, @(1)]];
     [self.dbHelper executeQuery:sql
            withArgumentsInArray:args
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
@@ -772,6 +785,7 @@ NSString *const jReadTime = @"read_time";
     [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageConversationTSIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -838,6 +852,7 @@ NSString *const jReadTime = @"read_time";
     [db executeUpdate:jInsertMessage,
                       @(message.conversation.conversationType),
                       message.conversation.conversationId,
+                      message.conversation.subChannel,
                       message.contentType,
                       message.messageId,
                       clientUid,
@@ -878,6 +893,19 @@ NSString *const jReadTime = @"read_time";
     return message;
 }
 
+- (void)updateMessageAfterSend:(long long)clientMsgNo
+                     messageId:(NSString *)messageId
+                     timestamp:(long long)timestamp
+                         seqNo:(long long)seqNo
+              groupMemberCount:(int)count
+                          inDb:(JFMDatabase *)db {
+    if (messageId.length == 0) {
+        return;
+    }
+    [db executeUpdate:jUpdateMessageAfterSend
+ withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), @(clientMsgNo)]];
+}
+
 #pragma mark - update table
 + (NSString *)alterTableAddFlags {
     return kAlterAddFlags;
@@ -889,6 +917,10 @@ NSString *const jReadTime = @"read_time";
 
 + (NSString *)addDTConversationTSIndex {
     return jCreateMessageDTConversationTSIndex;
+}
+
++ (NSString *)addDTConversationTSIndex2 {
+    return jCreateMessageDTConversationTSIndex2;
 }
 
 + (NSString *)addMessageClientUidIndex {
@@ -935,6 +967,7 @@ NSString *const jReadTime = @"read_time";
     JConversation *c = [[JConversation alloc] init];
     c.conversationType = [rs intForColumn:jMessageConversationType];
     c.conversationId = [rs stringForColumn:jMessageConversationId];
+    c.subChannel = [rs stringForColumn:jMessageSubChannel];
     message.conversation = c;
     message.contentType = [rs stringForColumn:jContentType];
     message.clientMsgNo = [rs longLongIntForColumn:jMessageId];

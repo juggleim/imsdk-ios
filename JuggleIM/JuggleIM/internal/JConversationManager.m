@@ -1017,8 +1017,7 @@
         }
         JConcreteConversationInfo *info;
         for (JConcreteConversationInfo * conversationInfo in conversations) {
-            if([conversationInfo.conversation.conversationId isEqualToString:message.conversation.conversationId] &&
-               conversationInfo.conversation.conversationType == message.conversation.conversationType){
+            if ([conversationInfo.conversation isEqual:message.conversation]) {
                 info = conversationInfo;
                 break;
             }
