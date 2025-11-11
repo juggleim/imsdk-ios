@@ -26,8 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         JIM.shared().messageManager.registerContentType(FriendNotifyMessage.self)
         JIM.shared().messageManager.registerContentType(ContactCardMessage.self)
         JIM.shared().messageManager.registerContentType(StreamTextMessage.self)
-//        CallCenter.shared().initZegoEngine(with: 1881186044, appSign: "")
-        CallCenter.shared().initLiveKitEngine()
+        CallCenter.shared().initZegoEngine(with: 111, appSign: "")
+//        CallCenter.shared().initLiveKitEngine()
         SBULog.logType = LogType.error.rawValue | LogType.warning.rawValue | LogType.info.rawValue
         
 //        let pushRegistry = PKPushRegistry(queue: .main)

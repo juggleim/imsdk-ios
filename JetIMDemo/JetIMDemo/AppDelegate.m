@@ -25,10 +25,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    [JIM.shared setServerUrls:@[@"wss://ws.juggleim.com"]];
+    [JIM.shared setServerUrls:@[@"xxx"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
-    [JIM.shared initWithAppKey:@"nsw3sue72begyv7y"];
-    [JIM.shared.connectionManager connectWithToken:@"ChBuc3czc3VlNzJiZWd5djd5GiAYOooHZ-RvpbUPXvixl9FPkWXNDFxoCkhhhVKJuvnU5A=="];
+    [JIM.shared initWithAppKey:@"xxx"];
+    [JIM.shared.connectionManager connectWithToken:@"xxx"];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
@@ -41,7 +41,7 @@
     
     [JIM.shared.callManager addReceiveDelegate:self];
     
-    [JIM.shared.callManager initZegoEngineWith:1881186044 appSign:@""];
+    [JIM.shared.callManager initZegoEngineWith:111 appSign:@""];
     
     return YES;
 }
