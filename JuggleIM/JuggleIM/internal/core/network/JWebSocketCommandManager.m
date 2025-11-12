@@ -6,9 +6,10 @@
 //
 
 #import "JWebSocketCommandManager.h"
+#import "JLogger.h"
 
-#define jCommandTimeOutInterval 5
-#define jCommandDetectInterval 5
+#define jCommandTimeOutInterval 8
+#define jCommandDetectInterval 8
 
 @interface JBlockTimeObj : NSObject
 @property (nonatomic, strong) JBlockObj *blockObj;
@@ -22,6 +23,7 @@
 @property (nonatomic, weak) id<JCommandTimeOutDelegate> delegate;
 @property (nonatomic, strong) NSTimer *detectTimer;
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, JBlockTimeObj *> *cmdBlockDic;
+@property (nonatomic, assign) NSUInteger timeOutCount;
 @end
 
 @implementation JWebSocketCommandManager
@@ -65,6 +67,7 @@
 
 - (JBlockObj *)removeBlockObjectForKey:(NSNumber *)index {
     @synchronized (self) {
+        self.timeOutCount = 0;
         JBlockTimeObj *timeObj = [self.cmdBlockDic objectForKey:index];
         [self.cmdBlockDic removeObjectForKey:index];
         return timeObj.blockObj;
@@ -73,6 +76,7 @@
 
 - (NSArray<JBlockObj *> *)clearBlockObject {
     @synchronized (self) {
+        self.timeOutCount = 0;
         NSMutableArray<JBlockObj *> *results = [[NSMutableArray alloc] init];
         for (JBlockTimeObj *timeObj in self.cmdBlockDic.allValues) {
             [results addObject:timeObj.blockObj];
@@ -87,6 +91,14 @@
     NSArray <JBlockObj *> *timeOutMessages = [self doCommandDetection];
     if (timeOutMessages.count > 0) {
         [self afterCommandDetection:timeOutMessages];
+        @synchronized (self) {
+            self.timeOutCount += timeOutMessages.count;
+            JLogI(@"CMD-Detect", @"timeOutCount is %ld", self.timeOutCount);
+            if (self.timeOutCount >= 3) {
+                [self.delegate timeoutCountDidExceed];
+                self.timeOutCount = 0;
+            }
+        }
     }
 }
 

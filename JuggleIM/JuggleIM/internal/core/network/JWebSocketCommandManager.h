@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol JCommandTimeOutDelegate <NSObject>
 
 - (void)commandDidTimeOut:(NSArray<JBlockObj *> *)objs;
+- (void)timeoutCountDidExceed;
 
 @end
 
