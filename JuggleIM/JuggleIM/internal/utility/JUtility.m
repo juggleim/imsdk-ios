@@ -11,6 +11,9 @@
 #import "JReachability.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import "JIM.h"
+#import <ifaddrs.h>
+#import <arpa/inet.h>
+#import <net/if.h>
 
 @import CoreTelephony;
 
@@ -381,5 +384,38 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 
 + (NSString *)getSystemLanguage {
     return [[NSLocale preferredLanguages] firstObject];
+}
+
++ (NSString *)getClientIP {
+    NSString *localIP = nil;
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *tempAddr = NULL;
+    int success = 0;
+    
+    // 获取所有网络接口信息
+    success = getifaddrs(&interfaces);
+    if (success == 0) {
+        tempAddr = interfaces;
+        // 遍历所有接口
+        while (tempAddr != NULL) {
+            if (tempAddr->ifa_addr != NULL) {
+                // 检查是否为 IPv4 地址且不是回环地址
+                if (tempAddr->ifa_addr->sa_family == AF_INET && !(tempAddr->ifa_flags & IFF_LOOPBACK)) {
+                    // 接口名称通常以 "en"（以太网）或 "wlan"（无线）开头
+                    if ([[NSString stringWithUTF8String:tempAddr->ifa_name] hasPrefix:@"en"] ||
+                        [[NSString stringWithUTF8String:tempAddr->ifa_name] hasPrefix:@"wlan"]) {
+                        // 转换为 IPv4 地址字符串
+                        localIP = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)tempAddr->ifa_addr)->sin_addr)];
+                        break; // 找到第一个有效地址后退出
+                    }
+                }
+            }
+            tempAddr = tempAddr->ifa_next;
+        }
+    }
+    
+    // 释放资源
+    freeifaddrs(interfaces);
+    return localIP;
 }
 @end

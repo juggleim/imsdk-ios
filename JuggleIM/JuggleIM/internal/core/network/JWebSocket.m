@@ -1313,7 +1313,7 @@ inConversation:(JConversation *)conversation
             if (webSocket != self.sws) {
                 return;
             }
-            JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@", error.description);
+            JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@, osVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion, [JUtility currentSystemVersion]);
             [self resetSws];
             if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
                 [self.connectDelegate webSocketDidFail];
@@ -1334,7 +1334,7 @@ inConversation:(JConversation *)conversation
                 }
             }
             if (allFailed && [self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
-                JLogI(@"WS-Connect", @"fail message is %@", error.description);
+                JLogI(@"WS-Connect", @"fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@, osVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion, [JUtility currentSystemVersion]);
                 [self resetSws];
                 [self.connectDelegate webSocketDidFail];
             }
@@ -1586,7 +1586,7 @@ inConversation:(JConversation *)conversation
                                          voipToken:self.voipToken
                                          networkId:[JUtility currentNetWork]
                                             ispNum:[JUtility currentCarrier]
-                                          clientIp:@""
+                                          clientIp:[JUtility getClientIP]
                                           language:[JUtility getSystemLanguage]];
     NSError *err = nil;
     [sws sendData:d error:&err];
