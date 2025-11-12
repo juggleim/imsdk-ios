@@ -8,9 +8,9 @@
 #import "JHeartBeatManager.h"
 #import "JLogger.h"
 
-#define jPingInterval 15
+#define jPingInterval 10
 #define jDetectInterval 10
-#define jTimeOutInterval (jPingInterval*3)
+#define jTimeOutInterval (jPingInterval*2)
 
 @interface JHeartBeatManager ()
 @property (nonatomic, weak) JWebSocket *ws;

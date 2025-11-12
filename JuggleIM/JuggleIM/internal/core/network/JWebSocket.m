@@ -1313,7 +1313,7 @@ inConversation:(JConversation *)conversation
             if (webSocket != self.sws) {
                 return;
             }
-            JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@, osVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion, [JUtility currentSystemVersion]);
+            JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
             [self resetSws];
             if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
                 [self.connectDelegate webSocketDidFail];
@@ -1334,7 +1334,7 @@ inConversation:(JConversation *)conversation
                 }
             }
             if (allFailed && [self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
-                JLogI(@"WS-Connect", @"fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@, osVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion, [JUtility currentSystemVersion]);
+                JLogI(@"WS-Connect", @"fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
                 [self resetSws];
                 [self.connectDelegate webSocketDidFail];
             }
@@ -1516,6 +1516,10 @@ inConversation:(JConversation *)conversation
     for (JBlockObj *obj in objs) {
         [self command:obj error:JErrorCodeInternalOperationTimeOut];
     }
+}
+
+- (void)timeoutCountDidExceed {
+    [self.connectDelegate webSocketDidTimeOut];
 }
 
 #pragma mark - inner
