@@ -1591,7 +1591,7 @@ inConversation:(JConversation *)conversation
                                          voipToken:self.voipToken
                                          networkId:[JUtility currentNetWork]
                                             ispNum:[JUtility currentCarrier]
-                                          clientIp:@""
+                                          clientIp:[JUtility getClientIP]
                                           language:[JUtility getSystemLanguage]];
     NSError *err = nil;
     [sws sendData:d error:&err];

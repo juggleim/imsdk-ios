@@ -8,6 +8,7 @@
 #import "JConnConnectingState.h"
 #import "JConnEvent.h"
 #import "JLogger.h"
+#import "JUtility.h"
 
 #define JConnectTimeOutInterval 10
 
