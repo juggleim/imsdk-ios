@@ -94,6 +94,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeServerSetError = 21006,
     //连接已存在
     JErrorCodeConnectionAlreadyExist = 21007,
+    //朋友圈请求失败
+    JErrorCodeMomentRequestError = 21008,
     
     //消息不存在
     JErrorCodeMessageNotExist = 22001,

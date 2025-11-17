@@ -12,6 +12,7 @@
 #import <JuggleIM/JUserInfoProtocol.h>
 #import <JuggleIM/JChatroomProtocol.h>
 #import <JuggleIM/JCallProtocol.h>
+#import <JuggleIM/JMomentProtocol.h>
 
 @protocol JConnectionProtocol;
 @protocol JMessageProtocol;
@@ -72,6 +73,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSString *currentUserId;
 /// 通话管理类
 @property (nonatomic, strong) id<JCallProtocol> callManager;
+/// 朋友圈管理类
+@property (nonatomic, strong) id<JMomentProtocol> momentManager;
+
 
 @end
 

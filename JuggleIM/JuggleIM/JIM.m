@@ -15,6 +15,7 @@
 #import "JLogger.h"
 #import "JUtility.h"
 #import "JCallManager.h"
+#import "JMomentManager.h"
 
 @interface JIM ()
 @property (nonatomic, strong) JIMCore *core;
@@ -34,6 +35,7 @@ static JIM *_instance;
         JChatroomManager *chatroomManager = [[JChatroomManager alloc] initWithCore:core];
         _instance.chatroomManager = chatroomManager;
         JUserInfoManager *userInfoManager = [[JUserInfoManager alloc] initWithCore:core];
+        JMomentManager *momentManager = [[JMomentManager alloc] initWithCore:core];
         JCallManager *callManager = [[JCallManager alloc] initWithCore:core userInfoManager:userInfoManager];
         JMessageManager *messageManager = [[JMessageManager alloc] initWithCore:core chatroomManager:chatroomManager userInfoManager:userInfoManager callManager:callManager];
         JConversationManager *conversationManager = [[JConversationManager alloc] initWithCore:core messageManager:messageManager userInfoManager:userInfoManager];
@@ -41,6 +43,7 @@ static JIM *_instance;
         _instance.conversationManager = conversationManager;
         _instance.messageManager = messageManager;
         _instance.userInfoManager = userInfoManager;
+        _instance.momentManager = momentManager;
         _instance.callManager = callManager;
         _instance.connectionManager = [[JConnectionManager alloc] initWithCore:core
                                                            conversationManager:conversationManager

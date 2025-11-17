@@ -589,7 +589,7 @@
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取缓存的消息回应（缓存的数据不一定是最新版本，可用于第一时间渲染，优化用户体验）
+/// 获取缓存的消息回应（缓存的数据不一定是最新版本，可用于第一时间渲染界面，优化用户体验）
 /// - Parameter messageIdList: 消息 id 列表
 - (NSArray <JMessageReaction *> *)getCachedMessagesReaction:(NSArray <NSString *> *)messageIdList;
 
