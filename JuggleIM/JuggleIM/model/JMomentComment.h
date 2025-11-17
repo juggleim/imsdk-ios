@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 更新时间
 @property (nonatomic, assign) long long updateTime;
 
+- (NSDictionary *)toDictionary;
+
 @end
 
 NS_ASSUME_NONNULL_END

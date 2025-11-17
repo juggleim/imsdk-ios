@@ -14,6 +14,7 @@
 #import "JReactionDB.h"
 #import "JUtility.h"
 #import "JVersionDB.h"
+#import "JMomentDB.h"
 
 #define kJetIMDBName @"jetimdb"
 
@@ -24,6 +25,7 @@
 @property (nonatomic, strong) JProfileDB *profileDb;
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
 @property (nonatomic, strong) JReactionDB *reactionDB;
+@property (nonatomic, strong) JMomentDB *momentDB;
 @property (nonatomic, strong) JVersionDB *versionDB;
 @end
 
@@ -437,6 +439,7 @@
     [self.profileDb createTables];
     [self.userInfoDB createTables];
     [self.reactionDB createTables];
+    [self.momentDB createTables];
     [self.versionDB createTables];
 }
 
@@ -480,6 +483,7 @@
         self.conversationDb.messageDB = self.messageDb;
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
         self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
+        self.momentDB = [[JMomentDB alloc] initWithDBHelper:self.dbHelper];
         self.versionDB = [[JVersionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;

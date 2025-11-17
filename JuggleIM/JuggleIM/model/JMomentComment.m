@@ -8,5 +8,16 @@
 #import "JMomentComment.h"
 
 @implementation JMomentComment
-
+- (NSDictionary *)toDictionary {
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    dict[@"commentId"] = self.commentId;
+    dict[@"postId"] = self.postId;
+    dict[@"parentCommentId"] = self.parentCommentId ?: [NSNull null];
+    dict[@"content"] = self.content;
+    dict[@"userInfo"] = [self.userInfo toDictionary];
+    dict[@"parentUserInfo"] = [self.parentUserInfo toDictionary] ?: [NSNull null];
+    dict[@"createTime"] = @(self.createTime);
+    dict[@"updateTime"] = @(self.updateTime);
+    return dict.copy;
+}
 @end
