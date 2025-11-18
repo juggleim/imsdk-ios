@@ -1401,7 +1401,7 @@
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMerge", @"success");
-        [self insertRemoteMessages:messages];
+        [self updateUserInfos:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages);
