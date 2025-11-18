@@ -30,7 +30,7 @@
            content:(nonnull NSString *)content
           complete:(nullable void (^)(JErrorCode, JMomentComment * _Nullable))completeBlock {
     NSDictionary *dic = @{
-        @"post_id": momentId,
+        @"momentId": momentId,
         @"parent_comment_id": parentCommentId,
         @"text": content
     };

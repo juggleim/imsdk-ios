@@ -9,16 +9,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, JPostMediaType) {
+typedef NS_ENUM(NSUInteger, JMomentMediaType) {
     /*
      图片
      */
-    JPostMediaTypeImage,
+    JMomentMediaTypeImage,
     
     /*
      视频
      */
-    JPostMediaTypeVideo
+    JMomentMediaTypeVideo
 };
 
 @interface JMomentMedia : NSObject
@@ -26,7 +26,7 @@ typedef NS_ENUM(NSUInteger, JPostMediaType) {
 /// 远端地址
 @property (nonatomic, copy) NSString *url;
 /// 类型
-@property (nonatomic, assign) JPostMediaType type;
+@property (nonatomic, assign) JMomentMediaType type;
 
 - (NSDictionary *)toDictionary;
 

@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 评论 id
 @property (nonatomic, copy) NSString *commentId;
-/// 帖子 id
-@property (nonatomic, copy) NSString *postId;
+/// 朋友圈 id
+@property (nonatomic, copy) NSString *momentId;
 /// 被回复的评论 id
 @property (nonatomic, copy) NSString *parentCommentId;
 /// 评论内容

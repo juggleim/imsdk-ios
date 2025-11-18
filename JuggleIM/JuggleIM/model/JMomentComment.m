@@ -11,7 +11,7 @@
 - (NSDictionary *)toDictionary {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     dict[@"commentId"] = self.commentId;
-    dict[@"postId"] = self.postId;
+    dict[@"momentId"] = self.momentId;
     dict[@"parentCommentId"] = self.parentCommentId ?: [NSNull null];
     dict[@"content"] = self.content;
     dict[@"userInfo"] = [self.userInfo toDictionary];

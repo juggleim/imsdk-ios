@@ -203,7 +203,7 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     
     JMomentComment *comment = [[JMomentComment alloc] init];
     comment.commentId = dict[@"commentId"];
-    comment.postId = dict[@"postId"];
+    comment.momentId = dict[@"momentId"];
     comment.parentCommentId = dict[@"parentCommentId"];
     comment.content = dict[@"content"];
     comment.createTime = [dict[@"createTime"] longLongValue];
