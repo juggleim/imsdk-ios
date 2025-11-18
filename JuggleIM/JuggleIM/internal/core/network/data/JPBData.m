@@ -21,6 +21,7 @@
 #import "JSimpleDataConverter.h"
 #import "JuggleIMConstInternal.h"
 #import "JUltEncryptProtocol.h"
+#import "JIM.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -2029,11 +2030,18 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.contentType = downMsg.msgType;
     msg.messageId = downMsg.msgId;
     msg.clientUid = downMsg.clientUid;
+    msg.senderUserId = downMsg.senderId;
     msg.direction = downMsg.isSend ? JMessageDirectionSend : JMessageDirectionReceive;
+    if (JIM.shared.currentUserId.length > 0) {
+        if ([JIM.shared.currentUserId isEqualToString:msg.senderUserId]) {
+            msg.direction = JMessageDirectionSend;
+        } else {
+            msg.direction = JMessageDirectionReceive;
+        }
+    }
     msg.hasRead = downMsg.isRead;
     msg.timestamp = downMsg.msgTime;
     msg.messageState = JMessageStateSent;
-    msg.senderUserId = downMsg.senderId;
     msg.seqNo = downMsg.msgSeqNo;
     msg.msgIndex = downMsg.unreadIndex;
     NSData *msgContent = downMsg.msgContent;
