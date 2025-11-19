@@ -96,7 +96,7 @@
 }
 
 - (void)getCommentList:(nonnull JGetMomentCommentOption *)option
-              complete:(nullable void (^)(JErrorCode, NSArray<JMomentComment *> * _Nullable))completeBlock { 
+              complete:(nullable void (^)(JErrorCode, NSArray<JMomentComment *> * _Nullable, BOOL isFinish))completeBlock {
     [self requestBySubUrl:@"/jim/posts/comments/list"
                    method:@"GET"
                    params:[option toDictionary]
@@ -116,7 +116,7 @@
 }
 
 - (void)getMomentList:(nonnull JGetMomentOption *)option
-             complete:(nullable void (^)(JErrorCode, NSArray<JMoment *> * _Nullable))completeBlock {
+             complete:(nullable void (^)(JErrorCode, NSArray<JMoment *> * _Nullable, BOOL isFinish))completeBlock {
     [self requestBySubUrl:@"/jim/posts/list"
                    method:@"GET"
                    params:[option toDictionary]
@@ -287,7 +287,7 @@
         if ([server hasPrefix:@"ws://"]) {
             server = [server stringByReplacingOccurrencesOfString:@"ws://" withString:@"http://" options:NSAnchoredSearch range:NSMakeRange(0, 5)];
         } else if ([server hasPrefix:@"wss://"]) {
-            server = [server stringByReplacingOccurrencesOfString:@"wss://" withString:@"http://" options:NSAnchoredSearch range:NSMakeRange(0, 6)];
+            server = [server stringByReplacingOccurrencesOfString:@"wss://" withString:@"https://" options:NSAnchoredSearch range:NSMakeRange(0, 6)];
         }
         _baseUrl = server;
     }

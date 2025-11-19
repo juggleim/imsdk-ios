@@ -38,7 +38,7 @@
 ///   - option: 获取参数
 ///   - completeBlock: 结果回调
 - (void)getMomentList:(nonnull JGetMomentOption *)option
-             complete:(nullable void (^)(JErrorCode errorCode, NSArray <JMoment *> * _Nullable momentList))completeBlock;
+             complete:(nullable void (^)(JErrorCode errorCode, NSArray <JMoment *> * _Nullable momentList, BOOL isFinish))completeBlock;
 
 /// 获取朋友圈详情
 /// - Parameters:
@@ -70,7 +70,7 @@
 ///   - option: 获取参数
 ///   - completeBlock: 结果回调
 - (void)getCommentList:(nonnull JGetMomentCommentOption *)option
-              complete:(nullable void (^)(JErrorCode errorCode, NSArray <JMomentComment *> * _Nullable commentList))completeBlock;
+              complete:(nullable void (^)(JErrorCode errorCode, NSArray <JMomentComment *> * _Nullable commentList, BOOL isFinish))completeBlock;
 
 /// 添加点赞
 /// - Parameters:
