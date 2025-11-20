@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JUploadPreSignCred : NSObject
 
 @property (nonatomic, copy) NSString * url;
+@property (nonatomic, copy) NSString *downloadUrl;
 
 @end
 

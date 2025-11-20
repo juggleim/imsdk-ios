@@ -71,12 +71,15 @@
                                             fromData:data
                                    completionHandler:^(NSData * _Nullable responseData, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error == nil && ((NSHTTPURLResponse *)response).statusCode == 200) {
-            NSArray * array = [self.preSignCred.url componentsSeparatedByString:@"?"];
-            if(array.count >= 2){
-                NSString * modifiedUrl = array.firstObject;
-                JLogE(@"J-Uploader", @"PreSignUploader success, url is %@",modifiedUrl);
-                [self notifySuccess:modifiedUrl];
+            NSString *mediaUrl = self.preSignCred.downloadUrl;
+            if (mediaUrl.length == 0) {
+                NSArray * array = [self.preSignCred.url componentsSeparatedByString:@"?"];
+                if(array.count >= 2){
+                    mediaUrl = array.firstObject;
+                    JLogE(@"J-Uploader", @"PreSignUploader success, url is %@", mediaUrl);
+                }
             }
+            [self notifySuccess:mediaUrl];
         } else {
             JLogE(@"J-Uploader", @"PreSignUploader error, responseCode is %li, error is %@",((NSHTTPURLResponse *)response).statusCode,  error.localizedDescription);
             [self notifyFail];
