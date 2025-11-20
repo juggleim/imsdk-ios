@@ -57,7 +57,7 @@
     contentDic[@"text"] = content;
     NSDictionary *params = @{@"content": contentDic};
     
-    [self requestBySubUrl:@"/jim/posts/add"
+    [self requestBySubUrl:@"/momentgateway/moments/add"
                    method:@"POST"
                    params:params
                  complete:^(int errorCode, NSDictionary *dic) {
@@ -65,9 +65,15 @@
             JMoment *moment = [JMoment new];
             moment.content = content;
             moment.mediaArray = mediaList;
-//            moment.momentId = ;
+            moment.momentId = dic[@"moment_id"];
+            id timeObj = dic[@"moment_time"];
+            if ([timeObj isKindOfClass:[NSNumber class]]) {
+                moment.createTime = [(NSNumber *)timeObj longLongValue];
+                moment.updateTime = moment.createTime;
+            }
+            NSDictionary *userInfoDic = dic[@"user_info"];
+//            JUserInfo *userInfo = 
 //            moment.userInfo = ;
-//            moment.createTime = ;
             if (completeBlock) {
                 completeBlock(JErrorCodeNone, moment);
             }

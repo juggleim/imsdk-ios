@@ -14,7 +14,13 @@
     if (self.url) {
         dict[@"url"] = self.url;
     }
+    if (self.snapshotUrl) {
+        dict[@"snapshot_url"] = self.snapshotUrl;
+    }
     dict[@"type"] = @(self.type);
+    dict[@"height"] = @(self.height);
+    dict[@"width"] = @(self.width);
+    dict[@"duration"] = @(self.duration);
     return [dict copy];
 }
 

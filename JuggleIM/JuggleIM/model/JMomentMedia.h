@@ -25,8 +25,16 @@ typedef NS_ENUM(NSUInteger, JMomentMediaType) {
 
 /// 远端地址
 @property (nonatomic, copy) NSString *url;
+/// 缩略图远端地址
+@property (nonatomic, copy) NSString *snapshotUrl;
 /// 类型
 @property (nonatomic, assign) JMomentMediaType type;
+/// 高度
+@property (nonatomic, assign) int height;
+/// 宽度
+@property (nonatomic, assign) int width;
+/// 时长（用于视频）
+@property (nonatomic, assign) int duration;
 
 - (NSDictionary *)toDictionary;
 
