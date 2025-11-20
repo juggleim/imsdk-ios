@@ -3416,11 +3416,32 @@ GPB_FINAL @interface QiNiuCredResp : GPBMessage
 
 typedef GPB_ENUM(PreSignResp_FieldNumber) {
   PreSignResp_FieldNumber_URL = 1,
+  PreSignResp_FieldNumber_ObjKey = 2,
+  PreSignResp_FieldNumber_Policy = 3,
+  PreSignResp_FieldNumber_SignVersion = 4,
+  PreSignResp_FieldNumber_Credential = 5,
+  PreSignResp_FieldNumber_Date = 6,
+  PreSignResp_FieldNumber_Signature = 7,
+  PreSignResp_FieldNumber_DownloadURL = 8,
 };
 
 GPB_FINAL @interface PreSignResp : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *URL;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *objKey;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *policy;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *signVersion;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *credential;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *date;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *signature;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *downloadURL;
 
 @end
 

@@ -2815,6 +2815,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if(resp.preSignResp != nil){
         JUploadPreSignCred * preSignCred = [[JUploadPreSignCred alloc] init];
         preSignCred.url = resp.preSignResp.URL;
+        preSignCred.downloadUrl = resp.preSignResp.downloadURL;
         a.preSignCred = preSignCred;
     }
     obj.qryFileCredAck = a;

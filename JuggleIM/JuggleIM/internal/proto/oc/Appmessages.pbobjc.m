@@ -10328,10 +10328,24 @@ typedef struct QiNiuCredResp__storage_ {
 @implementation PreSignResp
 
 @dynamic URL;
+@dynamic objKey;
+@dynamic policy;
+@dynamic signVersion;
+@dynamic credential;
+@dynamic date;
+@dynamic signature;
+@dynamic downloadURL;
 
 typedef struct PreSignResp__storage_ {
   uint32_t _has_storage_[1];
   NSString *URL;
+  NSString *objKey;
+  NSString *policy;
+  NSString *signVersion;
+  NSString *credential;
+  NSString *date;
+  NSString *signature;
+  NSString *downloadURL;
 } PreSignResp__storage_;
 
 // This method is threadsafe because it is initially called
@@ -10350,6 +10364,69 @@ typedef struct PreSignResp__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "objKey",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_ObjKey,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, objKey),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "policy",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_Policy,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, policy),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "signVersion",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_SignVersion,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, signVersion),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "credential",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_Credential,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, credential),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "date",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_Date,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, date),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "signature",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_Signature,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, signature),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "downloadURL",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PreSignResp_FieldNumber_DownloadURL,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(PreSignResp__storage_, downloadURL),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(PreSignResp)
@@ -10361,7 +10438,7 @@ typedef struct PreSignResp__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\001!!!\000";
+        "\004\001!!!\000\002\006\000\004\013\000\010\t!!\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
