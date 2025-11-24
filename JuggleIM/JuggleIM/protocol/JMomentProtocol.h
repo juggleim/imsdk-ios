@@ -61,8 +61,10 @@
 /// 删除评论
 /// - Parameters:
 ///   - commentId: 评论 id
+///   - momentId: 朋友圈 id
 ///   - completeBlock: 结果回调
 - (void)removeComment:(nonnull NSString *)commentId
+             momentId:(nonnull NSString *)momentId
              complete:(nullable void (^)(JErrorCode errorCode))completeBlock;
 
 /// 获取评论列表

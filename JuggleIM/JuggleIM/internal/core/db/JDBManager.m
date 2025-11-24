@@ -410,6 +410,19 @@
     [self.reactionDB setMessageReactions:reactions];
 }
 
+#pragma mark - moment table
+- (void)insertMoments:(NSArray<JMoment *> *)moments {
+    [self.momentDB updateMomentList:moments];
+}
+
+- (void)removeMoment:(NSString *)momentId {
+    [self.momentDB removeMoment:momentId];
+}
+
+- (NSArray<JMoment *> *)getCachedMomentList:(JGetMomentOption *)option {
+    return [self.momentDB getCachedMomentList:option];
+}
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {

@@ -26,10 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JUserInfo *parentUserInfo;
 /// 创建时间
 @property (nonatomic, assign) long long createTime;
-/// 更新时间
-@property (nonatomic, assign) long long updateTime;
 
 - (NSDictionary *)toDictionary;
+
++ (JMomentComment *)commentWith:(NSDictionary *)dictionary;
 
 @end
 

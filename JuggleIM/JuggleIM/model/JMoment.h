@@ -28,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray <JMomentComment *> *commentArray;
 /// 朋友圈的创建时间
 @property (nonatomic, assign) long long createTime;
-/// 朋友圈的更新时间
-@property (nonatomic, assign) long long updateTime;
+
++ (JMoment *)momentWith:(NSDictionary *)dictionary;
 @end
 
 NS_ASSUME_NONNULL_END

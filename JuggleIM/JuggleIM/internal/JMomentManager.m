@@ -30,15 +30,41 @@
            content:(nonnull NSString *)content
           complete:(nullable void (^)(JErrorCode, JMomentComment * _Nullable))completeBlock {
     NSDictionary *dic = @{
-        @"momentId": momentId,
-        @"parent_comment_id": parentCommentId,
-        @"text": content
+        @"moment_id": momentId,
+        @"parent_comment_id": parentCommentId?:@"",
+        @"content": @{@"text": content}
     };
-    [self requestBySubUrl:@"/jim/posts/comments/add"
+    [self requestBySubUrl:@"/momentgateway/moments/comments/add"
                    method:@"POST"
                    params:dic
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (errorCode == JErrorCodeNone) {
+            JMomentComment *comment = [JMomentComment new];
+            comment.commentId = dic[@"comment_id"];
+            comment.momentId = momentId;
+            comment.parentCommentId = parentCommentId?:@"";
+            comment.content = content;
+            comment.userInfo = [JUserInfo userInfoWith:dic[@"user_info"]];
+            comment.parentUserInfo = [JUserInfo userInfoWith:dic[@"parent_user_info"]];
+            comment.createTime = [dic[@"comment_time"] longLongValue];
+            NSMutableArray *userArray = [NSMutableArray array];
+            if (comment.userInfo) {
+                [userArray addObject:comment.userInfo];
+            }
+            if (comment.parentUserInfo) {
+                [userArray addObject:comment.parentUserInfo];
+            }
+            if (userArray.count > 0) {
+                [self.core.dbManager insertUserInfos:userArray];
+            }
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, comment);
+            }
+        } else {
+            if (completeBlock) {
+                completeBlock(errorCode, nil);
+            }
+        }
     }];
 }
 
@@ -69,11 +95,12 @@
             id timeObj = dic[@"moment_time"];
             if ([timeObj isKindOfClass:[NSNumber class]]) {
                 moment.createTime = [(NSNumber *)timeObj longLongValue];
-                moment.updateTime = moment.createTime;
             }
             NSDictionary *userInfoDic = dic[@"user_info"];
-//            JUserInfo *userInfo = 
-//            moment.userInfo = ;
+            JUserInfo *userInfo = [JUserInfo userInfoWith:userInfoDic];
+            moment.userInfo = userInfo;
+            [self.core.dbManager insertUserInfos:@[userInfo]];
+            [self.core.dbManager insertMoments:@[moment]];
             if (completeBlock) {
                 completeBlock(JErrorCodeNone, moment);
             }
@@ -88,75 +115,133 @@
 - (void)addReaction:(nonnull NSString *)momentId
                 key:(nonnull NSString *)key
            complete:(nullable void (^)(JErrorCode))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/reactions/add"
+    [self requestBySubUrl:@"/momentgateway/moments/reactions/add"
                    method:@"POST"
-                   params:@{@"post_id": momentId, @"key": key}
+                   params:@{@"moment_id": momentId, @"reaction": @{@"key": key}}
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (completeBlock) {
+            completeBlock(errorCode);
+        }
     }];
 }
 
 - (NSArray<JMoment *> * _Nonnull)getCachedMomentList:(nonnull JGetMomentOption *)option {
-    NSMutableArray *result = [NSMutableArray array];
-    return result;
+    return [self.core.dbManager getCachedMomentList:option];
 }
 
 - (void)getCommentList:(nonnull JGetMomentCommentOption *)option
               complete:(nullable void (^)(JErrorCode, NSArray<JMomentComment *> * _Nullable, BOOL isFinish))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/comments/list"
+    [self requestBySubUrl:@"/momentgateway/moments/comments/list"
                    method:@"GET"
                    params:[option toDictionary]
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (errorCode == JErrorCodeNone) {
+            NSArray *itemsArray = dic[@"items"];
+            NSMutableArray <JMomentComment *> *commentList = [NSMutableArray array];
+            for (NSDictionary *itemDic in itemsArray) {
+                JMomentComment *comment = [JMomentComment commentWith:itemDic];
+                if (comment) {
+                    [commentList addObject:comment];
+                }
+            }
+            BOOL isFinish = [dic[@"is_finished"] boolValue];
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, [commentList copy], isFinish);
+            }
+        } else {
+            if (completeBlock) {
+                completeBlock(errorCode, nil, false);
+            }
+        }
     }];
 }
 
 - (void)getMoment:(nonnull NSString *)momentId
          complete:(nullable void (^)(JErrorCode, JMoment * _Nullable))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/info"
+    [self requestBySubUrl:@"/momentgateway/moments/info"
                    method:@"GET"
-                   params:@{@"post_id": momentId}
+                   params:@{@"moment_id": momentId}
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (errorCode == JErrorCodeNone) {
+            JMoment *moment = [JMoment momentWith:dic];
+            [self.core.dbManager insertMoments:@[moment]];
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, moment);
+            }
+        } else {
+            if (completeBlock) {
+                completeBlock(errorCode, nil);
+            }
+        }
     }];
 }
 
 - (void)getMomentList:(nonnull JGetMomentOption *)option
              complete:(nullable void (^)(JErrorCode, NSArray<JMoment *> * _Nullable, BOOL isFinish))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/list"
+    [self requestBySubUrl:@"/momentgateway/moments/list"
                    method:@"GET"
                    params:[option toDictionary]
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (errorCode == JErrorCodeNone) {
+            NSArray *itemsArray = dic[@"items"];
+            NSMutableArray <JMoment *> *momentList = [NSMutableArray array];
+            for (NSDictionary *itemDic in itemsArray) {
+                JMoment *moment = [JMoment momentWith:itemDic];
+                if (moment) {
+                    [momentList addObject:moment];
+                }
+            }
+            BOOL isFinish = [dic[@"is_finished"] boolValue];
+            [self.core.dbManager insertMoments:momentList];
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, [momentList copy], isFinish);
+            }
+        } else {
+            if (completeBlock) {
+                completeBlock(errorCode, nil, false);
+            }
+        }
     }];
 }
 
 - (void)getReactionList:(nonnull NSString *)momentId
                complete:(nullable void (^)(JErrorCode, NSArray<JMomentReaction *> * _Nullable))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/reactions/list"
+    [self requestBySubUrl:@"/momentgateway/moments/reactions/list"
                    method:@"GET"
-                   params:@{@"post_id": momentId}
+                   params:@{@"moment_id": momentId}
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (errorCode == JErrorCodeNone) {
+            NSArray *itemsArray = dic[@"items"];
+            NSArray <JMomentReaction *> *reactionArray = [JMomentReaction mergeReactionListWithJson:itemsArray];
+            if (completeBlock) {
+                completeBlock(JErrorCodeNone, reactionArray);
+            }
+        } else {
+            if (completeBlock) {
+                completeBlock(errorCode, nil);
+            }
+        }
     }];
 }
 
-- (void)removeComment:(nonnull NSString *)commentId
-             complete:(nullable void (^)(JErrorCode))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/comments/del"
+- (void)removeComment:(NSString *)commentId momentId:(NSString *)momentId complete:(void (^)(JErrorCode))completeBlock {
+    [self requestBySubUrl:@"/momentgateway/moments/comments/del"
                    method:@"POST"
-                   params:@{@"comment_ids": @[commentId]}
+                   params:@{@"moment_id": momentId, @"comment_ids": @[commentId]}
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (completeBlock) {
+            completeBlock(errorCode);
+        }
     }];
 }
 
 - (void)removeMoment:(nonnull NSString *)momentId
             complete:(nullable void (^)(JErrorCode))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/del"
+    [self requestBySubUrl:@"/momentgateway/moments/del"
                    method:@"POST"
-                   params:@{@"post_ids":@[momentId]}
+                   params:@{@"moment_ids":@[momentId]}
                  complete:^(int errorCode, NSDictionary *dic) {
+        [self.core.dbManager removeMoment:momentId];
         if (completeBlock) {
             completeBlock(errorCode);
         }
@@ -166,11 +251,13 @@
 - (void)removeReaction:(nonnull NSString *)momentId
                    key:(nonnull NSString *)key
               complete:(nullable void (^)(JErrorCode))completeBlock {
-    [self requestBySubUrl:@"/jim/posts/reactions/del"
+    [self requestBySubUrl:@"/momentgateway/moments/reactions/del"
                    method:@"POST"
-                   params:@{@"post_id": momentId, @"key": key}
+                   params:@{@"moment_id": momentId, @"reaction": @{@"key": key}}
                  complete:^(int errorCode, NSDictionary *dic) {
-        
+        if (completeBlock) {
+            completeBlock(errorCode);
+        }
     }];
 }
 

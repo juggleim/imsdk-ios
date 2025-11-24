@@ -12,7 +12,7 @@
 - (NSDictionary *)toDictionary {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     if (self.momentId) {
-        dict[@"momentId"] = self.momentId;
+        dict[@"moment_id"] = self.momentId;
     }
     dict[@"start"] = @(self.startTime);
     dict[@"limit"] = @(self.count);

@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<JMoment *> *)getCachedMomentList:(JGetMomentOption *)option;
 - (void)updateMomentList:(NSArray <JMoment *> *)momentList;
+- (void)removeMoment:(NSString *)momentId;
+
 + (NSString *)createMomentTable;
 @end
 

@@ -14,11 +14,11 @@ NSString *const jCreateMomentTable = @"CREATE TABLE IF NOT EXISTS moment ("
                                     "user_info TEXT,"
                                     "reaction_array TEXT,"
                                     "comment_array TEXT,"
-                                    "create_time INTEGER,"
-                                    "update_time INTEGER"
+                                    "create_time INTEGER"
                                     ")";
 NSString *const jGetMoments = @"SELECT * FROM moment WHERE ";
-NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, content, media_array, user_info, reaction_array, comment_array, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, content, media_array, user_info, reaction_array, comment_array, create_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
+NSString *const jDeleteMoment = @"DELETE FROM moment WHERE moment_id = ?";
 
 
 @interface JMomentDB ()
@@ -36,9 +36,12 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     NSMutableArray *args = [NSMutableArray array];
     
     if (option.direction == JPullDirectionNewer) {
-        sql = [sql stringByAppendingString:@" timestamp > ?"];
+        sql = [sql stringByAppendingString:@" create_time > ?"];
     } else {
-        sql = [sql stringByAppendingString:@" timestamp < ?"];
+        sql = [sql stringByAppendingString:@" create_time < ?"];
+    }
+    if (option.startTime == 0) {
+        option.startTime = INT64_MAX;
     }
     [args addObject:@(option.startTime)];
     sql = [sql stringByAppendingString:@" ORDER BY create_time"];
@@ -64,27 +67,28 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
 - (void)updateMomentList:(NSArray<JMoment *> *)momentList {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         for (JMoment *moment in momentList) {
-                NSString *mediaArrayStr = [self jsonStringFromArray:moment.mediaArray];
-                NSString *userInfoStr = [self jsonStringFromObject:moment.userInfo];
-                NSString *reactionArrayStr = [self jsonStringFromArray:moment.reactionArray];
-                NSString *commentArrayStr = [self jsonStringFromArray:moment.commentArray];
-                
-                NSString *sql = @"INSERT OR REPLACE INTO moment ("
-                "moment_id, content, media_array, user_info, reaction_array, comment_array, create_time, update_time"
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                
-                [db executeUpdate:sql,
-                    moment.momentId ?: [NSNull null], // 防止 nil 导致 SQL 错误
-                    moment.content ?: [NSNull null],
-                    mediaArrayStr ?: [NSNull null],
-                    userInfoStr ?: [NSNull null],
-                    reactionArrayStr ?: [NSNull null],
-                    commentArrayStr ?: [NSNull null],
-                    @(moment.createTime),
-                    @(moment.updateTime)];
-            }
+            NSString *mediaArrayStr = [self jsonStringFromArray:moment.mediaArray];
+            NSString *userInfoStr = [self jsonStringFromObject:moment.userInfo];
+            NSString *reactionArrayStr = [self jsonStringFromArray:moment.reactionArray];
+            NSString *commentArrayStr = [self jsonStringFromArray:moment.commentArray];
+            
+            NSString *sql = jUpdateMoments;
+            
+            [db executeUpdate:sql,
+                moment.momentId ?: @"",
+                moment.content ?: @"",
+                mediaArrayStr ?: @"",
+                userInfoStr ?: @"",
+                reactionArrayStr ?: @"",
+                commentArrayStr ?: @"",
+                @(moment.createTime)];
+        }
     }];
-    
+}
+
+- (void)removeMoment:(NSString *)momentId {
+    [self.dbHelper executeUpdate:jDeleteMoment
+            withArgumentsInArray:@[momentId]];
 }
 
 - (nonnull instancetype)initWithDBHelper:(nonnull JDBHelper *)dbHelper {
@@ -104,7 +108,6 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     moment.momentId = [rs stringForColumn:@"moment_id"];
     moment.content = [rs stringForColumn:@"content"];
     moment.createTime = [rs longLongIntForColumn:@"create_time"];
-    moment.updateTime = [rs longLongIntForColumn:@"update_time"];
     
     NSString *mediaArrayStr = [rs stringForColumn:@"media_array"];
     if (mediaArrayStr.length > 0) {
@@ -124,7 +127,7 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     if (userInfoStr.length > 0) {
         NSData *userData = [userInfoStr dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *userDict = [NSJSONSerialization JSONObjectWithData:userData options:0 error:nil];
-        moment.userInfo = [self userInfoFromDict:userDict];
+        moment.userInfo = [JUserInfo userInfoWith:userDict];
     }
     
     NSString *reactionArrayStr = [rs stringForColumn:@"reaction_array"];
@@ -148,7 +151,7 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
         if ([commentDicts isKindOfClass:[NSArray class]]) {
             NSMutableArray *comments = [NSMutableArray array];
             for (NSDictionary *dict in commentDicts) {
-                JMomentComment *comment = [self commentFromDict:dict];
+                JMomentComment *comment = [JMomentComment commentWith:dict];
                 if (comment) [comments addObject:comment];
             }
             moment.commentArray = comments.copy;
@@ -167,19 +170,6 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     return media;
 }
 
-- (JUserInfo *)userInfoFromDict:(NSDictionary *)dict {
-    if (![dict isKindOfClass:[NSDictionary class]]) return nil;
-    
-    JUserInfo *userInfo = [[JUserInfo alloc] init];
-    userInfo.userId = dict[@"userId"];
-    userInfo.userName = dict[@"userName"];
-    userInfo.portrait = dict[@"portrait"];
-    userInfo.extraDic = dict[@"extraDic"];
-    userInfo.type = [dict[@"type"] integerValue];
-    userInfo.updatedTime = [dict[@"updatedTime"] longLongValue];
-    return userInfo;
-}
-
 - (JMomentReaction *)reactionFromDict:(NSDictionary *)dict {
     if (![dict isKindOfClass:[NSDictionary class]]) return nil;
     
@@ -190,28 +180,12 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
     if ([userDicts isKindOfClass:[NSArray class]]) {
         NSMutableArray *users = [NSMutableArray array];
         for (NSDictionary *userDict in userDicts) {
-            JUserInfo *user = [self userInfoFromDict:userDict];
+            JUserInfo *user = [JUserInfo userInfoWith:userDict];
             if (user) [users addObject:user];
         }
         reaction.userArray = users.copy;
     }
     return reaction;
-}
-
-- (JMomentComment *)commentFromDict:(NSDictionary *)dict {
-    if (![dict isKindOfClass:[NSDictionary class]]) return nil;
-    
-    JMomentComment *comment = [[JMomentComment alloc] init];
-    comment.commentId = dict[@"commentId"];
-    comment.momentId = dict[@"momentId"];
-    comment.parentCommentId = dict[@"parentCommentId"];
-    comment.content = dict[@"content"];
-    comment.createTime = [dict[@"createTime"] longLongValue];
-    comment.updateTime = [dict[@"updateTime"] longLongValue];
-    comment.userInfo = [self userInfoFromDict:dict[@"userInfo"]];
-    comment.parentUserInfo = [self userInfoFromDict:dict[@"parentUserInfo"]];
-    
-    return comment;
 }
 
 - (NSString *)jsonStringFromArray:(NSArray *)array {
@@ -225,7 +199,10 @@ NSString *const jUpdateMoments = @"INSERT OR REPLACE INTO moment (moment_id, con
         }
     }
     
-    return [self jsonStringFromObject:dictArray];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictArray options:0 error:nil];
+    if (!jsonData) return nil;
+    
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
 - (NSString *)jsonStringFromObject:(id)object {

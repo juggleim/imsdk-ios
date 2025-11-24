@@ -38,6 +38,8 @@ typedef NS_ENUM(NSUInteger, JMomentMediaType) {
 
 - (NSDictionary *)toDictionary;
 
++ (JMomentMedia *)mediaWith:(NSDictionary *)dictionary;
+
 @end
 
 NS_ASSUME_NONNULL_END

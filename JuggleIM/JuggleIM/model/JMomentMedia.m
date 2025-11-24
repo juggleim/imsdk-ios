@@ -24,4 +24,18 @@
     return [dict copy];
 }
 
++ (JMomentMedia *)mediaWith:(NSDictionary *)dictionary {
+    if (!dictionary) return nil;
+    JMomentMedia *media = [[self alloc] init];
+    
+    media.url = dictionary[@"url"];
+    media.snapshotUrl = dictionary[@"snapshot_url"];
+    media.type = [dictionary[@"type"] isEqualToString:@"image"] ? JMomentMediaTypeImage : JMomentMediaTypeVideo;
+    media.height = [dictionary[@"height"] intValue];
+    media.width = [dictionary[@"width"] intValue];
+    media.duration = [dictionary[@"duration"] intValue];
+    
+    return media;
+}
+
 @end
