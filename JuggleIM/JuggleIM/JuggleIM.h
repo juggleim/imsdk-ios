@@ -70,3 +70,10 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JUltEncryptProtocol.h>
 #import <JuggleIM/JGroupMessageMemberReadDetail.h>
 #import <JuggleIM/JGroupMessageReadInfoDetail.h>
+#import <JuggleIM/JMomentProtocol.h>
+#import <JuggleIM/JMoment.h>
+#import <JuggleIM/JMomentMedia.h>
+#import <JuggleIM/JMomentReaction.h>
+#import <JuggleIM/JMomentComment.h>
+#import <JuggleIM/JGetMomentOption.h>
+#import <JuggleIM/JGetMomentCommentOption.h>

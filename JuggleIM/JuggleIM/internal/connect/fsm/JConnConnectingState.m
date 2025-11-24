@@ -101,7 +101,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
             
         case JConnEventWebsocketFail:
         case JConnEventConnectingTimeOut:
-            JLogI(@"CON-Connect", @"clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
+            JLogI(@"CON-Connect", @"websocket fail or timeout, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
             [self.connectionManager transitionToWaitingForConnectState];
             if (self.storeStatus == JConnectingStoreStatusConnect) {
                 if (self.userToken.length > 0) {

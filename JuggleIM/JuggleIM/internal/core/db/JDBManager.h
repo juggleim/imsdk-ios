@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
 - (int)getUnreadCountWithTag:(NSString *)tagId;
 - (void)setMentionInfo:(JConversation *)conversation
-      mentionInfoJson:(NSString *)mentionInfoJson;
+       mentionInfoJson:(NSString *)mentionInfoJson;
 - (void)clearMentionInfo;
 - (void)clearTotalUnreadCount;
 - (void)updateTime:(long long)time
@@ -153,6 +153,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - reaction table
 - (NSArray <JMessageReaction *> *)getMessageReactions:(NSArray <NSString *> *)messageIds;
 - (void)setMessageReactions:(NSArray <JMessageReaction *> *)reactions;
-@end
 
+#pragma mark - moment table
+- (void)insertMoments:(NSArray <JMoment *> *)moments;
+- (void)removeMoment:(NSString *)momentId;
+- (NSArray<JMoment *> *)getCachedMomentList:(JGetMomentOption *)option;
+@end
 NS_ASSUME_NONNULL_END

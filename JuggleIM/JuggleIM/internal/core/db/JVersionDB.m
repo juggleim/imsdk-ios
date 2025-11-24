@@ -10,8 +10,9 @@
 #import "JUserInfoDB.h"
 #import "JReactionDB.h"
 #import "JConversationDB.h"
+#import "JMomentDB.h"
 
-#define jDBVersion 8
+#define jDBVersion 9
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -78,6 +79,9 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
                 [db executeUpdate:[JConversationDB addConversationIndex2]];
                 [db executeUpdate:[JConversationDB addConversationTagIndex2]];
                 [db executeUpdate:[JMessageDB addDTConversationTSIndex2]];
+            }
+            if (version < 9) {
+                [db executeUpdate:[JMomentDB createMomentTable]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];
