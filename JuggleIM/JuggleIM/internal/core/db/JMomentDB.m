@@ -116,7 +116,7 @@ NSString *const jDeleteMoment = @"DELETE FROM moment WHERE moment_id = ?";
         if ([mediaDicts isKindOfClass:[NSArray class]]) {
             NSMutableArray *medias = [NSMutableArray array];
             for (NSDictionary *dict in mediaDicts) {
-                JMomentMedia *media = [self mediaFromDict:dict];
+                JMomentMedia *media = [JMomentMedia mediaWith:dict];
                 if (media) [medias addObject:media];
             }
             moment.mediaArray = medias.copy;
@@ -159,15 +159,6 @@ NSString *const jDeleteMoment = @"DELETE FROM moment WHERE moment_id = ?";
     }
     
     return moment;
-}
-
-- (JMomentMedia *)mediaFromDict:(NSDictionary *)dict {
-    if (![dict isKindOfClass:[NSDictionary class]]) return nil;
-    
-    JMomentMedia *media = [[JMomentMedia alloc] init];
-    media.url = dict[@"url"];
-    media.type = [dict[@"type"] integerValue];
-    return media;
 }
 
 - (JMomentReaction *)reactionFromDict:(NSDictionary *)dict {

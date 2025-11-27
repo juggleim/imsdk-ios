@@ -17,6 +17,11 @@
     if (self.snapshotUrl) {
         dict[@"snapshot_url"] = self.snapshotUrl;
     }
+    if (self.type == JMomentMediaTypeImage) {
+        dict[@"type"] = @"image";
+    } else {
+        dict[@"type"] = @"video";
+    }
     dict[@"type"] = @(self.type);
     dict[@"height"] = @(self.height);
     dict[@"width"] = @(self.width);

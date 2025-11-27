@@ -25,7 +25,7 @@
     for (NSDictionary *reactionDict in jsonArray) {
         NSString *key = reactionDict[@"key"];
         if (key.length == 0) {
-            break;
+            continue;;
         }
         NSMutableArray *userInfos = keyUserInfosDic[key];
         if (!userInfos) {

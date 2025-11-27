@@ -99,8 +99,12 @@
             NSDictionary *userInfoDic = dic[@"user_info"];
             JUserInfo *userInfo = [JUserInfo userInfoWith:userInfoDic];
             moment.userInfo = userInfo;
-            [self.core.dbManager insertUserInfos:@[userInfo]];
-            [self.core.dbManager insertMoments:@[moment]];
+            if (userInfo) {
+                [self.core.dbManager insertUserInfos:@[userInfo]];
+            }
+            if (moment) {
+                [self.core.dbManager insertMoments:@[moment]];
+            }
             if (completeBlock) {
                 completeBlock(JErrorCodeNone, moment);
             }
@@ -164,7 +168,9 @@
                  complete:^(int errorCode, NSDictionary *dic) {
         if (errorCode == JErrorCodeNone) {
             JMoment *moment = [JMoment momentWith:dic];
-            [self.core.dbManager insertMoments:@[moment]];
+            if (moment) {
+                [self.core.dbManager insertMoments:@[moment]];
+            }
             if (completeBlock) {
                 completeBlock(JErrorCodeNone, moment);
             }
@@ -241,7 +247,9 @@
                    method:@"POST"
                    params:@{@"moment_ids":@[momentId]}
                  complete:^(int errorCode, NSDictionary *dic) {
-        [self.core.dbManager removeMoment:momentId];
+        if (errorCode == JErrorCodeNone) {
+            [self.core.dbManager removeMoment:momentId];
+        }
         if (completeBlock) {
             completeBlock(errorCode);
         }
