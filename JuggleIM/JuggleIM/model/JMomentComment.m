@@ -32,7 +32,9 @@
     comment.momentId = dictionary[@"moment_id"];
     comment.parentCommentId = dictionary[@"parent_comment_id"];
     comment.content = dictionary[@"content"][@"text"];
-    comment.parentUserInfo = [JUserInfo userInfoWith:dictionary[@"parent_user_info"]];
+    if (comment.parentCommentId.length > 0) {
+        comment.parentUserInfo = [JUserInfo userInfoWith:dictionary[@"parent_user_info"]];
+    }
     comment.userInfo = [JUserInfo userInfoWith:dictionary[@"user_info"]];
     comment.createTime = [dictionary[@"comment_time"] longLongValue];
     
