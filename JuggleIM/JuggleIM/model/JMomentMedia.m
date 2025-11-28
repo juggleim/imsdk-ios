@@ -22,7 +22,6 @@
     } else {
         dict[@"type"] = @"video";
     }
-    dict[@"type"] = @(self.type);
     dict[@"height"] = @(self.height);
     dict[@"width"] = @(self.width);
     dict[@"duration"] = @(self.duration);
