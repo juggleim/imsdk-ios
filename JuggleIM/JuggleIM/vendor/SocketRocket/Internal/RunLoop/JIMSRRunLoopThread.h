@@ -1,5 +1,7 @@
 //
-// Copyright (c) 2016-present, Facebook, Inc.
+// Copyright 2012 Square Inc.
+// Portions Copyright (c) 2016-present, Facebook, Inc.
+//
 // All rights reserved.
 //
 // This source code is licensed under the BSD-style license found in the
@@ -11,9 +13,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSData *JIMSRSHA1HashFromString(NSString *string);
-extern NSData *JIMSRSHA1HashFromBytes(const char *bytes, size_t length);
+@interface JIMSRRunLoopThread : NSThread
 
-extern NSString *JIMSRBase64EncodedStringFromData(NSData *data);
+@property (nonatomic, strong, readonly) NSRunLoop *runLoop;
+
++ (instancetype)sharedThread;
+
+@end
 
 NS_ASSUME_NONNULL_END

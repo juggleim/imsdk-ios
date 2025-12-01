@@ -13,14 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 // The origin isn't really applicable for a native application.
 // So instead, just map ws -> http and wss -> https.
-extern NSString *SRURLOrigin(NSURL *url);
+extern NSString *JIMSRURLOrigin(NSURL *url);
 
-extern BOOL SRURLRequiresSSL(NSURL *url);
+extern BOOL JIMSRURLRequiresSSL(NSURL *url);
 
 // Extracts `user` and `password` from url (if available) into `Basic base64(user:password)`.
-extern NSString *_Nullable SRBasicAuthorizationHeaderFromURL(NSURL *url);
+extern NSString *_Nullable JIMSRBasicAuthorizationHeaderFromURL(NSURL *url);
 
 // Returns a valid value for `NSStreamNetworkServiceType` or `nil`.
-extern NSString *_Nullable SRStreamNetworkServiceTypeFromURLRequest(NSURLRequest *request);
+extern NSString *_Nullable JIMSRStreamNetworkServiceTypeFromURLRequest(NSURLRequest *request);
 
 NS_ASSUME_NONNULL_END

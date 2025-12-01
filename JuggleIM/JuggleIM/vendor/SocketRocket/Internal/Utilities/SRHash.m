@@ -13,13 +13,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSData *SRSHA1HashFromString(NSString *string)
+NSData *JIMSRSHA1HashFromString(NSString *string)
 {
     size_t length = [string lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    return SRSHA1HashFromBytes(string.UTF8String, length);
+    return JIMSRSHA1HashFromBytes(string.UTF8String, length);
 }
 
-NSData *SRSHA1HashFromBytes(const char *bytes, size_t length)
+NSData *JIMSRSHA1HashFromBytes(const char *bytes, size_t length)
 {
     uint8_t outputLength = CC_SHA1_DIGEST_LENGTH;
     unsigned char output[outputLength];
@@ -28,7 +28,7 @@ NSData *SRSHA1HashFromBytes(const char *bytes, size_t length)
     return [NSData dataWithBytes:output length:outputLength];
 }
 
-NSString *SRBase64EncodedStringFromData(NSData *data)
+NSString *JIMSRBase64EncodedStringFromData(NSData *data)
 {
     if ([data respondsToSelector:@selector(base64EncodedStringWithOptions:)]) {
         return [data base64EncodedStringWithOptions:0];

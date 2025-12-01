@@ -7,13 +7,7 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import <Foundation/Foundation.h>
+#import "NSURLRequest+JIMSRWebSocket.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-extern NSData *JIMSRSHA1HashFromString(NSString *string);
-extern NSData *JIMSRSHA1HashFromBytes(const char *bytes, size_t length);
-
-extern NSString *JIMSRBase64EncodedStringFromData(NSData *data);
-
-NS_ASSUME_NONNULL_END
+// Empty function that force links the object file for the category.
+extern void import_NSURLRequest_JIMSRWebSocket(void);

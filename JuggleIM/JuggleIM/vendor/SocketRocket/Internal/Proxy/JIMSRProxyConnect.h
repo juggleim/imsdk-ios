@@ -11,9 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSData *JIMSRSHA1HashFromString(NSString *string);
-extern NSData *JIMSRSHA1HashFromBytes(const char *bytes, size_t length);
+typedef void(^SRProxyConnectCompletion)(NSError *_Nullable error,
+                                        NSInputStream *_Nullable readStream,
+                                        NSOutputStream *_Nullable writeStream);
 
-extern NSString *JIMSRBase64EncodedStringFromData(NSData *data);
+@interface JIMSRProxyConnect : NSObject
+
+- (instancetype)initWithURL:(NSURL *)url;
+
+- (void)openNetworkStreamWithCompletion:(SRProxyConnectCompletion)completion;
+
+@end
 
 NS_ASSUME_NONNULL_END

@@ -6,7 +6,7 @@
 //
 
 #import "JWebSocket.h"
-#import "SRWebSocket.h"
+#import "JIMSRWebSocket.h"
 #import "JUtility.h"
 #import "JuggleIMConstInternal.h"
 #import "JPBData.h"
@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *pushToken;
 @property (nonatomic, copy) NSString *voipToken;
-@property (nonatomic, strong) SRWebSocket *sws;
+@property (nonatomic, strong) JIMSRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
 /// 所有上行数据的自增 index
@@ -44,7 +44,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, strong) JPBData *pbData;
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
 @property (nonatomic, assign) BOOL isCompeteFinish;
-@property (nonatomic, strong) NSMutableArray <SRWebSocket *> *competeSwsList;
+@property (nonatomic, strong) NSMutableArray <JIMSRWebSocket *> *competeSwsList;
 @property (nonatomic, strong) NSMutableArray <NSNumber *> *competeStatusList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @property (nonatomic, strong) JWebSocketCommandManager *commandManager;
@@ -82,7 +82,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
         [self resetSws];
         for (NSString *url in servers) {
             JLogI(@"WS-Connect", @"create web socket url is %@", url);
-            SRWebSocket *sws = [self createWebSocket:url];
+            JIMSRWebSocket *sws = [self createWebSocket:url];
             [self.competeSwsList addObject:sws];
             [self.competeStatusList addObject:@(JWebSocketStatusIdle)];
             NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
@@ -1285,7 +1285,7 @@ inConversation:(JConversation *)conversation
 }
 
 #pragma mark - SRWebSocketDelegate
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+- (void)webSocketDidOpen:(JIMSRWebSocket *)webSocket {
     dispatch_async(self.sendQueue, ^{
         if (self.isCompeteFinish) {
             JLogI(@"WS-Connect", @"compete fail, url is %@", webSocket.url);
@@ -1294,7 +1294,7 @@ inConversation:(JConversation *)conversation
         }
         //防止上一批竞速的 webSocket 被选中
         for (int i = 0; i < self.competeSwsList.count; i++) {
-            SRWebSocket *sws = self.competeSwsList[i];
+            JIMSRWebSocket *sws = self.competeSwsList[i];
             if (webSocket == sws) {
                 JLogI(@"WS-Connect", @"compete success, url is %@", webSocket.url);
                 self.isCompeteFinish = YES;
@@ -1307,7 +1307,7 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
+- (void)webSocket:(JIMSRWebSocket *)webSocket didFailWithError:(NSError *)error {
     dispatch_async(self.sendQueue, ^{
         if (self.isCompeteFinish) {
             if (webSocket != self.sws) {
@@ -1320,7 +1320,7 @@ inConversation:(JConversation *)conversation
             }
         } else {
             for (int i = 0; i < self.competeSwsList.count; i++) {
-                SRWebSocket *sws = self.competeSwsList[i];
+                JIMSRWebSocket *sws = self.competeSwsList[i];
                 if (webSocket == sws) {
                     self.competeStatusList[i] = @(JWebSocketStatusFailure);
                     break;
@@ -1342,7 +1342,7 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
+- (void)webSocket:(JIMSRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     if (webSocket != self.sws) {
         return;
     }
@@ -1355,7 +1355,7 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data {
     if (webSocket != self.sws) {
         return;
     }
@@ -1576,7 +1576,7 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)sendConnectMsgByWebSocket:(SRWebSocket *)sws {
+- (void)sendConnectMsgByWebSocket:(JIMSRWebSocket *)sws {
     [self.pbData resetDataConverter];
     NSData *d = [self.pbData connectDataWithAppKey:self.appKey
                                              token:self.token
@@ -2076,14 +2076,14 @@ inConversation:(JConversation *)conversation
     return encodeData;
 }
 
-- (SRWebSocket *)createWebSocket:(NSString *)url {
+- (JIMSRWebSocket *)createWebSocket:(NSString *)url {
     NSString *u;
     if ([url containsString:jProtocolHead]) {
         u = [NSString stringWithFormat:@"%@%@", url, jWebSocketSuffix];
     } else {
         u = [NSString stringWithFormat:@"%@%@%@", jWSPrefix, url, jWebSocketSuffix];
     }
-    SRWebSocket *sws = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
+    JIMSRWebSocket *sws = [[JIMSRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
     sws.delegateDispatchQueue = self.receiveQueue;
     sws.delegate = self;
     return sws;
@@ -2097,7 +2097,7 @@ inConversation:(JConversation *)conversation
 }
 
 #pragma mark - getter
-- (NSMutableArray<SRWebSocket *> *)competeSwsList {
+- (NSMutableArray<JIMSRWebSocket *> *)competeSwsList {
     if (!_competeSwsList) {
         _competeSwsList = [NSMutableArray array];
     }

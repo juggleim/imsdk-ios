@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern CFHTTPMessageRef SRHTTPConnectMessageCreate(NSURLRequest *request,
+extern CFHTTPMessageRef JIMSRHTTPConnectMessageCreate(NSURLRequest *request,
                                                    NSString *securityKey,
                                                    uint8_t webSocketProtocolVersion,
                                                    NSArray<NSHTTPCookie *> *_Nullable cookies,

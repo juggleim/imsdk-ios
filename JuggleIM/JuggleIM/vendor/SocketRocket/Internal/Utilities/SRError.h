@@ -11,10 +11,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSError *SRErrorWithDomainCodeDescription(NSString *domain, NSInteger code, NSString *description);
-extern NSError *SRErrorWithCodeDescription(NSInteger code, NSString *description);
-extern NSError *SRErrorWithCodeDescriptionUnderlyingError(NSInteger code, NSString *description, NSError *underlyingError);
+extern NSError *JIMSRErrorWithDomainCodeDescription(NSString *domain, NSInteger code, NSString *description);
+extern NSError *JIMSRErrorWithCodeDescription(NSInteger code, NSString *description);
+extern NSError *JIMSRErrorWithCodeDescriptionUnderlyingError(NSInteger code, NSString *description, NSError *underlyingError);
 
-extern NSError *SRHTTPErrorWithCodeDescription(NSInteger httpCode, NSInteger errorCode, NSString *description);
+extern NSError *JIMSRHTTPErrorWithCodeDescription(NSInteger httpCode, NSInteger errorCode, NSString *description);
 
 NS_ASSUME_NONNULL_END

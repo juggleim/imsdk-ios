@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSData *SRRandomData(NSUInteger length)
+NSData *JIMSRRandomData(NSUInteger length)
 {
     NSMutableData *_Nullable data = [NSMutableData dataWithLength:length];
     if (data == nil) {

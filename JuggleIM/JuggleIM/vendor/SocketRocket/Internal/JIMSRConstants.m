@@ -7,13 +7,13 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import <Foundation/Foundation.h>
+#import "JIMSRConstants.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-extern NSData *JIMSRSHA1HashFromString(NSString *string);
-extern NSData *JIMSRSHA1HashFromBytes(const char *bytes, size_t length);
-
-extern NSString *JIMSRBase64EncodedStringFromData(NSData *data);
-
-NS_ASSUME_NONNULL_END
+size_t JIMSRDefaultBufferSize(void) {
+    static size_t size;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        size = getpagesize();
+    });
+    return size;
+}
