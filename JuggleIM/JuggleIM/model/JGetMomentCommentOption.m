@@ -9,6 +9,14 @@
 
 @implementation JGetMomentCommentOption
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.direction = JPullDirectionOlder;
+    }
+    return self;
+}
+
 - (NSDictionary *)toDictionary {
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     if (self.momentId) {
