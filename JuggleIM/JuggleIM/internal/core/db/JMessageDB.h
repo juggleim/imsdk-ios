@@ -103,6 +103,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)alterTableAddSubChannel;
 + (NSString *)alterTableAddReadTime;
 + (NSString *)addDTConversationTSIndex2;
++ (NSString *)addDestroyTimeIndex;
++ (NSString *)addTimestampIndex;
++ (NSString *)addConversationSubchannelIndex;
++ (NSString *)removeConversationIndex;
++ (NSString *)removeConversationTSIndex;
++ (NSString *)removeDSConversationTSIndex;
 @end
 
 NS_ASSUME_NONNULL_END

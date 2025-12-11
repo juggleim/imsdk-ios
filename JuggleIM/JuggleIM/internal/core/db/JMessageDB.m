@@ -9,7 +9,9 @@
 #import "JContentTypeCenter.h"
 
 //message 最新版本
+//deprecated
 #define jMessageTableVersion 3
+//deprecated
 //NSUserDefault 中保存 message 数据库版本的 key
 #define jMessageTableVersionKey @"MessageVersion"
 
@@ -45,10 +47,13 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
 NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
-NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
-NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
-NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts ON message(destroy_time, conversation_type, conversation_id, timestamp)";
 NSString *const jCreateMessageDTConversationTSIndex2 = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts2 ON message(destroy_time, conversation_type, conversation_id, subchannel, timestamp)";
+NSString *const jCreateMessageDestroyTimeIndex = @"CREATE INDEX IF NOT EXISTS idx_message_destroy_time ON message(destroy_time)";
+NSString *const jCreateMessageTimestampIndex = @"CREATE INDEX IF NOT EXISTS idx_message_timestamp ON message(timestamp)";
+NSString *const jCreateMessageConversationSubchannelIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_subchannel ON message(conversation_type, conversation_id, subchannel)";
+NSString *const jDropIndexMessageConversation = @"DROP INDEX IF EXISTS idx_message_conversation";
+NSString *const jDropIndexMessageConversationTS = @"DROP INDEX IF EXISTS idx_message_conversation_ts";
+NSString *const jDropIndexMessageDSConversationTS = @"DROP INDEX IF EXISTS idx_message_ds_conversation_ts";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -133,6 +138,11 @@ NSString *const jLifeTimeAfterRead = @"life_time_after_read";
 NSString *const jDestroyTime = @"destroy_time";
 NSString *const jReadTime = @"read_time";
 NSString *const jMessageSubChannel = @"subchannel";
+
+//deprecated
+NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
+NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
+NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts ON message(destroy_time, conversation_type, conversation_id, timestamp)";
 
 @interface JMessageDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -782,13 +792,14 @@ NSString *const jMessageSubChannel = @"subchannel";
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateClientUidIndex withArgumentsInArray:nil];
-    [self.dbHelper executeUpdate:kCreateMessageConversationIndex withArgumentsInArray:nil];
-    [self.dbHelper executeUpdate:jCreateMessageConversationTSIndex withArgumentsInArray:nil];
-    [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageDestroyTimeIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageTimestampIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
+//deprecated
 - (void)updateTables {
     NSNumber *existedVersionNumber = [[NSUserDefaults standardUserDefaults] objectForKey:jMessageTableVersionKey];
     int existedVersion = existedVersionNumber.intValue;
@@ -921,6 +932,30 @@ NSString *const jMessageSubChannel = @"subchannel";
 
 + (NSString *)addDTConversationTSIndex2 {
     return jCreateMessageDTConversationTSIndex2;
+}
+
++ (NSString *)addTimestampIndex {
+    return jCreateMessageTimestampIndex;
+}
+
++ (NSString *)addDestroyTimeIndex {
+    return jCreateMessageDestroyTimeIndex;
+}
+
++ (NSString *)addConversationSubchannelIndex {
+    return jCreateMessageConversationSubchannelIndex;
+}
+
++ (NSString *)removeConversationIndex {
+    return jDropIndexMessageConversation;
+}
+
++ (NSString *)removeConversationTSIndex {
+    return jDropIndexMessageConversationTS;
+}
+
++ (NSString *)removeDSConversationTSIndex {
+    return jDropIndexMessageDSConversationTS;
 }
 
 + (NSString *)addMessageClientUidIndex {
