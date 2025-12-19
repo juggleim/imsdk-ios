@@ -3165,6 +3165,7 @@
                 completeCallback(messages, getMessageTime, hasMore, code);
             }
         });
+        return;
     }
     JMessage *m;
     if (direction == JPullDirectionNewer) {
