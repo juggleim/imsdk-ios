@@ -14,7 +14,7 @@ enum TabType {
 }
 
 class MainChannelTabbarController: UITabBarController {
-    let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue)])
+    let channelsViewController = ChannelListViewController(conversationTypes: [NSNumber(value: JConversationType.private.rawValue), NSNumber(value: JConversationType.group.rawValue), NSNumber(value: JConversationType.publicService.rawValue)])
     let contactListViewController = ContactListViewController()
     let botListViewController = BotListViewController()
     let settingsViewController = MySettingsViewController()
