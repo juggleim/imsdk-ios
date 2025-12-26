@@ -11,6 +11,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSData *SRRandomData(NSUInteger length);
+extern NSData *JIMSRRandomData(NSUInteger length);
 
 NS_ASSUME_NONNULL_END

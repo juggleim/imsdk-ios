@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString *SRURLOrigin(NSURL *url)
+NSString *JIMSRURLOrigin(NSURL *url)
 {
     NSMutableString *origin = [NSMutableString string];
 
@@ -35,23 +35,23 @@ NSString *SRURLOrigin(NSURL *url)
     return origin;
 }
 
-extern BOOL SRURLRequiresSSL(NSURL *url)
+extern BOOL JIMSRURLRequiresSSL(NSURL *url)
 {
     NSString *scheme = url.scheme.lowercaseString;
     return ([scheme isEqualToString:@"wss"] || [scheme isEqualToString:@"https"]);
 }
 
-extern NSString *_Nullable SRBasicAuthorizationHeaderFromURL(NSURL *url)
+extern NSString *_Nullable JIMSRBasicAuthorizationHeaderFromURL(NSURL *url)
 {
     if (!url.user || !url.password) {
         return nil;
     }
 
     NSData *data = [[NSString stringWithFormat:@"%@:%@", url.user, url.password] dataUsingEncoding:NSUTF8StringEncoding];
-    return [NSString stringWithFormat:@"Basic %@", SRBase64EncodedStringFromData(data)];
+    return [NSString stringWithFormat:@"Basic %@", JIMSRBase64EncodedStringFromData(data)];
 }
 
-extern NSString *_Nullable SRStreamNetworkServiceTypeFromURLRequest(NSURLRequest *request)
+extern NSString *_Nullable JIMSRStreamNetworkServiceTypeFromURLRequest(NSURLRequest *request)
 {
     NSString *networkServiceType = nil;
     switch (request.networkServiceType) {

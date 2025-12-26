@@ -9,9 +9,9 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRRunLoopThread.h"
+#import "JIMSRRunLoopThread.h"
 
-@interface SRRunLoopThread ()
+@interface JIMSRRunLoopThread ()
 {
     dispatch_group_t _waitGroup;
 }
@@ -20,14 +20,14 @@
 
 @end
 
-@implementation SRRunLoopThread
+@implementation JIMSRRunLoopThread
 
 + (instancetype)sharedThread
 {
-    static SRRunLoopThread *thread;
+    static JIMSRRunLoopThread *thread;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        thread = [[SRRunLoopThread alloc] init];
+        thread = [[JIMSRRunLoopThread alloc] init];
         thread.name = @"com.facebook.SocketRocket.NetworkThread";
         thread.qualityOfService = NSQualityOfServiceUserInitiated;
         [thread start];

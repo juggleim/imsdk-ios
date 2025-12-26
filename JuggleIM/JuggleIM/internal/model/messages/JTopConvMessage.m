@@ -11,6 +11,7 @@
 #define jTopConvs               @"conversations"
 #define jTopConvsTargetId       @"target_id"
 #define jTopConvsChannelType    @"channel_type"
+#define jTopConvsSubChannel     @"sub_channel"
 #define jTopConvsIsTop          @"is_top"
 #define jTopConvsTopUpdateTime  @"top_update_time"
 
@@ -32,6 +33,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[jTopConvsTargetId]];
+            NSString *subChannel = itemDic[jTopConvsSubChannel];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             JConcreteConversationInfo * conversationInfo = [[JConcreteConversationInfo alloc] init];
             conversationInfo.conversation = c;
             if ([itemDic[jTopConvsIsTop] isKindOfClass:[NSNumber class]]) {

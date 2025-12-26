@@ -9,34 +9,34 @@
 
 #import "SRError.h"
 
-#import "SRWebSocket.h"
+#import "JIMSRWebSocket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSError *SRErrorWithDomainCodeDescription(NSString *domain, NSInteger code, NSString *description)
+NSError *JIMSRErrorWithDomainCodeDescription(NSString *domain, NSInteger code, NSString *description)
 {
     return [NSError errorWithDomain:domain code:code userInfo:@{ NSLocalizedDescriptionKey: description }];
 }
 
-NSError *SRErrorWithCodeDescription(NSInteger code, NSString *description)
+NSError *JIMSRErrorWithCodeDescription(NSInteger code, NSString *description)
 {
-    return SRErrorWithDomainCodeDescription(SRWebSocketErrorDomain, code, description);
+    return JIMSRErrorWithDomainCodeDescription(JIMSRWebSocketErrorDomain, code, description);
 }
 
-NSError *SRErrorWithCodeDescriptionUnderlyingError(NSInteger code, NSString *description, NSError *underlyingError)
+NSError *JIMSRErrorWithCodeDescriptionUnderlyingError(NSInteger code, NSString *description, NSError *underlyingError)
 {
-    return [NSError errorWithDomain:SRWebSocketErrorDomain
+    return [NSError errorWithDomain:JIMSRWebSocketErrorDomain
                                code:code
                            userInfo:@{ NSLocalizedDescriptionKey: description,
                                        NSUnderlyingErrorKey: underlyingError }];
 }
 
-NSError *SRHTTPErrorWithCodeDescription(NSInteger httpCode, NSInteger errorCode, NSString *description)
+NSError *JIMSRHTTPErrorWithCodeDescription(NSInteger httpCode, NSInteger errorCode, NSString *description)
 {
-    return [NSError errorWithDomain:SRWebSocketErrorDomain
+    return [NSError errorWithDomain:JIMSRWebSocketErrorDomain
                                code:errorCode
                            userInfo:@{ NSLocalizedDescriptionKey: description,
-                                       SRHTTPResponseErrorKey: @(httpCode) }];
+                                       JIMSRHTTPResponseErrorKey: @(httpCode) }];
 }
 
 NS_ASSUME_NONNULL_END

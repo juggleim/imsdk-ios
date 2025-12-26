@@ -15,7 +15,7 @@ typedef void(^SRProxyConnectCompletion)(NSError *_Nullable error,
                                         NSInputStream *_Nullable readStream,
                                         NSOutputStream *_Nullable writeStream);
 
-@interface SRProxyConnect : NSObject
+@interface JIMSRProxyConnect : NSObject
 
 - (instancetype)initWithURL:(NSURL *)url;
 

@@ -7,7 +7,7 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRPinningSecurityPolicy.h"
+#import "JIMSRPinningSecurityPolicy.h"
 
 #import <Foundation/Foundation.h>
 
@@ -15,13 +15,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SRPinningSecurityPolicy ()
+@interface JIMSRPinningSecurityPolicy ()
 
 @property (nonatomic, copy, readonly) NSArray *pinnedCertificates;
 
 @end
 
-@implementation SRPinningSecurityPolicy
+@implementation JIMSRPinningSecurityPolicy
 
 - (instancetype)initWithCertificates:(NSArray *)pinnedCertificates
 {
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)evaluateServerTrust:(SecTrustRef)serverTrust forDomain:(NSString *)domain
 {
-    SRDebugLog(@"Pinned cert count: %d", self.pinnedCertificates.count);
+    JIMSRDebugLog(@"Pinned cert count: %d", self.pinnedCertificates.count);
     NSUInteger requiredCertCount = self.pinnedCertificates.count;
 
     NSUInteger validatedCertCount = 0;

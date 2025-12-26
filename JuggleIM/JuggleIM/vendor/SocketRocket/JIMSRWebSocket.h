@@ -13,14 +13,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, SRReadyState) {
+typedef NS_ENUM(NSInteger, JIMSRReadyState) {
     SR_CONNECTING   = 0,
     SR_OPEN         = 1,
     SR_CLOSING      = 2,
     SR_CLOSED       = 3,
 };
 
-typedef NS_ENUM(NSInteger, SRStatusCode) {
+typedef NS_ENUM(NSInteger, JIMSRStatusCode) {
     // 0-999: Reserved and not used.
     SRStatusCodeNormal = 1000,
     SRStatusCodeGoingAway = 1001,
@@ -44,18 +44,18 @@ typedef NS_ENUM(NSInteger, SRStatusCode) {
     // 4000-4999: Available for use by applications.
 };
 
-@class SRWebSocket;
-@class SRSecurityPolicy;
+@class JIMSRWebSocket;
+@class JIMSRSecurityPolicy;
 
 /**
  Error domain used for errors reported by SRWebSocket.
  */
-extern NSString *const SRWebSocketErrorDomain;
+extern NSString *const JIMSRWebSocketErrorDomain;
 
 /**
  Key used for HTTP status code if bad response was received from the server.
  */
-extern NSString *const SRHTTPResponseErrorKey;
+extern NSString *const JIMSRHTTPResponseErrorKey;
 
 @protocol SRWebSocketDelegate;
 
@@ -66,7 +66,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 /**
  A `SRWebSocket` object lets you connect, send and receive data to a remote Web Socket.
  */
-@interface SRWebSocket : NSObject <NSStreamDelegate>
+@interface JIMSRWebSocket : NSObject <NSStreamDelegate>
 
 /**
  The delegate of the web socket.
@@ -94,7 +94,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 
  This property is Key-Value Observable and fully thread-safe.
  */
-@property (atomic, assign, readonly) SRReadyState readyState;
+@property (atomic, assign, readonly) JIMSRReadyState readyState;
 
 /**
  An instance of `NSURL` that this socket connects to.
@@ -139,7 +139,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param request        Request to initialize with.
  @param securityPolicy Policy object describing transport security behavior.
  */
-- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(SRSecurityPolicy *)securityPolicy;
+- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(JIMSRSecurityPolicy *)securityPolicy;
 
 /**
  Initializes a web socket with a given `NSURLRequest` and list of sub-protocols.
@@ -167,7 +167,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param protocols      An array of strings that turn into `Sec-WebSocket-Protocol`. Default: `nil`.
  @param securityPolicy Policy object describing transport security behavior.
  */
-- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(nullable NSArray<NSString *> *)protocols securityPolicy:(SRSecurityPolicy *)securityPolicy NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(nullable NSArray<NSString *> *)protocols securityPolicy:(JIMSRSecurityPolicy *)securityPolicy NS_DESIGNATED_INITIALIZER;
 
 /**
  Initializes a web socket with a given `NSURL`.
@@ -190,7 +190,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param url            URL to initialize with.
  @param securityPolicy Policy object describing transport security behavior.
  */
-- (instancetype)initWithURL:(NSURL *)url securityPolicy:(SRSecurityPolicy *)securityPolicy;
+- (instancetype)initWithURL:(NSURL *)url securityPolicy:(JIMSRSecurityPolicy *)securityPolicy;
 
 /**
  Initializes a web socket with a given `NSURL`, list of sub-protocols and whether untrusted SSL certificates are allowed.
@@ -341,7 +341,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that received a message.
  @param message   Received message. Either a `String` or `NSData`.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessage:(id)message;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceiveMessage:(id)message;
 
 /**
  Called when a frame was received from a web socket.
@@ -349,7 +349,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that received a message.
  @param string    Received text in a form of UTF-8 `String`.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceiveMessageWithString:(NSString *)string;
 
 /**
  Called when a frame was received from a web socket.
@@ -357,7 +357,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that received a message.
  @param data      Received data in a form of `NSData`.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceiveMessageWithData:(NSData *)data;
 
 #pragma mark Status & Connection
 
@@ -366,7 +366,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 
  @param webSocket An instance of `SRWebSocket` that was open.
  */
-- (void)webSocketDidOpen:(SRWebSocket *)webSocket;
+- (void)webSocketDidOpen:(JIMSRWebSocket *)webSocket;
 
 /**
  Called when a given web socket encountered an error.
@@ -374,7 +374,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that failed with an error.
  @param error     An instance of `NSError`.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didFailWithError:(NSError *)error;
 
 /**
  Called when a given web socket was closed.
@@ -384,7 +384,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param reason    Reason in a form of a String that was reported by the server or `nil`.
  @param wasClean  Boolean value indicating whether a socket was closed in a clean state.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(nullable NSString *)reason wasClean:(BOOL)wasClean;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(nullable NSString *)reason wasClean:(BOOL)wasClean;
 
 /**
  Called on receive of a ping message from the server.
@@ -392,7 +392,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that received a ping frame.
  @param data      Payload that was received or `nil` if there was no payload.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didReceivePingWithData:(nullable NSData *)data;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceivePingWithData:(nullable NSData *)data;
 
 /**
  Called when a pong data was received in response to ping.
@@ -400,7 +400,7 @@ extern NSString *const SRHTTPResponseErrorKey;
  @param webSocket An instance of `SRWebSocket` that received a pong frame.
  @param pongData  Payload that was received or `nil` if there was no payload.
  */
-- (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(nullable NSData *)pongData;
+- (void)webSocket:(JIMSRWebSocket *)webSocket didReceivePong:(nullable NSData *)pongData;
 
 /**
  Sent before reporting a text frame to be able to configure if it shuold be convert to a UTF-8 String or passed as `NSData`.
@@ -410,7 +410,7 @@ extern NSString *const SRHTTPResponseErrorKey;
 
  @return `YES` if text frame should be converted to UTF-8 String, otherwise - `NO`. Default: `YES`.
  */
-- (BOOL)webSocketShouldConvertTextFrameToString:(SRWebSocket *)webSocket NS_SWIFT_NAME(webSocketShouldConvertTextFrameToString(_:));
+- (BOOL)webSocketShouldConvertTextFrameToString:(JIMSRWebSocket *)webSocket NS_SWIFT_NAME(webSocketShouldConvertTextFrameToString(_:));
 
 @end
 

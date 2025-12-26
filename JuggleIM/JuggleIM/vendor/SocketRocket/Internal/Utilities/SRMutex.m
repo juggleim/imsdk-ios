@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-SRMutex SRMutexInitRecursive(void)
+SRMutex JIMSRMutexInitRecursive(void)
 {
     pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
     pthread_mutexattr_t attributes;
@@ -26,20 +26,20 @@ SRMutex SRMutexInitRecursive(void)
     return mutex;
 }
 
-void SRMutexDestroy(SRMutex mutex)
+void JIMSRMutexDestroy(SRMutex mutex)
 {
     pthread_mutex_destroy(mutex);
     free(mutex);
 }
 
 __attribute__((no_thread_safety_analysis))
-void SRMutexLock(SRMutex mutex)
+void JIMSRMutexLock(SRMutex mutex)
 {
     pthread_mutex_lock(mutex);
 }
 
 __attribute__((no_thread_safety_analysis))
-void SRMutexUnlock(SRMutex mutex)
+void JIMSRMutexUnlock(SRMutex mutex)
 {
     pthread_mutex_unlock(mutex);
 }

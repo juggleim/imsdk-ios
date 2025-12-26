@@ -7,11 +7,11 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRDelegateController.h"
+#import "JIMSRDelegateController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SRDelegateController ()
+@interface JIMSRDelegateController ()
 
 @property (nonatomic, strong, readonly) dispatch_queue_t accessQueue;
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@implementation SRDelegateController
+@implementation JIMSRDelegateController
 
 @synthesize delegate = _delegate;
 @synthesize dispatchQueue = _dispatchQueue;

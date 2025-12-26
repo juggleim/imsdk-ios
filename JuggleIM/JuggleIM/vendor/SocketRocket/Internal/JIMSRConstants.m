@@ -7,7 +7,13 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "NSRunLoop+SRWebSocket.h"
+#import "JIMSRConstants.h"
 
-// Empty function that force links the object file for the category.
-extern void import_NSRunLoop_SRWebSocket(void);
+size_t JIMSRDefaultBufferSize(void) {
+    static size_t size;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        size = getpagesize();
+    });
+    return size;
+}

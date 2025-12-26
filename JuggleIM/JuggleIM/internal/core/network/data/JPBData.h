@@ -264,8 +264,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
-                   conversationType:(JConversationType)conversationType
-                     conversationId:(NSString *)conversationId
+                       conversation:(JConversation *)conversation
                         mentionInfo:(JMessageMentionInfo *)mentionInfo
                     referredMessage:(JConcreteMessage *)referredMessage
                            pushData:(JPushData *)pushData

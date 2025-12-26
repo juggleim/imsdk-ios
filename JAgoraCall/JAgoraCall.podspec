@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JAgoraCall'
-  s.version          = '1.8.27'
+  s.version          = '1.8.31'
   s.summary          = 'Juggle Call With Agora.'
 
 # This description is used to generate tags and improve search results.
@@ -24,7 +24,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://www.juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JAgoraCall/JAgoraCall_v1_8_27.zip' }
+  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JAgoraCall/JAgoraCall_v1_8_31.zip' }
 
   s.ios.deployment_target = '12.0'
   

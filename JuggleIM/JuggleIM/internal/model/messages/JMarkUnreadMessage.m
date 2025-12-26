@@ -10,6 +10,7 @@
 #define jMarkUnreadType @"jg:markunread"
 #define jConversations @"conversations"
 #define jTargetId @"target_id"
+#define jSubChannel @"sub_channel"
 #define jChannelType @"channel_type"
 
 @implementation JMarkUnreadMessage
@@ -30,6 +31,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[jTargetId]];
+            NSString *subChannel = itemDic[jSubChannel];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             [conversations addObject:c];
         }
     }

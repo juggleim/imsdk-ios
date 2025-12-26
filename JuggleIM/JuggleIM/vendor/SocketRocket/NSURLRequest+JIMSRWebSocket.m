@@ -9,17 +9,17 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "NSURLRequest+SRWebSocket.h"
-#import "NSURLRequest+SRWebSocketPrivate.h"
+#import "NSURLRequest+JIMSRWebSocket.h"
+#import "NSURLRequest+JIMSRWebSocketPrivate.h"
 
 // Required for object file to always be linked.
-void import_NSURLRequest_SRWebSocket(void) { }
+void import_NSURLRequest_JIMSRWebSocket(void) { }
 
 NS_ASSUME_NONNULL_BEGIN
 
 static NSString *const SRSSLPinnnedCertificatesKey = @"SocketRocket_SSLPinnedCertificates";
 
-@implementation NSURLRequest (SRWebSocket)
+@implementation NSURLRequest (JIMSRWebSocket)
 
 - (nullable NSArray *)SR_SSLPinnedCertificates
 {
@@ -28,7 +28,7 @@ static NSString *const SRSSLPinnnedCertificatesKey = @"SocketRocket_SSLPinnedCer
 
 @end
 
-@implementation NSMutableURLRequest (SRWebSocket)
+@implementation NSMutableURLRequest (JIMSRWebSocket)
 
 - (void)setSR_SSLPinnedCertificates:(nullable NSArray *)SR_SSLPinnedCertificates
 {

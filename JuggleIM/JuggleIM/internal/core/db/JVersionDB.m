@@ -10,8 +10,9 @@
 #import "JUserInfoDB.h"
 #import "JReactionDB.h"
 #import "JConversationDB.h"
+#import "JMomentDB.h"
 
-#define jDBVersion 7
+#define jDBVersion 10
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -68,6 +69,27 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
             }
             if (version < 7) {
                 [db executeUpdate:[JMessageDB alterTableAddReadTime]];
+            }
+            if (version < 8) {
+                [db executeUpdate:[JMessageDB alterTableAddSubChannel]];
+                [db executeUpdate:[JConversationDB alterConversationInfoAddSubChannel]];
+                [db executeUpdate:[JConversationDB alterConversationTagAddSubChannel]];
+                [db executeUpdate:[JConversationDB dropConversationIndex1]];
+                [db executeUpdate:[JConversationDB dropConversationTagIndex1]];
+                [db executeUpdate:[JConversationDB addConversationIndex2]];
+                [db executeUpdate:[JConversationDB addConversationTagIndex2]];
+                [db executeUpdate:[JMessageDB addDTConversationTSIndex2]];
+            }
+            if (version < 9) {
+                [db executeUpdate:[JMomentDB createMomentTable]];
+            }
+            if (version < 10) {
+                [db executeUpdate:[JMessageDB removeConversationIndex]];
+                [db executeUpdate:[JMessageDB removeConversationTSIndex]];
+                [db executeUpdate:[JMessageDB removeDSConversationTSIndex]];
+                [db executeUpdate:[JMessageDB addDestroyTimeIndex]];
+                [db executeUpdate:[JMessageDB addTimestampIndex]];
+                [db executeUpdate:[JMessageDB addConversationSubchannelIndex]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];

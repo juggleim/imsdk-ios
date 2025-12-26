@@ -9,7 +9,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SRWebSocket.h"
+#import "JIMSRWebSocket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,7 +47,7 @@ typedef struct SRDelegateAvailableMethods SRDelegateAvailableMethods;
 
 typedef void(^SRDelegateBlock)(id<SRWebSocketDelegate> _Nullable delegate, SRDelegateAvailableMethods availableMethods);
 
-@interface SRDelegateController : NSObject
+@interface JIMSRDelegateController : NSObject
 
 @property (nonatomic, weak) id<SRWebSocketDelegate> delegate;
 @property (atomic, readonly) SRDelegateAvailableMethods availableDelegateMethods;

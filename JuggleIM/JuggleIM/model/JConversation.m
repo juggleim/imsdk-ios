@@ -23,9 +23,16 @@
     }
     if ([object isKindOfClass:[self class]]) {
         JConversation *c = (JConversation *)object;
-        return c.conversationType == self.conversationType && [c.conversationId isEqualToString:self.conversationId];
+        return c.conversationType == self.conversationType && [c.conversationId isEqualToString:self.conversationId] && [c.subChannel isEqualToString:self.subChannel];
     }
     return NO;
+}
+
+- (NSString *)subChannel {
+    if (!_subChannel) {
+        _subChannel = @"";
+    }
+    return _subChannel;
 }
 
 @end

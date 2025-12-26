@@ -22,7 +22,7 @@ static NSString *_SRHTTPConnectMessageHost(NSURL *url)
     return host;
 }
 
-CFHTTPMessageRef SRHTTPConnectMessageCreate(NSURLRequest *request,
+CFHTTPMessageRef JIMSRHTTPConnectMessageCreate(NSURLRequest *request,
                                             NSString *securityKey,
                                             uint8_t webSocketProtocolVersion,
                                             NSArray<NSHTTPCookie *> *_Nullable cookies,
@@ -46,7 +46,7 @@ CFHTTPMessageRef SRHTTPConnectMessageCreate(NSURLRequest *request,
     }
 
     // set header for http basic auth
-    NSString *basicAuthorizationString = SRBasicAuthorizationHeaderFromURL(url);
+    NSString *basicAuthorizationString = JIMSRBasicAuthorizationHeaderFromURL(url);
     if (basicAuthorizationString) {
         CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Authorization"), (__bridge CFStringRef)basicAuthorizationString);
     }
@@ -56,7 +56,7 @@ CFHTTPMessageRef SRHTTPConnectMessageCreate(NSURLRequest *request,
     CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Sec-WebSocket-Key"), (__bridge CFStringRef)securityKey);
     CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Sec-WebSocket-Version"), (__bridge CFStringRef)@(webSocketProtocolVersion).stringValue);
 
-    CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Origin"), (__bridge CFStringRef)SRURLOrigin(url));
+    CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Origin"), (__bridge CFStringRef)JIMSRURLOrigin(url));
 
     if (requestedProtocols.count) {
         CFHTTPMessageSetHeaderFieldValue(message, CFSTR("Sec-WebSocket-Protocol"),

@@ -23,4 +23,4 @@ typedef NS_ENUM(uint8_t, SROpCode)
 /**
  Default buffer size that is used for reading/writing to streams.
  */
-extern size_t SRDefaultBufferSize(void);
+extern size_t JIMSRDefaultBufferSize(void);

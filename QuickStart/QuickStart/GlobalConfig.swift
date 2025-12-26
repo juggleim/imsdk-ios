@@ -26,7 +26,7 @@ public class GlobalConfig {
             if let s = UserDefaults.loadIMServer() {
                 return s
             } else {
-                return "xxx"
+                return "ws://ws.xxx.com"
             }
         }
         set {
@@ -39,7 +39,7 @@ public class GlobalConfig {
             if let s = UserDefaults.loadDemoServer() {
                 return s
             } else {
-                return "xxx"
+                return "http://ws.xxx.com"
             }
         }
         set {

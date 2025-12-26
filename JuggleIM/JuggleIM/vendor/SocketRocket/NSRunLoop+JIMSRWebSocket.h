@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSRunLoop (SRWebSocket)
+@interface NSRunLoop (JIMSRWebSocket)
 
 /**
  Default run loop that will be used to schedule all instances of `SRWebSocket`.

@@ -28,20 +28,20 @@
     [JIM.shared setServerUrls:@[@"xxx"]];
     [JIM.shared setConsoleLogLevel:JLogLevelVerbose];
     [JIM.shared initWithAppKey:@"xxx"];
-    [JIM.shared.connectionManager connectWithToken:kToken1182];
+    [JIM.shared.connectionManager connectWithToken:@"xxx"];
     [JIM.shared.connectionManager addDelegate:self];
     [JIM.shared.messageManager addDelegate:self];
     [JIM.shared.messageManager addSyncDelegate:self];
     [JIM.shared.conversationManager addSyncDelegate:self];
     [JIM.shared.conversationManager addDelegate:self];
     [JIM.shared.messageManager addReadReceiptDelegate:self];
-    [JIM.shared.messageManager setMessageUploadProvider:self];
+//    [JIM.shared.messageManager setMessageUploadProvider:self];
     [JIM.shared.chatroomManager addDelegate:self];
     [JIM.shared.chatroomManager addAttributesDelegate:self];
     
     [JIM.shared.callManager addReceiveDelegate:self];
     
-    [JIM.shared.callManager initZegoEngineWith:111 appSign:@"xxx"];
+    [JIM.shared.callManager initZegoEngineWith:111 appSign:@""];
     
     return YES;
 }
@@ -53,16 +53,43 @@
     NSLog(@"AppDelegate, connectionStatusDidChange status is %lu, code is %lu", (unsigned long)status, (unsigned long)code);
     if (JConnectionStatusConnected == status) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"botid8"];
-            JTextMessage *text = [[JTextMessage alloc] initWithContent:@"hello"];
-            [JIM.shared.messageManager sendMessage:text
-                                    inConversation:c
-                                           success:^(JMessage *message) {
+            JConversation *c = [[JConversation alloc] initWithConversationType:JConversationTypePrivate conversationId:@"YvoGswbXyqU"];
+            JConversation *groupConversation = [[JConversation alloc] initWithConversationType:JConversationTypeGroup conversationId:@"DYEQKKbhh4G"];
+            NSMutableArray *previewList = [NSMutableArray array];
+            JMergeMessagePreviewUnit *unit = [[JMergeMessagePreviewUnit alloc] init];
+            unit.previewContent = @"图片";
+            JUserInfo *sender = [[JUserInfo alloc] init];
+            sender.userId = @"3mnHbCeigLw";
+            unit.sender = sender;
+            [previewList addObject:unit];
+            JMergeMessage *mergeMessage = [[JMergeMessage alloc] initWithTitle:@"Merge"
+                                                                  conversation:groupConversation
+                                                                 MessageIdList:@[@"n4fgtjpeje2gzrn9", @"n4fgtdvc2eygzrn9"]
+                                                                   previewList:previewList];
+            
+            
+//            [JIM.shared.messageManager getMessagesByMessageIds:@[@"n4fgtjpeje2gzrn9"]
+//                                                inConversation:c
+//                                                       success:^(NSArray<JMessage *> *messages) {
+//                int i = 0;
+//            } error:^(JErrorCode errorCode) {
+//                
+//            }];
+            
+//            [JIM.shared.messageManager sendMessage:mergeMessage
+//                                    inConversation:groupConversation
+//                                           success:^(JMessage *message) {
+//                int i = 0;
+//            } error:^(JErrorCode errorCode, JMessage *message) {
+//                int i = 0;
+//            }];
+            
+            
+            [JIM.shared.messageManager getMergedMessageList:@"n4fms7bbjfemyzxc" success:^(NSArray<JMessage *> *mergedMessages) {
                 int i = 0;
-            } error:^(JErrorCode errorCode, JMessage *message) {
+            } error:^(JErrorCode code) {
                 int i = 0;
             }];
-            
             
 //            [JIM.shared.messageManager sendMessage:text
 //                                    inConversation:c

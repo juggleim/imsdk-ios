@@ -13,6 +13,7 @@
 #define jUnDisturbConvTargetId           @"target_id"
 #define jUnDisturbConvChannelType        @"channel_type"
 #define jUnDisturbConvUndisturbType      @"undisturb_type"
+#define jUnDisturbConvSubChannel         @"sub_channel"
 
 @implementation JUnDisturbConvMessage
 
@@ -32,6 +33,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[jUnDisturbConvTargetId]];
+            NSString *subChannel = itemDic[jUnDisturbConvSubChannel];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             JConcreteConversationInfo * conversationInfo = [[JConcreteConversationInfo alloc] init];
             conversationInfo.conversation = c;
             if ([itemDic[jUnDisturbConvUndisturbType] isKindOfClass:[NSNumber class]]) {

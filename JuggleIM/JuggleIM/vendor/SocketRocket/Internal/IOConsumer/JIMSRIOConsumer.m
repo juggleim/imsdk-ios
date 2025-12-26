@@ -9,9 +9,9 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRIOConsumer.h"
+#import "JIMSRIOConsumer.h"
 
-@implementation SRIOConsumer
+@implementation JIMSRIOConsumer
 
 @synthesize bytesNeeded = _bytesNeeded;
 @synthesize consumer = _scanner;

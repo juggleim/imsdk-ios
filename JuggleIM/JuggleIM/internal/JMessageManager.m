@@ -158,8 +158,7 @@
     NSMutableArray * deleteClientMsgNoList = [NSMutableArray array];
     NSMutableArray * deleteRemoteList = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
-           && message.conversation.conversationType == conversation.conversationType){
+        if ([message.conversation isEqual:conversation]) {
             if (message.messageId.length > 0) {
                 [deleteRemoteList addObject:message];
             }
@@ -252,8 +251,7 @@
     NSMutableArray *msgList = [NSMutableArray array];
     NSMutableArray <NSNumber *> *clientMsgNos = [NSMutableArray array];
     for (JMessage * message in messages) {
-        if ([message.conversation.conversationId isEqualToString:conversation.conversationId]
-           && message.conversation.conversationType == conversation.conversationType) {
+        if ([message.conversation isEqual:conversation]) {
             [msgList addObject:message];
             [clientMsgNos addObject:@(message.clientMsgNo)];
         }
@@ -1403,7 +1401,7 @@
                                     direction:JPullDirectionOlder
                                       success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMerge", @"success");
-        [self insertRemoteMessages:messages];
+        [self updateUserInfos:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
                 successBlock(messages);
@@ -3167,6 +3165,7 @@
                 completeCallback(messages, getMessageTime, hasMore, code);
             }
         });
+        return;
     }
     JMessage *m;
     if (direction == JPullDirectionNewer) {

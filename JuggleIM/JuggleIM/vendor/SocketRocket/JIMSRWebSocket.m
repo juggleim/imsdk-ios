@@ -9,7 +9,7 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRWebSocket.h"
+#import "JIMSRWebSocket.h"
 
 #if __has_include(<unicode/utf8.h>)
 #define HAS_ICU
@@ -21,24 +21,24 @@
 
 #import <libkern/OSAtomic.h>
 
-#import "SRDelegateController.h"
-#import "SRIOConsumer.h"
-#import "SRIOConsumerPool.h"
+#import "JIMSRDelegateController.h"
+#import "JIMSRIOConsumer.h"
+#import "JIMSRIOConsumerPool.h"
 #import "SRHash.h"
 #import "SRURLUtilities.h"
 #import "SRError.h"
-#import "NSURLRequest+SRWebSocket.h"
-#import "NSRunLoop+SRWebSocket.h"
-#import "SRProxyConnect.h"
-#import "SRSecurityPolicy.h"
+#import "NSURLRequest+JIMSRWebSocket.h"
+#import "NSRunLoop+JIMSRWebSocket.h"
+#import "JIMSRProxyConnect.h"
+#import "JIMSRSecurityPolicy.h"
 #import "SRHTTPConnectMessage.h"
 #import "SRRandom.h"
 #import "SRLog.h"
 #import "SRMutex.h"
 #import "SRSIMDHelpers.h"
-#import "NSURLRequest+SRWebSocketPrivate.h"
-#import "NSRunLoop+SRWebSocketPrivate.h"
-#import "SRConstants.h"
+#import "NSURLRequest+JIMSRWebSocketPrivate.h"
+#import "NSRunLoop+JIMSRWebSocketPrivate.h"
+#import "JIMSRConstants.h"
 
 #if !__has_feature(objc_arc)
 #error SocketRocket must be compiled with ARC enabled
@@ -46,8 +46,8 @@
 
 __attribute__((used)) static void importCategories(void)
 {
-    import_NSURLRequest_SRWebSocket();
-    import_NSRunLoop_SRWebSocket();
+    import_NSURLRequest_JIMSRWebSocket();
+    import_NSRunLoop_JIMSRWebSocket();
 }
 
 typedef struct {
@@ -66,12 +66,12 @@ static inline int32_t validate_dispatch_data_partial_string(NSData *data);
 
 static uint8_t const SRWebSocketProtocolVersion = 13;
 
-NSString *const SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
-NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
+NSString *const JIMSRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
+NSString *const JIMSRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
-@interface SRWebSocket ()  <NSStreamDelegate>
+@interface JIMSRWebSocket ()  <NSStreamDelegate>
 
-@property (atomic, assign, readwrite) SRReadyState readyState;
+@property (atomic, assign, readwrite) JIMSRReadyState readyState;
 
 // Specifies whether SSL trust chain should NOT be evaluated.
 // By default this flag is set to NO, meaning only secure SSL connections are allowed.
@@ -79,16 +79,16 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 // of the certificate trust configuration
 @property (nonatomic, assign, readwrite) BOOL allowsUntrustedSSLCertificates;
 
-@property (nonatomic, strong, readonly) SRDelegateController *delegateController;
+@property (nonatomic, strong, readonly) JIMSRDelegateController *delegateController;
 
 @end
 
-@implementation SRWebSocket {
+@implementation JIMSRWebSocket {
     SRMutex _kvoLock;
     OSSpinLock _propertyLock;
 
     dispatch_queue_t _workQueue;
-    NSMutableArray<SRIOConsumer *> *_consumers;
+    NSMutableArray<JIMSRIOConsumer *> *_consumers;
 
     NSInputStream *_inputStream;
     NSOutputStream *_outputStream;
@@ -109,7 +109,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
     NSString *_secKey;
 
-    SRSecurityPolicy *_securityPolicy;
+    JIMSRSecurityPolicy *_securityPolicy;
     BOOL _requestRequiresSSL;
     BOOL _streamSecurityValidated;
 
@@ -131,13 +131,13 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     NSMutableSet<NSArray *> *_scheduledRunloops; // Set<[RunLoop, Mode]>. TODO: (nlutsenko) Fix clowntown
 
     // We use this to retain ourselves.
-    __strong SRWebSocket *_selfRetain;
+    __strong JIMSRWebSocket *_selfRetain;
 
     NSArray<NSString *> *_requestedProtocols;
-    SRIOConsumerPool *_consumerPool;
+    JIMSRIOConsumerPool *_consumerPool;
 
     // proxy support
-    SRProxyConnect *_proxyConnect;
+    JIMSRProxyConnect *_proxyConnect;
 }
 
 @synthesize readyState = _readyState;
@@ -146,7 +146,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 #pragma mark - Init
 ///--------------------------------------
 
-- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray<NSString *> *)protocols securityPolicy:(SRSecurityPolicy *)securityPolicy
+- (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray<NSString *> *)protocols securityPolicy:(JIMSRSecurityPolicy *)securityPolicy
 {
     self = [super init];
     if (!self) return self;
@@ -156,18 +156,18 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     _urlRequest = request;
     _requestedProtocols = [protocols copy];
     _securityPolicy = securityPolicy;
-    _requestRequiresSSL = SRURLRequiresSSL(_url);
+    _requestRequiresSSL = JIMSRURLRequiresSSL(_url);
 
     _readyState = SR_CONNECTING;
 
     _propertyLock = OS_SPINLOCK_INIT;
-    _kvoLock = SRMutexInitRecursive();
+    _kvoLock = JIMSRMutexInitRecursive();
     _workQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
 
     // Going to set a specific on the queue so we can validate we're on the work queue
     dispatch_queue_set_specific(_workQueue, (__bridge void *)self, (__bridge void *)(_workQueue), NULL);
 
-    _delegateController = [[SRDelegateController alloc] init];
+    _delegateController = [[JIMSRDelegateController alloc] init];
 
     _readBuffer = dispatch_data_empty;
     _outputBuffer = dispatch_data_empty;
@@ -176,7 +176,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
     _consumers = [[NSMutableArray alloc] init];
 
-    _consumerPool = [[SRIOConsumerPool alloc] init];
+    _consumerPool = [[JIMSRIOConsumerPool alloc] init];
 
     _scheduledRunloops = [[NSMutableSet alloc] init];
 
@@ -185,22 +185,22 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 - (instancetype)initWithURLRequest:(NSURLRequest *)request protocols:(NSArray<NSString *> *)protocols allowsUntrustedSSLCertificates:(BOOL)allowsUntrustedSSLCertificates
 {
-    SRSecurityPolicy *securityPolicy;
+    JIMSRSecurityPolicy *securityPolicy;
     NSArray *pinnedCertificates = request.SR_SSLPinnedCertificates;
     if (pinnedCertificates) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-        securityPolicy = [SRSecurityPolicy pinnningPolicyWithCertificates:pinnedCertificates];
+        securityPolicy = [JIMSRSecurityPolicy pinnningPolicyWithCertificates:pinnedCertificates];
 #pragma clang diagnostic pop
     } else {
         BOOL certificateChainValidationEnabled = !allowsUntrustedSSLCertificates;
-    securityPolicy = [[SRSecurityPolicy alloc] initWithCertificateChainValidationEnabled:certificateChainValidationEnabled];
+    securityPolicy = [[JIMSRSecurityPolicy alloc] initWithCertificateChainValidationEnabled:certificateChainValidationEnabled];
     }
 
     return [self initWithURLRequest:request protocols:protocols securityPolicy:securityPolicy];
 }
 
-- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(SRSecurityPolicy *)securityPolicy
+- (instancetype)initWithURLRequest:(NSURLRequest *)request securityPolicy:(JIMSRSecurityPolicy *)securityPolicy
 {
     return [self initWithURLRequest:request protocols:nil securityPolicy:securityPolicy];
 }
@@ -231,7 +231,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 #pragma clang diagnostic pop
 }
 
-- (instancetype)initWithURL:(NSURL *)url securityPolicy:(SRSecurityPolicy *)securityPolicy
+- (instancetype)initWithURL:(NSURL *)url securityPolicy:(JIMSRSecurityPolicy *)securityPolicy
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     return [self initWithURLRequest:request protocols:nil securityPolicy:securityPolicy];
@@ -265,7 +265,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
         _receivedHTTPHeaders = NULL;
     }
 
-    SRMutexDestroy(_kvoLock);
+    JIMSRMutexDestroy(_kvoLock);
 }
 
 ///--------------------------------------
@@ -274,10 +274,10 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 #pragma mark readyState
 
-- (void)setReadyState:(SRReadyState)readyState
+- (void)setReadyState:(JIMSRReadyState)readyState
 {
     @try {
-        SRMutexLock(_kvoLock);
+        JIMSRMutexLock(_kvoLock);
         if (_readyState != readyState) {
             [self willChangeValueForKey:@"readyState"];
             OSSpinLockLock(&_propertyLock);
@@ -287,13 +287,13 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
         }
     }
     @finally {
-        SRMutexUnlock(_kvoLock);
+        JIMSRMutexUnlock(_kvoLock);
     }
 }
 
-- (SRReadyState)readyState
+- (JIMSRReadyState)readyState
 {
-    SRReadyState state = 0;
+    JIMSRReadyState state = 0;
     OSSpinLockLock(&_propertyLock);
     state = _readyState;
     OSSpinLockUnlock(&_propertyLock);
@@ -319,18 +319,18 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_urlRequest.timeoutInterval * NSEC_PER_SEC));
         __weak typeof(self) wself = self;
         dispatch_after(popTime, dispatch_get_main_queue(), ^{
-            __strong SRWebSocket *sself = wself;
+            __strong JIMSRWebSocket *sself = wself;
             if (!sself) {
                 return;
             }
             if (sself.readyState == SR_CONNECTING) {
-                NSError *error = SRErrorWithDomainCodeDescription(NSURLErrorDomain, NSURLErrorTimedOut, @"Timed out connecting to server.");
+                NSError *error = JIMSRErrorWithDomainCodeDescription(NSURLErrorDomain, NSURLErrorTimedOut, @"Timed out connecting to server.");
                 [sself _failWithError:error];
             }
         });
     }
 
-    _proxyConnect = [[SRProxyConnect alloc] initWithURL:_url];
+    _proxyConnect = [[JIMSRProxyConnect alloc] initWithURL:_url];
 
     __weak typeof(self) wself = self;
     [_proxyConnect openNetworkStreamWithCompletion:^(NSError *error, NSInputStream *readStream, NSOutputStream *writeStream) {
@@ -378,8 +378,8 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     }
 
     NSString *concattedString = [_secKey stringByAppendingString:SRWebSocketAppendToSecKeyString];
-    NSData *hashedString = SRSHA1HashFromString(concattedString);
-    NSString *expectedAccept = SRBase64EncodedStringFromData(hashedString);
+    NSData *hashedString = JIMSRSHA1HashFromString(concattedString);
+    NSString *expectedAccept = JIMSRBase64EncodedStringFromData(hashedString);
     return [acceptHeader isEqualToString:expectedAccept];
 }
 
@@ -387,8 +387,8 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 {
     NSInteger responseCode = CFHTTPMessageGetResponseStatusCode(_receivedHTTPHeaders);
     if (responseCode >= 400) {
-        SRDebugLog(@"Request failed with response code %d", responseCode);
-        NSError *error = SRHTTPErrorWithCodeDescription(responseCode, 2132,
+        JIMSRDebugLog(@"Request failed with response code %d", responseCode);
+        NSError *error = JIMSRHTTPErrorWithCodeDescription(responseCode, 2132,
                                                         [NSString stringWithFormat:@"Received bad response code from server: %d.",
                                                          (int)responseCode]);
         [self _failWithError:error];
@@ -396,7 +396,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     }
 
     if(![self _checkHandshake:_receivedHTTPHeaders]) {
-        NSError *error = SRErrorWithCodeDescription(2133, @"Invalid Sec-WebSocket-Accept response.");
+        NSError *error = JIMSRErrorWithCodeDescription(2133, @"Invalid Sec-WebSocket-Accept response.");
         [self _failWithError:error];
         return;
     }
@@ -405,7 +405,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     if (negotiatedProtocol) {
         // Make sure we requested the protocol
         if ([_requestedProtocols indexOfObject:negotiatedProtocol] == NSNotFound) {
-            NSError *error = SRErrorWithCodeDescription(2133, @"Server specified Sec-WebSocket-Protocol that wasn't requested.");
+            NSError *error = JIMSRErrorWithCodeDescription(2133, @"Server specified Sec-WebSocket-Protocol that wasn't requested.");
             [self _failWithError:error];
             return;
         }
@@ -433,7 +433,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
         _receivedHTTPHeaders = CFHTTPMessageCreateEmpty(NULL, NO);
     }
 
-    [self _readUntilHeaderCompleteWithCallback:^(SRWebSocket *socket,  NSData *data) {
+    [self _readUntilHeaderCompleteWithCallback:^(JIMSRWebSocket *socket,  NSData *data) {
         if (!socket) {
             return;
         }
@@ -442,7 +442,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
         CFHTTPMessageAppendBytes(receivedHTTPHeaders, (const UInt8 *)data.bytes, data.length);
 
         if (CFHTTPMessageIsHeaderComplete(receivedHTTPHeaders)) {
-            SRDebugLog(@"Finished reading headers %@", CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(receivedHTTPHeaders)));
+            JIMSRDebugLog(@"Finished reading headers %@", CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(receivedHTTPHeaders)));
             [socket _HTTPHeadersDidFinish];
         } else {
             [socket _readHTTPHeader];
@@ -452,12 +452,12 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 - (void)didConnect
 {
-    SRDebugLog(@"Connected");
+    JIMSRDebugLog(@"Connected");
 
-    _secKey = SRBase64EncodedStringFromData(SRRandomData(16));
+    _secKey = JIMSRBase64EncodedStringFromData(JIMSRRandomData(16));
     assert([_secKey length] == 24);
 
-    CFHTTPMessageRef message = SRHTTPConnectMessageCreate(_urlRequest,
+    CFHTTPMessageRef message = JIMSRHTTPConnectMessageCreate(_urlRequest,
                                                           _secKey,
                                                           SRWebSocketProtocolVersion,
                                                           self.requestCookies,
@@ -474,12 +474,12 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 - (void)_updateSecureStreamOptions
 {
     if (_requestRequiresSSL) {
-        SRDebugLog(@"Setting up security for streams.");
+        JIMSRDebugLog(@"Setting up security for streams.");
         [_securityPolicy updateSecurityOptionsInStream:_inputStream];
         [_securityPolicy updateSecurityOptionsInStream:_outputStream];
     }
 
-    NSString *networkServiceType = SRStreamNetworkServiceTypeFromURLRequest(_urlRequest);
+    NSString *networkServiceType = JIMSRStreamNetworkServiceTypeFromURLRequest(_urlRequest);
     if (networkServiceType != nil) {
         [_inputStream setProperty:networkServiceType forKey:NSStreamNetworkServiceType];
         [_outputStream setProperty:networkServiceType forKey:NSStreamNetworkServiceType];
@@ -512,7 +512,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     assert(code);
     __weak typeof(self) wself = self;
     dispatch_async(_workQueue, ^{
-        __strong SRWebSocket *sself = wself;
+        __strong JIMSRWebSocket *sself = wself;
         if (!sself) {
           return;
         }
@@ -524,7 +524,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
         sself.readyState = SR_CLOSING;
 
-        SRDebugLog(@"Closing with code %d reason %@", code, reason);
+        JIMSRDebugLog(@"Closing with code %d reason %@", code, reason);
 
         if (wasConnecting) {
             [sself closeConnection];
@@ -582,7 +582,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
             self.readyState = SR_CLOSED;
 
-            SRDebugLog(@"Failing with error %@", error.localizedDescription);
+            JIMSRDebugLog(@"Failing with error %@", error.localizedDescription);
 
             [self closeConnection];
             [self _scheduleCleanup];
@@ -625,9 +625,9 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     if (self.readyState != SR_OPEN) {
         NSString *message = @"Invalid State: Cannot call `sendString:error:` until connection is open.";
         if (error) {
-            *error = SRErrorWithCodeDescription(2134, message);
+            *error = JIMSRErrorWithCodeDescription(2134, message);
         }
-        SRDebugLog(message);
+        JIMSRDebugLog(message);
         return NO;
     }
 
@@ -649,9 +649,9 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     if (self.readyState != SR_OPEN) {
         NSString *message = @"Invalid State: Cannot call `sendDataNoCopy:error:` until connection is open.";
         if (error) {
-            *error = SRErrorWithCodeDescription(2134, message);
+            *error = JIMSRErrorWithCodeDescription(2134, message);
         }
-        SRDebugLog(message);
+        JIMSRDebugLog(message);
         return NO;
     }
 
@@ -670,9 +670,9 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
     if (self.readyState != SR_OPEN) {
         NSString *message = @"Invalid State: Cannot call `sendPing:error:` until connection is open.";
         if (error) {
-            *error = SRErrorWithCodeDescription(2134, message);
+            *error = JIMSRErrorWithCodeDescription(2134, message);
         }
-        SRDebugLog(message);
+        JIMSRDebugLog(message);
         return NO;
     }
 
@@ -698,7 +698,7 @@ NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
 
 - (void)handlePong:(NSData *)pongData
 {
-    SRDebugLog(@"Received pong");
+    JIMSRDebugLog(@"Received pong");
     [self.delegateController performDelegateBlock:^(id<SRWebSocketDelegate>  _Nullable delegate, SRDelegateAvailableMethods availableMethods) {
         if (availableMethods.didReceivePong) {
             [delegate webSocket:self didReceivePong:pongData];
@@ -746,7 +746,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
     size_t dataSize = data.length;
     __block uint16_t closeCode = 0;
 
-    SRDebugLog(@"Received close frame");
+    JIMSRDebugLog(@"Received close frame");
 
     if (dataSize == 1) {
         // TODO handle error
@@ -783,7 +783,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
 - (void)closeConnection
 {
     [self assertOnWorkQueue];
-    SRDebugLog(@"Trying to disconnect");
+    JIMSRDebugLog(@"Trying to disconnect");
     _closeWhenFinishedWriting = YES;
     [self _pumpWriting];
 }
@@ -815,7 +815,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
                 });
                 return;
             }
-            SRDebugLog(@"Received text message.");
+            JIMSRDebugLog(@"Received text message.");
             [self.delegateController performDelegateBlock:^(id<SRWebSocketDelegate>  _Nullable delegate, SRDelegateAvailableMethods availableMethods) {
                 // Don't convert into string - iff `delegate` tells us not to. Otherwise - create UTF8 string and handle that.
                 if (availableMethods.shouldConvertTextFrameToString && ![delegate webSocketShouldConvertTextFrameToString:self]) {
@@ -837,7 +837,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
             break;
         }
         case SROpCodeBinaryFrame: {
-            SRDebugLog(@"Received data message.");
+            JIMSRDebugLog(@"Received data message.");
             [self.delegateController performDelegateBlock:^(id<SRWebSocketDelegate>  _Nullable delegate, SRDelegateAvailableMethods availableMethods) {
                 if (availableMethods.didReceiveMessage) {
                     [delegate webSocket:self didReceiveMessage:frameData];
@@ -903,7 +903,7 @@ static inline BOOL closeCodeIsValid(int closeCode) {
         }
     } else {
         assert(frame_header.payload_length <= SIZE_T_MAX);
-        [self _addConsumerWithDataLength:(size_t)frame_header.payload_length callback:^(SRWebSocket *sself, NSData *newData) {
+        [self _addConsumerWithDataLength:(size_t)frame_header.payload_length callback:^(JIMSRWebSocket *sself, NSData *newData) {
             if (isControlFrame) {
                 [sself _handleFrameWithData:newData opCode:frame_header.opcode];
             } else {
@@ -951,7 +951,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
 {
     assert((_currentFrameCount == 0 && _currentFrameOpcode == 0) || (_currentFrameCount > 0 && _currentFrameOpcode > 0));
 
-    [self _addConsumerWithDataLength:2 callback:^(SRWebSocket *sself, NSData *data) {
+    [self _addConsumerWithDataLength:2 callback:^(JIMSRWebSocket *sself, NSData *data) {
         __block frame_header header = {0};
 
         const uint8_t *headerBuffer = data.bytes;
@@ -1002,7 +1002,7 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
         if (extra_bytes_needed == 0) {
             [sself _handleFrameHeader:header curData:sself->_currentFrameData];
         } else {
-            [sself _addConsumerWithDataLength:extra_bytes_needed callback:^(SRWebSocket *eself, NSData *edata) {
+            [sself _addConsumerWithDataLength:extra_bytes_needed callback:^(JIMSRWebSocket *eself, NSData *edata) {
                 size_t mapped_size = edata.length;
 #pragma unused (mapped_size)
                 const void *mapped_buffer = edata.bytes;
@@ -1078,14 +1078,14 @@ static const uint8_t SRPayloadLenMask   = 0x7F;
             NSInteger code = 2145;
             NSString *description = @"Error writing to stream.";
             NSError *streamError = _outputStream.streamError;
-            NSError *error = streamError ? SRErrorWithCodeDescriptionUnderlyingError(code, description, streamError) : SRErrorWithCodeDescription(code, description);
+            NSError *error = streamError ? JIMSRErrorWithCodeDescriptionUnderlyingError(code, description, streamError) : JIMSRErrorWithCodeDescription(code, description);
             [self _failWithError:error];
             return;
         }
 
         _outputBufferOffset += bytesWritten;
 
-        if (_outputBufferOffset > SRDefaultBufferSize() && _outputBufferOffset > dataLength / 2) {
+        if (_outputBufferOffset > JIMSRDefaultBufferSize() && _outputBufferOffset > dataLength / 2) {
             _outputBuffer = dispatch_data_create_subrange(_outputBuffer, _outputBufferOffset, dataLength - _outputBufferOffset);
             _outputBufferOffset = 0;
         }
@@ -1231,7 +1231,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
         return didWork;
     }
 
-    SRIOConsumer *consumer = [_consumers objectAtIndex:0];
+    JIMSRIOConsumer *consumer = [_consumers objectAtIndex:0];
 
     size_t bytesNeeded = consumer.bytesNeeded;
 
@@ -1253,7 +1253,7 @@ static const char CRLFCRLFBytes[] = {'\r', '\n', '\r', '\n'};
 
         _readBufferOffset += foundSize;
 
-        if (_readBufferOffset > SRDefaultBufferSize() && _readBufferOffset > readBufferSize / 2) {
+        if (_readBufferOffset > JIMSRDefaultBufferSize() && _readBufferOffset > readBufferSize / 2) {
             _readBuffer = dispatch_data_create_subrange(_readBuffer, _readBufferOffset, readBufferSize - _readBufferOffset);
             _readBufferOffset = 0;
         }
@@ -1396,7 +1396,7 @@ static const size_t SRFrameHeaderOverhead = 32;
     uint8_t *maskKey = frameBuffer + frameBufferSize;
     
     size_t randomBytesSize = sizeof(uint32_t);
-    NSData *randomData = SRRandomData(randomBytesSize);
+    NSData *randomData = JIMSRRandomData(randomBytesSize);
     [randomData getBytes:maskKey range:NSMakeRange(0, randomBytesSize)];
     frameBufferSize += randomBytesSize;
 
@@ -1425,7 +1425,7 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
         if (!_streamSecurityValidated) {
             dispatch_async(_workQueue, ^{
-                NSError *error = SRErrorWithDomainCodeDescription(NSURLErrorDomain,
+                NSError *error = JIMSRErrorWithDomainCodeDescription(NSURLErrorDomain,
                                                                   NSURLErrorClientCertificateRejected,
                                                                   @"Invalid server certificate.");
                 [wself _failWithError:error];
@@ -1445,7 +1445,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 {
     switch (eventCode) {
         case NSStreamEventOpenCompleted: {
-            SRDebugLog(@"NSStreamEventOpenCompleted %@", aStream);
+            JIMSRDebugLog(@"NSStreamEventOpenCompleted %@", aStream);
             if (self.readyState >= SR_CLOSING) {
                 return;
             }
@@ -1462,7 +1462,7 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
 
         case NSStreamEventErrorOccurred: {
-            SRDebugLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
+            JIMSRDebugLog(@"NSStreamEventErrorOccurred %@ %@", aStream, [[aStream streamError] copy]);
             /// TODO specify error better!
             [self _failWithError:aStream.streamError];
             _readBufferOffset = 0;
@@ -1473,7 +1473,7 @@ static const size_t SRFrameHeaderOverhead = 32;
 
         case NSStreamEventEndEncountered: {
             [self _pumpScanner];
-            SRDebugLog(@"NSStreamEventEndEncountered %@", aStream);
+            JIMSRDebugLog(@"NSStreamEventEndEncountered %@", aStream);
             if (aStream.streamError) {
                 [self _failWithError:aStream.streamError];
             } else {
@@ -1502,15 +1502,15 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
 
         case NSStreamEventHasBytesAvailable: {
-            SRDebugLog(@"NSStreamEventHasBytesAvailable %@", aStream);
-            uint8_t buffer[SRDefaultBufferSize()];
+            JIMSRDebugLog(@"NSStreamEventHasBytesAvailable %@", aStream);
+            uint8_t buffer[JIMSRDefaultBufferSize()];
 
             while (_inputStream.hasBytesAvailable) {
-                NSInteger bytesRead = [_inputStream read:buffer maxLength:SRDefaultBufferSize()];
+                NSInteger bytesRead = [_inputStream read:buffer maxLength:JIMSRDefaultBufferSize()];
                 if (bytesRead > 0) {
                     dispatch_data_t data = dispatch_data_create(buffer, bytesRead, nil, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
                     if (!data) {
-                        NSError *error = SRErrorWithCodeDescription(SRStatusCodeMessageTooBig,
+                        NSError *error = JIMSRErrorWithCodeDescription(SRStatusCodeMessageTooBig,
                                                                     @"Unable to allocate memory to read from socket.");
                         [self _failWithError:error];
                         return;
@@ -1525,13 +1525,13 @@ static const size_t SRFrameHeaderOverhead = 32;
         }
 
         case NSStreamEventHasSpaceAvailable: {
-            SRDebugLog(@"NSStreamEventHasSpaceAvailable %@", aStream);
+            JIMSRDebugLog(@"NSStreamEventHasSpaceAvailable %@", aStream);
             [self _pumpWriting];
             break;
         }
 
         case NSStreamEventNone:
-            SRDebugLog(@"(default)  %@", aStream);
+            JIMSRDebugLog(@"(default)  %@", aStream);
             break;
     }
 }

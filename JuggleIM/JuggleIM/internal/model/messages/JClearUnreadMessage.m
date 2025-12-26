@@ -10,6 +10,7 @@
 #define jClearUnreadType            @"jg:clearunread"
 #define jClearUnreads               @"conversations"
 #define jClearUnreadsTargetId       @"target_id"
+#define jClearUnreadSubChannel      @"sub_channel"
 #define jClearUnreadsChannelType    @"channel_type"
 #define jClearUnreadsLastReadIndex  @"latest_read_index"
 
@@ -31,6 +32,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[jClearUnreadsTargetId]];
+            NSString *subChannel = itemDic[jClearUnreadSubChannel];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             JConcreteConversationInfo * conversationInfo = [[JConcreteConversationInfo alloc] init];
             conversationInfo.conversation = c;
             if ([itemDic[jClearUnreadsLastReadIndex] isKindOfClass:[NSNumber class]]) {

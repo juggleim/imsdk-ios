@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSURLRequest (SRWebSocket)
+@interface NSURLRequest (JIMSRWebSocket)
 
 /**
  An array of pinned `SecCertificateRef` SSL certificates that `SRWebSocket` will use for validation.
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface NSMutableURLRequest (SRWebSocket)
+@interface NSMutableURLRequest (JIMSRWebSocket)
 
 /**
  An array of pinned `SecCertificateRef` SSL certificates that `SRWebSocket` will use for validation.

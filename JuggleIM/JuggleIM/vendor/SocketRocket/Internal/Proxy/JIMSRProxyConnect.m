@@ -7,15 +7,15 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRProxyConnect.h"
+#import "JIMSRProxyConnect.h"
 
-#import "NSRunLoop+SRWebSocket.h"
-#import "SRConstants.h"
+#import "NSRunLoop+JIMSRWebSocket.h"
+#import "JIMSRConstants.h"
 #import "SRError.h"
 #import "SRLog.h"
 #import "SRURLUtilities.h"
 
-@interface SRProxyConnect() <NSStreamDelegate>
+@interface JIMSRProxyConnect() <NSStreamDelegate>
 
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, strong) NSInputStream *inputStream;
@@ -23,7 +23,7 @@
 
 @end
 
-@implementation SRProxyConnect
+@implementation JIMSRProxyConnect
 {
     SRProxyConnectCompletion _completion;
 
@@ -53,7 +53,7 @@
     if (!self) return self;
 
     _url = url;
-    _connectionRequiresSSL = SRURLRequiresSSL(url);
+    _connectionRequiresSSL = JIMSRURLRequiresSSL(url);
 
     _writeQueue = dispatch_queue_create("com.facebook.socketrocket.proxyconnect.write", DISPATCH_QUEUE_SERIAL);
     _inputQueue = [NSMutableArray arrayWithCapacity:2];
@@ -91,11 +91,11 @@
 
 - (void)_didConnect
 {
-    SRDebugLog(@"_didConnect, return streams");
+    JIMSRDebugLog(@"_didConnect, return streams");
     if (_connectionRequiresSSL) {
         if (_httpProxyHost) {
             // Must set the real peer name before turning on SSL
-            SRDebugLog(@"proxy set peer name to real host %@", self.url.host);
+            JIMSRDebugLog(@"proxy set peer name to real host %@", self.url.host);
             [self.outputStream setProperty:self.url.host forKey:@"_kCFStreamPropertySocketPeerName"];
         }
     }
@@ -119,9 +119,9 @@
 
 - (void)_failWithError:(NSError *)error
 {
-    SRDebugLog(@"_failWithError, return error");
+    JIMSRDebugLog(@"_failWithError, return error");
     if (!error) {
-        error = SRHTTPErrorWithCodeDescription(500, 2132,@"Proxy Error");
+        error = JIMSRHTTPErrorWithCodeDescription(500, 2132,@"Proxy Error");
     }
 
     if (_receivedHTTPHeaders) {
@@ -144,7 +144,7 @@
 // get proxy setting from device setting
 - (void)_configureProxy
 {
-    SRDebugLog(@"configureProxy");
+    JIMSRDebugLog(@"configureProxy");
     NSDictionary *proxySettings = CFBridgingRelease(CFNetworkCopySystemProxySettings());
 
     // CFNetworkCopyProxiesForURL doesn't understand ws:// or wss://
@@ -157,7 +157,7 @@
 
     NSArray *proxies = CFBridgingRelease(CFNetworkCopyProxiesForURL((__bridge CFURLRef)httpURL, (__bridge CFDictionaryRef)proxySettings));
     if (proxies.count == 0) {
-        SRDebugLog(@"configureProxy no proxies");
+        JIMSRDebugLog(@"configureProxy no proxies");
         [self _openConnection];
         return;                 // no proxy
     }
@@ -201,17 +201,17 @@
         _socksProxyPassword = settings[(NSString *)kCFProxyPasswordKey];
     }
     if (_httpProxyHost) {
-        SRDebugLog(@"Using http proxy %@:%u", _httpProxyHost, _httpProxyPort);
+        JIMSRDebugLog(@"Using http proxy %@:%u", _httpProxyHost, _httpProxyPort);
     } else if (_socksProxyHost) {
-        SRDebugLog(@"Using socks proxy %@:%u", _socksProxyHost, _socksProxyPort);
+        JIMSRDebugLog(@"Using socks proxy %@:%u", _socksProxyHost, _socksProxyPort);
     } else {
-        SRDebugLog(@"configureProxy no proxies");
+        JIMSRDebugLog(@"configureProxy no proxies");
     }
 }
 
 - (void)_fetchPAC:(NSURL *)PACurl withProxySettings:(NSDictionary *)proxySettings
 {
-    SRDebugLog(@"SRWebSocket fetchPAC:%@", PACurl);
+    JIMSRDebugLog(@"SRWebSocket fetchPAC:%@", PACurl);
 
     if ([PACurl isFileURL]) {
         NSError *error = nil;
@@ -254,7 +254,7 @@
         [self _openConnection];
         return;
     }
-    SRDebugLog(@"runPACScript");
+    JIMSRDebugLog(@"runPACScript");
     // From: http://developer.apple.com/samplecode/CFProxySupportTool/listing1.html
     // Work around <rdar://problem/5530166>.  This dummy call to
     // CFNetworkCopyProxiesForURL initialise some state within CFNetwork
@@ -309,14 +309,14 @@
     CFReadStreamRef readStream = NULL;
     CFWriteStreamRef writeStream = NULL;
 
-    SRDebugLog(@"ProxyConnect connect stream to %@:%u", host, port);
+    JIMSRDebugLog(@"ProxyConnect connect stream to %@:%u", host, port);
     CFStreamCreatePairWithSocketToHost(NULL, (__bridge CFStringRef)host, port, &readStream, &writeStream);
 
     self.outputStream = CFBridgingRelease(writeStream);
     self.inputStream = CFBridgingRelease(readStream);
 
     if (_socksProxyHost) {
-        SRDebugLog(@"ProxyConnect set sock property stream to %@:%u user %@ password %@", _socksProxyHost, _socksProxyPort, _socksProxyUsername, _socksProxyPassword);
+        JIMSRDebugLog(@"ProxyConnect set sock property stream to %@:%u user %@ password %@", _socksProxyHost, _socksProxyPort, _socksProxyUsername, _socksProxyPassword);
         NSMutableDictionary *settings = [NSMutableDictionary dictionaryWithCapacity:4];
         settings[NSStreamSOCKSProxyHostKey] = _socksProxyHost;
         if (_socksProxyPort) {
@@ -337,7 +337,7 @@
 
 - (void)stream:(NSStream *)aStream handleEvent:(NSStreamEvent)eventCode
 {
-    SRDebugLog(@"stream handleEvent %u", eventCode);
+    JIMSRDebugLog(@"stream handleEvent %u", eventCode);
     switch (eventCode) {
         case NSStreamEventOpenCompleted: {
             if (aStream == self.inputStream) {
@@ -361,14 +361,14 @@
         } break;
         case NSStreamEventHasSpaceAvailable:
         case NSStreamEventNone:
-            SRDebugLog(@"(default)  %@", aStream);
+            JIMSRDebugLog(@"(default)  %@", aStream);
             break;
     }
 }
 
 - (void)_proxyDidConnect
 {
-    SRDebugLog(@"Proxy Connected");
+    JIMSRDebugLog(@"Proxy Connected");
     uint32_t port = _url.port.unsignedIntValue;
     if (port == 0) {
         port = (_connectionRequiresSSL ? 443 : 80);
@@ -377,7 +377,7 @@
     NSString *connectRequestStr = [NSString stringWithFormat:@"CONNECT %@:%u HTTP/1.1\r\nHost: %@\r\nConnection: keep-alive\r\nProxy-Connection: keep-alive\r\n\r\n", _url.host, port, _url.host];
 
     NSData *message = [connectRequestStr dataUsingEncoding:NSUTF8StringEncoding];
-    SRDebugLog(@"Proxy sending %@", connectRequestStr);
+    JIMSRDebugLog(@"Proxy sending %@", connectRequestStr);
 
     [self _writeData:message];
 }
@@ -385,9 +385,9 @@
 ///handles the incoming bytes and sending them to the proper processing method
 - (void)_processInputStream
 {
-    NSMutableData *buf = [NSMutableData dataWithCapacity:SRDefaultBufferSize()];
+    NSMutableData *buf = [NSMutableData dataWithCapacity:JIMSRDefaultBufferSize()];
     uint8_t *buffer = buf.mutableBytes;
-    NSInteger length = [_inputStream read:buffer maxLength:SRDefaultBufferSize()];
+    NSInteger length = [_inputStream read:buffer maxLength:JIMSRDefaultBufferSize()];
 
     if (length <= 0) {
         return;
@@ -424,7 +424,7 @@
 
     CFHTTPMessageAppendBytes(_receivedHTTPHeaders, (const UInt8 *)data.bytes, data.length);
     if (CFHTTPMessageIsHeaderComplete(_receivedHTTPHeaders)) {
-        SRDebugLog(@"Finished reading headers %@", CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(_receivedHTTPHeaders)));
+        JIMSRDebugLog(@"Finished reading headers %@", CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(_receivedHTTPHeaders)));
         [self _proxyHTTPHeadersDidFinish];
         return YES;
     }
@@ -437,14 +437,14 @@
     NSInteger responseCode = CFHTTPMessageGetResponseStatusCode(_receivedHTTPHeaders);
 
     if (responseCode >= 299) {
-        SRDebugLog(@"Connect to Proxy Request failed with response code %d", responseCode);
-        NSError *error = SRHTTPErrorWithCodeDescription(responseCode, 2132,
+        JIMSRDebugLog(@"Connect to Proxy Request failed with response code %d", responseCode);
+        NSError *error = JIMSRHTTPErrorWithCodeDescription(responseCode, 2132,
                                                         [NSString stringWithFormat:@"Received bad response code from proxy server: %d.",
                                                          (int)responseCode]);
         [self _failWithError:error];
         return;
     }
-    SRDebugLog(@"proxy connect return %d, call socket connect", responseCode);
+    JIMSRDebugLog(@"proxy connect return %d, call socket connect", responseCode);
     [self _didConnect];
 }
 
@@ -468,7 +468,7 @@ static NSTimeInterval const SRProxyConnectWriteTimeout = 5.0;
             usleep(100); //wait until the socket is ready
             timeout -= 100;
             if (timeout < 0) {
-                NSError *error = SRHTTPErrorWithCodeDescription(408, 2132, @"Proxy timeout");
+                NSError *error = JIMSRHTTPErrorWithCodeDescription(408, 2132, @"Proxy timeout");
                 [sself _failWithError:error];
             } else if (outStream.streamError != nil) {
                 [sself _failWithError:outStream.streamError];

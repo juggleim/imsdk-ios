@@ -27,6 +27,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[@"target_id"]];
+            NSString *subChannel = itemDic[@"sub_channel"];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             [conversations addObject:c];
         }
     }

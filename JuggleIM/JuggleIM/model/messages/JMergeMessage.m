@@ -12,6 +12,7 @@
 #define jMessageIdList @"messageIdList"
 #define jMessageConversationId      @"conversationId"
 #define jMessageConversationType    @"conversationType"
+#define jMessageSubChannel          @"subChannel"
 #define jMessageContainerMsgId      @"containerMsgId"
 #define jMergeExtra @"extra"
 #define jPreviewList @"previewList"
@@ -57,12 +58,13 @@
     return jMergeType;
 }
 
--(NSData *)encode{
+-(NSData *)encode {
     NSMutableDictionary *mergeDic = [NSMutableDictionary dictionary];
     [mergeDic setObject:self.title?:@"" forKey:jMergeTitle];
     [mergeDic setObject:self.extra?:@"" forKey:jMergeExtra];
     [mergeDic setObject:self.conversation.conversationId?:@"" forKey:jMessageConversationId];
     [mergeDic setObject:@(self.conversation.conversationType) forKey:jMessageConversationType];
+    [mergeDic setObject:self.conversation.subChannel?:@"" forKey:jMessageSubChannel];
     [mergeDic setObject:self.containerMsgId?:@"" forKey:jMessageContainerMsgId];
     if (self.messageIdList.count > 0) {
         [mergeDic setObject:self.messageIdList forKey:jMessageIdList];
@@ -81,7 +83,7 @@
     return data;
 }
 
-- (void)decode:(NSData *)data{
+- (void)decode:(NSData *)data {
     NSDictionary * json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     self.title = json[jMergeTitle];
     self.messageIdList = json[jMessageIdList];
@@ -93,6 +95,7 @@
     if([type isKindOfClass:[NSNumber class]]){
         conversation.conversationType = [type integerValue];
     }
+    conversation.subChannel = json[jMessageSubChannel];
     self.conversation = conversation;
     NSArray *previewListJson = json[jPreviewList];
     NSMutableArray *previewList = [NSMutableArray array];

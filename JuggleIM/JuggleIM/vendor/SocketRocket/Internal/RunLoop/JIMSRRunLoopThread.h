@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SRRunLoopThread : NSThread
+@interface JIMSRRunLoopThread : NSThread
 
 @property (nonatomic, strong, readonly) NSRunLoop *runLoop;
 

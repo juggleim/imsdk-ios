@@ -7,18 +7,18 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRSecurityPolicy.h"
-#import "SRPinningSecurityPolicy.h"
+#import "JIMSRSecurityPolicy.h"
+#import "JIMSRPinningSecurityPolicy.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SRSecurityPolicy ()
+@interface JIMSRSecurityPolicy ()
 
 @property (nonatomic, assign, readonly) BOOL certificateChainValidationEnabled;
 
 @end
 
-@implementation SRSecurityPolicy
+@implementation JIMSRSecurityPolicy
 
 + (instancetype)defaultPolicy
 {

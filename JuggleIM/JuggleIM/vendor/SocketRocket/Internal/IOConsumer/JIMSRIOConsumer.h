@@ -11,14 +11,14 @@
 
 #import <Foundation/Foundation.h>
 
-@class SRWebSocket; // TODO: (nlutsenko) Remove dependency on SRWebSocket here.
+@class JIMSRWebSocket; // TODO: (nlutsenko) Remove dependency on SRWebSocket here.
 
 // Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
 typedef size_t (^stream_scanner)(NSData *collected_data);
-typedef void (^data_callback)(SRWebSocket *webSocket,  NSData *data);
+typedef void (^data_callback)(JIMSRWebSocket *webSocket,  NSData *data);
 
-@interface SRIOConsumer : NSObject {
+@interface JIMSRIOConsumer : NSObject {
     stream_scanner _scanner;
     data_callback _handler;
     size_t _bytesNeeded;

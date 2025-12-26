@@ -24,6 +24,8 @@ typedef NS_ENUM(NSUInteger, JUserType) {
 // 更新时间
 @property (nonatomic, assign) long long updatedTime;
 
+- (NSDictionary *)toDictionary;
++ (JUserInfo *)userInfoWith:(NSDictionary *)dictionary;
 @end
 
 NS_ASSUME_NONNULL_END

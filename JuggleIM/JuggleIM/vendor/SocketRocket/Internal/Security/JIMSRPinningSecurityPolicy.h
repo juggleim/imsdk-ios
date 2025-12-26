@@ -9,7 +9,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "SRSecurityPolicy.h"
+#import "JIMSRSecurityPolicy.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  * it is still possible to manually construct a security policy of this class. If you do this, note that you may
  * be open to MitM attacks, and we will not support any issues you may have. Dive at your own risk.
  */
-@interface SRPinningSecurityPolicy : SRSecurityPolicy
+@interface JIMSRPinningSecurityPolicy : JIMSRSecurityPolicy
 
 - (instancetype)initWithCertificates:(NSArray *)pinnedCertificates;
 

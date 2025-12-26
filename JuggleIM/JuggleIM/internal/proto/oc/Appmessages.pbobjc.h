@@ -553,6 +553,7 @@ typedef GPB_ENUM(MergedMsgs_FieldNumber) {
   MergedMsgs_FieldNumber_UserId = 2,
   MergedMsgs_FieldNumber_TargetId = 3,
   MergedMsgs_FieldNumber_MsgsArray = 4,
+  MergedMsgs_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface MergedMsgs : GPBMessage
@@ -563,10 +564,12 @@ GPB_FINAL @interface MergedMsgs : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
-/** string containerMsgId = 5; */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SimpleMsg*> *msgsArray;
 /** The number of items in @c msgsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgsArray_Count;
+
+/** string containerMsgId = 5; */
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1050,6 +1053,7 @@ typedef GPB_ENUM(SimpleConversation_FieldNumber) {
   SimpleConversation_FieldNumber_ChannelType = 2,
   SimpleConversation_FieldNumber_MsgTime = 3,
   SimpleConversation_FieldNumber_MsgSeq = 4,
+  SimpleConversation_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface SimpleConversation : GPBMessage
@@ -1061,6 +1065,8 @@ GPB_FINAL @interface SimpleConversation : GPBMessage
 @property(nonatomic, readwrite) int64_t msgTime;
 
 @property(nonatomic, readwrite) int64_t msgSeq;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1150,6 +1156,7 @@ typedef GPB_ENUM(DelHisMsgsReq_FieldNumber) {
   DelHisMsgsReq_FieldNumber_ChannelType = 3,
   DelHisMsgsReq_FieldNumber_MsgsArray = 4,
   DelHisMsgsReq_FieldNumber_DelScope = 5,
+  DelHisMsgsReq_FieldNumber_SubChannel = 6,
 };
 
 GPB_FINAL @interface DelHisMsgsReq : GPBMessage
@@ -1164,6 +1171,8 @@ GPB_FINAL @interface DelHisMsgsReq : GPBMessage
 @property(nonatomic, readonly) NSUInteger msgsArray_Count;
 
 @property(nonatomic, readwrite) int32_t delScope;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1184,6 +1193,7 @@ void SetDelHisMsgsReq_ChannelType_RawValue(DelHisMsgsReq *message, int32_t value
 typedef GPB_ENUM(QryLatestMsgReq_FieldNumber) {
   QryLatestMsgReq_FieldNumber_ConverId = 1,
   QryLatestMsgReq_FieldNumber_ChannelType = 2,
+  QryLatestMsgReq_FieldNumber_SubChannel = 3,
 };
 
 GPB_FINAL @interface QryLatestMsgReq : GPBMessage
@@ -1191,6 +1201,8 @@ GPB_FINAL @interface QryLatestMsgReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *converId;
 
 @property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1214,6 +1226,7 @@ typedef GPB_ENUM(QryLatestMsgResp_FieldNumber) {
   QryLatestMsgResp_FieldNumber_MsgSeqNo = 3,
   QryLatestMsgResp_FieldNumber_MsgTime = 4,
   QryLatestMsgResp_FieldNumber_MsgId = 5,
+  QryLatestMsgResp_FieldNumber_SubChannel = 6,
 };
 
 GPB_FINAL @interface QryLatestMsgResp : GPBMessage
@@ -1227,6 +1240,8 @@ GPB_FINAL @interface QryLatestMsgResp : GPBMessage
 @property(nonatomic, readwrite) int64_t msgTime;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1251,6 +1266,7 @@ typedef GPB_ENUM(QryHisMsgsReq_FieldNumber) {
   QryHisMsgsReq_FieldNumber_Count = 4,
   QryHisMsgsReq_FieldNumber_Order = 5,
   QryHisMsgsReq_FieldNumber_MsgTypesArray = 6,
+  QryHisMsgsReq_FieldNumber_SubChannel = 7,
 };
 
 GPB_FINAL @interface QryHisMsgsReq : GPBMessage
@@ -1268,6 +1284,8 @@ GPB_FINAL @interface QryHisMsgsReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgTypesArray;
 /** The number of items in @c msgTypesArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgTypesArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1288,17 +1306,20 @@ void SetQryHisMsgsReq_ChannelType_RawValue(QryHisMsgsReq *message, int32_t value
 typedef GPB_ENUM(QryFirstUnreadMsgReq_FieldNumber) {
   QryFirstUnreadMsgReq_FieldNumber_TargetId = 1,
   QryFirstUnreadMsgReq_FieldNumber_ChannelType = 2,
+  QryFirstUnreadMsgReq_FieldNumber_SubChannel = 3,
 };
 
 GPB_FINAL @interface QryFirstUnreadMsgReq : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
+@property(nonatomic, readwrite) ChannelType channelType;
+
 /**
  * int64 startTime = 3;
  * int32 count = 4;
  **/
-@property(nonatomic, readwrite) ChannelType channelType;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1320,6 +1341,7 @@ typedef GPB_ENUM(QryHisMsgByIdsReq_FieldNumber) {
   QryHisMsgByIdsReq_FieldNumber_TargetId = 1,
   QryHisMsgByIdsReq_FieldNumber_ChannelType = 2,
   QryHisMsgByIdsReq_FieldNumber_MsgIdsArray = 3,
+  QryHisMsgByIdsReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface QryHisMsgByIdsReq : GPBMessage
@@ -1331,6 +1353,8 @@ GPB_FINAL @interface QryHisMsgByIdsReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgIdsArray;
 /** The number of items in @c msgIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1354,6 +1378,7 @@ typedef GPB_ENUM(RecallMsgReq_FieldNumber) {
   RecallMsgReq_FieldNumber_MsgId = 3,
   RecallMsgReq_FieldNumber_MsgTime = 4,
   RecallMsgReq_FieldNumber_ExtsArray = 5,
+  RecallMsgReq_FieldNumber_SubChannel = 6,
 };
 
 GPB_FINAL @interface RecallMsgReq : GPBMessage
@@ -1369,6 +1394,8 @@ GPB_FINAL @interface RecallMsgReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<KvItem*> *extsArray;
 /** The number of items in @c extsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger extsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1391,6 +1418,7 @@ typedef GPB_ENUM(MarkReadReq_FieldNumber) {
   MarkReadReq_FieldNumber_ChannelType = 2,
   MarkReadReq_FieldNumber_MsgsArray = 3,
   MarkReadReq_FieldNumber_IndexScopesArray = 4,
+  MarkReadReq_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface MarkReadReq : GPBMessage
@@ -1406,6 +1434,8 @@ GPB_FINAL @interface MarkReadReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<IndexScope*> *indexScopesArray;
 /** The number of items in @c indexScopesArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger indexScopesArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1427,6 +1457,7 @@ typedef GPB_ENUM(MarkGrpMsgReadReq_FieldNumber) {
   MarkGrpMsgReadReq_FieldNumber_GroupId = 1,
   MarkGrpMsgReadReq_FieldNumber_ChannelType = 2,
   MarkGrpMsgReadReq_FieldNumber_MsgIdsArray = 3,
+  MarkGrpMsgReadReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface MarkGrpMsgReadReq : GPBMessage
@@ -1438,6 +1469,8 @@ GPB_FINAL @interface MarkGrpMsgReadReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgIdsArray;
 /** The number of items in @c msgIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1462,6 +1495,7 @@ typedef GPB_ENUM(CleanHisMsgReq_FieldNumber) {
   CleanHisMsgReq_FieldNumber_CleanScope = 4,
   CleanHisMsgReq_FieldNumber_SenderId = 5,
   CleanHisMsgReq_FieldNumber_CleanTimeOffset = 6,
+  CleanHisMsgReq_FieldNumber_SubChannel = 7,
 };
 
 GPB_FINAL @interface CleanHisMsgReq : GPBMessage
@@ -1477,6 +1511,8 @@ GPB_FINAL @interface CleanHisMsgReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *senderId;
 
 @property(nonatomic, readwrite) int64_t cleanTimeOffset;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1535,6 +1571,7 @@ typedef GPB_ENUM(ModifyMsgReq_FieldNumber) {
   ModifyMsgReq_FieldNumber_MsgSeqNo = 5,
   ModifyMsgReq_FieldNumber_MsgContent = 6,
   ModifyMsgReq_FieldNumber_MsgType = 7,
+  ModifyMsgReq_FieldNumber_SubChannel = 8,
 };
 
 GPB_FINAL @interface ModifyMsgReq : GPBMessage
@@ -1552,6 +1589,8 @@ GPB_FINAL @interface ModifyMsgReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1572,6 +1611,7 @@ void SetModifyMsgReq_ChannelType_RawValue(ModifyMsgReq *message, int32_t value);
 typedef GPB_ENUM(MergeMsgReq_FieldNumber) {
   MergeMsgReq_FieldNumber_ParentMsgId = 1,
   MergeMsgReq_FieldNumber_MergedMsgs = 2,
+  MergeMsgReq_FieldNumber_SubChannel = 3,
 };
 
 GPB_FINAL @interface MergeMsgReq : GPBMessage
@@ -1581,6 +1621,8 @@ GPB_FINAL @interface MergeMsgReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) MergedMsgs *mergedMsgs;
 /** Test to see if @c mergedMsgs has been set. */
 @property(nonatomic, readwrite) BOOL hasMergedMsgs;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1608,6 +1650,7 @@ typedef GPB_ENUM(QryMsgExtReq_FieldNumber) {
   QryMsgExtReq_FieldNumber_TargetId = 1,
   QryMsgExtReq_FieldNumber_ChannelType = 2,
   QryMsgExtReq_FieldNumber_MsgIdsArray = 3,
+  QryMsgExtReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface QryMsgExtReq : GPBMessage
@@ -1619,6 +1662,8 @@ GPB_FINAL @interface QryMsgExtReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgIdsArray;
 /** The number of items in @c msgIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1641,6 +1686,7 @@ typedef GPB_ENUM(MsgExt_FieldNumber) {
   MsgExt_FieldNumber_ChannelType = 2,
   MsgExt_FieldNumber_MsgId = 3,
   MsgExt_FieldNumber_Ext = 4,
+  MsgExt_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface MsgExt : GPBMessage
@@ -1654,6 +1700,8 @@ GPB_FINAL @interface MsgExt : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) MsgExtItem *ext;
 /** Test to see if @c ext has been set. */
 @property(nonatomic, readwrite) BOOL hasExt;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1732,6 +1780,7 @@ typedef GPB_ENUM(QryGlobalConversReq_FieldNumber) {
   QryGlobalConversReq_FieldNumber_TargetId = 4,
   QryGlobalConversReq_FieldNumber_ChannelType = 5,
   QryGlobalConversReq_FieldNumber_ExcludeUserIdsArray = 6,
+  QryGlobalConversReq_FieldNumber_SubChannel = 7,
 };
 
 /**
@@ -1752,6 +1801,8 @@ GPB_FINAL @interface QryGlobalConversReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *excludeUserIdsArray;
 /** The number of items in @c excludeUserIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger excludeUserIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -1903,6 +1954,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_LatestReadMsgId = 18,
   Conversation_FieldNumber_LatestReadMsgTime = 19,
   Conversation_FieldNumber_ConverTagsArray = 20,
+  Conversation_FieldNumber_SubChannel = 21,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -1956,6 +2008,8 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<ConverTag*> *converTagsArray;
 /** The number of items in @c converTagsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger converTagsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -2091,6 +2145,7 @@ typedef GPB_ENUM(QryMentionMsgsReq_FieldNumber) {
   QryMentionMsgsReq_FieldNumber_Count = 4,
   QryMentionMsgsReq_FieldNumber_Order = 5,
   QryMentionMsgsReq_FieldNumber_LatestReadIndex = 6,
+  QryMentionMsgsReq_FieldNumber_SubChannel = 7,
 };
 
 GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
@@ -2106,6 +2161,8 @@ GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
 @property(nonatomic, readwrite) int32_t order;
 
 @property(nonatomic, readwrite) int64_t latestReadIndex;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -2262,6 +2319,7 @@ typedef GPB_ENUM(UndisturbConverItem_FieldNumber) {
   UndisturbConverItem_FieldNumber_TargetId = 1,
   UndisturbConverItem_FieldNumber_ChannelType = 2,
   UndisturbConverItem_FieldNumber_UndisturbType = 3,
+  UndisturbConverItem_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface UndisturbConverItem : GPBMessage
@@ -2271,6 +2329,8 @@ GPB_FINAL @interface UndisturbConverItem : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite) int32_t undisturbType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -2334,6 +2394,7 @@ typedef GPB_ENUM(QryReadInfosReq_FieldNumber) {
   QryReadInfosReq_FieldNumber_TargetId = 1,
   QryReadInfosReq_FieldNumber_ChannelType = 2,
   QryReadInfosReq_FieldNumber_MsgIdsArray = 3,
+  QryReadInfosReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface QryReadInfosReq : GPBMessage
@@ -2345,6 +2406,8 @@ GPB_FINAL @interface QryReadInfosReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *msgIdsArray;
 /** The number of items in @c msgIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger msgIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -2398,6 +2461,7 @@ typedef GPB_ENUM(QryReadDetailReq_FieldNumber) {
   QryReadDetailReq_FieldNumber_TargetId = 1,
   QryReadDetailReq_FieldNumber_ChannelType = 2,
   QryReadDetailReq_FieldNumber_MsgId = 3,
+  QryReadDetailReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface QryReadDetailReq : GPBMessage
@@ -2407,6 +2471,8 @@ GPB_FINAL @interface QryReadDetailReq : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -2471,6 +2537,7 @@ typedef GPB_ENUM(QryConverReq_FieldNumber) {
   QryConverReq_FieldNumber_ChannelType = 2,
   QryConverReq_FieldNumber_IsInner = 3,
   QryConverReq_FieldNumber_UserIdsArray = 4,
+  QryConverReq_FieldNumber_SubChannel = 5,
 };
 
 GPB_FINAL @interface QryConverReq : GPBMessage
@@ -2484,6 +2551,8 @@ GPB_FINAL @interface QryConverReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *userIdsArray;
 /** The number of items in @c userIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger userIdsArray_Count;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -3416,11 +3485,32 @@ GPB_FINAL @interface QiNiuCredResp : GPBMessage
 
 typedef GPB_ENUM(PreSignResp_FieldNumber) {
   PreSignResp_FieldNumber_URL = 1,
+  PreSignResp_FieldNumber_ObjKey = 2,
+  PreSignResp_FieldNumber_Policy = 3,
+  PreSignResp_FieldNumber_SignVersion = 4,
+  PreSignResp_FieldNumber_Credential = 5,
+  PreSignResp_FieldNumber_Date = 6,
+  PreSignResp_FieldNumber_Signature = 7,
+  PreSignResp_FieldNumber_DownloadURL = 8,
 };
 
 GPB_FINAL @interface PreSignResp : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *URL;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *objKey;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *policy;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *signVersion;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *credential;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *date;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *signature;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *downloadURL;
 
 @end
 
@@ -3530,6 +3620,7 @@ typedef GPB_ENUM(TopMsgReq_FieldNumber) {
   TopMsgReq_FieldNumber_TargetId = 1,
   TopMsgReq_FieldNumber_ChannelType = 2,
   TopMsgReq_FieldNumber_MsgId = 3,
+  TopMsgReq_FieldNumber_SubChannel = 4,
 };
 
 GPB_FINAL @interface TopMsgReq : GPBMessage
@@ -3539,6 +3630,8 @@ GPB_FINAL @interface TopMsgReq : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 
@@ -3559,6 +3652,7 @@ void SetTopMsgReq_ChannelType_RawValue(TopMsgReq *message, int32_t value);
 typedef GPB_ENUM(GetTopMsgReq_FieldNumber) {
   GetTopMsgReq_FieldNumber_TargetId = 1,
   GetTopMsgReq_FieldNumber_ChannelType = 2,
+  GetTopMsgReq_FieldNumber_SubChannel = 3,
 };
 
 GPB_FINAL @interface GetTopMsgReq : GPBMessage
@@ -3566,6 +3660,8 @@ GPB_FINAL @interface GetTopMsgReq : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *targetId;
 
 @property(nonatomic, readwrite) ChannelType channelType;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
 
 @end
 

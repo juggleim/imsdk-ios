@@ -9,19 +9,19 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "NSRunLoop+SRWebSocket.h"
-#import "NSRunLoop+SRWebSocketPrivate.h"
+#import "NSRunLoop+JIMSRWebSocket.h"
+#import "NSRunLoop+JIMSRWebSocketPrivate.h"
 
-#import "SRRunLoopThread.h"
+#import "JIMSRRunLoopThread.h"
 
 // Required for object file to always be linked.
-void import_NSRunLoop_SRWebSocket(void) { }
+void import_NSRunLoop_JIMSRWebSocket(void) { }
 
-@implementation NSRunLoop (SRWebSocket)
+@implementation NSRunLoop (JIMSRWebSocket)
 
 + (NSRunLoop *)SR_networkRunLoop
 {
-    return [SRRunLoopThread sharedThread].runLoop;
+    return [JIMSRRunLoopThread sharedThread].runLoop;
 }
 
 @end

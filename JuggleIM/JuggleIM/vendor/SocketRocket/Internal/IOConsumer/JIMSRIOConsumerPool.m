@@ -9,11 +9,11 @@
 // of patent rights can be found in the PATENTS file in the same directory.
 //
 
-#import "SRIOConsumerPool.h"
+#import "JIMSRIOConsumerPool.h"
 
-@implementation SRIOConsumerPool {
+@implementation JIMSRIOConsumerPool {
     NSUInteger _poolSize;
-    NSMutableArray<SRIOConsumer *> *_bufferedConsumers;
+    NSMutableArray<JIMSRIOConsumer *> *_bufferedConsumers;
 }
 
 - (instancetype)initWithBufferCapacity:(NSUInteger)poolSize
@@ -31,18 +31,18 @@
     return [self initWithBufferCapacity:8];
 }
 
-- (SRIOConsumer *)consumerWithScanner:(stream_scanner)scanner
+- (JIMSRIOConsumer *)consumerWithScanner:(stream_scanner)scanner
                               handler:(data_callback)handler
                           bytesNeeded:(size_t)bytesNeeded
                    readToCurrentFrame:(BOOL)readToCurrentFrame
                           unmaskBytes:(BOOL)unmaskBytes
 {
-    SRIOConsumer *consumer = nil;
+    JIMSRIOConsumer *consumer = nil;
     if (_bufferedConsumers.count) {
         consumer = [_bufferedConsumers lastObject];
         [_bufferedConsumers removeLastObject];
     } else {
-        consumer = [[SRIOConsumer alloc] init];
+        consumer = [[JIMSRIOConsumer alloc] init];
     }
 
     [consumer resetWithScanner:scanner
@@ -54,7 +54,7 @@
     return consumer;
 }
 
-- (void)returnConsumer:(SRIOConsumer *)consumer
+- (void)returnConsumer:(JIMSRIOConsumer *)consumer
 {
     if (_bufferedConsumers.count < _poolSize) {
         [_bufferedConsumers addObject:consumer];

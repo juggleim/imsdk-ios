@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern void SRErrorLog(NSString *format, ...)
+extern void JIMSRErrorLog(NSString *format, ...)
 {
     __block va_list arg_list;
     va_start (arg_list, format);
@@ -23,7 +23,7 @@ extern void SRErrorLog(NSString *format, ...)
     NSLog(@"[SocketRocket] %@", formattedString);
 }
 
-extern void SRDebugLog(NSString *format, ...)
+extern void JIMSRDebugLog(NSString *format, ...)
 {
 #ifdef SR_DEBUG_LOG_ENABLED
     SRErrorLog(tag, format);

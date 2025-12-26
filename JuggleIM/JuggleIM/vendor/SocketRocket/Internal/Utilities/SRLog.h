@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Uncomment this line to enable debug logging
 //#define SR_DEBUG_LOG_ENABLED
 
-extern void SRErrorLog(NSString *format, ...);
-extern void SRDebugLog(NSString *format, ...);
+extern void JIMSRErrorLog(NSString *format, ...);
+extern void JIMSRDebugLog(NSString *format, ...);
 
 NS_ASSUME_NONNULL_END

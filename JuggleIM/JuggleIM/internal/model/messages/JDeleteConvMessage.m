@@ -11,6 +11,7 @@
 #define jDelConvConversations @"conversations"
 #define jDelConvTargetId @"target_id"
 #define jDelConvChannelType @"channel_type"
+#define jDelConvSubChannel @"sub_channel"
 
 @implementation JDeleteConvMessage
 
@@ -30,6 +31,10 @@
                 conversationType = [(NSNumber *)type intValue];
             }
             JConversation *c = [[JConversation alloc] initWithConversationType:conversationType conversationId:itemDic[jDelConvTargetId]];
+            NSString *subChannel = itemDic[jDelConvSubChannel];
+            if (subChannel.length > 0) {
+                c.subChannel = subChannel;
+            }
             [conversations addObject:c];
         }
     }

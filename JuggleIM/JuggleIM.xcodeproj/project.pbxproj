@@ -96,6 +96,14 @@
 		A06516182C9A866400E3AEC1 /* JPushData.h in Headers */ = {isa = PBXBuildFile; fileRef = A06516152C9A866400E3AEC1 /* JPushData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A06596902E5D88250047B896 /* JCallVideoDenoiseParams.h in Headers */ = {isa = PBXBuildFile; fileRef = A065968E2E5D88250047B896 /* JCallVideoDenoiseParams.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A06596912E5D88250047B896 /* JCallVideoDenoiseParams.m in Sources */ = {isa = PBXBuildFile; fileRef = A065968F2E5D88250047B896 /* JCallVideoDenoiseParams.m */; };
+		A068B9C62EC5F5A100D04F45 /* JGetMomentOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A068B9C52EC5F5A100D04F45 /* JGetMomentOption.m */; };
+		A068B9C72EC5F5A100D04F45 /* JGetMomentOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A068B9C42EC5F5A100D04F45 /* JGetMomentOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A068B9CA2EC5FDA000D04F45 /* JGetMomentCommentOption.m in Sources */ = {isa = PBXBuildFile; fileRef = A068B9C92EC5FDA000D04F45 /* JGetMomentCommentOption.m */; };
+		A068B9CB2EC5FDA000D04F45 /* JGetMomentCommentOption.h in Headers */ = {isa = PBXBuildFile; fileRef = A068B9C82EC5FDA000D04F45 /* JGetMomentCommentOption.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A068B9CE2EC6035D00D04F45 /* JMomentManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A068B9CD2EC6035D00D04F45 /* JMomentManager.m */; };
+		A068B9CF2EC6035D00D04F45 /* JMomentManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A068B9CC2EC6035D00D04F45 /* JMomentManager.h */; };
+		A068B9D22ECB272300D04F45 /* JMomentDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A068B9D12ECB272300D04F45 /* JMomentDB.m */; };
+		A068B9D32ECB272300D04F45 /* JMomentDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A068B9D02ECB272300D04F45 /* JMomentDB.h */; };
 		A06A2F092B20B2B6009B9588 /* JPBData.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F072B20B2B6009B9588 /* JPBData.h */; };
 		A06A2F0A2B20B2B6009B9588 /* JPBData.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F082B20B2B6009B9588 /* JPBData.m */; };
 		A06A2F132B233351009B9588 /* JDBHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F112B233351009B9588 /* JDBHelper.h */; };
@@ -159,6 +167,15 @@
 		A0897C7E2BA9D4BC00041E33 /* JMergeMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */; };
 		A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */ = {isa = PBXBuildFile; fileRef = A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */; };
 		A0897C822BB66F7200041E33 /* Pushtoken.pbobjc.m in Sources */ = {isa = PBXBuildFile; fileRef = A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		A08A263D2EC341730022272D /* JMomentProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A263C2EC341730022272D /* JMomentProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08A26402EC341BD0022272D /* JMoment.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A263E2EC341BD0022272D /* JMoment.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08A26412EC341BD0022272D /* JMoment.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A263F2EC341BD0022272D /* JMoment.m */; };
+		A08A26442EC345B80022272D /* JMomentMedia.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A26432EC345B80022272D /* JMomentMedia.m */; };
+		A08A26452EC345B80022272D /* JMomentMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A26422EC345B80022272D /* JMomentMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08A26482EC34C5F0022272D /* JMomentReaction.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A26472EC34C5F0022272D /* JMomentReaction.m */; };
+		A08A26492EC34C5F0022272D /* JMomentReaction.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A26462EC34C5F0022272D /* JMomentReaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A08A264C2EC34ED70022272D /* JMomentComment.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A264B2EC34ED70022272D /* JMomentComment.m */; };
+		A08A264D2EC34ED70022272D /* JMomentComment.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A264A2EC34ED70022272D /* JMomentComment.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A9A552D5DE532009EE779 /* JGroupMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08A9A582D5DE532009EE779 /* JGroupMember.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A9A562D5DE532009EE779 /* JGroupMember.m */; };
 		A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -268,21 +285,21 @@
 		A08AA3B62B19DF75008B114C /* JIMCore.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3B42B19DF75008B114C /* JIMCore.h */; };
 		A08AA3B72B19DF75008B114C /* JIMCore.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3B52B19DF75008B114C /* JIMCore.m */; };
 		A08AA3B92B19E3DF008B114C /* GPBProtocolBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3B82B19E3DF008B114C /* GPBProtocolBuffers.h */; };
-		A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BB2B19EEDA008B114C /* SRWebSocket.m */; };
-		A08AA3EC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m */; };
-		A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BD2B19EEDA008B114C /* SRSecurityPolicy.m */; };
+		A08AA3EB2B19EEDA008B114C /* JIMSRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BB2B19EEDA008B114C /* JIMSRWebSocket.m */; };
+		A08AA3EC2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BC2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.m */; };
+		A08AA3ED2B19EEDA008B114C /* JIMSRSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3BD2B19EEDA008B114C /* JIMSRSecurityPolicy.m */; };
 		A08AA3EE2B19EEDA008B114C /* SocketRocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3BE2B19EEDA008B114C /* SocketRocket.h */; };
-		A08AA3EF2B19EEDA008B114C /* SRConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C02B19EEDA008B114C /* SRConstants.h */; };
-		A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C22B19EEDA008B114C /* SRProxyConnect.m */; };
-		A08AA3F12B19EEDA008B114C /* SRProxyConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C32B19EEDA008B114C /* SRProxyConnect.h */; };
-		A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C52B19EEDA008B114C /* SRRunLoopThread.h */; };
-		A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C62B19EEDA008B114C /* SRRunLoopThread.m */; };
-		A08AA3F42B19EEDA008B114C /* SRPinningSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C82B19EEDA008B114C /* SRPinningSecurityPolicy.h */; };
-		A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C92B19EEDA008B114C /* SRPinningSecurityPolicy.m */; };
-		A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CA2B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h */; };
-		A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3CC2B19EEDA008B114C /* SRDelegateController.m */; };
-		A08AA3F82B19EEDB008B114C /* SRDelegateController.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CD2B19EEDA008B114C /* SRDelegateController.h */; };
-		A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CE2B19EEDA008B114C /* NSURLRequest+SRWebSocketPrivate.h */; };
+		A08AA3EF2B19EEDA008B114C /* JIMSRConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C02B19EEDA008B114C /* JIMSRConstants.h */; };
+		A08AA3F02B19EEDA008B114C /* JIMSRProxyConnect.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C22B19EEDA008B114C /* JIMSRProxyConnect.m */; };
+		A08AA3F12B19EEDA008B114C /* JIMSRProxyConnect.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C32B19EEDA008B114C /* JIMSRProxyConnect.h */; };
+		A08AA3F22B19EEDA008B114C /* JIMSRRunLoopThread.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C52B19EEDA008B114C /* JIMSRRunLoopThread.h */; };
+		A08AA3F32B19EEDA008B114C /* JIMSRRunLoopThread.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C62B19EEDA008B114C /* JIMSRRunLoopThread.m */; };
+		A08AA3F42B19EEDA008B114C /* JIMSRPinningSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3C82B19EEDA008B114C /* JIMSRPinningSecurityPolicy.h */; };
+		A08AA3F52B19EEDA008B114C /* JIMSRPinningSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3C92B19EEDA008B114C /* JIMSRPinningSecurityPolicy.m */; };
+		A08AA3F62B19EEDA008B114C /* NSRunLoop+JIMSRWebSocketPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CA2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocketPrivate.h */; };
+		A08AA3F72B19EEDB008B114C /* JIMSRDelegateController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3CC2B19EEDA008B114C /* JIMSRDelegateController.m */; };
+		A08AA3F82B19EEDB008B114C /* JIMSRDelegateController.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CD2B19EEDA008B114C /* JIMSRDelegateController.h */; };
+		A08AA3F92B19EEDB008B114C /* NSURLRequest+JIMSRWebSocketPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3CE2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocketPrivate.h */; };
 		A08AA3FA2B19EEDB008B114C /* SRHash.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3D02B19EEDA008B114C /* SRHash.h */; };
 		A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3D12B19EEDA008B114C /* SRLog.h */; };
 		A08AA3FC2B19EEDB008B114C /* SRMutex.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3D22B19EEDA008B114C /* SRMutex.m */; };
@@ -299,16 +316,16 @@
 		A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3DD2B19EEDA008B114C /* SRRandom.m */; };
 		A08AA4082B19EEDB008B114C /* SRURLUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3DE2B19EEDA008B114C /* SRURLUtilities.h */; };
 		A08AA4092B19EEDB008B114C /* SRSIMDHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3DF2B19EEDA008B114C /* SRSIMDHelpers.m */; };
-		A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E12B19EEDA008B114C /* SRIOConsumerPool.h */; };
-		A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E22B19EEDA008B114C /* SRIOConsumer.m */; };
-		A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E32B19EEDA008B114C /* SRIOConsumer.h */; };
-		A08AA40D2B19EEDB008B114C /* SRIOConsumerPool.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E42B19EEDA008B114C /* SRIOConsumerPool.m */; };
-		A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E52B19EEDA008B114C /* SRConstants.m */; };
-		A08AA40F2B19EEDB008B114C /* NSURLRequest+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E62B19EEDA008B114C /* NSURLRequest+SRWebSocket.h */; };
-		A08AA4102B19EEDB008B114C /* SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E72B19EEDA008B114C /* SRWebSocket.h */; };
-		A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */; };
-		A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */; };
-		A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */; };
+		A08AA40A2B19EEDB008B114C /* JIMSRIOConsumerPool.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E12B19EEDA008B114C /* JIMSRIOConsumerPool.h */; };
+		A08AA40B2B19EEDB008B114C /* JIMSRIOConsumer.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E22B19EEDA008B114C /* JIMSRIOConsumer.m */; };
+		A08AA40C2B19EEDB008B114C /* JIMSRIOConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E32B19EEDA008B114C /* JIMSRIOConsumer.h */; };
+		A08AA40D2B19EEDB008B114C /* JIMSRIOConsumerPool.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E42B19EEDA008B114C /* JIMSRIOConsumerPool.m */; };
+		A08AA40E2B19EEDB008B114C /* JIMSRConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3E52B19EEDA008B114C /* JIMSRConstants.m */; };
+		A08AA40F2B19EEDB008B114C /* NSURLRequest+JIMSRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E62B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.h */; };
+		A08AA4102B19EEDB008B114C /* JIMSRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E72B19EEDA008B114C /* JIMSRWebSocket.h */; };
+		A08AA4112B19EEDB008B114C /* NSRunLoop+JIMSRWebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E82B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.h */; };
+		A08AA4122B19EEDB008B114C /* JIMSRSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA3E92B19EEDA008B114C /* JIMSRSecurityPolicy.h */; };
+		A08AA4132B19EEDB008B114C /* NSURLRequest+JIMSRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA3EA2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.m */; };
 		A08AA4172B1ADECF008B114C /* JTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA4152B1ADECE008B114C /* JTextMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4162B1ADECE008B114C /* JTextMessage.m */; };
 		A08AA41A2B1B4F79008B114C /* JMessageContent.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA4192B1B4F79008B114C /* JMessageContent.m */; };
@@ -513,6 +530,14 @@
 		A06516162C9A866400E3AEC1 /* JPushData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPushData.m; sourceTree = "<group>"; };
 		A065968E2E5D88250047B896 /* JCallVideoDenoiseParams.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallVideoDenoiseParams.h; sourceTree = "<group>"; };
 		A065968F2E5D88250047B896 /* JCallVideoDenoiseParams.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallVideoDenoiseParams.m; sourceTree = "<group>"; };
+		A068B9C42EC5F5A100D04F45 /* JGetMomentOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGetMomentOption.h; sourceTree = "<group>"; };
+		A068B9C52EC5F5A100D04F45 /* JGetMomentOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetMomentOption.m; sourceTree = "<group>"; };
+		A068B9C82EC5FDA000D04F45 /* JGetMomentCommentOption.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGetMomentCommentOption.h; sourceTree = "<group>"; };
+		A068B9C92EC5FDA000D04F45 /* JGetMomentCommentOption.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetMomentCommentOption.m; sourceTree = "<group>"; };
+		A068B9CC2EC6035D00D04F45 /* JMomentManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentManager.h; sourceTree = "<group>"; };
+		A068B9CD2EC6035D00D04F45 /* JMomentManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMomentManager.m; sourceTree = "<group>"; };
+		A068B9D02ECB272300D04F45 /* JMomentDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentDB.h; sourceTree = "<group>"; };
+		A068B9D12ECB272300D04F45 /* JMomentDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMomentDB.m; sourceTree = "<group>"; };
 		A06A2F072B20B2B6009B9588 /* JPBData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JPBData.h; sourceTree = "<group>"; };
 		A06A2F082B20B2B6009B9588 /* JPBData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JPBData.m; sourceTree = "<group>"; };
 		A06A2F0B2B20B34B009B9588 /* JuggleIMPBConst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIMPBConst.h; sourceTree = "<group>"; };
@@ -578,6 +603,15 @@
 		A0897C7C2BA9D4BC00041E33 /* JMergeMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeMessage.m; sourceTree = "<group>"; };
 		A0897C7F2BB66F7200041E33 /* Pushtoken.pbobjc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pushtoken.pbobjc.h; sourceTree = "<group>"; };
 		A0897C802BB66F7200041E33 /* Pushtoken.pbobjc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pushtoken.pbobjc.m; sourceTree = "<group>"; };
+		A08A263C2EC341730022272D /* JMomentProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentProtocol.h; sourceTree = "<group>"; };
+		A08A263E2EC341BD0022272D /* JMoment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMoment.h; sourceTree = "<group>"; };
+		A08A263F2EC341BD0022272D /* JMoment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMoment.m; sourceTree = "<group>"; };
+		A08A26422EC345B80022272D /* JMomentMedia.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentMedia.h; sourceTree = "<group>"; };
+		A08A26432EC345B80022272D /* JMomentMedia.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMomentMedia.m; sourceTree = "<group>"; };
+		A08A26462EC34C5F0022272D /* JMomentReaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentReaction.h; sourceTree = "<group>"; };
+		A08A26472EC34C5F0022272D /* JMomentReaction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMomentReaction.m; sourceTree = "<group>"; };
+		A08A264A2EC34ED70022272D /* JMomentComment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMomentComment.h; sourceTree = "<group>"; };
+		A08A264B2EC34ED70022272D /* JMomentComment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMomentComment.m; sourceTree = "<group>"; };
 		A08A9A552D5DE532009EE779 /* JGroupMember.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupMember.h; sourceTree = "<group>"; };
 		A08A9A562D5DE532009EE779 /* JGroupMember.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMember.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -689,21 +723,21 @@
 		A08AA3B42B19DF75008B114C /* JIMCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIMCore.h; sourceTree = "<group>"; };
 		A08AA3B52B19DF75008B114C /* JIMCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIMCore.m; sourceTree = "<group>"; };
 		A08AA3B82B19E3DF008B114C /* GPBProtocolBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPBProtocolBuffers.h; sourceTree = "<group>"; };
-		A08AA3BB2B19EEDA008B114C /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
-		A08AA3BC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+SRWebSocket.m"; sourceTree = "<group>"; };
-		A08AA3BD2B19EEDA008B114C /* SRSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSecurityPolicy.m; sourceTree = "<group>"; };
+		A08AA3BB2B19EEDA008B114C /* JIMSRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRWebSocket.m; sourceTree = "<group>"; };
+		A08AA3BC2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSRunLoop+JIMSRWebSocket.m"; sourceTree = "<group>"; };
+		A08AA3BD2B19EEDA008B114C /* JIMSRSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRSecurityPolicy.m; sourceTree = "<group>"; };
 		A08AA3BE2B19EEDA008B114C /* SocketRocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketRocket.h; sourceTree = "<group>"; };
-		A08AA3C02B19EEDA008B114C /* SRConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRConstants.h; sourceTree = "<group>"; };
-		A08AA3C22B19EEDA008B114C /* SRProxyConnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRProxyConnect.m; sourceTree = "<group>"; };
-		A08AA3C32B19EEDA008B114C /* SRProxyConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRProxyConnect.h; sourceTree = "<group>"; };
-		A08AA3C52B19EEDA008B114C /* SRRunLoopThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRRunLoopThread.h; sourceTree = "<group>"; };
-		A08AA3C62B19EEDA008B114C /* SRRunLoopThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRRunLoopThread.m; sourceTree = "<group>"; };
-		A08AA3C82B19EEDA008B114C /* SRPinningSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRPinningSecurityPolicy.h; sourceTree = "<group>"; };
-		A08AA3C92B19EEDA008B114C /* SRPinningSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRPinningSecurityPolicy.m; sourceTree = "<group>"; };
-		A08AA3CA2B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SRWebSocketPrivate.h"; sourceTree = "<group>"; };
-		A08AA3CC2B19EEDA008B114C /* SRDelegateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRDelegateController.m; sourceTree = "<group>"; };
-		A08AA3CD2B19EEDA008B114C /* SRDelegateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRDelegateController.h; sourceTree = "<group>"; };
-		A08AA3CE2B19EEDA008B114C /* NSURLRequest+SRWebSocketPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+SRWebSocketPrivate.h"; sourceTree = "<group>"; };
+		A08AA3C02B19EEDA008B114C /* JIMSRConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRConstants.h; sourceTree = "<group>"; };
+		A08AA3C22B19EEDA008B114C /* JIMSRProxyConnect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRProxyConnect.m; sourceTree = "<group>"; };
+		A08AA3C32B19EEDA008B114C /* JIMSRProxyConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRProxyConnect.h; sourceTree = "<group>"; };
+		A08AA3C52B19EEDA008B114C /* JIMSRRunLoopThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRRunLoopThread.h; sourceTree = "<group>"; };
+		A08AA3C62B19EEDA008B114C /* JIMSRRunLoopThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRRunLoopThread.m; sourceTree = "<group>"; };
+		A08AA3C82B19EEDA008B114C /* JIMSRPinningSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRPinningSecurityPolicy.h; sourceTree = "<group>"; };
+		A08AA3C92B19EEDA008B114C /* JIMSRPinningSecurityPolicy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRPinningSecurityPolicy.m; sourceTree = "<group>"; };
+		A08AA3CA2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocketPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+JIMSRWebSocketPrivate.h"; sourceTree = "<group>"; };
+		A08AA3CC2B19EEDA008B114C /* JIMSRDelegateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRDelegateController.m; sourceTree = "<group>"; };
+		A08AA3CD2B19EEDA008B114C /* JIMSRDelegateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRDelegateController.h; sourceTree = "<group>"; };
+		A08AA3CE2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocketPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+JIMSRWebSocketPrivate.h"; sourceTree = "<group>"; };
 		A08AA3D02B19EEDA008B114C /* SRHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRHash.h; sourceTree = "<group>"; };
 		A08AA3D12B19EEDA008B114C /* SRLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRLog.h; sourceTree = "<group>"; };
 		A08AA3D22B19EEDA008B114C /* SRMutex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRMutex.m; sourceTree = "<group>"; };
@@ -720,16 +754,16 @@
 		A08AA3DD2B19EEDA008B114C /* SRRandom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRRandom.m; sourceTree = "<group>"; };
 		A08AA3DE2B19EEDA008B114C /* SRURLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRURLUtilities.h; sourceTree = "<group>"; };
 		A08AA3DF2B19EEDA008B114C /* SRSIMDHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRSIMDHelpers.m; sourceTree = "<group>"; };
-		A08AA3E12B19EEDA008B114C /* SRIOConsumerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRIOConsumerPool.h; sourceTree = "<group>"; };
-		A08AA3E22B19EEDA008B114C /* SRIOConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRIOConsumer.m; sourceTree = "<group>"; };
-		A08AA3E32B19EEDA008B114C /* SRIOConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRIOConsumer.h; sourceTree = "<group>"; };
-		A08AA3E42B19EEDA008B114C /* SRIOConsumerPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRIOConsumerPool.m; sourceTree = "<group>"; };
-		A08AA3E52B19EEDA008B114C /* SRConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRConstants.m; sourceTree = "<group>"; };
-		A08AA3E62B19EEDA008B114C /* NSURLRequest+SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+SRWebSocket.h"; sourceTree = "<group>"; };
-		A08AA3E72B19EEDA008B114C /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
-		A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+SRWebSocket.h"; sourceTree = "<group>"; };
-		A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRSecurityPolicy.h; sourceTree = "<group>"; };
-		A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+SRWebSocket.m"; sourceTree = "<group>"; };
+		A08AA3E12B19EEDA008B114C /* JIMSRIOConsumerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRIOConsumerPool.h; sourceTree = "<group>"; };
+		A08AA3E22B19EEDA008B114C /* JIMSRIOConsumer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRIOConsumer.m; sourceTree = "<group>"; };
+		A08AA3E32B19EEDA008B114C /* JIMSRIOConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRIOConsumer.h; sourceTree = "<group>"; };
+		A08AA3E42B19EEDA008B114C /* JIMSRIOConsumerPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRIOConsumerPool.m; sourceTree = "<group>"; };
+		A08AA3E52B19EEDA008B114C /* JIMSRConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JIMSRConstants.m; sourceTree = "<group>"; };
+		A08AA3E62B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURLRequest+JIMSRWebSocket.h"; sourceTree = "<group>"; };
+		A08AA3E72B19EEDA008B114C /* JIMSRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRWebSocket.h; sourceTree = "<group>"; };
+		A08AA3E82B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSRunLoop+JIMSRWebSocket.h"; sourceTree = "<group>"; };
+		A08AA3E92B19EEDA008B114C /* JIMSRSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIMSRSecurityPolicy.h; sourceTree = "<group>"; };
+		A08AA3EA2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURLRequest+JIMSRWebSocket.m"; sourceTree = "<group>"; };
 		A08AA4152B1ADECE008B114C /* JTextMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JTextMessage.h; sourceTree = "<group>"; };
 		A08AA4162B1ADECE008B114C /* JTextMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JTextMessage.m; sourceTree = "<group>"; };
 		A08AA4192B1B4F79008B114C /* JMessageContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMessageContent.m; sourceTree = "<group>"; };
@@ -981,6 +1015,8 @@
 				A0574BF32D56275B00632625 /* JReactionDB.m */,
 				A0752D872D68615D009B7E0F /* JVersionDB.h */,
 				A0752D882D68615D009B7E0F /* JVersionDB.m */,
+				A068B9D02ECB272300D04F45 /* JMomentDB.h */,
+				A068B9D12ECB272300D04F45 /* JMomentDB.m */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -1071,6 +1107,7 @@
 				A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */,
 				A09716BA2B9FFDA000D1DB24 /* JUserInfoProtocol.h */,
 				A09645792BECCFE800290775 /* JMessageUploadProvider.h */,
+				A08A263C2EC341730022272D /* JMomentProtocol.h */,
 			);
 			path = protocol;
 			sourceTree = "<group>";
@@ -1133,6 +1170,18 @@
 				A03AED902EB34EF400C73302 /* JGroupMessageReadInfoDetail.m */,
 				A03AED932EB34FCC00C73302 /* JGroupMessageMemberReadDetail.h */,
 				A03AED942EB34FCC00C73302 /* JGroupMessageMemberReadDetail.m */,
+				A08A263E2EC341BD0022272D /* JMoment.h */,
+				A08A263F2EC341BD0022272D /* JMoment.m */,
+				A08A26422EC345B80022272D /* JMomentMedia.h */,
+				A08A26432EC345B80022272D /* JMomentMedia.m */,
+				A08A26462EC34C5F0022272D /* JMomentReaction.h */,
+				A08A26472EC34C5F0022272D /* JMomentReaction.m */,
+				A08A264A2EC34ED70022272D /* JMomentComment.h */,
+				A08A264B2EC34ED70022272D /* JMomentComment.m */,
+				A068B9C42EC5F5A100D04F45 /* JGetMomentOption.h */,
+				A068B9C52EC5F5A100D04F45 /* JGetMomentOption.m */,
+				A068B9C82EC5FDA000D04F45 /* JGetMomentCommentOption.h */,
+				A068B9C92EC5FDA000D04F45 /* JGetMomentCommentOption.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1196,6 +1245,8 @@
 				A0E3DDCB2C6B3DCD00FE9D3B /* JChatroomManager.m */,
 				A08518A12DCB423E0001F699 /* JUserInfoCache.h */,
 				A08518A22DCB423E0001F699 /* JUserInfoCache.m */,
+				A068B9CC2EC6035D00D04F45 /* JMomentManager.h */,
+				A068B9CD2EC6035D00D04F45 /* JMomentManager.m */,
 			);
 			path = internal;
 			sourceTree = "<group>";
@@ -1306,16 +1357,16 @@
 		A08AA3BA2B19EEDA008B114C /* SocketRocket */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3BB2B19EEDA008B114C /* SRWebSocket.m */,
-				A08AA3BC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m */,
-				A08AA3BD2B19EEDA008B114C /* SRSecurityPolicy.m */,
+				A08AA3BB2B19EEDA008B114C /* JIMSRWebSocket.m */,
+				A08AA3BC2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.m */,
+				A08AA3BD2B19EEDA008B114C /* JIMSRSecurityPolicy.m */,
 				A08AA3BE2B19EEDA008B114C /* SocketRocket.h */,
 				A08AA3BF2B19EEDA008B114C /* Internal */,
-				A08AA3E62B19EEDA008B114C /* NSURLRequest+SRWebSocket.h */,
-				A08AA3E72B19EEDA008B114C /* SRWebSocket.h */,
-				A08AA3E82B19EEDA008B114C /* NSRunLoop+SRWebSocket.h */,
-				A08AA3E92B19EEDA008B114C /* SRSecurityPolicy.h */,
-				A08AA3EA2B19EEDA008B114C /* NSURLRequest+SRWebSocket.m */,
+				A08AA3E62B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.h */,
+				A08AA3E72B19EEDA008B114C /* JIMSRWebSocket.h */,
+				A08AA3E82B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.h */,
+				A08AA3E92B19EEDA008B114C /* JIMSRSecurityPolicy.h */,
+				A08AA3EA2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocket.m */,
 			);
 			path = SocketRocket;
 			sourceTree = "<group>";
@@ -1323,16 +1374,16 @@
 		A08AA3BF2B19EEDA008B114C /* Internal */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3C02B19EEDA008B114C /* SRConstants.h */,
+				A08AA3C02B19EEDA008B114C /* JIMSRConstants.h */,
 				A08AA3C12B19EEDA008B114C /* Proxy */,
 				A08AA3C42B19EEDA008B114C /* RunLoop */,
 				A08AA3C72B19EEDA008B114C /* Security */,
-				A08AA3CA2B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h */,
+				A08AA3CA2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocketPrivate.h */,
 				A08AA3CB2B19EEDA008B114C /* Delegate */,
-				A08AA3CE2B19EEDA008B114C /* NSURLRequest+SRWebSocketPrivate.h */,
+				A08AA3CE2B19EEDA008B114C /* NSURLRequest+JIMSRWebSocketPrivate.h */,
 				A08AA3CF2B19EEDA008B114C /* Utilities */,
 				A08AA3E02B19EEDA008B114C /* IOConsumer */,
-				A08AA3E52B19EEDA008B114C /* SRConstants.m */,
+				A08AA3E52B19EEDA008B114C /* JIMSRConstants.m */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -1340,8 +1391,8 @@
 		A08AA3C12B19EEDA008B114C /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3C22B19EEDA008B114C /* SRProxyConnect.m */,
-				A08AA3C32B19EEDA008B114C /* SRProxyConnect.h */,
+				A08AA3C22B19EEDA008B114C /* JIMSRProxyConnect.m */,
+				A08AA3C32B19EEDA008B114C /* JIMSRProxyConnect.h */,
 			);
 			path = Proxy;
 			sourceTree = "<group>";
@@ -1349,8 +1400,8 @@
 		A08AA3C42B19EEDA008B114C /* RunLoop */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3C52B19EEDA008B114C /* SRRunLoopThread.h */,
-				A08AA3C62B19EEDA008B114C /* SRRunLoopThread.m */,
+				A08AA3C52B19EEDA008B114C /* JIMSRRunLoopThread.h */,
+				A08AA3C62B19EEDA008B114C /* JIMSRRunLoopThread.m */,
 			);
 			path = RunLoop;
 			sourceTree = "<group>";
@@ -1358,8 +1409,8 @@
 		A08AA3C72B19EEDA008B114C /* Security */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3C82B19EEDA008B114C /* SRPinningSecurityPolicy.h */,
-				A08AA3C92B19EEDA008B114C /* SRPinningSecurityPolicy.m */,
+				A08AA3C82B19EEDA008B114C /* JIMSRPinningSecurityPolicy.h */,
+				A08AA3C92B19EEDA008B114C /* JIMSRPinningSecurityPolicy.m */,
 			);
 			path = Security;
 			sourceTree = "<group>";
@@ -1367,8 +1418,8 @@
 		A08AA3CB2B19EEDA008B114C /* Delegate */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3CC2B19EEDA008B114C /* SRDelegateController.m */,
-				A08AA3CD2B19EEDA008B114C /* SRDelegateController.h */,
+				A08AA3CC2B19EEDA008B114C /* JIMSRDelegateController.m */,
+				A08AA3CD2B19EEDA008B114C /* JIMSRDelegateController.h */,
 			);
 			path = Delegate;
 			sourceTree = "<group>";
@@ -1399,10 +1450,10 @@
 		A08AA3E02B19EEDA008B114C /* IOConsumer */ = {
 			isa = PBXGroup;
 			children = (
-				A08AA3E12B19EEDA008B114C /* SRIOConsumerPool.h */,
-				A08AA3E22B19EEDA008B114C /* SRIOConsumer.m */,
-				A08AA3E32B19EEDA008B114C /* SRIOConsumer.h */,
-				A08AA3E42B19EEDA008B114C /* SRIOConsumerPool.m */,
+				A08AA3E12B19EEDA008B114C /* JIMSRIOConsumerPool.h */,
+				A08AA3E22B19EEDA008B114C /* JIMSRIOConsumer.m */,
+				A08AA3E32B19EEDA008B114C /* JIMSRIOConsumer.h */,
+				A08AA3E42B19EEDA008B114C /* JIMSRIOConsumerPool.m */,
 			);
 			path = IOConsumer;
 			sourceTree = "<group>";
@@ -1620,6 +1671,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A068B9CB2EC5FDA000D04F45 /* JGetMomentCommentOption.h in Headers */,
+				A068B9C72EC5F5A100D04F45 /* JGetMomentOption.h in Headers */,
+				A08A264D2EC34ED70022272D /* JMomentComment.h in Headers */,
+				A068B9CF2EC6035D00D04F45 /* JMomentManager.h in Headers */,
+				A08A26492EC34C5F0022272D /* JMomentReaction.h in Headers */,
+				A08A263D2EC341730022272D /* JMomentProtocol.h in Headers */,
+				A08A26402EC341BD0022272D /* JMoment.h in Headers */,
+				A08A26452EC345B80022272D /* JMomentMedia.h in Headers */,
 				A03AED922EB34EF400C73302 /* JGroupMessageReadInfoDetail.h in Headers */,
 				A03AED962EB34FCC00C73302 /* JGroupMessageMemberReadDetail.h in Headers */,
 				A05712622E619260006F66A3 /* JCallInfo.h in Headers */,
@@ -1700,7 +1759,7 @@
 				A0A701FF2C09A91B0032D9F1 /* JWebSocketCommandManager.h in Headers */,
 				A08AA2812B175646008B114C /* JConnectionManager.h in Headers */,
 				A095798C2B885222004E3D60 /* JDeleteConvMessage.h in Headers */,
-				A08AA3F22B19EEDA008B114C /* SRRunLoopThread.h in Headers */,
+				A08AA3F22B19EEDA008B114C /* JIMSRRunLoopThread.h in Headers */,
 				A08AA3852B19CB78008B114C /* GPBDescriptor.h in Headers */,
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
 				A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */,
@@ -1711,7 +1770,7 @@
 				A0D3AD2D2B6D1B9C00D170D7 /* JRecallCmdMessage.h in Headers */,
 				A08AA2772B162A12008B114C /* JFMDatabaseAdditions.h in Headers */,
 				A08AA3772B19CB77008B114C /* Wrappers.pbobjc.h in Headers */,
-				A08AA3F82B19EEDB008B114C /* SRDelegateController.h in Headers */,
+				A08AA3F82B19EEDB008B114C /* JIMSRDelegateController.h in Headers */,
 				A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */,
 				A06A2F132B233351009B9588 /* JDBHelper.h in Headers */,
 				A09727E82CC6346B00E08BC4 /* JCallIncomingState.h in Headers */,
@@ -1729,14 +1788,14 @@
 				A08AA3622B19CB77008B114C /* GPBAny.pbobjc.h in Headers */,
 				5B7C06292C3E260C00E91783 /* JBaseUploader.h in Headers */,
 				A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */,
-				A08AA3F92B19EEDB008B114C /* NSURLRequest+SRWebSocketPrivate.h in Headers */,
-				A08AA4112B19EEDB008B114C /* NSRunLoop+SRWebSocket.h in Headers */,
+				A08AA3F92B19EEDB008B114C /* NSURLRequest+JIMSRWebSocketPrivate.h in Headers */,
+				A08AA4112B19EEDB008B114C /* NSRunLoop+JIMSRWebSocket.h in Headers */,
 				A08AA3B62B19DF75008B114C /* JIMCore.h in Headers */,
 				A08AA24B2B14A546008B114C /* JConversationProtocol.h in Headers */,
 				A08AA3A32B19CB78008B114C /* GPBUnknownField.h in Headers */,
 				A0C612142E2612BB00A758E8 /* JTopMsgMessage.h in Headers */,
 				A08AA36F2B19CB77008B114C /* GPBDictionary.h in Headers */,
-				A08AA4102B19EEDB008B114C /* SRWebSocket.h in Headers */,
+				A08AA4102B19EEDB008B114C /* JIMSRWebSocket.h in Headers */,
 				A08AA3752B19CB77008B114C /* Duration.pbobjc.h in Headers */,
 				A09824402C4FABE8001852A6 /* JDownloadManager.h in Headers */,
 				5B4DB6922BFC3BF700DD18B6 /* JDeleteMsgMessage.h in Headers */,
@@ -1763,7 +1822,7 @@
 				A06CF0F62B96080B00B5CD89 /* JReadNtfMessage.h in Headers */,
 				A08AA38D2B19CB78008B114C /* GPBRuntimeTypes.h in Headers */,
 				A08AA4042B19EEDB008B114C /* SRMutex.h in Headers */,
-				A08AA3F12B19EEDA008B114C /* SRProxyConnect.h in Headers */,
+				A08AA3F12B19EEDA008B114C /* JIMSRProxyConnect.h in Headers */,
 				A08AA26E2B162A11008B114C /* JFMDatabase.h in Headers */,
 				A06A2F092B20B2B6009B9588 /* JPBData.h in Headers */,
 				A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */,
@@ -1779,7 +1838,7 @@
 				5B9980F82C2BF00000AF6519 /* JMergeInfo.h in Headers */,
 				A08AA3A02B19CB78008B114C /* GPBUnknownFieldSet.h in Headers */,
 				A08AA3782B19CB78008B114C /* Struct.pbobjc.h in Headers */,
-				A08AA40C2B19EEDB008B114C /* SRIOConsumer.h in Headers */,
+				A08AA40C2B19EEDB008B114C /* JIMSRIOConsumer.h in Headers */,
 				A08AA37C2B19CB78008B114C /* Any.pbobjc.h in Headers */,
 				A065160B2C91DEBE00E3AEC1 /* JIntervalGenerator.h in Headers */,
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
@@ -1797,7 +1856,7 @@
 				A08AA3802B19CB78008B114C /* GPBWrappers.pbobjc.h in Headers */,
 				A0E68E5D2D2E88CE00640324 /* JMsgModifyMessage.h in Headers */,
 				A08AA2702B162A11008B114C /* JFMResultSet.h in Headers */,
-				A08AA3F62B19EEDA008B114C /* NSRunLoop+SRWebSocketPrivate.h in Headers */,
+				A08AA3F62B19EEDA008B114C /* NSRunLoop+JIMSRWebSocketPrivate.h in Headers */,
 				A07D0E342C0083FD00B9035B /* JNaviTask.h in Headers */,
 				A09727E02CC6346B00E08BC4 /* JCallSuperState.h in Headers */,
 				A08AA39A2B19CB78008B114C /* GPBCodedInputStream.h in Headers */,
@@ -1808,7 +1867,7 @@
 				A085189A2DC10F090001F699 /* JLRUCacheNode.h in Headers */,
 				A08AA2762B162A11008B114C /* JFMDatabasePool.h in Headers */,
 				A097280D2CC6676E00E08BC4 /* Rtcroom.pbobjc.h in Headers */,
-				A08AA4122B19EEDB008B114C /* SRSecurityPolicy.h in Headers */,
+				A08AA4122B19EEDB008B114C /* JIMSRSecurityPolicy.h in Headers */,
 				A0E3DDCC2C6B3DCD00FE9D3B /* JChatroomManager.h in Headers */,
 				A09727E42CC6346B00E08BC4 /* JCallConnectingState.h in Headers */,
 				A08AA3A12B19CB78008B114C /* GPBExtensionInternals.h in Headers */,
@@ -1816,15 +1875,16 @@
 				A08AA3A62B19CB78008B114C /* GPBUnknownField_PackagePrivate.h in Headers */,
 				5B7C06232C3D3F3700E91783 /* JUploadPreSignCred.h in Headers */,
 				A08AA39D2B19CB78008B114C /* GPBStruct.pbobjc.h in Headers */,
-				A08AA40A2B19EEDB008B114C /* SRIOConsumerPool.h in Headers */,
+				A08AA40A2B19EEDB008B114C /* JIMSRIOConsumerPool.h in Headers */,
 				A0AF4A2A2C1065B000D97694 /* JLogUploader.h in Headers */,
 				A08AA25B2B14C4C0008B114C /* JuggleIMConst.h in Headers */,
 				A0897C812BB66F7200041E33 /* Pushtoken.pbobjc.h in Headers */,
+				A068B9D32ECB272300D04F45 /* JMomentDB.h in Headers */,
 				A08AA3972B19CB78008B114C /* GPBProtocolBuffers_RuntimeSupport.h in Headers */,
 				A057126A2E65BD0F006F66A3 /* JCallActiveCallMessage.h in Headers */,
 				A08AA3742B19CB77008B114C /* SourceContext.pbobjc.h in Headers */,
-				A08AA3EF2B19EEDA008B114C /* SRConstants.h in Headers */,
-				A08AA3F42B19EEDA008B114C /* SRPinningSecurityPolicy.h in Headers */,
+				A08AA3EF2B19EEDA008B114C /* JIMSRConstants.h in Headers */,
+				A08AA3F42B19EEDA008B114C /* JIMSRPinningSecurityPolicy.h in Headers */,
 				A07CE41C2B3AF131006E3F4D /* JContentTypeCenter.h in Headers */,
 				A08AA3912B19CB78008B114C /* GPBMessage_PackagePrivate.h in Headers */,
 				A08AA3702B19CB77008B114C /* GPBCodedOutputStream.h in Headers */,
@@ -1832,7 +1892,7 @@
 				A08AA25E2B1619FB008B114C /* JMessageContent.h in Headers */,
 				A06A2F212B233A6C009B9588 /* JDBManager.h in Headers */,
 				A08AA3862B19CB78008B114C /* GPBCodedInputStream_PackagePrivate.h in Headers */,
-				A08AA40F2B19EEDB008B114C /* NSURLRequest+SRWebSocket.h in Headers */,
+				A08AA40F2B19EEDB008B114C /* NSURLRequest+JIMSRWebSocket.h in Headers */,
 				A06A2F192B233A08009B9588 /* JMessageDB.h in Headers */,
 				A08AA4052B19EEDB008B114C /* SRHTTPConnectMessage.h in Headers */,
 				A08AA2852B1756E3008B114C /* JMessageManager.h in Headers */,
@@ -1932,15 +1992,16 @@
 				5B7C062A2C3E260C00E91783 /* JBaseUploader.m in Sources */,
 				A0834F782C19B67B0074AE93 /* JAddConvMessage.m in Sources */,
 				A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */,
-				A08AA3F02B19EEDA008B114C /* SRProxyConnect.m in Sources */,
+				A08AA3F02B19EEDA008B114C /* JIMSRProxyConnect.m in Sources */,
 				A085189F2DC10F430001F699 /* JLRUCache.m in Sources */,
 				A08AA3632B19CB77008B114C /* GPBExtensionRegistry.m in Sources */,
 				A0CEA8F82B6292FC0016FC88 /* JVideoMessage.m in Sources */,
-				A08AA40B2B19EEDB008B114C /* SRIOConsumer.m in Sources */,
+				A08AA40B2B19EEDB008B114C /* JIMSRIOConsumer.m in Sources */,
 				5B7C06342C3E29B900E91783 /* JQiNiuUploader.m in Sources */,
 				A08AA28F2B1758F1008B114C /* JWebSocket.m in Sources */,
 				A094F0072B9C9C200000E97F /* JUserInfo.m in Sources */,
 				A08F4BB82C7767D500791C52 /* JQueryMessageOptions.m in Sources */,
+				A068B9CE2EC6035D00D04F45 /* JMomentManager.m in Sources */,
 				5B9980E22C215AEC00AF6519 /* JConversationMentionInfo.m in Sources */,
 				A08AA26D2B162A11008B114C /* JFMResultSet.m in Sources */,
 				A079E8872CE395CC00A1008F /* JConnSuperState.m in Sources */,
@@ -1952,14 +2013,14 @@
 				A06FC66B2B25A39700E43DA8 /* JConcreteMessage.m in Sources */,
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A0A702002C09A91B0032D9F1 /* JWebSocketCommandManager.m in Sources */,
-				A08AA40E2B19EEDB008B114C /* SRConstants.m in Sources */,
+				A08AA40E2B19EEDB008B114C /* JIMSRConstants.m in Sources */,
 				A09728122CC7783B00E08BC4 /* JCallState.m in Sources */,
 				5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */,
 				A07F3CB62BFC791E0087920B /* JLogger.m in Sources */,
 				A05EED622B20826B00809F13 /* JReachability.m in Sources */,
 				A08AA36D2B19CB77008B114C /* GPBExtensionInternals.m in Sources */,
 				A0A1B0F82C47B25C00DAD93C /* JDownloader.m in Sources */,
-				A08AA40D2B19EEDB008B114C /* SRIOConsumerPool.m in Sources */,
+				A08AA40D2B19EEDB008B114C /* JIMSRIOConsumerPool.m in Sources */,
 				A0222A9B2BD25B7F00253311 /* JMessageMentionInfo.m in Sources */,
 				A09727E72CC6346B00E08BC4 /* JCallIdleState.m in Sources */,
 				5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */,
@@ -1978,21 +2039,23 @@
 				5B7C06242C3D3F3700E91783 /* JUploadPreSignCred.m in Sources */,
 				A09727F32CC6346B00E08BC4 /* JCallManager.m in Sources */,
 				A08AA3712B19CB77008B114C /* GPBStruct.pbobjc.m in Sources */,
+				A068B9CA2EC5FDA000D04F45 /* JGetMomentCommentOption.m in Sources */,
 				A08AA3822B19CB78008B114C /* GPBWellKnownTypes.m in Sources */,
 				A09727ED2CC6346B00E08BC4 /* JState.m in Sources */,
 				A0F376242B3A83B20076CB84 /* JFileMessage.m in Sources */,
 				A0E3DDCD2C6B3DCD00FE9D3B /* JChatroomManager.m in Sources */,
-				A08AA3EC2B19EEDA008B114C /* NSRunLoop+SRWebSocket.m in Sources */,
+				A08AA3EC2B19EEDA008B114C /* NSRunLoop+JIMSRWebSocket.m in Sources */,
 				A07F3CBA2BFC928E0087920B /* JLogCommandMessage.m in Sources */,
 				A0CE9A2A2CD4BDC5008B405C /* JCallMediaRoom.m in Sources */,
 				A08AA3652B19CB77008B114C /* GPBDescriptor.m in Sources */,
 				A0CC37342C661A9D009AF2CC /* JTimePeriod.m in Sources */,
 				A06A2F0A2B20B2B6009B9588 /* JPBData.m in Sources */,
+				A08A26412EC341BD0022272D /* JMoment.m in Sources */,
 				A08AA38E2B19CB78008B114C /* GPBFieldMask.pbobjc.m in Sources */,
 				A05712612E619260006F66A3 /* JCallInfo.m in Sources */,
 				A079E87E2CE35AC400A1008F /* JConnBaseState.m in Sources */,
 				A08AA2552B14AF2E008B114C /* JConversation.m in Sources */,
-				A08AA3EB2B19EEDA008B114C /* SRWebSocket.m in Sources */,
+				A08AA3EB2B19EEDA008B114C /* JIMSRWebSocket.m in Sources */,
 				A07D0E352C0083FD00B9035B /* JNaviTask.m in Sources */,
 				5B7C06302C3E29AB00E91783 /* JPreSignUploader.m in Sources */,
 				5B7C06382C3E29E000E91783 /* JUploaderFactory.m in Sources */,
@@ -2032,12 +2095,13 @@
 				A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */,
 				A024C3942D35262F005C369C /* JMsgExSetMessage.m in Sources */,
 				A09727F12CC6346B00E08BC4 /* JCallEventUtil.m in Sources */,
+				A068B9C62EC5F5A100D04F45 /* JGetMomentOption.m in Sources */,
 				A08AA3692B19CB77008B114C /* GPBWireFormat.m in Sources */,
-				A08AA3ED2B19EEDA008B114C /* SRSecurityPolicy.m in Sources */,
+				A08AA3ED2B19EEDA008B114C /* JIMSRSecurityPolicy.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
 				A024C39C2D353814005C369C /* JMessageReaction.m in Sources */,
-				A08AA3F72B19EEDB008B114C /* SRDelegateController.m in Sources */,
+				A08AA3F72B19EEDB008B114C /* JIMSRDelegateController.m in Sources */,
 				A09D207C2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m in Sources */,
 				A09824412C4FABE8001852A6 /* JDownloadManager.m in Sources */,
 				A08AA2592B14B153008B114C /* JConversationInfo.m in Sources */,
@@ -2046,6 +2110,7 @@
 				A0606F742CF6FB1700FBD652 /* JCallFinishNotifyMessage.m in Sources */,
 				A05712692E65BD0F006F66A3 /* JCallActiveCallMessage.m in Sources */,
 				A09727E52CC6346B00E08BC4 /* JCallConnectingState.m in Sources */,
+				A08A26442EC345B80022272D /* JMomentMedia.m in Sources */,
 				A057125D2E6002B7006F66A3 /* JCallJoinState.m in Sources */,
 				A06CF0FB2B988FC200B5CD89 /* JGroupReadNtfMessage.m in Sources */,
 				A09645912BF339EA00290775 /* JSnapshotPackedVideoMessage.m in Sources */,
@@ -2062,6 +2127,7 @@
 				A08AA4072B19EEDB008B114C /* SRRandom.m in Sources */,
 				A09727E32CC6346B00E08BC4 /* JCallConnectedState.m in Sources */,
 				A0E3DDD12C6F4FA600FE9D3B /* JGetMessageOptions.m in Sources */,
+				A08A264C2EC34ED70022272D /* JMomentComment.m in Sources */,
 				A0AF4A2B2C1065B000D97694 /* JLogUploader.m in Sources */,
 				A097280E2CC6676E00E08BC4 /* Rtcroom.pbobjc.m in Sources */,
 				A0752D832D66F8AA009B7E0F /* JTagDelConvMessage.m in Sources */,
@@ -2071,16 +2137,17 @@
 				A08AA4442B1C3B33008B114C /* JImageMessage.m in Sources */,
 				A09D20802E4C7637001F1DC2 /* JFavoriteMessage.m in Sources */,
 				A08AA2862B1756E3008B114C /* JMessageManager.m in Sources */,
-				A08AA3F52B19EEDA008B114C /* SRPinningSecurityPolicy.m in Sources */,
+				A08AA3F52B19EEDA008B114C /* JIMSRPinningSecurityPolicy.m in Sources */,
 				A08AA3FD2B19EEDB008B114C /* SRHTTPConnectMessage.m in Sources */,
-				A08AA4132B19EEDB008B114C /* NSURLRequest+SRWebSocket.m in Sources */,
+				A08AA4132B19EEDB008B114C /* NSURLRequest+JIMSRWebSocket.m in Sources */,
 				A085189B2DC10F090001F699 /* JLRUCacheNode.m in Sources */,
 				A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */,
 				5B4DB68F2BFC3BD600DD18B6 /* JClearUnreadMessage.m in Sources */,
 				A06596912E5D88250047B896 /* JCallVideoDenoiseParams.m in Sources */,
 				A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */,
 				A0D3AD2E2B6D1B9C00D170D7 /* JRecallCmdMessage.m in Sources */,
-				A08AA3F32B19EEDA008B114C /* SRRunLoopThread.m in Sources */,
+				A068B9D22ECB272300D04F45 /* JMomentDB.m in Sources */,
+				A08AA3F32B19EEDA008B114C /* JIMSRRunLoopThread.m in Sources */,
 				A06A2F142B233351009B9588 /* JDBHelper.m in Sources */,
 				A05EED5F2B207D5200809F13 /* JUtility.m in Sources */,
 				A05143542DF80201004413F3 /* JUnknownMessage.m in Sources */,
@@ -2089,6 +2156,7 @@
 				A0574BF42D56275B00632625 /* JReactionDB.m in Sources */,
 				A08AA39F2B19CB78008B114C /* GPBDictionary.m in Sources */,
 				A09727EB2CC6346B00E08BC4 /* JCallOutgoingState.m in Sources */,
+				A08A26482EC34C5F0022272D /* JMomentReaction.m in Sources */,
 				A06CF0F72B96080B00B5CD89 /* JReadNtfMessage.m in Sources */,
 				A08AA38A2B19CB78008B114C /* GPBArray.m in Sources */,
 				A079E8832CE3653500A1008F /* JConnEventUtil.m in Sources */,
