@@ -303,7 +303,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (mergeInfo != nil && mergeInfo.containerMsgId.length == 0 && mergeInfo.messages.count > 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
-        pbMsgs.channelType = (int32_t)mergeInfo.conversation.conversationType;
+        pbMsgs.channelType = [self channelTypeFromConversationType:mergeInfo.conversation.conversationType];
         pbMsgs.userId = userId;
         pbMsgs.targetId = mergeInfo.conversation.conversationId;
         if (mergeInfo.conversation.subChannel.length > 0) {
@@ -396,7 +396,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     DownMsg * downMsg = [[DownMsg alloc] init];
     downMsg.targetId = message.conversation.conversationId;
-    downMsg.channelType = (int32_t)message.conversation.conversationType;
+    downMsg.channelType = [self channelTypeFromConversationType:message.conversation.conversationType];
     if (message.conversation.subChannel.length > 0) {
         downMsg.subChannel = message.conversation.subChannel;
     }
@@ -447,7 +447,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     ModifyMsgReq *req = [[ModifyMsgReq alloc] init];
     req.msgId = messageId;
     req.targetId = conversation.conversationId;
-    req.channelType = (int32_t)conversation.conversationType;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         req.subChannel = conversation.subChannel;
     }
@@ -477,7 +477,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     RecallMsgReq *req = [[RecallMsgReq alloc] init];
     req.msgId = messageId;
     req.targetId = conversation.conversationId;
-    req.channelType = (int32_t)conversation.conversationType;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         req.subChannel = conversation.subChannel;
     }
@@ -516,7 +516,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
     MarkReadReq *req = [[MarkReadReq alloc] init];
     req.targetId = conversation.conversationId;
-    req.channelType = (int32_t)conversation.conversationType;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         req.subChannel = conversation.subChannel;
     }
@@ -540,7 +540,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                                 index:(int)index {
     QryReadDetailReq *req = [[QryReadDetailReq alloc] init];
     req.targetId = conversation.conversationId;
-    req.channelType = (int32_t)conversation.conversationType;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         req.subChannel = conversation.subChannel;
     }
@@ -1211,7 +1211,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
     MsgExt *ext = [[MsgExt alloc] init];
     ext.targetId = conversation.conversationId;
-    ext.channelType = (int32_t)conversation.conversationType;
+    ext.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         ext.subChannel = conversation.subChannel;
     }
@@ -1242,7 +1242,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
     MsgExt *ext = [[MsgExt alloc] init];
     ext.targetId = conversation.conversationId;
-    ext.channelType = (int32_t)conversation.conversationType;
+    ext.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         ext.subChannel = conversation.subChannel;
     }
@@ -1272,7 +1272,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     
     QryMsgExtReq *req = [[QryMsgExtReq alloc] init];
     req.targetId = conversation.conversationId;
-    req.channelType = (int32_t)conversation.conversationType;
+    req.channelType = [self channelTypeFromConversationType:conversation.conversationType];
     if (conversation.subChannel.length > 0) {
         req.subChannel = conversation.subChannel;
     }
@@ -1299,7 +1299,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     for (JConversation *conversation in conversations) {
         SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
         pbConversation.targetId = conversation.conversationId;
-        pbConversation.channelType = (int32_t)conversation.conversationType;
+        pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
         if (conversation.subChannel.length > 0) {
             pbConversation.subChannel = conversation.subChannel;
         }
@@ -1331,7 +1331,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     for (JConversation *conversation in conversations) {
         SimpleConversation *pbConversation = [[SimpleConversation alloc] init];
         pbConversation.targetId = conversation.conversationId;
-        pbConversation.channelType = (int32_t)conversation.conversationType;
+        pbConversation.channelType = [self channelTypeFromConversationType:conversation.conversationType];
         if (conversation.subChannel.length > 0) {
             pbConversation.subChannel = conversation.subChannel;
         }
