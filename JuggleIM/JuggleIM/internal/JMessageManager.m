@@ -2117,6 +2117,7 @@
     self.syncNotifyTime = 0;
     self.chatroomSyncProcessing = NO;
     [self clearChatroomSyncDic];
+    [self.core.dbManager batchSetStateFail];
 }
 
 #pragma mark - JChatroomProtocol

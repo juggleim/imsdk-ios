@@ -54,6 +54,7 @@ NSString *const jCreateMessageConversationSubchannelIndex = @"CREATE INDEX IF NO
 NSString *const jDropIndexMessageConversation = @"DROP INDEX IF EXISTS idx_message_conversation";
 NSString *const jDropIndexMessageConversationTS = @"DROP INDEX IF EXISTS idx_message_conversation_ts";
 NSString *const jDropIndexMessageDSConversationTS = @"DROP INDEX IF EXISTS idx_message_ds_conversation_ts";
+NSString *const jCreateMessageStateIndex = @"CREATE INDEX IF NOT EXISTS idx_message_state ON message(state)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -109,6 +110,7 @@ NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attrib
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
 NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, subchannel, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
+NSString *const jBatchSetStateFail = @"UPDATE message set state = 3 WHERE state = 1 OR state = 4";
 NSString *const jGroupByConversation = @" GROUP BY conversation_type, conversation_id, subchannel";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -788,6 +790,10 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
             withArgumentsInArray:@[chatroomId]];
 }
 
+- (void)batchSetStateFail {
+    [self.dbHelper executeUpdate:jBatchSetStateFail withArgumentsInArray:nil];
+}
+
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
@@ -796,6 +802,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeUpdate:jCreateMessageTimestampIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageStateIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -944,6 +951,10 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 
 + (NSString *)addConversationSubchannelIndex {
     return jCreateMessageConversationSubchannelIndex;
+}
+
++ (NSString *)addStateIndex {
+    return jCreateMessageStateIndex;
 }
 
 + (NSString *)removeConversationIndex {

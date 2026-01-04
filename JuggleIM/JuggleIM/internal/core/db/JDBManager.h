@@ -140,6 +140,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clearChatroomMessage:(NSString *)chatroomId;
 - (NSArray <JSearchConversationsResult *> *)searchMessageInConversations:(JQueryMessageOptions *)option
                                                              currentTime:(long long)now;
+- (void)batchSetStateFail;
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId;

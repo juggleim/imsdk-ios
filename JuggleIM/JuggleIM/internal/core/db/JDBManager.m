@@ -375,6 +375,9 @@
     return [self.messageDb clearChatroomMessageExclude:chatroomIds];
 }
 
+- (void)batchSetStateFail {
+    [self.messageDb batchSetStateFail];
+}
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {

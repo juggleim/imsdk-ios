@@ -89,6 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
                          currentTime:(long long)now;
 - (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds;
 - (void)clearChatroomMessage:(NSString *)chatroomId;
+- (void)batchSetStateFail;
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;
@@ -106,6 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)addDestroyTimeIndex;
 + (NSString *)addTimestampIndex;
 + (NSString *)addConversationSubchannelIndex;
++ (NSString *)addStateIndex;
 + (NSString *)removeConversationIndex;
 + (NSString *)removeConversationTSIndex;
 + (NSString *)removeDSConversationTSIndex;
