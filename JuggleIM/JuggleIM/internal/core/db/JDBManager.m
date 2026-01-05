@@ -392,6 +392,14 @@
     return [self.userInfoDB getGroupMemberIn:groupId userId:userId];
 }
 
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    return [self.userInfoDB getUserInfoList:userIdList];
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    return [self.userInfoDB getGroupInfoList:groupIdList];
+}
+
 - (void)insertUserInfos:(NSArray<JUserInfo *> *)userInfos {
     [self.userInfoDB insertUserInfos:userInfos];
 }

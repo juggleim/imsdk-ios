@@ -55,6 +55,8 @@ NSString *const jGetGroupMember = @"SELECT * FROM group_member WHERE group_id = 
 NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension, type, updated_time) VALUES (?, ?, ?, ?, ?, ?)";
 NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
 NSString *const jInsertGroupMembers = @"INSERT OR REPLACE INTO group_member (group_id, user_id, display_name, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
+NSString *const jGetUserInfoList = @"SELECT * FROM user WHERE user_id IN ";
+NSString *const jGetGroupList = @"SELECT * FROM group_info WHERE group_id IN ";
 NSString *const jColUserId = @"user_id";
 NSString *const jColGroupId = @"group_id";
 NSString *const jColName = @"name";
@@ -209,6 +211,42 @@ NSString *const jColUpdatedTime = @"updated_time";
             }
         }];
     }];
+}
+
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    NSMutableArray <JUserInfo *> *userList = [NSMutableArray array];
+    if (userIdList.count == 0) {
+        return [userList copy];
+    }
+    NSString *sql = jGetUserInfoList;
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:userIdList.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:userIdList
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JUserInfo *userInfo = [self userInfoWith:resultSet];
+            [userList addObject:userInfo];
+        }
+    }];
+    return [userList copy];
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    NSMutableArray <JGroupInfo *> *groupList = [NSMutableArray array];
+    if (groupIdList.count == 0) {
+        return [groupList copy];
+    }
+    NSString *sql = jGetGroupList;
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:groupIdList.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:groupIdList
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JGroupInfo *groupInfo = [self groupInfoWith:resultSet];
+            [groupList addObject:groupInfo];
+        }
+    }];
+    return [groupList copy];
 }
 
 + (NSString *)alterUserTableAddType {

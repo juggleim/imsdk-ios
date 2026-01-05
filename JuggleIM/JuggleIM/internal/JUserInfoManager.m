@@ -47,6 +47,22 @@
     return groupInfo;
 }
 
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    NSArray <JUserInfo *> *userInfoList = [self.core.dbManager getUserInfoList:userIdList];
+    for (JUserInfo *userInfo in userInfoList) {
+        [self.cache putUserInfo:userInfo];
+    }
+    return userInfoList;
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    NSArray <JGroupInfo *> *groupInfoList = [self.core.dbManager getGroupInfoList:groupIdList];
+    for (JGroupInfo *groupInfo in groupInfoList) {
+        [self.cache putGroupInfo:groupInfo];
+    }
+    return groupInfoList;
+}
+
 - (JGroupMember *)getGroupMember:(NSString *)groupId userId:(NSString *)userId {
     JGroupMember *groupMember = [self.cache getGroupMember:groupId userId:userId];
     if (groupMember) {
