@@ -97,4 +97,33 @@
     [self.core.dbManager insertGroupMembers:groupMemberList];
 }
 
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (userId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchUserInfo:userId
+                               success:^(JUserInfo * _Nonnull userInfo) {
+        [self.cache putUserInfo:userInfo];
+        [self.core.dbManager insertUserInfos:@[userInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(userInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 @end

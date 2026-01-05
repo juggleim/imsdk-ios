@@ -1272,6 +1272,24 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo * _Nonnull))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"fetch user info, userId is %@", userId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData fetchUserInfo:userId
+                                         index:self.cmdIndex++];
+        JTemplateObj <JUserInfo *> *obj = [[JTemplateObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1485,9 +1503,9 @@ inConversation:(JConversation *)conversation
             //复用 rtcQryCallRoomsAck
             [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
             break;
-        case JPBRcvTypeGetUserInfoAck:
-            JLogI(@"WS-Receive", @"JPBRcvTypeGetUserInfoAck");
-            [self handleGetUserInfoAck:obj.stringAck];
+        case JPBRcvTypeGetUserSettingAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetUserSettingAck");
+            [self handleGetUserSettingAck:obj.stringAck];
             break;
         case JPBRcvTypeQryMsgExtAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryMsgExtAck");
@@ -1504,6 +1522,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGetConversationConfAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetConversationConfAck");
             [self handleGetConversationConfAck:obj.templateAck];
+            break;
+        case JPBRcvTypeGetUserInfoAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetUserInfoAck");
+            [self handleGetUserInfoAck:obj.templateAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1936,7 +1958,7 @@ inConversation:(JConversation *)conversation
     }
 }
 
-- (void)handleGetUserInfoAck:(JStringAck *)ack {
+- (void)handleGetUserSettingAck:(JStringAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JStringObj class]]) {
         JStringObj *stringObj = (JStringObj *)obj;
@@ -1944,6 +1966,18 @@ inConversation:(JConversation *)conversation
             stringObj.errorBlock(ack.code);
         } else {
             stringObj.successBlock(ack.str);
+        }
+    }
+}
+
+- (void)handleGetUserInfoAck:(JTemplateAck<JUserInfo *> *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            templateObj.successBlock(ack.t);
         }
     }
 }

@@ -8,6 +8,7 @@
 #import <JuggleIM/JUserInfo.h>
 #import <JuggleIM/JGroupInfo.h>
 #import <JuggleIM/JGroupMember.h>
+#import <JuggleIM/JuggleIMConst.h>
 
 @protocol JUserInfoProtocol <NSObject>
 
@@ -33,5 +34,14 @@
 ///   - userId: 用户 id
 - (JGroupMember *)getGroupMember:(NSString *)groupId
                           userId:(NSString *)userId;
+
+/// 从服务端获取最新的用户信息
+/// - Parameters:
+///   - userId: 用户 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo *userInfo))successBlock
+                error:(void (^)(JErrorCode code))errorBlock;
 
 @end

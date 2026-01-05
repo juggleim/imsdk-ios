@@ -373,6 +373,10 @@ inConversation:(JConversation *)conversation
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo *))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call
