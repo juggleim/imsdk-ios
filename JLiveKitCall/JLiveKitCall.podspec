@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   Juggle Call With LiveKit for iOS.
                        DESC
 
-  s.homepage         = 'https://www.juggle.im/'
+  s.homepage         = 'https://juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
   s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JLiveKitCall/JLiveKitCall_v1_8_33.zip' }
