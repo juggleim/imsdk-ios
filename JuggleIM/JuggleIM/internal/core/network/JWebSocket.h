@@ -377,6 +377,10 @@ inConversation:(JConversation *)conversation
               success:(void (^)(JUserInfo *))successBlock
                 error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo *groupInfo))successBlock
+                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call

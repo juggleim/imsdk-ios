@@ -91,6 +91,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jTagAddConvers @"tag_add_convers"
 #define jTagDelConvers @"tag_del_convers"
 #define jQryUserInfo @"qry_user_info"
+#define jQryGroupInfo @"qry_group_info"
 
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
@@ -1374,6 +1375,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)fetchGroupInfo:(NSString *)groupId
+                     index:(int)index {
+    GroupInfoReq *req = [GroupInfoReq new];
+    req.groupId = groupId;
+    
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jQryGroupInfo;
+    body.targetId = groupId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -1963,6 +1982,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                     break;
                 case JPBRcvTypeGetUserInfoAck:
                     obj = [self getUserInfoAckWithImWebsocketMsg:body];
+                    break;
+                case JPBRcvTypeGetGroupInfoAck:
+                    obj = [self getGroupInfoAckWithImWebsocketMsg:body];
                     break;
                 default:
                     break;
@@ -2707,6 +2729,24 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getGroupInfoAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    GroupInfo *pbGroupInfo = [[GroupInfo alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get group info parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetGroupInfoAck;
+    JGroupInfo *groupInfo = [self groupInfoWithPBGroupInfo:pbGroupInfo];
+    JTemplateAck <JGroupInfo *> *a = [JTemplateAck new];
+    [a encodeWithQueryAckMsgBody:body];
+    a.t = groupInfo;
+    obj.templateAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryMsgExtAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -3187,7 +3227,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryFavoriteMsgs:@(JPBRcvTypeGetFavoriteMsgAck),
              jRtcJoin:@(JPBRcvTypeQryCallRoomAck),
              jQryConverConf:@(JPBRcvTypeGetConversationConfAck),
-             jQryUserInfo:@(JPBRcvTypeGetUserInfoAck)
+             jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
+             jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck)
     };
 }
 @end

@@ -44,4 +44,13 @@
               success:(void (^)(JUserInfo *userInfo))successBlock
                 error:(void (^)(JErrorCode code))errorBlock;
 
+/// 从服务端获取最新的群组信息
+/// - Parameters:
+///   - groupId: 群组 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo *groupInfo))successBlock
+                 error:(void (^)(JErrorCode code))errorBlock;
+
 @end

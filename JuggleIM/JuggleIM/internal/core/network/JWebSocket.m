@@ -1290,6 +1290,24 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo * _Nonnull))successBlock
+                 error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"fetch group info, groupId is %@", groupId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData fetchGroupInfo:groupId
+                                          index:self.cmdIndex++];
+        JTemplateObj <JGroupInfo *> *obj = [[JTemplateObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1526,6 +1544,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGetUserInfoAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetUserInfoAck");
             [self handleGetUserInfoAck:obj.templateAck];
+            break;
+        case JPBRcvTypeGetGroupInfoAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetGroupInfoAck");
+            [self handleGetGroupInfoAck:obj.templateAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -1971,6 +1993,18 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleGetUserInfoAck:(JTemplateAck<JUserInfo *> *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            templateObj.successBlock(ack.t);
+        }
+    }
+}
+
+- (void)handleGetGroupInfoAck:(JTemplateAck<JGroupInfo *> *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTemplateObj class]]) {
         JTemplateObj *templateObj = (JTemplateObj *)obj;

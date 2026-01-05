@@ -126,4 +126,33 @@
     }];
 }
 
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo *))successBlock
+                 error:(void (^)(JErrorCode))errorBlock {
+    if (groupId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchGroupInfo:groupId
+                                success:^(JGroupInfo * _Nonnull groupInfo) {
+        [self.cache putGroupInfo:groupInfo];
+        [self.core.dbManager insertGroupInfos:@[groupInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(groupInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 @end
