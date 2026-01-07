@@ -338,6 +338,7 @@
                 errorBlock(JErrorCodeRecallExtrasTypeNotString);
             }
         });
+        return;
     }
     
     NSArray *arr = [self getMessagesByMessageIds:@[messageId]];
