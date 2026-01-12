@@ -138,6 +138,7 @@
                 errorBlock(JErrorCodeInvalidParam);
             }
         });
+        return;
     }
     
     __weak typeof(self) weakSelf = self;

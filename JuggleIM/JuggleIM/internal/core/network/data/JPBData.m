@@ -2949,6 +2949,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
             result = ChannelType_System;
             break;
             
+        case JConversationTypePublicService:
+            result = ChannelType_PublicService;
+            break;
+            
         default:
             break;
     }
