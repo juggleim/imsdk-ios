@@ -390,10 +390,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (DownMsg *)downMsgWithMessage:(JConcreteMessage *)message {
-    if(message == nil){
+    if (message == nil) {
         return nil;
     }
-    if(message.conversation == nil){
+    if (message.conversation == nil) {
         return nil;
     }
     DownMsg * downMsg = [[DownMsg alloc] init];
@@ -413,17 +413,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
     downMsg.clientUid = message.clientUid;
     downMsg.isRead = message.hasRead;
     downMsg.unreadIndex = message.msgIndex;
-    if(message.groupReadInfo){
+    if (message.groupReadInfo) {
         downMsg.readCount = message.groupReadInfo.readCount;
         downMsg.memberCount = message.groupReadInfo.memberCount;
     }
-    if(message.groupInfo){
+    if (message.groupInfo) {
         downMsg.groupInfo = [self pbGroupInfoWithGroupInfo:message.groupInfo];
     }
-    if(message.targetUserInfo){
+    if (message.targetUserInfo) {
         downMsg.targetUserInfo = [self pbUserInfoWithUserInfo:message.targetUserInfo];
     }
-    if(message.mentionInfo){
+    if (message.mentionInfo) {
         MentionInfo * mentionInfo = [[MentionInfo alloc] init];
         mentionInfo.mentionType = (int32_t)message.mentionInfo.type;
         NSMutableArray * targetUsersArray = [NSMutableArray array];
@@ -433,7 +433,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         mentionInfo.targetUsersArray = targetUsersArray;
         downMsg.mentionInfo = mentionInfo;
     }
-    if(message.referredMsg){
+    if (message.referredMsg) {
         downMsg.referMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
     }
     return downMsg;
@@ -1505,9 +1505,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                         index:(int)index{
     QryFileCredReq * req = [[QryFileCredReq alloc] init];
     req.fileType = (FileType)fileType;
-    if(ext == nil || ext.length == 0){
+    if (ext == nil || ext.length == 0) {
         req.ext = @"";
-    }else{
+    } else {
         req.ext = ext;
     }
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
@@ -2180,9 +2180,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     msg.content = [[JContentTypeCenter shared] contentWithData:msgContent
                                                    contentType:downMsg.msgType];
-    if([msg.content isKindOfClass:[JMergeMessage class]]){
+    if ([msg.content isKindOfClass:[JMergeMessage class]]) {
         JMergeMessage * mergeMessage = (JMergeMessage *)msg.content;
-        if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+        if (mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0) {
             mergeMessage.containerMsgId = msg.messageId;
         }
     }
@@ -2210,7 +2210,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         mentionInfo.targetUsers = mentionUserList;
         msg.mentionInfo = mentionInfo;
     }
-    if(downMsg.hasReferMsg && downMsg.referMsg != nil){
+    if (downMsg.hasReferMsg && downMsg.referMsg != nil) {
         JConcreteMessage * referMsg = [self messageWithDownMsg:downMsg.referMsg];
         msg.referredMsg = referMsg;
         msg.referMsgId = referMsg.messageId;
@@ -2224,7 +2224,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 - (GroupInfo *)pbGroupInfoWithGroupInfo:(JGroupInfo *)groupInfo{
-    if(groupInfo == nil){
+    if (groupInfo == nil) {
         return nil;
     }
     GroupInfo * pbGroupInfo = [[GroupInfo alloc] init];
@@ -2262,7 +2262,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 -(UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
-    if(userInfo == nil){
+    if (userInfo == nil) {
         return nil;
     }
     UserInfo * pbUserInfo = [[UserInfo alloc] init];
@@ -2430,13 +2430,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
-    if(conversation.mentions != nil && conversation.mentions.isMentioned){
+    if (conversation.mentions != nil && conversation.mentions.isMentioned) {
         JConversationMentionInfo * mentionInfo = [[JConversationMentionInfo alloc] init];
-        if(conversation.mentions.mentionMsgsArray != nil){
+        if (conversation.mentions.mentionMsgsArray != nil) {
             NSMutableArray<JConversationMentionMessage *> * array = [NSMutableArray array];
             for (MentionMsg * mentionMsg in conversation.mentions.mentionMsgsArray) {
                 JConversationMentionMessage * mentionMessage = [self mentionMsgWithPBMentionMsg:mentionMsg];
-                if(mentionMessage){
+                if (mentionMessage) {
                     [array addObject:mentionMessage];
                 }
             }
@@ -2444,11 +2444,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
         }
         info.mentionInfo = mentionInfo;
 
-        if(conversation.mentions.sendersArray != nil){
+        if (conversation.mentions.sendersArray != nil) {
             NSMutableArray<JUserInfo *> * array = [NSMutableArray array];
             for (UserInfo * userInfo in conversation.mentions.sendersArray) {
                 JUserInfo * jUserInfo = [self userInfoWithPBUserInfo:userInfo];
-                if(jUserInfo){
+                if (jUserInfo) {
                     [array addObject:jUserInfo];
                 }
             }
@@ -2467,7 +2467,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 }
 
 -(JConversationMentionMessage *)mentionMsgWithPBMentionMsg:(MentionMsg *)mentionMsg{
-    if(mentionMsg == nil){
+    if (mentionMsg == nil) {
         return nil;
     }
     JConversationMentionMessage * mentionMessage = [[JConversationMentionMessage alloc] init];
@@ -2964,7 +2964,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     QryFileCredResp * resp = [[QryFileCredResp alloc] initWithData:body.data_p error:&e];
-    if(e != nil){
+    if (e != nil) {
         JLogE(@"PB-Parse", @"file cred ack parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;
@@ -2973,13 +2973,13 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JQryFileCredAck * a = [[JQryFileCredAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     a.ossType = (JUploadOssType)resp.ossType;
-    if(resp.qiNiuCred != nil){
+    if (resp.qiNiuCred != nil) {
         JUploadQiNiuCred * qiNiuCred = [[JUploadQiNiuCred alloc] init];
         qiNiuCred.domain = resp.qiNiuCred.domain;
         qiNiuCred.token = resp.qiNiuCred.token;
         a.qiNiuCred = qiNiuCred;
     }
-    if(resp.preSignResp != nil){
+    if (resp.preSignResp != nil) {
         JUploadPreSignCred * preSignCred = [[JUploadPreSignCred alloc] init];
         preSignCred.url = resp.preSignResp.URL;
         preSignCred.downloadUrl = resp.preSignResp.downloadURL;
@@ -2994,7 +2994,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
     UserUndisturb *resp = [[UserUndisturb alloc] initWithData:body.data_p error:&e];
-    if(e != nil){
+    if (e != nil) {
         JLogE(@"PB-Parse", @"global mute ack parse error, msg is %@", e.description);
         obj.rcvType = JPBRcvTypeParseError;
         return obj;

@@ -513,7 +513,6 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(time), @(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
-
 - (void)setMentionInfo:(JConversation *)conversation
       mentionInfoJson:(NSString *)mentionInfoJson{
     if (conversation.conversationId.length == 0) {
@@ -535,7 +534,7 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     [self.dbHelper executeUpdate:sql withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
 
-- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message{
+- (void)updateLastMessageWithoutIndex:(JConcreteMessage *)message {
     NSString *sql = jUpdateLastMessage;
     sql = [sql stringByAppendingString:jWhereConversationIs];
     
@@ -543,9 +542,9 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     NSString *content = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     
     NSString * mentionInfo;
-    if(message.mentionInfo){
+    if (message.mentionInfo) {
         mentionInfo = [message.mentionInfo encodeToJson];
-    }else{
+    } else {
         mentionInfo = @"";
     }
     
@@ -566,12 +565,14 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
                                                                    message.conversation.subChannel]];
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 }
-- (void)setLastMessageHasRead:(JConversation *)conversation{
+
+- (void)setLastMessageHasRead:(JConversation *)conversation {
     [self.dbHelper executeUpdate:jUpdateConversationLastMessageHasRead withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]];
 }
+
 - (void)updateLastMessageState:(JConversation *)conversation
                          state:(JMessageState)state
-               withClientMsgNo:(long long)clientMsgNo{
+               withClientMsgNo:(long long)clientMsgNo {
     NSString *sql = jUpdateConversationLastMessageState;
     NSMutableArray *args = [[NSMutableArray alloc] initWithArray:@[@(state),
                                                                    @(conversation.conversationType),

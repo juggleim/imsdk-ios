@@ -179,7 +179,7 @@
         [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [self notifyMessageRemoved:conversation removedMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
-            if(successBlock){
+            if (successBlock) {
                 successBlock();
             }
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -202,7 +202,7 @@
         [weakSelf.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [weakSelf notifyMessageRemoved:conversation removedMessages:deleteRemoteList];
         dispatch_async(self.core.delegateQueue, ^{
-            if(successBlock){
+            if (successBlock) {
                 successBlock();
             }
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -272,7 +272,7 @@
             [weakSelf.core.dbManager deleteMessageByMessageIds:ids];
             [weakSelf notifyMessageRemoved:conversation removedMessages:msgList];
             dispatch_async(self.core.delegateQueue, ^{
-                if(successBlock){
+                if (successBlock) {
                     successBlock();
                 }
                 [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -862,13 +862,13 @@
                          success:(void (^)(JMessage *message))successBlock
                            error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                           cancel:(void (^)(JMessage *message))cancelBlock{
-    if(message.clientMsgNo <= 0 ||
+    if (message.clientMsgNo <= 0 ||
        !(message.messageId == nil || message.messageId.length == 0) ||   //已发送的消息不允许重发
        message.content == nil ||
        ![message.content isKindOfClass:[JMediaMessageContent class]] ||
        message.conversation == nil ||
        (message.conversation.conversationId == nil || message.conversation.conversationId.length == 0)){
-        if(errorBlock){
+        if (errorBlock) {
             errorBlock(JErrorCodeInvalidParam,message);
         }
         return message;
@@ -883,7 +883,7 @@
         return message;
     }
     
-    if(message.messageState != JMessageStateSending){
+    if (message.messageState != JMessageStateSending) {
         message.messageState = JMessageStateSending;
         [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
     }
@@ -1104,11 +1104,11 @@
             }
             //正序排序
             NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
-                if(msg1.timestamp < msg2.timestamp){
+                if (msg1.timestamp < msg2.timestamp) {
                     return NSOrderedAscending;
-                }else if(msg1.timestamp > msg2.timestamp){
+                } else if (msg1.timestamp > msg2.timestamp) {
                     return NSOrderedDescending;
-                }else{
+                } else {
                     return NSOrderedSame;
                 }
             }];
@@ -2468,9 +2468,9 @@
             message.contentType = contentType;
         }
         
-        if([message.content isKindOfClass:[JMergeMessage class]]){
+        if ([message.content isKindOfClass:[JMergeMessage class]]) {
             JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
-            if(mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0){
+            if (mergeMessage.containerMsgId == nil || mergeMessage.containerMsgId.length == 0) {
                 mergeMessage.containerMsgId = msgId;
             }
             [self.core.dbManager updateMessageContent:message.content
@@ -2566,7 +2566,7 @@
     if (isBroadcast) {
         message.flags |= JMessageFlagIsBroadcast;
     }
-    if(messageOption.mentionInfo) {
+    if (messageOption.mentionInfo) {
         message.mentionInfo = messageOption.mentionInfo;
     }
     if (messageOption.referredMsgId) {
@@ -2609,13 +2609,13 @@
 }
 
 -(void)saveReferMessages:(JConcreteMessage *)message {
-    if(message.referredMsg == nil){
+    if (message.referredMsg == nil) {
         return;
     }
     JConcreteMessage * localReferMsg = [self.core.dbManager getMessageWithMessageId:message.referredMsg.messageId currentTime:[self.core getCurrentTime]];
-    if(localReferMsg != nil){
+    if (localReferMsg != nil) {
         message.referredMsg = localReferMsg;
-    }else{
+    } else {
         JConcreteMessage *refer = (JConcreteMessage *)message.referredMsg;
         NSArray * messages = [self messagesToSave:@[refer]];
         [self insertRemoteMessages:messages];
@@ -2625,7 +2625,7 @@
 - (JMessage *)handleModifyMessage:(NSString *)messageId
                           msgType:(NSString *)msgType
                           content:(JMessageContent *)content {
-    if(messageId == nil) {
+    if (messageId == nil) {
         return nil;
     }
     [self.core.dbManager updateMessageContent:content
@@ -2647,7 +2647,7 @@
 }
 
 - (JMessage *)handleRecallCmdMessage:(NSString *)messageId extra:(NSDictionary *)extra {
-    if(messageId == nil) {
+    if (messageId == nil) {
         return nil;
     }
     JRecallInfoMessage *recallInfoMsg = [[JRecallInfoMessage alloc] init];
@@ -2668,7 +2668,7 @@
     JDeleteMsgMessage * content = (JDeleteMsgMessage *)message.content;
     
     NSArray * messageList = [self.core.dbManager getMessagesByMessageIds:content.msgIdList];
-    if(messageList == nil || messageList.count == 0){
+    if (messageList == nil || messageList.count == 0) {
         return;
     }
     
@@ -2682,7 +2682,7 @@
     
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if([obj respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]){
+            if ([obj respondsToSelector:@selector(messageDidDelete:clientMsgNos:)]) {
                 [obj messageDidDelete:message.conversation clientMsgNos:clientMsgNos];
             }
         }];
@@ -2721,14 +2721,14 @@
     JCleanMsgMessage * content = (JCleanMsgMessage *)message.content;
     
     long long starTime = content.cleanTime;
-    if(starTime == 0){
+    if (starTime == 0) {
         starTime = [[NSDate date] timeIntervalSince1970] * 1000;
     }
     
     [self.core.dbManager clearMessagesIn:message.conversation startTime:starTime senderId:content.senderId];
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            if([obj respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]){
+            if ([obj respondsToSelector:@selector(messageDidClear:timestamp:senderId:)]) {
                 [obj messageDidClear:message.conversation
                                      timestamp:starTime
                                       senderId:content.senderId];
