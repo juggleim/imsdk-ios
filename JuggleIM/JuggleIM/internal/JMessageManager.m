@@ -2246,7 +2246,6 @@
     [self.chatroomManager setSyncTime:lastMessage.timestamp forChatroom:lastMessage.conversation.conversationId];
     
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        
         //recall message
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;

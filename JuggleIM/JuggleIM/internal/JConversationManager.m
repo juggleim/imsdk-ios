@@ -117,7 +117,6 @@
                 }
             }];
         });
-        
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CONV-Delete", @"error code is %lu", code);
         dispatch_async(weakSelf.core.delegateQueue, ^{
