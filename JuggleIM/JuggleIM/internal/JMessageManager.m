@@ -823,8 +823,7 @@
                error:(void (^)(JErrorCode, JMessage *))errorBlock {
     if (message.clientMsgNo <= 0
         || !message.content
-        || message.conversation.conversationId.length == 0
-        || ![message isKindOfClass:[JConcreteMessage class]]) {
+        || message.conversation.conversationId.length == 0) {
         dispatch_async(self.core.delegateQueue, ^{
             if (errorBlock) {
                 errorBlock(JErrorCodeInvalidParam, message);
@@ -840,6 +839,19 @@
                 }
             });
             return message;
+        }
+        if (![message isKindOfClass:[JConcreteMessage class]]) {
+            NSArray<JMessage *> *messageList = [self getMessagesByClientMsgNos:@[@(message.clientMsgNo)]];
+            if (messageList.count > 0) {
+                message = messageList[0];
+            } else {
+                dispatch_async(self.core.delegateQueue, ^{
+                    if (errorBlock) {
+                        errorBlock(JErrorCodeMessageNotExist, message);
+                    }
+                });
+                return message;
+            }
         }
         if (message.messageState != JMessageStateSending) {
             message.messageState = JMessageStateSending;
@@ -890,6 +902,19 @@
             }
         });
         return message;
+    }
+    if (![message isKindOfClass:[JConcreteMessage class]]) {
+        NSArray<JMessage *> *messageList = [self getMessagesByClientMsgNos:@[@(message.clientMsgNo)]];
+        if (messageList.count > 0) {
+            message = messageList[0];
+        } else {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeMessageNotExist, message);
+                }
+            });
+            return message;
+        }
     }
     
     if (message.messageState != JMessageStateSending) {
