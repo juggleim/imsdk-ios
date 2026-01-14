@@ -89,6 +89,7 @@ NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ? AND timestamp <= ?";
+NSString *const jPurgeMessages = @"DELETE FROM message WHERE timestamp < ?";
 NSString *const jAndSenderIs = @" AND sender = ?";
 NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
@@ -405,6 +406,19 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     }
     [self.dbHelper executeUpdate:sql
             withArgumentsInArray:args];
+}
+
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+    NSString *sql = jPurgeMessages;
+    NSMutableArray *args = [NSMutableArray array];
+    [args addObject:@(timestamp)];
+    if (conversationTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndConversationTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+        [args addObjectsFromArray:conversationTypes];
+    }
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
 }
 
 //被删除的消息也能查出来

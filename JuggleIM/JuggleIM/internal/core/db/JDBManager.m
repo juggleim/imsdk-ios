@@ -305,6 +305,11 @@
     [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+    [self.messageDb purgeMessagesBefore:timestamp conversationTypes:conversationTypes];
+}
+
 - (void)clearChatroomMessage:(NSString *)chatroomId {
     [self.messageDb clearChatroomMessage:chatroomId];
 }

@@ -444,6 +444,15 @@
                     error:errorBlock];
 }
 
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+    if (timestamp == 0) {
+        timestamp =  [[NSDate date] timeIntervalSince1970] * 1000;
+    }
+    [self.core.dbManager purgeMessagesBefore:timestamp
+                           conversationTypes:conversationTypes];
+}
+
 -(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRemove:removedMessages:lastMessage:)]) {
         long long now = [self.core getCurrentTime];

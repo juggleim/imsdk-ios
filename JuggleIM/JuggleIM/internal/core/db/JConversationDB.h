@@ -72,6 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)dropConversationTagIndex1;
 + (NSString *)addConversationIndex2;
 + (NSString *)addConversationTagIndex2;
++ (NSString *)addConversationTSIndex;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -61,6 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
 - (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes;
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid;

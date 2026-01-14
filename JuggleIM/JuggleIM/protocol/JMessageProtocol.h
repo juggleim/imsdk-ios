@@ -340,6 +340,13 @@
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock;
 
+/// 物理删除指定时间之前的所有消息（只删除本地消息，可用于释放本地存储空间）
+/// - Parameters:
+///   - timestamp: 时间戳，传 0 表示当前时间
+///   - conversationTypes: 待删除的会话类型列表，传 nil 表示删除所有会话类型的消息。
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes;
+
 /// 根据 messageId 数组获取对应的本地消息
 /// - Parameter messageIds: messageId 数组
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;

@@ -52,6 +52,7 @@ NSString *const jCreateConversationTagIndex = @"CREATE UNIQUE INDEX IF NOT EXIST
 NSString *const jCreateConversationTagIndex2 = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag2 ON conversation_tag(tag_id, conversation_type, conversation_id, subchannel)";
 NSString *const jCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
 NSString *const jCreateConversationIndex2 = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation2 ON conversation_info(conversation_type, conversation_id, subchannel)";
+NSString *const jCreateConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_conversation_timestamp ON conversation_info(timestamp)";
 NSString *const kInsertConversation = @"INSERT OR REPLACE INTO conversation_info"
                                        "(conversation_type, conversation_id, subchannel, timestamp, last_message_id,"
                                        "last_read_message_index, last_message_index, is_top, top_time, mute, mention_info,"
@@ -154,6 +155,7 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateConversationTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationIndex2 withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateConversationTSIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagIndex2 withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
@@ -670,6 +672,10 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
 
 + (NSString *)addConversationTagIndex2 {
     return jCreateConversationTagIndex2;
+}
+
++ (NSString *)addConversationTSIndex {
+    return jCreateConversationTSIndex;
 }
 
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
