@@ -33,6 +33,10 @@
 @property (nonatomic, copy) NSString *draft;
 /// @信息
 @property (nonatomic, strong) JConversationMentionInfo * mentionInfo;
+/// 会话名字
+@property (nonatomic, copy) NSString *displayName;
+/// 会话头像
+@property (nonatomic, copy) NSString *portrait;
 
 @end
 
