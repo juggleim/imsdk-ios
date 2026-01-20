@@ -55,6 +55,7 @@ NSString *const jDropIndexMessageConversation = @"DROP INDEX IF EXISTS idx_messa
 NSString *const jDropIndexMessageConversationTS = @"DROP INDEX IF EXISTS idx_message_conversation_ts";
 NSString *const jDropIndexMessageDSConversationTS = @"DROP INDEX IF EXISTS idx_message_ds_conversation_ts";
 NSString *const jCreateMessageStateIndex = @"CREATE INDEX IF NOT EXISTS idx_message_state ON message(state)";
+NSString *const jCreateMessageSenderIndex = @"CREATE INDEX IF NOT EXISTS idx_message_sender ON message(sender)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -817,6 +818,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageStateIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageSenderIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -969,6 +971,10 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 
 + (NSString *)addStateIndex {
     return jCreateMessageStateIndex;
+}
+
++ (NSString *)addSenderIndex {
+    return jCreateMessageSenderIndex;
 }
 
 + (NSString *)removeConversationIndex {

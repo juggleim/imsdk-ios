@@ -10,7 +10,7 @@ import JuggleIM
 
 @objc class HttpManager: NSObject {
     @objc static let shared = HttpManager()
-    
+        
     static var domain: String {
         GlobalConfig.demoServer
     }
