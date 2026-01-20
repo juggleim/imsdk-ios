@@ -44,7 +44,7 @@
 
 - (JUserInfo *)userInfo {
     if (!_userInfo) {
-        _userInfo = [JIM.shared.userInfoManager getUserInfo:self.conversation.conversationId];
+        _userInfo = [JIM.shared.userInfoManager getUserInfo:self.senderUserId];
     }
     return _userInfo;
 }

@@ -115,6 +115,9 @@
 /// - Parameter view: 预览的视频 view
 - (void)startPreview:(UIView *)view;
 
+/// 停止预览
+- (void)stopPreview;
+
 /// 设置麦克风静音
 /// - Parameter isMute: 是否静音
 - (void)muteMicrophone:(BOOL)isMute;

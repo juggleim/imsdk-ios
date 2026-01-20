@@ -91,6 +91,11 @@
     }
 }
 
+- (void)stopPreview {
+    [[JCallMediaManager shared] stopPreview];
+    [self.viewDic removeObjectForKey:JIM.shared.currentUserId];
+}
+
 - (void)muteMicrophone:(BOOL)isMute {
     [[JCallMediaManager shared] muteMicrophone:isMute];
 }
