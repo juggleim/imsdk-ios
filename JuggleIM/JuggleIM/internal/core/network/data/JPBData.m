@@ -2197,6 +2197,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.groupMemberInfo = [self groupMemberWithPBGroupMember:downMsg.grpMemberInfo
                                                 groupId:msg.groupInfo.groupId
                                                  userId:msg.targetUserInfo.userId];
+    msg.friendInfo = [self friendInfoWithPBFriendInfo:downMsg.friendInfo userId:msg.targetUserInfo.userId];
     if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
         JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
         mentionInfo.type = (JMentionType)downMsg.mentionInfo.mentionType;
@@ -2259,6 +2260,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     result.updatedTime = pbGroupInfo.updatedTime;
     return result;
+}
+
+- (JFriendInfo *)friendInfoWithPBFriendInfo:(FriendInfo *)pbFriendInfo
+                                     userId:(NSString *)userId {
+    if (pbFriendInfo == nil || userId.length == 0 || pbFriendInfo.updatedTime == 0) {
+        return nil;
+    }
+    JFriendInfo *friendInfo = [[JFriendInfo alloc] init];
+    friendInfo.userId = userId;
+    friendInfo.isFriend = pbFriendInfo.isFriend;
+    friendInfo.alias = pbFriendInfo.friendDisplayName;
+    friendInfo.updatedTime = pbFriendInfo.updatedTime;
+    return friendInfo;
 }
 
 -(UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
@@ -2430,6 +2444,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
+    info.friendInfo = [self friendInfoWithPBFriendInfo:conversation.friendInfo userId:info.targetUserInfo.userId];
     if (conversation.mentions != nil && conversation.mentions.isMentioned) {
         JConversationMentionInfo * mentionInfo = [[JConversationMentionInfo alloc] init];
         if (conversation.mentions.mentionMsgsArray != nil) {

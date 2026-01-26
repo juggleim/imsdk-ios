@@ -426,6 +426,8 @@
 		A0E3DDD12C6F4FA600FE9D3B /* JGetMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E3DDCF2C6F4FA600FE9D3B /* JGetMessageOptions.m */; };
 		A0E68E5D2D2E88CE00640324 /* JMsgModifyMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */; };
 		A0E68E5E2D2E88CE00640324 /* JMsgModifyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */; };
+		A0EDD3A92F2372AE0096EE03 /* JFriendInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A0EDD3A82F2372AE0096EE03 /* JFriendInfo.m */; };
+		A0EDD3AA2F2372AE0096EE03 /* JFriendInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0EDD3A72F2372AE0096EE03 /* JFriendInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0F376152B3571CE0076CB84 /* JProfileDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376132B3571CE0076CB84 /* JProfileDB.h */; };
 		A0F376162B3571CE0076CB84 /* JProfileDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A0F376142B3571CE0076CB84 /* JProfileDB.m */; };
 		A0F3761B2B3994920076CB84 /* JConcreteConversationInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */; };
@@ -868,6 +870,8 @@
 		A0E3DDCF2C6F4FA600FE9D3B /* JGetMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGetMessageOptions.m; sourceTree = "<group>"; };
 		A0E68E5B2D2E88CE00640324 /* JMsgModifyMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMsgModifyMessage.h; sourceTree = "<group>"; };
 		A0E68E5C2D2E88CE00640324 /* JMsgModifyMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMsgModifyMessage.m; sourceTree = "<group>"; };
+		A0EDD3A72F2372AE0096EE03 /* JFriendInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JFriendInfo.h; sourceTree = "<group>"; };
+		A0EDD3A82F2372AE0096EE03 /* JFriendInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JFriendInfo.m; sourceTree = "<group>"; };
 		A0F376132B3571CE0076CB84 /* JProfileDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JProfileDB.h; sourceTree = "<group>"; };
 		A0F376142B3571CE0076CB84 /* JProfileDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JProfileDB.m; sourceTree = "<group>"; };
 		A0F376192B3994920076CB84 /* JConcreteConversationInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConcreteConversationInfo.h; sourceTree = "<group>"; };
@@ -1160,6 +1164,8 @@
 				A024C39A2D353814005C369C /* JMessageReaction.m */,
 				A08A9A552D5DE532009EE779 /* JGroupMember.h */,
 				A08A9A562D5DE532009EE779 /* JGroupMember.m */,
+				A0EDD3A72F2372AE0096EE03 /* JFriendInfo.h */,
+				A0EDD3A82F2372AE0096EE03 /* JFriendInfo.m */,
 				A0752D792D65D97D009B7E0F /* JGetConversationOptions.h */,
 				A0752D7A2D65D97D009B7E0F /* JGetConversationOptions.m */,
 				A09D20792E4C7538001F1DC2 /* JGetFavoriteMessageOption.h */,
@@ -1671,6 +1677,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0EDD3AA2F2372AE0096EE03 /* JFriendInfo.h in Headers */,
 				A068B9CB2EC5FDA000D04F45 /* JGetMomentCommentOption.h in Headers */,
 				A068B9C72EC5F5A100D04F45 /* JGetMomentOption.h in Headers */,
 				A08A264D2EC34ED70022272D /* JMomentComment.h in Headers */,
@@ -2100,6 +2107,7 @@
 				A08AA3ED2B19EEDA008B114C /* JIMSRSecurityPolicy.m in Sources */,
 				A08AA36E2B19CB77008B114C /* GPBUnknownFieldSet.m in Sources */,
 				A08AA3832B19CB78008B114C /* GPBUnknownField.m in Sources */,
+				A0EDD3A92F2372AE0096EE03 /* JFriendInfo.m in Sources */,
 				A024C39C2D353814005C369C /* JMessageReaction.m in Sources */,
 				A08AA3F72B19EEDB008B114C /* JIMSRDelegateController.m in Sources */,
 				A09D207C2E4C7538001F1DC2 /* JGetFavoriteMessageOption.m in Sources */,

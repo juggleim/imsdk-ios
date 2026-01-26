@@ -21,9 +21,36 @@
         || self.conversation.conversationType == JConversationTypePublicService) {
         displayName = self.groupInfo.groupName;
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
-        displayName = self.userInfo.userName;
+        JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
+        displayName = friendInfo.alias;
+        if (displayName.length == 0) {
+            displayName = self.userInfo.userName;
+        }
     }
     return displayName;
+}
+
+- (NSString *)alias {
+    NSString *alias = @"";
+    if (self.conversation.conversationType == JConversationTypeGroup
+        || self.conversation.conversationType == JConversationTypePublicService) {
+        alias = self.groupInfo.groupName;
+    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+        JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
+        alias = friendInfo.alias;
+    }
+    return alias;
+}
+
+- (NSString *)name {
+    NSString *name = @"";
+    if (self.conversation.conversationType == JConversationTypeGroup
+        || self.conversation.conversationType == JConversationTypePublicService) {
+        name = self.groupInfo.groupName;
+    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+        name = self.userInfo.userName;
+    }
+    return name;
 }
 
 - (NSString *)portrait {

@@ -73,6 +73,16 @@
     return groupMember;
 }
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    JFriendInfo *friendInfo = [self.cache getFriendInfo:userId];
+    if (friendInfo) {
+        return friendInfo;
+    }
+    friendInfo = [self.core.dbManager getFriendInfo:userId];
+    [self.cache putFriendInfo:friendInfo];
+    return friendInfo;
+}
+
 - (void)insertUserInfoList:(NSArray<JUserInfo *> *)userInfoList {
     if (userInfoList.count == 0) {
         return;
@@ -95,6 +105,14 @@
     }
     [self.cache putGroupMemberList:groupMemberList];
     [self.core.dbManager insertGroupMembers:groupMemberList];
+}
+
+- (void)insertFriendInfoList:(NSArray<JFriendInfo *> *)friendInfoList {
+    if (friendInfoList.count == 0) {
+        return;
+    }
+    [self.cache putFriendInfoList:friendInfoList];
+    [self.core.dbManager insertFriendInfos:friendInfoList];
 }
 
 - (void)fetchUserInfo:(NSString *)userId

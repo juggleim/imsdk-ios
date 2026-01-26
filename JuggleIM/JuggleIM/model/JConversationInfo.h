@@ -33,8 +33,12 @@
 @property (nonatomic, copy) NSString *draft;
 /// @信息
 @property (nonatomic, strong) JConversationMentionInfo * mentionInfo;
-/// 会话名字
+/// 会话名字（按照默认规则显示的会话名字）
 @property (nonatomic, copy) NSString *displayName;
+/// 会话备注名（群会话使用群备注名，单聊会话使用好友备注名）
+@property (nonatomic, copy) NSString *alias;
+/// 会话本名（群会话使用群名称，单聊会话使用用户名称）
+@property (nonatomic, copy) NSString *name;
 /// 会话头像
 @property (nonatomic, copy) NSString *portrait;
 

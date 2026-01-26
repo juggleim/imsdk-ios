@@ -7,6 +7,7 @@
 
 #import "JMessage.h"
 #import "JuggleIM/JIM.h"
+#import "JFriendInfo.h"
 
 @interface JMessage ()
 @property (nonatomic, strong) JUserInfo *userInfo;
@@ -25,6 +26,11 @@
 
 - (NSString *)senderDisplayName {
     NSString *userName;
+    
+    userName = self.friendAlias;
+    if (userName.length > 0) {
+        return userName;
+    }
     if (self.conversation.conversationType == JConversationTypeGroup) {
         JGroupMember *groupMember = [JIM.shared.userInfoManager getGroupMember:self.conversation.conversationId userId:self.senderUserId];
         userName = groupMember.groupDisplayName;
@@ -37,9 +43,22 @@
     return userName;
 }
 
+- (NSString *)friendAlias {
+    JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.senderUserId];
+    return friendInfo.alias;
+}
+
+- (NSString *)groupMemberAlias {
+    JGroupMember *groupMember = [JIM.shared.userInfoManager getGroupMember:self.conversation.conversationId userId:self.senderUserId];
+    return groupMember.groupDisplayName;
+}
+
+- (NSString *)senderName {
+    return self.userInfo.userName;
+}
+
 - (NSString *)senderPortrait {
-    NSString *portrait = self.userInfo.portrait;
-    return portrait;
+    return self.userInfo.portrait;
 }
 
 - (JUserInfo *)userInfo {

@@ -37,6 +37,7 @@ CF_EXTERN_C_BEGIN
 @class DownMsg;
 @class FavoriteMsg;
 @class FavoriteMsgIdItem;
+@class FriendInfo;
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
@@ -701,6 +702,7 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_SubChannel = 34,
   DownMsg_FieldNumber_ToUserIdsArray = 35,
   DownMsg_FieldNumber_ReadTime = 36,
+  DownMsg_FieldNumber_FriendInfo = 37,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -801,6 +803,10 @@ GPB_FINAL @interface DownMsg : GPBMessage
 
 @property(nonatomic, readwrite) int64_t readTime;
 
+@property(nonatomic, readwrite, strong, null_resettable) FriendInfo *friendInfo;
+/** Test to see if @c friendInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasFriendInfo;
+
 @end
 
 /**
@@ -814,6 +820,24 @@ int32_t DownMsg_ChannelType_RawValue(DownMsg *message);
  * was generated.
  **/
 void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
+
+#pragma mark - FriendInfo
+
+typedef GPB_ENUM(FriendInfo_FieldNumber) {
+  FriendInfo_FieldNumber_IsFriend = 1,
+  FriendInfo_FieldNumber_FriendDisplayName = 2,
+  FriendInfo_FieldNumber_UpdatedTime = 3,
+};
+
+GPB_FINAL @interface FriendInfo : GPBMessage
+
+@property(nonatomic, readwrite) BOOL isFriend;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *friendDisplayName;
+
+@property(nonatomic, readwrite) int64_t updatedTime;
+
+@end
 
 #pragma mark - GrpMemberInfo
 
@@ -1955,6 +1979,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_LatestReadMsgTime = 19,
   Conversation_FieldNumber_ConverTagsArray = 20,
   Conversation_FieldNumber_SubChannel = 21,
+  Conversation_FieldNumber_FriendInfo = 22,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -2010,6 +2035,10 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readonly) NSUInteger converTagsArray_Count;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) FriendInfo *friendInfo;
+/** Test to see if @c friendInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasFriendInfo;
 
 @end
 

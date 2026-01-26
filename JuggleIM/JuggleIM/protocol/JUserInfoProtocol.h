@@ -8,6 +8,7 @@
 #import <JuggleIM/JUserInfo.h>
 #import <JuggleIM/JGroupInfo.h>
 #import <JuggleIM/JGroupMember.h>
+#import <JuggleIM/JFriendInfo.h>
 #import <JuggleIM/JuggleIMConst.h>
 
 @protocol JUserInfoProtocol <NSObject>
@@ -34,6 +35,10 @@
 ///   - userId: 用户 id
 - (JGroupMember *)getGroupMember:(NSString *)groupId
                           userId:(NSString *)userId;
+
+/// 获取好友信息
+/// - Parameter userId: 好友的用户 id
+- (JFriendInfo *)getFriendInfo:(NSString *)userId;
 
 /// 从服务端获取最新的用户信息
 /// - Parameters:

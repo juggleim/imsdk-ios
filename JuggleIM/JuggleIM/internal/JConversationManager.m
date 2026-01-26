@@ -955,12 +955,16 @@
 - (void)updateUserInfos:(NSArray <JConcreteConversationInfo *> *)conversations {
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *friendDic = [NSMutableDictionary new];
     [conversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.groupInfo.groupId.length > 0) {
             [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
         }
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
+        }
+        if (obj.friendInfo.userId.length > 0) {
+            [friendDic setObject:obj.friendInfo forKey:obj.friendInfo.userId];
         }
         if (obj.mentionUserList!= nil){
             for (JUserInfo * userInfo in obj.mentionUserList) {
@@ -970,6 +974,7 @@
     }];
     [self.userInfoManager insertUserInfoList:userDic.allValues];
     [self.userInfoManager insertGroupInfoList:groupDic.allValues];
+    [self.userInfoManager insertFriendInfoList:friendDic.allValues];
 }
 
 - (void)updateConversationTag:(NSArray <JConcreteConversationInfo *> *)conversations {

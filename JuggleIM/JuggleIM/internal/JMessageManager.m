@@ -3117,6 +3117,7 @@
     NSMutableDictionary *groupDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *groupMemberDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *friendInfoDic = [NSMutableDictionary dictionary];
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (obj.groupInfo.groupId.length > 0) {
             [groupDic setObject:obj.groupInfo forKey:obj.groupInfo.groupId];
@@ -3128,6 +3129,9 @@
             NSString *key = [NSString stringWithFormat:@"%@xxx%@", obj.groupMemberInfo.groupId, obj.groupMemberInfo.userId];
             [groupMemberDic setObject:obj.groupMemberInfo forKey:key];
         }
+        if (obj.friendInfo.userId.length > 0) {
+            [friendInfoDic setObject:obj.friendInfo forKey:obj.friendInfo.userId];
+        }
         if (obj.mentionInfo) {
             for (JUserInfo *userInfo in obj.mentionInfo.targetUsers) {
                 [userDic setObject:userInfo forKey:userInfo.userId];
@@ -3137,6 +3141,7 @@
     [self.userInfoManager insertUserInfoList:userDic.allValues];
     [self.userInfoManager insertGroupInfoList:groupDic.allValues];
     [self.userInfoManager insertGroupMemberList:groupMemberDic.allValues];
+    [self.userInfoManager insertFriendInfoList:friendInfoDic.allValues];
 }
 
 - (void)insertRemoteMessages:(NSArray<JConcreteMessage *> *)messages {

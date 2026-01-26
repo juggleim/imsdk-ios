@@ -69,8 +69,14 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 /// 消息已读后的生存周期，单位毫秒。
 /// 默认值为 0，表示读后不自动销毁。
 @property (nonatomic, assign) long long lifeTimeAfterRead;
-/// 发送者名字
+/// 发送者名字（按照默认规则显示的发送者名字）
 @property (nonatomic, copy) NSString *senderDisplayName;
+/// 发送者好友备注
+@property (nonatomic, copy) NSString *friendAlias;
+/// 发送者群成员备注
+@property (nonatomic, copy) NSString *groupMemberAlias;
+/// 发送者本名
+@property (nonatomic, copy) NSString *senderName;
 /// 发送者头像 URL
 @property (nonatomic, copy) NSString *senderPortrait;
 @end

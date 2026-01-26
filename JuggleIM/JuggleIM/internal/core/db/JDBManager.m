@@ -397,6 +397,10 @@
     return [self.userInfoDB getGroupMemberIn:groupId userId:userId];
 }
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    return [self.userInfoDB getFriendInfo:userId];
+}
+
 - (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
     return [self.userInfoDB getUserInfoList:userIdList];
 }
@@ -415,6 +419,10 @@
 
 - (void)insertGroupMembers:(NSArray<JGroupMember *> *)members {
     [self.userInfoDB insertGroupMembers:members];
+}
+
+- (void)insertFriendInfos:(NSArray<JFriendInfo *> *)friends {
+    [self.userInfoDB insertFriendInfos:friends];
 }
 
 #pragma mark - reaction table

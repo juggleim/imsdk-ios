@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
 @property (nonatomic, strong) JGroupMember *groupMemberInfo;
+@property (nonatomic, strong) JFriendInfo *friendInfo;
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
 @property (nonatomic, assign) long long lifeTime;
