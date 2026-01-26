@@ -9,7 +9,7 @@
 #import "JuggleIM/JIM.h"
 
 @interface JConversationInfo ()
-@property (nonatomic, strong) JGroupInfo *groupInfo;
+@property (nonatomic, strong) JGroupInfo *gInfo;
 @property (nonatomic, strong) JUserInfo *userInfo;
 @end
 
@@ -19,7 +19,7 @@
     NSString *displayName = @"";
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
-        displayName = self.groupInfo.groupName;
+        displayName = self.gInfo.groupName;
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
         JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
         displayName = friendInfo.alias;
@@ -34,7 +34,7 @@
     NSString *alias = @"";
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
-        alias = self.groupInfo.groupName;
+        alias = self.gInfo.groupName;
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
         JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
         alias = friendInfo.alias;
@@ -46,7 +46,7 @@
     NSString *name = @"";
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
-        name = self.groupInfo.groupName;
+        name = self.gInfo.groupName;
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
         name = self.userInfo.userName;
     }
@@ -57,18 +57,18 @@
     NSString *portrait = @"";
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
-        portrait = self.groupInfo.portrait;
+        portrait = self.gInfo.portrait;
     } else if (self.conversation.conversationType == JConversationTypePrivate) {
         portrait = self.userInfo.portrait;
     }
     return portrait;
 }
 
-- (JGroupInfo *)groupInfo {
-    if (!_groupInfo) {
-        _groupInfo = [JIM.shared.userInfoManager getGroupInfo:self.conversation.conversationId];
+- (JGroupInfo *)gInfo {
+    if (!_gInfo) {
+        _gInfo = [JIM.shared.userInfoManager getGroupInfo:self.conversation.conversationId];
     }
-    return _groupInfo;
+    return _gInfo;
 }
 
 - (JUserInfo *)userInfo {
