@@ -3125,6 +3125,9 @@
         if (obj.targetUserInfo.userId.length > 0) {
             [userDic setObject:obj.targetUserInfo forKey:obj.targetUserInfo.userId];
         }
+        if (obj.senderUserInfo.userId.length > 0) {
+            [userDic setObject:obj.senderUserInfo forKey:obj.senderUserInfo.userId];
+        }
         if (obj.groupMemberInfo.userId.length > 0 && obj.groupMemberInfo.groupId.length > 0) {
             NSString *key = [NSString stringWithFormat:@"%@xxx%@", obj.groupMemberInfo.groupId, obj.groupMemberInfo.userId];
             [groupMemberDic setObject:obj.groupMemberInfo forKey:key];

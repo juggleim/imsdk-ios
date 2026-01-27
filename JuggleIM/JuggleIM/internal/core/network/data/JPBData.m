@@ -92,6 +92,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jTagDelConvers @"tag_del_convers"
 #define jQryUserInfo @"qry_user_info"
 #define jQryGroupInfo @"qry_group_info"
+#define jQryFriendInfos @"qry_friend_infos"
 
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
@@ -1393,6 +1394,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)fetchFriendInfo:(NSString *)userId
+              currentUserId:(NSString *)currentUserId
+                      index:(int)index {
+    FriendIdsReq *req = [FriendIdsReq new];
+    NSMutableArray *friends = [NSMutableArray array];
+    [friends addObject:userId];
+    req.friendIdsArray = friends;
+    
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jQryFriendInfos;
+    body.targetId = currentUserId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -1986,6 +2008,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeGetGroupInfoAck:
                     obj = [self getGroupInfoAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetFriendInfosAck:
+                    obj = [self getFriendInfosAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2197,7 +2222,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.groupMemberInfo = [self groupMemberWithPBGroupMember:downMsg.grpMemberInfo
                                                 groupId:msg.groupInfo.groupId
                                                  userId:msg.targetUserInfo.userId];
-    msg.friendInfo = [self friendInfoWithPBFriendInfo:downMsg.friendInfo userId:msg.targetUserInfo.userId];
+    msg.senderUserInfo = [self userInfoWithPBUserInfo:downMsg.senderInfo];
+    msg.friendInfo = [self friendInfoWithPBFriendInfo:downMsg.friendInfo];
     if (downMsg.hasMentionInfo && downMsg.mentionInfo.mentionType != MentionType_MentionDefault) {
         JMessageMentionInfo *mentionInfo = [[JMessageMentionInfo alloc] init];
         mentionInfo.type = (JMentionType)downMsg.mentionInfo.mentionType;
@@ -2262,13 +2288,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return result;
 }
 
-- (JFriendInfo *)friendInfoWithPBFriendInfo:(FriendInfo *)pbFriendInfo
-                                     userId:(NSString *)userId {
-    if (pbFriendInfo == nil || userId.length == 0 || pbFriendInfo.updatedTime == 0) {
+- (JFriendInfo *)friendInfoWithPBFriendInfo:(FriendInfo *)pbFriendInfo {
+    if (pbFriendInfo == nil || pbFriendInfo.updatedTime == 0) {
         return nil;
     }
     JFriendInfo *friendInfo = [[JFriendInfo alloc] init];
-    friendInfo.userId = userId;
+    friendInfo.userId = pbFriendInfo.friendId;
     friendInfo.isFriend = pbFriendInfo.isFriend;
     friendInfo.alias = pbFriendInfo.friendDisplayName;
     friendInfo.updatedTime = pbFriendInfo.updatedTime;
@@ -2444,7 +2469,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     info.topTime = conversation.topUpdatedTime;
     info.groupInfo = [self groupInfoWithPBGroupInfo:conversation.groupInfo];
     info.targetUserInfo = [self userInfoWithPBUserInfo:conversation.targetUserInfo];
-    info.friendInfo = [self friendInfoWithPBFriendInfo:conversation.friendInfo userId:info.targetUserInfo.userId];
+    info.friendInfo = [self friendInfoWithPBFriendInfo:conversation.friendInfo];
     if (conversation.mentions != nil && conversation.mentions.isMentioned) {
         JConversationMentionInfo * mentionInfo = [[JConversationMentionInfo alloc] init];
         if (conversation.mentions.mentionMsgsArray != nil) {
@@ -2758,6 +2783,27 @@ typedef NS_ENUM(NSUInteger, JQos) {
     JTemplateAck <JGroupInfo *> *a = [JTemplateAck new];
     [a encodeWithQueryAckMsgBody:body];
     a.t = groupInfo;
+    obj.templateAck = a;
+    return obj;
+}
+
+- (JPBRcvObj *)getFriendInfosAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    FriendInfos *pbFriendInfos = [[FriendInfos alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get friend info parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetFriendInfosAck;
+    JFriendInfo *friendInfo = nil;
+    if (pbFriendInfos.itemsArray_Count > 0) {
+        friendInfo = [self friendInfoWithPBFriendInfo:pbFriendInfos.itemsArray[0]];
+    }
+    JTemplateAck <JFriendInfo *> *a = [JTemplateAck new];
+    [a encodeWithQueryAckMsgBody:body];
+    a.t = friendInfo;
     obj.templateAck = a;
     return obj;
 }
@@ -3243,7 +3289,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jRtcJoin:@(JPBRcvTypeQryCallRoomAck),
              jQryConverConf:@(JPBRcvTypeGetConversationConfAck),
              jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
-             jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck)
+             jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck),
+             jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck)
     };
 }
 @end

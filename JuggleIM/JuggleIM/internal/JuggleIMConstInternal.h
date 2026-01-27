@@ -68,6 +68,8 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalServerSetError = 21006,
     //连接已存在
     JErrorCodeInternalConnectionAlreadyExist = 21007,
+    //好友不存在
+    JErrorCodeInternalFriendNotExist = 21009,
     
     //消息不存在
     JErrorCodeInternalMessageNotExist = 22001,

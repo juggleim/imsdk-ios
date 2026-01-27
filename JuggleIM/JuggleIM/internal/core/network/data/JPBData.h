@@ -61,7 +61,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeGetFavoriteMsgAck,
     JPBRcvTypeGetConversationConfAck,
     JPBRcvTypeGetUserInfoAck,
-    JPBRcvTypeGetGroupInfoAck
+    JPBRcvTypeGetGroupInfoAck,
+    JPBRcvTypeGetFriendInfosAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -488,6 +489,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 
 - (NSData *)fetchGroupInfo:(NSString *)groupId
                      index:(int)index;
+
+- (NSData *)fetchFriendInfo:(NSString *)userId
+              currentUserId:(NSString *)currentUserId
+                      index:(int)index;
 
 - (NSData *)pingData;
 

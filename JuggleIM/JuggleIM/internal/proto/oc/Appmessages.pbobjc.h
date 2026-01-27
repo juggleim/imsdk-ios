@@ -703,6 +703,7 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_ToUserIdsArray = 35,
   DownMsg_FieldNumber_ReadTime = 36,
   DownMsg_FieldNumber_FriendInfo = 37,
+  DownMsg_FieldNumber_SenderInfo = 38,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -807,6 +808,10 @@ GPB_FINAL @interface DownMsg : GPBMessage
 /** Test to see if @c friendInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasFriendInfo;
 
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *senderInfo;
+/** Test to see if @c senderInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasSenderInfo;
+
 @end
 
 /**
@@ -824,12 +829,15 @@ void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
 #pragma mark - FriendInfo
 
 typedef GPB_ENUM(FriendInfo_FieldNumber) {
-  FriendInfo_FieldNumber_IsFriend = 1,
-  FriendInfo_FieldNumber_FriendDisplayName = 2,
-  FriendInfo_FieldNumber_UpdatedTime = 3,
+  FriendInfo_FieldNumber_FriendId = 1,
+  FriendInfo_FieldNumber_IsFriend = 2,
+  FriendInfo_FieldNumber_FriendDisplayName = 3,
+  FriendInfo_FieldNumber_UpdatedTime = 4,
 };
 
 GPB_FINAL @interface FriendInfo : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *friendId;
 
 @property(nonatomic, readwrite) BOOL isFriend;
 
@@ -3189,6 +3197,34 @@ GPB_FINAL @interface GroupInfoReq : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *careFieldsArray;
 /** The number of items in @c careFieldsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger careFieldsArray_Count;
+
+@end
+
+#pragma mark - FriendIdsReq
+
+typedef GPB_ENUM(FriendIdsReq_FieldNumber) {
+  FriendIdsReq_FieldNumber_FriendIdsArray = 1,
+};
+
+GPB_FINAL @interface FriendIdsReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *friendIdsArray;
+/** The number of items in @c friendIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger friendIdsArray_Count;
+
+@end
+
+#pragma mark - FriendInfos
+
+typedef GPB_ENUM(FriendInfos_FieldNumber) {
+  FriendInfos_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface FriendInfos : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FriendInfo*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
 
 @end
 

@@ -173,4 +173,42 @@
     }];
 }
 
+- (void)fetchFriendInfo:(NSString *)userId
+                success:(void (^)(JFriendInfo *))successBlock
+                  error:(void (^)(JErrorCode))errorBlock {
+    if (userId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchFriendInfo:userId
+                           currentUserId:self.core.userId
+                                 success:^(JFriendInfo *friendInfo) {
+        if (!friendInfo) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeFriendNotExist);
+                }
+            });
+            return;
+        }
+        [self.cache putFriendInfo:friendInfo];
+        [self.core.dbManager insertFriendInfos:@[friendInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(friendInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
 @end

@@ -58,4 +58,12 @@
                success:(void (^)(JGroupInfo *groupInfo))successBlock
                  error:(void (^)(JErrorCode code))errorBlock;
 
+/// 从服务端获取最新的好友信息
+/// - Parameters:
+///   - userId: 用户 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)fetchFriendInfo:(NSString *)userId
+                success:(void (^)(JFriendInfo *friendInfo))successBlock
+                  error:(void (^)(JErrorCode code))errorBlock;
 @end

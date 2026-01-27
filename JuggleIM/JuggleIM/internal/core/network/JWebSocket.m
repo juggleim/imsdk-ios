@@ -1308,6 +1308,26 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)fetchFriendInfo:(NSString *)userId
+          currentUserId:(NSString *)currentUserId
+                success:(void (^)(JFriendInfo *))successBlock
+                  error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"fetch friend info, userId is %@", userId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData fetchFriendInfo:userId
+                                   currentUserId:currentUserId
+                                           index:self.cmdIndex++];
+        JTemplateObj <JFriendInfo *> *obj = [[JTemplateObj alloc] init];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1548,6 +1568,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGetGroupInfoAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetGroupInfoAck");
             [self handleGetGroupInfoAck:obj.templateAck];
+            break;
+        case JPBRcvTypeGetFriendInfosAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetFriendInfosAck");
+            [self handleGetFriendInfoAck:obj.templateAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -2005,6 +2029,18 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleGetGroupInfoAck:(JTemplateAck<JGroupInfo *> *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            templateObj.successBlock(ack.t);
+        }
+    }
+}
+
+- (void)handleGetFriendInfoAck:(JTemplateAck<JFriendInfo *> *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTemplateObj class]]) {
         JTemplateObj *templateObj = (JTemplateObj *)obj;

@@ -96,6 +96,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeConnectionAlreadyExist = 21007,
     //朋友圈请求失败
     JErrorCodeMomentRequestError = 21008,
+    //好友不存在
+    JErrorCodeFriendNotExist = 21009,
     
     //消息不存在
     JErrorCodeMessageNotExist = 22001,

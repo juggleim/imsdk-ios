@@ -58,7 +58,9 @@ GPBObjCClassDeclaration(FavoriteMsg);
 GPBObjCClassDeclaration(FavoriteMsgIdItem);
 GPBObjCClassDeclaration(FavoriteMsgIds);
 GPBObjCClassDeclaration(FavoriteMsgs);
+GPBObjCClassDeclaration(FriendIdsReq);
 GPBObjCClassDeclaration(FriendInfo);
+GPBObjCClassDeclaration(FriendInfos);
 GPBObjCClassDeclaration(GetTopMsgReq);
 GPBObjCClassDeclaration(GlobalConver);
 GPBObjCClassDeclaration(GroupIdsReq);
@@ -1653,6 +1655,7 @@ void SetPushData_ChannelType_RawValue(PushData *message, int32_t value) {
 @dynamic toUserIdsArray, toUserIdsArray_Count;
 @dynamic readTime;
 @dynamic hasFriendInfo, friendInfo;
+@dynamic hasSenderInfo, senderInfo;
 
 typedef struct DownMsg__storage_ {
   uint32_t _has_storage_[2];
@@ -1683,6 +1686,7 @@ typedef struct DownMsg__storage_ {
   NSString *subChannel;
   NSMutableArray *toUserIdsArray;
   FriendInfo *friendInfo;
+  UserInfo *senderInfo;
   int64_t msgSeqNo;
   int64_t msgTime;
   int64_t unreadIndex;
@@ -2022,6 +2026,15 @@ typedef struct DownMsg__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeMessage,
       },
+      {
+        .name = "senderInfo",
+        .dataTypeSpecific.clazz = GPBObjCClass(UserInfo),
+        .number = DownMsg_FieldNumber_SenderInfo,
+        .hasIndex = 34,
+        .offset = (uint32_t)offsetof(DownMsg__storage_, senderInfo),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(DownMsg)
@@ -2033,10 +2046,10 @@ typedef struct DownMsg__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\"\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
+        "#\001\010\000\002\013\000\003\007\000\004\010\000\005\005\000\006\010\000\007\n\000\010\007\000\n\006\000\014\t\000\r\010\000\016\013\000\017\006\000"
         "\020\010\000\021\016\000\022\t\000\023\n\000\024\r\000\025\013\000\026\t\000\027\013\000\030\000msgItems\000\031\000msg"
         "ExSet\000\032\000msgExts\000\033\000converTags\000\035J\000\036\r\000\037\013\000 \021"
-        "\000!\010\000\"\n\000#\000toUserIds\000$\010\000%\n\000";
+        "\000!\010\000\"\n\000#\000toUserIds\000$\010\000%\n\000&\n\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -2065,12 +2078,14 @@ void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value) {
 
 @implementation FriendInfo
 
+@dynamic friendId;
 @dynamic isFriend;
 @dynamic friendDisplayName;
 @dynamic updatedTime;
 
 typedef struct FriendInfo__storage_ {
   uint32_t _has_storage_[1];
+  NSString *friendId;
   NSString *friendDisplayName;
   int64_t updatedTime;
 } FriendInfo__storage_;
@@ -2083,11 +2098,20 @@ typedef struct FriendInfo__storage_ {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static GPBMessageFieldDescription fields[] = {
       {
+        .name = "friendId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = FriendInfo_FieldNumber_FriendId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(FriendInfo__storage_, friendId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
         .name = "isFriend",
         .dataTypeSpecific.clazz = Nil,
         .number = FriendInfo_FieldNumber_IsFriend,
-        .hasIndex = 0,
-        .offset = 1,  // Stored in _has_storage_ to save space.
+        .hasIndex = 1,
+        .offset = 2,  // Stored in _has_storage_ to save space.
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeBool,
       },
@@ -2095,7 +2119,7 @@ typedef struct FriendInfo__storage_ {
         .name = "friendDisplayName",
         .dataTypeSpecific.clazz = Nil,
         .number = FriendInfo_FieldNumber_FriendDisplayName,
-        .hasIndex = 2,
+        .hasIndex = 3,
         .offset = (uint32_t)offsetof(FriendInfo__storage_, friendDisplayName),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
@@ -2104,7 +2128,7 @@ typedef struct FriendInfo__storage_ {
         .name = "updatedTime",
         .dataTypeSpecific.clazz = Nil,
         .number = FriendInfo_FieldNumber_UpdatedTime,
-        .hasIndex = 3,
+        .hasIndex = 4,
         .offset = (uint32_t)offsetof(FriendInfo__storage_, updatedTime),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt64,
@@ -2120,7 +2144,7 @@ typedef struct FriendInfo__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\001\010\000\002\021\000\003\013\000";
+        "\004\001\010\000\002\010\000\003\021\000\004\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -9579,6 +9603,103 @@ typedef struct GroupInfoReq__storage_ {
         "\002\001\007\000\002\000careFields\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - FriendIdsReq
+
+@implementation FriendIdsReq
+
+@dynamic friendIdsArray, friendIdsArray_Count;
+
+typedef struct FriendIdsReq__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *friendIdsArray;
+} FriendIdsReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "friendIdsArray",
+        .dataTypeSpecific.clazz = Nil,
+        .number = FriendIdsReq_FieldNumber_FriendIdsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(FriendIdsReq__storage_, friendIdsArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(FriendIdsReq)
+                                   messageName:@"FriendIdsReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(FriendIdsReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\000friendIds\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - FriendInfos
+
+@implementation FriendInfos
+
+@dynamic itemsArray, itemsArray_Count;
+
+typedef struct FriendInfos__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *itemsArray;
+} FriendInfos__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "itemsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(FriendInfo),
+        .number = FriendInfos_FieldNumber_ItemsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(FriendInfos__storage_, itemsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(FriendInfos)
+                                   messageName:@"FriendInfos"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(FriendInfos__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if defined(DEBUG) && DEBUG
       NSAssert(descriptor == nil, @"Startup recursed!");
     #endif  // DEBUG

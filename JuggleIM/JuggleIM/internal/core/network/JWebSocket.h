@@ -381,6 +381,11 @@ inConversation:(JConversation *)conversation
                success:(void (^)(JGroupInfo *groupInfo))successBlock
                  error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)fetchFriendInfo:(NSString *)userId
+          currentUserId:(NSString *)currentUserId
+                success:(void (^)(JFriendInfo * _Nullable friendInfo))successBlock
+                  error:(void (^)(JErrorCodeInternal code))errorBlock;
+
 - (void)sendPing;
 
 #pragma mark - Call
