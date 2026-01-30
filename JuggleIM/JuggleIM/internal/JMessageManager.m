@@ -38,6 +38,8 @@
 #import "JTagDelConvMessage.h"
 #import "JTopMsgMessage.h"
 #import "JCallActiveCallMessage.h"
+#import "JStreamTextMessage.h"
+#import "JStreamAppendMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -48,6 +50,7 @@
 @property (nonatomic, strong) NSHashTable <id<JMessageSyncDelegate>> *syncDelegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageReadReceiptDelegate>> *readReceiptDelegates;
 @property (nonatomic, strong) NSHashTable <id<JMessageDestroyDelegate>> *destroyDelegates;
+@property (nonatomic, strong) NSHashTable <id<JStreamMessageDelegate>> *streamMessageDelegates;
 //@property (nonatomic, weak) id<JMessageUploadProvider> uploadProvider;
 @property (nonatomic, strong) JDownloadManager *downloadManager;
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
@@ -123,6 +126,15 @@
             return;
         }
         [self.destroyDelegates addObject:delegate];
+    });
+}
+
+- (void)addStreamMessageDelegate:(id<JStreamMessageDelegate>)delegate {
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.streamMessageDelegates addObject:delegate];
     });
 }
 
@@ -1067,6 +1079,14 @@
         //判断是否连续
         __block long long seqNo = -1;
         [fullLocalMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj.contentType isEqualToString:[JStreamTextMessage contentType]]) {
+                JStreamTextMessage *streamText = (JStreamTextMessage *) obj.content;
+                if (!streamText.isFinished) {
+                    needRemote = YES;
+                    *stop = YES;
+                    return;
+                }
+            }
             if (obj.seqNo < 0) {
                 return;
             }
@@ -2374,6 +2394,8 @@
     [self registerContentType:[JTagDelConvMessage class]];
     [self registerContentType:[JTopMsgMessage class]];
     [self registerContentType:[JCallActiveCallMessage class]];
+    [self registerContentType:[JStreamTextMessage class]];
+    [self registerContentType:[JStreamAppendMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2814,6 +2836,12 @@
             receiveTime = obj.timestamp;
         }
         
+        // stream append
+        if ([obj.contentType isEqualToString:[JStreamAppendMessage contentType]]) {
+            [self handleStreamAppend:obj];
+            return;
+        }
+        
         // call related
         if ([obj.contentType isEqualToString:[JCallActiveCallMessage contentType]]) {
             [self.callManager handleActiveCallMessage:obj];
@@ -3244,6 +3272,48 @@
     }
 }
 
+- (void)handleStreamAppend:(JConcreteMessage *)message {
+    JStreamAppendMessage *appendMsg = (JStreamAppendMessage *)message.content;
+    NSString *streamId = appendMsg.streamId;
+    NSArray <JMessage *> *messageList = [self getMessagesByMessageIds:@[streamId]];
+    if (messageList.count == 0) {
+        return;
+    }
+    JConcreteMessage *streamMsg = (JConcreteMessage *)messageList[0];
+    JStreamTextMessage *streamText = (JStreamTextMessage *) streamMsg.content;
+    NSString *content = streamText.content;
+    if (appendMsg.isFinished) {
+        streamText.isFinished = TRUE;
+        content = appendMsg.content;
+    } else {
+        content = [content stringByAppendingString:appendMsg.content];
+    }
+    streamText.content = content;
+    [self.core.dbManager updateMessageContent:streamText
+                                  contentType:[JStreamTextMessage contentType]
+                                withMessageId:streamId];
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidUpdate:)]) {
+        [self.sendReceiveDelegate messageDidUpdate:streamMsg];
+    }
+    if (appendMsg.isFinished) {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.streamMessageDelegates.allObjects enumerateObjectsUsingBlock:^(id<JStreamMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(streamTextMessageDidComplete:)]) {
+                    [dlg streamTextMessageDidComplete:streamMsg];
+                }
+            }];
+        });
+    } else {
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.streamMessageDelegates.allObjects enumerateObjectsUsingBlock:^(id<JStreamMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([dlg respondsToSelector:@selector(streamTextMessageDidAppend:content:)]) {
+                    [dlg streamTextMessageDidAppend:streamId content:appendMsg.content];
+                }
+            }];
+        });
+    }
+}
+
 #pragma mark - getter
 - (NSHashTable<id<JMessageDelegate>> *)delegates {
     if (!_delegates) {
@@ -3272,6 +3342,13 @@
         _destroyDelegates = [NSHashTable weakObjectsHashTable];
     }
     return _destroyDelegates;
+}
+
+- (NSHashTable<id<JStreamMessageDelegate>> *)streamMessageDelegates {
+    if (!_streamMessageDelegates) {
+        _streamMessageDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _streamMessageDelegates;
 }
 
 - (JDownloadManager *)downloadManager {

@@ -40,6 +40,10 @@
 		5B9980E62C21790600AF6519 /* JMessageOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980E42C21790600AF6519 /* JMessageOptions.m */; };
 		5B9980F82C2BF00000AF6519 /* JMergeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9980F62C2BF00000AF6519 /* JMergeInfo.h */; };
 		5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9980F72C2BF00000AF6519 /* JMergeInfo.m */; };
+		A0146ED92F2B47710019A026 /* JStreamTextMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0146ED72F2B47710019A026 /* JStreamTextMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0146EDA2F2B47710019A026 /* JStreamTextMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0146ED82F2B47710019A026 /* JStreamTextMessage.m */; };
+		A0146EDD2F2B4C8D0019A026 /* JStreamAppendMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0146EDB2F2B4C8D0019A026 /* JStreamAppendMessage.h */; };
+		A0146EDE2F2B4C8D0019A026 /* JStreamAppendMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0146EDC2F2B4C8D0019A026 /* JStreamAppendMessage.m */; };
 		A017F92F2C3BD47D00D527B0 /* JChatroomInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F92D2C3BD47D00D527B0 /* JChatroomInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A017F9302C3BD47D00D527B0 /* JChatroomInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A017F92E2C3BD47D00D527B0 /* JChatroomInfo.m */; };
 		A017F9332C3BD57600D527B0 /* JChatroomMember.h in Headers */ = {isa = PBXBuildFile; fileRef = A017F9312C3BD57600D527B0 /* JChatroomMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -475,6 +479,10 @@
 		5B9980E42C21790600AF6519 /* JMessageOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageOptions.m; sourceTree = "<group>"; };
 		5B9980F62C2BF00000AF6519 /* JMergeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMergeInfo.h; sourceTree = "<group>"; };
 		5B9980F72C2BF00000AF6519 /* JMergeInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMergeInfo.m; sourceTree = "<group>"; };
+		A0146ED72F2B47710019A026 /* JStreamTextMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JStreamTextMessage.h; sourceTree = "<group>"; };
+		A0146ED82F2B47710019A026 /* JStreamTextMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JStreamTextMessage.m; sourceTree = "<group>"; };
+		A0146EDB2F2B4C8D0019A026 /* JStreamAppendMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JStreamAppendMessage.h; sourceTree = "<group>"; };
+		A0146EDC2F2B4C8D0019A026 /* JStreamAppendMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JStreamAppendMessage.m; sourceTree = "<group>"; };
 		A017F92C2C3BC25600D527B0 /* JChatroomProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomProtocol.h; sourceTree = "<group>"; };
 		A017F92D2C3BD47D00D527B0 /* JChatroomInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomInfo.h; sourceTree = "<group>"; };
 		A017F92E2C3BD47D00D527B0 /* JChatroomInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JChatroomInfo.m; sourceTree = "<group>"; };
@@ -1487,6 +1495,8 @@
 				A096458F2BF339EA00290775 /* JSnapshotPackedVideoMessage.m */,
 				A05143522DF80201004413F3 /* JUnknownMessage.h */,
 				A05143532DF80201004413F3 /* JUnknownMessage.m */,
+				A0146ED72F2B47710019A026 /* JStreamTextMessage.h */,
+				A0146ED82F2B47710019A026 /* JStreamTextMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1666,6 +1676,8 @@
 				A0752D822D66F8AA009B7E0F /* JTagDelConvMessage.m */,
 				A0C612112E2612BB00A758E8 /* JTopMsgMessage.h */,
 				A0C612122E2612BB00A758E8 /* JTopMsgMessage.m */,
+				A0146EDB2F2B4C8D0019A026 /* JStreamAppendMessage.h */,
+				A0146EDC2F2B4C8D0019A026 /* JStreamAppendMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1677,6 +1689,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0146ED92F2B47710019A026 /* JStreamTextMessage.h in Headers */,
 				A0EDD3AA2F2372AE0096EE03 /* JFriendInfo.h in Headers */,
 				A068B9CB2EC5FDA000D04F45 /* JGetMomentCommentOption.h in Headers */,
 				A068B9C72EC5F5A100D04F45 /* JGetMomentOption.h in Headers */,
@@ -1771,6 +1784,7 @@
 				A08AA3982B19CB78008B114C /* GPBApi.pbobjc.h in Headers */,
 				A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */,
 				A0596E062CD12F1000914FEA /* Chatroom.pbobjc.h in Headers */,
+				A0146EDD2F2B4C8D0019A026 /* JStreamAppendMessage.h in Headers */,
 				A024C3932D35262F005C369C /* JMsgExSetMessage.h in Headers */,
 				A0F3761F2B3A689E0076CB84 /* JHeartBeatManager.h in Headers */,
 				A08AA3872B19CB78008B114C /* GPBRootObject.h in Headers */,
@@ -2032,6 +2046,7 @@
 				A09727E72CC6346B00E08BC4 /* JCallIdleState.m in Sources */,
 				5B9980F92C2BF00000AF6519 /* JMergeInfo.m in Sources */,
 				A08A9A582D5DE532009EE779 /* JGroupMember.m in Sources */,
+				A0146EDE2F2B4C8D0019A026 /* JStreamAppendMessage.m in Sources */,
 				A08AA4062B19EEDB008B114C /* SRError.m in Sources */,
 				A08AA3662B19CB77008B114C /* GPBMessage.m in Sources */,
 				A079E8692CE3591100A1008F /* JConnConnectedState.m in Sources */,
@@ -2150,6 +2165,7 @@
 				A08AA4132B19EEDB008B114C /* NSURLRequest+JIMSRWebSocket.m in Sources */,
 				A085189B2DC10F090001F699 /* JLRUCacheNode.m in Sources */,
 				A09716BE2B9FFE3C00D1DB24 /* JGroupInfo.m in Sources */,
+				A0146EDA2F2B47710019A026 /* JStreamTextMessage.m in Sources */,
 				5B4DB68F2BFC3BD600DD18B6 /* JClearUnreadMessage.m in Sources */,
 				A06596912E5D88250047B896 /* JCallVideoDenoiseParams.m in Sources */,
 				A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */,

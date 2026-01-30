@@ -122,6 +122,18 @@
 
 @end
 
+@protocol JStreamMessageDelegate <NSObject>
+/// 流式消息分片追加的回调
+/// - Parameters:
+///   - messageId: 流式消息的消息 id
+///   - content: 分片追加的内容，开发者可以在界面上把 content 追加到 JStreamTextMessage 的 content 尾部
+- (void)streamTextMessageDidAppend:(NSString *)messageId
+                           content:(NSString *)content;
+/// 流式消息完成的回调
+/// - Parameter message: 追加完成的流式消息，开发者可以根据 messageId 找到界面上对应的流式消息进行界面刷新
+- (void)streamTextMessageDidComplete:(JMessage *)message;
+@end
+
 @protocol JMessageProtocol <NSObject>
 
 /// 发送消息
@@ -376,6 +388,8 @@
 - (void)addReadReceiptDelegate:(id<JMessageReadReceiptDelegate>)delegate;
 
 - (void)addDestroyDelegate:(id<JMessageDestroyDelegate>)delegate;
+
+- (void)addStreamMessageDelegate:(id<JStreamMessageDelegate>)delegate;
 
 - (void)setPreprocessor:(id<JMessagePreprocessor>)preprocessor;
 

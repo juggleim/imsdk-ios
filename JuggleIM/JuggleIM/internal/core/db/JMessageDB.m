@@ -194,19 +194,30 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            JConcreteMessage *m = nil;
+            JConcreteMessage *old = nil;
             //messageId 排重
             if (obj.messageId.length > 0) {
-                m = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
+                old = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
             }
             //clientUid 排重
-            if (!m && obj.clientUid.length > 0) {
-                m = [self getMessageWithClientUid:obj.clientUid inDb:db];
+            if (!old && obj.clientUid.length > 0) {
+                old = [self getMessageWithClientUid:obj.clientUid inDb:db];
             }
-            if (m) {
-                obj.clientMsgNo = m.clientMsgNo;
+            if (old) {
+                obj.clientMsgNo = old.clientMsgNo;
                 obj.existed = YES;
-                if (m.messageId.length == 0) {
+                
+                if ([old.contentType isEqualToString:[JStreamTextMessage contentType]]) {
+                    JStreamTextMessage *oldStreamText = (JStreamTextMessage *) old.content;
+                    JStreamTextMessage *newStreamText = (JStreamTextMessage *) obj.content;
+                    if (!oldStreamText.isFinished && newStreamText.isFinished) {
+                        [self updateMessageContent:newStreamText
+                                       contentType:[JStreamTextMessage contentType]
+                                     withMessageId:obj.messageId
+                                              inDb:db];
+                    }
+                }
+                if (old.messageId.length == 0) {
                     [self updateMessageAfterSend:obj.clientMsgNo
                                        messageId:obj.messageId
                                        timestamp:obj.timestamp
@@ -939,6 +950,21 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [db executeUpdate:jUpdateMessageAfterSend
  withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), @(clientMsgNo)]];
 }
+
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(nonnull NSString *)type
+               withMessageId:(NSString *)messageId
+                        inDb:(JFMDatabase *)db {
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0 || messageId.length == 0) {
+        return;
+    }
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jMessageIdIs];
+    [db executeUpdate:sql
+ withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+}
+
 
 #pragma mark - update table
 + (NSString *)alterTableAddFlags {
