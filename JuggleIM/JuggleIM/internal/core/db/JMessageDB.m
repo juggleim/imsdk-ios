@@ -216,6 +216,9 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
                                      withMessageId:obj.messageId
                                               inDb:db];
                     }
+                    if (oldStreamText.seq > newStreamText.seq) {
+                        obj.content = oldStreamText;
+                    }
                 }
                 if (old.messageId.length == 0) {
                     [self updateMessageAfterSend:obj.clientMsgNo

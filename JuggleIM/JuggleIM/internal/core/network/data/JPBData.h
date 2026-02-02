@@ -494,6 +494,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
               currentUserId:(NSString *)currentUserId
                       index:(int)index;
 
+- (NSData *)subStreamMsgsReq:(NSArray <JMessage *> *)messageList
+                      userId:(NSString *)userId
+                       index:(int)index;
+
 - (NSData *)pingData;
 
 - (NSData *)publishAckData:(int)index;

@@ -141,6 +141,8 @@ GPBObjCClassDeclaration(StreamDownMsg);
 GPBObjCClassDeclaration(StreamMsgItem);
 GPBObjCClassDeclaration(SubMsg);
 GPBObjCClassDeclaration(SubMsgs);
+GPBObjCClassDeclaration(SubStream);
+GPBObjCClassDeclaration(SubStreamMsgsReq);
 GPBObjCClassDeclaration(SyncConversationsReq);
 GPBObjCClassDeclaration(SyncMsgReq);
 GPBObjCClassDeclaration(TagConvers);
@@ -11823,6 +11825,119 @@ typedef struct FavoriteMsg__storage_ {
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\001\002\013\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - SubStreamMsgsReq
+
+@implementation SubStreamMsgsReq
+
+@dynamic subStreamMsgsArray, subStreamMsgsArray_Count;
+
+typedef struct SubStreamMsgsReq__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *subStreamMsgsArray;
+} SubStreamMsgsReq__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "subStreamMsgsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(SubStream),
+        .number = SubStreamMsgsReq_FieldNumber_SubStreamMsgsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(SubStreamMsgsReq__storage_, subStreamMsgsArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SubStreamMsgsReq)
+                                   messageName:@"SubStreamMsgsReq"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SubStreamMsgsReq__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\001\001\000subStreamMsgs\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - SubStream
+
+@implementation SubStream
+
+@dynamic streamMsgId;
+@dynamic startSeq;
+
+typedef struct SubStream__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *streamMsgId;
+  int64_t startSeq;
+} SubStream__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "streamMsgId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SubStream_FieldNumber_StreamMsgId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(SubStream__storage_, streamMsgId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "startSeq",
+        .dataTypeSpecific.clazz = Nil,
+        .number = SubStream_FieldNumber_StartSeq,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(SubStream__storage_, startSeq),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt64,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(SubStream)
+                                   messageName:@"SubStream"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(SubStream__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\013\000\002\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

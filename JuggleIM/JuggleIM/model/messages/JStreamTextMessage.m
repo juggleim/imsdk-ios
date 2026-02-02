@@ -9,6 +9,7 @@
 
 #define jSTContent @"content"
 #define jSTIsFinished @"is_finished"
+#define jSTSeq @"seq"
 
 @implementation JStreamTextMessage
 
@@ -18,7 +19,8 @@
 
 - (NSData *)encode {
     NSDictionary *dic = @{jSTContent:self.content?:@"",
-                           jSTIsFinished:@(self.isFinished)};
+                          jSTIsFinished:@(self.isFinished),
+                          jSTSeq:@(self.seq)};
     NSData *data = [NSJSONSerialization dataWithJSONObject:dic options:kNilOptions error:nil];
     return data;
 }
@@ -34,6 +36,10 @@
     id isFinished = json[jSTIsFinished];
     if ([isFinished isKindOfClass:[NSNumber class]]) {
         self.isFinished = [(NSNumber *)isFinished boolValue];
+    }
+    id seq = json[jSTSeq];
+    if ([seq isKindOfClass:[NSNumber class]]) {
+        self.seq = [(NSNumber *)seq intValue];
     }
 }
 

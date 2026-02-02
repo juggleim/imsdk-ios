@@ -13,6 +13,8 @@
 @property (nonatomic, copy) NSString *content;
 /// 是否完成
 @property (nonatomic, assign) BOOL isFinished;
+/// 当前分片数
+@property (nonatomic, assign) int seq;
 
 @end
 

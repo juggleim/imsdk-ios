@@ -59,6 +59,7 @@ CF_EXTERN_C_BEGIN
 @class SimpleMsg;
 @class StreamMsgItem;
 @class SubMsg;
+@class SubStream;
 @class UndisturbConverItem;
 @class UserInfo;
 @class UserOnlineItem;
@@ -3860,6 +3861,35 @@ GPB_FINAL @interface FavoriteMsg : GPBMessage
 @property(nonatomic, readwrite) BOOL hasMsg;
 
 @property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
+#pragma mark - SubStreamMsgsReq
+
+typedef GPB_ENUM(SubStreamMsgsReq_FieldNumber) {
+  SubStreamMsgsReq_FieldNumber_SubStreamMsgsArray = 1,
+};
+
+GPB_FINAL @interface SubStreamMsgsReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SubStream*> *subStreamMsgsArray;
+/** The number of items in @c subStreamMsgsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger subStreamMsgsArray_Count;
+
+@end
+
+#pragma mark - SubStream
+
+typedef GPB_ENUM(SubStream_FieldNumber) {
+  SubStream_FieldNumber_StreamMsgId = 1,
+  SubStream_FieldNumber_StartSeq = 2,
+};
+
+GPB_FINAL @interface SubStream : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *streamMsgId;
+
+@property(nonatomic, readwrite) int64_t startSeq;
 
 @end
 
