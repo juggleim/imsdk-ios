@@ -1328,23 +1328,6 @@ inConversation:(JConversation *)conversation
     });
 }
 
-- (void)subStreamMsgs:(NSArray <JMessage *> *)messageList
-               userId:(NSString *)userId
-              success:(void (^)(void))successBlock
-                error:(void (^)(JErrorCodeInternal))errorBlock {
-    dispatch_async(self.sendQueue, ^{
-        JLogI(@"WS-Send", @"sub stream messages, messages count is %ld", messageList.count);
-        NSNumber *key = @(self.cmdIndex);
-        NSData *d = [self.pbData subStreamMsgsReq:messageList
-                                           userId:userId
-                                            index:self.cmdIndex++];
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
-    });
-}
-
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");

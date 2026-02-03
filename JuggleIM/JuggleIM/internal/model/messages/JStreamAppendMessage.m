@@ -43,7 +43,7 @@
 }
 
 + (JMessageFlag)flags {
-    return JMessageFlagIsStatus;
+    return JMessageFlagNone;
 }
 
 @end

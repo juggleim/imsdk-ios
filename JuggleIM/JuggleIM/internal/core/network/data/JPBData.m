@@ -93,7 +93,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryUserInfo @"qry_user_info"
 #define jQryGroupInfo @"qry_group_info"
 #define jQryFriendInfos @"qry_friend_infos"
-#define jSubStreamMsg @"sub_stream_msg"
 
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
@@ -1407,33 +1406,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.index = index;
     body.topic = jQryFriendInfos;
     body.targetId = currentUserId;
-    body.data_p = req.data;
-    
-    @synchronized (self) {
-        [self.msgCmdDic setObject:body.topic forKey:@(index)];
-    }
-    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
-    return m.data;
-}
-
-- (NSData *)subStreamMsgsReq:(NSArray<JMessage *> *)messageList
-                      userId:(NSString *)userId
-                       index:(int)index {
-    SubStreamMsgsReq *req = [SubStreamMsgsReq new];
-    NSMutableArray *subStreamMsgs = [NSMutableArray array];
-    for (JMessage *message in messageList) {
-        SubStream *subStream = [SubStream new];
-        subStream.streamMsgId = message.messageId;
-        JStreamTextMessage *streamTextMessage = (JStreamTextMessage *)message.content;
-        subStream.startSeq = streamTextMessage.seq;
-        [subStreamMsgs addObject:subStream];
-    }
-    req.subStreamMsgsArray = subStreamMsgs;
-    
-    QueryMsgBody *body = [QueryMsgBody new];
-    body.index = index;
-    body.topic = jSubStreamMsg;
-    body.targetId = userId;
     body.data_p = req.data;
     
     @synchronized (self) {
@@ -3318,8 +3290,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryConverConf:@(JPBRcvTypeGetConversationConfAck),
              jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
              jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck),
-             jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck),
-             jSubStreamMsg:@(JPBRcvTypeSimpleQryAck)
+             jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck)
     };
 }
 @end

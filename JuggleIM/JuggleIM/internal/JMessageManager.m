@@ -2836,12 +2836,6 @@
             receiveTime = obj.timestamp;
         }
         
-        // stream text
-        if ([obj.contentType isEqualToString:[JStreamTextMessage contentType]]) {
-            [self handleStreamText:obj];
-            //not return, need to callback messageDidReceive
-        }
-        
         // stream append
         if ([obj.contentType isEqualToString:[JStreamAppendMessage contentType]]) {
             [self handleStreamAppend:obj];
@@ -3251,24 +3245,6 @@
         m = messages.firstObject;
     }
     long long timestamp = m.timestamp;
-    NSMutableArray *streamTextMessages = [NSMutableArray array];
-    for (JMessage *message in messages) {
-        if ([message.contentType isEqualToString:[JStreamTextMessage contentType]]) {
-            JStreamTextMessage *streamTextMessage = (JStreamTextMessage *)message.content;
-            if (!streamTextMessage.isFinished) {
-                [streamTextMessages addObject:message];
-            }
-        }
-    }
-    if (streamTextMessages.count > 0) {
-        [self.core.webSocket subStreamMsgs:streamTextMessages
-                                    userId:self.core.userId
-                                   success:^{
-            JLogI(@"MSG-STSub", @"success");
-        } error:^(JErrorCodeInternal code) {
-            JLogE(@"MSG-STSub", @"error, code is %ld", code);
-        }];
-    }
     dispatch_async(self.core.delegateQueue, ^{
         if (completeCallback) {
             completeCallback(messages, timestamp, hasMore, code);
@@ -3296,19 +3272,6 @@
     }
 }
 
-- (void)handleStreamText:(JConcreteMessage *)message {
-    JStreamTextMessage *streamTextMessage = (JStreamTextMessage *)message.content;
-    if (!streamTextMessage.isFinished) {
-        [self.core.webSocket subStreamMsgs:@[message]
-                                    userId:self.core.userId
-                                   success:^{
-            JLogI(@"MSG-STSub", @"success");
-        } error:^(JErrorCodeInternal code) {
-            JLogE(@"MSG-STSub", @"error, code is %ld", code);
-        }];
-    }
-}
-
 - (void)handleStreamAppend:(JConcreteMessage *)message {
     JStreamAppendMessage *appendMsg = (JStreamAppendMessage *)message.content;
     NSString *streamId = appendMsg.streamId;
@@ -3318,13 +3281,21 @@
     }
     JConcreteMessage *streamMsg = (JConcreteMessage *)messageList[0];
     JStreamTextMessage *streamText = (JStreamTextMessage *) streamMsg.content;
+    if (streamText.isFinished) {
+        return;
+    }
     NSString *content = streamText.content;
-    streamText.seq = appendMsg.seq;
     if (appendMsg.isFinished) {
         streamText.isFinished = YES;
         streamText.content = appendMsg.content;
+        streamText.seq = appendMsg.seq;
     } else {
-        streamText.content = [content stringByAppendingString:appendMsg.content];
+        if (appendMsg.seq > streamText.seq) {
+            streamText.content = [content stringByAppendingString:appendMsg.content];
+            streamText.seq = appendMsg.seq;
+        } else {
+            return;
+        }
     }
     [self.core.dbManager updateMessageContent:streamText
                                   contentType:[JStreamTextMessage contentType]

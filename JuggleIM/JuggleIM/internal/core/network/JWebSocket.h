@@ -386,11 +386,6 @@ inConversation:(JConversation *)conversation
                 success:(void (^)(JFriendInfo * _Nullable friendInfo))successBlock
                   error:(void (^)(JErrorCodeInternal code))errorBlock;
 
-- (void)subStreamMsgs:(NSArray <JMessage *> *)messageList
-               userId:(NSString *)userId
-              success:(void (^)(void))successBlock
-                error:(void (^)(JErrorCodeInternal))errorBlock;
-
 - (void)sendPing;
 
 #pragma mark - Call
