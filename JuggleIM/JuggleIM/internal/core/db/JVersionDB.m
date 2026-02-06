@@ -12,7 +12,7 @@
 #import "JConversationDB.h"
 #import "JMomentDB.h"
 
-#define jDBVersion 14
+#define jDBVersion 15
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -103,6 +103,9 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
             if (version < 14) {
                 [db executeUpdate:[JUserInfoDB createFriendTable]];
                 [db executeUpdate:[JUserInfoDB createFriendIndex]];
+            }
+            if (version < 15) {
+                [db executeUpdate:[JMessageDB addConversationSubchannelTSIndex]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];

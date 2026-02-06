@@ -110,6 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)addDestroyTimeIndex;
 + (NSString *)addTimestampIndex;
 + (NSString *)addConversationSubchannelIndex;
++ (NSString *)addConversationSubchannelTSIndex;
 + (NSString *)addStateIndex;
 + (NSString *)addSenderIndex;
 + (NSString *)removeConversationIndex;

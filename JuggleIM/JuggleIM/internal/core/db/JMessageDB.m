@@ -51,6 +51,7 @@ NSString *const jCreateMessageDTConversationTSIndex2 = @"CREATE INDEX IF NOT EXI
 NSString *const jCreateMessageDestroyTimeIndex = @"CREATE INDEX IF NOT EXISTS idx_message_destroy_time ON message(destroy_time)";
 NSString *const jCreateMessageTimestampIndex = @"CREATE INDEX IF NOT EXISTS idx_message_timestamp ON message(timestamp)";
 NSString *const jCreateMessageConversationSubchannelIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_subchannel ON message(conversation_type, conversation_id, subchannel)";
+NSString *const jCreateMessageConversationSubchannelTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_subchannel_ts ON message(conversation_type, conversation_id, subchannel, timestamp)";
 NSString *const jDropIndexMessageConversation = @"DROP INDEX IF EXISTS idx_message_conversation";
 NSString *const jDropIndexMessageConversationTS = @"DROP INDEX IF EXISTS idx_message_conversation_ts";
 NSString *const jDropIndexMessageDSConversationTS = @"DROP INDEX IF EXISTS idx_message_ds_conversation_ts";
@@ -142,7 +143,7 @@ NSString *const jLifeTimeAfterRead = @"life_time_after_read";
 NSString *const jDestroyTime = @"destroy_time";
 NSString *const jReadTime = @"read_time";
 NSString *const jMessageSubChannel = @"subchannel";
-
+ 
 //deprecated
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
@@ -833,6 +834,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageStateIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageSenderIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelTSIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -996,6 +998,10 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 
 + (NSString *)addConversationSubchannelIndex {
     return jCreateMessageConversationSubchannelIndex;
+}
+
++ (NSString *)addConversationSubchannelTSIndex {
+    return jCreateMessageConversationSubchannelTSIndex;
 }
 
 + (NSString *)addStateIndex {
