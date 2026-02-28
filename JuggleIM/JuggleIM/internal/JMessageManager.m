@@ -459,25 +459,26 @@
 - (void)purgeMessagesBefore:(long long)timestamp
           conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
     if (timestamp == 0) {
-        timestamp =  [[NSDate date] timeIntervalSince1970] * 1000;
+        timestamp = [[NSDate date] timeIntervalSince1970] * 1000;
     }
     [self.core.dbManager purgeMessagesBefore:timestamp
                            conversationTypes:conversationTypes];
 }
 
--(void)notifyMessageRemoved:(JConversation *)conversation removedMessages:(NSArray <JConcreteMessage *> *)removedMessages{
+- (void)notifyMessageRemoved:(JConversation *)conversation
+             removedMessages:(NSArray <JConcreteMessage *> *)removedMessages {
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidRemove:removedMessages:lastMessage:)]) {
         long long now = [self.core getCurrentTime];
         JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation currentTime:now];
         [self.sendReceiveDelegate messageDidRemove:conversation removedMessages:removedMessages lastMessage:lastMessage];
     }
 }
--(void)notifyMessageCleared:(JConversation *)conversation startTime:(long long)startTime sendUserId:(NSString *)sendUserId{
+
+- (void)notifyMessageCleared:(JConversation *)conversation startTime:(long long)startTime sendUserId:(NSString *)sendUserId {
     if ([self.sendReceiveDelegate respondsToSelector:@selector(messageDidClear:startTime:sendUserId:lastMessage:)]) {
         long long now = [self.core getCurrentTime];
         JConcreteMessage * lastMessage = [self.core.dbManager getLastMessage:conversation currentTime:now];
         [self.sendReceiveDelegate messageDidClear:conversation startTime:startTime sendUserId:sendUserId lastMessage:lastMessage];
-
     }
 }
 
