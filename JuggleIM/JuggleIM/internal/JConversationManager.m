@@ -1050,6 +1050,7 @@
             if (mentionInfo) {
                 addInfo.mentionInfo = mentionInfo;
             }
+            addInfo.mute = message.isMute;
             [conversations addObject:addInfo];
         } else {
             if (mentionInfo) {

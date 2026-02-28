@@ -2246,6 +2246,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.destroyTime = downMsg.destroyTime;
     msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
     msg.readTime = downMsg.readTime;
+    msg.isMute = downMsg.undisturbType;
     
     return msg;
 }
