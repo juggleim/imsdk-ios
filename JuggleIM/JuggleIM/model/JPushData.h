@@ -11,6 +11,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JPushData : NSObject
 
+/// 推送标题，用于通知栏的展示
+@property (nonatomic, copy) NSString *title;
+
 /// 推送内容，用于通知栏的展示
 @property (nonatomic, copy) NSString *content;
 

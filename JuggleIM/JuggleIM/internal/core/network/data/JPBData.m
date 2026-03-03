@@ -345,6 +345,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     if (pushData) {
         PushData *pbPushData = [[PushData alloc] init];
+        pbPushData.title = pushData.title;
         pbPushData.pushText = pushData.content;
         pbPushData.pushExtraData = pushData.extra;
         upMsg.pushData = pbPushData;
