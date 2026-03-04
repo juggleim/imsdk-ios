@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSArray <JMomentMedia *> *mediaArray;
 /// 朋友圈的发送者
 @property (nonatomic, strong) JUserInfo *userInfo;
-/// 朋友圈的点赞列表（支持多种类型的点赞，此处最多给出最新的 20 个）
+/// 朋友圈的点赞列表（支持多种类型的点赞）
 @property (nonatomic, copy) NSArray <JMomentReaction *> *reactionArray;
 /// 朋友圈的评论列表（此处最多给出最新的 10 条）
 @property (nonatomic, copy) NSArray <JMomentComment *> *commentArray;
