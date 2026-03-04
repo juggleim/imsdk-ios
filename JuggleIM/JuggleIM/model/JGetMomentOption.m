@@ -23,6 +23,9 @@
     dict[@"limit"] = @(self.count);
     int order = self.direction == 1 ? 0 : 1;
     dict[@"order"] = @(order);
+    if (self.userId.length > 0) {
+        dict[@"user_id"] = self.userId;
+    }
     return [dict copy];
 }
 

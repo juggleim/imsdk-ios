@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int count;
 /// 拉取方向
 @property (nonatomic, assign) JPullDirection direction;
+/// 拉取的用户 id，nil 表示当前用户
+@property (nonatomic, copy, nullable) NSString *userId;
 
 - (NSDictionary *)toDictionary;
 
