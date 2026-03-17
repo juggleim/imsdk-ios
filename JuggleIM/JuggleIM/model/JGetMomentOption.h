@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int count;
 /// 拉取方向
 @property (nonatomic, assign) JPullDirection direction;
-/// 拉取的用户 id，nil 表示当前用户
+/// 获取指定用户发布的朋友圈列表，为空表示获取所有好友的朋友圈列表。只支持 getMomentList 接口；getCachedMomentList 接口不支持该参数
 @property (nonatomic, copy, nullable) NSString *userId;
 
 - (NSDictionary *)toDictionary;
