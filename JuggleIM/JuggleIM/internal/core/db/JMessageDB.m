@@ -435,6 +435,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
         [args addObjectsFromArray:conversationTypes];
     }
     [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
+    [self.dbHelper executeUpdate:@"VACUUM" withArgumentsInArray:nil];
 }
 
 //被删除的消息也能查出来
