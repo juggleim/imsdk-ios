@@ -216,6 +216,18 @@
     }
 }
 
+- (void)onPlayerRenderCameraVideoFirstFrame:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPlayerRenderCameraVideoFirstFrame:)]) {
+        [sHandler onPlayerRenderCameraVideoFirstFrame:streamID];
+    }
+}
+
+- (void)onPlayerRecvVideoFirstFrame:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPlayerRecvVideoFirstFrame:)]) {
+        [sHandler onPlayerRecvVideoFirstFrame:streamID];
+    }
+}
+
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];
