@@ -294,6 +294,26 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_capture_device(bool en
 typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device)(bool enable);
 #endif
 
+/// Asynchronous enables or disables the audio capture device.
+///
+/// Available since: 3.23.0
+/// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming. not support Linux.
+/// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
+/// Default value: The default is `true`.
+/// When to call: After creating the engine [createEngine].
+/// Restrictions: None.
+/// Related APIs: Turning off or turning on the microphone on the hardware is a time-consuming operation, and there is a certain performance overhead when the user performs frequent operations. [muteMicrophone] is generally recommended.
+///
+/// @param enable Whether to enable the audio capture device, `true`: enable audio capture device, `false`: disable audio capture device.
+/// @param sequence [in] Context that identifies which invocation triggered this callback.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_capture_device_async(bool enable,
+                                                                               zego_seq sequence);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device_async)(bool enable,
+                                                                                zego_seq sequence);
+#endif
+
 /// get current audio route type.
 ///
 /// Available since: 1.1.0
@@ -1148,6 +1168,22 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_get_current_audio_device(
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_current_audio_device)(
     enum zego_audio_device_type device_type, struct zego_device_info *device_info);
+#endif
+
+/// Enable audio capture device result callback.
+///
+/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param seq Message sequence.
+/// @param user_context Context of user.
+typedef void (*zego_on_audio_captrue_device_enable_result)(zego_error error_code, zego_seq seq,
+                                                           void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_audio_captrue_device_enable_result_callback(
+    zego_on_audio_captrue_device_enable_result callback_func, void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_audio_captrue_device_enable_result_callback)(
+    zego_on_audio_captrue_device_enable_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

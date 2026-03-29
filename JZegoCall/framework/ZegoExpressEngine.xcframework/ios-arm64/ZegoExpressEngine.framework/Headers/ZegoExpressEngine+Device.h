@@ -196,6 +196,21 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param enable Whether to enable the audio capture device, `YES`: enable audio capture device, `NO`: disable audio capture device.
 - (void)enableAudioCaptureDevice:(BOOL)enable;
 
+/// Asynchronous enables or disables the audio capture device.
+///
+/// Available since: 3.23.0
+/// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming. not support Linux.
+/// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
+/// Default value: The default is `YES`.
+/// When to call: After creating the engine [createEngine].
+/// Restrictions: None.
+/// Related APIs: Turning off or turning on the microphone on the hardware is a time-consuming operation, and there is a certain performance overhead when the user performs frequent operations. [muteMicrophone] is generally recommended.
+///
+/// @param enable Whether to enable the audio capture device, `YES`: enable audio capture device, `NO`: disable audio capture device.
+/// @param callback The callback of this enable or disable result.
+- (void)enableAudioCaptureDeviceAsync:(BOOL)enable
+                             callback:(ZegoAudioCaptureDeviceEnableCallback)callback;
+
 #if TARGET_OS_IPHONE
 /// get current audio route type.
 ///

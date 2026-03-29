@@ -131,14 +131,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_network_time_info)(
     zego_network_time_info *time_info);
 #endif
 
-/// Dump audio and video data.
+/// Dump audio, video data.
 ///
 /// Available since: 3.10.0
-/// Description: Dump audio and video data. Currently, only audio data is supported.
-/// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+/// Description: Dump audio, video data.
+/// Use cases: This is a debugging tool. When there is a problem with audio/video capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
 /// When to call: It needs to be called after [createEngine].
-/// Restrictions: None.
-/// Caution: It will trigger the [onStartDumpData] callback when data dumping starts.
+/// Restrictions: Only support Android and iOS to dump video.
+/// Caution: It will trigger the [onStartDumpData] callback when data dumping starts. The video dump auto-stops after 30 seconds to prevent excessive storage usage, triggering the [onStopDumpData] callback.
 /// Related APIs: Call [stopDumpData] to stop dumping data.
 ///
 /// @param config Dump data config.

@@ -279,7 +279,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 1.12.0
 /// Description: Call this function to set the sound equalizer adjust the tone.
 /// Use cases: Often used in voice chatroom, KTV.
-/// When to call: It needs to be called after [createEngine].
+/// When to call: It should be called after the engine has started.
 /// Restrictions: None.
 ///
 /// @param bandIndex Band frequency index, the value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.

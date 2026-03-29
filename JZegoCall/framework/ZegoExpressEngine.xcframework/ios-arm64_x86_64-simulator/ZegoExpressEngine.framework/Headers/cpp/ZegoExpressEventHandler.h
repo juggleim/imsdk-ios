@@ -439,6 +439,17 @@ class IZegoEventHandler {
     /// @param streamID Stream ID.
     virtual void onPlayerRecvAudioFirstFrame(const std::string & /*streamID*/) {}
 
+    /// The callback triggered when the first audio frame is received. Please do not call the SDK interface in the callback thread.
+    ///
+    /// Available since: 3.22.0
+    /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of audio data.
+    /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
+    /// Trigger: This callback is triggered when SDK receives the first frame of audio data from the network.
+    /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerSyncRecvVideoFirstFrame] determines whether the SDK has received the video data, and the callback [onPlayerSyncRecvRenderVideoFirstFrame] determines whether the SDK has rendered the first frame of the received video data.
+    ///
+    /// @param streamID Stream ID.
+    virtual void onPlayerSyncRecvAudioFirstFrame(const std::string & /*streamID*/) {}
+
     /// The callback triggered when the first video frame is received.
     ///
     /// Available since: 1.1.0
@@ -457,7 +468,7 @@ class IZegoEventHandler {
     /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK received the first frame of video data.
     /// Use cases: Developer can use this callback to count time consuming that take the first frame time.
     /// Trigger: This callback is triggered when SDK receives the first frame of video data from the network.
-    /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerRenderVideoFirstFrame] determines whether the SDK has rendered the first frame of the received video data.
+    /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerSyncRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerSyncRecvRenderVideoFirstFrame] determines whether the SDK has rendered the first frame of the received video data.
     /// Note: This function is only available in ZegoExpressVideo SDK!
     ///
     /// @param streamID Stream ID.
@@ -474,6 +485,18 @@ class IZegoEventHandler {
     ///
     /// @param streamID Stream ID.
     virtual void onPlayerRenderVideoFirstFrame(const std::string & /*streamID*/) {}
+
+    /// The callback triggered when the first video frame is rendered. Please do not call the SDK interface in the callback thread.
+    ///
+    /// Available since: 3.22.0
+    /// Description: After the [startPlayingStream] function is called successfully, this callback will be called when SDK rendered the first frame of video data.
+    /// Use cases: Developer can use this callback to count time consuming that take the first frame time or update the UI for playing stream.
+    /// Trigger: This callback is triggered when SDK rendered the first frame of video data from the network.
+    /// Related callbacks: After a successful call to [startPlayingStream], the callback function [onPlayerSyncRecvAudioFirstFrame] determines whether the SDK has received the audio data, and the callback [onPlayerSyncRecvVideoFirstFrame] determines whether the SDK has received the video data.
+    /// Note: This function is only available in ZegoExpressVideo SDK!
+    ///
+    /// @param streamID Stream ID.
+    virtual void onPlayerSyncRecvRenderVideoFirstFrame(const std::string & /*streamID*/) {}
 
     /// Calls back when the stream playing end renders the first frame of the video from the remote camera.
     ///
@@ -857,7 +880,7 @@ class IZegoEventHandler {
     ///
     /// Available since: 1.2.1
     /// Description: This callback is used to receive broadcast messages sent by other users in the same room.
-    /// Use cases: Generally used when the number of people in the live room does not exceed 500
+    /// Use cases: Generally used in the live room.
     /// When to trigger: After calling [loginRoom] to log in to the room, if a user in the room sends a broadcast message via [sendBroadcastMessage] function, this callback will be triggered.
     /// Restrictions: None
     /// Caution: The broadcast message sent by the user will not be notified through this callback.
@@ -887,7 +910,7 @@ class IZegoEventHandler {
     ///
     /// Available since: 1.2.1
     /// Description: This callback is used to receive custom command sent by other users in the same room.
-    /// Use cases: Generally used when the number of people in the live room does not exceed 500
+    /// Use cases: Generally used in the live room.
     /// When to trigger: After calling [loginRoom] to log in to the room, if other users in the room send custom signaling to the developer through the [sendCustomCommand] function, this callback will be triggered.
     /// Restrictions: None
     /// Caution: The custom command sent by the user himself will not be notified through this callback.
@@ -1027,6 +1050,27 @@ class IZegoEventHandler {
     ///
     /// @param errorCode Error code.
     virtual void onUploadDumpData(int /*errorCode*/) {}
+
+    /// The callback triggered when a screen capture source exception occurred.
+    ///
+    /// Available since: 3.6.0
+    /// Description: The callback triggered when the mobile screen capture source exception occurred.
+    /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
+    /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+    /// Restrictions: Only available on Android and iOS.
+    ///
+    /// @param exceptionType Screen capture exception type.
+    virtual void
+    onScreenCaptureExceptionOccurred(ZegoScreenCaptureExceptionType /*exceptionType*/) {}
+
+    /// The callback triggered when start screen capture.
+    ///
+    /// Available since: 3.16.0
+    /// Description: The callback triggered when calling the start mobile screen capture.
+    /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
+    /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
+    /// Restrictions: Only available on Android and iOS.
+    virtual void onScreenCaptureStart() {}
 };
 
 class IZegoApiCalledEventHandler {
@@ -1435,6 +1479,37 @@ class IZegoDataRecordEventHandler {
     virtual void onCapturedDataRecordProgressUpdate(ZegoDataRecordProgress /*progress*/,
                                                     ZegoDataRecordConfig /*config*/,
                                                     ZegoPublishChannel /*channel*/) {}
+
+    /// The callback triggered when the state of data recording (to a file) changes.
+    ///
+    /// Available since: 3.21.0
+    /// Description: The callback triggered when the state of data remote recording (to a file) changes.
+    /// Use cases: The developer should use this callback to determine the status of the file recording or for UI prompting.
+    /// When to trigger: After [startRecordingRemoteData] is called, if the state of the recording process changes, this callback will be triggered.
+    /// Restrictions: None.
+    ///
+    /// @param state File recording status.
+    /// @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+    /// @param config Record config.
+    /// @param streamID play stream id.
+    virtual void onRemoteDataRecordStateUpdate(ZegoDataRecordState /*state*/, int /*errorCode*/,
+                                               ZegoDataRecordConfig /*config*/,
+                                               const std::string & /*streamID*/) {}
+
+    /// The callback to report the current recording progress.
+    ///
+    /// Available since: 3.21.0
+    /// Description: Remote Recording progress update callback, triggered at regular intervals during recording.
+    /// Use cases: Developers can do UI hints for the user interface.
+    /// When to trigger: After [startRecordingRemoteData] is called, If configured to require a callback, timed trigger during recording.
+    /// Restrictions: None.
+    ///
+    /// @param progress File recording progress, which allows developers to hint at the UI, etc.
+    /// @param config Record config.
+    /// @param streamID stream id.
+    virtual void onRemoteDataRecordProgressUpdate(ZegoDataRemoteRecordProgress /*progress*/,
+                                                  ZegoDataRecordConfig /*config*/,
+                                                  const std::string & /*streamID*/) {}
 };
 
 class IZegoCustomVideoCaptureHandler {

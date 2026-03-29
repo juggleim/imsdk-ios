@@ -71,6 +71,11 @@ class ZegoExpressScreenCaptureSourceImp : public IZegoScreenCaptureSource {
         oInternalOriginBridge->screenCaptureEnableAudioCapture(enable, audioParam, instance_index_);
     }
 
+    void enableAudioCapture(bool enable, ZegoScreenCaptureAudioConfig config) override {
+        oInternalOriginBridge->screenCaptureEnableAudioCaptureWithConfig(enable, config,
+                                                                         instance_index_);
+    }
+
     int getIndex() override { return instance_index_; }
 
     void zego_on_screen_capture_source_available_frame(const void *data, unsigned int data_length,

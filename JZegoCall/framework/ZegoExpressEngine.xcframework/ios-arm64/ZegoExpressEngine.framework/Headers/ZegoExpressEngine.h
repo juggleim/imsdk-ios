@@ -292,6 +292,7 @@ NS_ASSUME_NONNULL_END
 #import "ZegoExpressEngine+MediaDataPublisher.h"
 #import "ZegoExpressEngine+MediaPlayer.h"
 #import "ZegoExpressEngine+Mixer.h"
+#import "ZegoExpressEngine+PictureCapturer.h"
 #import "ZegoExpressEngine+Player.h"
 #import "ZegoExpressEngine+Preprocess.h"
 #import "ZegoExpressEngine+Publisher.h"

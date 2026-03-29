@@ -10,6 +10,7 @@
 #include "ZegoInternalExplicit.hpp"
 #include "ZegoInternalMediaDataPublisher.hpp"
 #include "ZegoInternalMediaPlayer.hpp"
+#include "ZegoInternalPictureCapturer.hpp"
 #include "ZegoInternalRangeAudio.hpp"
 #include "ZegoInternalRealTimeSequentialDataManager.hpp"
 #include "ZegoInternalScreenCaptureSource.hpp"
@@ -77,16 +78,18 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         zego_user _user = ZegoExpressConvert::O2IUser(user);
         zego_room_config _config = ZegoExpressConvert::O2IRoomConfig(config);
 
-        int seq = oInternalOriginBridge->loginRoomWithCallback(_roomId, _user, &_config);
+        int seq = oInternalOriginBridge->getIncreaseSeq();
         if (callback != nullptr) {
             oInternalCallbackCenter->insertZegoRoomLoginCallback(seq, callback);
         }
+        oInternalOriginBridge->loginRoomWithCallback(_roomId, _user, &_config, seq);
     }
 
     void logoutRoom(ZegoRoomLogoutCallback callback) override {
         if (callback != nullptr) {
-            int seq = oInternalOriginBridge->logoutRoomWithCallback();
+            int seq = oInternalOriginBridge->getIncreaseSeq();
             oInternalCallbackCenter->insertZegoRoomLogoutCallback(seq, callback);
+            oInternalOriginBridge->logoutRoomWithCallback(seq);
         } else {
             oInternalOriginBridge->logoutRoom();
         }
@@ -94,8 +97,9 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
 
     void logoutRoom(const std::string &roomID, ZegoRoomLogoutCallback callback) override {
         if (callback != nullptr) {
-            int seq = oInternalOriginBridge->logoutRoomWithCallback(roomID.c_str());
+            int seq = oInternalOriginBridge->getIncreaseSeq();
             oInternalCallbackCenter->insertZegoRoomLogoutCallback(seq, callback);
+            oInternalOriginBridge->logoutRoomWithCallback(roomID.c_str(), seq);
         } else {
             const char *_roomId = roomID.c_str();
             oInternalOriginBridge->logoutRoom(_roomId);
@@ -182,11 +186,7 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         if (canvas == nullptr) {
             oInternalOriginBridge->startPreview(nullptr, zego_publish_channel(channel));
         } else {
-            zego_canvas _canvas;
-            _canvas.view = canvas->view;
-            _canvas.view_mode = zego_view_mode(canvas->viewMode);
-            _canvas.background_color = canvas->backgroundColor;
-            _canvas.alpha_blend = canvas->alphaBlend;
+            zego_canvas _canvas = ZegoExpressConvert::O2ICanvas(*canvas);
             oInternalOriginBridge->startPreview(&_canvas, zego_publish_channel(channel));
         }
     }
@@ -326,6 +326,19 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
     takePublishStreamSnapshot(ZegoPublisherTakeSnapshotCallback callback,
                               ZegoPublishChannel channel = ZEGO_PUBLISH_CHANNEL_MAIN) override {
         oInternalOriginBridge->takePublishStreamSnapshot(zego_publish_channel(channel));
+        if (callback != nullptr) {
+            oInternalCallbackCenter->insertZegoPublisherTakeSnapshotCallback((int)channel,
+                                                                             callback);
+        }
+    }
+
+    void takePublishStreamSnapshotByConfig(
+        ZegoPublisherTakeSnapshotConfig config, ZegoPublisherTakeSnapshotCallback callback,
+        ZegoPublishChannel channel = ZEGO_PUBLISH_CHANNEL_MAIN) override {
+        zego_publisher_take_snapshot_config _config =
+            ZegoExpressConvert::O2IPublisherTakeSnapshotConfig(config);
+        oInternalOriginBridge->takePublishStreamSnapshotByConfig(_config,
+                                                                 zego_publish_channel(channel));
         if (callback != nullptr) {
             oInternalCallbackCenter->insertZegoPublisherTakeSnapshotCallback((int)channel,
                                                                              callback);
@@ -479,6 +492,28 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
             static_cast<zego_video_codec_backend>(codecBackend));
     }
 
+    void getVideoEncoderSupported(ZegoVideoCodecID codecID, ZegoVideoCodecBackend codecBackend,
+                                  ZegoPublisherGetVideoEncoderSupportedCallback callback) override {
+        int seq = oInternalOriginBridge->getIncreaseSeq();
+        if (callback) {
+            oInternalCallbackCenter->insertZegoPublisherGetVideoEncoderSupportedCallback(seq,
+                                                                                         callback);
+        }
+
+        int error = oInternalOriginBridge->getVideoEncoderSupported(
+            static_cast<zego_video_codec_id>(codecID),
+            static_cast<zego_video_codec_backend>(codecBackend), seq);
+
+        if (error != ZEGO_ERRCODE_COMMON_SUCCESS && callback) {
+            oInternalCallbackCenter->eraseZegoPublisherGetVideoEncoderSupportedCallback(seq);
+            ZEGO_SWITCH_THREAD_PRE
+            if (callback) {
+                callback(0);
+            }
+            ZEGO_SWITCH_THREAD_ING
+        }
+    }
+
     void enableAuxBgmBalance(bool enable) override {
         oInternalOriginBridge->enableAuxBgmBalance(enable);
     }
@@ -525,7 +560,7 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         _config.adaptive_template_id_list = nullptr;
         if (_config.adaptive_switch > 0 && _config.adaptive_template_id_count > 0) {
             _config.adaptive_template_id_list = new int[_config.adaptive_template_id_count];
-            for (int i = 0; i < _config.adaptive_template_id_count; ++i) {
+            for (unsigned i = 0; i < _config.adaptive_template_id_count; ++i) {
                 _config.adaptive_template_id_list[i] = config.adaptiveTemplateIDList[i];
             }
         }
@@ -623,6 +658,12 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         customResourceConfig.after_publish =
             zego_resource_type(config.customResourceConfig.afterPublish);
         _config.custom_resource_config = &customResourceConfig;
+
+        struct zego_switch_playing_stream_config switchStreamConfig;
+        switchStreamConfig.switch_type =
+            zego_switch_playing_stream_type(config.switchStreamConfig.switchType);
+        switchStreamConfig.switch_time_out = config.switchStreamConfig.switchTimeout;
+        _config.switch_stream_config = &switchStreamConfig;
 
         oInternalOriginBridge->switchPlayingStream(fromStreamID.c_str(), toStreamID.c_str(),
                                                    &_config);
@@ -723,6 +764,12 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         oInternalOriginBridge->muteAllPlayVideoStreams(mute);
     }
 
+    void setPlayStreamDecodeFrameMode(const std::string &streamID,
+                                      ZegoStreamDecodeMode frameMode) override {
+        oInternalOriginBridge->setPlayStreamDecodeFrameMode(streamID.c_str(),
+                                                            (zego_stream_decode_mode)frameMode);
+    }
+
     void enableHardwareDecoder(bool enable) override {
         oInternalOriginBridge->enableHardwareDecoder(enable);
     }
@@ -738,6 +785,28 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         return oInternalOriginBridge->isVideoDecoderSupported(
             static_cast<zego_video_codec_id>(codecID),
             static_cast<zego_video_codec_backend>(codecBackend));
+    }
+
+    void getVideoDecoderSupported(ZegoVideoCodecID codecID, ZegoVideoCodecBackend codecBackend,
+                                  ZegoPlayerGetVideoDecoderSupportedCallback callback) override {
+        int seq = oInternalOriginBridge->getIncreaseSeq();
+        if (callback) {
+            oInternalCallbackCenter->insertZegoPlayerGetVideoDecoderSupportedCallback(seq,
+                                                                                      callback);
+        }
+
+        int error = oInternalOriginBridge->getVideoDecoderSupported(
+            static_cast<zego_video_codec_id>(codecID),
+            static_cast<zego_video_codec_backend>(codecBackend), seq);
+
+        if (error != ZEGO_ERRCODE_COMMON_SUCCESS && callback) {
+            oInternalCallbackCenter->eraseZegoPlayerGetVideoDecoderSupportedCallback(seq);
+            ZEGO_SWITCH_THREAD_PRE
+            if (callback) {
+                callback(0);
+            }
+            ZEGO_SWITCH_THREAD_ING
+        }
     }
 
     void setLowlightEnhancement(ZegoLowlightEnhancementMode mode,
@@ -843,6 +912,15 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
 
     void enableAudioCaptureDevice(bool enable) override {
         oInternalOriginBridge->enableAudioCaptureDevice(enable);
+    }
+
+    void enableAudioCaptureDeviceAsync(bool enable,
+                                       ZegoAudioCaptureDeviceEnableCallback callback) override {
+        auto seq = zego_express_get_increase_seq();
+        if (callback) {
+            oInternalCallbackCenter->insertZegoAudioCaptureDeviceEnableCallback(seq, callback);
+        }
+        oInternalOriginBridge->enableAudioCaptureDeviceAsync(enable, seq);
     }
 
 #if TARGET_OS_IPHONE || defined(ANDROID) || defined(_OS_OHOS_)
@@ -1376,9 +1454,8 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
                                   ZegoMixerStartCallback startCallback,
                                   ZegoMixerStopCallback stopCallback) {
         zego_auto_mixer_task _task;
+        memset(&_task, 0, sizeof(zego_auto_mixer_task));
 
-        memset(_task.task_id, 0, sizeof(_task.task_id));
-        memset(_task.room_id, 0, sizeof(task.roomID));
         strncpy(_task.task_id, task.taskID.c_str(), ZEGO_EXPRESS_MAX_MIXER_TASK_LEN);
         strncpy(_task.room_id, task.roomID.c_str(), ZEGO_EXPRESS_MAX_ROOMID_LEN);
 
@@ -1397,6 +1474,16 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         _task.enable_sound_level = task.enableSoundLevel;
         _task.stream_alignment_mode = (zego_stream_alignment_mode)task.streamAlignmentMode;
         _task.min_play_stream_buffer_length = task.minPlayStreamBufferLength;
+
+        _task.stream_alignment_volume_control_mode =
+            (zego_stream_alignment_volume_control_mode)task.streamAlignmentVolumeControlMode;
+
+        strncpy(_task.stream_alignment_baseline_stream_id,
+                task.streamAlignmentBaselineStreamID.c_str(),
+                sizeof(_task.stream_alignment_baseline_stream_id) - 1);
+        _task
+            .stream_alignment_baseline_stream_id[sizeof(_task.stream_alignment_baseline_stream_id) -
+                                                 1] = 0;
 
         if (isStart) {
             int seq = oInternalOriginBridge->startAutoMixerTask(_task);
@@ -1584,6 +1671,27 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
             oInternalOriginBridge->destroyScreenCaptureSource(source->getIndex());
             oInternalCallbackCenter->eraseZegoExpressScreenCaptureSourceImp(source->getIndex());
         }
+    }
+
+    void setAppGroupID(const std::string &groupID) override {
+        oInternalOriginBridge->screenCaptureSetAppGroupID(groupID);
+    }
+
+    void startScreenCaptureInApp(ZegoScreenCaptureConfig config) override {
+        auto _config = ZegoExpressConvert::O2IScreenCaptureConfig(config);
+        oInternalOriginBridge->screenCaptureStartScreenCaptureInApp(_config);
+    }
+
+    void startScreenCapture(ZegoScreenCaptureConfig config) override {
+        auto _config = ZegoExpressConvert::O2IScreenCaptureConfig(config);
+        oInternalOriginBridge->screenCaptureStartScreenCapture(_config);
+    }
+
+    void stopScreenCapture() override { oInternalOriginBridge->screenCaptureStopScreenCapture(); }
+
+    void updateScreenCaptureConfig(ZegoScreenCaptureConfig config) override {
+        auto _config = ZegoExpressConvert::O2IScreenCaptureConfig(config);
+        oInternalOriginBridge->screenCaptureUpdateScreenCaptureConfig(_config);
     }
 
     //===================================================================================================
@@ -1820,6 +1928,16 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         oInternalOriginBridge->stopRecordingCapturedData(zego_publish_channel(channel));
     }
 
+    void startRecordingRemoteData(const std::string &streamID,
+                                  ZegoDataRecordConfig config) override {
+        zego_data_record_config _config = ZegoExpressConvert::O2IDataRecordConfig(config);
+        oInternalOriginBridge->startRecordingRemoteData(streamID.c_str(), _config);
+    }
+
+    void stopRecordingRemoteData(const std::string &streamID) override {
+        oInternalOriginBridge->stopRecordingRemoteData(streamID.c_str());
+    }
+
     void setDataRecordEventHandler(std::shared_ptr<IZegoDataRecordEventHandler> handler) override {
         oInternalCallbackCenter->setIZegoDataRecordEventHandler(handler);
     }
@@ -2001,6 +2119,12 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
             enable, (zego_alpha_layout_type)alphaLayout, (zego_publish_channel)channel);
     }
 
+    void enableVideoEncoderEnhancement(bool enable, float enhanceLevel,
+                                       ZegoPublishChannel channel) override {
+        oInternalOriginBridge->enableVideoEncoderEnhancement(enable, enhanceLevel,
+                                                             (zego_publish_channel)channel);
+    }
+
     int updatePlayingCanvas(const std::string &streamID, ZegoCanvas *canvas) override {
         int error = ZegoErrorCode::ZEGO_ERROR_CODE_COMMON_SUCCESS;
         if (canvas == nullptr) {
@@ -2044,6 +2168,26 @@ class ZegoExpressEngineImp : public IZegoExpressEngine {
         p.lip_color_protection_level = params.lipColorProtectionLevel;
         oInternalOriginBridge->enableColorEnhancement(enable, p,
                                                       static_cast<zego_publish_channel>(channel));
+    }
+
+    //===================================================================================================
+    IZegoPictureCapturer *createPictureCapturer() override {
+        int index = oInternalOriginBridge->createPictureCapturer();
+        if (index == -1) {
+            return nullptr;
+        }
+
+        auto picture_capturer = std::make_shared<ZegoExpressPictureCapturerImpl>(index);
+        oInternalCallbackCenter->insertZegoExpressPictureCapturerImpl(index, picture_capturer);
+        return picture_capturer.get();
+    }
+
+    void destroyPictureCapturer(IZegoPictureCapturer *&picture_capturer) override {
+        if (picture_capturer) {
+            int index = picture_capturer->getIndex();
+            oInternalOriginBridge->destroyPictureCapturer(index);
+            oInternalCallbackCenter->eraseZegoExpressPictureCapturerImpl(index);
+        }
     }
 
   public:

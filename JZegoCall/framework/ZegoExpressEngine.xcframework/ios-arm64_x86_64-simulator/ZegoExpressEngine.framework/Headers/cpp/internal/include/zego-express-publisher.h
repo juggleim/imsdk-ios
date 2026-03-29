@@ -378,6 +378,27 @@ typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot)(
     enum zego_publish_channel channel);
 #endif
 
+/// Take a snapshot of the publishing stream for the specified publish channel.
+///
+/// Available since: 3.22.0
+/// Description: Take a snapshot of the publishing stream.
+/// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+/// Restrictions: None.
+/// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].
+/// Related callbacks: The screenshot result will be called back through [ZegoPublisherTakeSnapshotCallback].
+/// Related APIs: [takePlayStreamSnapshot].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param config The config of snapshot
+/// @param channel Publish stream channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_take_publish_stream_snapshot_by_config(
+    struct zego_publisher_take_snapshot_config config, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot_by_config)(
+    struct zego_publisher_take_snapshot_config config, enum zego_publish_channel channel);
+#endif
+
 /// Stops or resumes sending the audio part of a stream for the specified channel.
 ///
 /// Available since: 1.1.0
@@ -891,6 +912,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_capture_pipeline_scale_mode)(
 ///   1. The static picture cannot be seen in the local preview.
 ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
 ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
 /// Platform differences:
 ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
 ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
@@ -922,6 +944,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_path)(
 ///   1. The static picture cannot be seen in the local preview.
 ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
 ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
 /// Platform differences:
 ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
 ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
@@ -974,6 +997,26 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_is_video_encoder_supported(
 typedef zego_error(EXP_CALL *pfnzego_express_is_video_encoder_supported)(
     enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
     int *is_supported);
+#endif
+
+/// Whether the specified video encoding type and implementation are supported.
+///
+/// Available since: 3.23.0 and above
+/// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
+/// When to call: After creating the engine.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
+///
+/// @param codec_id Video codec id. Required: Yes.
+/// @param codec_backend Backend implementation of encoder. Required: Yes.
+/// @param sequence [in/out] Context that identifies which invocation triggered this callback.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_encoder_supported(
+    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
+    zego_seq sequence);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_get_video_encoder_supported)(
+    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
+    zego_seq sequence);
 #endif
 
 /// Set the orientation mode of the video.
@@ -1132,6 +1175,26 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_alpha_channel_video_encoder)
     bool enable, enum zego_alpha_layout_type alpha_layout, enum zego_publish_channel channel);
 #endif
 
+/// Enable video encoder enhancement.
+///
+/// Available since: 3.23.0
+/// Description: Call this function to enable or disable video encoder enhancement.
+/// Use cases: Commonly used in video calling, live streaming, and similar scenarios.
+/// Default value: When this function is not called, video encoder enhancement is not enabled by default.
+/// When to call: It needs to be called after [createEngine].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param enable Whether to enable, true: enable, false: disable
+/// @param enhance_level enhance_level [0.0,1.5], advise 0.9
+/// @param channel Publish stream channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_encoder_enhancement(
+    bool enable, float enhance_level, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_video_encoder_enhancement)(
+    bool enable, float enhance_level, enum zego_publish_channel channel);
+#endif
+
 /// Set the camera stabilization mode.
 ///
 /// Available since: 3.13.0
@@ -1171,6 +1234,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(bool enable
 /// Available since: 3.20.0
 /// Description: Turn on or off the face detection. Default is on.
 /// When to call: Called after the engine is created [createEngine].
+/// Restrictions: This interface is disabled when using custom video capture.
 /// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
 ///
 /// @param enable Turn on or off the face detection.
@@ -1566,6 +1630,22 @@ ZEGOEXP_API void EXP_CALL zego_register_publisher_take_snapshot_result_callback(
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_take_snapshot_result_callback)(
     zego_on_publisher_take_snapshot_result callback_func, void *user_context);
+#endif
+
+/// Results of get video encoder supported.
+///
+/// @param support 0 - does not support the specified encoding capability, 1 - supports the specified encoding capability, 2 - undetermined.
+/// @param seq Message sequence.
+/// @param user_context Context of user.
+typedef void (*zego_on_publisher_get_video_encoder_supported_result)(int support, zego_seq seq,
+                                                                     void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_publisher_get_video_encoder_supported_result_callback(
+    zego_on_publisher_get_video_encoder_supported_result callback_func, void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_publisher_get_video_encoder_supported_result_callback)(
+    zego_on_publisher_get_video_encoder_supported_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

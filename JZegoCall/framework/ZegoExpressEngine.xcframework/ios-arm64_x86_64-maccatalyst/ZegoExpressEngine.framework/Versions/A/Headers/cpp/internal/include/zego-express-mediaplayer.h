@@ -11,7 +11,7 @@ ZEGO_BEGIN_DECLS
 /// Description: Creates a media player instance.
 /// Use case: It is often used to play media resource scenes, For example, play video files, push the video of media resources in combination with custom video acquisition, and the remote end can pull the stream for viewing.
 /// When to call: It can be called after the SDK by [createEngine] has been initialized.
-/// Restrictions: Currently, a maximum of 4 instances can be created, after which it will return NULL.
+/// Restrictions: Currently, a maximum of 10 instances can be created, after which it will return NULL.
 /// Caution: The more instances of a media player, the greater the performance overhead on the device.
 /// Related APIs: User can call [destroyMediaPlayer] function to destroy a media player instance.
 ///
@@ -562,6 +562,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_accurate_seek)(
 ///
 /// The setting must be called before loading the resource, and it will take effect during the entire life cycle of the media player.
 /// Time and size are not allowed to be 0 at the same time. The SDK internal default time is 5000, and the size is 15*1024*1024 byte.When one of time and size reaches the set value first, the cache will stop.
+/// When loading resources with a non-empty onlineResourceCachePath, the cache is controlled by maxCachePendingLength. This configuration is invalid.
 ///
 /// @param time The maximum length of the cache time, in ms, the SDK internal default is 5000; the effective value is greater than or equal to 2000; if you fill in 0, it means no limit.
 /// @param size The maximum size of the cache, the unit is byte, the internal default size of the SDK is 15*1024*1024 byte; the effective value is greater than or equal to 5000000, if you fill in 0, it means no limit.

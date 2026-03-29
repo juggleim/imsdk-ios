@@ -571,7 +571,7 @@ enum ZegoErrorCode {
     /// Description: Failed to start mixed stream. <br>Cause: The auto-mixing server was not found. <br>Solutions: Please contact ZEGO technical support.
     ZEGO_ERROR_CODE_MIXER_AUTO_MIX_STREAM_SERVER_NOT_FOUND = 1005070,
 
-    /// Description: Stream mixing internal error.<br>Cause: Unknown error occured in stream mixing internal.<br>Solutions: Please contact ZEGO technical support.
+    /// Description: Stream mixing internal error.<br>Cause: Unknown error occurred in stream mixing internal.<br>Solutions: Please contact ZEGO technical support.
     ZEGO_ERROR_CODE_MIXER_INNER_ERROR = 1005099,
 
     /// Description: Generic device error.<br>Cause: Device dose not work normally.<br>Solutions: Use the system's video or audio recording application to check whether the device can work normally. If the device is normal, please contact ZEGO technical support.
@@ -940,6 +940,9 @@ enum ZegoErrorCode {
     /// Description: The dump data exceeding the maximum upload limit error. <br>Cause: The dump data is too large to exceed the limit of the upload module. <br>Solutions: Please contact ZEGO technical support and report to ZEGO manually.
     ZEGO_ERROR_CODE_UTILITIES_DUMP_DATA_EXCEED_MAX_SIZE_ERROR = 1015038,
 
+    /// Description: Fail to dump video data. <br>Cause: Error occurred in AV engine. <br>Solutions: Please contact ZEGO technical support.
+    ZEGO_ERROR_CODE_UTILITIES_START_DUMP_VIDEO_DATA_FAILED = 1015039,
+
     /// Description: The function call failed. <br>Cause: No range auido instance has been created. <br>Solutions: Create a range audio instance.
     ZEGO_ERROR_CODE_RANGE_AUDIO_NO_INSTANCE = 1016000,
 
@@ -1204,6 +1207,9 @@ enum ZegoErrorCode {
     /// Description: Failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it.
     ZEGO_ERROR_CODE_SCREEN_CAPTURE_INNER_ERROR = 1020005,
 
+    /// Description: This method is not supported.<br>Cause: The current mode does not support this method.<br>Solutions: Please select the appropriate acquisition mode.
+    ZEGO_ERROR_CODE_SCREEN_CAPTURE_NOT_SUPPORTED_ERROR = 1020050,
+
     /// Description: The function call failed. <br>Cause: No AI voice changer instance has been created. <br>Solutions: Create an AI voice changer instance.
     ZEGO_ERROR_CODE_AI_VOICE_CHANGER_NO_INSTANCE = 1021000,
 
@@ -1227,6 +1233,15 @@ enum ZegoErrorCode {
 
     /// Description: Can not run AI voice changer on this device.<br>Cause: AI voice changer feature can not run on this device because of poor perforamance.<br>Solutions: Do not use AI voice changer feature on this device.
     ZEGO_ERROR_CODE_AI_VOICE_CHANGER_DEVICE_NOT_SUPPORTED_ERROR = 1021007,
+
+    /// Description: Failed to set the picture capturer path. <br>Cause: The length of the picture capturer path exceeds the limit. <br>Solution: Please make sure the picture capturer path length does not exceed 512 bytes.
+    ZEGO_ERROR_CODE_PICTURE_CAPTURER_PATH_TOO_LONG = 1022000,
+
+    /// Description: Failed to set the picture capturer path. <br>Cause: The picture capturer path is illegal. <br>Solution: Please make sure the picture capturer path is legal.
+    ZEGO_ERROR_CODE_PICTURE_CAPTURER_PATH_INVALID = 1022001,
+
+    /// Description: Failed to set the picture capturer path. <br>Cause: The picture capturer path is null. <br>Solution: Please make sure the picture capturer path is not null.
+    ZEGO_ERROR_CODE_PICTURE_CAPTURER_PATH_NULL = 1022002,
 
 };
 
