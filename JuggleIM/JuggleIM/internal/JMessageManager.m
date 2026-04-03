@@ -2841,6 +2841,10 @@
     NSArray <JConcreteMessage *> *messagesToSave = [self messagesToSave:messages];
     [self insertRemoteMessages:messagesToSave];
     
+    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
+        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
+    }
+    
     __block long long sendTime = 0;
     __block long long receiveTime = 0;
     [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -3097,10 +3101,6 @@
             }];
         });
     }];
-    
-    if ([self.sendReceiveDelegate respondsToSelector:@selector(messagesDidReceive:)]) {
-        [self.sendReceiveDelegate messagesDidReceive:messagesToSave];
-    }
 
     //直发的消息，而且正在同步中，不直接更新 sync time
     if (!isSync && self.syncProcessing) {
