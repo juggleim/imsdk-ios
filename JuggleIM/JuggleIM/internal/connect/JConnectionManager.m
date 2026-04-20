@@ -36,6 +36,7 @@
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) JReachability *reachability;
+@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *connectHeaders;
 
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JConnSuperState *superState;
@@ -181,6 +182,10 @@
     }];
 }
 
+- (void)setConnectHeaders:(NSDictionary<NSString *,NSString *> *)headers {
+    _connectHeaders = headers;
+}
+
 - (JConnectionStatus)getConnectionStatus {
     return (JConnectionStatus)self.core.connectionStatus;
 }
@@ -264,7 +269,8 @@
                            token:self.core.token
                        pushToken:self.pushToken
                        voipToken:self.voipPushToken
-                         servers:self.core.servers];
+                         servers:self.core.servers
+                         headers:self.connectHeaders];
     
 //    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
 //                                       appKey:self.core.appKey

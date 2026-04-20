@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, strong) NSMutableArray <NSNumber *> *competeStatusList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @property (nonatomic, strong) JWebSocketCommandManager *commandManager;
+@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *connectHeaders;
 @end
 
 @implementation JWebSocket
@@ -71,13 +72,15 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
           token:(NSString *)token
       pushToken:(NSString *)pushToken
       voipToken:(NSString *)voipToken
-        servers:(nonnull NSArray *)servers {
+        servers:(nonnull NSArray *)servers
+        headers:(nonnull NSDictionary<NSString *,NSString *> *)headers {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Connect", @"appkey is %@, token is %@", appKey, token);
         self.appKey = appKey;
         self.token = token;
         self.pushToken = pushToken;
         self.voipToken = voipToken;
+        self.connectHeaders = headers;
         
         [self resetSws];
         for (NSString *url in servers) {
@@ -1371,8 +1374,16 @@ inConversation:(JConversation *)conversation
             }
             JLogI(@"WS-Connect", @"isCompeteFinish, fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
             [self resetSws];
-            if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
-                [self.connectDelegate webSocketDidFail];
+            NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
+            if (httpNumber.longValue == 403) {
+                JLogE(@"WS-Connect", @"webSocket 403");
+                if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
+                    [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalTokenIllegal userId:@"" session:@"" extra:@""];
+                }
+            } else {
+                if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                    [self.connectDelegate webSocketDidFail];
+                }
             }
         } else {
             for (int i = 0; i < self.competeSwsList.count; i++) {
@@ -1389,10 +1400,20 @@ inConversation:(JConversation *)conversation
                     break;
                 }
             }
-            if (allFailed && [self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+            if (allFailed) {
                 JLogI(@"WS-Connect", @"fail message is %@, clientIP is %@, osVersion is %@, networkId is %@, ispNum is %@, sdkVersion is %@", error.description, [JUtility getClientIP], [JUtility currentSystemVersion], [JUtility currentNetWork], [JUtility currentCarrier], JIMVersion);
                 [self resetSws];
-                [self.connectDelegate webSocketDidFail];
+                NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
+                if (httpNumber.longValue == 403) {
+                    JLogE(@"WS-Connect", @"webSocket 403");
+                    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
+                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalTokenIllegal userId:@"" session:@"" extra:@""];
+                    }
+                } else {
+                    if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
+                        [self.connectDelegate webSocketDidFail];
+                    }
+                }
             }
         }
     });
@@ -2187,10 +2208,27 @@ inConversation:(JConversation *)conversation
     } else {
         u = [NSString stringWithFormat:@"%@%@%@", jWSPrefix, url, jWebSocketSuffix];
     }
-    JIMSRWebSocket *sws = [[JIMSRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:u]]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:u]];
+    [self addConnectHeader:request];
+    JIMSRWebSocket *sws = [[JIMSRWebSocket alloc] initWithURLRequest:request];
     sws.delegateDispatchQueue = self.receiveQueue;
     sws.delegate = self;
     return sws;
+}
+
+- (void)addConnectHeader:(NSMutableURLRequest *)request {
+    if (self.connectHeaders.count > 0) {
+        [self.connectHeaders enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull value, BOOL * _Nonnull stop) {
+            [request setValue:value forHTTPHeaderField:key];
+        }];
+    }
+    
+    [request setValue:self.appKey forHTTPHeaderField:@"x-appkey"];
+    [request setValue:self.token forHTTPHeaderField:@"x-token"];
+    [request setValue:JPlatform forHTTPHeaderField:@"x-platform"];
+    [request setValue:JIMVersion forHTTPHeaderField:@"x-version"];
+    [request setValue:[JUtility currentDeviceModel] forHTTPHeaderField:@"x-device"];
+    [request setValue:[JUtility getDeviceId] forHTTPHeaderField:@"x-device_id"];
 }
 
 - (void)resetSws {
