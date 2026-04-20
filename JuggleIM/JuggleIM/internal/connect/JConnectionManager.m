@@ -452,7 +452,8 @@
         code == JErrorCodeInternalAppProhibited ||
         code == JErrorCodeInternalUserProhibited ||
         code == JErrorCodeInternalUserKickedByOtherClient ||
-        code == JErrorCodeInternalUserLogOut
+        code == JErrorCodeInternalUserLogOut ||
+        code == JErrorCodeInternalConnectForbidden
         ) {
         return YES;
     }
