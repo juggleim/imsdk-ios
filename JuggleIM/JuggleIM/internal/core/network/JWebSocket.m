@@ -1407,7 +1407,7 @@ inConversation:(JConversation *)conversation
                 if (httpNumber.longValue == 403) {
                     JLogE(@"WS-Connect", @"webSocket 403");
                     if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
-                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalTokenIllegal userId:@"" session:@"" extra:@""];
+                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" extra:@""];
                     }
                 } else {
                     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
