@@ -48,6 +48,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, strong) NSMutableArray <NSNumber *> *competeStatusList;
 @property (nonatomic, strong) JHeartBeatManager *heartbeatManager;
 @property (nonatomic, strong) JWebSocketCommandManager *commandManager;
+@property (nonatomic, copy) NSString *signKey;
 @property (nonatomic, strong) NSDictionary <NSString *, NSString *> *connectHeaders;
 @end
 
@@ -73,6 +74,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
       pushToken:(NSString *)pushToken
       voipToken:(NSString *)voipToken
         servers:(nonnull NSArray *)servers
+        signKey:(NSString *)signKey
         headers:(nonnull NSDictionary<NSString *,NSString *> *)headers {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Connect", @"appkey is %@, token is %@", appKey, token);
@@ -80,6 +82,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
         self.token = token;
         self.pushToken = pushToken;
         self.voipToken = voipToken;
+        self.signKey = signKey;
         self.connectHeaders = headers;
         
         [self resetSws];
@@ -2229,6 +2232,16 @@ inConversation:(JConversation *)conversation
     [request setValue:JIMVersion forHTTPHeaderField:@"x-version"];
     [request setValue:[JUtility currentDeviceModel] forHTTPHeaderField:@"x-device"];
     [request setValue:[JUtility getDeviceId] forHTTPHeaderField:@"x-device_id"];
+    u_int32_t randomNumber = arc4random_uniform(100000);
+    NSString *nonce = [NSString stringWithFormat:@"%05u", randomNumber];
+    long long millisecond = [[NSDate date] timeIntervalSince1970] * 1000;
+    NSString *timestamp = [NSString stringWithFormat:@"%lld", millisecond];
+    NSString *signature = [JUtility signatureWithNonce:nonce
+                                             timestamp:timestamp
+                                               signKey:self.signKey];
+    [request setValue:nonce forHTTPHeaderField:@"X-Nonce"];
+    [request setValue:timestamp forHTTPHeaderField:@"X-Timestamp"];
+    [request setValue:signature forHTTPHeaderField:@"X-Signature"];
 }
 
 - (void)resetSws {

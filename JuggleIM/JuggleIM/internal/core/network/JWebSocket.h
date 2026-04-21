@@ -87,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
       pushToken:(NSString *)pushToken
       voipToken:(NSString *)voipToken
         servers:(NSArray *)servers
+        signKey:(NSString *)signKey
         headers:(NSDictionary <NSString *, NSString *> *)headers;
 
 - (void)disconnect:(BOOL)needPush;

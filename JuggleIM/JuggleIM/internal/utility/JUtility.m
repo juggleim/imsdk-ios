@@ -316,6 +316,23 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return [NSData dataWithBytesNoCopy:bytes length:length];
 }
 
++ (NSString *)signatureWithNonce:(NSString *)nonce
+                       timestamp:(NSString *)timestamp
+                         signKey:(NSString *)signKey {
+    NSString *raw = [NSString stringWithFormat:@"%@%@%@", nonce ?: @"", timestamp ?: @"", signKey ?: @""];
+    NSData *rawData = [raw dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *keyData = [(signKey ?: @"") dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+
+    CCHmac(kCCHmacAlgSHA256, keyData.bytes, keyData.length, rawData.bytes, rawData.length, digest);
+
+    NSMutableString *signature = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
+    for (NSInteger i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [signature appendFormat:@"%02x", digest[i]];
+    }
+    return signature;
+}
+
 + (NSString *)rootPath {
     NSString *path =
             NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];

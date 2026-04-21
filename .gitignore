@@ -10,3 +10,4 @@ DerivedData
 */*.xcworkspace/xcuserdata
 */*.xcworkspace/xcshareddata
 */Podfile.lock
+docs

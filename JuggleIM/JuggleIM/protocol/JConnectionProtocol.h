@@ -41,9 +41,11 @@
 /// - Parameter completeBlock: 结果回调，返回 JErrorCodeNone 表示成功
 - (void)getLanguage:(void (^)(JErrorCode code, NSString *language))completeBlock;
 
-/// 设置连接 headers
+/// 设置连接参数
+/// - Parameter sighKey:
 /// - Parameter headers: 连接 headers
-- (void)setConnectHeaders:(NSDictionary <NSString *, NSString *> *)headers;
+- (void)setConnectParams:(NSString *)signKey
+                 headers:(NSDictionary <NSString *, NSString *> *)headers;
 
 - (JConnectionStatus)getConnectionStatus;
 
