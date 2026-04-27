@@ -90,6 +90,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryMsgExSet @"qry_msg_exset"
 #define jTagAddConvers @"tag_add_convers"
 #define jTagDelConvers @"tag_del_convers"
+#define jDelUserConverTags @"del_user_conver_tags"
 #define jQryUserInfo @"qry_user_info"
 #define jQryGroupInfo @"qry_group_info"
 #define jQryFriendInfos @"qry_friend_infos"
@@ -1287,6 +1288,50 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.topic = jQryMsgExSet;
     body.targetId = conversation.conversationId;
     body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)createConversationTag:(NSString *)tagId
+                             name:(NSString *)name
+                           userId:(NSString *)userId
+                            index:(int)index {
+    TagConvers *tagConvers = [TagConvers new];
+    tagConvers.tag = tagId;
+    tagConvers.tagName = name;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jTagAddConvers;
+    body.targetId = userId;
+    body.data_p = tagConvers.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)destroyConversationTag:(NSString *)tagId
+                            userId:(NSString *)userId
+                             index:(int)index {
+    NSMutableArray *pbTagList = [NSMutableArray array];
+    ConverTag *converTag = [ConverTag new];
+    converTag.tag = tagId;
+    [pbTagList addObject:converTag];
+    UserConverTags *userConverTags = [UserConverTags new];
+    userConverTags.tagsArray = pbTagList;
+    
+    QueryMsgBody *body = [[QueryMsgBody alloc] init];
+    body.index = index;
+    body.topic = jDelUserConverTags;
+    body.targetId = userId;
+    body.data_p = userConverTags.data;
     
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(index)];
@@ -3292,7 +3337,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryConverConf:@(JPBRcvTypeGetConversationConfAck),
              jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
              jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck),
-             jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck)
+             jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck),
+             jDelUserConverTags:@(JPBRcvTypeSimpleQryAck)
     };
 }
 @end

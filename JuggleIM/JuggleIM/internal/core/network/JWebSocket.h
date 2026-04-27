@@ -363,6 +363,17 @@ inConversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)createConversationTag:(NSString *)tagId
+                         name:(NSString *)name
+                       userId:(NSString *)userId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)destroyConversationTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)addConversationList:(NSArray <JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                      userId:(NSString *)userId

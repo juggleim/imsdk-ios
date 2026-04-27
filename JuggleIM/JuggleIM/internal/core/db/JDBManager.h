@@ -73,6 +73,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTopConversationsOrderType:(JTopConversationsOrderType)type;
 
 #pragma mark - conversation tag table
+- (void)createConversationTag:(JConversationTagInfo *)tagInfo;
+- (void)destroyConversationTag:(NSString *)tagId;
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId;
+- (NSArray <JConversationTagInfo *> *)getConversationTagInfoList;
+- (NSArray <JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation;
 - (void)updateConversationTag:(NSArray <JConcreteConversationInfo *>*)conversations;
 - (void)addConversations:(NSArray <JConversation *> *)conversations
                    toTag:(NSString *)tagId;

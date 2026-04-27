@@ -148,6 +148,10 @@
 		A079E8842CE3653500A1008F /* JConnEventUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = A079E8812CE3653500A1008F /* JConnEventUtil.h */; };
 		A079E8872CE395CC00A1008F /* JConnSuperState.m in Sources */ = {isa = PBXBuildFile; fileRef = A079E8862CE395CC00A1008F /* JConnSuperState.m */; };
 		A079E8882CE395CC00A1008F /* JConnSuperState.h in Headers */ = {isa = PBXBuildFile; fileRef = A079E8852CE395CC00A1008F /* JConnSuperState.h */; };
+		A07C03FD2F99FDAB00C54A01 /* JConversationTagInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A07C03FC2F99FDAB00C54A01 /* JConversationTagInfo.m */; };
+		A07C03FE2F99FDAB00C54A01 /* JConversationTagInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A07C03FB2F99FDAB00C54A01 /* JConversationTagInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A07C04012F99FFC400C54A01 /* JDeleteConversationTagMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A07C04002F99FFC400C54A01 /* JDeleteConversationTagMessage.m */; };
+		A07C04022F99FFC400C54A01 /* JDeleteConversationTagMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A07C03FF2F99FFC400C54A01 /* JDeleteConversationTagMessage.h */; };
 		A07CE41C2B3AF131006E3F4D /* JContentTypeCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */; };
 		A07CE41D2B3AF131006E3F4D /* JContentTypeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */; };
 		A07D0E2E2BFCD0B200B9035B /* JLogFileWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = A07D0E2C2BFCD0B200B9035B /* JLogFileWriter.h */; };
@@ -590,6 +594,10 @@
 		A079E8822CE3653500A1008F /* JConnEventUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnEventUtil.m; sourceTree = "<group>"; };
 		A079E8852CE395CC00A1008F /* JConnSuperState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnSuperState.h; sourceTree = "<group>"; };
 		A079E8862CE395CC00A1008F /* JConnSuperState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConnSuperState.m; sourceTree = "<group>"; };
+		A07C03FB2F99FDAB00C54A01 /* JConversationTagInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConversationTagInfo.h; sourceTree = "<group>"; };
+		A07C03FC2F99FDAB00C54A01 /* JConversationTagInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationTagInfo.m; sourceTree = "<group>"; };
+		A07C03FF2F99FFC400C54A01 /* JDeleteConversationTagMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDeleteConversationTagMessage.h; sourceTree = "<group>"; };
+		A07C04002F99FFC400C54A01 /* JDeleteConversationTagMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDeleteConversationTagMessage.m; sourceTree = "<group>"; };
 		A07CE41A2B3AF131006E3F4D /* JContentTypeCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JContentTypeCenter.h; sourceTree = "<group>"; };
 		A07CE41B2B3AF131006E3F4D /* JContentTypeCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JContentTypeCenter.m; sourceTree = "<group>"; };
 		A07D0E2C2BFCD0B200B9035B /* JLogFileWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLogFileWriter.h; sourceTree = "<group>"; };
@@ -1196,6 +1204,8 @@
 				A068B9C52EC5F5A100D04F45 /* JGetMomentOption.m */,
 				A068B9C82EC5FDA000D04F45 /* JGetMomentCommentOption.h */,
 				A068B9C92EC5FDA000D04F45 /* JGetMomentCommentOption.m */,
+				A07C03FB2F99FDAB00C54A01 /* JConversationTagInfo.h */,
+				A07C03FC2F99FDAB00C54A01 /* JConversationTagInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1678,6 +1688,8 @@
 				A0C612122E2612BB00A758E8 /* JTopMsgMessage.m */,
 				A0146EDB2F2B4C8D0019A026 /* JStreamAppendMessage.h */,
 				A0146EDC2F2B4C8D0019A026 /* JStreamAppendMessage.m */,
+				A07C03FF2F99FFC400C54A01 /* JDeleteConversationTagMessage.h */,
+				A07C04002F99FFC400C54A01 /* JDeleteConversationTagMessage.m */,
 			);
 			path = messages;
 			sourceTree = "<group>";
@@ -1689,6 +1701,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A07C03FE2F99FDAB00C54A01 /* JConversationTagInfo.h in Headers */,
 				A0146ED92F2B47710019A026 /* JStreamTextMessage.h in Headers */,
 				A0EDD3AA2F2372AE0096EE03 /* JFriendInfo.h in Headers */,
 				A068B9CB2EC5FDA000D04F45 /* JGetMomentCommentOption.h in Headers */,
@@ -1864,6 +1877,7 @@
 				A065160B2C91DEBE00E3AEC1 /* JIntervalGenerator.h in Headers */,
 				A08AA3FB2B19EEDB008B114C /* SRLog.h in Headers */,
 				5B4CAF582C2E648A00FF9D51 /* JClearTotalUnreadMessage.h in Headers */,
+				A07C04022F99FFC400C54A01 /* JDeleteConversationTagMessage.h in Headers */,
 				A08AA39C2B19CB78008B114C /* GPBTimestamp.pbobjc.h in Headers */,
 				A08AA2712B162A11008B114C /* JFMDatabaseQueue.h in Headers */,
 				A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */,
@@ -2039,6 +2053,7 @@
 				5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */,
 				A07F3CB62BFC791E0087920B /* JLogger.m in Sources */,
 				A05EED622B20826B00809F13 /* JReachability.m in Sources */,
+				A07C04012F99FFC400C54A01 /* JDeleteConversationTagMessage.m in Sources */,
 				A08AA36D2B19CB77008B114C /* GPBExtensionInternals.m in Sources */,
 				A0A1B0F82C47B25C00DAD93C /* JDownloader.m in Sources */,
 				A08AA40D2B19EEDB008B114C /* JIMSRIOConsumerPool.m in Sources */,
@@ -2191,6 +2206,7 @@
 				A08518A42DCB423E0001F699 /* JUserInfoCache.m in Sources */,
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
 				A0CE9A322CD4BE19008B405C /* JCallMediaRoomConfig.m in Sources */,
+				A07C03FD2F99FDAB00C54A01 /* JConversationTagInfo.m in Sources */,
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,
 				A03B3A0C2CCA4044003D150A /* JRtcRoom.m in Sources */,
 				A08AA3902B19CB78008B114C /* GPBDuration.pbobjc.m in Sources */,

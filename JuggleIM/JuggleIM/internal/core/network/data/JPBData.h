@@ -474,6 +474,15 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
              conversation:(JConversation *)conversation
                     index:(int)index;
 
+- (NSData *)createConversationTag:(NSString *)tagId
+                             name:(NSString *)name
+                           userId:(NSString *)userId
+                            index:(int)index;
+
+- (NSData *)destroyConversationTag:(NSString *)tagId
+                            userId:(NSString *)userId
+                             index:(int)index;
+
 - (NSData *)addConversations:(NSArray <JConversation *> *)conversations
                        toTag:(NSString *)tagId
                       userId:(NSString *)userId

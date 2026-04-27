@@ -48,6 +48,13 @@ NSString *const jCreateConversationTagTable = @"CREATE TABLE IF NOT EXISTS conve
                                         "conversation_id VARCHAR (64),"
                                         "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
+NSString *const jCreateTagInfoTable = @"CREATE TABLE IF NOT EXISTS conversation_tag_info ("
+                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                        "tag_id VARCHAR (64),"
+                                        "name VARCHAR (64),"
+                                        "type SMALLINT"
+                                        ")";
+NSString *const jCreateTagInfoIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_tag_info ON conversation_tag_info(tag_id)";
 NSString *const jCreateConversationTagIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag ON conversation_tag(tag_id, conversation_type, conversation_id)";
 NSString *const jCreateConversationTagIndex2 = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_tag2 ON conversation_tag(tag_id, conversation_type, conversation_id, subchannel)";
 NSString *const jCreateConversationIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation ON conversation_info(conversation_type, conversation_id)";
@@ -115,6 +122,11 @@ NSString *const jGetConversationsByTag = @"SELECT * FROM conversation_info INNER
                                             " AND conversation_info.conversation_id = conversation_tag.conversation_id"
                                             " AND conversation_info.subchannel = conversation_tag.subchannel"
                                             " WHERE tag_id = ? ";
+NSString *const jInsertConversationTagInfo = @"INSERT OR REPLACE INTO conversation_tag_info (tag_id, name, type) VALUES (?, ?, ?)";
+NSString *const jRemoveConversationTagInfo = @"DELETE FROM conversation_tag_info WHERE tag_id = ?";
+NSString *const jUpdateTagName = @"UPDATE conversation_tag_info SET name = ? WHERE tag_id = ?";
+NSString *const jGetTagList = @"SELECT * FROM conversation_tag_info ORDER BY id";
+NSString *const jGetTagsForConversation = @"SELECT DISTINCT cti.* FROM conversation_tag ct INNER JOIN conversation_tag_info cti ON ct.tag_id = cti.tag_id WHERE ct.conversation_type = ? AND ct.conversation_id = ? AND ct.subchannel = ?";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -158,6 +170,8 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     [self.dbHelper executeUpdate:jCreateConversationTSIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateConversationTagIndex2 withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateTagInfoTable withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateTagInfoIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jConversationTableVersion) forKey:jConversationTableVersionKey];
 }
 
@@ -642,8 +656,56 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     }];
 }
 
+- (void)createConversationTag:(JConversationTagInfo *)tagInfo {
+    NSString *tagId = tagInfo.tagId ?: @"";
+    NSString *name = tagInfo.name ?: @"";
+    [self.dbHelper executeUpdate:jInsertConversationTagInfo withArgumentsInArray:@[tagId, name, @(tagInfo.type)]];
+}
+
+- (void)destroyConversationTag:(NSString *)tagId {
+    [self.dbHelper executeUpdate:jRemoveConversationTagInfo withArgumentsInArray:@[tagId]];
+}
+
+- (void)updateConversationTagName:(NSString *)name forId:(NSString *)tagId {
+    [self.dbHelper executeUpdate:jUpdateTagName withArgumentsInArray:@[name ?: @"", tagId ?: @""]];
+}
+
+- (NSArray<JConversationTagInfo *> *)getConversationTagInfoList {
+    NSMutableArray <JConversationTagInfo *> *array = [NSMutableArray array];
+    [self.dbHelper executeQuery:jGetTagList
+           withArgumentsInArray:nil
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConversationTagInfo *info = [self tagInfoWith:resultSet];
+            [array addObject:info];
+        }
+    }];
+    return array;
+}
+
+- (NSArray<JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation {
+    NSMutableArray <JConversationTagInfo *> *array = [NSMutableArray array];
+    [self.dbHelper executeQuery:jGetTagsForConversation
+           withArgumentsInArray:@[@(conversation.conversationType), conversation.conversationId, conversation.subChannel]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JConversationTagInfo *info = [self tagInfoWith:resultSet];
+            [array addObject:info];
+        }
+    }];
+    return array;
+}
+
 + (NSString *)createConversationTagTable {
     return jCreateConversationTagTable;
+}
+
++ (NSString *)createTagInfoTable {
+    return jCreateTagInfoTable;
+}
+
++ (NSString *)createTagInfoIndex {
+    return jCreateTagInfoIndex;
 }
 
 + (nonnull NSString *)createConversationTagIndex {
@@ -727,6 +789,14 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     lastMessage.msgIndex = [rs longLongIntForColumn:jLastMessageIndex];
     info.lastMessage = lastMessage;
     info.hasUnread = [rs boolForColumn:jHasUnread];
+    return info;
+}
+
+- (JConversationTagInfo *)tagInfoWith:(JFMResultSet *)rs {
+    JConversationTagInfo *info = [JConversationTagInfo new];
+    info.tagId = [rs stringForColumn:@"tag_id"];
+    info.name = [rs stringForColumn:@"name"];
+    info.type = [rs intForColumn:@"type"];
     return info;
 }
 

@@ -9,6 +9,7 @@
 #import <JuggleIM/JConversationInfo.h>
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JGetConversationOptions.h>
+#import <JuggleIM/JConversationTagInfo.h>
 
 @protocol JConversationDelegate <NSObject>
 
@@ -29,6 +30,20 @@
 @end
 
 @protocol JConversationTagDelegate <NSObject>
+/// 标签创建
+/// - Parameter tagInfo: 会话标签
+- (void)tagDidCreate:(JConversationTagInfo *)tagInfo;
+
+/// 标签销毁
+/// - Parameter tagId: 标签 id
+- (void)tagDidDestroy:(NSString *)tagId;
+
+/// 标签名称变更
+/// - Parameters:
+///   - tagId: 标签 id
+///   - tagName: 标签名称
+- (void)tagNameDidUpdate:(NSString *)tagId
+                    name:(NSString *)tagName;
 
 - (void)conversationsDidAddToTag:(NSString *)tagId
                    conversations:(NSArray <JConversation *> *)conversationList;
@@ -104,6 +119,51 @@
 /// 根据会话类型获取消息未读总数
 /// - Parameter conversationTypes: 会话类型的数组，需要将 JConversationType 转为 NSNumber 并构建 NSArray
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
+
+/// 添加会话标签
+/// - Parameters:
+///   - tagId: 标签 id
+///   - name: 标签名称
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)createConversationTag:(NSString *)tagId
+                         name:(NSString *)name
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
+
+/// 删除会话标签
+/// - Parameters:
+///   - tagId: 标签 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)destroyConversationTag:(NSString *)tagId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
+/// 更新会话标签名称
+/// - Parameters:
+///   - name: 标签名称
+///   - tagId: 标签 id
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId
+                          success:(void (^)(void))successBlock
+                            error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取缓存的会话标签列表（缓存的数据不一定是最新版本，可用于第一时间渲染界面，优化用户体验）
+- (NSArray <JConversationTagInfo *> *)getCachedConversationTagList;
+
+/// 获取会话标签列表
+/// - Parameters:
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getConversationTagList:(void (^)(NSArray <JConversationTagInfo *> *tagInfoList))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
+/// 获取特定会话的所有标签
+/// - Parameter conversation: 会话标识
+- (NSArray <JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation;
 
 /// 根据标签 id 获取消息未读总数
 /// - Parameter tagId: 标签 id

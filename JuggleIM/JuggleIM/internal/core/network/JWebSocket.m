@@ -1239,6 +1239,42 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)createConversationTag:(NSString *)tagId
+                         name:(NSString *)name
+                       userId:(NSString *)userId
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"create conversation tag, tagId is %@", tagId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData createConversationTag:tagId
+                                                  name:name
+                                                userId:userId
+                                                 index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)destroyConversationTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"destroy conversation tag, tagId is %@", tagId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData destroyConversationTag:tagId
+                                                 userId:userId
+                                                  index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
 - (void)addConversationList:(NSArray<JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                      userId:(NSString *)userId

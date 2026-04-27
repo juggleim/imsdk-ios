@@ -40,6 +40,7 @@
 #import "JCallActiveCallMessage.h"
 #import "JStreamTextMessage.h"
 #import "JStreamAppendMessage.h"
+#import "JDeleteConversationTagMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -2411,6 +2412,7 @@
     [self registerContentType:[JCallActiveCallMessage class]];
     [self registerContentType:[JStreamTextMessage class]];
     [self registerContentType:[JStreamAppendMessage class]];
+    [self registerContentType:[JDeleteConversationTagMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2865,6 +2867,18 @@
         if ([obj.contentType isEqualToString:[JCallActiveCallMessage contentType]]) {
             [self.callManager handleActiveCallMessage:obj];
             return;
+        }
+        
+        // delete conversation tag
+        if ([obj.contentType isEqualToString:[JDeleteConversationTagMessage contentType]]) {
+            JDeleteConversationTagMessage *cmd = (JDeleteConversationTagMessage *)obj.content;
+            if (cmd.tagIdList.count == 0) {
+                return;
+            }
+            for (NSString *tagId in cmd.tagIdList) {
+                [self.core.dbManager destroyConversationTag:tagId];
+                [self.sendReceiveDelegate conversationTagDidDestroy:tagId];
+            }
         }
         
         // tag add conversation

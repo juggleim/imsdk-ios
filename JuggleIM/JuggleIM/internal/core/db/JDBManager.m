@@ -193,6 +193,26 @@
 }
 
 #pragma mark - conversation tag table
+- (void)createConversationTag:(JConversationTagInfo *)tagInfo {
+    [self.conversationDb createConversationTag:tagInfo];
+}
+
+- (void)destroyConversationTag:(NSString *)tagId {
+    [self.conversationDb destroyConversationTag:tagId];
+}
+
+- (void)updateConversationTagName:(NSString *)name forId:(NSString *)tagId {
+    [self.conversationDb updateConversationTagName:name forId:tagId];
+}
+
+- (NSArray<JConversationTagInfo *> *)getConversationTagInfoList {
+    return [self.conversationDb getConversationTagInfoList];
+}
+
+- (NSArray<JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation {
+    return [self.conversationDb getTagsForConversation:conversation];
+}
+
 - (void)updateConversationTag:(NSArray<JConcreteConversationInfo *> *)conversations {
     [self.conversationDb updateConversationTag:conversations];
 }
