@@ -192,7 +192,7 @@
     self.conversationDb.topConversationsOrderType = type;
 }
 
-#pragma mark - conversation tag table
+#pragma mark - conversation tag info table
 - (void)createConversationTag:(JConversationTagInfo *)tagInfo {
     [self.conversationDb createConversationTag:tagInfo];
 }
@@ -213,6 +213,11 @@
     return [self.conversationDb getTagsForConversation:conversation];
 }
 
+- (void)clearConversationTags {
+    return [self.conversationDb clearConversationTags];
+}
+
+#pragma mark - conversation tag table
 - (void)updateConversationTag:(NSArray<JConcreteConversationInfo *> *)conversations {
     [self.conversationDb updateConversationTag:conversations];
 }

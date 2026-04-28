@@ -127,6 +127,7 @@ NSString *const jRemoveConversationTagInfo = @"DELETE FROM conversation_tag_info
 NSString *const jUpdateTagName = @"UPDATE conversation_tag_info SET name = ? WHERE tag_id = ?";
 NSString *const jGetTagList = @"SELECT * FROM conversation_tag_info ORDER BY id";
 NSString *const jGetTagsForConversation = @"SELECT DISTINCT cti.* FROM conversation_tag ct INNER JOIN conversation_tag_info cti ON ct.tag_id = cti.tag_id WHERE ct.conversation_type = ? AND ct.conversation_id = ? AND ct.subchannel = ?";
+NSString *const jClearConversationTags = @"DELETE FROM conversation_tag_info";
 
 NSString *const jConversationType = @"conversation_type";
 NSString *const jConversationId = @"conversation_id";
@@ -694,6 +695,10 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
         }
     }];
     return array;
+}
+
+- (void)clearConversationTags {
+    [self.dbHelper executeUpdate:jClearConversationTags withArgumentsInArray:nil];
 }
 
 + (NSString *)createConversationTagTable {

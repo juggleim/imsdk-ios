@@ -444,7 +444,7 @@
     [self.core.webSocket destroyConversationTag:tagId
                                          userId:self.core.userId
                                         success:^{
-        JLogI(@"ONV-DestroyTag", @"success");
+        JLogI(@"CONV-DestroyTag", @"success");
         [self.core.dbManager destroyConversationTag:tagId];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -470,7 +470,44 @@
                             forId:(NSString *)tagId
                           success:(void (^)(void))successBlock
                             error:(void (^)(JErrorCode))errorBlock {
-    //TODO: tag
+    if (tagId.length == 0) {
+        JLogE(@"CONV-UpdateTag", @"invalid param");
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    if (!name) {
+        name = @"";
+    }
+    [self.core.webSocket updateConversationTagName:name
+                                             forId:tagId
+                                            userId:self.core.userId
+                                           success:^{
+        JLogI(@"CONV-UpdateTag", @"success");
+        [self.core.dbManager updateConversationTagName:name
+                                                 forId:tagId];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock();
+            }
+            [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj respondsToSelector:@selector(tagNameDidUpdate:name:)]) {
+                    [obj tagNameDidUpdate:tagId
+                                     name:name];
+                }
+            }];
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-UpdateTag", @"error code is %lu", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
 }
 
 - (NSArray<JConversationTagInfo *> *)getCachedConversationTagList {
@@ -479,7 +516,26 @@
 
 - (void)getConversationTagList:(void (^)(NSArray<JConversationTagInfo *> *))successBlock
                          error:(void (^)(JErrorCode))errorBlock {
-    //TODO: tag
+    [self.core.webSocket getConversationTagList:self.core.userId
+                                        success:^(NSArray<JConversationTagInfo *> * _Nonnull tagList) {
+        JLogI(@"CONV-FetchTag", @"success");
+        [self.core.dbManager clearConversationTags];
+        for (JConversationTagInfo *tagInfo in tagList) {
+            [self.core.dbManager createConversationTag:tagInfo];
+        }
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(tagList);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"CONV-FetchTag", @"error code is %lu", code);
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((int)code);
+            }
+        });
+    }];
 }
 
 - (NSArray<JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation {
@@ -849,6 +905,16 @@
 
 - (void)conversationDidSetUnread:(JConversation *)conversation {
     [self setDBUnreadAndNotice:conversation];
+}
+
+- (void)conversationTagDidCreate:(JConversationTagInfo *)tagInfo {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(tagDidCreate:)]) {
+                [obj tagDidCreate:tagInfo];
+            }
+        }];
+    });
 }
 
 - (void)conversationTagDidDestroy:(NSString *)tagId {

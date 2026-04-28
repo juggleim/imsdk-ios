@@ -374,6 +374,16 @@ inConversation:(JConversation *)conversation
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock;
 
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId
+                           userId:(NSString *)userId
+                          success:(void (^)(void))successBlock
+                            error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)getConversationTagList:(NSString *)userId
+                       success:(void (^)(NSArray <JConversationTagInfo *> *tagList))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)addConversationList:(NSArray <JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                      userId:(NSString *)userId

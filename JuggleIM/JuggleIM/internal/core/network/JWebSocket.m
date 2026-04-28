@@ -1275,6 +1275,43 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId
+                           userId:(NSString *)userId
+                          success:(void (^)(void))successBlock
+                            error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"update conversation tag name, tagId is %@", tagId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData createConversationTag:tagId
+                                                  name:name
+                                                userId:userId
+                                                 index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
+- (void)getConversationTagList:(NSString *)userId
+                       success:(void (^)(NSArray<JConversationTagInfo *> * _Nonnull))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get conversation tag list");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getConversationTagList:userId
+                                                  index:self.cmdIndex++];
+        JTemplateObj <NSArray <JConversationTagInfo *> *> *obj = [JTemplateObj new];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)addConversationList:(NSArray<JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                      userId:(NSString *)userId
@@ -1632,6 +1669,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGetFriendInfosAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetFriendInfosAck");
             [self handleGetFriendInfoAck:obj.templateAck];
+            break;
+        case JPBRcvTypeGetConversationTagListAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetConversationTagListAck");
+            [self handleGetConversationTagListAck:obj.templateAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -2101,6 +2142,18 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleGetFriendInfoAck:(JTemplateAck<JFriendInfo *> *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            templateObj.successBlock(ack.t);
+        }
+    }
+}
+
+- (void)handleGetConversationTagListAck:(JTemplateAck<NSArray <JConversationInfoAck *> *> *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTemplateObj class]]) {
         JTemplateObj *templateObj = (JTemplateObj *)obj;

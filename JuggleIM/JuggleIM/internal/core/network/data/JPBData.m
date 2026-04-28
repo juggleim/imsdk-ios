@@ -90,7 +90,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryMsgExSet @"qry_msg_exset"
 #define jTagAddConvers @"tag_add_convers"
 #define jTagDelConvers @"tag_del_convers"
+#define jCreateUserConverTags @"create_user_conver_tags"
 #define jDelUserConverTags @"del_user_conver_tags"
+#define jQryUserConverTags @"qry_user_conver_tags"
 #define jQryUserInfo @"qry_user_info"
 #define jQryGroupInfo @"qry_group_info"
 #define jQryFriendInfos @"qry_friend_infos"
@@ -1300,15 +1302,19 @@ typedef NS_ENUM(NSUInteger, JQos) {
                              name:(NSString *)name
                            userId:(NSString *)userId
                             index:(int)index {
-    TagConvers *tagConvers = [TagConvers new];
-    tagConvers.tag = tagId;
-    tagConvers.tagName = name;
+    ConverTag *converTag = [ConverTag new];
+    converTag.tag = tagId;
+    converTag.tagName = name;
+    UserConverTags *userConverTags = [UserConverTags new];
+    NSMutableArray *tags = [NSMutableArray array];
+    [tags addObject:converTag];
+    userConverTags.tagsArray = tags;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
-    body.topic = jTagAddConvers;
+    body.topic = jCreateUserConverTags;
     body.targetId = userId;
-    body.data_p = tagConvers.data;
+    body.data_p = userConverTags.data;
     
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(index)];
@@ -1332,6 +1338,20 @@ typedef NS_ENUM(NSUInteger, JQos) {
     body.topic = jDelUserConverTags;
     body.targetId = userId;
     body.data_p = userConverTags.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)getConversationTagList:(NSString *)userId
+                             index:(int)index {
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jQryUserConverTags;
+    body.targetId = userId;
     
     @synchronized (self) {
         [self.msgCmdDic setObject:body.topic forKey:@(index)];
@@ -2057,6 +2077,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeGetFriendInfosAck:
                     obj = [self getFriendInfosAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetConversationTagListAck:
+                    obj = [self getConversationTagListAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2347,7 +2370,15 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return friendInfo;
 }
 
--(UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
+- (JConversationTagInfo *)conversationTagInfoWith:(ConverTag *)converTag {
+    JConversationTagInfo *tagInfo = [JConversationTagInfo new];
+    tagInfo.tagId = converTag.tag;
+    tagInfo.name = converTag.tagName;
+    tagInfo.type = (NSUInteger)converTag.tagType;
+    return tagInfo;
+}
+
+- (UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
     if (userInfo == nil) {
         return nil;
     }
@@ -2855,6 +2886,28 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getConversationTagListAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    UserConverTags *userConverTags = [[UserConverTags alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get conversation tag list parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetConversationTagListAck;
+    NSMutableArray <JConversationTagInfo *> *tagList = [NSMutableArray array];
+    for (ConverTag *converTag in userConverTags.tagsArray) {
+        JConversationTagInfo *tagInfo = [self conversationTagInfoWith:converTag];
+        [tagList addObject:tagInfo];
+    }
+    JTemplateAck <NSArray <JConversationTagInfo *> *> *a = [JTemplateAck new];
+    [a encodeWithQueryAckMsgBody:body];
+    a.t = tagList;
+    obj.templateAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryMsgExtAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -3338,7 +3391,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
              jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck),
              jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck),
-             jDelUserConverTags:@(JPBRcvTypeSimpleQryAck)
+             jCreateUserConverTags:@(JPBRcvTypeSimpleQryAck),
+             jDelUserConverTags:@(JPBRcvTypeSimpleQryAck),
+             jQryUserConverTags:@(JPBRcvTypeGetConversationTagListAck)
     };
 }
 @end

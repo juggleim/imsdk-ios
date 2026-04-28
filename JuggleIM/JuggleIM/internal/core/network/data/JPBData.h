@@ -62,7 +62,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeGetConversationConfAck,
     JPBRcvTypeGetUserInfoAck,
     JPBRcvTypeGetGroupInfoAck,
-    JPBRcvTypeGetFriendInfosAck
+    JPBRcvTypeGetFriendInfosAck,
+    JPBRcvTypeGetConversationTagListAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -492,6 +493,9 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                         fromTag:(NSString *)tagId
                          userId:(NSString *)userId
                           index:(int)index;
+
+- (NSData *)getConversationTagList:(NSString *)userId
+                             index:(int)index;
 
 - (NSData *)fetchUserInfo:(NSString *)userId
                     index:(int)index;

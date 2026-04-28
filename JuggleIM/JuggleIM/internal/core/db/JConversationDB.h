@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
                             forId:(NSString *)tagId;
 - (NSArray <JConversationTagInfo *> *)getConversationTagInfoList;
 - (NSArray <JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation;
+- (void)clearConversationTags;
 
 + (NSString *)createConversationTagTable;
 + (NSString *)createConversationTagIndex;
