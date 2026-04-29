@@ -118,6 +118,8 @@
 		A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F1C2B233A15009B9588 /* JConversationDB.m */; };
 		A06A2F212B233A6C009B9588 /* JDBManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A06A2F1F2B233A6C009B9588 /* JDBManager.h */; };
 		A06A2F222B233A6C009B9588 /* JDBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A06A2F202B233A6C009B9588 /* JDBManager.m */; };
+		A06C79062FA1F58900ED472C /* JConversationTagInfoContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = A06C79042FA1F58900ED472C /* JConversationTagInfoContainer.h */; };
+		A06C79072FA1F58900ED472C /* JConversationTagInfoContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A06C79052FA1F58900ED472C /* JConversationTagInfoContainer.m */; };
 		A06CF0F62B96080B00B5CD89 /* JReadNtfMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06CF0F42B96080B00B5CD89 /* JReadNtfMessage.h */; };
 		A06CF0F72B96080B00B5CD89 /* JReadNtfMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A06CF0F52B96080B00B5CD89 /* JReadNtfMessage.m */; };
 		A06CF0FA2B988FC200B5CD89 /* JGroupReadNtfMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A06CF0F82B988FC200B5CD89 /* JGroupReadNtfMessage.h */; };
@@ -565,6 +567,8 @@
 		A06A2F1C2B233A15009B9588 /* JConversationDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationDB.m; sourceTree = "<group>"; };
 		A06A2F1F2B233A6C009B9588 /* JDBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDBManager.h; sourceTree = "<group>"; };
 		A06A2F202B233A6C009B9588 /* JDBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDBManager.m; sourceTree = "<group>"; };
+		A06C79042FA1F58900ED472C /* JConversationTagInfoContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConversationTagInfoContainer.h; sourceTree = "<group>"; };
+		A06C79052FA1F58900ED472C /* JConversationTagInfoContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JConversationTagInfoContainer.m; sourceTree = "<group>"; };
 		A06CF0F42B96080B00B5CD89 /* JReadNtfMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JReadNtfMessage.h; sourceTree = "<group>"; };
 		A06CF0F52B96080B00B5CD89 /* JReadNtfMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JReadNtfMessage.m; sourceTree = "<group>"; };
 		A06CF0F82B988FC200B5CD89 /* JGroupReadNtfMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupReadNtfMessage.h; sourceTree = "<group>"; };
@@ -1000,6 +1004,8 @@
 				A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */,
 				A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */,
 				A06516002C8092C400E3AEC1 /* JChatroomAttributeItem.m */,
+				A06C79042FA1F58900ED472C /* JConversationTagInfoContainer.h */,
+				A06C79052FA1F58900ED472C /* JConversationTagInfoContainer.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1764,6 +1770,7 @@
 				A096457B2BECCFE800290775 /* JMessageUploadProvider.h in Headers */,
 				A09645772BECCDF800290775 /* JMediaMessageContent.h in Headers */,
 				A08F4B582C7486D900791C52 /* JSimpleDataConverter.h in Headers */,
+				A06C79062FA1F58900ED472C /* JConversationTagInfoContainer.h in Headers */,
 				A0222A9A2BD25B7F00253311 /* JMessageMentionInfo.h in Headers */,
 				5B7C062C2C3E265600E91783 /* JUploaderProtocol.h in Headers */,
 				A0897C7D2BA9D4BC00041E33 /* JMergeMessage.h in Headers */,
@@ -2123,6 +2130,7 @@
 				A03AED952EB34FCC00C73302 /* JGroupMessageMemberReadDetail.m in Sources */,
 				A08AA2822B175646008B114C /* JConnectionManager.m in Sources */,
 				A08AA21E2B148BFF008B114C /* JIM.m in Sources */,
+				A06C79072FA1F58900ED472C /* JConversationTagInfoContainer.m in Sources */,
 				A0D3AD332B6DFD4300D170D7 /* JRecallInfoMessage.m in Sources */,
 				A06CF0FF2B989C7400B5CD89 /* JGroupMessageReadInfo.m in Sources */,
 				A08AA3842B19CB78008B114C /* GPBSourceContext.pbobjc.m in Sources */,

@@ -1242,7 +1242,7 @@ inConversation:(JConversation *)conversation
 - (void)createConversationTag:(NSString *)tagId
                          name:(NSString *)name
                        userId:(NSString *)userId
-                      success:(void (^)(void))successBlock
+                      success:(void (^)(long long timestamp))successBlock
                         error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"create conversation tag, tagId is %@", tagId);
@@ -1251,16 +1251,16 @@ inConversation:(JConversation *)conversation
                                                   name:name
                                                 userId:userId
                                                  index:self.cmdIndex++];
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)destroyConversationTag:(NSString *)tagId
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"destroy conversation tag, tagId is %@", tagId);
@@ -1268,17 +1268,17 @@ inConversation:(JConversation *)conversation
         NSData *d = [self.pbData destroyConversationTag:tagId
                                                  userId:userId
                                                   index:self.cmdIndex++];
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 
 - (void)updateConversationTagName:(NSString *)name
                             forId:(NSString *)tagId
                            userId:(NSString *)userId
-                          success:(void (^)(void))successBlock
+                          success:(void (^)(long long timestamp))successBlock
                             error:(void (^)(JErrorCodeInternal))errorBlock {
     dispatch_async(self.sendQueue, ^{
         JLogI(@"WS-Send", @"update conversation tag name, tagId is %@", tagId);
@@ -1287,10 +1287,10 @@ inConversation:(JConversation *)conversation
                                                   name:name
                                                 userId:userId
                                                  index:self.cmdIndex++];
-        [self simpleSendData:d
-                         key:key
-                     success:successBlock
-                       error:errorBlock];
+        [self timestampSendData:d
+                            key:key
+                        success:successBlock
+                          error:errorBlock];
     });
 }
 

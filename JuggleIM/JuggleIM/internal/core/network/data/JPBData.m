@@ -3391,8 +3391,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryUserInfo:@(JPBRcvTypeGetUserInfoAck),
              jQryGroupInfo:@(JPBRcvTypeGetGroupInfoAck),
              jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck),
-             jCreateUserConverTags:@(JPBRcvTypeSimpleQryAck),
-             jDelUserConverTags:@(JPBRcvTypeSimpleQryAck),
+             jCreateUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
+             jDelUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryUserConverTags:@(JPBRcvTypeGetConversationTagListAck)
     };
 }

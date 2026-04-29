@@ -366,18 +366,18 @@ inConversation:(JConversation *)conversation
 - (void)createConversationTag:(NSString *)tagId
                          name:(NSString *)name
                        userId:(NSString *)userId
-                      success:(void (^)(void))successBlock
+                      success:(void (^)(long long timestamp))successBlock
                         error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)destroyConversationTag:(NSString *)tagId
                         userId:(NSString *)userId
-                       success:(void (^)(void))successBlock
+                       success:(void (^)(long long timestamp))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)updateConversationTagName:(NSString *)name
                             forId:(NSString *)tagId
                            userId:(NSString *)userId
-                          success:(void (^)(void))successBlock
+                          success:(void (^)(long long timestamp))successBlock
                             error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)getConversationTagList:(NSString *)userId

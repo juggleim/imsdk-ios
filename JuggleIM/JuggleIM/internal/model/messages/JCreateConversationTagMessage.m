@@ -16,7 +16,7 @@
 - (void)decode:(NSData *)data {
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     NSArray *tagListJson = json[@"tags"];
-    NSMutableArray *tagList = [NSMutableArray array];
+    NSMutableArray <JConversationTagInfoContainer *> *tagList = [NSMutableArray array];
     if ([tagListJson isKindOfClass:[NSArray class]]) {
         for (NSDictionary *itemDic in tagListJson) {
             if (![itemDic isKindOfClass:[NSDictionary class]]) {
@@ -26,7 +26,13 @@
             tagInfo.tagId = itemDic[@"tag"] ?: @"";
             tagInfo.name = itemDic[@"tag_name"] ?: @"";
             tagInfo.type = JConversationTagTypeUser;
-            [tagList addObject:tagInfo];
+            JConversationTagInfoContainer *container = [JConversationTagInfoContainer new];
+            container.tagInfo = tagInfo;
+            id isAdd = itemDic[@"is_add"];
+            if ([isAdd isKindOfClass:[NSNumber class]]) {
+                container.isAdd = [(NSNumber *)isAdd boolValue];
+            }
+            [tagList addObject:container];
         }
     }
     self.tagList = tagList;

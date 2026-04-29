@@ -42,6 +42,7 @@
 #import "JStreamAppendMessage.h"
 #import "JDeleteConversationTagMessage.h"
 #import "JCreateConversationTagMessage.h"
+#import "JConversationTagInfoContainer.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -2877,9 +2878,14 @@
             if (cmd.tagList.count == 0) {
                 return;
             }
-            for (JConversationTagInfo *tagInfo in cmd.tagList) {
-                [self.core.dbManager createConversationTag:tagInfo];
-                [self.sendReceiveDelegate conversationTagDidCreate:tagInfo];
+            for (JConversationTagInfoContainer *tagInfo in cmd.tagList) {
+                [self.core.dbManager createConversationTag:tagInfo.tagInfo];
+                if (tagInfo.isAdd) {
+                    [self.sendReceiveDelegate conversationTagDidCreate:tagInfo.tagInfo];
+                } else {
+                    [self.sendReceiveDelegate conversationTagNameDidUpdate:tagInfo.tagInfo.tagId
+                                                                      name:tagInfo.tagInfo.name];
+                }
             }
         }
         

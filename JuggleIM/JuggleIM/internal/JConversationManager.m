@@ -402,8 +402,9 @@
     [self.core.webSocket createConversationTag:tagId
                                           name:name
                                         userId:self.core.userId
-                                       success:^{
+                                       success:^(long long timestamp) {
         JLogI(@"CONV-CreateTag", @"success");
+        [self.messageManager updateSendSyncTime:timestamp];
         JConversationTagInfo *tagInfo = [JConversationTagInfo new];
         tagInfo.tagId = tagId;
         tagInfo.name = name;
@@ -443,8 +444,9 @@
     }
     [self.core.webSocket destroyConversationTag:tagId
                                          userId:self.core.userId
-                                        success:^{
+                                        success:^(long long timestamp) {
         JLogI(@"CONV-DestroyTag", @"success");
+        [self.messageManager updateSendSyncTime:timestamp];
         [self.core.dbManager destroyConversationTag:tagId];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -485,8 +487,9 @@
     [self.core.webSocket updateConversationTagName:name
                                              forId:tagId
                                             userId:self.core.userId
-                                           success:^{
+                                           success:^(long long timestamp) {
         JLogI(@"CONV-UpdateTag", @"success");
+        [self.messageManager updateSendSyncTime:timestamp];
         [self.core.dbManager updateConversationTagName:name
                                                  forId:tagId];
         dispatch_async(self.core.delegateQueue, ^{
@@ -922,6 +925,18 @@
         [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj respondsToSelector:@selector(tagDidDestroy:)]) {
                 [obj tagDidDestroy:tagId];
+            }
+        }];
+    });
+}
+
+- (void)conversationTagNameDidUpdate:(NSString *)tagId
+                                name:(NSString *)name {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(tagNameDidUpdate:name:)]) {
+                [obj tagNameDidUpdate:tagId
+                                 name:name];
             }
         }];
     });

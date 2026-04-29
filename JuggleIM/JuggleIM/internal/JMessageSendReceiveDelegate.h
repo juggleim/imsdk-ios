@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
                         conversations:(NSArray<JConversation *> *)conversationList;
 - (void)conversationTagDidCreate:(JConversationTagInfo *)tagInfo;
 - (void)conversationTagDidDestroy:(NSString *)tagId;
+- (void)conversationTagNameDidUpdate:(NSString *)tagId
+                                name:(NSString *)name;
 @end
 
 NS_ASSUME_NONNULL_END
