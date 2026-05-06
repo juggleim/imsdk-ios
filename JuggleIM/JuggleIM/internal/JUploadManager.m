@@ -341,7 +341,7 @@
                                                    attributes:nil
                                                         error:nil];
     }
-    NSString *fileName = [NSString stringWithFormat:@"%lld.jpg", (long long)[NSDate date].timeIntervalSince1970];
+    NSString *fileName = [NSString stringWithFormat:@"%@.jpg", NSUUID.UUID.UUIDString];
     NSString *localPath = [mediaPath stringByAppendingPathComponent:fileName];
     [imgData writeToFile:localPath atomically:YES];
     return localPath;
