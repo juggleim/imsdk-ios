@@ -377,7 +377,7 @@
         [self event:JCallEventInviteDone userInfo:@{@"userIdList":userIdList}];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
-        [self event:JCallEventInviteFail userInfo:nil];
+        [self event:JCallEventInviteFail userInfo:@{@"code":@(code)}];
     }];
 }
 

@@ -57,6 +57,9 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //聊天室已销毁
     JErrorCodeInternalChatroomDestroyed = 14006,
     
+    //会话中有通话未结束
+    JErrorCodeInternalCallConversationBinded = 16011,
+    
     //禁止连接
     JErrorCodeInternalConnectForbidden = 21000,
     JErrorCodeInternalWebSocketFailure = 21001,

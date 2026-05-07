@@ -83,6 +83,7 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeChatroomNotExist = 14005,
     //聊天室已销毁
     JErrorCodeChatroomDestroyed = 14006,
+    
     //禁止连接
     JErrorCodeConnectForbidden = 21000,
     //非法参数

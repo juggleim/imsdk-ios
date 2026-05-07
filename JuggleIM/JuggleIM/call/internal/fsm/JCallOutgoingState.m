@@ -43,10 +43,13 @@
             break;
             
         case JCallEventInviteFail:
-            [self inviteFail];
+        {
+            NSNumber *errorCode = userInfo[@"code"];
+            [self inviteFail:errorCode];
             [self.callSessionImpl transitionToIdleState];
             result = YES;
             break;
+        }
             
         case JCallEventInviteTimeOut:
             [self inviteTimeOut];
@@ -96,9 +99,13 @@
     [self.callSessionImpl event:JCallEventInviteTimeOut userInfo:nil];
 }
 
-- (void)inviteFail {
+- (void)inviteFail:(NSNumber *)code {
     self.callSessionImpl.finishTime = [[NSDate date] timeIntervalSince1970] * 1000;
-    self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
+    if (code.intValue == JErrorCodeInternalCallConversationBinded) {
+        self.callSessionImpl.finishReason = JCallFinishReasonOtherSideBusy;
+    } else {
+        self.callSessionImpl.finishReason = JCallFinishReasonNetworkError;
+    }
 }
 
 - (void)inviteTimeOut {
