@@ -2506,6 +2506,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
             result.token = agoraAuth.token;
         }
     }
+    if (pbRoom.hasAttachedConver) {
+        ConverIndex *converIndex = pbRoom.attachedConver;
+        JConversation *conversation = [JConversation new];
+        conversation.conversationType = [self conversationTypeFromChannelType:converIndex.channelType];
+        conversation.conversationId = converIndex.targetId;
+        conversation.subChannel = pbRoom.attachedConver.subChannel;
+        result.conversation = conversation;
+    }
     return result;
 }
 

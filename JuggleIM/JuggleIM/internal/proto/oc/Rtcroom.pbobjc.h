@@ -328,6 +328,7 @@ typedef GPB_ENUM(RtcRoom_FieldNumber) {
   RtcRoom_FieldNumber_RtcMediaType = 5,
   RtcRoom_FieldNumber_Ext = 6,
   RtcRoom_FieldNumber_Auth = 7,
+  RtcRoom_FieldNumber_AttachedConver = 8,
   RtcRoom_FieldNumber_MembersArray = 51,
 };
 
@@ -350,6 +351,10 @@ GPB_FINAL @interface RtcRoom : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) RtcAuth *auth;
 /** Test to see if @c auth has been set. */
 @property(nonatomic, readwrite) BOOL hasAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) ConverIndex *attachedConver;
+/** Test to see if @c attachedConver has been set. */
+@property(nonatomic, readwrite) BOOL hasAttachedConver;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */

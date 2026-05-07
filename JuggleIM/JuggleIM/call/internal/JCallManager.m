@@ -233,6 +233,7 @@
                             [callSession addMember:member];
                         }
                     }
+                    callSession.conversation = singleRoom.conversation;
                     [self.userInfoManager insertUserInfoList:userDic.allValues];
                     [self initCallSession:callSession
                            withCallStatus:callStatus];
@@ -305,6 +306,7 @@
                     [callSession addMember:member];
                 }
             }
+            callSession.conversation = room.conversation;
             [self addCallSession:callSession];
             [callSession event:JCallEventReceiveInvite userInfo:nil];
         }

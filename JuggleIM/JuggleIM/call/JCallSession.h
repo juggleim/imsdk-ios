@@ -11,6 +11,7 @@
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JCallMember.h>
 #import <JuggleIM/JCallVideoDenoiseParams.h>
+#import <JuggleIM/JConversation.h>
 
 @protocol JCallSessionDelegate <NSObject>
 
@@ -89,6 +90,8 @@
 @property (nonatomic, copy, readonly) NSArray <JCallMember *> *members;
 /// 当前用户
 @property (nonatomic, strong, readonly) JCallMember *currentCallMember;
+/// 所属会话
+@property (nonatomic, strong) JConversation *conversation;
 /// 扩展字段
 @property (nonatomic, copy) NSString *extra;
 

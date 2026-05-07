@@ -672,6 +672,7 @@
 @synthesize members = _members;
 @synthesize startTime;
 @synthesize mediaType;
+@synthesize conversation;
 @synthesize extra;
 
 @end

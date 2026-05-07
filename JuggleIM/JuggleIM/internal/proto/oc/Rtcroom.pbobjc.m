@@ -615,6 +615,7 @@ void SetConverIndex_ChannelType_RawValue(ConverIndex *message, int32_t value) {
 @dynamic rtcMediaType;
 @dynamic ext;
 @dynamic hasAuth, auth;
+@dynamic hasAttachedConver, attachedConver;
 @dynamic membersArray, membersArray_Count;
 
 typedef struct RtcRoom__storage_ {
@@ -626,6 +627,7 @@ typedef struct RtcRoom__storage_ {
   UserInfo *owner;
   NSString *ext;
   RtcAuth *auth;
+  ConverIndex *attachedConver;
   NSMutableArray *membersArray;
 } RtcRoom__storage_;
 
@@ -700,6 +702,15 @@ typedef struct RtcRoom__storage_ {
         .dataType = GPBDataTypeMessage,
       },
       {
+        .name = "attachedConver",
+        .dataTypeSpecific.clazz = GPBObjCClass(ConverIndex),
+        .number = RtcRoom_FieldNumber_AttachedConver,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(RtcRoom__storage_, attachedConver),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+      {
         .name = "membersArray",
         .dataTypeSpecific.clazz = GPBObjCClass(RtcMember),
         .number = RtcRoom_FieldNumber_MembersArray,
@@ -719,7 +730,7 @@ typedef struct RtcRoom__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\004\001\010\000\002\006\000\004\n\000\005\014\000";
+        "\005\001\010\000\002\006\000\004\n\000\005\014\000\010\016\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
