@@ -226,6 +226,7 @@
                     JCallSessionImpl *callSession = [self createCallSessionImpl:singleRoom.roomId isMultiCall:singleRoom.isMultiCall];
                     callSession.owner = singleRoom.owner.userId;
                     callSession.extra = singleRoom.extra;
+                    callSession.mediaType = singleRoom.mediaType;
                     NSMutableDictionary *userDic = [NSMutableDictionary dictionary];
                     for (JCallMember *member in singleRoom.members) {
                         [userDic setObject:member.userInfo forKey:member.userInfo.userId];
