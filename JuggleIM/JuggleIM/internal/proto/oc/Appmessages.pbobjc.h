@@ -62,6 +62,7 @@ CF_EXTERN_C_BEGIN
 @class UndisturbConverItem;
 @class UserInfo;
 @class UserOnlineItem;
+@class UserStatus;
 @class UserUndisturbItem;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -154,6 +155,7 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_GroupCast = 5,
   ChannelType_BroadCast = 6,
   ChannelType_PublicService = 7,
+  ChannelType_SubStatus = 8,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
@@ -3860,6 +3862,37 @@ GPB_FINAL @interface FavoriteMsg : GPBMessage
 @property(nonatomic, readwrite) BOOL hasMsg;
 
 @property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
+#pragma mark - UserStatusList
+
+typedef GPB_ENUM(UserStatusList_FieldNumber) {
+  UserStatusList_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface UserStatusList : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<UserStatus*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - UserStatus
+
+typedef GPB_ENUM(UserStatus_FieldNumber) {
+  UserStatus_FieldNumber_UserId = 1,
+  UserStatus_FieldNumber_OnlineStatus = 2,
+};
+
+GPB_FINAL @interface UserStatus : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserOnlineItem *onlineStatus;
+/** Test to see if @c onlineStatus has been set. */
+@property(nonatomic, readwrite) BOOL hasOnlineStatus;
 
 @end
 

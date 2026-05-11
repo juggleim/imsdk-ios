@@ -1407,6 +1407,26 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)getUserStatus:(NSArray<NSString *> *)userIdList
+        currentUserId:(NSString *)currentUserId
+              success:(void (^)(NSArray<JUserStatus *> * _Nonnull))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get user status, count is %ld", userIdList.count);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getUserStatus:userIdList
+                                 currentUserId:currentUserId
+                                         index:self.cmdIndex++];
+        JTemplateObj <NSArray <JUserStatus *> *> *obj = [JTemplateObj new];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1673,6 +1693,10 @@ inConversation:(JConversation *)conversation
         case JPBRcvTypeGetConversationTagListAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetConversationTagListAck");
             [self handleGetConversationTagListAck:obj.templateAck];
+            break;
+        case JPBRcvTypeGetUserStatusAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeGetUserStatusAck");
+            [self handleTemplateAck:obj.templateAck];
             break;
         default:
             JLogI(@"WS-Receive", @"default, type is %lu", (unsigned long)obj.rcvType);
@@ -2154,6 +2178,18 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleGetConversationTagListAck:(JTemplateAck<NSArray <JConversationInfoAck *> *> *)ack {
+    JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
+    if ([obj isKindOfClass:[JTemplateObj class]]) {
+        JTemplateObj *templateObj = (JTemplateObj *)obj;
+        if (ack.code != 0) {
+            templateObj.errorBlock(ack.code);
+        } else {
+            templateObj.successBlock(ack.t);
+        }
+    }
+}
+
+- (void)handleTemplateAck:(JTemplateAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JTemplateObj class]]) {
         JTemplateObj *templateObj = (JTemplateObj *)obj;

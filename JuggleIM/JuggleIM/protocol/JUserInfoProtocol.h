@@ -10,6 +10,13 @@
 #import <JuggleIM/JGroupMember.h>
 #import <JuggleIM/JFriendInfo.h>
 #import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JUserStatus.h>
+
+@protocol JUserStatusDelegate <NSObject>
+
+- (void)userStatusDidChange:(JUserStatus *)userStatus;
+
+@end
 
 @protocol JUserInfoProtocol <NSObject>
 
@@ -66,4 +73,15 @@
 - (void)fetchFriendInfo:(NSString *)userId
                 success:(void (^)(JFriendInfo *friendInfo))successBlock
                   error:(void (^)(JErrorCode code))errorBlock;
+
+/// 查询用户状态
+/// - Parameters:
+///   - userIdList: 需要获取的用户 id 列表
+///   - successBlock: 成功回调
+///   - errorBlock: 失败回调
+- (void)getUserStatus:(NSArray <NSString *>*)userIdList
+              success:(void (^)(NSArray <JUserStatus *> *statusList))successBlock
+                error:(void (^)(JErrorCode code))errorBlock;
+
+- (void)addUserStatusDelegate:(id<JUserStatusDelegate>)delegate;
 @end

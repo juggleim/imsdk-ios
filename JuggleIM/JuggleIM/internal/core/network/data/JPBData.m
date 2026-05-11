@@ -96,6 +96,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryUserInfo @"qry_user_info"
 #define jQryGroupInfo @"qry_group_info"
 #define jQryFriendInfos @"qry_friend_infos"
+#define jQryUserStatus @"qry_user_status"
 
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
@@ -1481,6 +1482,25 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getUserStatus:(NSArray<NSString *> *)userIdList
+            currentUserId:(NSString *)currentUserId
+                    index:(int)index {
+    UserIdsReq *req = [UserIdsReq new];
+    req.userIdsArray = [NSMutableArray arrayWithArray:userIdList];
+    
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jQryUserStatus;
+    body.targetId = currentUserId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -2080,6 +2100,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeGetConversationTagListAck:
                     obj = [self getConversationTagListAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeGetUserStatusAck:
+                    obj = [self getUserStatusAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2376,6 +2399,17 @@ typedef NS_ENUM(NSUInteger, JQos) {
     tagInfo.name = converTag.tagName;
     tagInfo.type = (NSUInteger)converTag.tagType;
     return tagInfo;
+}
+
+- (JUserStatus *)userStatusWith:(UserStatus *)pbUserStatus {
+    JUserStatus *status = [JUserStatus new];
+    status.userId = pbUserStatus.userId;
+    if (pbUserStatus.onlineStatus.isOnline) {
+        status.statusType = JUserStatusTypeOnline;
+    } else {
+        status.statusType = JUserStatusTypeOffline;
+    }
+    return status;
 }
 
 - (UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
@@ -2916,6 +2950,28 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)getUserStatusAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    UserStatusList *userStatusList = [[UserStatusList alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"get user status parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeGetUserStatusAck;
+    NSMutableArray <JUserStatus *> *statusList = [NSMutableArray array];
+    for (UserStatus *pbUserStatus in userStatusList.itemsArray) {
+        JUserStatus *userStatus = [self userStatusWith:pbUserStatus];
+        [statusList addObject:userStatus];
+    }
+    JTemplateAck <NSArray <JUserStatus *> *> *a = [JTemplateAck new];
+    [a encodeWithQueryAckMsgBody:body];
+    a.t = statusList;
+    obj.templateAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryMsgExtAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -3328,6 +3384,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
             result = JConversationTypePublicService;
             break;
             
+        case ChannelType_SubStatus:
+            result = JConversationTypeSubStatus;
+            break;
+            
         default:
             break;
     }
@@ -3401,7 +3461,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jQryFriendInfos:@(JPBRcvTypeGetFriendInfosAck),
              jCreateUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
-             jQryUserConverTags:@(JPBRcvTypeGetConversationTagListAck)
+             jQryUserConverTags:@(JPBRcvTypeGetConversationTagListAck),
+             jQryUserStatus:@(JPBRcvTypeGetUserStatusAck)
     };
 }
 @end

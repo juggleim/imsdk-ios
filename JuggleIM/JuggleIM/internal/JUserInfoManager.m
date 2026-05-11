@@ -11,6 +11,7 @@
 @interface JUserInfoManager ()
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) JUserInfoCache *cache;
+@property (nonatomic, strong) NSHashTable <id<JUserStatusDelegate>> *userStatusDelegates;
 @end
 
 @implementation JUserInfoManager
@@ -115,6 +116,16 @@
     [self.core.dbManager insertFriendInfos:friendInfoList];
 }
 
+- (void)userStatusChange:(JUserStatus *)userStatus {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.userStatusDelegates.allObjects enumerateObjectsUsingBlock:^(id<JUserStatusDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(userStatusDidChange:)]) {
+                [obj userStatusDidChange:userStatus];
+            }
+        }];
+    });
+}
+
 - (void)fetchUserInfo:(NSString *)userId
               success:(void (^)(JUserInfo *))successBlock
                 error:(void (^)(JErrorCode))errorBlock {
@@ -210,5 +221,51 @@
         });
     }];
 }
+
+- (void)getUserStatus:(NSArray<NSString *> *)userIdList
+              success:(void (^)(NSArray<JUserStatus *> *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (userIdList.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket getUserStatus:userIdList
+                         currentUserId:self.core.userId
+                               success:^(NSArray<JUserStatus *> * _Nonnull statusList) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(statusList);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)addUserStatusDelegate:(id<JUserStatusDelegate>)delegate { 
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.userStatusDelegates addObject:delegate];
+    });
+}
+
+#pragma mark - getter
+- (NSHashTable<id<JUserStatusDelegate>> *)userStatusDelegates {
+    if (!_userStatusDelegates) {
+        _userStatusDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _userStatusDelegates;
+}
+
 
 @end

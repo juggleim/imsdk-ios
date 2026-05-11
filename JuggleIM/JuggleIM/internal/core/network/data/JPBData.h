@@ -63,7 +63,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeGetUserInfoAck,
     JPBRcvTypeGetGroupInfoAck,
     JPBRcvTypeGetFriendInfosAck,
-    JPBRcvTypeGetConversationTagListAck
+    JPBRcvTypeGetConversationTagListAck,
+    JPBRcvTypeGetUserStatusAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -506,6 +507,10 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)fetchFriendInfo:(NSString *)userId
               currentUserId:(NSString *)currentUserId
                       index:(int)index;
+
+- (NSData *)getUserStatus:(NSArray<NSString *> *)userIdList
+            currentUserId:(NSString *)currentUserId
+                    index:(int)index;
 
 - (NSData *)pingData;
 

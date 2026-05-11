@@ -80,3 +80,4 @@ FOUNDATION_EXPORT const unsigned char JuggleIMVersionString[];
 #import <JuggleIM/JFriendInfo.h>
 #import <JuggleIM/JStreamTextMessage.h>
 #import <JuggleIM/JConversationTagInfo.h>
+#import <JuggleIM/JUserStatus.h>

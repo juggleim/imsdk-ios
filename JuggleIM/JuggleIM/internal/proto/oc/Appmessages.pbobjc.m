@@ -163,6 +163,8 @@ GPBObjCClassDeclaration(UserOnlineStatusReq);
 GPBObjCClassDeclaration(UserOnlineStatusResp);
 GPBObjCClassDeclaration(UserPushStatus);
 GPBObjCClassDeclaration(UserRegResp);
+GPBObjCClassDeclaration(UserStatus);
+GPBObjCClassDeclaration(UserStatusList);
 GPBObjCClassDeclaration(UserUndisturb);
 GPBObjCClassDeclaration(UserUndisturbItem);
 
@@ -325,7 +327,8 @@ GPBEnumDescriptor *ChannelType_EnumDescriptor(void) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static const char *valueNames =
         "Unknown\000Private\000Group\000Chatroom\000System\000Gr"
-        "oupCast\000BroadCast\000PublicService\000";
+        "oupCast\000BroadCast\000PublicService\000SubStatu"
+        "s\000";
     static const int32_t values[] = {
         ChannelType_Unknown,
         ChannelType_Private,
@@ -335,8 +338,9 @@ GPBEnumDescriptor *ChannelType_EnumDescriptor(void) {
         ChannelType_GroupCast,
         ChannelType_BroadCast,
         ChannelType_PublicService,
+        ChannelType_SubStatus,
     };
-    static const char *extraTextFormatInfo = "\010\000\007\000\001\007\000\002\005\000\003\010\000\004\006\000\005\t\000\006\t\000\007\r\000";
+    static const char *extraTextFormatInfo = "\t\000\007\000\001\007\000\002\005\000\003\010\000\004\006\000\005\t\000\006\t\000\007\r\000\010\t\000";
     GPBEnumDescriptor *worker =
         [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(ChannelType)
                                        valueNames:valueNames
@@ -363,6 +367,7 @@ BOOL ChannelType_IsValidValue(int32_t value__) {
     case ChannelType_GroupCast:
     case ChannelType_BroadCast:
     case ChannelType_PublicService:
+    case ChannelType_SubStatus:
       return YES;
     default:
       return NO;
@@ -11823,6 +11828,114 @@ typedef struct FavoriteMsg__storage_ {
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
         "\001\002\013\000";
+      [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+    #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - UserStatusList
+
+@implementation UserStatusList
+
+@dynamic itemsArray, itemsArray_Count;
+
+typedef struct UserStatusList__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *itemsArray;
+} UserStatusList__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "itemsArray",
+        .dataTypeSpecific.clazz = GPBObjCClass(UserStatus),
+        .number = UserStatusList_FieldNumber_ItemsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(UserStatusList__storage_, itemsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(UserStatusList)
+                                   messageName:@"UserStatusList"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(UserStatusList__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if defined(DEBUG) && DEBUG
+      NSAssert(descriptor == nil, @"Startup recursed!");
+    #endif  // DEBUG
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - UserStatus
+
+@implementation UserStatus
+
+@dynamic userId;
+@dynamic hasOnlineStatus, onlineStatus;
+
+typedef struct UserStatus__storage_ {
+  uint32_t _has_storage_[1];
+  NSString *userId;
+  UserOnlineItem *onlineStatus;
+} UserStatus__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "userId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = UserStatus_FieldNumber_UserId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(UserStatus__storage_, userId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "onlineStatus",
+        .dataTypeSpecific.clazz = GPBObjCClass(UserOnlineItem),
+        .number = UserStatus_FieldNumber_OnlineStatus,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(UserStatus__storage_, onlineStatus),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:GPBObjCClass(UserStatus)
+                                   messageName:@"UserStatus"
+                               fileDescription:&AppmessagesRoot_FileDescription
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(UserStatus__storage_)
+                                         flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
+    #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+      static const char *extraTextFormatInfo =
+        "\002\001\006\000\002\014\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

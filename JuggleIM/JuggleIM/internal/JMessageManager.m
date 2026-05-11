@@ -43,6 +43,7 @@
 #import "JDeleteConversationTagMessage.h"
 #import "JCreateConversationTagMessage.h"
 #import "JConversationTagInfoContainer.h"
+#import "JUserStatusChangeMessage.h"
 
 @interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
 {
@@ -2416,6 +2417,7 @@
     [self registerContentType:[JStreamAppendMessage class]];
     [self registerContentType:[JDeleteConversationTagMessage class]];
     [self registerContentType:[JCreateConversationTagMessage class]];
+    [self registerContentType:[JUserStatusChangeMessage class]];
 }
 
 - (void)loopBroadcastMessage:(JMessageContent *)content
@@ -2858,6 +2860,20 @@
             sendTime = obj.timestamp;
         } else if (obj.direction == JMessageDirectionReceive && !isStatusMessage) {
             receiveTime = obj.timestamp;
+        }
+        
+        // user status change
+        if ([obj.contentType isEqualToString:[JUserStatusChangeMessage contentType]]) {
+            JUserStatus *userStatus = [JUserStatus new];
+            userStatus.userId = obj.conversation.conversationId;
+            JUserStatusChangeMessage *cmd = (JUserStatusChangeMessage *)obj.content;
+            if (cmd.isOnline) {
+                userStatus.statusType = JUserStatusTypeOnline;
+            } else {
+                userStatus.statusType = JUserStatusTypeOffline;
+            }
+            [self.userInfoManager userStatusChange:userStatus];
+            return;
         }
         
         // stream append
