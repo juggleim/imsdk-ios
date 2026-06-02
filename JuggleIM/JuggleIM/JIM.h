@@ -76,7 +76,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// 朋友圈管理类
 @property (nonatomic, strong) id<JMomentProtocol> momentManager;
 
+/// 按照起止时间生成日志 zip 文件，返回值为本地路径
+/// - Parameters:
+///   - startTime: 开始时间，单位毫秒
+///   - endTime: 结束时间，单位毫秒
+- (NSString *)generateZipFile:(long long)startTime
+                      endTime:(long long)endTime;
 
+/// 删除生成的日志 zip 文件
+/// - Parameter fileName: 文件本地路径
+- (void)removeZipFile:(NSString *)fileName;
 @end
 
 NS_ASSUME_NONNULL_END

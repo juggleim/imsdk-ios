@@ -79,4 +79,13 @@ static JLogger *_instance;
         });
     }
 }
+
+- (NSString *)generateZipFile:(long long)startTime endTime:(long long)endTime {
+    return [self.fileWriter generateZipFile:startTime endTime:endTime];
+}
+
+- (void)removeZipFile:(NSString *)fileName {
+    [self.fileWriter removeZipFile:fileName];
+}
+
 @end

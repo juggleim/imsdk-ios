@@ -36,6 +36,11 @@ NS_ASSUME_NONNULL_BEGIN
           tag:(NSString *)tag
          keys:(NSString *)keys, ... NS_FORMAT_FUNCTION(3, 4);
 
+- (NSString *)generateZipFile:(long long)startTime
+                      endTime:(long long)endTime;
+
+- (void)removeZipFile:(NSString *)fileName;
+
 @end
 
 NS_ASSUME_NONNULL_END

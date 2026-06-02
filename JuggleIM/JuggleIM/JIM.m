@@ -98,4 +98,12 @@ static JIM *_instance;
     return [self.core getTimeDifference];
 }
 
+- (NSString *)generateZipFile:(long long)startTime endTime:(long long)endTime {
+    return [JLogger.shared generateZipFile:startTime endTime:endTime];
+}
+
+- (void)removeZipFile:(NSString *)fileName {
+    [JLogger.shared removeZipFile:fileName];
+}
+
 @end
