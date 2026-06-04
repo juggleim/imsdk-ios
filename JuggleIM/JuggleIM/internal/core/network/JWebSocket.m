@@ -77,7 +77,9 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
         signKey:(NSString *)signKey
         headers:(nonnull NSDictionary<NSString *,NSString *> *)headers {
     dispatch_async(self.sendQueue, ^{
-        JLogI(@"WS-Connect", @"appkey is %@, token is %@", appKey, token);
+        NSString *starAppKey = [JUtility maskAppKey:appKey];
+        NSString *starToken = [JUtility maskToken:token];
+        JLogI(@"WS-Connect", @"appkey is %@, token is %@", starAppKey, starToken);
         self.appKey = appKey;
         self.token = token;
         self.pushToken = pushToken;

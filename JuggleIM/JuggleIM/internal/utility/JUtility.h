@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)getUUID;
 + (NSString *)getSystemLanguage;
 + (NSString *)getClientIP;
++ (NSString *)maskAppKey:(NSString *)string;
++ (NSString *)maskToken:(NSString *)string;
 
 @end
 

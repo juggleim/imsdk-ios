@@ -435,4 +435,46 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     freeifaddrs(interfaces);
     return localIP;
 }
+
++ (NSString *)maskAppKey:(NSString *)string {
+    if (string.length == 0) {
+        return @"";
+    }
+    NSMutableString *result = [NSMutableString stringWithString:string];
+
+    if (string.length > 3) {
+        [result replaceCharactersInRange:NSMakeRange(0, 4) withString:@"****"];
+    }
+
+    if (string.length > 11) {
+        [result replaceCharactersInRange:NSMakeRange(8, 4) withString:@"****"];
+    }
+
+    return result;
+}
+
++ (NSString *)maskToken:(NSString *)string {
+    if (!string || string.length == 0) {
+        return @"";
+    }
+    
+    NSInteger length = string.length;
+    NSMutableString *result = [NSMutableString stringWithString:string];
+    
+    for (NSInteger i = 0; i < length; i++) {
+        BOOL needKeep = NO;
+        
+        if (i >= length - 10) {
+            needKeep = YES;
+        } else if (i >= length - 30 && i <= length - 21) {
+            needKeep = YES;
+        }
+        
+        if (!needKeep) {
+            [result replaceCharactersInRange:NSMakeRange(i, 1) withString:@"*"];
+        }
+    }
+    
+    return result;
+}
 @end

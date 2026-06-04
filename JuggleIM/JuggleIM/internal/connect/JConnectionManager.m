@@ -21,6 +21,7 @@
 #import "JConnEventUtil.h"
 #import "JConnEvent.h"
 #import "JConnSuperState.h"
+#import "JUtility.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -72,7 +73,7 @@
 }
 
 - (void)connectWithToken:(NSString *)token {
-    JLogI(@"CON-Connect", @"token is %@", token);
+    JLogI(@"CON-Connect", @"token is %@", [JUtility maskToken:token]);
     if (token.length == 0) {
         token = @"";
     }

@@ -56,7 +56,7 @@ static JIM *_instance;
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
-    JLogI(@"J-Init", @"appKey is %@", appKey);
+    JLogI(@"J-Init", @"appKey is %@", [JUtility maskAppKey:appKey]);
     if ([self.core.appKey isEqualToString:appKey]) {
         return;
     }
