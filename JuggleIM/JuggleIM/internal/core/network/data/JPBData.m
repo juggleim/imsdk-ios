@@ -387,8 +387,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
         suite.nonce = aesNonce;
         suite.tag = aesTag;
         
-        NSLog(@"E2EE debug, send aesKey is %@, aesNonce is %@, aesTag is %@", aesKey, aesNonce, aesTag);
-        
         E2ECiphers *ciphers = [E2ECiphers new];
         NSMutableArray <E2ECipher *> *cipherArray = [NSMutableArray array];
         for (JE2EEInfo *e2eeInfo in e2eeInfoList) {
@@ -413,7 +411,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
             [cipherData appendData:cipherTag];
             cipher.cipher = cipherData;
             [cipherArray addObject:cipher];
-            NSLog(@"E2EE debug, send sharedSecret is %@, hkdf is %@, cipherNonce is %@, cipherTag is %@, encryptKey is %@", sharedSecret, hkdf, cipherNonce, cipherTag, encryptKey);
         }
         ciphers.itemsArray = cipherArray;
         suite.ciphers = ciphers;
@@ -2430,7 +2427,6 @@ typedef NS_ENUM(NSUInteger, JQos) {
                                                          nonce:nonce
                                    additionalAuthenticatedData:nil
                                                            tag:tag];
-            NSLog(@"E2EE debug, receive senderPubKey is %@, nonce is %@, tag is %@, priKey is %@, cipherNonce is %@, encryptedCEK is %@, cipherTag is %@, sharedSecret is %@, hkdf is %@, aesKey is %@", senderPubKey, nonce, tag, priKey, cipherNonce, encryptedCEK, cipherTag, sharedSecret, hkdf, aesKey);
         }
     }
     

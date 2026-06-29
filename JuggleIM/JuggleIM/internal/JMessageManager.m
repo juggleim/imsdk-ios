@@ -3469,7 +3469,6 @@
     }
     NSData *pubKey = [self.core.dbManager getE2EEPubKey];
     NSData *priKey = [self.core.dbManager getE2EEPriKey];
-    NSLog(@"E2EE debug, pubKey is %@, priKey is %@", pubKey, priKey);
     if (pubKey && priKey) {
         self.pubKey = pubKey;
         self.priKey = priKey;
