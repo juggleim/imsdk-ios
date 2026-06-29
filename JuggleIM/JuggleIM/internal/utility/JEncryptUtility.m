@@ -184,9 +184,11 @@ static void JX25519(uint8_t out[32], const uint8_t scalar[32], const uint8_t poi
         return @"";
     }
     
-    // 1. 按 deviceId 字母升序排序
+    // 1. 按 userId + deviceId 字母升序排序
     NSArray<JE2EEInfo *> *sortedList = [infoList sortedArrayUsingComparator:^NSComparisonResult(JE2EEInfo *obj1, JE2EEInfo *obj2) {
-        return [obj1.deviceId compare:obj2.deviceId];
+        NSString *str1 = [obj1.userId stringByAppendingString:obj1.deviceId];
+        NSString *str2 = [obj2.userId stringByAppendingString:obj2.deviceId];
+        return [str1 compare:str2];
     }];
     
     // 2. 遍历取出 pubKey 依次拼接

@@ -63,6 +63,8 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeRemoteMessageNotExist = 12011,
     //收藏重复消息
     JErrorCodeAddDuplicateFavoriteMessage = 12012,
+    //密聊 hash 不匹配
+    JErrorCodePubKeysHashMismatch = 12013,
     
     //群组不存在
     JErrorCodeGroupNotExist = 13001,

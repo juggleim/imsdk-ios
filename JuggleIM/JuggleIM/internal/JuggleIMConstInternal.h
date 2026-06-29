@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     //收藏重复消息
     JErrorCodeInternalAddDuplicateFavoriteMessage = 12012,
     //密聊 hash 不匹配（需要重新去服务端更新公钥列表）
-    JErrorCodeInternalPubKeysHashMismatch = 12013,//TODO: e2ee 换错误码
+    JErrorCodeInternalPubKeysHashMismatch = 12013,
     
     //群组不存在
     JErrorCodeInternalGroupNotExist = 13001,
