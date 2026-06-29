@@ -11,6 +11,7 @@
 #import "JGroupMessageReadInfo.h"
 #import "JSearchConversationsResult.h"
 #import "JGetConversationOptions.h"
+#import "JE2EEInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,14 +22,18 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)closeIMDB;
 - (BOOL)isOpen;
 
-#pragma mark - sync table
+#pragma mark - profile table
 - (long long)getConversationSyncTime;
 - (long long)getMessageSendSyncTime;
 - (long long)getMessageReceiveSyncTime;
+- (NSData *)getE2EEPubKey;
+- (NSData *)getE2EEPriKey;
 
 - (void)setConversationSyncTime:(long long)time;
 - (void)setMessageSendSyncTime:(long long)time;
 - (void)setMessageReceiveSyncTime:(long long)time;
+- (void)setE2EEWithPubKey:(NSData *)pubKey
+                   priKey:(NSData *)priKey;
 
 #pragma mark - conversation table
 - (void)insertConversations:(NSArray<JConcreteConversationInfo *> *)conversations
@@ -173,6 +178,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - moment table
 - (void)insertMoments:(NSArray <JMoment *> *)moments;
 - (void)removeMoment:(NSString *)momentId;
-- (NSArray<JMoment *> *)getCachedMomentList:(JGetMomentOption *)option;
+- (NSArray <JMoment *> *)getCachedMomentList:(JGetMomentOption *)option;
+
+#pragma mark - E2EE table
+- (NSArray <JE2EEInfo *> *)getE2EEInfo:(NSString *)userId;
+- (void)updateE2EEInfo:(NSArray <JE2EEInfo *> *)infoList;
 @end
 NS_ASSUME_NONNULL_END

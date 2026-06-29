@@ -43,7 +43,12 @@ typedef NS_ENUM(NSUInteger, JConversationType) {
     /*!
      状态变更
      */
-    JConversationTypeSubStatus = 8
+    JConversationTypeSubStatus = 8,
+    
+    /*!
+     端对端加密单聊
+     */
+    JConversationTypePrivateE2EE = 11
 };
 
 

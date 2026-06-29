@@ -35,6 +35,9 @@ CF_EXTERN_C_BEGIN
 @class ConverTag;
 @class Conversation;
 @class DownMsg;
+@class E2ECipher;
+@class E2ECiphers;
+@class E2ESuite;
 @class FavoriteMsg;
 @class FavoriteMsgIdItem;
 @class FriendInfo;
@@ -52,6 +55,8 @@ CF_EXTERN_C_BEGIN
 @class MsgExtItem;
 @class MsgExtItems;
 @class PreSignResp;
+@class PublicKeyData;
+@class PublicKeys;
 @class PushData;
 @class QiNiuCredResp;
 @class ReadInfoItem;
@@ -156,6 +161,7 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_BroadCast = 6,
   ChannelType_PublicService = 7,
   ChannelType_SubStatus = 8,
+  ChannelType_PrivateE2Ee = 11,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
@@ -491,6 +497,7 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
   UpMsg_FieldNumber_LifeTime = 11,
   UpMsg_FieldNumber_LifeTimeAfterRead = 12,
   UpMsg_FieldNumber_SubChannel = 13,
+  UpMsg_FieldNumber_E2ESuite = 14,
   UpMsg_FieldNumber_MsgTime = 51,
 };
 
@@ -544,6 +551,10 @@ GPB_FINAL @interface UpMsg : GPBMessage
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ESuite *e2ESuite;
+/** Test to see if @c e2ESuite has been set. */
+@property(nonatomic, readwrite) BOOL hasE2ESuite;
 
 @property(nonatomic, readwrite) int64_t msgTime;
 
@@ -706,6 +717,8 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_ReadTime = 36,
   DownMsg_FieldNumber_FriendInfo = 37,
   DownMsg_FieldNumber_SenderInfo = 38,
+  DownMsg_FieldNumber_OriginalMsg = 39,
+  DownMsg_FieldNumber_E2ESuite = 40,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -813,6 +826,14 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) UserInfo *senderInfo;
 /** Test to see if @c senderInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasSenderInfo;
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *originalMsg;
+/** Test to see if @c originalMsg has been set. */
+@property(nonatomic, readwrite) BOOL hasOriginalMsg;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ESuite *e2ESuite;
+/** Test to see if @c e2ESuite has been set. */
+@property(nonatomic, readwrite) BOOL hasE2ESuite;
 
 @end
 
@@ -3893,6 +3914,110 @@ GPB_FINAL @interface UserStatus : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) UserOnlineItem *onlineStatus;
 /** Test to see if @c onlineStatus has been set. */
 @property(nonatomic, readwrite) BOOL hasOnlineStatus;
+
+@end
+
+#pragma mark - PublicKeyData
+
+typedef GPB_ENUM(PublicKeyData_FieldNumber) {
+  PublicKeyData_FieldNumber_UserId = 1,
+  PublicKeyData_FieldNumber_DeviceId = 2,
+  PublicKeyData_FieldNumber_PublicKey = 3,
+};
+
+GPB_FINAL @interface PublicKeyData : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *publicKey;
+
+@end
+
+#pragma mark - PublicKeys
+
+typedef GPB_ENUM(PublicKeys_FieldNumber) {
+  PublicKeys_FieldNumber_UserId = 1,
+  PublicKeys_FieldNumber_PublicKeysArray = 2,
+};
+
+GPB_FINAL @interface PublicKeys : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<PublicKeyData*> *publicKeysArray;
+/** The number of items in @c publicKeysArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger publicKeysArray_Count;
+
+@end
+
+#pragma mark - MultiPublicKeys
+
+typedef GPB_ENUM(MultiPublicKeys_FieldNumber) {
+  MultiPublicKeys_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface MultiPublicKeys : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<PublicKeys*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - E2ESuite
+
+typedef GPB_ENUM(E2ESuite_FieldNumber) {
+  E2ESuite_FieldNumber_SenderPubKey = 1,
+  E2ESuite_FieldNumber_PubKeysHash = 2,
+  E2ESuite_FieldNumber_Nonce = 3,
+  E2ESuite_FieldNumber_Tag = 4,
+  E2ESuite_FieldNumber_Ciphers = 5,
+};
+
+GPB_FINAL @interface E2ESuite : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *senderPubKey;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *pubKeysHash;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *nonce;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *tag;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ECiphers *ciphers;
+/** Test to see if @c ciphers has been set. */
+@property(nonatomic, readwrite) BOOL hasCiphers;
+
+@end
+
+#pragma mark - E2ECiphers
+
+typedef GPB_ENUM(E2ECiphers_FieldNumber) {
+  E2ECiphers_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface E2ECiphers : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<E2ECipher*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - E2ECipher
+
+typedef GPB_ENUM(E2ECipher_FieldNumber) {
+  E2ECipher_FieldNumber_DeviceId = 1,
+  E2ECipher_FieldNumber_Cipher = 2,
+};
+
+GPB_FINAL @interface E2ECipher : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *cipher;
 
 @end
 

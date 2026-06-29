@@ -20,6 +20,8 @@
 #import "JPushData.h"
 #import "JRtcRoom.h"
 #import "JGroupMessageReadInfoDetail.h"
+#import "JE2EEInfo.h"
+#import "JPBData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -110,18 +112,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
 
-- (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(JConversation *)conversation
-          clientMsgNo:(long long)clientMsgNo
-            clientUid:(NSString *)clientUid
+- (void)setE2EEProvider:(id<JE2EEProvider>)provider;
+
+- (void)sendIMMessage:(JConcreteMessage *)message
             mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
-          mentionInfo:(JMessageMentionInfo *)mentionInfo
-      referredMessage:(JConcreteMessage *)referredMessage
-             pushData:(JPushData *)pushData
-             lifeTime:(long long)lifeTime
-    lifeTimeAfterRead:(long long)lifeTimeAfterRead
+        currentPubKey:(NSData *)currentPubKey
+        currentPriKey:(NSData *)currentPriKey
+         e2eeInfoList:(NSArray<JE2EEInfo *> *)e2eeInfoList
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
@@ -413,6 +412,17 @@ inConversation:(JConversation *)conversation
         currentUserId:(NSString *)currentUserId
               success:(void (^)(NSArray <JUserStatus *> *statusList))successBlock
                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getPubKeys:(NSString *)userId
+     currentUserId:(NSString *)currentUserId
+           success:(void (^)(NSArray <JE2EEInfo *> *infoList))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)uploadPubKey:(NSData *)pubKey
+            deviceId:(NSString *)deviceId
+       currentUserId:(NSString *)currentUserId
+             success:(void (^)(void))successBlock
+               error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)sendPing;
 

@@ -90,6 +90,12 @@
 		A05EED632B20826B00809F13 /* JReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = A05EED612B20826A00809F13 /* JReachability.h */; };
 		A0606F732CF6FB1700FBD652 /* JCallFinishNotifyMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A0606F712CF6FB1700FBD652 /* JCallFinishNotifyMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A0606F742CF6FB1700FBD652 /* JCallFinishNotifyMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A0606F722CF6FB1700FBD652 /* JCallFinishNotifyMessage.m */; };
+		A062D9382FE38C2A0006C707 /* JE2EEDB.m in Sources */ = {isa = PBXBuildFile; fileRef = A062D9372FE38C2A0006C707 /* JE2EEDB.m */; };
+		A062D9392FE38C2A0006C707 /* JE2EEDB.h in Headers */ = {isa = PBXBuildFile; fileRef = A062D9362FE38C2A0006C707 /* JE2EEDB.h */; };
+		A062D93C2FE3A8A90006C707 /* JEncryptUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = A062D93B2FE3A8A90006C707 /* JEncryptUtility.m */; };
+		A062D93D2FE3A8A90006C707 /* JEncryptUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = A062D93A2FE3A8A90006C707 /* JEncryptUtility.h */; };
+		A062D9442FE931C00006C707 /* JE2EEInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A062D9432FE931C00006C707 /* JE2EEInfo.m */; };
+		A062D9452FE931C00006C707 /* JE2EEInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = A062D9422FE931C00006C707 /* JE2EEInfo.h */; };
 		A06515FD2C7C717D00E3AEC1 /* JCachedChatroom.h in Headers */ = {isa = PBXBuildFile; fileRef = A06515FB2C7C717D00E3AEC1 /* JCachedChatroom.h */; };
 		A06515FE2C7C717D00E3AEC1 /* JCachedChatroom.m in Sources */ = {isa = PBXBuildFile; fileRef = A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */; };
 		A06516012C8092C400E3AEC1 /* JChatroomAttributeItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */; };
@@ -542,6 +548,12 @@
 		A05EED612B20826A00809F13 /* JReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JReachability.h; sourceTree = "<group>"; };
 		A0606F712CF6FB1700FBD652 /* JCallFinishNotifyMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCallFinishNotifyMessage.h; sourceTree = "<group>"; };
 		A0606F722CF6FB1700FBD652 /* JCallFinishNotifyMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCallFinishNotifyMessage.m; sourceTree = "<group>"; };
+		A062D9362FE38C2A0006C707 /* JE2EEDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JE2EEDB.h; sourceTree = "<group>"; };
+		A062D9372FE38C2A0006C707 /* JE2EEDB.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JE2EEDB.m; sourceTree = "<group>"; };
+		A062D93A2FE3A8A90006C707 /* JEncryptUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JEncryptUtility.h; sourceTree = "<group>"; };
+		A062D93B2FE3A8A90006C707 /* JEncryptUtility.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JEncryptUtility.m; sourceTree = "<group>"; };
+		A062D9422FE931C00006C707 /* JE2EEInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JE2EEInfo.h; sourceTree = "<group>"; };
+		A062D9432FE931C00006C707 /* JE2EEInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JE2EEInfo.m; sourceTree = "<group>"; };
 		A06515FB2C7C717D00E3AEC1 /* JCachedChatroom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JCachedChatroom.h; sourceTree = "<group>"; };
 		A06515FC2C7C717D00E3AEC1 /* JCachedChatroom.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JCachedChatroom.m; sourceTree = "<group>"; };
 		A06515FF2C8092C400E3AEC1 /* JChatroomAttributeItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JChatroomAttributeItem.h; sourceTree = "<group>"; };
@@ -993,6 +1005,8 @@
 				A08518992DC10F090001F699 /* JLRUCacheNode.m */,
 				A085189C2DC10F430001F699 /* JLRUCache.h */,
 				A085189D2DC10F430001F699 /* JLRUCache.m */,
+				A062D93A2FE3A8A90006C707 /* JEncryptUtility.h */,
+				A062D93B2FE3A8A90006C707 /* JEncryptUtility.m */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1014,6 +1028,8 @@
 				A06516002C8092C400E3AEC1 /* JChatroomAttributeItem.m */,
 				A06C79042FA1F58900ED472C /* JConversationTagInfoContainer.h */,
 				A06C79052FA1F58900ED472C /* JConversationTagInfoContainer.m */,
+				A062D9422FE931C00006C707 /* JE2EEInfo.h */,
+				A062D9432FE931C00006C707 /* JE2EEInfo.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1055,6 +1071,8 @@
 				A0752D882D68615D009B7E0F /* JVersionDB.m */,
 				A068B9D02ECB272300D04F45 /* JMomentDB.h */,
 				A068B9D12ECB272300D04F45 /* JMomentDB.m */,
+				A062D9362FE38C2A0006C707 /* JE2EEDB.h */,
+				A062D9372FE38C2A0006C707 /* JE2EEDB.m */,
 			);
 			path = db;
 			sourceTree = "<group>";
@@ -1874,6 +1892,7 @@
 				A08AA3A52B19CB78008B114C /* GPBWellKnownTypes.h in Headers */,
 				A09727EC2CC6346B00E08BC4 /* JState.h in Headers */,
 				A09727F22CC6346B00E08BC4 /* JCallManager.h in Headers */,
+				A062D9392FE38C2A0006C707 /* JE2EEDB.h in Headers */,
 				A08AA2722B162A11008B114C /* JFMDB.h in Headers */,
 				A08AA3952B19CB78008B114C /* GPBEmpty.pbobjc.h in Headers */,
 				A08AA2892B175726008B114C /* JConversationManager.h in Headers */,
@@ -1958,12 +1977,14 @@
 				A06A2F192B233A08009B9588 /* JMessageDB.h in Headers */,
 				A08AA4052B19EEDB008B114C /* SRHTTPConnectMessage.h in Headers */,
 				A08AA2852B1756E3008B114C /* JMessageManager.h in Headers */,
+				A062D93D2FE3A8A90006C707 /* JEncryptUtility.h in Headers */,
 				A08AA3FF2B19EEDB008B114C /* SRRandom.h in Headers */,
 				A08AA38F2B19CB78008B114C /* GPBUtilities.h in Headers */,
 				A05EED632B20826B00809F13 /* JReachability.h in Headers */,
 				A0A702042C09AB700032D9F1 /* JBlockObj.h in Headers */,
 				A09716C22B9FFF1F00D1DB24 /* JUserInfoManager.h in Headers */,
 				A07D0E2E2BFCD0B200B9035B /* JLogFileWriter.h in Headers */,
+				A062D9452FE931C00006C707 /* JE2EEInfo.h in Headers */,
 				A079E8662CE3589C00A1008F /* JConnIdleState.h in Headers */,
 				A08AA3722B19CB77008B114C /* GPBRootObject_PackagePrivate.h in Headers */,
 				A07C07722FA08EB400C54A01 /* JCreateConversationTagMessage.h in Headers */,
@@ -2135,6 +2156,7 @@
 				A06A2F1E2B233A15009B9588 /* JConversationDB.m in Sources */,
 				A08AA2742B162A11008B114C /* JFMDatabase.m in Sources */,
 				A08AA37E2B19CB78008B114C /* GPBTimestamp.pbobjc.m in Sources */,
+				A062D93C2FE3A8A90006C707 /* JEncryptUtility.m in Sources */,
 				A065160C2C91DEBE00E3AEC1 /* JIntervalGenerator.m in Sources */,
 				A0596E072CD12F1000914FEA /* Chatroom.pbobjc.m in Sources */,
 				A0F376202B3A689E0076CB84 /* JHeartBeatManager.m in Sources */,
@@ -2216,6 +2238,7 @@
 				A06596912E5D88250047B896 /* JCallVideoDenoiseParams.m in Sources */,
 				A095798D2B885222004E3D60 /* JDeleteConvMessage.m in Sources */,
 				A0D3AD2E2B6D1B9C00D170D7 /* JRecallCmdMessage.m in Sources */,
+				A062D9382FE38C2A0006C707 /* JE2EEDB.m in Sources */,
 				A068B9D22ECB272300D04F45 /* JMomentDB.m in Sources */,
 				A08AA3F32B19EEDA008B114C /* JIMSRRunLoopThread.m in Sources */,
 				A06A2F142B233351009B9588 /* JDBHelper.m in Sources */,
@@ -2237,6 +2260,7 @@
 				A08518A42DCB423E0001F699 /* JUserInfoCache.m in Sources */,
 				A08AA36B2B19CB77008B114C /* GPBUtilities.m in Sources */,
 				A07C07712FA08EB400C54A01 /* JCreateConversationTagMessage.m in Sources */,
+				A062D9442FE931C00006C707 /* JE2EEInfo.m in Sources */,
 				A0CE9A322CD4BE19008B405C /* JCallMediaRoomConfig.m in Sources */,
 				A07C03FD2F99FDAB00C54A01 /* JConversationTagInfo.m in Sources */,
 				A08AA4182B1ADECF008B114C /* JTextMessage.m in Sources */,

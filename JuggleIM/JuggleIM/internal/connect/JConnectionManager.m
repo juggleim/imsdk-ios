@@ -218,8 +218,10 @@
         [self.chatroomManager connectSuccess];
         [self.callManager connectSuccess];
         [self event:JConnEventConnectDone userInfo:@{@"extra":extra}];
-        [self.conversationManager syncConversations:^{
-            [self.messageManager syncMessages];
+        [self.messageManager checkAndUploadPubKey:^{
+            [self.conversationManager syncConversations:^{
+                [self.messageManager syncMessages];
+            }];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {

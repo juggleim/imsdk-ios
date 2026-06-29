@@ -44,8 +44,10 @@
 #import "JCreateConversationTagMessage.h"
 #import "JConversationTagInfoContainer.h"
 #import "JUserStatusChangeMessage.h"
+#import "JEncryptUtility.h"
+#import "JIntervalGenerator.h"
 
-@interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate>
+@interface JMessageManager () <JWebSocketMessageDelegate, JChatroomDelegate, JE2EEProvider>
 {
     id<JMessageUploadProvider> _uploadProvider;
 }
@@ -60,6 +62,10 @@
 @property (nonatomic, strong) JChatroomManager *chatroomManager;
 @property (nonatomic, strong) JUserInfoManager *userInfoManager;
 @property (nonatomic, strong) JCallManager *callManager;
+
+@property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
+@property (nonatomic, strong) NSTimer *uploadPubKeyTimer;
+
 //在 receiveQueue 里处理
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
@@ -67,6 +73,8 @@
 @property (nonatomic, assign) long long syncNotifyTime;//发件箱
 @property (nonatomic, assign) BOOL chatroomSyncProcessing;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *chatroomSyncDic;
+@property (nonatomic, strong) NSData *pubKey;
+@property (nonatomic, strong) NSData *priKey;
 @end
 
 @implementation JMessageManager
@@ -89,6 +97,7 @@
         self.callManager = callManager;
         [self.chatroomManager addDelegate:self];
         [self.core.webSocket setMessageDelegate:self];
+        [self.core.webSocket setE2EEProvider:self];
         [self registerMessages];
         self.cachedSendTime = -1;
         self.cachedReceiveTime = -1;
@@ -730,10 +739,10 @@
                                       withClientMsgNo:cm.clientMsgNo];
             cm.messageState = JMessageStateSending;
             [self setMessageState:JMessageStateSending withClientMsgNo:cm.clientMsgNo];
-            [self sendWebSocketMessage:cm
-                           isBroadcast:NO
-                               success:successBlock
-                                 error:errorBlock];
+            [self prepareAndSendWebSocketMessage:cm
+                                     isBroadcast:NO
+                                         success:successBlock
+                                           error:errorBlock];
             
         } error:^{
             message.messageState = JMessageStateFail;
@@ -889,10 +898,10 @@
             [self setMessageState:JMessageStateSending withClientMsgNo:message.clientMsgNo];
         }
         [self updateMessageWithContent:(JConcreteMessage *)message];
-        [self sendWebSocketMessage:(JConcreteMessage *)message
-                       isBroadcast:NO
-                           success:successBlock
-                             error:errorBlock];
+        [self prepareAndSendWebSocketMessage:(JConcreteMessage *)message
+                                 isBroadcast:NO
+                                     success:successBlock
+                                       error:errorBlock];
         return message;
     } else {
         JMessageOptions * messageOptions = [[JMessageOptions alloc] init];
@@ -2192,6 +2201,8 @@
     self.chatroomSyncProcessing = NO;
     [self clearChatroomSyncDic];
     [self.core.dbManager batchSetStateFail];
+    self.pubKey = nil;
+    self.priKey = nil;
 }
 
 #pragma mark - JChatroomProtocol
@@ -2271,6 +2282,11 @@
                                       contentType:contentType
                                     withMessageId:messageId];
     }
+}
+
+#pragma mark - JE2EEProvider
+- (NSData *)getPriKey {
+    return self.priKey;
 }
 
 #pragma mark - internal
@@ -2488,10 +2504,20 @@
     }
 }
 
-- (void)sendWebSocketMessage:(JConcreteMessage *)message
-                 isBroadcast:(BOOL)isBroadcast
-                     success:(void (^)(JMessage *message))successBlock
-                       error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+- (void)prepareAndSendWebSocketMessage:(JConcreteMessage *)message
+                           isBroadcast:(BOOL)isBroadcast
+                               success:(void (^)(JMessage *message))successBlock
+                                 error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+    if (!message.content || message.conversation.conversationId.length == 0) {
+        message.messageState = JMessageStateFail;
+        [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam, message);
+            }
+        });
+        return;
+    }
     JMergeInfo * mergeInfo;
     if ([message.content isKindOfClass:[JMergeMessage class]]) {
         JMergeMessage * mergeMessage = (JMergeMessage *)message.content;
@@ -2500,27 +2526,116 @@
         mergeInfo.containerMsgId = mergeMessage.containerMsgId;
         mergeInfo.messages = [self.core.dbManager getMessagesByMessageIds:mergeMessage.messageIdList];
     }
-    JMessageContent *content = message.content;
-    if (!content) {
-        dispatch_async(self.core.delegateQueue, ^{
-            if (errorBlock) {
-                errorBlock(JErrorCodeInvalidParam, message);
-            }
-        });
+    if (message.conversation.conversationType == JConversationTypePrivateE2EE) {
+        NSArray <JE2EEInfo *> *list1 = [self.core.dbManager getE2EEInfo:message.conversation.conversationId];
+        if (list1.count == 0) {
+            [self getPubKeyAndSendMessage:message
+                                mergeInfo:mergeInfo
+                              isBroadcast:isBroadcast
+                                  success:successBlock
+                                    error:errorBlock];
+            return;
+        }
+        NSArray <JE2EEInfo *> *list2 = [self.core.dbManager getE2EEInfo:self.core.userId];
+        NSArray <JE2EEInfo *> *list = [list1 arrayByAddingObjectsFromArray:list2];
+        if (!self.pubKey || !self.priKey) {
+            JLogE(@"MSG-E2EE", @"local public key invalid");
+            message.messageState = JMessageStateFail;
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeLocalPublicKeyInvalid, message);
+                }
+            });
+            return;
+        }
+        [self sendWebSocketMessage:message
+                         mergeInfo:mergeInfo
+                       isBroadcast:isBroadcast
+                            pubKey:self.pubKey
+                            priKey:self.priKey
+                      e2eeInfoList:list
+                           success:successBlock
+                             error:errorBlock];
         return;
     }
-    [self.core.webSocket sendIMMessage:content
-                        inConversation:message.conversation
-                           clientMsgNo:message.clientMsgNo
-                             clientUid:message.clientUid
+    [self sendWebSocketMessage:message
+                     mergeInfo:mergeInfo
+                   isBroadcast:isBroadcast
+                        pubKey:nil
+                        priKey:nil
+                  e2eeInfoList:nil
+                       success:successBlock
+                         error:errorBlock];
+}
+
+- (void)getPubKeyAndSendMessage:(JConcreteMessage *)message
+                      mergeInfo:(JMergeInfo *)mergeInfo
+                    isBroadcast:(BOOL)isBroadcast
+                        success:(void (^)(JMessage *message))successBlock
+                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+    [self.core.webSocket getPubKeys:message.conversation.conversationId
+                      currentUserId:self.core.userId
+                            success:^(NSArray<JE2EEInfo *> * _Nonnull infoList) {
+        JLogI(@"MSG-GetPubK", @"success");
+        [self.core.dbManager updateE2EEInfo:infoList];
+        if (![self checkOtherSideE2EEList:infoList]) {
+            JLogE(@"MSG-GetPubK", @"other side E2EE is empty");
+            message.messageState = JMessageStateFail;
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeOtherSideE2EEInvalid, message);
+                }
+            });
+            return;
+        }
+        if (!self.pubKey || !self.priKey) {
+            JLogE(@"MSG-E2EE", @"local public key invalid");
+            message.messageState = JMessageStateFail;
+            [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeLocalPublicKeyInvalid, message);
+                }
+            });
+            return;
+        }
+        [self sendWebSocketMessage:message
+                         mergeInfo:mergeInfo
+                       isBroadcast:isBroadcast
+                            pubKey:self.pubKey
+                            priKey:self.priKey
+                      e2eeInfoList:infoList
+                           success:successBlock
+                             error:errorBlock];
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-GetPubK", @"error, code is %ld", code);
+        message.messageState = JMessageStateFail;
+        [self setMessageState:JMessageStateFail withClientMsgNo:message.clientMsgNo];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code, message);
+            }
+        });
+    }];
+}
+
+- (void)sendWebSocketMessage:(JConcreteMessage *)message
+                   mergeInfo:(JMergeInfo *)mergeInfo
+                 isBroadcast:(BOOL)isBroadcast
+                      pubKey:(NSData *)pubKey
+                      priKey:(NSData *)priKey
+                e2eeInfoList:(NSArray<JE2EEInfo *> *)e2eeInfoList
+                     success:(void (^)(JMessage *message))successBlock
+                       error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock {
+    [self.core.webSocket sendIMMessage:message
                              mergeInfo:mergeInfo
                            isBroadcast:isBroadcast
                                 userId:self.core.userId
-                           mentionInfo:message.mentionInfo
-                       referredMessage:(JConcreteMessage *)message.referredMsg
-                              pushData:message.pushData
-                              lifeTime:message.lifeTime
-                     lifeTimeAfterRead:message.lifeTimeAfterRead
+                         currentPubKey:pubKey
+                         currentPriKey:priKey
+                          e2eeInfoList:e2eeInfoList
                                success:^(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount) {
         JLogI(@"MSG-Send", @"success");
         [self.core.dbManager updateMessageAfterSend:message.clientMsgNo
@@ -2573,6 +2688,14 @@
         });
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
         JLogI(@"MSG-Send", @"error, code is %lu", errorCode);
+        if (errorCode == JErrorCodeInternalPubKeysHashMismatch) {
+            [self getPubKeyAndSendMessage:message
+                                mergeInfo:mergeInfo
+                              isBroadcast:isBroadcast
+                                  success:successBlock
+                                    error:errorBlock];
+            return;
+        }
         message.messageState = JMessageStateFail;
         [self setMessageState:JMessageStateFail withClientMsgNo:clientMsgNo];
         dispatch_async(self.core.delegateQueue, ^{
@@ -2595,10 +2718,10 @@
                                                        state:JMessageStateSending
                                                    direction:JMessageDirectionSend
                                                  isBroadcast:isBroadcast];
-    [self sendWebSocketMessage:message
-                   isBroadcast:isBroadcast
-                       success:successBlock
-                         error:errorBlock];
+    [self prepareAndSendWebSocketMessage:message
+                             isBroadcast:isBroadcast
+                                 success:successBlock
+                                   error:errorBlock];
     return message;
 }
 
@@ -3337,6 +3460,72 @@
     }
 }
 
+- (void)checkAndUploadPubKey:(void (^)(void))completeBlock {
+    if (self.pubKey && self.priKey) {
+        if (completeBlock) {
+            completeBlock();
+        }
+        return;
+    }
+    NSData *pubKey = [self.core.dbManager getE2EEPubKey];
+    NSData *priKey = [self.core.dbManager getE2EEPriKey];
+    NSLog(@"E2EE debug, pubKey is %@, priKey is %@", pubKey, priKey);
+    if (pubKey && priKey) {
+        self.pubKey = pubKey;
+        self.priKey = priKey;
+        if (completeBlock) {
+            completeBlock();
+        }
+        return;
+    }
+    priKey = [JEncryptUtility generateX25519PrivateKey];
+    pubKey = [JEncryptUtility x25519PublicKeyFromPrivateKey:priKey];
+    [self.core.webSocket uploadPubKey:pubKey
+                             deviceId:[JUtility getDeviceId]
+                        currentUserId:self.core.userId
+                              success:^{
+        JLogI(@"MSG-UploadPubKey", @"success");
+        [self.intervalGenerator reset];
+        [self.core.dbManager setE2EEWithPubKey:pubKey priKey:priKey];
+        self.pubKey = pubKey;
+        self.priKey = priKey;
+        if (completeBlock) {
+            completeBlock();
+        }
+    } error:^(JErrorCodeInternal code) {
+        JLogE(@"MSG-UploadPubKey", @"error, code is %ld", code);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.uploadPubKeyTimer) {
+                return;
+            }
+            self.uploadPubKeyTimer = [NSTimer scheduledTimerWithTimeInterval:[self.intervalGenerator getNextInterval] target:self selector:@selector(uploadPubKeyTimerFired) userInfo:completeBlock repeats:NO];
+        });
+    }];
+}
+
+- (void)uploadPubKeyTimerFired {
+    void (^block)(void) = self.uploadPubKeyTimer.userInfo;
+    [self stopUploadPubKeyTimer];
+    [self checkAndUploadPubKey:block];
+}
+
+- (void)stopUploadPubKeyTimer {
+    if (self.uploadPubKeyTimer) {
+        [self.uploadPubKeyTimer invalidate];
+        self.uploadPubKeyTimer = nil;
+    }
+}
+
+- (BOOL)checkOtherSideE2EEList:(NSArray <JE2EEInfo *> *)infoList {
+    for (JE2EEInfo *info in infoList) {
+        if (info.userId.length > 0 &&
+            ![info.userId isEqualToString:self.core.userId]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void)handleStreamAppend:(JConcreteMessage *)message {
     JStreamAppendMessage *appendMsg = (JStreamAppendMessage *)message.content;
     NSString *streamId = appendMsg.streamId;
@@ -3478,6 +3667,13 @@
         _chatroomSyncDic = [NSMutableDictionary dictionary];
     }
     return _chatroomSyncDic;
+}
+
+- (JIntervalGenerator *)intervalGenerator {
+    if (!_intervalGenerator) {
+        _intervalGenerator = [[JIntervalGenerator alloc] init];
+    }
+    return _intervalGenerator;
 }
 
 @end

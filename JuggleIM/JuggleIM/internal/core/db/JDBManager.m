@@ -15,6 +15,7 @@
 #import "JUtility.h"
 #import "JVersionDB.h"
 #import "JMomentDB.h"
+#import "JE2EEDB.h"
 
 #define kJetIMDBName @"jetimdb"
 
@@ -26,6 +27,7 @@
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
 @property (nonatomic, strong) JReactionDB *reactionDB;
 @property (nonatomic, strong) JMomentDB *momentDB;
+@property (nonatomic, strong) JE2EEDB *e2eeDB;
 @property (nonatomic, strong) JVersionDB *versionDB;
 @end
 
@@ -62,6 +64,14 @@
     return [self.profileDb getMessageReceiveSyncTime];
 }
 
+- (NSData *)getE2EEPubKey {
+    return [self.profileDb getE2EEPubKey];
+}
+
+- (NSData *)getE2EEPriKey {
+    return [self.profileDb getE2EEPriKey];
+}
+
 - (void)setConversationSyncTime:(long long)time {
     [self.profileDb setConversationSyncTime:time];
 }
@@ -72,6 +82,10 @@
 
 - (void)setMessageReceiveSyncTime:(long long)time {
     [self.profileDb setMessageReceiveSyncTime:time];
+}
+
+- (void)setE2EEWithPubKey:(NSData *)pubKey priKey:(NSData *)priKey {
+    [self.profileDb setE2EEWithPubKey:pubKey priKey:priKey];
 }
 
 #pragma mark - conversation table
@@ -472,6 +486,16 @@
     return [self.momentDB getCachedMomentList:option];
 }
 
+#pragma mark - E2EE table
+- (NSArray<JE2EEInfo *> *)getE2EEInfo:(NSString *)userId {
+    return [self.e2eeDB getE2EEInfo:userId];
+}
+
+- (void)updateE2EEInfo:(NSArray <JE2EEInfo *> *)infoList {
+    [self.e2eeDB updateE2EEInfo:infoList];
+}
+
+
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
          userId:(NSString *)userId {
@@ -502,6 +526,7 @@
     [self.userInfoDB createTables];
     [self.reactionDB createTables];
     [self.momentDB createTables];
+    [self.e2eeDB createTables];
     [self.versionDB createTables];
 }
 
@@ -546,6 +571,7 @@
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
         self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
         self.momentDB = [[JMomentDB alloc] initWithDBHelper:self.dbHelper];
+        self.e2eeDB = [[JE2EEDB alloc] initWithDBHelper:self.dbHelper];
         self.versionDB = [[JVersionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;

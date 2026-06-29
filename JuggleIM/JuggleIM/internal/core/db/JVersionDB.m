@@ -11,8 +11,9 @@
 #import "JReactionDB.h"
 #import "JConversationDB.h"
 #import "JMomentDB.h"
+#import "JE2EEDB.h"
 
-#define jDBVersion 16
+#define jDBVersion 17
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -110,6 +111,10 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
             if (version < 16) {
                 [db executeUpdate:[JConversationDB createTagInfoTable]];
                 [db executeUpdate:[JConversationDB createTagInfoIndex]];
+            }
+            if (version < 17) {
+                [db executeUpdate:[JE2EEDB createPublicKeyTable]];
+                [db executeUpdate:[JE2EEDB createPublicKeyIndex]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];

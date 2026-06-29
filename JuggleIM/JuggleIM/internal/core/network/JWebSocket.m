@@ -9,11 +9,11 @@
 #import "JIMSRWebSocket.h"
 #import "JUtility.h"
 #import "JuggleIMConstInternal.h"
-#import "JPBData.h"
 #import "JLogger.h"
 #import "JHeartBeatManager.h"
 #import "JBlockObj.h"
 #import "JWebSocketCommandManager.h"
+#import "JEncryptUtility.h"
 
 #define jProtocolHead @"://"
 #define jWSPrefix @"ws://"
@@ -147,60 +147,55 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     [self.pbData setMessagePreprocessor:preprocessor];
 }
 
+- (void)setE2EEProvider:(id<JE2EEProvider>)provider {
+    [self.pbData setE2EEProvider:provider];
+}
+
 #pragma mark - send pb
-- (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(JConversation *)conversation
-          clientMsgNo:(long long)clientMsgNo
-            clientUid:(NSString *)clientUid
+- (void)sendIMMessage:(JConcreteMessage *)message
             mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
-          mentionInfo:(JMessageMentionInfo *)mentionInfo
-      referredMessage:(JConcreteMessage *)referredMessage
-             pushData:(JPushData *)pushData
-             lifeTime:(long long)lifeTime
-    lifeTimeAfterRead:(long long)lifeTimeAfterRead
+        currentPubKey:(NSData *)currentPubKey
+        currentPriKey:(NSData *)currentPriKey
+         e2eeInfoList:(NSArray<JE2EEInfo *> *)e2eeInfoList
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock {
     dispatch_async(self.sendQueue, ^{
         NSNumber *key = @(self.cmdIndex);
-        NSData *encodeData = [self encodeContentData:content];
+        NSData *encodeData = [self encodeContentData:message.content];
         NSString *contentType;
         JMessageFlag flag;
-        if ([content isKindOfClass:[JUnknownMessage class]]) {
-            JUnknownMessage *unknown = (JUnknownMessage *)content;
+        if ([message.content isKindOfClass:[JUnknownMessage class]]) {
+            JUnknownMessage *unknown = (JUnknownMessage *)message.content;
             contentType = unknown.messageType;
             flag = unknown.flags;
         } else {
-            contentType = [[content class] contentType];
-            flag = [[content class] flags];
+            contentType = [[message.content class] contentType];
+            flag = [[message.content class] flags];
         }
-
         NSData *d = [self.pbData sendMessageDataWithType:contentType
                                                  msgData:encodeData
                                                    flags:flag
-                                               clientUid:clientUid
+                                                 message:message
                                                mergeInfo:mergeInfo
                                              isBroadcast:isBroadcast
                                                   userId:userId
                                                    index:self.cmdIndex++
-                                            conversation:conversation
-                                             mentionInfo:mentionInfo
-                                         referredMessage:referredMessage
-                                                pushData:pushData
-                                                lifeTime:lifeTime
-                                       lifeTimeAfterRead:lifeTimeAfterRead];
+                                           currentPubKey:currentPubKey
+                                           currentPriKey:currentPriKey
+                                            e2eeInfoList:e2eeInfoList];
         JLogI(@"WS-Send", @"send message");
         NSError *err = nil;
         [self.sws sendData:d error:&err];
         if (err != nil) {
             JLogE(@"WS-Send", @"send message error, msg is %@", err.description);
             if (errorBlock) {
-                errorBlock(JErrorCodeInternalWebSocketFailure, clientMsgNo);
+                errorBlock(JErrorCodeInternalWebSocketFailure, message.clientMsgNo);
             }
         } else {
             JSendMessageObj *obj = [[JSendMessageObj alloc] init];
-            obj.clientMsgNo = clientMsgNo;
+            obj.clientMsgNo = message.clientMsgNo;
             obj.successBlock = successBlock;
             obj.errorBlock = errorBlock;
             [self.commandManager setBlockObject:obj forKey:key];
@@ -1429,6 +1424,45 @@ inConversation:(JConversation *)conversation
     });
 }
 
+- (void)getPubKeys:(NSString *)userId
+     currentUserId:(NSString *)currentUserId
+           success:(void (^)(NSArray<JE2EEInfo *> * _Nonnull))successBlock
+             error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"get pub keys, userId is %@", userId);
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData getPubKeys:userId
+                              currentUserId:currentUserId
+                                      index:self.cmdIndex++];
+        JTemplateObj <NSArray <JE2EEInfo *> *> *obj = [JTemplateObj new];
+        obj.successBlock = successBlock;
+        obj.errorBlock = errorBlock;
+        [self sendData:d
+                   key:key
+                   obj:obj
+                 error:errorBlock];
+    });
+}
+
+- (void)uploadPubKey:(NSData *)pubKey
+            deviceId:(NSString *)deviceId
+       currentUserId:(NSString *)currentUserId
+             success:(void (^)(void))successBlock
+               error:(void (^)(JErrorCodeInternal))errorBlock {
+    dispatch_async(self.sendQueue, ^{
+        JLogI(@"WS-Send", @"upload pub key");
+        NSNumber *key = @(self.cmdIndex);
+        NSData *d = [self.pbData uploadPubKey:pubKey
+                                     deviceId:deviceId
+                                currentUserId:currentUserId
+                                        index:self.cmdIndex++];
+        [self simpleSendData:d
+                         key:key
+                     success:successBlock
+                       error:errorBlock];
+    });
+}
+
 - (void)rtcPing:(NSString *)callId {
     dispatch_async(self.sendQueue, ^{
         JLogV(@"WS-Send", @"rtc ping");
@@ -1698,6 +1732,10 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeGetUserStatusAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeGetUserStatusAck");
+            [self handleTemplateAck:obj.templateAck];
+            break;
+        case JPBRcvTypeQryPubKeysAck:
+            JLogI(@"WS-Receive", @"JPBRcvTypeQryPubKeysAck");
             [self handleTemplateAck:obj.templateAck];
             break;
         default:

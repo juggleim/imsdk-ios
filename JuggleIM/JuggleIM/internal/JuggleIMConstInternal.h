@@ -46,6 +46,8 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalRemoteMessageNotExist = 12011,
     //收藏重复消息
     JErrorCodeInternalAddDuplicateFavoriteMessage = 12012,
+    //密聊 hash 不匹配（需要重新去服务端更新公钥列表）
+    JErrorCodeInternalPubKeysHashMismatch = 12013,//TODO: e2ee 换错误码
     
     //群组不存在
     JErrorCodeInternalGroupNotExist = 13001,
@@ -82,8 +84,14 @@ typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalMessageAlreadyRecalled = 22002,
     //消息上传失败
     JErrorCodeInternalMessageUploadError = 22003,
+    //撤回消息扩展信息（extras）中的 key 和 value 不是 NSString
+    JErrorCodeInternalRecallExtrasTypeNotString = 22004,
     //日志不存在
-    JErrorCodeInternalLogNotExist = 22004,
+    JErrorCodeInternalLogNotExist = 22005,
+    //未找到对端公钥
+    JErrorCodeInternalOtherSideE2EEInvalid = 22006,
+    //本地公钥未生成
+    JErrorCodeInternalLocalPublicKeyInvalid = 22007,
     
     //批量设置聊天室属性失败
     JErrorCodeInternalChatroomBatchSetAttributeFail = 24001,

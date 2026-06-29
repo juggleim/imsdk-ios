@@ -18,6 +18,7 @@
 #import "JChatroomAttributeItem.h"
 #import "JPushData.h"
 #import "JRtcRoom.h"
+#import "JE2EEInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -64,7 +65,8 @@ typedef NS_ENUM(NSUInteger, JPBRcvType) {
     JPBRcvTypeGetGroupInfoAck,
     JPBRcvTypeGetFriendInfosAck,
     JPBRcvTypeGetConversationTagListAck,
-    JPBRcvTypeGetUserStatusAck
+    JPBRcvTypeGetUserStatusAck,
+    JPBRcvTypeQryPubKeysAck
 };
 
 typedef NS_ENUM(NSUInteger, JPBChrmEventType) {
@@ -241,10 +243,16 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, strong) JTemplateAck *templateAck;
 @end
 
+@protocol JE2EEProvider <NSObject>
+- (NSData *)getPriKey;
+@end
+
 @interface JPBData : NSObject
 - (void)resetDataConverter;
 
 - (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
+
+- (void)setE2EEProvider:(id<JE2EEProvider>)provider;
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
                             token:(NSString *)token
@@ -264,17 +272,14 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)sendMessageDataWithType:(NSString *)contentType
                             msgData:(NSData *)msgData
                               flags:(int)flags
-                          clientUid:(NSString *)clientUid
+                            message:(JConcreteMessage *)message
                           mergeInfo:(JMergeInfo *)mergeInfo
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
-                       conversation:(JConversation *)conversation
-                        mentionInfo:(JMessageMentionInfo *)mentionInfo
-                    referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(JPushData *)pushData
-                           lifeTime:(long long)lifeTime
-                  lifeTimeAfterRead:(long long)lifeTimeAfterRead;
+                      currentPubKey:(NSData *)pubKey
+                      currentPriKey:(NSData *)priKey
+                       e2eeInfoList:(NSArray<JE2EEInfo *> *)e2eeInfoList;
 
 - (NSData *)recallMessageData:(NSString *)messageId
                        extras:(NSDictionary *)extras
@@ -511,6 +516,15 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 - (NSData *)getUserStatus:(NSArray<NSString *> *)userIdList
             currentUserId:(NSString *)currentUserId
                     index:(int)index;
+
+- (NSData *)getPubKeys:(NSString *)userId
+         currentUserId:(NSString *)currentUserId
+                 index:(int)index;
+
+- (NSData *)uploadPubKey:(NSData *)pubKey
+                deviceId:(NSString *)deviceId
+           currentUserId:(NSString *)currentUserId
+                   index:(int)index;
 
 - (NSData *)pingData;
 

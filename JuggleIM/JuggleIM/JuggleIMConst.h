@@ -109,6 +109,11 @@ typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeMessageUploadError = 22003,
     //撤回消息扩展信息（extras）中的 key 和 value 不是 NSString
     JErrorCodeRecallExtrasTypeNotString = 22004,
+    //未找到对端公钥
+    JErrorCodeOtherSideE2EEInvalid = 22006,
+    //本地公钥未生成
+    JErrorCodeLocalPublicKeyInvalid = 22007,
+    
     //下载的不是媒体消息
     JErrorCodeDownloadNotMediaMessage = 23001,
     //消息下载失败

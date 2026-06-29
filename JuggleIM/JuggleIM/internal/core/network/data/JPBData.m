@@ -22,6 +22,8 @@
 #import "JuggleIMConstInternal.h"
 #import "JUltEncryptProtocol.h"
 #import "JIM.h"
+#import "JEncryptUtility.h"
+#import "JUtility.h"
 
 typedef NS_ENUM(NSUInteger, JCmdType) {
     JCmdTypeConnect = 0,
@@ -47,6 +49,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define kGMsg @"g_msg"
 #define kCMsg @"c_msg"
 #define kPcMsg @"pc_msg"
+#define kSPMsg @"s_p_msg"
 #define kRecallMsg @"recall_msg"
 #define kModifyMsg @"modify_msg"
 #define kQryHisMsgs @"qry_hismsgs"
@@ -97,6 +100,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
 #define jQryGroupInfo @"qry_group_info"
 #define jQryFriendInfos @"qry_friend_infos"
 #define jQryUserStatus @"qry_user_status"
+#define jBatchQryPubKeys @"batch_qry_pubkeys"
+#define jUploadPubKey @"upload_pubkey"
 
 #define jRtcInvite @"rtc_invite"
 #define jRtcHangUp @"rtc_hangup"
@@ -201,6 +206,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
 @property (nonatomic, strong) NSDictionary *cmdAckPair;
 @property (nonatomic, strong) id<JDataConverterProtocol> converter;
 @property (nonatomic, weak) id<JMessagePreprocessor> messagePreprocessor;
+@property (nonatomic, weak) id<JE2EEProvider> e2eeProvider;
 @property (nonatomic, strong) id<JUltEncryptProtocol> converter2;
 @end
 
@@ -222,6 +228,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
 
 - (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor {
     _messagePreprocessor = preprocessor;
+}
+
+- (void)setE2EEProvider:(id<JE2EEProvider>)provider {
+    _e2eeProvider = provider;
 }
 
 - (NSData *)connectDataWithAppKey:(NSString *)appKey
@@ -288,25 +298,22 @@ typedef NS_ENUM(NSUInteger, JQos) {
 - (NSData *)sendMessageDataWithType:(NSString *)contentType
                             msgData:(NSData *)msgData
                               flags:(int)flags
-                          clientUid:(NSString *)clientUid
+                            message:(JConcreteMessage *)message
                           mergeInfo:(JMergeInfo *)mergeInfo
                         isBroadcast:(BOOL)isBroadcast
                              userId:(NSString *)userId
                               index:(int)index
-                       conversation:(JConversation *)conversation
-                        mentionInfo:(JMessageMentionInfo *)mentionInfo
-                    referredMessage:(JConcreteMessage *)referredMessage
-                           pushData:(nonnull JPushData *)pushData
-                           lifeTime:(long long)lifeTime
-                  lifeTimeAfterRead:(long long)lifeTimeAfterRead {
+                      currentPubKey:(NSData *)pubKey
+                      currentPriKey:(NSData *)priKey
+                       e2eeInfoList:(NSArray <JE2EEInfo *> *)e2eeInfoList {
     if ([self.messagePreprocessor respondsToSelector:@selector(encryptMessageContent:inConversation:contentType:)]) {
-        msgData = [self.messagePreprocessor encryptMessageContent:msgData inConversation:conversation contentType:contentType];
+        msgData = [self.messagePreprocessor encryptMessageContent:msgData inConversation:message.conversation contentType:contentType];
     }
     UpMsg *upMsg = [[UpMsg alloc] init];
     upMsg.msgType = contentType;
     upMsg.msgContent = msgData;
     upMsg.flags = flags;
-    upMsg.clientUid = clientUid;
+    upMsg.clientUid = message.clientUid;
     if (mergeInfo != nil && mergeInfo.containerMsgId.length == 0 && mergeInfo.messages.count > 0) {
         upMsg.flags |= JMessageFlagIsMerged;
         MergedMsgs *pbMsgs = [[MergedMsgs alloc] init];
@@ -330,11 +337,11 @@ typedef NS_ENUM(NSUInteger, JQos) {
     if (isBroadcast) {
         upMsg.flags |= JMessageFlagIsBroadcast;
     }
-    if (mentionInfo) {
+    if (message.mentionInfo) {
         MentionInfo *pbMentionInfo = [[MentionInfo alloc] init];
-        pbMentionInfo.mentionType = (int32_t)mentionInfo.type;
+        pbMentionInfo.mentionType = (int32_t)message.mentionInfo.type;
         NSMutableArray <UserInfo *> *pbUsers = [NSMutableArray array];
-        for (JUserInfo *userInfo in mentionInfo.targetUsers) {
+        for (JUserInfo *userInfo in message.mentionInfo.targetUsers) {
             UserInfo *pbUser = [[UserInfo alloc] init];
             pbUser.userId = userInfo.userId;
             [pbUsers addObject:pbUser];
@@ -343,26 +350,79 @@ typedef NS_ENUM(NSUInteger, JQos) {
         upMsg.mentionInfo = pbMentionInfo;
     }
     
-    if (referredMessage) {
-        DownMsg * referredDownMsg = [self downMsgWithMessage:referredMessage];
+    if (message.referredMsg) {
+        DownMsg * referredDownMsg = [self downMsgWithMessage:(JConcreteMessage *)message.referredMsg];
         upMsg.referMsg = referredDownMsg;
     }
-    if (pushData) {
+    if (message.pushData) {
         PushData *pbPushData = [[PushData alloc] init];
-        pbPushData.title = pushData.title;
-        pbPushData.pushText = pushData.content;
-        pbPushData.pushExtraData = pushData.extra;
+        pbPushData.title = message.pushData.title;
+        pbPushData.pushText = message.pushData.content;
+        pbPushData.pushExtraData = message.pushData.extra;
         upMsg.pushData = pbPushData;
     }
-    upMsg.lifeTime = lifeTime;
-    upMsg.lifeTimeAfterRead = lifeTimeAfterRead;
-    if (conversation.subChannel.length > 0) {
-        upMsg.subChannel = conversation.subChannel;
+    upMsg.lifeTime = message.lifeTime;
+    upMsg.lifeTimeAfterRead = message.lifeTimeAfterRead;
+    if (message.conversation.subChannel.length > 0) {
+        upMsg.subChannel = message.conversation.subChannel;
+    }
+    if (pubKey) {
+        upMsg.flags |= JMessageFlagIsE2EE;
+        
+        NSString *sha256 = [JEncryptUtility calcPubKeysSHA256Base64WithInfoList:e2eeInfoList];
+        NSData *aesKey = [JEncryptUtility generateAES256Key];
+        NSData *aesNonce = [JEncryptUtility generateAESGCMNonce];
+        NSData *aesTag = nil;
+        
+        NSData *encryptData = [JEncryptUtility aes256GCMEncryptData:msgData
+                                                                key:aesKey
+                                                              nonce:aesNonce
+                                        additionalAuthenticatedData:nil
+                                                                tag:&aesTag];
+        upMsg.msgContent = encryptData;
+        
+        E2ESuite *suite = [E2ESuite new];
+        suite.senderPubKey = pubKey;
+        suite.pubKeysHash = sha256;
+        suite.nonce = aesNonce;
+        suite.tag = aesTag;
+        
+        NSLog(@"E2EE debug, send aesKey is %@, aesNonce is %@, aesTag is %@", aesKey, aesNonce, aesTag);
+        
+        E2ECiphers *ciphers = [E2ECiphers new];
+        NSMutableArray <E2ECipher *> *cipherArray = [NSMutableArray array];
+        for (JE2EEInfo *e2eeInfo in e2eeInfoList) {
+            E2ECipher *cipher = [E2ECipher new];
+            cipher.deviceId = e2eeInfo.deviceId;
+            
+            NSData *sharedSecret = [JEncryptUtility x25519SharedSecretWithPrivateKey:priKey
+                                                                           publicKey:e2eeInfo.pubKey];
+            NSData *hkdf = [JEncryptUtility deriveAES256KeyFromSharedSecret:sharedSecret];
+                        
+            NSData *cipherNonce = [JEncryptUtility generateAESGCMNonce];
+            NSData *cipherTag = nil;
+            
+            NSData *encryptKey = [JEncryptUtility aes256GCMEncryptData:aesKey
+                                                                   key:hkdf
+                                                                 nonce:cipherNonce
+                                           additionalAuthenticatedData:nil
+                                                                   tag:&cipherTag];
+            NSMutableData *cipherData = [NSMutableData data];
+            [cipherData appendData:cipherNonce];
+            [cipherData appendData:encryptKey];
+            [cipherData appendData:cipherTag];
+            cipher.cipher = cipherData;
+            [cipherArray addObject:cipher];
+            NSLog(@"E2EE debug, send sharedSecret is %@, hkdf is %@, cipherNonce is %@, cipherTag is %@, encryptKey is %@", sharedSecret, hkdf, cipherNonce, cipherTag, encryptKey);
+        }
+        ciphers.itemsArray = cipherArray;
+        suite.ciphers = ciphers;
+        upMsg.e2ESuite = suite;
     }
 
     PublishMsgBody *publishMsg = [[PublishMsgBody alloc] init];
     publishMsg.index = index;
-    switch (conversation.conversationType) {
+    switch (message.conversation.conversationType) {
         case JConversationTypePrivate:
             publishMsg.topic = kPMsg;
             break;
@@ -382,10 +442,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
             publishMsg.topic = kPcMsg;
             break;
             
+        case JConversationTypePrivateE2EE:
+            publishMsg.topic = kSPMsg;
+            break;
+            
         default:
             break;
     }
-    publishMsg.targetId = conversation.conversationId;
+    publishMsg.targetId = message.conversation.conversationId;
     publishMsg.data_p = [upMsg data];
 
     @synchronized (self) {
@@ -1501,6 +1565,46 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return m.data;
 }
 
+- (NSData *)getPubKeys:(NSString *)userId currentUserId:(NSString *)currentUserId index:(int)index {
+    NSArray *userIdList = @[userId?:@"", currentUserId?:@""];
+    UserIdsReq *req = [UserIdsReq new];
+    req.userIdsArray = [NSMutableArray arrayWithArray:userIdList];
+    
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jBatchQryPubKeys;
+    body.targetId = currentUserId;
+    body.data_p = req.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
+- (NSData *)uploadPubKey:(NSData *)pubKey
+                deviceId:(NSString *)deviceId
+           currentUserId:(NSString *)currentUserId
+                   index:(int)index {
+    PublicKeyData *key = [PublicKeyData new];
+    key.userId = currentUserId;
+    key.deviceId = deviceId;
+    key.publicKey = pubKey;
+    
+    QueryMsgBody *body = [QueryMsgBody new];
+    body.index = index;
+    body.topic = jUploadPubKey;
+    body.targetId = currentUserId;
+    body.data_p = key.data;
+    
+    @synchronized (self) {
+        [self.msgCmdDic setObject:body.topic forKey:@(index)];
+    }
+    ImWebsocketMsg *m = [self createImWebSocketMsgWithQueryMsg:body];
+    return m.data;
+}
+
 - (NSData *)pingData {
     ImWebsocketMsg *m = [self createImWebsocketMsg];
     m.cmd = JCmdTypePing;
@@ -2103,6 +2207,9 @@ typedef NS_ENUM(NSUInteger, JQos) {
                 case JPBRcvTypeGetUserStatusAck:
                     obj = [self getUserStatusAckWithImWebsocketMsg:body];
                     break;
+                case JPBRcvTypeQryPubKeysAck:
+                    obj = [self qryPubKeysAckWithImWebsocketMsg:body];
+                    break;
                 default:
                     break;
             }
@@ -2292,6 +2399,41 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.seqNo = downMsg.msgSeqNo;
     msg.msgIndex = downMsg.unreadIndex;
     NSData *msgContent = downMsg.msgContent;
+    if (downMsg.flags & JMessageFlagIsE2EE) {
+        E2ESuite *suite = downMsg.e2ESuite;
+        NSData *senderPubKey = suite.senderPubKey;
+        NSData *nonce = suite.nonce;
+        NSData *tag = suite.tag;
+        E2ECiphers *ciphers = suite.ciphers;
+        NSData *cipherData = nil;
+        for (E2ECipher *cipher in ciphers.itemsArray) {
+            if ([cipher.deviceId isEqualToString:[JUtility getDeviceId]]) {
+                cipherData = cipher.cipher;
+                break;
+            }
+        }
+        NSData *priKey = [self.e2eeProvider getPriKey];
+        if (cipherData && priKey) {
+            NSData *cipherNonce = [cipherData subdataWithRange:NSMakeRange(0, 12)];
+            NSData *encryptedCEK = [cipherData subdataWithRange:NSMakeRange(12, 32)];
+            NSData *cipherTag = [cipherData subdataWithRange:NSMakeRange(44, 16)];
+            
+            NSData *sharedSecret = [JEncryptUtility x25519SharedSecretWithPrivateKey:priKey publicKey:senderPubKey];
+            NSData *hkdf = [JEncryptUtility deriveAES256KeyFromSharedSecret:sharedSecret];
+            NSData *aesKey = [JEncryptUtility aes256GCMDecryptData:encryptedCEK
+                                                               key:hkdf
+                                                             nonce:cipherNonce
+                                       additionalAuthenticatedData:nil
+                                                               tag:cipherTag];
+            msgContent = [JEncryptUtility aes256GCMDecryptData:msgContent
+                                                           key:aesKey
+                                                         nonce:nonce
+                                   additionalAuthenticatedData:nil
+                                                           tag:tag];
+            NSLog(@"E2EE debug, receive senderPubKey is %@, nonce is %@, tag is %@, priKey is %@, cipherNonce is %@, encryptedCEK is %@, cipherTag is %@, sharedSecret is %@, hkdf is %@, aesKey is %@", senderPubKey, nonce, tag, priKey, cipherNonce, encryptedCEK, cipherTag, sharedSecret, hkdf, aesKey);
+        }
+    }
+    
     if ([self.messagePreprocessor respondsToSelector:@selector(decryptMessageContent:inConversation:contentType:)]) {
         msgContent = [self.messagePreprocessor decryptMessageContent:msgContent inConversation:conversation contentType:msg.contentType];
     }
@@ -2410,6 +2552,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
         status.statusType = JUserStatusTypeOffline;
     }
     return status;
+}
+
+- (JE2EEInfo *)e2eeInfoWith:(PublicKeyData *)publicKey {
+    JE2EEInfo *info = [JE2EEInfo new];
+    info.userId = publicKey.userId;
+    info.deviceId = publicKey.deviceId;
+    info.pubKey = publicKey.publicKey;
+    return info;
 }
 
 - (UserInfo *)pbUserInfoWithUserInfo:(JUserInfo *)userInfo{
@@ -2972,6 +3122,30 @@ typedef NS_ENUM(NSUInteger, JQos) {
     return obj;
 }
 
+- (JPBRcvObj *)qryPubKeysAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
+    JPBRcvObj *obj = [JPBRcvObj new];
+    NSError *e = nil;
+    MultiPublicKeys *multiPublicKeys = [[MultiPublicKeys alloc] initWithData:body.data_p error:&e];
+    if (e != nil) {
+        JLogE(@"PB-Parse", @"qry pub keys parse error, msg is %@", e.description);
+        obj.rcvType = JPBRcvTypeParseError;
+        return obj;
+    }
+    obj.rcvType = JPBRcvTypeQryPubKeysAck;
+    NSMutableArray <JE2EEInfo *> *infoList = [NSMutableArray array];
+    for (PublicKeys *publicKeys in multiPublicKeys.itemsArray) {
+        for (PublicKeyData *publicKey in publicKeys.publicKeysArray) {
+            JE2EEInfo *info = [self e2eeInfoWith:publicKey];
+            [infoList addObject:info];
+        }
+    }
+    JTemplateAck <NSArray <JE2EEInfo *> *> *a = [JTemplateAck new];
+    [a encodeWithQueryAckMsgBody:body];
+    a.t = infoList;
+    obj.templateAck = a;
+    return obj;
+}
+
 - (JPBRcvObj *)qryMsgExtAckWithImWebsocketMsg:(QueryAckMsgBody *)body {
     JPBRcvObj *obj = [[JPBRcvObj alloc] init];
     NSError *e = nil;
@@ -3388,6 +3562,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
             result = JConversationTypeSubStatus;
             break;
             
+        case ChannelType_PrivateE2Ee:
+            result = JConversationTypePrivateE2EE;
+            break;
+            
         default:
             break;
     }
@@ -3462,7 +3640,10 @@ typedef NS_ENUM(NSUInteger, JQos) {
              jCreateUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jDelUserConverTags:@(JPBRcvTypeSimpleQryAckCallbackTimestamp),
              jQryUserConverTags:@(JPBRcvTypeGetConversationTagListAck),
-             jQryUserStatus:@(JPBRcvTypeGetUserStatusAck)
+             jQryUserStatus:@(JPBRcvTypeGetUserStatusAck),
+             jBatchQryPubKeys:@(JPBRcvTypeQryPubKeysAck),
+             jUploadPubKey:@(JPBRcvTypeSimpleQryAck),
+             kSPMsg:@(JPBRcvTypePublishMsgAck),
     };
 }
 @end
