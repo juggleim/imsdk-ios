@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 消息阅读时间（仅对单聊生效）
 @property (nonatomic, assign) long long readTime;
 @property (nonatomic, assign) BOOL isMute;
+/// 加密消息 hash 重试次数
+@property (nonatomic, assign) int hashCount;
 @end
 
 NS_ASSUME_NONNULL_END

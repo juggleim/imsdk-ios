@@ -2688,7 +2688,8 @@
         });
     } error:^(JErrorCodeInternal errorCode, long long clientMsgNo) {
         JLogI(@"MSG-Send", @"error, code is %lu", errorCode);
-        if (errorCode == JErrorCodeInternalPubKeysHashMismatch) {
+        if (errorCode == JErrorCodeInternalPubKeysHashMismatch
+            && message.hashCount++ < 3) {
             [self getPubKeyAndSendMessage:message
                                 mergeInfo:mergeInfo
                               isBroadcast:isBroadcast
