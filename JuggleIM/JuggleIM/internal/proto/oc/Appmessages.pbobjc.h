@@ -4009,11 +4009,14 @@ GPB_FINAL @interface E2ECiphers : GPBMessage
 #pragma mark - E2ECipher
 
 typedef GPB_ENUM(E2ECipher_FieldNumber) {
-  E2ECipher_FieldNumber_DeviceId = 1,
-  E2ECipher_FieldNumber_Cipher = 2,
+  E2ECipher_FieldNumber_UserId = 1,
+  E2ECipher_FieldNumber_DeviceId = 2,
+  E2ECipher_FieldNumber_Cipher = 3,
 };
 
 GPB_FINAL @interface E2ECipher : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
 

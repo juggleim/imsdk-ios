@@ -44,11 +44,15 @@ static JContentTypeCenter *_instance;
     }
     if (cls) {
         id content = [[cls alloc] init];
-        [content decode:data];
+        if (data) {
+            [content decode:data];
+        }
         return content;
     } else {
         JUnknownMessage *content = [[JUnknownMessage alloc] init];
-        [content decode:data];
+        if (data) {
+            [content decode:data];
+        }
         content.messageType = type;
         return content;
     }

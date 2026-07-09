@@ -391,6 +391,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         NSMutableArray <E2ECipher *> *cipherArray = [NSMutableArray array];
         for (JE2EEInfo *e2eeInfo in e2eeInfoList) {
             E2ECipher *cipher = [E2ECipher new];
+            cipher.userId = e2eeInfo.userId;
             cipher.deviceId = e2eeInfo.deviceId;
             
             NSData *sharedSecret = [JEncryptUtility x25519SharedSecretWithPrivateKey:priKey
@@ -2404,7 +2405,8 @@ typedef NS_ENUM(NSUInteger, JQos) {
         E2ECiphers *ciphers = suite.ciphers;
         NSData *cipherData = nil;
         for (E2ECipher *cipher in ciphers.itemsArray) {
-            if ([cipher.deviceId isEqualToString:[JUtility getDeviceId]]) {
+            if ([cipher.userId isEqualToString:JIM.shared.currentUserId]
+                && [cipher.deviceId isEqualToString:[JUtility getDeviceId]]) {
                 cipherData = cipher.cipher;
                 break;
             }

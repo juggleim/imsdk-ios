@@ -12315,11 +12315,13 @@ typedef struct E2ECiphers__storage_ {
 
 @implementation E2ECipher
 
+@dynamic userId;
 @dynamic deviceId;
 @dynamic cipher;
 
 typedef struct E2ECipher__storage_ {
   uint32_t _has_storage_[1];
+  NSString *userId;
   NSString *deviceId;
   NSData *cipher;
 } E2ECipher__storage_;
@@ -12332,10 +12334,19 @@ typedef struct E2ECipher__storage_ {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     static GPBMessageFieldDescription fields[] = {
       {
+        .name = "userId",
+        .dataTypeSpecific.clazz = Nil,
+        .number = E2ECipher_FieldNumber_UserId,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(E2ECipher__storage_, userId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
         .name = "deviceId",
         .dataTypeSpecific.clazz = Nil,
         .number = E2ECipher_FieldNumber_DeviceId,
-        .hasIndex = 0,
+        .hasIndex = 1,
         .offset = (uint32_t)offsetof(E2ECipher__storage_, deviceId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
@@ -12344,7 +12355,7 @@ typedef struct E2ECipher__storage_ {
         .name = "cipher",
         .dataTypeSpecific.clazz = Nil,
         .number = E2ECipher_FieldNumber_Cipher,
-        .hasIndex = 1,
+        .hasIndex = 2,
         .offset = (uint32_t)offsetof(E2ECipher__storage_, cipher),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeBytes,
@@ -12360,7 +12371,7 @@ typedef struct E2ECipher__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\001\001\010\000";
+        "\002\001\006\000\002\010\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
