@@ -9,9 +9,9 @@
 #import "JContentTypeCenter.h"
 #import "JIM.h"
 
-//conversation_info 最新版本
+//Latest conversation_info version.
 #define jConversationTableVersion 2
-//NSUserDefault 中保存 conversation_info 数据库版本的 key
+//Key for saving the conversation_info database version in NSUserDefaults.
 #define jConversationTableVersionKey @"ConversationVersion"
 
 NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversation_info ("
@@ -21,8 +21,8 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "draft TEXT,"
                                         "timestamp INTEGER,"
                                         "last_message_id VARCHAR (64),"
-                                        "last_read_message_index INTEGER,"//最后一条读过的消息的未读数 index
-                                        "last_message_index INTEGER,"//最后一条消息的未读数 index
+                                        "last_read_message_index INTEGER,"//Unread index of the last read message.
+                                        "last_message_index INTEGER,"//Unread index of the last message.
                                         "is_top BOOLEAN,"
                                         "top_time INTEGER,"
                                         "mute BOOLEAN,"
@@ -37,7 +37,7 @@ NSString *const kCreateConversationTable = @"CREATE TABLE IF NOT EXISTS conversa
                                         "last_message_sender VARCHAR (64),"
                                         "last_message_content TEXT,"
                                         "last_message_mention_info TEXT,"
-                                        "last_message_seq_no INTEGER,"//最后一条消息的排序号
+                                        "last_message_seq_no INTEGER,"//Sequence number of the last message.
                                         "unread_tag BOOLEAN,"
                                         "subchannel VARCHAR (64) DEFAULT ''"
                                         ")";
@@ -809,7 +809,7 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     BOOL needUpdate = NO;
     long long timeDifference = [JIM.shared getTimeDifference];
     long long now = [[NSDate date] timeIntervalSince1970] * 1000 + timeDifference;
-    // 当 lastMessage 存在的时候，检查它是否被删除或者过期了。不存在的时候不做处理
+    // When lastMessage exists, check whether it was deleted or expired. Do nothing when it does not exist.
     if ([info.lastMessage isKindOfClass:[JConcreteMessage class]]) {
         JConcreteMessage *conversationLastMessage = (JConcreteMessage *)info.lastMessage;
         JConcreteMessage *lastMessage = [self.messageDB getMessageWithClientUid:conversationLastMessage.clientUid];

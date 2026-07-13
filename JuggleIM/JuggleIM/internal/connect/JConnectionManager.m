@@ -88,8 +88,8 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        JLogE(@"CON-Token", @"tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
-              @"deviceToken 传入");
+        JLogE(@"CON-Token", @"tokenData type error. Please pass the deviceToken from "
+              @"didRegisterForRemoteNotificationsWithDeviceToken directly.");
         return;
     }
     JLogI(@"CON-Token", @"");
@@ -111,8 +111,8 @@
 
 - (void)registerVoIPToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        JLogE(@"CON-Token", @"VoIP tokenData 类型错误，请直接将 pushRegistry:didUpdatePushCredentials:forType 方法中的 "
-              @"credentials.token 传入");
+        JLogE(@"CON-Token", @"VoIP tokenData type error. Please pass credentials.token from "
+              @"pushRegistry:didUpdatePushCredentials:forType directly.");
         return;
     }
     JLogI(@"CON-Token", @"VoIP");

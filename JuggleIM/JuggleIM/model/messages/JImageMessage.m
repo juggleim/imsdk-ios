@@ -67,7 +67,7 @@
 }
 
 - (NSData *)encode{
-    //绝对路径转换成相对路径
+    //Convert absolute path to relative path
     NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
     
     NSString * thumbnailLocalPath = [self.thumbnailLocalPath stringByAbbreviatingWithTildeInPath];
@@ -88,7 +88,7 @@
 - (void)decode:(NSData *)data{
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     
-    //相对路径转换成绝对路径
+    //Convert relative path to absolute path
 
     NSString * localPath = json[jLocalPath]?:@"";
     if(localPath.length > 0){
@@ -121,16 +121,16 @@
 }
 
 - (NSString *)appendFileName:(NSString *)filePath {
-    // 获取文件扩展名
+    // Get the file extension
     NSString *extension = [filePath pathExtension];
     
     if (extension.length == 0) {
-        // 如果没有扩展名，直接在末尾添加"1"
+        // If there is no extension, append "1" to the end directly
         return [filePath stringByAppendingString:@"1"];
     } else {
-        // 去掉扩展名的文件路径
+        // File path without the extension
         NSString *pathWithoutExtension = [filePath stringByDeletingPathExtension];
-        // 在文件名后添加"1"，再加上原来的扩展名
+        // Add "1" after the file name, then append the original extension
         return [pathWithoutExtension stringByAppendingFormat:@"1.%@", extension];
     }
 }

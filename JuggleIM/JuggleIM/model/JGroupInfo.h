@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, copy) NSString *groupName;
 @property (nullable, nonatomic, copy) NSString *portrait;
 @property (nullable, nonatomic, strong) NSDictionary <NSString *, NSString *> *extraDic;
-// 更新时间
+// Updated time
 @property (nonatomic, assign) long long updatedTime;
 
 @end

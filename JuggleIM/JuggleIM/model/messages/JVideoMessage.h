@@ -13,19 +13,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)videoWithData:(NSData *)videoFileData;
 
-/// 视频封面图本地路径
+/// Local path of the video cover image
 @property (nonatomic, copy) NSString *snapshotLocalPath;
-/// 视频封面图远端地址
+/// Remote address of the video cover image
 @property (nonatomic, copy) NSString *snapshotUrl;
-/// 视频高度
+/// Video height
 @property (nonatomic, assign) int height;
-/// 视频宽度
+/// Video width
 @property (nonatomic, assign) int width;
-/// 视频大小，单位：Byte
+/// Video size, in bytes
 @property (nonatomic, assign) long long size;
-/// 视频时长，单位：秒
+/// Video duration, in seconds
 @property (nonatomic, assign) int duration;
-/// 扩展字段
+/// Extra field
 @property (nonatomic, copy) NSString *extra;
 @end
 

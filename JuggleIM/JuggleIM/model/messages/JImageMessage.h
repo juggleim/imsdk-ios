@@ -17,17 +17,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithImage:(UIImage *)image
                      fileName:(NSString *)fileName;
 
-///缩略图本地路径
+///Thumbnail local path
 @property (nonatomic, copy) NSString *thumbnailLocalPath;
-/// 缩略图的远端地址
+/// Remote address of the thumbnail
 @property (nonatomic, copy) NSString *thumbnailUrl;
-/// 图片高度
+/// Image height
 @property (nonatomic, assign) int height;
-/// 图片宽度
+/// Image width
 @property (nonatomic, assign) int width;
-/// 图片大小，单位：Byte
+/// Image size, in bytes
 @property (nonatomic, assign) long long size;
-/// 扩展字段
+/// Extra field
 @property (nonatomic, copy) NSString *extra;
 @end
 

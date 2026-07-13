@@ -57,7 +57,7 @@ typedef GPB_ENUM(RtcChannel) {
   RtcChannel_LivekitRtc = 1,
   RtcChannel_Agora = 2,
 
-  /** 自建音视频，保留 */
+  /** Self-hosted audio/video, reserved */
   RtcChannel_JuggleRtc = 11,
 };
 
@@ -520,7 +520,7 @@ GPB_FINAL @interface RtcRoomEvent : GPBMessage
 
 @property(nonatomic, readwrite) RtcRoomEventType roomEventType;
 
-/** 事件相关人的列表 */
+/** List of members related to the event */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger membersArray_Count;

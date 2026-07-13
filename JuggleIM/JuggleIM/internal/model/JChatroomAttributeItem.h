@@ -8,9 +8,9 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSInteger, JChatroomAttrOptType) {
-    JChatroomAttrOptType_Default = 0,    //默认
-    JChatroomAttrOptType_Update = 1,      //更新
-    JChatroomAttrOptType_Delete = 2,      //删除
+    JChatroomAttrOptType_Default = 0,    //Default
+    JChatroomAttrOptType_Update = 1,      //Update
+    JChatroomAttrOptType_Delete = 2,      //Delete
 };
 
 @interface JChatroomAttributeItem : NSObject

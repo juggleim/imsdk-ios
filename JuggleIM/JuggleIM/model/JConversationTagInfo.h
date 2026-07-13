@@ -10,19 +10,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- 会话标签类型
+ Conversation tag type
  */
 typedef NS_ENUM(NSUInteger, JConversationTagType) {
     /*!
-     用户类型
+     User type
      */
     JConversationTagTypeUser = 0,
     /*!
-     系统类型
+     System type
      */
     JConversationTagTypeSystem = 1,
     /*!
-     全局类型
+     Global type
      */
     JConversationTagTypeGlobal = 2
 };

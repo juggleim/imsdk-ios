@@ -39,9 +39,9 @@ typedef NS_ENUM(NSUInteger, JCmdType) {
 };
 
 typedef NS_ENUM(NSUInteger, JQos) {
-    //不需要响应 ack
+    //No response ack needed.
     JQosNo = 0,
-    //需要响应 ack
+    //Response ack needed.
     JQosYes = 1
 };
 
@@ -2852,7 +2852,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         return obj;
     }
     obj.rcvType = JPBRcvTypeSyncMsgsAck;
-    //sync 和 query history 共用一个 ack
+    //sync and query history share one ack.
     JQryHisMsgsAck *a = [[JQryHisMsgsAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     a.isFinished = set.isFinished;
@@ -2987,7 +2987,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
     NSMutableArray <JRtcRoom *> *outRooms = [NSMutableArray array];
     JRtcRoom *outRoom = [self rtcRoomWithPBRtcRoom:room];
     [outRooms addObject:outRoom];
-    //共用 JRtcQryCallRoomsAck
+    //Share JRtcQryCallRoomsAck.
     JRtcQryCallRoomsAck *a = [[JRtcQryCallRoomsAck alloc] init];
     [a encodeWithQueryAckMsgBody:body];
     a.rooms = outRooms;

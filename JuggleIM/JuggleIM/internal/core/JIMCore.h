@@ -10,15 +10,15 @@
 #import "JDBManager.h"
 
 typedef NS_ENUM(NSUInteger, JConnectionStatusInternal) {
-    //未连接
+    //Not connected
     JConnectionStatusInternalIdle = 0,
-    //已连接
+    //Connected
     JConnectionStatusInternalConnected = 1,
-    //连接断开（用户主动断开或者被服务端踢掉，SDK 不会进行重连）
+    //Connection disconnected (user actively disconnects or is kicked by the server; SDK will not reconnect)
     JConnectionStatusInternalDisconnected = 2,
-    //连接中
+    //Connecting
     JConnectionStatusInternalConnecting = 3,
-    //连接失败
+    //Connection failed
     JConnectionStatusInternalFailure,
     //
     JConnectionStatusInternalWaitingForConnecting

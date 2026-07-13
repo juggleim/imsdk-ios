@@ -10,19 +10,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- 在线类型
+ Online status type
  */
 typedef NS_ENUM(NSUInteger, JUserStatusType) {
     /*!
-     未知
+     Unknown
      */
     JUserStatusTypeUnknown = 0,
     /*!
-     在线
+     Online
      */
     JUserStatusTypeOnline = 1,
     /*!
-     离线
+     Offline
      */
     JUserStatusTypeOffline = 2
 };

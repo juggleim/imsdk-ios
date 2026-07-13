@@ -22,7 +22,7 @@
 @property (nonatomic, strong) NSHashTable <id<JConversationDelegate>> *delegates;
 @property (nonatomic, strong) NSHashTable <id<JConversationSyncDelegate>> *syncDelegates;
 @property (nonatomic, strong) NSHashTable <id<JConversationTagDelegate>> *tagDelegates;
-//在 receiveQueue 里处理
+//Handled in receiveQueue.
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedSyncTime;
 
@@ -100,9 +100,9 @@
     [self.core.webSocket deleteConversationInfo:conversation
                                          userId:self.core.userId
                                         success:^(long long timestamp) {
-        //删除会话不更新时间戳，只通过命令消息来更新
+        //Deleting a conversation does not update the timestamp; it is only updated by command messages.
         JLogI(@"CONV-Delete", @"success");
-        //更新消息发送时间
+        //Update message send time.
         [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager deleteConversationInfoBy:conversation];
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -705,15 +705,15 @@
         JUnDisturbConvMessage * content = (JUnDisturbConvMessage *)message.content;
         NSMutableArray * convs = [NSMutableArray array];
         for (JConcreteConversationInfo * conv in content.conversations) {
-            //更新数据库
+            //Update database.
             [self.core.dbManager setMute:conv.mute conversation:conv.conversation];
-            //获取会话对象
+            //Get conversation object.
             JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
             if (conversationInfo) {
                 [convs addObject:conversationInfo];
             }
         }
-        //回调
+        //Callback.
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
@@ -725,15 +725,15 @@
         JTopConvMessage * content = (JTopConvMessage *)message.content;
         NSMutableArray * convs = [NSMutableArray array];
         for (JConcreteConversationInfo * conv in content.conversations) {
-            //更新数据库
+            //Update database.
             [self.core.dbManager setTop:conv.isTop time:conv.topTime conversation:conv.conversation];
-            //获取会话对象
+            //Get conversation object.
             JConversationInfo * conversationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
             if (conversationInfo) {
                 [convs addObject:conversationInfo];
             }
         }
-        //回调
+        //Callback.
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
@@ -745,18 +745,18 @@
         JClearUnreadMessage * content = (JClearUnreadMessage *)message.content;
         NSMutableArray * convs = [NSMutableArray array];
         for (JConcreteConversationInfo * conv in content.conversations) {
-            //更新数据库
+            //Update database.
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
             [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
             [self.core.dbManager setUnread:NO conversation:conv.conversation];
             
-            //获取会话对象
+            //Get conversation object.
             JConversationInfo * convationInfo = [self.core.dbManager getConversationInfo:conv.conversation];
             if (convationInfo) {
                 [convs addObject:convationInfo];
             }
         }
-        //回调
+        //Callback.
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
@@ -1060,7 +1060,7 @@
                 [deletedConversations enumerateObjectsUsingBlock:^(JConcreteConversationInfo *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     [self.core.dbManager deleteConversationInfoBy:obj.conversation];
                 }];
-                //本地没有的给 delete 回调也没事
+                //It is fine to send delete callbacks for items that do not exist locally.
                 dispatch_async(self.core.delegateQueue, ^{
                     [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         if ([obj respondsToSelector:@selector(conversationInfoDidDelete:)]) {
@@ -1186,7 +1186,7 @@
         }
         
         BOOL hasMention = NO;
-        //接收的消息才处理 mention
+        //Only received messages process mentions.
         if (message.direction == JMessageDirectionReceive
             && message.mentionInfo != nil) {
             if (message.mentionInfo.type == JMentionTypeAll
@@ -1262,7 +1262,7 @@
                 }
                 info.mentionInfo = mentionInfo;
             }
-            //更新未读数
+            //Update unread count.
             if (message.msgIndex > 0) {
                 info.lastMessageIndex = message.msgIndex;
                 info.unreadCount = (int)(info.lastMessageIndex - info.lastReadMessageIndex);

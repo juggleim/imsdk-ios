@@ -352,29 +352,29 @@
 
 - (NSString *)fetchGetUrl:(NSString *)url
                    params:(NSDictionary *)params {
-    // 1. 将原始 URL 转为 NSURLComponents（方便处理参数）
+    // 1. Convert the original URL to NSURLComponents to make query handling easier.
     NSURLComponents *components = [NSURLComponents componentsWithString:url];
     if (!components) {
         JLogE(@"Mmt-Request", @"fetch url error");
         return url;
     }
 
-    // 2. 初始化参数数组（如果已有参数，先保留）
+    // 2. Initialize the query item array, preserving existing parameters if present.
     NSMutableArray *queryItems = [NSMutableArray arrayWithArray:components.queryItems ?: @[]];
 
-    // 3. 遍历字典，添加参数到数组
+    // 3. Iterate over the dictionary and add parameters to the array.
     [params enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
-        // 将参数值转为字符串（支持数字、布尔值、字符串等）
+        // Convert the parameter value to a string (supports numbers, booleans, strings, etc.).
         NSString *valueString = [NSString stringWithFormat:@"%@", value];
-        // 创建查询参数项（会自动处理编码）
+        // Create a query item, which handles encoding automatically.
         NSURLQueryItem *item = [NSURLQueryItem queryItemWithName:key value:valueString];
         [queryItems addObject:item];
     }];
 
-    // 4. 将参数数组赋值给 components
+    // 4. Assign the query item array to components.
     components.queryItems = queryItems;
 
-    // 5. 生成最终的 URL 字符串
+    // 5. Generate the final URL string.
     NSString *finalURLString = components.string;
     return finalURLString;
 }

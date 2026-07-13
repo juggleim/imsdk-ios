@@ -502,38 +502,38 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
 };
 
 /**
- * 上行消息
+ * Upstream message
  **/
 GPB_FINAL @interface UpMsg : GPBMessage
 
-/** 消息类型定义 */
+/** Message type definition */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
 
-/** 消息实体数据 */
+/** Message entity data */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
 
-/** 标识 */
+/** Flag */
 @property(nonatomic, readwrite) int32_t flags;
 
-/** 客户端指定的消息唯一ID */
+/** Client-specified unique message ID */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *clientUid;
 
-/** 推送设置 */
+/** Push settings */
 @property(nonatomic, readwrite, strong, null_resettable) PushData *pushData;
 /** Test to see if @c pushData has been set. */
 @property(nonatomic, readwrite) BOOL hasPushData;
 
-/** \@设置 */
+/** \@ mention settings */
 @property(nonatomic, readwrite, strong, null_resettable) MentionInfo *mentionInfo;
 /** Test to see if @c mentionInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasMentionInfo;
 
-/** 被引用的消息 */
+/** Referenced message */
 @property(nonatomic, readwrite, strong, null_resettable) DownMsg *referMsg;
 /** Test to see if @c referMsg has been set. */
 @property(nonatomic, readwrite) BOOL hasReferMsg;
 
-/** 群定向消息，指定接收消息的部分群成员 */
+/** Group targeted message, specifying some group members who receive the message */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
 /** The number of items in @c toUserIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
@@ -544,10 +544,10 @@ GPB_FINAL @interface UpMsg : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *searchText;
 
-/** 消息默认生存周期，单位毫秒，例如：86400000，即该消息1天后会被自动删除 */
+/** Default message lifetime in milliseconds, for example 86400000 means the message is automatically deleted after 1 day */
 @property(nonatomic, readwrite) int64_t lifeTime;
 
-/** 消息已读后的生存周期，通常小于lifeTime，例如60000，即消息已读1分钟后会被自动删除 */
+/** Lifetime after the message is read, usually less than lifeTime. For example, 60000 means the message is automatically deleted 1 minute after being read */
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
@@ -803,10 +803,10 @@ GPB_FINAL @interface DownMsg : GPBMessage
 /** Test to see if @c grpMemberInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasGrpMemberInfo;
 
-/** 消息默认的销毁时间点，单位毫秒，如 1752551449037，为0时，表示消息不自动销毁 */
+/** Default message destruction timestamp in milliseconds, such as 1752551449037. A value of 0 means the message is not automatically destroyed */
 @property(nonatomic, readwrite) int64_t destroyTime;
 
-/** 消息已读后生存周期，例如60000，即消息已读1分钟后会被自动删除 */
+/** Lifetime after the message is read, for example 60000 means the message is automatically deleted 1 minute after being read */
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite) BOOL isDelete;
@@ -1010,13 +1010,13 @@ typedef GPB_ENUM(SyncMsgReq_FieldNumber) {
 
 GPB_FINAL @interface SyncMsgReq : GPBMessage
 
-/** 收件箱同步时间 */
+/** Inbox sync time */
 @property(nonatomic, readwrite) int64_t syncTime;
 
-/** 是否包含发件箱消息 */
+/** Whether sent box messages are included */
 @property(nonatomic, readwrite) BOOL containsSendBox;
 
-/** 发件箱同步时间 */
+/** Sent box sync time */
 @property(nonatomic, readwrite) int64_t sendBoxSyncTime;
 
 @end

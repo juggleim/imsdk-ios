@@ -7,9 +7,9 @@
 
 #import "JProfileDB.h"
 
-//profile 最新版本
+//Latest profile version.
 #define jProfileTableVersion 1
-//NSUserDefault 中保存 profile 数据库版本的 key
+//Key for saving the profile database version in NSUserDefaults.
 #define jProfileTableVersionKey @"ProfileVersion"
 
 NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS profile ("

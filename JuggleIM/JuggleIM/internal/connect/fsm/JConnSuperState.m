@@ -14,23 +14,23 @@
     BOOL result = YES;
     switch (event) {
         case JConnEventUserConnect:
-            // 各状态自行处理
+            // Each state handles this itself.
             break;
             
         case JConnEventUserDisconnect:
-            // 各状态自行处理
+            // Each state handles this itself.
             break;
             
         case JConnEventConnectDone:
             // do nothing
-            // connecting 状态处理
-            // 其它状态下忽略
+            // Handled by the connecting state.
+            // Ignored in other states.
             break;
             
         case JConnEventNetworkAvailable:
             // do nothing
-            // waiting 和 connecting 状态处理
-            // 其它状态忽略（connected 状态会自动触发 websocketFail）
+            // Handled by the waiting and connecting states.
+            // Ignored in other states; the connected state automatically triggers websocketFail.
             break;
             
         default:

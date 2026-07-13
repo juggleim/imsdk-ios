@@ -11,29 +11,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, JMomentMediaType) {
     /*
-     图片
+     Image
      */
     JMomentMediaTypeImage,
     
     /*
-     视频
+     Video
      */
     JMomentMediaTypeVideo
 };
 
 @interface JMomentMedia : NSObject
 
-/// 远端地址
+/// Remote address
 @property (nonatomic, copy) NSString *url;
-/// 缩略图远端地址
+/// Remote address of the thumbnail
 @property (nonatomic, copy) NSString *snapshotUrl;
-/// 类型
+/// Type
 @property (nonatomic, assign) JMomentMediaType type;
-/// 高度
+/// Height
 @property (nonatomic, assign) int height;
-/// 宽度
+/// Width
 @property (nonatomic, assign) int width;
-/// 时长（用于视频）
+/// Duration (for videos)
 @property (nonatomic, assign) int duration;
 
 - (NSDictionary *)toDictionary;

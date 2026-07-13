@@ -203,7 +203,7 @@ NSString *const jDeleteMoment = @"DELETE FROM moment WHERE moment_id = ?";
     if ([object respondsToSelector:@selector(toDictionary)]) {
         dict = [object performSelector:@selector(toDictionary)];
     } else if ([object isKindOfClass:[NSDictionary class]]) {
-        dict = object; // 如果是字典直接使用
+        dict = object; // Use directly if this is a dictionary.
     }
     
     if (!dict) return nil;

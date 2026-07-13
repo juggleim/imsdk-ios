@@ -8,11 +8,11 @@
 #import "JMessageDB.h"
 #import "JContentTypeCenter.h"
 
-//message 最新版本
+//Latest message version.
 //deprecated
 #define jMessageTableVersion 3
 //deprecated
-//NSUserDefault 中保存 message 数据库版本的 key
+//Key for saving the message database version in NSUserDefaults.
 #define jMessageTableVersionKey @"MessageVersion"
 
 NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
@@ -196,11 +196,11 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             JConcreteMessage *old = nil;
-            //messageId 排重
+            //Deduplicate by messageId.
             if (obj.messageId.length > 0) {
                 old = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
             }
-            //clientUid 排重
+            //Deduplicate by clientUid.
             if (!old && obj.clientUid.length > 0) {
                 old = [self getMessageWithClientUid:obj.clientUid inDb:db];
             }
@@ -438,7 +438,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeUpdate:@"VACUUM" withArgumentsInArray:nil];
 }
 
-//被删除的消息也能查出来
+//Deleted messages can also be queried.
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (messageIds.count == 0) {
@@ -470,7 +470,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     return [messages copy];
 }
 
-//被删除的消息也能查出来
+//Deleted messages can also be queried.
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (clientMsgNos.count == 0) {

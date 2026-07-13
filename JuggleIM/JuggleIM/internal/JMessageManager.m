@@ -66,11 +66,11 @@
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) NSTimer *uploadPubKeyTimer;
 
-//在 receiveQueue 里处理
+//Handled in receiveQueue.
 @property (nonatomic, assign) BOOL syncProcessing;
 @property (nonatomic, assign) long long cachedReceiveTime;
 @property (nonatomic, assign) long long cachedSendTime;
-@property (nonatomic, assign) long long syncNotifyTime;//发件箱
+@property (nonatomic, assign) long long syncNotifyTime;//Sent box.
 @property (nonatomic, assign) BOOL chatroomSyncProcessing;
 @property (nonatomic, strong) NSMutableDictionary <NSString *, NSNumber *> *chatroomSyncDic;
 @property (nonatomic, strong) NSData *pubKey;
@@ -199,7 +199,7 @@
         });
         return;
     }
-    //如果没有远端消息 只删除本地后直接回调
+    //If there is no remote message, only delete locally and callback directly.
     if (deleteRemoteList.count == 0) {
         [self.core.dbManager deleteMessageByClientIds:deleteClientMsgNoList];
         [self notifyMessageRemoved:conversation removedMessages:messages];
@@ -216,7 +216,7 @@
         return;
     }
     
-    //如果有远端消息则删除远端消息，操作本地数据 回调
+    //If there is a remote message, delete it remotely, operate on local data, and callback.
     __weak typeof(self) weakSelf = self;
     [self.core.webSocket deleteMessage:conversation
                                msgList:deleteRemoteList
@@ -924,7 +924,7 @@
                            error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                           cancel:(void (^)(JMessage *message))cancelBlock{
     if (message.clientMsgNo <= 0 ||
-       !(message.messageId == nil || message.messageId.length == 0) ||   //已发送的消息不允许重发
+       !(message.messageId == nil || message.messageId.length == 0) ||   //Sent messages cannot be resent.
        message.content == nil ||
        ![message.content isKindOfClass:[JMediaMessageContent class]] ||
        message.conversation == nil ||
@@ -1020,8 +1020,8 @@
                              contentTypes:contentTypes
                                   success:^(NSArray * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-Get", @"success");
-        //TODO: 拉取的历史消息，重复的本地消息直接覆盖，clientMsgNo 不变，MediaMessageContent 的 localPath 不变，其它字段覆盖
-        //远端消息中间有断档的情况下，表示远端删了而本地没跟进，需要把本地对应的范围删掉
+        //TODO: For fetched history messages, duplicate local messages are overwritten directly; clientMsgNo and MediaMessageContent localPath remain unchanged, while other fields are overwritten.
+        //If remote messages have a gap, it means the remote side deleted messages but local data has not caught up, so the corresponding local range needs to be deleted.
         [self insertRemoteMessages:messages];
         dispatch_async(self.core.delegateQueue, ^{
             if (successBlock) {
@@ -1070,10 +1070,10 @@
     
     __block BOOL needRemote = NO;
     if (localMessages.count < option.count+1) {
-        //本地数据小于需要拉取的数量
+        //Local data is less than the amount that needs to be fetched.
         needRemote = YES;
     } else {
-        //查询逆向的消息，用于判断是否断档
+        //Query messages in reverse order to determine whether there is a gap.
         NSMutableArray *fullLocalMessages = [localMessages mutableCopy];
         if (option.startTime != 0) {
             JPullDirection reverseDirection;
@@ -1104,7 +1104,7 @@
             }
         }
         
-        //判断是否连续
+        //Determine whether it is continuous.
         __block long long seqNo = -1;
         [fullLocalMessages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if ([obj.contentType isEqualToString:[JStreamTextMessage contentType]]) {
@@ -1148,7 +1148,7 @@
                                   direction:direction
                                contentTypes:option.contentTypes
                                     success:^(NSArray *messages, BOOL isFinished) {
-            //合并
+            //Merge.
             NSMutableArray * messagesArray = [NSMutableArray array];
             [messagesArray addObjectsFromArray:messages];
             for (JMessage *localMessage in localMessages) {
@@ -1184,7 +1184,7 @@
                     [messagesArray addObject:localMessage];
                 }
             }
-            //正序排序
+            //Sort in ascending order.
             NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
                 if (msg1.timestamp < msg2.timestamp) {
                     return NSOrderedAscending;
@@ -1261,18 +1261,18 @@
 //                                              time:startTime
 //                                         direction:direction];
 //    __block BOOL needRemote = NO;
-//    //本地数据为空
+//    //Local data is empty.
 //    if (localMessages.count == 0) {
 //        needRemote = YES;
 //    } else {
 //        JConcreteMessage *message = localMessages[0];
 //        __block long long seqNo = message.seqNo;
 //        if(localMessages.count < count){
-//            //本地数据小于需要拉取的数量
+//            //Local data is less than the amount that needs to be fetched.
 //            needRemote = YES;
 //        } else {
-//            //本地数据等于需要拉取的数据
-//            //判断是否连续
+//            //Local data equals the amount that needs to be fetched.
+//            //Determine whether it is continuous.
 //            [localMessages enumerateObjectsUsingBlock:^(JConcreteMessage *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 //                if (idx > 0 && obj.messageState == JMessageStateSent && obj.seqNo != 0) {
 //                    if (obj.seqNo > ++seqNo) {
@@ -1297,7 +1297,7 @@
 //                              count:count
 //                          direction:direction
 //                            success:^(NSArray *messages, BOOL isFinished) {
-//            //合并
+//            //Merge.
 //            NSMutableArray * messagesArray = [NSMutableArray array];
 //            [messagesArray addObjectsFromArray:localMessages];
 //            for (JMessage * message in messages) {
@@ -1305,7 +1305,7 @@
 //                    [messagesArray addObject:message];
 //                }
 //            }
-//            //正序排序
+//            //Sort in ascending order.
 //            NSArray * ascArray = [messagesArray sortedArrayUsingComparator:^NSComparisonResult(JConcreteMessage *  _Nonnull msg1, JConcreteMessage *  _Nonnull msg2) {
 //                if(msg1.timestamp < msg2.timestamp){
 //                    return NSOrderedAscending;
@@ -1871,7 +1871,7 @@
             }
             
             //callback delegate
-            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
+            //callback only contains new items. Do not merge locally because local data is incomplete, especially when receiving another user's reaction, where incomplete data must not be returned.
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
@@ -1966,7 +1966,7 @@
             }
             
             //callback delegate
-            //callback 只有新增的，不用本地做合并，因为本地不全（特别是收到别的用户的 reaction 时，不能返回不全的数据）
+            //callback only contains new items. Do not merge locally because local data is incomplete, especially when receiving another user's reaction, where incomplete data must not be returned.
             JMessageReaction *reaction = [[JMessageReaction alloc] init];
             reaction.messageId = messageId;
             JMessageReactionItem *item = [[JMessageReactionItem alloc] init];
@@ -2207,7 +2207,7 @@
 
 #pragma mark - JChatroomProtocol
 - (void)chatroomDidJoin:(NSString *)chatroomId {
-    //确保后面会走 sync 逻辑
+    //Ensure the later sync logic runs.
     long long time = [self.chatroomManager getSyncTimeForChatroom:chatroomId] + 1;
     [self syncChatroomNotify:chatroomId time:time];
 }
@@ -2230,7 +2230,7 @@
 #pragma mark - JWebSocketMessageDelegate
 - (BOOL)messageDidReceive:(JConcreteMessage *)message {
     JLogI(@"MSG-Rcv", @"direct message id is %@", message.messageId);
-    // 只处理发件箱的消息，收件箱的消息直接抛弃（状态消息直接漏过）
+    // Only process sent box messages; discard inbox messages directly, while status messages pass through.
     BOOL isStatusMessage = message.flags&JMessageFlagIsStatus;
     if (self.syncProcessing && !isStatusMessage) {
         if (message.direction == JMessageDirectionSend) {
@@ -2339,7 +2339,7 @@
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
             JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId extra:cmd.extra];
-            //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
+            //recallMessage being nil means the recalled message does not exist locally and no callback is needed.
             if (recallMessage) {
                 dispatch_async(self.core.delegateQueue, ^{
                     [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -2894,7 +2894,7 @@
 
 - (void)handleTopMsgMessage:(JConcreteMessage *)message {
     JTopMsgMessage *topMsg = (JTopMsgMessage *)message.content;
-    //延时操作有可能导致乱序，但是针对这个业务，回调延迟也不会造成太大影响
+    //Delayed operations may cause out-of-order execution, but callback delay does not have much impact for this business case.
     [self getMessagesByMessageIds:@[topMsg.messageId]
                    inConversation:message.conversation
                           success:^(NSArray<JMessage *> *messages) {
@@ -3105,7 +3105,7 @@
         if ([obj.contentType isEqualToString:[JMsgModifyMessage contentType]]) {
             JMsgModifyMessage *cmd = (JMsgModifyMessage *)obj.content;
             JMessage *updatedMessage = [self handleModifyMessage:cmd.originalMessageId msgType:cmd.messageType content:cmd.messageContent];
-            //updatedMessage 为空表示被修改的消息本地不存在，不需要回调
+            //updatedMessage being nil means the modified message does not exist locally and no callback is needed.
             if (updatedMessage) {
                 dispatch_async(self.core.delegateQueue, ^{
                     [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -3122,7 +3122,7 @@
         if ([obj.contentType isEqualToString:[JRecallCmdMessage contentType]]) {
             JRecallCmdMessage *cmd = (JRecallCmdMessage *)obj.content;
             JMessage *recallMessage = [self handleRecallCmdMessage:cmd.originalMessageId extra:cmd.extra];
-            //recallMessage 为空表示被撤回的消息本地不存在，不需要回调
+            //recallMessage being nil means the recalled message does not exist locally and no callback is needed.
             if (recallMessage) {
                 dispatch_async(self.core.delegateQueue, ^{
                     [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JMessageDelegate>  _Nonnull dlg, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -3276,7 +3276,7 @@
         });
     }];
 
-    //直发的消息，而且正在同步中，不直接更新 sync time
+    //For directly sent messages, do not update sync time directly while syncing.
     if (!isSync && self.syncProcessing) {
         if (sendTime > 0) {
             self.cachedSendTime = sendTime;

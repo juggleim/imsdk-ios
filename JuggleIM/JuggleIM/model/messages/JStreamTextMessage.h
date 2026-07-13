@@ -9,11 +9,11 @@
 
 @interface JStreamTextMessage : JMessageContent
 
-/// 流式消息的内容
+/// Streaming message content
 @property (nonatomic, copy) NSString *content;
-/// 是否完成
+/// Whether complete
 @property (nonatomic, assign) BOOL isFinished;
-/// 当前分片数
+/// Current fragment count
 @property (nonatomic, assign) int seq;
 
 @end

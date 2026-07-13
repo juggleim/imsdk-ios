@@ -9,14 +9,14 @@
 #import <JuggleIM/JuggleIMConst.h>
 
 @interface JGetConversationOptions : NSObject
-/// 会话类型列表，nil 表示全部类型
+/// Conversation type list; nil means all types
 @property (nonatomic, copy) NSArray <NSNumber *> *conversationTypes;
-/// 拉取数量
+/// Fetch count
 @property (nonatomic, assign) int count;
-/// 拉取时间戳，0 表示当前时间
+/// Fetch timestamp; 0 means the current time
 @property (nonatomic, assign) long long timestamp;
-/// 拉取方向
+/// Fetch direction
 @property (nonatomic, assign) JPullDirection direction;
-/// 标签 id，nil 表示不限标签
+/// Tag id; nil means no tag restriction
 @property (nonatomic, copy) NSString *tagId;
 @end

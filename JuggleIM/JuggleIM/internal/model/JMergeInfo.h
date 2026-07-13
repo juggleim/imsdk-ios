@@ -2,7 +2,7 @@
 //  JMergeInfo.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/6/26.
+//  Created by Zheng Kai on 2024/6/26.
 //
 
 #import <Foundation/Foundation.h>
@@ -10,7 +10,7 @@
 
 @interface JMergeInfo : NSObject
 
-/// 被合并消息的会话标识
+/// Conversation identifier of the merged message.
 @property (nonatomic, strong) JConversation * conversation;
 
 @property (nonatomic, copy) NSArray <JConcreteMessage *> * messages;
@@ -18,4 +18,3 @@
 @property (nonatomic, copy) NSString * containerMsgId;
 
 @end
-

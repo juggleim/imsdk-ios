@@ -10,9 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JGetFavoriteMessageOption : NSObject
-/// 查询的起始位置，第一次可以传空，后续可以从成功回调里获取下一次的 offset
+/// Query start position. Pass empty for the first time; later calls can use the next offset from the success callback
 @property (nonatomic, copy) NSString *offset;
-/// 查询数量
+/// Query count
 @property (nonatomic, assign) int count;
 @end
 

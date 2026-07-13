@@ -12,16 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JUnknownMessage : JMessageContent
 
 /*!
- 消息的类型
+ Message type
  */
 @property (nonatomic, copy) NSString *messageType;
 
 /*!
- 消息的内容
+ Message content
  */
 @property (nonatomic, copy) NSString *content;
 
-/// 消息属性
+/// Message attributes
 @property (nonatomic, assign) JMessageFlag flags;
 
 @end

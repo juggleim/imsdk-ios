@@ -11,9 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JFavoriteMessage : NSObject
-/// 消息
+/// Message
 @property (nonatomic, strong) JMessage *message;
-/// 收藏时间
+/// Favorited time
 @property (nonatomic, assign) long long createdTime;
 @end
 

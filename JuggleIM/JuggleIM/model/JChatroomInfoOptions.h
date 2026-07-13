@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JChatroomInfoOptions : NSObject
 
-/// 拉取数量，member 大于 0 小于等于 100， 默认为 20
+/// Fetch count; member is greater than 0 and less than or equal to 100. Defaults to 20
 @property (nonatomic, assign) int memberCount;
 
-/// 成员排序，默认为 JChatroomMemberOrderDescending
+/// Member order; defaults to JChatroomMemberOrderDescending
 @property (nonatomic, assign) JChatroomMemberOrder memberOrder;
 
 @end

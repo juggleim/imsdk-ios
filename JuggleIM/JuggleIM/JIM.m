@@ -60,7 +60,7 @@ static JIM *_instance;
     if ([self.core.appKey isEqualToString:appKey]) {
         return;
     }
-    //appKey 更新了，则原来缓存的 userId 和 token 不再适用
+    // When appKey changes, the previously cached userId and token are no longer valid.
     self.core.appKey = appKey;
     self.core.userId = @"";
     self.core.token = @"";

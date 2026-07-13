@@ -14,16 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JChatroomInfo : NSObject
 
-/// 聊天室 id
+/// Chatroom id
 @property (nonatomic, copy) NSString *chatroomId;
 
-/// 成员排序
+/// Member order
 @property (nonatomic, assign) JChatroomMemberOrder memberOrder;
 
-/// 聊天室成员数量
+/// Number of chatroom members
 @property (nonatomic, assign) int totalMemberCount;
 
-/// 成员列表，只包含前 100 条（按照 memberOrder 排序规则）
+/// Member list, containing only the first 100 entries (according to the memberOrder sort rule)
 @property (nonatomic, copy) NSArray <JChatroomMember *> *memberList;
 
 @end

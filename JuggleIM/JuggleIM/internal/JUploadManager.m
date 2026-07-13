@@ -2,7 +2,7 @@
 //  JUploadManager.m
 // JuggleIM
 //
-//  Created by 郑开 on 2024/7/9.
+//  Created by Zheng Kai on 2024/7/9.
 //
 
 #import "JUploadManager.h"
@@ -159,7 +159,7 @@
     } else {
         uploadFileType = JUploadFileType_Default;
     }
-    //获取封面或缩略图
+    //Get the cover or thumbnail.
     BOOL needPreUpload = NO;
     NSString * preUploadLocalPath = @"";
     if ([content isKindOfClass:[JImageMessage class]]) {
@@ -173,7 +173,7 @@
             needPreUpload = YES;
         }
     }
-    //有缩略图的情况下先上传缩略图
+    //Upload the thumbnail first when one exists.
     if (needPreUpload) {
         float preProgressPercent = 0.2f;
         [self doUploadMessage:message

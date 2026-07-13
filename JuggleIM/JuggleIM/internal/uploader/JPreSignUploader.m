@@ -2,7 +2,7 @@
 //  JPreSignUploader.m
 // JuggleIM
 //
-//  Created by 郑开 on 2024/7/10.
+//  Created by Zheng Kai on 2024/7/10.
 //
 
 #import "JPreSignUploader.h"
@@ -39,7 +39,7 @@
         return;
     }
     
-    //带扩展名的文件名
+    //Filename with extension.
     NSString *fileName = [self.localPath lastPathComponent];
     
     if(fileName == nil || fileName.length == 0){
@@ -48,7 +48,7 @@
         return;
     }
     
-    //文件URL
+    //File URL.
     NSURL *fileURL = [NSURL fileURLWithPath:self.localPath];
     NSData * data = [NSData dataWithContentsOfURL:fileURL];
     if(data == nil || data.length == 0){
@@ -56,15 +56,15 @@
         [self notifyFail];
         return;
     }
-    //上传URL
+    //Upload URL.
     NSURL *uploadURL = [NSURL URLWithString:self.preSignCred.url];
-    // 创建请求
+    // Create request.
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:uploadURL];
     [request setHTTPMethod:@"PUT"];
     if (self.ossType == JUploadOssType_S3) {
         [request setValue:@"public-read" forHTTPHeaderField:@"x-amz-acl"];
     }
-    // 创建上传任务
+    // Create upload task.
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     NSURLSession * session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     self.uploadTask = [session uploadTaskWithRequest:request
@@ -87,7 +87,7 @@
         [session invalidateAndCancel];
     }];
     
-    // 启动任务
+    // Start task.
     [self.uploadTask resume];
     
 }
@@ -98,7 +98,7 @@
     [self notifyCancel];
 }
 
-//获取上传进度
+//Get upload progress.
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
     double progress = (double)totalBytesSent / (double)totalBytesExpectedToSend;
     int IntProgress = progress * 100;

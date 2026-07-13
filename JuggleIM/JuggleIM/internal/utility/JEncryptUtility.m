@@ -184,14 +184,14 @@ static void JX25519(uint8_t out[32], const uint8_t scalar[32], const uint8_t poi
         return @"";
     }
     
-    // 1. 按 userId + deviceId 字母升序排序
+    // 1. Sort by userId + deviceId in ascending lexicographic order.
     NSArray<JE2EEInfo *> *sortedList = [infoList sortedArrayUsingComparator:^NSComparisonResult(JE2EEInfo *obj1, JE2EEInfo *obj2) {
         NSString *str1 = [obj1.userId stringByAppendingString:obj1.deviceId];
         NSString *str2 = [obj2.userId stringByAppendingString:obj2.deviceId];
         return [str1 compare:str2];
     }];
     
-    // 2. 遍历取出 pubKey 依次拼接
+    // 2. Iterate and concatenate pubKey values in order.
     NSMutableData *concatPubData = [NSMutableData data];
     for (JE2EEInfo *info in sortedList) {
         if (info.pubKey && info.pubKey.length > 0) {
@@ -199,10 +199,10 @@ static void JX25519(uint8_t out[32], const uint8_t scalar[32], const uint8_t poi
         }
     }
     
-    // 3. 计算 SHA256
+    // 3. Calculate SHA256.
     NSData *sha256Data = [self sha256Hash:concatPubData];
     
-    // 4. Base64编码返回
+    // 4. Base64 encode and return.
     return [sha256Data base64EncodedStringWithOptions:0];
 }
 

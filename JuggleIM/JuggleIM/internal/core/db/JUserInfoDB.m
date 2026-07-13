@@ -7,13 +7,13 @@
 
 #import "JUserInfoDB.h"
 
-//user 最新版本
+//Latest user version.
 #define jUserTableVersion 1
-//NSUserDefault 中保存 user 数据库版本的 key
+//Key for saving the user database version in NSUserDefaults.
 #define jUserTableVersionKey @"UserVersion"
-//group 最新版本
+//Latest group version.
 #define jGroupTableVersion 1
-//NSUserDefault 中保存 group 数据库版本的 key
+//Key for saving the group database version in NSUserDefaults.
 #define jGroupTableVersionKey @"GroupVersion"
 
 NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("

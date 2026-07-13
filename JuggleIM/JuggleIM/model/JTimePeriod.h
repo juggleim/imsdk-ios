@@ -11,10 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JTimePeriod : NSObject
 
-/// 开始时间，格式为 "HH:mm"
+/// Start time, in "HH:mm" format
 @property (nonatomic, copy) NSString *startTime;
 
-/// 结束时间，格式为 "HH:mm"
+/// End time, in "HH:mm" format
 @property (nonatomic, copy) NSString *endTime;
 
 

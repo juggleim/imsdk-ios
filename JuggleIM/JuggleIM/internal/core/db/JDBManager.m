@@ -539,7 +539,7 @@
     [self.versionDB updateTables];
 }
 
-//DB 目录
+//DB directory.
 - (NSString *)dbDirectoryWith:(NSString *)appKey
                        userId:(NSString *)userId {
     NSString *path = [JUtility rootPath];
@@ -548,7 +548,7 @@
     return path;
 }
 
-//当 DB 文件存在时返回路径，否则返回 @""
+//Return the path when the DB file exists; otherwise return @"".
 - (NSString *)dbPathWith:(NSString *)appKey
                   userId:(NSString *)userId
     notExistsReturnEmpty:(BOOL)returnEmpty {

@@ -12,7 +12,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     /// Signal outgoing
     JCallEventInvite,
     JCallEventAccept,
-    JCallEventHangup, //失败暂不处理，对端会收到 media 的退出或者超时
+    JCallEventHangup, // Failures are not handled for now. The remote side will receive the media exit or timeout.
     JCallEventAcceptAfterHangupOther,
     //JCallEventAddParticipants,
     
@@ -43,7 +43,7 @@ typedef NS_ENUM(NSInteger, JCallEvent) {
     /// Media outgoing
     
     /// Media outgoing callback
-    JCallEventJoinChannelDone, //join channel 暂不需要产生事件，只是进入某一个状态时的一个动作
+    JCallEventJoinChannelDone, // Joining the channel does not need to produce an event for now; it is only an action when entering a state.
     JCallEventJoinChannelFail,
     
     /// Media incoming

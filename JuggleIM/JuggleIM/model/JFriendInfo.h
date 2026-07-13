@@ -11,7 +11,7 @@
 
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, assign) BOOL isFriend;
-// 好友备注
+// Friend remark
 @property (nonatomic, copy) NSString *alias;
 @property (nonatomic, assign) long long updatedTime;
 

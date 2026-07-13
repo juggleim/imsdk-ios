@@ -8,15 +8,15 @@
 
 @protocol JConnectionDelegate <NSObject>
 @optional
-/// 连接状态变化的回调
+/// Callback for connection status changes.
 /// - Parameters:
-///   - status: 变化后的状态
-///   - code: 连接错误码，在 JConnectionStatusFailure 状态时有效，其它状态均为 0。
-///   - extra: 附加信息
+///   - status: Updated status.
+///   - code: Connection error code. Valid when status is JConnectionStatusFailure; 0 for other statuses.
+///   - extra: Additional information.
 - (void)connectionStatusDidChange:(JConnectionStatus)status
                         errorCode:(JErrorCode)code
                             extra:(NSString *)extra;
-/// 数据库打开的回调，设备离线的情况下也可以打开本地数据库查看历史消息
+/// Callback when the database is opened. The local database can be opened even the device is offline to view historical messages.
 - (void)dbDidOpen;
 - (void)dbDidClose;
 @end
@@ -30,20 +30,20 @@
 
 - (void)registerVoIPToken:(NSData *)tokenData;
 
-/// 设置语言（主要影响内置消息的推送语言，目前支持中/英文）
+/// Sets the language. This mainly affects the push language for built-in messages. English and Chinese are currently supported.
 /// - Parameters:
-///   - language: 语言，例 “en-US”
-///   - completeBlock: 结果回调，返回 JErrorCodeNone 表示成功
+///   - language: Language, for example "en-US".
+///   - completeBlock: Result callback. JErrorCodeNone indicates success.
 - (void)setLanguage:(NSString *)language
            complete:(void (^)(JErrorCode code))completeBlock;
 
-/// 获取语言（主要影响内置消息的推送语言，目前支持中/英文）
-/// - Parameter completeBlock: 结果回调，返回 JErrorCodeNone 表示成功
+/// Gets the language. This mainly affects the push language for built-in messages. Chinese and English are currently supported.
+/// - Parameter completeBlock: Result callback. JErrorCodeNone indicates success.
 - (void)getLanguage:(void (^)(JErrorCode code, NSString *language))completeBlock;
 
-/// 设置连接参数
+/// Sets connection parameters.
 /// - Parameter sighKey:
-/// - Parameter headers: 连接 headers
+/// - Parameter headers: Connection headers.
 - (void)setConnectParams:(NSString *)signKey
                  headers:(NSDictionary <NSString *, NSString *> *)headers;
 

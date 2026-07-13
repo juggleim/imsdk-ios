@@ -2,7 +2,7 @@
 //  JCleanMsgMessage.m
 // JuggleIM
 //
-//  Created by 郑开 on 2024/5/21.
+//  Created by Zheng Kai on 2024/5/21.
 //
 
 #import "JCleanMsgMessage.h"

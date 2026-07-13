@@ -20,65 +20,65 @@
 
 @protocol JUserInfoProtocol <NSObject>
 
-/// 获取用户信息
-/// - Parameter userId: 用户 id
+/// Gets user information.
+/// - Parameter userId: User ID.
 - (JUserInfo *)getUserInfo:(NSString *)userId;
 
-/// 批量获取用户信息
-/// - Parameter userIdList: 用户 id 列表
+/// Gets user information in batches.
+/// - Parameter userIdList: User ID list.
 - (NSArray <JUserInfo *> *)getUserInfoList:(NSArray <NSString *> *)userIdList;
 
-/// 获取群组信息
-/// - Parameter groupId: 群组 id
+/// Gets group information.
+/// - Parameter groupId: Group ID.
 - (JGroupInfo *)getGroupInfo:(NSString *)groupId;
 
-/// 批量获取群组信息
-/// - Parameter groupIdList: 群组 id 列表
+/// Gets group information in batches.
+/// - Parameter groupIdList: Group ID list.
 - (NSArray <JGroupInfo *> *)getGroupInfoList:(NSArray <NSString *> *)groupIdList;
 
-/// 获取群成员信息
+/// Gets group member information.
 /// - Parameters:
-///   - groupId: 群组 id
-///   - userId: 用户 id
+///   - groupId: Group ID.
+///   - userId: User ID.
 - (JGroupMember *)getGroupMember:(NSString *)groupId
                           userId:(NSString *)userId;
 
-/// 获取好友信息
-/// - Parameter userId: 好友的用户 id
+/// Gets friend information.
+/// - Parameter userId: Friend's user ID.
 - (JFriendInfo *)getFriendInfo:(NSString *)userId;
 
-/// 从服务端获取最新的用户信息
+/// Fetches the latest user information from the server.
 /// - Parameters:
-///   - userId: 用户 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - userId: User ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)fetchUserInfo:(NSString *)userId
               success:(void (^)(JUserInfo *userInfo))successBlock
                 error:(void (^)(JErrorCode code))errorBlock;
 
-/// 从服务端获取最新的群组信息
+/// Fetches the latest group information from the server.
 /// - Parameters:
-///   - groupId: 群组 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - groupId: Group ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)fetchGroupInfo:(NSString *)groupId
                success:(void (^)(JGroupInfo *groupInfo))successBlock
                  error:(void (^)(JErrorCode code))errorBlock;
 
-/// 从服务端获取最新的好友信息
+/// Fetches the latest friend information from the server.
 /// - Parameters:
-///   - userId: 用户 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - userId: User ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)fetchFriendInfo:(NSString *)userId
                 success:(void (^)(JFriendInfo *friendInfo))successBlock
                   error:(void (^)(JErrorCode code))errorBlock;
 
-/// 查询用户状态
+/// Queries user status.
 /// - Parameters:
-///   - userIdList: 需要获取的用户 id 列表
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - userIdList: User ID list to fetch.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getUserStatus:(NSArray <NSString *>*)userIdList
               success:(void (^)(NSArray <JUserStatus *> *statusList))successBlock
                 error:(void (^)(JErrorCode code))errorBlock;

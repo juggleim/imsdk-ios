@@ -63,7 +63,7 @@
                               success:^(long long timestamp) {
         JLogI(@"CHRM-Join", @"success");
         [self changeStatus:JChatroomStatusJoined forChatroom:chatroomId];
-        //count 为 0，timestamp 也为 0，服务端永远同步不下来消息
+        //When count is 0 and timestamp is also 0, the server can never sync messages.
         long long existedSyncTime = [self getSyncTimeForChatroom:chatroomId];
         if (count == 0 && existedSyncTime == 0) {
             [self setSyncTime:timestamp forChatroom:chatroomId];
@@ -79,7 +79,7 @@
     } error:^(JErrorCodeInternal code) {
         JLogE(@"CHRM-Join", @"error code is %ld", code);
         [self changeStatus:JChatroomStatusFailed forChatroom:chatroomId];
-        //不做自动重新加入
+        //Do not automatically rejoin.
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JChatroomDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(chatroomJoinFail:errorCode:)]) {

@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
               additionalAuthenticatedData:(nullable NSData *)additionalAuthenticatedData
                                       tag:(NSData *)tag;
 
-/// 将 infoList 按 deviceId 升序排序，拼接全部 pubKey，计算SHA256后返回base64字符串
-/// @param infoList 原始JE2EEInfo数组
+/// Sort infoList by deviceId in ascending order, concatenate all pubKey values, calculate SHA256, and return a base64 string.
+/// @param infoList Original JE2EEInfo array.
 + (NSString *)calcPubKeysSHA256Base64WithInfoList:(NSArray<JE2EEInfo *> *)infoList;
 
 + (NSData *)deriveAES256KeyFromSharedSecret:(NSData *)sharedSecret;

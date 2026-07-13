@@ -23,44 +23,44 @@
 @class JMergeMessage;
 
 @protocol JMessageDelegate <NSObject>
-/// 接收消息的回调
+/// Callback when a message is received.
 - (void)messageDidReceive:(JMessage *)message;
 
 @optional
-/// 消息撤回的回调
+/// Callback when a message is recalled.
 - (void)messageDidRecall:(JMessage *)message;
-/// 消息删除的回调
+/// Callback when messages are deleted.
 - (void)messageDidDelete:(JConversation *)conversation
             clientMsgNos:(NSArray <NSNumber *> *)clientMsgNos;
-/// 消息清除回调，表示清除特定会话中某个时间点之前的所有消息
+/// Callback when messages are cleared before a specific time in a specific conversation.
 /// - Parameters:
-///   - conversation: 被清除消息所属的会话标识
-///   - timestamp: 时间戳（毫秒），timestamp 之前的消息被清除
-///   - senderId: 若不为空，表示只清除发送者 id 为 senderId 的消息
+///   - conversation: Conversation identifier for the cleared messages.
+///   - timestamp: Timestamp in milliseconds. Messages before this timestamp are cleared.
+///   - senderId: If not empty, only messages from this sender ID are cleared.
 - (void)messageDidClear:(JConversation *)conversation
               timestamp:(long long)timestamp
                senderId:(NSString *)senderId;
-/// 消息修改的回调
-/// - Parameter message: 修改后的消息
+/// Callback when a message is updated.
+/// - Parameter message: Updated message.
 - (void)messageDidUpdate:(JMessage *)message;
 
-/// 新增消息回应的回调
-/// - Parameter reaction: 新增的消息回应
-/// - Parameter conversation: 所属会话
+/// Callback when a message reaction is added.
+/// - Parameter reaction: Added message reaction.
+/// - Parameter conversation: Conversation it belongs to.
 - (void)messageReactionDidAdd:(JMessageReaction *)reaction
                inConversation:(JConversation *)conversation;
 
-/// 删除消息回应的回调
-/// - Parameter reaction: 删除的消息回应
-/// - Parameter conversation: 所属会话
+/// Callback when a message reaction is removed.
+/// - Parameter reaction: Removed message reaction.
+/// - Parameter conversation: Conversation it belongs to.
 - (void)messageReactionDidRemove:(JMessageReaction *)reaction
                   inConversation:(JConversation *)conversation;
 
-/// 消息置顶的回调
+/// Callback when a message is pinned or unpinned.
 /// - Parameters:
-///   - isTop: YES 表示置顶，NO 表示取消置顶
-///   - message: 对应的消息
-///   - userInfo: 操作置顶的用户
+///   - isTop: YES to pin, NO to unpin.
+///   - message: Corresponding message.
+///   - userInfo: User who performed the pin operation.
 - (void)messageDidSetTop:(BOOL)isTop
                  message:(JMessage *)message
                     user:(JUserInfo *)userInfo;
@@ -68,54 +68,54 @@
 @end
 
 @protocol JMessageSyncDelegate <NSObject>
-/// 消息同步完成的回调
+/// Callback when message synchronization completes.
 - (void)messageSyncDidComplete;
 @end
 
 @protocol JMessageReadReceiptDelegate <NSObject>
-/// 单聊消息阅读回调
+/// Callback for one-to-one message reads.
 /// - Parameters:
-///   - messageIds: 消息 id 数组
-///   - conversation: 所在会话
+///   - messageIds: Message ID array.
+///   - conversation: Conversation where the messages are located.
 - (void)messagesDidRead:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation;
 
-/// 群消息阅读回调
+/// Callback for group message reads.
 /// - Parameters:
-///   - msgs: key 为 messageId
-///   - conversation: 所在会话
+///   - msgs: Dictionary whose key is messageId.
+///   - conversation: Conversation where the messages are located.
 - (void)groupMessagesDidRead:(NSDictionary <NSString *, JGroupMessageReadInfo *> *)msgs
               inConversation:(JConversation *)conversation;
 @end
 
 @protocol JMessageDestroyDelegate <NSObject>
-/// 消息销毁时间更新回调（一般发生在阅后即焚之类的场景）
+/// Callback when the message destruction time is updated. This usually occurs in burn-after-reading scenarios.
 /// - Parameters:
-///   - messageId: 消息 id
-///   - conversation: 所在会话
-///   - destroyTime: 更新后的销毁时间
+///   - messageId: Message ID.
+///   - conversation: Conversation where the message is located.
+///   - destroyTime: Updated destruction time.
 - (void)messageDestroyTimeDidUpdate:(NSString *)messageId
                      inConversation:(JConversation *)conversation
                         destroyTime:(long long)destroyTime;
 @end
 
 @protocol JMessagePreprocessor <NSObject>
-/// 消息加密的回调
-/// 回调时机：消息入库之后，发送之前
-/// - Parameter content: 待发送的消息内容，已序列化成 NSData
-/// - Parameter conversation: 所在会话
-/// - Parameter contentType: 消息类型
-/// - Return: 处理后的消息内容。
+/// Callback for message encryption.
+/// Callback timing: after the message is stored and before it is sent.
+/// - Parameter content: Message content to send, serialized as NSData.
+/// - Parameter conversation: Conversation where the message is located.
+/// - Parameter contentType: Message type.
+/// - Return: Processed message content.
 - (NSData *)encryptMessageContent:(NSData *)content
                    inConversation:(JConversation *)conversation
                       contentType:(NSString *)contentType;
 
-/// 消息解密的回调
-/// 回调时机：接收到消息，入库之前
-/// - Parameter content: 接收到的消息内容，NSData 格式，还没反序列化
-/// - Parameter conversation: 所在会话
-/// - Parameter contentType: 消息类型
-/// - Return: 处理后的消息内容。
+/// Callback for message decryption.
+/// Callback timing: after receiving the message and before it is stored.
+/// - Parameter content: Received message content in NSData format, not yet deserialized.
+/// - Parameter conversation: Conversation where the message is located.
+/// - Parameter contentType: Message type.
+/// - Return: Processed message content.
 - (NSData *)decryptMessageContent:(NSData *)content
                    inConversation:(JConversation *)conversation
                       contentType:(NSString *)contentType;
@@ -123,51 +123,51 @@
 @end
 
 @protocol JStreamMessageDelegate <NSObject>
-/// 流式消息分片追加的回调
+/// Callback when a streaming message fragment is appended.
 /// - Parameters:
-///   - messageId: 流式消息的消息 id
-///   - content: 分片追加的内容，开发者可以在界面上把 content 追加到 JStreamTextMessage 的 content 尾部
+///   - messageId: Streaming message ID.
+///   - content: Appended fragment content. Developers can append this content to the end of JStreamTextMessage's content in the UI.
 - (void)streamTextMessageDidAppend:(NSString *)messageId
                            content:(NSString *)content;
-/// 流式消息完成的回调
-/// - Parameter message: 追加完成的流式消息，开发者可以根据 messageId 找到界面上对应的流式消息进行界面刷新
+/// Callback when a streaming message completes.
+/// - Parameter message: Completed streaming message. Developers can use messageId to find the corresponding streaming message in the UI and refresh it.
 - (void)streamTextMessageDidComplete:(JMessage *)message;
 @end
 
 @protocol JMessageProtocol <NSObject>
 
-/// 发送消息
+/// Sends a message.
 /// - Parameters:
-///   - content: 消息实体
-///   - conversation: 会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - content: Message entity.
+///   - conversation: Conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (JMessage *)sendMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-/// 发送消息
+/// Sends a message.
 /// - Parameters:
-///   - content: 消息实体
-///   - messageOption: 消息扩展选项
-///   - conversation: 会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - content: Message entity.
+///   - messageOption: Message extension options.
+///   - conversation: Conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (JMessage *)sendMessage:(JMessageContent *)content
             messageOption:(JMessageOptions *)messageOption
            inConversation:(JConversation *)conversation
                   success:(void (^)(JMessage *message))successBlock
                     error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-/// 发送媒体消息（先上传媒体，再发送消息）
+/// Sends a media message by uploading the media first, then sending the message.
 /// - Parameters:
-///   - content: 媒体消息实体
-///   - conversation: 会话
-///   - progressBlock: 上传进度回调
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
-///   - cancelBlock: 用户取消上传回调
+///   - content: Media message entity.
+///   - conversation: Conversation.
+///   - progressBlock: Upload progress callback.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+///   - cancelBlock: User upload cancellation callback.
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
                 inConversation:(JConversation *)conversation
                       progress:(void (^)(int progress, JMessage *message))progressBlock
@@ -175,15 +175,15 @@
                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                         cancel:(void (^)(JMessage *message))cancelBlock;
 
-/// 发送媒体消息（先上传媒体，再发送消息）
+/// Sends a media message by uploading the media first, then sending the message.
 /// - Parameters:
-///   - content: 媒体消息实体
-///   - messageOption: 消息扩展选项
-///   - conversation: 会话
-///   - progressBlock: 上传进度回调
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
-///   - cancelBlock: 用户取消上传回调
+///   - content: Media message entity.
+///   - messageOption: Message extension options.
+///   - conversation: Conversation.
+///   - progressBlock: Upload progress callback.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+///   - cancelBlock: User upload cancellation callback.
 - (JMessage *)sendMediaMessage:(JMediaMessageContent *)content
                  messageOption:(JMessageOptions *)messageOption
                 inConversation:(JConversation *)conversation
@@ -192,193 +192,193 @@
                          error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                         cancel:(void (^)(JMessage *message))cancelBlock;
 
-/// 重发消息，用于发送失败后进行重发（如果消息已经发送成功则直接返回成功回调）
+/// Resends a message after a send failure. If the message has already been sent successfully, the success callback is returned directly.
 /// - Parameters:
-///   - messsage: 消息对象
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messsage: Message object.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (JMessage *)resend:(JMessage *)messsage
              success:(void (^)(JMessage *message))successBlock
                error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock;
 
-/// 重发消息，用于媒体类型消息发送失败后重发（如果消息已经发送成功则直接返回成功回调）
+/// Resends a media message after a send failure. If the message has already been sent successfully, the success callback is returned directly.
 /// - Parameters:
-///   - message: 消息对象
-///   - progressBlock: 上传进度回调
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
-///   - cancelBlock: 取消回调
+///   - message: Message object.
+///   - progressBlock: Upload progress callback.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+///   - cancelBlock: Cancellation callback.
 - (JMessage *)resendMediaMessage:(JMessage *)message
                         progress:(void (^)(int progress, JMessage *message))progressBlock
                          success:(void (^)(JMessage *message))successBlock
                            error:(void (^)(JErrorCode errorCode, JMessage *message))errorBlock
                           cancel:(void (^)(JMessage *message))cancelBlock;
-/// 保存消息
+/// Saves a message.
 /// - Parameters:
-///   - content: 消息实体
-///   - conversation: 会话
-///   - direction: 消息方向
+///   - content: Message entity.
+///   - conversation: Conversation.
+///   - direction: Message direction.
 - (JMessage *)saveMessage:(JMessageContent *)content
            inConversation:(JConversation *)conversation
                 direction:(JMessageDirection)direction;
 
-/// 保存消息
+/// Saves a message.
 /// - Parameters:
-///   - content: 消息实体
-///   - messageOption: 消息扩展选项
-///   - conversation: 会话
-///   - direction: 消息方向
+///   - content: Message entity.
+///   - messageOption: Message extension options.
+///   - conversation: Conversation.
+///   - direction: Message direction.
 - (JMessage *)saveMessage:(JMessageContent *)content
             messageOption:(JMessageOptions *)messageOption
            inConversation:(JConversation *)conversation
                 direction:(JMessageDirection)direction;
 
-/// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
-/// 获取消息列表
+/// Gets messages from local storage. Results are sorted by message time in ascending order, oldest first.
+/// Gets the message list.
 /// - Parameters:
-///   - conversation: 会话对象
-///   - count: 拉取消息条数，超过 100 条按 100 返回
-///   - time: 消息时间戳，如果传 0 表示当前时间
-///   - direction: 拉取方向
+///   - conversation: Conversation object.
+///   - count: Number of messages to fetch. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Fetch direction.
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation 
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction;
 
-/// 从本地获取消息，结果按照消息时间正序排列（旧的在前，新的在后）
+/// Gets messages from local storage. Results are sorted by message time in ascending order, oldest first.
 /// - Parameters:
-///   - conversation: 会话对象
-///   - count: 拉取消息条数，超过 100 条按 100 返回
-///   - time: 消息时间戳，如果传 0 表示当前时间
-///   - direction: 拉取方向
-///   - contentTypes: 拉取的消息类型列表，消息类型获取举例 " [JTextMessage contentType] "
+///   - conversation: Conversation object.
+///   - count: Number of messages to fetch. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Fetch direction.
+///   - contentTypes: Message type list to fetch. Example for getting a message type: " [JTextMessage contentType] "
 - (NSArray<JMessage *> *)getMessagesFrom:(JConversation *)conversation
                                    count:(int)count
                                     time:(long long)time
                                direction:(JPullDirection)direction
                             contentTypes:(NSArray <NSString *> *)contentTypes;
 
-/// 从本地搜索消息
+/// Searches messages from local storage.
 /// - Parameters:
-///   - count: 拉取数量，超过 100 条按 100 返回
-///   - time: 消息时间戳，如果传 0 表示当前时间
-///   - direction: 拉取方向
-///   - option: 搜索条件
+///   - count: Fetch count. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Fetch direction.
+///   - option: Search options.
 - (NSArray<JMessage *> *)getMessages:(int)count
                                 time:(long long)time
                            direction:(JPullDirection)direction
                          queryOption:(JQueryMessageOptions *)option;
 
-/// 在同一个会话里，根据本端消息唯一编号批量删除消息
+/// Deletes messages in batches by local message unique number within the same conversation.
 /// - Parameters:
-///   - clientMsgNos: 本端消息唯一编号列表
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - clientMsgNos: Local message unique number list.
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
                            conversation:(JConversation *)conversation
                                 success:(void (^)(void))successBlock
                                   error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 在同一个会话里，根据消息 id 批量删除消息
+/// Deletes messages in batches by message ID within the same conversation.
 /// - Parameters:
-///   - messageIds: 消息 id 列表
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIds: Message ID list.
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                       conversation:(JConversation *)conversation
                            success:(void (^)(void))successBlock
                              error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 在同一个会话里，根据本端消息唯一编号批量删除消息
+/// Deletes messages in batches by local message unique number within the same conversation.
 /// - Parameters:
-///   - clientMsgNos: 本端消息唯一编号列表
-///   - conversation: 会话标识
-///   - forAllUsers: 是否对会话里所有用户删除消息
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - clientMsgNos: Local message unique number list.
+///   - conversation: Conversation identifier.
+///   - forAllUsers: Whether to delete the messages for all users in the conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)deleteMessagesByClientMsgNoList:(NSArray<NSNumber *> *)clientMsgNos
                            conversation:(JConversation *)conversation
                             forAllUsers:(BOOL)forAllUsers
                                 success:(void (^)(void))successBlock
                                   error:(void (^)(JErrorCode))errorBlock;
 
-/// 在同一个会话里，根据消息 id 批量删除消息
+/// Deletes messages in batches by message ID within the same conversation.
 /// - Parameters:
-///   - messageIds: 消息 id 列表
-///   - conversation: 会话标识
-///   - forAllUsers: 是否对会话里所有用户删除消息
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIds: Message ID list.
+///   - conversation: Conversation identifier.
+///   - forAllUsers: Whether to delete the messages for all users in the conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)deleteMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                       conversation:(JConversation *)conversation
                        forAllUsers:(BOOL)forAllUsers
                            success:(void (^)(void))successBlock
                              error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 撤回消息（撤回后会话中的所有人都看不到原消息）
+/// Recalls a message. After recall, no one in the conversation can see the original message.
 /// - Parameters:
-///   - messageId: 被撤回的消息 id
-///   - extras: 扩展信息，key 和 value 都只能是 NSString 类型
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageId: ID of the message to recall.
+///   - extras: Extension information. Keys and values must both be NSString.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)recallMessage:(NSString *)messageId
                extras:(NSDictionary <NSString *, NSString *> *)extras
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 清空会话中指定时间之前的所有消息，startTime 传 0 表示当前时间
+/// Clears all messages in a conversation before the specified time. Pass 0 for startTime to use the current time.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - startTime: 开始时间，传 0 表示当前时间
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - startTime: Start time. Pass 0 for the current time.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)clearMessagesIn:(JConversation *)conversation
               startTime:(long long)startTime
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 清空会话中指定时间之前的所有消息，startTime 传 0 表示当前时间
+/// Clears all messages in a conversation before the specified time. Pass 0 for startTime to use the current time.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - startTime: 开始时间，传 0 表示当前时间
-///   - forAllUsers: 是否对会话里所有用户清除消息
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - startTime: Start time. Pass 0 for the current time.
+///   - forAllUsers: Whether to clear messages for all users in the conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)clearMessagesIn:(JConversation *)conversation
               startTime:(long long)startTime
             forAllUsers:(BOOL)forAllUsers
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 物理删除指定时间之前的所有消息（只删除本地消息，可用于释放本地存储空间）
+/// Physically deletes all messages before the specified time. Only local messages are deleted, which can free local storage space.
 /// - Parameters:
-///   - timestamp: 时间戳，传 0 表示当前时间
-///   - conversationTypes: 待删除的会话类型列表，传 nil 表示删除所有会话类型的消息。
+///   - timestamp: Timestamp. Pass 0 for the current time.
+///   - conversationTypes: Conversation type list to delete. Pass nil to delete messages of all conversation types.
 - (void)purgeMessagesBefore:(long long)timestamp
           conversationTypes:(NSArray<NSNumber *> *)conversationTypes;
 
-/// 根据 messageId 数组获取对应的本地消息
-/// - Parameter messageIds: messageId 数组
+/// Gets the corresponding local messages by messageId array.
+/// - Parameter messageIds: messageId array.
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 
-/// 根据 messageId 数组获取对应的消息，如果本地有则优先取本地消息，否则去服务端获取
+/// Gets the corresponding messages by messageId array. Local messages are preferred when available; otherwise, messages are fetched from the server.
 /// - Parameters:
-///   - messageIds: messageId 数组
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIds: messageId array.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds
                  inConversation:(JConversation *)conversation
                         success:(void (^)(NSArray <JMessage *> *messages))successBlock
                           error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 根据 clientMsgNo 数组获取对应的本地消息
-/// - Parameter clientMsgNos: clientMsgNo 数组
+/// Gets the corresponding local messages by clientMsgNo array.
+/// - Parameter clientMsgNos: clientMsgNo array.
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 
-/// 注册自定义消息，没有注册的自定义消息 SDK 无法正常进行解析
-/// - Parameter messageClass: 自定义消息的类，需要继承 JMessageContent
+/// Registers a custom message. The SDK cannot parse unregistered custom messages correctly.
+/// - Parameter messageClass: Custom message class. It must inherit from JMessageContent.
 - (void)registerContentType:(Class)messageClass;
 
 - (void)addDelegate:(id<JMessageDelegate>)delegate;
@@ -395,14 +395,14 @@
 
 - (void)setMessageUploadProvider:(id<JMessageUploadProvider>)uploadProvider;
 
-/// 从远端拉取历史消息，结果按照消息时间正序排列（旧的在前，新的在后）
+/// Fetches historical messages from the remote server. Results are sorted by message time in ascending order, oldest first.
 /// - Parameters:
-///   - conversation: 会话对象
-///   - startTime: 消息时间戳，如果传 0 为当前时间
-///   - count: 拉取数量，超过 100 条按 100 返回
-///   - direction: 拉取方向
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation object.
+///   - startTime: Message timestamp. Pass 0 for the current time.
+///   - count: Fetch count. Values over 100 are treated as 100.
+///   - direction: Fetch direction.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getRemoteMessagesFrom:(JConversation *)conversation
                     startTime:(long long)startTime
                         count:(int)count
@@ -410,61 +410,61 @@
                       success:(void (^)(NSArray *messages, BOOL isFinished))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取消息，结果按照消息时间正序排列（旧的在前，新的在后）。当消息有缺失并且网络有问题的时候，返回本地缓存的消息。
+/// Gets messages. Results are sorted by message time in ascending order, oldest first. When messages are missing and the network has issues, locally cached messages are returned.
 /// - Parameters:
-///   - conversation: 会话对象
-///   - direction: 拉取方向
-///   - option: 获取消息选项
-///   - completeBlock: messages: 消息列表，timestamp: 消息时间戳，拉下一批消息的时候可以使用，hasMore: 是否还有更多消息，
-///                    code: 错误码（code 不为 0 的时候，如果本地存在缓存消息，则会在 messages 里返回本地消息）
+///   - conversation: Conversation object.
+///   - direction: Fetch direction.
+///   - option: Message fetch options.
+///   - completeBlock: messages: Message list; timestamp: Message timestamp that can be used to fetch the next batch; hasMore: Whether more messages are available;
+///                    code: Error code. When code is not 0, locally cached messages are returned in messages if local cache exists.
 - (void)getMessages:(JConversation *)conversation
           direction:(JPullDirection)direction
              option:(JGetMessageOptions *)option
            complete:(void (^)(NSArray <JMessage *> *messages, long long timestamp, BOOL hasMore, JErrorCode code))completeBlock;
 
-/// 发送阅读回执
+/// Sends read receipts.
 /// - Parameters:
-///   - messageIds: 需要发送阅读回执的消息 id 列表
-///   - conversation: 消息所在会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIds: Message ID list that needs read receipts.
+///   - conversation: Conversation where the messages are located.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)sendReadReceipt:(NSArray <NSString *> *)messageIds
          inConversation:(JConversation *)conversation
                 success:(void (^)(void))successBlock
                   error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取群消息阅读状态
+/// Gets group message read status.
 /// - Parameters:
-///   - messageId: 需要查询的群消息 id
-///   - conversation: 消息所在会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageId: Group message ID to query.
+///   - conversation: Conversation where the message is located.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getGroupMessageReadInfoDetail:(NSString *)messageId
                        inConversation:(JConversation *)conversation
                               success:(void (^)(JGroupMessageReadInfoDetail * detail))successBlock
                                 error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取单聊消息阅读时间（群消息阅读状态请使用 getGroupMessageReadInfoDetail:inConversation:success:error:）
-/// - Parameter clientMsgNo: 本端消息唯一编号
+/// Gets the read time for a one-to-one message. Use getGroupMessageReadInfoDetail:inConversation:success:error: for group message read status.
+/// - Parameter clientMsgNo: Local message unique number.
 - (long long)getMessageReadTime:(long long)clientMsgNo;
 
-/// 获取被合并的消息列表
+/// Gets the merged message list.
 /// - Parameters:
-///   - messageId: 合并消息 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageId: Merged message ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getMergedMessageList:(NSString *)messageId
                      success:(void (^)(NSArray<JMessage *> *mergedMessages))successBlock
                        error:(void (^)(JErrorCode code))errorBlock;
 
-/// 消息本地检索
+/// Searches local messages.
 /// - Parameters:
-///   - searchContent: 查询内容
-///   - conversation: 要查询的会话
-///   - count:拉取数量，超过 100 条按 100 返回
-///   - time: 消息时间戳，如果传 0 为当前时间
-///   - direction: 查询方向
-///   - contentTypes: 内容类型，传空返回所有类型
+///   - searchContent: Search content.
+///   - conversation: Conversation to query.
+///   - count: Fetch count. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Query direction.
+///   - contentTypes: Content types. Pass empty to return all types.
 - (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                      inConversation:(JConversation *)conversation
                                              count:(int)count
@@ -472,15 +472,15 @@
                                          direction:(JPullDirection)direction
                                       contentTypes:(NSArray<NSString *> *)contentTypes;
 
-/// 消息本地检索
+/// Searches local messages.
 /// - Parameters:
-///   - searchContent: 查询内容
-///   - conversation: 要查询的会话
-///   - count:拉取数量，超过 100 条按 100 返回
-///   - time: 消息时间戳，如果传 0 为当前时间
-///   - direction: 查询方向
-///   - contentTypes: 内容类型，传空返回所有类型
-///   - senderUserIds: 消息发送者 id 列表
+///   - searchContent: Search content.
+///   - conversation: Conversation to query.
+///   - count: Fetch count. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Query direction.
+///   - contentTypes: Content types. Pass empty to return all types.
+///   - senderUserIds: Message sender ID list.
 - (NSArray <JMessage *> *)searchMessagesWithContent:(NSString *)searchContent
                                      inConversation:(JConversation *)conversation
                                              count:(int)count
@@ -489,21 +489,21 @@
                                       contentTypes:(NSArray<NSString *> *)contentTypes
                                       senderUserIds:(NSArray <NSString *> *)senderUserIds;
 
-/// 根据消息中的关键字搜索会话
+/// Searches conversations by message keywords.
 /// - Parameters:
-///   - option: 搜索条件
-///   - completeBlock: 结果回调
+///   - option: Search options.
+///   - completeBlock: Result callback.
 - (void)searchConversationsWithMessageContent:(JQueryMessageOptions *)option
                                      complete:(void (^)(NSArray<JSearchConversationsResult*> *result))completeBlock;
 
-/// 获取指定会话中未读的 @ 消息
+/// Gets unread mention messages in the specified conversation.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - count: 获取数量，超过 100 条按 100 返回
-///   - time: 消息时间戳，传 0 为当前时间
-///   - direction: 查询方向
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - count: Fetch count. Values over 100 are treated as 100.
+///   - time: Message timestamp. Pass 0 for the current time.
+///   - direction: Query direction.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getMentionMessages:(JConversation *)conversation
                      count:(int)count
                       time:(long long)time
@@ -511,183 +511,183 @@
                    success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置置顶
+/// Sets top.
 /// - Parameters:
-///   - isTop: YES 表示置顶，NO 表示不置顶
-///   - messageId: 消息 id
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - isTop: YES to pin, NO to unpin.
+///   - messageId: Message ID.
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)setTop:(BOOL)isTop
      messageId:(NSString *)messageId
   conversation:(JConversation *)conversation
        success:(void (^)(void))successBlock
          error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取置顶消息
+/// Gets the pinned message.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getTopMessage:(JConversation *)conversation
               success:(void (^)(JMessage *message, JUserInfo *userInfo, long long timestamp))successBlock
                 error:(void (^)(JErrorCode code))errorBlock;
 
-/// 添加消息收藏
+/// Adds message favorites.
 /// - Parameters:
-///   - messageIdList: 待收藏的消息 id 列表
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIdList: Message ID list to favorite.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)addFavorite:(NSArray <NSString *> *)messageIdList
             success:(void (^)(void))successBlock
               error:(void (^)(JErrorCode code))errorBlock;
 
-/// 移除消息收藏
+/// Removes message favorites.
 /// - Parameters:
-///   - messageIdList: 待移除的消息 id 列表
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIdList: Message ID list to remove.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)removeFavorite:(NSArray <NSString *> *)messageIdList
                success:(void (^)(void))successBlock
                  error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取收藏的消息
+/// Gets favorite messages.
 /// - Parameters:
-///   - option: 查询参数
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - option: Query parameters.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getFavorite:(JGetFavoriteMessageOption *)option
             success:(void (^)(NSArray <JFavoriteMessage *> *messageList, NSString *offset))successBlock
               error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取会话中第一条未读消息
+/// Gets the first unread message in the conversation.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - successBlock: 成功回调，如果没有未读消息则回调 nil
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback. Returns nil if there are no unread messages.
+///   - errorBlock: Failure callback.
 - (void)getFirstUnreadMessage:(JConversation *)conversation
                       success:(void (^)(JMessage *message))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取消息本地属性
-/// - Parameter messageId: 消息 id
+/// Gets a message local attribute.
+/// - Parameter messageId: Message ID.
 - (NSString *)getLocalAttributeByMessageId:(NSString *)messageId;
 
 
-/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// Sets a message local attribute. It only takes effect locally and is not synchronized to the remote server.
 /// - Parameters:
-///   - attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
-///   - messageId: 消息 id
+///   - attribute: Local attribute. JSON can be used for complex business scenarios.
+///   - messageId: Message ID.
 - (void)setLocalAttribute:(NSString *)attribute forMessage:(NSString *)messageId;
 
-/// 获取消息本地属性
-/// - Parameter clientMsgNo: 本端消息唯一编号
+/// Gets a message local attribute.
+/// - Parameter clientMsgNo: Local message unique number.
 - (NSString *)getLocalAttributeByClientMsgNo:(long long)clientMsgNo;
 
-/// 设置消息本地属性（只在本地生效，不会同步到远端）
+/// Sets a message local attribute. It only takes effect locally and is not synchronized to the remote server.
 /// - Parameters:
-///   - attribute: 本地属性（可以使用 JSON 以满足复杂的业务场景）
-///   - clientMsgNo: 本端消息唯一编号
+///   - attribute: Local attribute. JSON can be used for complex business scenarios.
+///   - clientMsgNo: Local message unique number.
 - (void)setLocalAttribute:(NSString *)attribute forClientMsgNo:(long long)clientMsgNo;
 
-/// 添加消息回应
+/// Adds a message reaction.
 /// - Parameters:
-///   - messageId: 消息 id
-///   - conversation: 消息所属会话
-///   - reactionId: 回应 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageId: Message ID.
+///   - conversation: Conversation the message belongs to.
+///   - reactionId: Reaction ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)addMessageReaction:(NSString *)messageId
               conversation:(JConversation *)conversation
                 reactionId:(NSString *)reactionId
                    success:(void (^)(void))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
 
-/// 删除消息回应
+/// Deletes a message reaction.
 /// - Parameters:
-///   - messageId: 消息 id
-///   - conversation: 消息所属会话
-///   - reactionId: 回应 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageId: Message ID.
+///   - conversation: Conversation the message belongs to.
+///   - reactionId: Reaction ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)removeMessageReaction:(NSString *)messageId
                  conversation:(JConversation *)conversation
                    reactionId:(NSString *)reactionId
                       success:(void (^)(void))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-/// 批量获取消息回应（消息必须属于同一个会话）
+/// Gets message reactions in batches. Messages must belong to the same conversation.
 /// - Parameters:
-///   - messageIdList: 消息 id 列表
-///   - conversation: 消息所属会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - messageIdList: Message ID list.
+///   - conversation: Conversation the messages belong to.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)getMessagesReaction:(NSArray <NSString *> *)messageIdList
                conversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取缓存的消息回应（缓存的数据不一定是最新版本，可用于第一时间渲染界面，优化用户体验）
-/// - Parameter messageIdList: 消息 id 列表
+/// Gets cached message reactions. Cached data may not be the latest version and can be used for immediate UI rendering to optimize user experience.
+/// - Parameter messageIdList: Message ID list.
 - (NSArray <JMessageReaction *> *)getCachedMessagesReaction:(NSArray <NSString *> *)messageIdList;
 
-/// 消息广播。同时向批量会话中发送消息，该消息在发送方不影响会话的排序
+/// Broadcasts a message. Sends the message to multiple conversations at the same time, without affecting conversation ordering on the sender side.
 /// - Parameters:
-///   - content: 消息实体
-///   - conversations: 目标会话列表
-///   - progressBlock: 进度回调
-///   - completeBlock: 完成回调
+///   - content: Message entity.
+///   - conversations: Target conversation list.
+///   - progressBlock: Progress callback.
+///   - completeBlock: Completion callback.
 - (void)broadcastMessage:(JMessageContent *)content
          inConversations:(NSArray <JConversation *> *)conversations
                 progress:(void (^)(JMessage *sentMessage, JErrorCode code, int processCount, int totalCount))progressBlock
                 complete:(void (^)(void))completeBlock;
 
-/// 下载消息中的媒体文件
+/// Downloads the media file in a message.
 /// - Parameters:
-///   - messageId: 消息 id
-///   - progressBlock: 进度更新的回调 [progress: 当前的下载进度，0 <= progress <= 100]
-///   - successBlock: 成功的回调 [message: 下载完成的本地路径已写入 message]
-///   - errorBlock: 失败的回调 [errorCode: 错误码]
+///   - messageId: Message ID.
+///   - progressBlock: Progress update callback [progress: Current download progress, 0 <= progress <= 100].
+///   - successBlock: Success callback [message: The downloaded local path has been written to message].
+///   - errorBlock: Failure callback [errorCode: Error code].
 - (void)downloadMediaMessage:(NSString *)messageId
                     progress:(void (^)(JMessage *message, int progress))progressBlock
                      success:(void (^)(JMessage *message))successBlock
                        error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 取消下载消息
-/// - Parameter messageId: 消息 id
+/// Cancels message download.
+/// - Parameter messageId: Message ID.
 - (void)cancelDownloadMediaMessage:(NSString *)messageId;
 
-/// 修改消息
+/// Updates a message.
 /// - Parameters:
-///   - content: 修改后的消息实体
-///   - messageId: 消息 id
-///   - conversation: 会话
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - content: Updated message entity.
+///   - messageId: Message ID.
+///   - conversation: Conversation.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)updateMessage:(JMessageContent *)content
             messageId:(NSString *)messageId
        inConversation:(JConversation *)conversation
               success:(void (^)(JMessage *message))successBlock
                 error:(void (^)(JErrorCode errorCode))errorBlock;
 
-/// 设置消息全局免打扰
+/// Sets global message mute.
 /// - Parameters:
-///   - isMute: 是否免打扰
-///   - periods: 免打扰的时间段，如果为空则视为全天免打扰
-///   - completeBlock: 结果回调
+///   - isMute: Whether to mute.
+///   - periods: Mute time periods. Empty means muted all day.
+///   - completeBlock: Result callback.
 - (void)setMute:(BOOL)isMute
         periods:(NSArray <JTimePeriod *> *)periods
        complete:(void (^)(JErrorCode errorCode))completeBlock;
 
-/// 获取消息全局免打扰配置
-/// - Parameter completeBlock: 结果回调 [errorCode: 错误码，0 为成功; isMute: 是否免打扰; timezone: 时区; periods: 免打扰的时间段, 为空视为全天免打扰]
+/// Gets the global message mute configuration.
+/// - Parameter completeBlock: Result callback [errorCode: Error code, 0 means success; isMute: Whether muted; timezone: Time zone; periods: Mute time periods, empty means muted all day].
 - (void)getMuteStatus:(void (^)(JErrorCode errorCode, BOOL isMute, NSString *timezone, NSArray <JTimePeriod *> *periods))completeBlock;
 
-/// 上传图片
+/// Uploads an image.
 /// - Parameters:
-///   - image: 图片
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - image: Image.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)uploadImage:(UIImage *)image
             success:(void (^)(NSString * url))successBlock
               error:(void (^)(JErrorCode code))errorBlock;

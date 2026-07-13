@@ -25,7 +25,7 @@
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId;
 
-//暂不处理
+// Not handled for now.
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
 
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
@@ -61,7 +61,7 @@
 
 - (void)useFrontCamera:(BOOL)isEnable;
 
-// 当前 active 的 CallSession
+// Current active CallSession.
 - (void)setDelegate:(id<JCallMediaEngineDelegate>)delegate;
 
 @optional
@@ -74,4 +74,3 @@
 - (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end
-

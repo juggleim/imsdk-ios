@@ -10,22 +10,22 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, JCallFinishNotifyType) {
-    // 主叫取消
+    // Caller canceled.
     JCallFinishNotifyTypeCancel = 0,
-    // 被叫拒绝
+    // Callee rejected.
     JCallFinishNotifyTypeReject = 1,
-    // 被叫无应答
+    // Callee did not respond.
     JCallFinishNotifyTypeNoResponse = 2,
-    //通话结束
+    // Call ended.
     JCallFinishNotifyTypeComplete = 3
 };
 
 @interface JCallFinishNotifyMessage : JMessageContent
-// 结束类型
+// Finish type.
 @property (nonatomic, assign) JCallFinishNotifyType finishType;
-// 通话时长，单位（ms）
+// Call duration, in milliseconds.
 @property (nonatomic, assign) long long duration;
-// 通话类型
+// Call type.
 @property (nonatomic, assign) JCallMediaType mediaType;
 
 @end

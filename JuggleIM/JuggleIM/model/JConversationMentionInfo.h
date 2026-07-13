@@ -2,7 +2,7 @@
 //  JConversationMentionInfo.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/6/18.
+//  Created by Zheng Kai on 2024/6/18.
 //
 
 #import <Foundation/Foundation.h>

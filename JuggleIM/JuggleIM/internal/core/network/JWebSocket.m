@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
 @property (nonatomic, strong) JIMSRWebSocket *sws;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;
-/// 所有上行数据的自增 index
+/// Auto-incrementing index for all upstream data.
 @property (nonatomic, assign) int32_t cmdIndex;
 @property (nonatomic, strong) JPBData *pbData;
 @property (nonatomic, strong) NSOperationQueue *competeQueue;
@@ -1483,7 +1483,7 @@ inConversation:(JConversation *)conversation
             [webSocket close];
             return;
         }
-        //防止上一批竞速的 webSocket 被选中
+        //Prevent a competing webSocket from the previous batch from being selected.
         for (int i = 0; i < self.competeSwsList.count; i++) {
             JIMSRWebSocket *sws = self.competeSwsList[i];
             if (webSocket == sws) {
@@ -1691,7 +1691,7 @@ inConversation:(JConversation *)conversation
             break;
         case JPBRcvTypeQryCallRoomAck:
             JLogI(@"WS-Receive", @"JPBRcvTypeQryCallRoomAck");
-            //复用 rtcQryCallRoomsAck
+            //Reuse rtcQryCallRoomsAck.
             [self handleRtcQryCallRoomsAck:obj.rtcQryCallRoomsAck];
             break;
         case JPBRcvTypeGetUserSettingAck:
@@ -1853,7 +1853,7 @@ inConversation:(JConversation *)conversation
 
 - (void)handlePublishAckMsg:(JPublishMsgAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
-    //超时回调之后拿不到 obj，通知 message 更新状态
+    //After the timeout callback, obj is unavailable; notify message to update status.
     if (!obj && ack.code == 0) {
         [self.messageDelegate messageDidSend:ack.msgId
                                         time:ack.timestamp
@@ -1898,7 +1898,7 @@ inConversation:(JConversation *)conversation
     }
 }
 
-//sync 和 queryHisMsgs 共用一个 ack
+//sync and queryHisMsgs share one ack.
 - (void)handleSyncMsgsAck:(JQryHisMsgsAck *)ack {
     JBlockObj *obj = [self.commandManager removeBlockObjectForKey:@(ack.index)];
     if ([obj isKindOfClass:[JQryHisMsgsObj class]]) {
@@ -2109,7 +2109,7 @@ inConversation:(JConversation *)conversation
             }
             break;
             
-        //TODO: statechange 只在用户 connecting 变成 connected 时触发，暂不处理
+        //TODO: statechange only triggers when the user changes from connecting to connected; do not handle it for now.
             
         default:
             break;

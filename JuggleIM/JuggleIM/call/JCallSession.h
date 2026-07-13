@@ -17,138 +17,138 @@
 
 @optional
 
-/// 通话已接通
+/// The call has connected.
 - (void)callDidConnect;
 
-/// 通话已结束
-/// - Parameter finishReason: 结束原因
+/// The call has finished.
+/// - Parameter finishReason: Finish reason.
 - (void)callDidFinish:(JCallFinishReason)finishReason;
 
-/// 用户被邀请（多人通话中使用）
-/// - Parameter userId: 被邀请的用户 id
+/// Users were invited (used in multi-party calls).
+/// - Parameter userId: Invited user IDs.
 - (void)usersDidInvite:(NSArray <NSString *> *)userIdList
              inviterId:(NSString *)inviterId;
 
-/// 用户加入通话（多人通话中使用）
-/// - Parameter userId: 用户 id
+/// Users joined the call (used in multi-party calls).
+/// - Parameter userId: User IDs.
 - (void)usersDidConnect:(NSArray <NSString *> *)userIdList;
 
-/// 用户退出通话（多人通话中使用）
-/// - Parameter userId: 用户 id
+/// Users left the call (used in multi-party calls).
+/// - Parameter userId: User IDs.
 - (void)usersDidLeave:(NSArray <NSString *> *)userIdList;
 
-/// 用户开启/关闭摄像头
+/// A user enabled or disabled the camera.
 /// - Parameters:
-///   - enable: 是否开启
-///   - userId: 用户 id
+///   - enable: Whether it is enabled.
+///   - userId: User ID.
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId;
 
-/// 用户开启/关闭麦克风
+/// A user enabled or disabled the microphone.
 /// - Parameters:
-///   - enable: 是否开启
-///   - userId: 用户 id
+///   - enable: Whether it is enabled.
+///   - userId: User ID.
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId;
 
-/// 用户声音大小变化回调
-/// - Parameter soundLevels: 由 userId 为 key，声音大小为 value 的字典
+/// Callback for user sound level changes.
+/// - Parameter soundLevels: A dictionary with userId as the key and sound level as the value.
 - (void)soundLevelDidUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels;
 
-/// 视频渲染第一祯回调
-/// - Parameter userId: 用户 id
+/// Callback when the first video frame is rendered.
+/// - Parameter userId: User ID.
 - (void)videoFirstFrameDidRender:(NSString *)userId;
 
-/// 通话中的错误回调
-/// - Parameter errorCode: 错误码
+/// Callback for errors during a call.
+/// - Parameter errorCode: Error code.
 - (void)errorDidOccur:(JCallErrorCode)errorCode;
 
 @end
 
 @protocol JCallSession <NSObject>
-/// 通话 id
+/// Call ID.
 @property (nonatomic, copy) NSString *callId;
-/// 是否多人通话，NO 表示一对一通话
+/// Whether this is a multi-party call. NO means a one-to-one call.
 @property (nonatomic, assign) BOOL isMultiCall;
-/// 媒体类型（语音/视频）
+/// Media type (audio/video).
 @property (nonatomic, assign) JCallMediaType mediaType;
-/// 通话状态
+/// Call status.
 @property (nonatomic, assign) JCallStatus callStatus;
-/// 呼叫开始时间（多人会话中当前用户被呼叫的时间，不一定等于整个通话开始的时间）
+/// Call start time. In multi-party sessions, this is when the current user was called and may differ from the overall call start time.
 @property (nonatomic, assign) long long startTime;
-/// 当前用户加入通话的时间
+/// Time when the current user joined the call.
 @property (nonatomic, assign) long long connectTime;
-/// 当前用户结束通话的时间
+/// Time when the current user finished the call.
 @property (nonatomic, assign) long long finishTime;
-/// 通话的发起人 id
+/// ID of the call initiator.
 @property (nonatomic, copy) NSString *owner;
-/// 邀请当前用户加入通话的用户 id
+/// ID of the user who invited the current user to the call.
 @property (nonatomic, copy) NSString *inviterId;
-/// 通话结束原因
+/// Call finish reason.
 @property (nonatomic, assign) JCallFinishReason finishReason;
-/// 通话参与者（除当前用户外的其他参与者）
+/// Call participants, excluding the current user.
 @property (nonatomic, copy, readonly) NSArray <JCallMember *> *members;
-/// 当前用户
+/// Current user.
 @property (nonatomic, strong, readonly) JCallMember *currentCallMember;
-/// 所属会话
+/// Associated conversation.
 @property (nonatomic, strong) JConversation *conversation;
-/// 扩展字段
+/// Extra field.
 @property (nonatomic, copy) NSString *extra;
 
 - (void)addDelegate:(id<JCallSessionDelegate>)delegate;
 
-/// 接听来电
+/// Accept an incoming call.
 - (void)accept;
 
-/// 挂断电话
+/// Hang up the call.
 - (void)hangup;
 
-/// 开启摄像头
-/// - Parameter isEnable: 是否开启
+/// Enable the camera.
+/// - Parameter isEnable: Whether to enable it.
 - (void)enableCamera:(BOOL)isEnable;
 
-/// 设置用户的视频 view
+/// Set the video view for a user.
 /// - Parameters:
-///   - view: 视频 view
-///   - userId: 用户 id（当前用户或者会话中的其他用户）
+///   - view: Video view.
+///   - userId: User ID, either the current user or another user in the session.
 - (void)setVideoView:(UIView *)view
            forUserId:(NSString *)userId;
 
-/// 开始预览
-/// - Parameter view: 预览的视频 view
+/// Start preview.
+/// - Parameter view: Video view for the preview.
 - (void)startPreview:(UIView *)view;
 
-/// 停止预览
+/// Stop preview.
 - (void)stopPreview;
 
-/// 设置麦克风静音
-/// - Parameter isMute: 是否静音
+/// Mute or unmute the microphone.
+/// - Parameter isMute: Whether to mute it.
 - (void)muteMicrophone:(BOOL)isMute;
 
-/// 设置扬声器静音
-/// - Parameter isMute: 是否静音
+/// Mute or unmute the speaker.
+/// - Parameter isMute: Whether to mute it.
 - (void)muteSpeaker:(BOOL)isMute;
 
-/// 设置外放声音
-/// - Parameter isEnable: YES 使用外放扬声器；NO 使用听筒
+/// Enable or disable speakerphone audio.
+/// - Parameter isEnable: YES to use the speakerphone; NO to use the receiver.
 - (void)setSpeakerEnable:(BOOL)isEnable;
 
-/// 切换摄像头，默认 YES 使用前置摄像头
-/// - Parameter isEnable: YES 使用前置摄像头；NO 使用后置摄像头
+/// Switch the camera. The default is YES, which uses the front camera.
+/// - Parameter isEnable: YES to use the front camera; NO to use the rear camera.
 - (void)useFrontCamera:(BOOL)isEnable;
 
 #pragma mark -
-/// 呼叫用户加入通话（isMultiCall 为 NO 时不支持该功能）
-/// - Parameter userIdList: 呼叫的用户 id 列表
+/// Invite users to join the call. This is not supported when isMultiCall is NO.
+/// - Parameter userIdList: List of user IDs to invite.
 - (void)inviteUsers:(NSArray <NSString *> *)userIdList;
 
 #pragma mark - only for Zego
-/// 开启回声消除
-/// - Parameter isEnable: 是否开启
+/// Enable acoustic echo cancellation.
+/// - Parameter isEnable: Whether to enable it.
 - (void)enableAEC:(BOOL)isEnable;
 
-/// 设置视频降噪参数
-/// - Parameter params: 视频降噪参数
+/// Set video denoise parameters.
+/// - Parameter params: Video denoise parameters.
 - (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params;
 
 @end

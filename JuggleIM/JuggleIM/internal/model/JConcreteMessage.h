@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
 @property (nonatomic, assign) long long lifeTime;
-/// 消息阅读时间（仅对单聊生效）
+/// Message read time (only effective for one-to-one chats).
 @property (nonatomic, assign) long long readTime;
 @property (nonatomic, assign) BOOL isMute;
-/// 加密消息 hash 重试次数
+/// Encrypted message hash retry count.
 @property (nonatomic, assign) int hashCount;
 @end
 

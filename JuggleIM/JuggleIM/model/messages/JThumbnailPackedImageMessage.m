@@ -53,7 +53,7 @@
         thumbnailString = [JUtility base64EncodedStringFrom:thumbnailData];
     }
     
-    //绝对路径转换成相对路径
+    //Convert absolute path to relative path
     NSString * localPath = [self.localPath stringByAbbreviatingWithTildeInPath];
     
     

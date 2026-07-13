@@ -11,19 +11,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JSnapshotPackedVideoMessage : JMediaMessageContent
-/// 视频封面图远端地址
+/// Remote address of the video cover image
 @property (nonatomic, strong) UIImage *snapshotImage;
-/// 视频高度
+/// Video height
 @property (nonatomic, assign) int height;
-/// 视频宽度
+/// Video width
 @property (nonatomic, assign) int width;
-/// 视频大小，单位：KB
+/// Video size, in KB
 @property (nonatomic, assign) long long size;
-/// 视频时长，单位：秒
+/// Video duration, in seconds
 @property (nonatomic, assign) int duration;
-/// 视频文件名
+/// Video file name
 @property (nonatomic, copy) NSString *name;
-/// 扩展字段
+/// Extra field
 @property (nonatomic, copy) NSString *extra;
 @end
 
