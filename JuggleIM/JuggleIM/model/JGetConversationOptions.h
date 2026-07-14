@@ -19,4 +19,6 @@
 @property (nonatomic, assign) JPullDirection direction;
 /// 标签 id，nil 表示不限标签
 @property (nonatomic, copy) NSString *tagId;
+/// YES means fetch without top conversations.
+@property (nonatomic, assign) BOOL ignoreTop;
 @end
