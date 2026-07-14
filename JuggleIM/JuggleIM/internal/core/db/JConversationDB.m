@@ -260,7 +260,8 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
 - (NSArray<JConcreteConversationInfo *> *)getConversationInfoList {
     NSMutableArray<JConcreteConversationInfo *> *array = [[NSMutableArray alloc] init];
     NSString *sql = jGetConversations;
-    sql = [self appendOrderSql:sql];
+    sql = [self appendOrderSql:sql
+                     ignoreTop:NO];
     [self.dbHelper executeQuery:sql
            withArgumentsInArray:nil
                      syncResult:^(JFMResultSet * _Nonnull resultSet) {
@@ -302,7 +303,8 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
         sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:options.conversationTypes.count]];
         [args addObjectsFromArray:options.conversationTypes];
     }
-    sql = [self appendOrderSql:sql];
+    sql = [self appendOrderSql:sql
+                     ignoreTop:options.ignoreTop];
     sql = [sql stringByAppendingString:jConversationLimit];
     [args addObject:@(options.count)];
     
@@ -828,11 +830,16 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     return info;
 }
 
-- (NSString *)appendOrderSql:(NSString *)originSql {
-    if (self.topConversationsOrderType == JTopConversationsOrderByTopTime) {
-        originSql = [originSql stringByAppendingString:jConversationOrderByTopTopTimeTimestamp];
+- (NSString *)appendOrderSql:(NSString *)originSql
+                   ignoreTop:(BOOL)ignoreTop {
+    if (ignoreTop) {
+        originSql = [originSql stringByAppendingString:jConversationOrderByTimestamp];
     } else {
-        originSql = [originSql stringByAppendingString:jConversationOrderByTopTimestamp];
+        if (self.topConversationsOrderType == JTopConversationsOrderByTopTime) {
+            originSql = [originSql stringByAppendingString:jConversationOrderByTopTopTimeTimestamp];
+        } else {
+            originSql = [originSql stringByAppendingString:jConversationOrderByTopTimestamp];
+        }
     }
     return originSql;
 }
