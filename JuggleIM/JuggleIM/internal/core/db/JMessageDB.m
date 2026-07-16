@@ -46,7 +46,10 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "read_time INTEGER"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
-NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
+// client_uid is used as a lookup key, but it is not globally unique in practice
+// for all message rows. Keep it as a normal index to avoid index build failures
+// on legacy databases and to preserve inserts with empty clientUid.
+NSString *const kCreateClientUidIndex = @"CREATE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const jCreateMessageDTConversationTSIndex2 = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts2 ON message(destroy_time, conversation_type, conversation_id, subchannel, timestamp)";
 NSString *const jCreateMessageDestroyTimeIndex = @"CREATE INDEX IF NOT EXISTS idx_message_destroy_time ON message(destroy_time)";
 NSString *const jCreateMessageTimestampIndex = @"CREATE INDEX IF NOT EXISTS idx_message_timestamp ON message(timestamp)";
@@ -869,14 +872,17 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 - (void)insertMessage:(JMessage *)message inDb:(JFMDatabase *)db {
     long long seqNo = 0;
     long long msgIndex = 0;
-    NSString *clientUid = @"";
+    NSString *clientUid = nil;
     int flags = 0;
     long long lifeTime = 0;
     long long readTime = 0;
     if ([message isKindOfClass:[JConcreteMessage class]]) {
         seqNo = ((JConcreteMessage *)message).seqNo;
         msgIndex = ((JConcreteMessage *)message).msgIndex;
-        clientUid = ((JConcreteMessage *)message).clientUid;
+        NSString *messageClientUid = ((JConcreteMessage *)message).clientUid;
+        if (messageClientUid.length > 0) {
+            clientUid = messageClientUid;
+        }
         flags = ((JConcreteMessage *)message).flags;
         lifeTime = ((JConcreteMessage *)message).lifeTime;
         readTime = ((JConcreteMessage *)message).readTime;
