@@ -91,6 +91,11 @@
     }
 }
 
+- (void)stopPreview {
+    [[JCallMediaManager shared] stopPreview];
+    [self.viewDic removeObjectForKey:JIM.shared.currentUserId];
+}
+
 - (void)muteMicrophone:(BOOL)isMute {
     [[JCallMediaManager shared] muteMicrophone:isMute];
 }
@@ -116,7 +121,7 @@
 }
 
 #pragma mark - JCallSessionImpl
-/// 下面方法都在状态机中调用
+/// The following methods are all called by the state machine.
 - (void)error:(JCallErrorCode)code {
     dispatch_async(self.core.delegateQueue, ^{
         [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JCallSessionDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -305,7 +310,7 @@
             [self.members addObject:newMember];
         }
     }
-    // 主动加入没有回调，最终会在 media 加入成功之后走 usersDidConnect
+    // Proactive joins have no callback; Finally usersDidConnect will be called after media joins successfully.
 }
 
 - (void)cameraEnable:(BOOL)enable userId:(NSString *)userId {
@@ -372,7 +377,7 @@
         [self event:JCallEventInviteDone userInfo:@{@"userIdList":userIdList}];
     } error:^(JErrorCodeInternal code) {
         JLogE(@"Call-Signal", @"send invite error, code is %ld", code);
-        [self event:JCallEventInviteFail userInfo:nil];
+        [self event:JCallEventInviteFail userInfo:@{@"code":@(code)}];
     }];
 }
 
@@ -667,6 +672,7 @@
 @synthesize members = _members;
 @synthesize startTime;
 @synthesize mediaType;
+@synthesize conversation;
 @synthesize extra;
 
 @end

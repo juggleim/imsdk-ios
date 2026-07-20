@@ -17,12 +17,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL existed;
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
+@property (nonatomic, strong) JUserInfo *senderUserInfo;
 @property (nonatomic, strong) JGroupMember *groupMemberInfo;
+@property (nonatomic, strong) JFriendInfo *friendInfo;
 @property (nonatomic, copy) NSString *referMsgId;
 @property (nonatomic, strong) JPushData *pushData;
 @property (nonatomic, assign) long long lifeTime;
-/// 消息阅读时间（仅对单聊生效）
+/// Message read time (only effective for one-to-one chats).
 @property (nonatomic, assign) long long readTime;
+@property (nonatomic, assign) BOOL isMute;
+/// Encrypted message hash retry count.
+@property (nonatomic, assign) int hashCount;
 @end
 
 NS_ASSUME_NONNULL_END

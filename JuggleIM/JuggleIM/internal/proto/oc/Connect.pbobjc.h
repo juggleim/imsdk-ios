@@ -86,35 +86,35 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *protoId;
 
-/** sdk 版本 */
+/** SDK version */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *sdkVersion;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *appkey;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *token;
 
-/** 设备信息 */
+/** Device information */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
 
 /** iOS/Android/iPad */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *platform;
 
-/** 设备厂商, huawei/apple */
+/** Device manufacturer, huawei/apple */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceCompany;
 
-/** 设备型号  例如: iPhone8 */
+/** Device model, for example: iPhone8 */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceModel;
 
-/** 手机操作系统版本 */
+/** Mobile operating system version */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *deviceOsVersion;
 
-/** 厂商推送Token */
+/** Vendor push token */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *pushToken;
 
-/** 网络 */
+/** Network */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *networkId;
 
-/** 网络运营商编号 */
+/** Network carrier number */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ispNum;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *clientIp;
@@ -125,19 +125,19 @@ GPB_FINAL @interface ConnectMsgBody : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
-/** 客户端实例标识,用于多开时识别不同的实例，clientSession */
+/** Client instance identifier, used to distinguish different instances when multiple instances are open, clientSession */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *instanceId;
 
-/** 语言设置 */
+/** Language setting */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *language;
 
-/** app是否在后台 */
+/** Whether the app is in the background */
 @property(nonatomic, readwrite) BOOL isBackend;
 
 /** voip token of iOS */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *voipToken;
 
-/** 密钥协商 */
+/** Secret negotiation */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *secretNegotiate;
 
 @end
@@ -165,7 +165,7 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
-/** 密钥协商应答 */
+/** Secret negotiation response */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *secretNegotiateAck;
 
 @end

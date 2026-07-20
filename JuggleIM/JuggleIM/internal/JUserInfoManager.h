@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)insertUserInfoList:(NSArray <JUserInfo *> *)userInfoList;
 - (void)insertGroupInfoList:(NSArray <JGroupInfo *> *)groupInfoList;
 - (void)insertGroupMemberList:(NSArray <JGroupMember *> *)groupMemberList;
+- (void)insertFriendInfoList:(NSArray <JFriendInfo *> *)friendInfoList;
+- (void)userStatusChange:(JUserStatus *)userStatus;
 
 @end
 

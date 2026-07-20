@@ -11,8 +11,9 @@
 #import "JReactionDB.h"
 #import "JConversationDB.h"
 #import "JMomentDB.h"
+#import "JE2EEDB.h"
 
-#define jDBVersion 10
+#define jDBVersion 17
 
 NSString *const jCreateVersionTable = @"CREATE TABLE IF NOT EXISTS version (v INTEGER)";
 NSString *const jGetVersion = @"SELECT v FROM version";
@@ -90,6 +91,30 @@ NSString *const jUpdateVersion = @"UPDATE version SET v = ?";
                 [db executeUpdate:[JMessageDB addDestroyTimeIndex]];
                 [db executeUpdate:[JMessageDB addTimestampIndex]];
                 [db executeUpdate:[JMessageDB addConversationSubchannelIndex]];
+            }
+            if (version < 11) {
+                [db executeUpdate:[JMessageDB addStateIndex]];
+            }
+            if (version < 12) {
+                [db executeUpdate:[JConversationDB addConversationTSIndex]];
+            }
+            if (version < 13) {
+                [db executeUpdate:[JMessageDB addSenderIndex]];
+            }
+            if (version < 14) {
+                [db executeUpdate:[JUserInfoDB createFriendTable]];
+                [db executeUpdate:[JUserInfoDB createFriendIndex]];
+            }
+            if (version < 15) {
+                [db executeUpdate:[JMessageDB addConversationSubchannelTSIndex]];
+            }
+            if (version < 16) {
+                [db executeUpdate:[JConversationDB createTagInfoTable]];
+                [db executeUpdate:[JConversationDB createTagInfoIndex]];
+            }
+            if (version < 17) {
+                [db executeUpdate:[JE2EEDB createPublicKeyTable]];
+                [db executeUpdate:[JE2EEDB createPublicKeyIndex]];
             }
             [db executeUpdate:jUpdateVersion withArgumentsInArray:@[@(jDBVersion)]];
         }];

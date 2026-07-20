@@ -23,7 +23,7 @@
 @property (nonatomic, assign) int zipIndex;
 @end
 
-//本身不控制线程，但是 write 方法是在单独的线程中运行
+//This class does not manage threads itself, but the write method runs on a separate thread.
 @implementation JLogFileWriter
 
 - (NSString *)generateZipFile:(long long)startTime endTime:(long long)endTime {
@@ -33,7 +33,7 @@
         NSString *timeString = [fileName substringToIndex:jLogFileFormate.length];
         NSDate *date = [self.dateFormatter dateFromString:timeString];
         NSTimeInterval interval = [date timeIntervalSince1970];
-        //拉取3:05~4:00 的日志需要把文件名中小时数为 3 的日志包含进去
+        //Fetching logs from 3:05 to 4:00 needs to include logs whose filename hour is 3.
         if ((interval+jOneHour)*1000-1 > startTime && interval*1000 < endTime) {
             NSString *fullPath = [[self logFolder] stringByAppendingPathComponent:fileName];
             [resultFiles addObject:fullPath];

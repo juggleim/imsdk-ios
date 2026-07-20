@@ -11,17 +11,17 @@
 
 @interface JCallInfo : NSObject
 
-/// 通话 id
+/// Call ID.
 @property (nonatomic, copy) NSString *callId;
-/// 是否多人通话，NO 表示一对一通话
+/// Whether this is a multi-party call. NO means a one-to-one call.
 @property (nonatomic, assign) BOOL isMultiCall;
-/// 媒体类型（语音/视频）
+/// Media type (audio/video).
 @property (nonatomic, assign) JCallMediaType mediaType;
-/// 通话的发起人 id
+/// User info of the call initiator.
 @property (nonatomic, strong) JUserInfo *owner;
-/// 通话参与者
+/// Call participants.
 @property (nonatomic, copy) NSArray <JCallMember *> *members;
-/// 扩展字段
+/// Extra field.
 @property (nonatomic, copy) NSString *extra;
 
 @end

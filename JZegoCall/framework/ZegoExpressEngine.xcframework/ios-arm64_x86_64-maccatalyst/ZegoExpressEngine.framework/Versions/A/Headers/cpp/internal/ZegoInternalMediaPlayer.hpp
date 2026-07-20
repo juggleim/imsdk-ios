@@ -175,11 +175,7 @@ class ZegoExpressMediaPlayerImp : public IZegoMediaPlayer,
             oInternalOriginBridge->mediaPlayerSetPlayerCanvas(
                 nullptr, zego_media_player_instance_index(instanceIndex));
         } else {
-            zego_canvas _canvas;
-            _canvas.view = canvas->view;
-            _canvas.view_mode = zego_view_mode(canvas->viewMode);
-            _canvas.background_color = canvas->backgroundColor;
-            _canvas.alpha_blend = canvas->alphaBlend;
+            zego_canvas _canvas = ZegoExpressConvert::O2ICanvas(*canvas);
             oInternalOriginBridge->mediaPlayerSetPlayerCanvas(
                 &_canvas, zego_media_player_instance_index(instanceIndex));
         }

@@ -393,6 +393,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (int)isVideoDecoderSupported:(ZegoVideoCodecID)codecID
                   codecBackend:(ZegoVideoCodecBackend)codecBackend;
 
+/// Whether the specified video decoding type and implementation are supported.
+///
+/// Available since: 3.23.0
+/// Description: Whether the specified video decoding is supported depends on the following aspects: whether the hardware model supports hard decoding, whether the performance of the hardware model supports soft decoding, and whether the SDK includes the decoding module.
+/// When to call: After creating the engine.
+/// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
+///
+/// @param codecID Video codec id. Required: Yes.
+/// @param codecBackend Backend implementation of decoder. Required: Yes.
+/// @param callback Results of get video decoder supported.
+- (void)getVideoDecoderSupported:(ZegoVideoCodecID)codecID
+                    codecBackend:(ZegoVideoCodecBackend)codecBackend
+                        callback:(nullable ZegoPlayerGetVideoDecoderSupportedCallback)callback;
+
 /// Set the play stream alignment properties.
 ///
 /// Available since: 2.14.0
@@ -462,6 +476,28 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param canvas The view used to display the play audio and video stream's image. When the view is set to [nil], no video is displayed, only audio is played.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 - (int)updatePlayingCanvas:(NSString *)streamID canvas:(nullable ZegoCanvas *)canvas;
+
+#if defined(TARGET_OS_IOS) && TARGET_OS_IOS
+/// Setting up playing canvas.
+///
+/// Available: since 3.21.0
+/// Description: This interface can add, delete and update playing view.
+/// Use case: The user can call this function to add, delete and update canvas display video.
+/// When to call: After calling the [startPlayingStream] interface.
+/// Restrictions: None.
+/// Caution: None.
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param streamID Stream ID, a string of up to 256 characters.
+///   Caution:
+///   Only support numbers, English characters and '-', '_'.
+/// @param updateType Update type.
+/// @param canvas The view used to display the play audio and video stream's image.
+/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+- (int)setPlayingCanvas:(NSString *)streamID
+             updateType:(ZegoViewUpdateType)updateType
+                 canvas:(nullable ZegoCanvas *)canvas;
+#endif
 
 /// [Deprecated] Set the adaptive adjustment interval range of the buffer for playing stream.
 ///

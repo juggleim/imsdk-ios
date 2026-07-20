@@ -7,13 +7,13 @@
 
 #import "JUserInfoDB.h"
 
-//user 最新版本
+//Latest user version.
 #define jUserTableVersion 1
-//NSUserDefault 中保存 user 数据库版本的 key
+//Key for saving the user database version in NSUserDefaults.
 #define jUserTableVersionKey @"UserVersion"
-//group 最新版本
+//Latest group version.
 #define jGroupTableVersion 1
-//NSUserDefault 中保存 group 数据库版本的 key
+//Key for saving the group database version in NSUserDefaults.
 #define jGroupTableVersionKey @"GroupVersion"
 
 NSString *const jCreateUserTable = @"CREATE TABLE IF NOT EXISTS user ("
@@ -41,9 +41,18 @@ NSString *const jCreateGroupMemberTable = @"CREATE TABLE IF NOT EXISTS group_mem
                                         "extension TEXT,"
                                         "updated_time INTERGER"
                                         ")";
+NSString *const jCreateFriendTable = @"CREATE TABLE IF NOT EXISTS friend ("
+                                        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                                        "user_id VARCHAR (64),"
+                                        "is_friend BOOLEAN,"
+                                        "name VARCHAR (64),"
+                                        "updated_time INTEGER"
+                                        ")";
+
 NSString *const jCreateUserIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_user ON user(user_id)";
 NSString *const jCreateGroupIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_group ON group_info(group_id)";
 NSString *const jCreateGroupMemberIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_group_member ON group_member(group_id, user_id)";
+NSString *const jCreateFriendIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_friend ON friend(user_id)";
 NSString *const kAlterAddUserType = @"ALTER TABLE user ADD COLUMN type SMALLINT";
 NSString *const jAlterAddUserUpdatedTime = @"ALTER TABLE user ADD COLUMN updated_time INTEGER";
 NSString *const jAlterAddGroupUpdatedTime = @"ALTER TABLE group_info ADD COLUMN updated_time INTEGER";
@@ -52,9 +61,13 @@ NSString *const jAlterAddGroupMemberUpdatedTime = @"ALTER TABLE group_member ADD
 NSString *const jGetUserInfo = @"SELECT * FROM user WHERE user_id = ?";
 NSString *const jGetGroupInfo = @"SELECT * FROM group_info WHERE group_id = ?";
 NSString *const jGetGroupMember = @"SELECT * FROM group_member WHERE group_id = ? AND user_id = ?";
+NSString *const jGetFriend = @"SELECT * FROM friend WHERE user_id = ?";
 NSString *const jInsertUserInfo = @"INSERT OR REPLACE INTO user (user_id, name, portrait, extension, type, updated_time) VALUES (?, ?, ?, ?, ?, ?)";
 NSString *const jInsertGroupInfo = @"INSERT OR REPLACE INTO group_info (group_id, name, portrait, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
 NSString *const jInsertGroupMembers = @"INSERT OR REPLACE INTO group_member (group_id, user_id, display_name, extension, updated_time) VALUES (?, ?, ?, ?, ?)";
+NSString *const jInsertFriend = @"INSERT OR REPLACE INTO friend (user_id, is_friend, name, updated_time) VALUES (?, ?, ?, ?)";
+NSString *const jGetUserInfoList = @"SELECT * FROM user WHERE user_id IN ";
+NSString *const jGetGroupList = @"SELECT * FROM group_info WHERE group_id IN ";
 NSString *const jColUserId = @"user_id";
 NSString *const jColGroupId = @"group_id";
 NSString *const jColName = @"name";
@@ -63,6 +76,7 @@ NSString *const jColExtension = @"extension";
 NSString *const jColType = @"type";
 NSString *const jColDisplayName = @"display_name";
 NSString *const jColUpdatedTime = @"updated_time";
+NSString *const jColIsFriend = @"is_friend";
 
 @interface JUserInfoDB ()
 @property (nonatomic, strong) JDBHelper *dbHelper;
@@ -74,9 +88,11 @@ NSString *const jColUpdatedTime = @"updated_time";
     [self.dbHelper executeUpdate:jCreateUserTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateGroupTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateGroupMemberTable withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateFriendTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateUserIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateGroupIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateGroupMemberIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateFriendIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jUserTableVersion) forKey:jUserTableVersionKey];
     [[NSUserDefaults standardUserDefaults] setObject:@(jGroupTableVersion) forKey:jGroupTableVersionKey];
 }
@@ -148,6 +164,21 @@ NSString *const jColUpdatedTime = @"updated_time";
     return groupMember;
 }
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    if (userId.length == 0) {
+        return nil;
+    }
+    __block JFriendInfo *friendInfo = nil;
+    [self.dbHelper executeQuery:jGetFriend
+           withArgumentsInArray:@[userId]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            friendInfo = [self friendInfoWith:resultSet];
+        }
+    }];
+    return friendInfo;
+}
+
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [userInfos enumerateObjectsUsingBlock:^(JUserInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -211,6 +242,61 @@ NSString *const jColUpdatedTime = @"updated_time";
     }];
 }
 
+- (void)insertFriendInfos:(NSArray<JFriendInfo *> *)friends {
+    [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
+        [friends enumerateObjectsUsingBlock:^(JFriendInfo * _Nonnull friend, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *userId = friend.userId?:@"";
+            BOOL isFriend = friend.isFriend;
+            NSString *name = friend.alias?:@"";
+            JFriendInfo *oldFriend = nil;
+            JFMResultSet *resultSet = [db executeQuery:jGetFriend, userId];
+            if ([resultSet next]) {
+                oldFriend = [self friendInfoWith:resultSet];
+            }
+            [resultSet close];
+            if (!oldFriend || friend.updatedTime > oldFriend.updatedTime) {
+                [db executeUpdate:jInsertFriend withArgumentsInArray:@[userId, @(isFriend), name, @(friend.updatedTime)]];
+            }
+        }];
+    }];
+}
+
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    NSMutableArray <JUserInfo *> *userList = [NSMutableArray array];
+    if (userIdList.count == 0) {
+        return [userList copy];
+    }
+    NSString *sql = jGetUserInfoList;
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:userIdList.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:userIdList
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JUserInfo *userInfo = [self userInfoWith:resultSet];
+            [userList addObject:userInfo];
+        }
+    }];
+    return [userList copy];
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    NSMutableArray <JGroupInfo *> *groupList = [NSMutableArray array];
+    if (groupIdList.count == 0) {
+        return [groupList copy];
+    }
+    NSString *sql = jGetGroupList;
+    sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:groupIdList.count]];
+    [self.dbHelper executeQuery:sql
+           withArgumentsInArray:groupIdList
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        while ([resultSet next]) {
+            JGroupInfo *groupInfo = [self groupInfoWith:resultSet];
+            [groupList addObject:groupInfo];
+        }
+    }];
+    return [groupList copy];
+}
+
 + (NSString *)alterUserTableAddType {
     return kAlterAddUserType;
 }
@@ -233,6 +319,14 @@ NSString *const jColUpdatedTime = @"updated_time";
 
 + (NSString *)alterGroupMemberTableAddUpdatedTime {
     return jAlterAddGroupMemberUpdatedTime;
+}
+
++ (NSString *)createFriendTable {
+    return jCreateFriendTable;
+}
+
++ (NSString *)createFriendIndex {
+    return jCreateFriendIndex;
 }
 
 #pragma mark - internal
@@ -268,6 +362,15 @@ NSString *const jColUpdatedTime = @"updated_time";
     groupMember.extraDic = [self dicFromString:extra];
     groupMember.updatedTime = [rs longLongIntForColumn:jColUpdatedTime];
     return groupMember;
+}
+
+- (JFriendInfo *)friendInfoWith:(JFMResultSet *)rs {
+    JFriendInfo *info = [JFriendInfo new];
+    info.userId = [rs stringForColumn:jColUserId];
+    info.isFriend = [rs boolForColumn:jColIsFriend];
+    info.alias = [rs stringForColumn:jColName];
+    info.updatedTime = [rs longLongIntForColumn:jColUpdatedTime];
+    return info;
 }
 
 - (NSString *)stringFromDic:(NSDictionary *)dic {

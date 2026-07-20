@@ -20,8 +20,8 @@
 }
 
 + (NSArray<JMomentReaction *> *)mergeReactionListWithJson:(NSArray *)jsonArray {
-    NSMutableArray *reactionModels = [NSMutableArray array];// 实际的 reaction 数组
-    NSMutableDictionary <NSString *, NSMutableArray <JUserInfo *> *> *keyUserInfosDic = [NSMutableDictionary dictionary];// key/用户列表
+    NSMutableArray *reactionModels = [NSMutableArray array];// Actual reaction array
+    NSMutableDictionary <NSString *, NSMutableArray <JUserInfo *> *> *keyUserInfosDic = [NSMutableDictionary dictionary];// key/user list
     for (NSDictionary *reactionDict in jsonArray) {
         NSString *key = reactionDict[@"key"];
         if (key.length == 0) {

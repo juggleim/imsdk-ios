@@ -64,6 +64,14 @@ NS_ASSUME_NONNULL_BEGIN
                     fromTag:(NSString *)tagId;
 - (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
 
+- (void)createConversationTag:(JConversationTagInfo *)tagInfo;
+- (void)destroyConversationTag:(NSString *)tagId;
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId;
+- (NSArray <JConversationTagInfo *> *)getConversationTagInfoList;
+- (NSArray <JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation;
+- (void)clearConversationTags;
+
 + (NSString *)createConversationTagTable;
 + (NSString *)createConversationTagIndex;
 + (NSString *)alterConversationInfoAddSubChannel;
@@ -72,6 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)dropConversationTagIndex1;
 + (NSString *)addConversationIndex2;
 + (NSString *)addConversationTagIndex2;
++ (NSString *)addConversationTSIndex;
++ (NSString *)createTagInfoTable;
++ (NSString *)createTagInfoIndex;
 @end
 
 NS_ASSUME_NONNULL_END

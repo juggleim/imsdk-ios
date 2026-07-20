@@ -10,11 +10,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JGetMessageOptions : NSObject
-/// 消息时间戳，传 0 或者不设置时，默认为当前时间
+/// Message timestamp; when 0 or unset, defaults to the current time
 @property (nonatomic, assign) long long startTime;
-/// 拉取数量，默认为 100 条，超过 100 时按 100 返回
+/// Fetch count; defaults to 100, and values over 100 return 100
 @property (nonatomic, assign) int count;
-/// 拉取的消息类型列表，消息类型获取示例：[JTextMessage contentType]，如果为空则拉取所有类型的消息
+/// List of message types to fetch. Example for getting a message type: [JTextMessage contentType]. If empty, all message types are fetched
 @property (nonatomic, copy) NSArray <NSString *> *contentTypes;
 @end
 

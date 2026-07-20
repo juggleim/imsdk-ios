@@ -5,138 +5,149 @@
 //  Created by Nathan on 2023/11/27.
 //
 
-/// 拉取消息的方向
+/// Message pull direction.
 typedef NS_ENUM(NSUInteger, JPullDirection) {
     JPullDirectionNewer = 0,
     JPullDirectionOlder = 1,
 };
 
-//聊天室成员排列顺序
+// Chatroom member ordering.
 typedef NS_ENUM(NSUInteger, JChatroomMemberOrder) {
-    //返回最早加入的成员
+    // Returns the earliest joined members first.
     JChatroomMemberOrderAscending = 0,
-    //返回最晚加入的成员
+    // Returns the latest joined members first.
     JChatroomMemberOrderDescending = 1
 };
 
 typedef NS_ENUM(NSUInteger, JConnectionStatus) {
-    //未连接
+    // Not connected.
     JConnectionStatusIdle = 0,
-    //已连接
+    // Connected.
     JConnectionStatusConnected = 1,
-    //（用户主动断开或者被服务端踢掉，SDK 不会进行重连）
+    // Disconnected by the user or kicked by the server. SDK will not reconnect.
     JConnectionStatusDisconnected = 2,
-    //连接中
+    // Connecting.
     JConnectionStatusConnecting = 3,
-    //连接失败，用户可根据 JErrorCode 来决定相应的处理
+    // Connection failed. Developer can handle it based on JErrorCode.
     JConnectionStatusFailure
 };
 
 typedef NS_ENUM(NSUInteger, JErrorCode) {
     JErrorCodeNone = 0,
-    //未传 AppKey
+    // AppKey is missing.
     JErrorCodeAppKeyEmpty = 11001,
-    //未传 Token
+    // Token is missing.
     JErrorCodeTokenEmpty = 11002,
-    //AppKey 不存在
+    // AppKey does not exist.
     JErrorCodeAppKeyInvalid = 11003,
-    //Token 不合法
+    // Token is invalid.
     JErrorCodeTokenIllegal = 11004,
-    //Token 未授权
+    // Token is unauthorized.
     JErrorCodeTokenUnauthorized = 11005,
-    //Token 已过期
+    // Token has expired.
     JErrorCodeTokenExpired = 11006,
-    //App 已封禁
+    // App is prohibited.
     JErrorCodeAppProhibited = 11009,
-    //用户被封禁
+    // User is prohibited.
     JErrorCodeUserProhibited = 11010,
-    //用户被踢下线
+    // User was kicked offline by another client.
     JErrorCodeUserKickedByOtherClient = 11011,
-    //用户注销下线
+    // User logged out.
     JErrorCodeUserLogOut = 11012,
     
-    //非好友关系
+    // Not a friend.
     JErrorCodeNotFriend = 12009,
-    //没有操作权限
+    // No operation permission.
     JErrorCodeNoOperationPermission = 12010,
-    //消息不存在
+    // Message does not exist.
     JErrorCodeRemoteMessageNotExist = 12011,
-    //收藏重复消息
+    // Duplicate favorite message.
     JErrorCodeAddDuplicateFavoriteMessage = 12012,
+    // E2EE keys hash mismatch.
+    JErrorCodePubKeysHashMismatch = 12013,
     
-    //群组不存在
+    // Group does not exist.
     JErrorCodeGroupNotExist = 13001,
-    //不是群成员
+    // Not a group member.
     JErrorCodeNotGroupMember = 13002,
     
-    //聊天室默认错误
+    // Chatroom default error.
     JErrorCodeChatroomUnknownError = 14000,
-    //非聊天室成员
+    // Not a chatroom member.
     JErrorCodeNotChatroomMember = 14001,
-    //聊天室属性已满（最多 100 个）
+    // Chatroom attributes are full (maximum 100).
     JErrorCodeChatroomAttributeCountExceed = 14002,
-    //无权限操作聊天室属性（非当前用户设置的 key）
+    // No permission to operate this chatroom attribute (the key was not set by the current user).
     JErrorCodeChatroomKeyUnauthorized = 14003,
-    //聊天室属性不存在
+    // Chatroom attribute does not exist.
     JErrorCodeChatroomAttributeNotExist = 14004,
-    //聊天室不存在
+    // Chatroom does not exist.
     JErrorCodeChatroomNotExist = 14005,
-    //聊天室已销毁
+    // Chatroom has been destroyed.
     JErrorCodeChatroomDestroyed = 14006,
     
-    //非法参数
+    // Connection is forbidden.
+    JErrorCodeConnectForbidden = 21000,
+    // Invalid parameter.
     JErrorCodeInvalidParam = 21003,
-    //操作超时
+    // Operation timed out.
     JErrorCodeOperationTimeOut = 21004,
-    //连接不可用
+    // Connection is unavailable.
     JErrorCodeConnectionUnavailable = 21005,
-    //服务器设置错误
+    // Server setting error.
     JErrorCodeServerSetError = 21006,
-    //连接已存在
+    // Connection already exists.
     JErrorCodeConnectionAlreadyExist = 21007,
-    //朋友圈请求失败
+    // Moment request failed.
     JErrorCodeMomentRequestError = 21008,
+    // Friend does not exist.
+    JErrorCodeFriendNotExist = 21009,
     
-    //消息不存在
+    // Message does not exist.
     JErrorCodeMessageNotExist = 22001,
-    //消息已被撤回
+    // Message has already been recalled.
     JErrorCodeMessageAlreadyRecalled = 22002,
-    //消息上传失败
+    // Message upload failed.
     JErrorCodeMessageUploadError = 22003,
-    //撤回消息扩展信息（extras）中的 key 和 value 不是 NSString
+    // The key and value in recalled message extras are not NSString.
     JErrorCodeRecallExtrasTypeNotString = 22004,
-    //下载的不是媒体消息
+    // Peer public key was not found.
+    JErrorCodeOtherSideE2EEInvalid = 22006,
+    // Local public key has not been generated.
+    JErrorCodeLocalPublicKeyInvalid = 22007,
+    
+    // The downloaded message is not a media message.
     JErrorCodeDownloadNotMediaMessage = 23001,
-    //消息下载失败
+    // Message download failed.
     JErrorCodeMessageDownloadError = 23006,
-    //消息下载已存在
+    // Message download already exists.
     JErrorCodeDownloadAlreadyExist = 23008,
-    //消息下载被取消
+    // Message download was canceled.
     JErrorCodeDownloadCanceled = 23009,
     
-    //批量设置聊天室属性失败
+    // Failed to batch set chatroom attributes.
     JErrorCodeChatroomBatchSetAttributeFail = 24001,
     
-    //加入 LiveKit 房间失败
+    // Failed to join the LiveKit room.
     JErrorCodeJoinLiveKitFail = 25001
 };
 
 /*!
- 当前所处的网络
+ Current network status.
  */
 typedef NS_ENUM(NSUInteger, JNetworkStatus) {
     /*!
-     当前网络不可用
+     The network is unavailable.
      */
     JNetworkStatusNotReachable = 0,
 
     /*!
-     当前处于 WiFi 网络
+     The current network is Wi-Fi.
      */
     JNetworkStatusReachableViaWiFi = 1,
 
     /*!
-     移动网络
+     Cellular network.
      */
     JNetworkStatusReachableViaWWAN = 2,
 };
@@ -151,10 +162,10 @@ typedef NS_ENUM(NSUInteger, JLogLevel) {
     JLogLevelVerbose = 6
 };
 
-// 置顶会话排序规则
+// Pinned conversation sorting rule.
 typedef NS_ENUM(NSUInteger, JTopConversationsOrderType) {
-    // 按照置顶时间排序
+    // Sort by pinned time.
     JTopConversationsOrderByTopTime,
-    // 按照会话的消息时间排序
+    // Sort by conversation message time.
     JTopConversationsOrderByMessageTime
 };

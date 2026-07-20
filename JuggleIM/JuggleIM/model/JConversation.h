@@ -10,49 +10,59 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*!
- 会话类型
+ Conversation type
  */
 typedef NS_ENUM(NSUInteger, JConversationType) {
     
     JConversationTypeUnknown = 0,
     /*!
-     单聊
+     One-to-one chat
      */
     JConversationTypePrivate = 1,
 
     /*!
-     群组
+     Group
      */
     JConversationTypeGroup = 2,
 
     /*!
-     聊天室
+     Chatroom
      */
     JConversationTypeChatroom = 3,
 
     /*!
-     系统会话
+     System conversation
      */
     JConversationTypeSystem = 4,
     
     /*!
-     公众号
+     Official account
      */
-    JConversationTypePublicService = 7
+    JConversationTypePublicService = 7,
+    
+    /*!
+     Status change
+     */
+    JConversationTypeSubStatus = 8,
+    
+    /*!
+     End-to-end encrypted one-to-one chat
+     */
+    JConversationTypePrivateE2EE = 11
 };
 
 
 @interface JConversation : NSObject
 
-// 会话 id
+// Conversation id
 @property(nonatomic, copy) NSString *conversationId;
-// 会话类型
+// Conversation type
 @property(nonatomic, assign) JConversationType conversationType;
 
 - (instancetype)initWithConversationType:(JConversationType)type
                           conversationId:(NSString *)conversationId;
 
-// 会话子频道，默认为空。
+// Conversation subchannel, empty by default.
 @property(nonatomic, copy) NSString *subChannel;
 
 @end

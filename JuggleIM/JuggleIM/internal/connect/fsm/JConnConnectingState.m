@@ -20,7 +20,7 @@ typedef NS_ENUM(NSInteger, JConnectingStoreStatus) {
 
 @interface JConnConnectingState ()
 @property (nonatomic, copy) NSString *userToken;
-//连接过程中保存的状态
+//State saved during connection.
 @property (nonatomic, assign) JConnectingStoreStatus storeStatus;
 @property (nonatomic, assign) BOOL receivePush;
 @property (nonatomic, strong) NSTimer *connectTimer;

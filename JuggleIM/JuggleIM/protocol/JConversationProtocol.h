@@ -9,6 +9,7 @@
 #import <JuggleIM/JConversationInfo.h>
 #import <JuggleIM/JuggleIMConst.h>
 #import <JuggleIM/JGetConversationOptions.h>
+#import <JuggleIM/JConversationTagInfo.h>
 
 @protocol JConversationDelegate <NSObject>
 
@@ -29,6 +30,20 @@
 @end
 
 @protocol JConversationTagDelegate <NSObject>
+/// Tag created.
+/// - Parameter tagInfo: Conversation tag.
+- (void)tagDidCreate:(JConversationTagInfo *)tagInfo;
+
+/// Tag destroyed.
+/// - Parameter tagId: Tag ID.
+- (void)tagDidDestroy:(NSString *)tagId;
+
+/// Tag name changed.
+/// - Parameters:
+///   - tagId: Tag ID.
+///   - tagName: Tag name.
+- (void)tagNameDidUpdate:(NSString *)tagId
+                    name:(NSString *)tagName;
 
 - (void)conversationsDidAddToTag:(NSString *)tagId
                    conversations:(NSArray <JConversation *> *)conversationList;
@@ -40,145 +55,190 @@
 
 @protocol JConversationProtocol <NSObject>
 
-/// 获取全部会话信息列表，按照从新到旧的顺序排列
+/// Gets all conversation information, ordered from newest to oldest.
 - (NSArray<JConversationInfo *> *)getConversationInfoList;
 
-/// 分页获取会话信息列表，结果按照会话时间倒序排列（新的在前，旧的在后）
+/// Gets conversation information by page. Results are sorted by conversation time in descending order(newest first).
 /// - Parameters:
-///   - conversationTypes: 会话类型列表
-///   - count: 拉取数量
-///   - ts: 拉取时间戳（传 0 表示当前时间）
-///   - direction: 拉取方向
+///   - conversationTypes: Conversation type list.
+///   - count: Fetch count.
+///   - ts: Fetch timestamp. Pass 0 for the current time.
+///   - direction: Fetch direction.
 - (NSArray<JConversationInfo *> *)getConversationInfoListWithTypes:(NSArray<NSNumber *> *)conversationTypes
                                                              count:(int)count
                                                          timestamp:(long long)ts
                                                          direction:(JPullDirection)direction;
 
-/// 分页获取会话信息列表，结果按照会话时间倒序排列（新的在前，旧的在后）
+/// Gets conversation information by page. Results are sorted by conversation time in descending order, newest first.
 /// - Parameters:
-///   - count: 拉取数量
-///   - ts: 拉取时间戳（传 0 表示当前时间）
-///   - direction: 拉取方向
+///   - count: Fetch count.
+///   - ts: Fetch timestamp. Pass 0 for the current time.
+///   - direction: Fetch direction.
 - (NSArray<JConversationInfo *> *)getConversationInfoListByCount:(int)count
                                                        timestamp:(long long)ts
                                                        direction:(JPullDirection)direction;
 
-/// 根据查询条件获取会话信息列表
-/// - Parameter options: 查询条件
+/// Gets conversation information by query options.
+/// - Parameter options: Query options.
 - (NSArray<JConversationInfo *> *)getConversationInfoListWith:(JGetConversationOptions *)options;
 
-/// 获取某个特定会话信息
-/// - Parameter conversation: 会话标识
+/// Gets information for a specific conversation.
+/// - Parameter conversation: Conversation identifier.
 - (JConversationInfo *)getConversationInfo:(JConversation *)conversation;
 
 
-/// 删除特定会话
-/// - Parameter conversation: 会话标识
+/// Deletes a specific conversation.
+/// - Parameter conversation: Conversation identifier.
 - (void)deleteConversationInfoBy:(JConversation *)conversation
                          success:(void (^)(void))successBlock
                            error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置草稿内容
+/// Sets draft content.
 /// - Parameters:
-///   - draft: 草稿内容
-///   - conversation: 会话标识
+///   - draft: Draft content.
+///   - conversation: Conversation identifier.
 - (void)setDraft:(NSString *)draft
   inConversation:(JConversation *)conversation;
 
-/// 清除草稿
-/// - Parameter conversation: 会话标识
+/// Clears the draft.
+/// - Parameter conversation: Conversation identifier.
 - (void)clearDraftInConversation:(JConversation *)conversation;
 
-/// 创建会话信息
+/// Creates conversation information.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)createConversationInfo:(JConversation *)conversation
                        success:(void (^)(JConversationInfo *))successBlock
                          error:(void (^)(JErrorCode code))errorBlock;
 
-/// 获取消息未读的总数
+/// Gets the total unread message count.
 - (int)getTotalUnreadCount;
 
-/// 根据会话类型获取消息未读总数
-/// - Parameter conversationTypes: 会话类型的数组，需要将 JConversationType 转为 NSNumber 并构建 NSArray
+/// Gets the unread message count by conversation type.
+/// - Parameter conversationTypes: Conversation type array. Convert JConversationType to NSNumber and build an NSArray.
 - (int)getUnreadCountWithTypes:(NSArray<NSNumber *> *)conversationTypes;
 
-/// 根据标签 id 获取消息未读总数
-/// - Parameter tagId: 标签 id
+/// Adds a conversation tag.
+/// - Parameters:
+///   - tagId: Tag ID.
+///   - name: Tag name.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+- (void)createConversationTag:(NSString *)tagId
+                         name:(NSString *)name
+                      success:(void (^)(void))successBlock
+                        error:(void (^)(JErrorCode code))errorBlock;
+
+/// Deletes a conversation tag.
+/// - Parameters:
+///   - tagId: Tag ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+- (void)destroyConversationTag:(NSString *)tagId
+                       success:(void (^)(void))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
+/// Updates the conversation tag name.
+/// - Parameters:
+///   - name: Tag name.
+///   - tagId: Tag ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId
+                          success:(void (^)(void))successBlock
+                            error:(void (^)(JErrorCode code))errorBlock;
+
+/// Gets the cached conversation tag list. Cached data may not be the latest version and can be used for immediate UI rendering to optimize user experience.
+- (NSArray <JConversationTagInfo *> *)getCachedConversationTagList;
+
+/// Gets the conversation tag list.
+/// - Parameters:
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
+- (void)getConversationTagList:(void (^)(NSArray <JConversationTagInfo *> *tagInfoList))successBlock
+                         error:(void (^)(JErrorCode code))errorBlock;
+
+/// Gets all tags for a specific conversation.
+/// - Parameter conversation: Conversation identifier.
+- (NSArray <JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation;
+
+/// Gets the unread message count by tag ID.
+/// - Parameter tagId: Tag ID.
 - (int)getUnreadCountWithTag:(NSString *)tagId;
 
-/// 清除某一个会话的未读数
-/// - Parameter conversation: 会话对象
+/// Clears the unread count for a conversation.
+/// - Parameter conversation: Conversation object.
 - (void)clearUnreadCountByConversation:(JConversation *)conversation
                                success:(void (^)(void))successBlock
                                  error:(void (^)(JErrorCode code))errorBlock;
 
-/// 将会话添加到标签
+/// Adds conversations to a tag.
 /// - Parameters:
-///   - conversationList: 会话列表
-///   - tagId: 标签 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversationList: Conversation list.
+///   - tagId: Tag ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)addConversationList:(NSArray <JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                     success:(void (^)(void))successBlock
                       error:(void (^)(JErrorCode code))errorBlock;
 
-/// 将会话从标签中移除
+/// Removes conversations from a tag.
 /// - Parameters:
-///   - conversationList: 待移除的会话列表
-///   - tagId: 标签 id
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversationList: Conversation list to remove.
+///   - tagId: Tag ID.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)removeConversationList:(NSArray <JConversation *> *)conversationList
                        fromTag:(NSString *)tagId
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置静音
+/// Sets mute.
 /// - Parameters:
-///   - isMute: YES 表示静音，NO 表示解除静音
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - isMute: YES to mute, NO to unmute.
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)setMute:(BOOL)isMute
    conversation:(JConversation *)conversation
         success:(void (^)(void))successBlock
           error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置置顶
+/// Sets top.
 /// - Parameters:
-///   - isTop: YES 表示置顶，NO 表示不置顶
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - isTop: YES to pin, NO to unpin.
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)setTop:(BOOL)isTop
   conversation:(JConversation *)conversation
        success:(void (^)(void))successBlock
          error:(void (^)(JErrorCode code))errorBlock;
 
-/// 分页获取置顶会话信息列表
+/// Gets pinned conversation information by page.
 - (NSArray<JConversationInfo *> *)getTopConversationInfoListByCount:(int)count
                                                           timestamp:(long long)ts
                                                           direction:(JPullDirection)direction;
 
-/// 清除总未读数
+/// Clears the total unread count.
 - (void)clearTotalUnreadCount:(void (^)(void))successBlock
                         error:(void (^)(JErrorCode code))errorBlock;
 
-/// 标记未读
+/// Marks as unread.
 /// - Parameters:
-///   - conversation: 会话标识
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - conversation: Conversation identifier.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 - (void)setUnread:(JConversation *)conversation
           success:(void (^)(void))successBlock
             error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置置顶会话排序规则
-/// - Parameter type: 排序规则
+/// Sets the pinned conversation sort rule.
+/// - Parameter type: Sort rule.
 - (void)setTopConversationsOrderType:(JTopConversationsOrderType)type;
 
 - (void)addDelegate:(id<JConversationDelegate>)delegate;

@@ -61,6 +61,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deleteMessageByClientIds:(NSArray <NSNumber *> *)clientMsgNos;
 - (void)deleteMessageByMessageIds:(NSArray <NSString *> *)messageIds;
 - (void)clearMessagesIn:(JConversation *)conversation startTime:(long long)startTime senderId:(NSString *)senderId;
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes;
+
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds;
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos;
 - (JConcreteMessage *)getMessageWithClientUid:(NSString *)clientUid;
@@ -89,6 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
                          currentTime:(long long)now;
 - (void)clearChatroomMessageExclude:(NSArray<NSString *> *)chatroomIds;
 - (void)clearChatroomMessage:(NSString *)chatroomId;
+- (void)batchSetStateFail;
 #pragma mark - operation with db
 - (void)insertMessage:(JMessage *)message
                  inDb:(JFMDatabase *)db;
@@ -106,6 +110,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)addDestroyTimeIndex;
 + (NSString *)addTimestampIndex;
 + (NSString *)addConversationSubchannelIndex;
++ (NSString *)addConversationSubchannelTSIndex;
++ (NSString *)addStateIndex;
++ (NSString *)addSenderIndex;
 + (NSString *)removeConversationIndex;
 + (NSString *)removeConversationTSIndex;
 + (NSString *)removeDSConversationTSIndex;

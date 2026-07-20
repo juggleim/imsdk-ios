@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)syncMessages;
 - (void)updateSendSyncTime:(long long)timestamp;
 - (void)connectSuccess;
+- (void)checkAndUploadPubKey:(void(^)(void))completeBlock;
 
 @property (nonatomic, weak) id<JMessageSendReceiveDelegate> sendReceiveDelegate;
 

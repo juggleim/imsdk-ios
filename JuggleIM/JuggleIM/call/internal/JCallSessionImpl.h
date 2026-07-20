@@ -20,7 +20,6 @@
 @property (nonatomic, weak) id<JCallSessionLifeCycleDelegate> sessionLifeCycleDelegate;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *url;
-@property (nonatomic, strong) JConversation *conversation;
 
 - (void)error:(JCallErrorCode)code;
 - (void)notifyReceiveCall;

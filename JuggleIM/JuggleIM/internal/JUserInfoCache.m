@@ -15,6 +15,7 @@
 @property (nonatomic, strong) JLRUCache *userInfoCache;
 @property (nonatomic, strong) JLRUCache *groupInfoCache;
 @property (nonatomic, strong) JLRUCache *groupMemberCache;
+@property (nonatomic, strong) JLRUCache *friendCache;
 @end
 
 @implementation JUserInfoCache
@@ -22,6 +23,7 @@
     [self.userInfoCache clearCache];
     [self.groupInfoCache clearCache];
     [self.groupMemberCache clearCache];
+    [self.friendCache clearCache];
 }
 
 - (JUserInfo *)getUserInfo:(NSString *)userId {
@@ -90,6 +92,28 @@
     }
 }
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    if (userId.length == 0) {
+        return nil;
+    }
+    return [self.friendCache get:userId];
+}
+
+- (void)putFriendInfo:(JFriendInfo *)friendInfo {
+    if (friendInfo.userId.length > 0) {
+        JFriendInfo *old = [self.friendCache get:friendInfo.userId];
+        if (!old || friendInfo.updatedTime >= old.updatedTime) {
+            [self.friendCache put:friendInfo.userId value:friendInfo];
+        }
+    }
+}
+
+- (void)putFriendInfoList:(NSArray<JFriendInfo *> *)friendInfoList {
+    for (JFriendInfo *friendInfo in friendInfoList) {
+        [self putFriendInfo:friendInfo];
+    }
+}
+
 #pragma mark - private
 - (NSString *)keyForGroupId:(NSString *)groupId
                      userId:(NSString *)userId {
@@ -116,5 +140,12 @@
         _groupMemberCache = [[JLRUCache alloc] initWithCapacity:jMaxCacheCount];
     }
     return _groupMemberCache;
+}
+
+- (JLRUCache *)friendCache {
+    if (!_friendCache) {
+        _friendCache = [[JLRUCache alloc] initWithCapacity:jMaxCacheCount];
+    }
+    return _friendCache;
 }
 @end

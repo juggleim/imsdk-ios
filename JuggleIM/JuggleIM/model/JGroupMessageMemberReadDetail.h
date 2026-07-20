@@ -11,9 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JGroupMessageMemberReadDetail : NSObject
-/// 用户信息
+/// User info
 @property (nonatomic, strong) JUserInfo *userInfo;
-/// 阅读时间
+/// Read time
 @property (nonatomic, assign) long long readTime;
 
 @end

@@ -25,58 +25,67 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shared;
 
 /*!
- 初始化 SDK
+ Initializes IM SDK.
 
- @param appKey  创建应用后获取到的 App Key
+ @param appKey The App Key obtained after creating the application.
  @discussion
- 在使用 SDK 所有功能之前，您必须先调用此方法初始化 SDK。
- 在 App 整个生命周期中，您只需要执行一次初始化。
+ You must call this method before using any SDK feature.
+ Initialization only needs to be performed once during app lifecycle.
  */
 - (void)initWithAppKey:(NSString *)appKey;
 
 /*!
- 设置服务器地址
+ Sets server URLs.
 
- @param serverUrls  服务器地址
+ @param serverUrls The server URLs.
  */
 - (void)setServerUrls:(NSArray <NSString *> *)serverUrls;
 
-/// 设置控制台日志输出等级
-/// @param level 日志等级
+/// Sets the console log output level.
+/// @param level The log level.
 - (void)setConsoleLogLevel:(JLogLevel)level;
 
 /*!
- 获取 SDK 版本
+ Gets SDK version.
  */
 - (NSString *)getSDKVersion;
 
 - (NSString *)getDeviceId;
 
-//服务端时间与本地时间的差值（服务端时间 - 本地时间）
+// The time difference between server time and local time (server time - local time).
 - (long long)getTimeDifference;
 
-/// 连接管理类
+/// Connection manager.
 @property (nonatomic, strong) id<JConnectionProtocol> connectionManager;
-/// 消息管理类
+/// Message manager.
 @property (nonatomic, strong) id<JMessageProtocol> messageManager;
-/// 会话管理类
+/// Conversation manager.
 @property (nonatomic, strong) id<JConversationProtocol> conversationManager;
-/// 用户管理类
+/// User info manager.
 @property(nonatomic, strong) id<JUserInfoProtocol> userInfoManager;
-/// 聊天室管理类
+/// Chatroom manager.
 @property (nonatomic, strong) id<JChatroomProtocol> chatroomManager;
-/// SDK 中所有代理的回调线程，如果不指定则默认使用主线程回调
+/// Callback queue for all SDK delegates. The main queue is used by default if this is not specified.
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
-/// 当前 app key
+/// Current app key.
 @property (nonatomic, copy, readonly) NSString *appKey;
-/// 当前用户 id
+/// Current user ID.
 @property (nonatomic, copy, readonly) NSString *currentUserId;
-/// 通话管理类
+/// Call manager.
 @property (nonatomic, strong) id<JCallProtocol> callManager;
-/// 朋友圈管理类
+/// Moment manager.
 @property (nonatomic, strong) id<JMomentProtocol> momentManager;
 
+/// Generates a log zip file for the specified time range and returns its local path.
+/// - Parameters:
+///   - startTime: Start time, in milliseconds.
+///   - endTime: End time, in milliseconds.
+- (NSString *)generateZipFile:(long long)startTime
+                      endTime:(long long)endTime;
 
+/// Deletes a generated log zip file.
+/// - Parameter fileName: The local file path.
+- (void)removeZipFile:(NSString *)fileName;
 @end
 
 NS_ASSUME_NONNULL_END

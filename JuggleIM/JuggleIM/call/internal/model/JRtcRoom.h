@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import "JUserInfo.h"
 #import "JCallMember.h"
+#import "JConversation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *extra;
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *url;
+@property (nonatomic, strong) JConversation *conversation;
 @end
 
 NS_ASSUME_NONNULL_END

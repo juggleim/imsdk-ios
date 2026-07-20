@@ -21,11 +21,16 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIImage *)generateThumbnail:(UIImage *)image targetSize:(CGSize)targetSize;
 + (NSString *)base64EncodedStringFrom:(NSData *)data;
 + (NSData *)dataWithBase64EncodedString:(NSString *)string;
++ (NSString *)signatureWithNonce:(NSString *)nonce
+                       timestamp:(NSString *)timestamp
+                         signKey:(NSString *)signKey;
 + (NSString *)rootPath;
 + (NSString *)mediaPath:(JMediaType)type;
 + (NSString *)getUUID;
 + (NSString *)getSystemLanguage;
 + (NSString *)getClientIP;
++ (NSString *)maskAppKey:(NSString *)string;
++ (NSString *)maskToken:(NSString *)string;
 
 @end
 

@@ -20,10 +20,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (long long)getConversationSyncTime;
 - (long long)getMessageSendSyncTime;
 - (long long)getMessageReceiveSyncTime;
+- (NSData *)getE2EEPubKey;
+- (NSData *)getE2EEPriKey;
 
 - (void)setConversationSyncTime:(long long)time;
 - (void)setMessageSendSyncTime:(long long)time;
 - (void)setMessageReceiveSyncTime:(long long)time;
+
+- (void)setE2EEWithPubKey:(NSData *)pubKey
+                   priKey:(NSData *)priKey;
 @end
 
 NS_ASSUME_NONNULL_END

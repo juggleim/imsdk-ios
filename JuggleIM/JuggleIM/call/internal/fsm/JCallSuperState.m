@@ -26,34 +26,34 @@
         case JCallEventInvite:
 //            [self.callSessionImpl error:JCallErrorCodeCallExist];
             // do nothing
-            // idle 状态处理
-            // connected 状态处理
-            // 其它状态下 invite 两次不会是同一个 callSession
+            // Handled in the idle state.
+            // Handled in the connected state.
+            // In other states, two invite events will not be for the same callSession.
             break;
             
         case JCallEventInviteDone:
             // do nothing
-            // outgoing 状态处理
-            // connected 状态处理
-            // 其它状态下忽略
+            // Handled in the outgoing state.
+            // Handled in the connected state.
+            // Ignored in other states.
             break;
             
         case JCallEventInviteFail:
             // do nothing
-            // outgoing 状态处理
-            // connected 状态处理
-            // 其它状态下忽略
+            // Handled in the outgoing state.
+            // Handled in the connected state.
+            // Ignored in other states.
             break;
             
         case JCallEventReceiveInvite:
             // do nothing
-            // idle 状态处理
-            // 其它状态下忽略（服务端不会给已在房间内的用户发送同一个 callId 的 invite）
+            // Handled in the idle state.
+            // Ignored in other states. Server will not send an invite with the same callId to a user already in the room.
             break;
             
         case JCallEventReceiveInviteOthers:
-            // idle 状态 do nothing
-            // 其它状态统一由这里处理
+            // Do nothing in the idle state.
+            // Other states are handled here.
         {
             JUserInfo *inviter = userInfo[@"inviter"];
             NSArray<JUserInfo *> *targetUsers = userInfo[@"targetUsers"];
@@ -97,20 +97,20 @@
             
         case JCallEventAcceptDone:
             // do nothing
-            // incoming 状态处理
-            // 其它状态忽略
+            // Handled in the incoming state.
+            // Ignored in other states.
             break;
             
         case JCallEventAcceptFail:
             // do nothing
-            // incoming 状态处理
-            // 其它状态忽略
+            // Handled in the incoming state.
+            // Ignored in other states.
             break;
             
         case JCallEventReceiveAccept:
         {
-            // outgoing 状态处理（别的用户 accept）
-            // incoming 状态处理（当前用户在其它端 accept）
+            // Handled in the outgoing state when another user accepts.
+            // Handled in the incoming state when current user accepts on another client.
             NSString *userId = userInfo[@"userId"];
             [self.callSessionImpl memberAccept:userId];
             break;
@@ -118,7 +118,7 @@
             
         case JCallEventReceiveHangup:
         {
-            // incoming 状态处理（当前用户在其它端 hangup）
+            // Handled in the incoming state when the current user hangs up on another client.
             NSString *userId = userInfo[@"userId"];
             [self.callSessionImpl memberHangup:userId];
             if (!self.callSessionImpl.isMultiCall) {
@@ -129,7 +129,7 @@
             
         case JCallEventReceiveQuit:
         {
-            // 跟 JCallEventReceiveHangup 不同，incoming 状态不会收到当前用户在其它端的 quit 事件
+            // Unlike JCallEventReceiveHangup, the incoming state will not receive quit events from the current user on another client.
             NSArray <NSString *> *userIdList = userInfo[@"userIdList"];
             [self.callSessionImpl membersQuit:userIdList];
             if (!self.callSessionImpl.isMultiCall) {
@@ -140,14 +140,14 @@
             
         case JCallEventJoinChannelDone:
             // do nothing
-            // connecting 状态处理
-            // 其它状态忽略
+            // Handled in the connecting state.
+            // Ignored in other states.
             break;
             
         case JCallEventJoinChannelFail:
             // do nothing
-            // connecting 状态处理
-            // 其它状态忽略
+            // Handled in the connecting state.
+            // Ignored in other states.
             break;
             
         case JCallEventParticipantJoinChannel:
@@ -193,21 +193,21 @@
         case JCallEventJoin:
         {
             // do nothing
-            // idle 状态处理
-            // 其它状态下忽略
+            // Handled in the idle state.
+            // Ignored in other states.
             break;
         }
             
         case JCallEventJoinDone:
             // do nothing
-            // join 状态处理
-            // 其它状态下忽略
+            // Handled in the join state.
+            // Ignored in other states.
             break;
             
         case JCallEventJoinFail:
             // do nothing
-            // join 状态处理
-            // 其它状态下忽略
+            // Handled in the join state.
+            // Ignored in other states.
             break;
             
         case JCallEventReceiveJoin:

@@ -16,7 +16,7 @@
 @property (nonatomic, weak) JWebSocket *ws;
 @property (nonatomic, strong) NSTimer *pingTimer;
 @property (nonatomic, strong) NSTimer *detectTimer;
-@property (nonatomic, assign) long long lastMessageReceiveTime;//秒
+@property (nonatomic, assign) long long lastMessageReceiveTime;//Seconds.
 @end
 
 @implementation JHeartBeatManager

@@ -19,13 +19,13 @@
     return JMessageFlagIsCountable|JMessageFlagIsSave;
 }
 
-/// 数据序列化方法
+/// Data serialization method
 -(NSData *)encode{
     return nil;
 }
 
-/// 数据反序列话方法
-/// - Parameter date: 数据内容
+/// Data deserialization method
+/// - Parameter date: Data content
 -(void)decode:(NSData *)data{
     
 }
@@ -34,7 +34,7 @@
     return @"";
 }
 
-/// 本地模糊搜索内容
+/// Local fuzzy search content
 - (NSString *)searchContent{
     return @"";
 }

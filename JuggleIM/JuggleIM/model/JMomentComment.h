@@ -12,19 +12,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JMomentComment : NSObject
 
-/// 评论 id
+/// Comment id
 @property (nonatomic, copy) NSString *commentId;
-/// 朋友圈 id
+/// Moment id
 @property (nonatomic, copy) NSString *momentId;
-/// 被回复的评论 id
+/// Replied comment id
 @property (nonatomic, copy) NSString *parentCommentId;
-/// 评论内容
+/// Comment content
 @property (nonatomic, copy) NSString *content;
-/// 评论人的用户信息
+/// User info of the commenter
 @property (nonatomic, strong) JUserInfo *userInfo;
-/// 被回复的评论用户信息
+/// User info of the replied comment
 @property (nonatomic, strong) JUserInfo *parentUserInfo;
-/// 创建时间
+/// Created time
 @property (nonatomic, assign) long long createTime;
 
 - (NSDictionary *)toDictionary;

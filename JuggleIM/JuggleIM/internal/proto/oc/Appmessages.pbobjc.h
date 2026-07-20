@@ -35,8 +35,12 @@ CF_EXTERN_C_BEGIN
 @class ConverTag;
 @class Conversation;
 @class DownMsg;
+@class E2ECipher;
+@class E2ECiphers;
+@class E2ESuite;
 @class FavoriteMsg;
 @class FavoriteMsgIdItem;
+@class FriendInfo;
 @class GlobalConver;
 @class GroupInfo;
 @class GroupMember;
@@ -51,6 +55,8 @@ CF_EXTERN_C_BEGIN
 @class MsgExtItem;
 @class MsgExtItems;
 @class PreSignResp;
+@class PublicKeyData;
+@class PublicKeys;
 @class PushData;
 @class QiNiuCredResp;
 @class ReadInfoItem;
@@ -61,6 +67,7 @@ CF_EXTERN_C_BEGIN
 @class UndisturbConverItem;
 @class UserInfo;
 @class UserOnlineItem;
+@class UserStatus;
 @class UserUndisturbItem;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -153,6 +160,8 @@ typedef GPB_ENUM(ChannelType) {
   ChannelType_GroupCast = 5,
   ChannelType_BroadCast = 6,
   ChannelType_PublicService = 7,
+  ChannelType_SubStatus = 8,
+  ChannelType_PrivateE2Ee = 11,
 };
 
 GPBEnumDescriptor *ChannelType_EnumDescriptor(void);
@@ -488,42 +497,43 @@ typedef GPB_ENUM(UpMsg_FieldNumber) {
   UpMsg_FieldNumber_LifeTime = 11,
   UpMsg_FieldNumber_LifeTimeAfterRead = 12,
   UpMsg_FieldNumber_SubChannel = 13,
+  UpMsg_FieldNumber_E2ESuite = 14,
   UpMsg_FieldNumber_MsgTime = 51,
 };
 
 /**
- * 上行消息
+ * Upstream message
  **/
 GPB_FINAL @interface UpMsg : GPBMessage
 
-/** 消息类型定义 */
+/** Message type definition */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *msgType;
 
-/** 消息实体数据 */
+/** Message entity data */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *msgContent;
 
-/** 标识 */
+/** Flag */
 @property(nonatomic, readwrite) int32_t flags;
 
-/** 客户端指定的消息唯一ID */
+/** Client-specified unique message ID */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *clientUid;
 
-/** 推送设置 */
+/** Push settings */
 @property(nonatomic, readwrite, strong, null_resettable) PushData *pushData;
 /** Test to see if @c pushData has been set. */
 @property(nonatomic, readwrite) BOOL hasPushData;
 
-/** \@设置 */
+/** \@ mention settings */
 @property(nonatomic, readwrite, strong, null_resettable) MentionInfo *mentionInfo;
 /** Test to see if @c mentionInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasMentionInfo;
 
-/** 被引用的消息 */
+/** Referenced message */
 @property(nonatomic, readwrite, strong, null_resettable) DownMsg *referMsg;
 /** Test to see if @c referMsg has been set. */
 @property(nonatomic, readwrite) BOOL hasReferMsg;
 
-/** 群定向消息，指定接收消息的部分群成员 */
+/** Group targeted message, specifying some group members who receive the message */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *toUserIdsArray;
 /** The number of items in @c toUserIdsArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
@@ -534,13 +544,17 @@ GPB_FINAL @interface UpMsg : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *searchText;
 
-/** 消息默认生存周期，单位毫秒，例如：86400000，即该消息1天后会被自动删除 */
+/** Default message lifetime in milliseconds, for example 86400000 means the message is automatically deleted after 1 day */
 @property(nonatomic, readwrite) int64_t lifeTime;
 
-/** 消息已读后的生存周期，通常小于lifeTime，例如60000，即消息已读1分钟后会被自动删除 */
+/** Lifetime after the message is read, usually less than lifeTime. For example, 60000 means the message is automatically deleted 1 minute after being read */
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ESuite *e2ESuite;
+/** Test to see if @c e2ESuite has been set. */
+@property(nonatomic, readwrite) BOOL hasE2ESuite;
 
 @property(nonatomic, readwrite) int64_t msgTime;
 
@@ -701,6 +715,10 @@ typedef GPB_ENUM(DownMsg_FieldNumber) {
   DownMsg_FieldNumber_SubChannel = 34,
   DownMsg_FieldNumber_ToUserIdsArray = 35,
   DownMsg_FieldNumber_ReadTime = 36,
+  DownMsg_FieldNumber_FriendInfo = 37,
+  DownMsg_FieldNumber_SenderInfo = 38,
+  DownMsg_FieldNumber_OriginalMsg = 39,
+  DownMsg_FieldNumber_E2ESuite = 40,
 };
 
 GPB_FINAL @interface DownMsg : GPBMessage
@@ -785,10 +803,10 @@ GPB_FINAL @interface DownMsg : GPBMessage
 /** Test to see if @c grpMemberInfo has been set. */
 @property(nonatomic, readwrite) BOOL hasGrpMemberInfo;
 
-/** 消息默认的销毁时间点，单位毫秒，如 1752551449037，为0时，表示消息不自动销毁 */
+/** Default message destruction timestamp in milliseconds, such as 1752551449037. A value of 0 means the message is not automatically destroyed */
 @property(nonatomic, readwrite) int64_t destroyTime;
 
-/** 消息已读后生存周期，例如60000，即消息已读1分钟后会被自动删除 */
+/** Lifetime after the message is read, for example 60000 means the message is automatically deleted 1 minute after being read */
 @property(nonatomic, readwrite) int64_t lifeTimeAfterRead;
 
 @property(nonatomic, readwrite) BOOL isDelete;
@@ -800,6 +818,22 @@ GPB_FINAL @interface DownMsg : GPBMessage
 @property(nonatomic, readonly) NSUInteger toUserIdsArray_Count;
 
 @property(nonatomic, readwrite) int64_t readTime;
+
+@property(nonatomic, readwrite, strong, null_resettable) FriendInfo *friendInfo;
+/** Test to see if @c friendInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasFriendInfo;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserInfo *senderInfo;
+/** Test to see if @c senderInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasSenderInfo;
+
+@property(nonatomic, readwrite, strong, null_resettable) DownMsg *originalMsg;
+/** Test to see if @c originalMsg has been set. */
+@property(nonatomic, readwrite) BOOL hasOriginalMsg;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ESuite *e2ESuite;
+/** Test to see if @c e2ESuite has been set. */
+@property(nonatomic, readwrite) BOOL hasE2ESuite;
 
 @end
 
@@ -814,6 +848,27 @@ int32_t DownMsg_ChannelType_RawValue(DownMsg *message);
  * was generated.
  **/
 void SetDownMsg_ChannelType_RawValue(DownMsg *message, int32_t value);
+
+#pragma mark - FriendInfo
+
+typedef GPB_ENUM(FriendInfo_FieldNumber) {
+  FriendInfo_FieldNumber_FriendId = 1,
+  FriendInfo_FieldNumber_IsFriend = 2,
+  FriendInfo_FieldNumber_FriendDisplayName = 3,
+  FriendInfo_FieldNumber_UpdatedTime = 4,
+};
+
+GPB_FINAL @interface FriendInfo : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *friendId;
+
+@property(nonatomic, readwrite) BOOL isFriend;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *friendDisplayName;
+
+@property(nonatomic, readwrite) int64_t updatedTime;
+
+@end
 
 #pragma mark - GrpMemberInfo
 
@@ -955,13 +1010,13 @@ typedef GPB_ENUM(SyncMsgReq_FieldNumber) {
 
 GPB_FINAL @interface SyncMsgReq : GPBMessage
 
-/** 收件箱同步时间 */
+/** Inbox sync time */
 @property(nonatomic, readwrite) int64_t syncTime;
 
-/** 是否包含发件箱消息 */
+/** Whether sent box messages are included */
 @property(nonatomic, readwrite) BOOL containsSendBox;
 
-/** 发件箱同步时间 */
+/** Sent box sync time */
 @property(nonatomic, readwrite) int64_t sendBoxSyncTime;
 
 @end
@@ -1955,6 +2010,7 @@ typedef GPB_ENUM(Conversation_FieldNumber) {
   Conversation_FieldNumber_LatestReadMsgTime = 19,
   Conversation_FieldNumber_ConverTagsArray = 20,
   Conversation_FieldNumber_SubChannel = 21,
+  Conversation_FieldNumber_FriendInfo = 22,
 };
 
 GPB_FINAL @interface Conversation : GPBMessage
@@ -2010,6 +2066,10 @@ GPB_FINAL @interface Conversation : GPBMessage
 @property(nonatomic, readonly) NSUInteger converTagsArray_Count;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite, strong, null_resettable) FriendInfo *friendInfo;
+/** Test to see if @c friendInfo has been set. */
+@property(nonatomic, readwrite) BOOL hasFriendInfo;
 
 @end
 
@@ -3163,6 +3223,34 @@ GPB_FINAL @interface GroupInfoReq : GPBMessage
 
 @end
 
+#pragma mark - FriendIdsReq
+
+typedef GPB_ENUM(FriendIdsReq_FieldNumber) {
+  FriendIdsReq_FieldNumber_FriendIdsArray = 1,
+};
+
+GPB_FINAL @interface FriendIdsReq : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *friendIdsArray;
+/** The number of items in @c friendIdsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger friendIdsArray_Count;
+
+@end
+
+#pragma mark - FriendInfos
+
+typedef GPB_ENUM(FriendInfos_FieldNumber) {
+  FriendInfos_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface FriendInfos : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<FriendInfo*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
 #pragma mark - GroupIdsReq
 
 typedef GPB_ENUM(GroupIdsReq_FieldNumber) {
@@ -3795,6 +3883,144 @@ GPB_FINAL @interface FavoriteMsg : GPBMessage
 @property(nonatomic, readwrite) BOOL hasMsg;
 
 @property(nonatomic, readwrite) int64_t createdTime;
+
+@end
+
+#pragma mark - UserStatusList
+
+typedef GPB_ENUM(UserStatusList_FieldNumber) {
+  UserStatusList_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface UserStatusList : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<UserStatus*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - UserStatus
+
+typedef GPB_ENUM(UserStatus_FieldNumber) {
+  UserStatus_FieldNumber_UserId = 1,
+  UserStatus_FieldNumber_OnlineStatus = 2,
+};
+
+GPB_FINAL @interface UserStatus : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, strong, null_resettable) UserOnlineItem *onlineStatus;
+/** Test to see if @c onlineStatus has been set. */
+@property(nonatomic, readwrite) BOOL hasOnlineStatus;
+
+@end
+
+#pragma mark - PublicKeyData
+
+typedef GPB_ENUM(PublicKeyData_FieldNumber) {
+  PublicKeyData_FieldNumber_UserId = 1,
+  PublicKeyData_FieldNumber_DeviceId = 2,
+  PublicKeyData_FieldNumber_PublicKey = 3,
+};
+
+GPB_FINAL @interface PublicKeyData : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *publicKey;
+
+@end
+
+#pragma mark - PublicKeys
+
+typedef GPB_ENUM(PublicKeys_FieldNumber) {
+  PublicKeys_FieldNumber_UserId = 1,
+  PublicKeys_FieldNumber_PublicKeysArray = 2,
+};
+
+GPB_FINAL @interface PublicKeys : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<PublicKeyData*> *publicKeysArray;
+/** The number of items in @c publicKeysArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger publicKeysArray_Count;
+
+@end
+
+#pragma mark - MultiPublicKeys
+
+typedef GPB_ENUM(MultiPublicKeys_FieldNumber) {
+  MultiPublicKeys_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface MultiPublicKeys : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<PublicKeys*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - E2ESuite
+
+typedef GPB_ENUM(E2ESuite_FieldNumber) {
+  E2ESuite_FieldNumber_SenderPubKey = 1,
+  E2ESuite_FieldNumber_PubKeysHash = 2,
+  E2ESuite_FieldNumber_Nonce = 3,
+  E2ESuite_FieldNumber_Tag = 4,
+  E2ESuite_FieldNumber_Ciphers = 5,
+};
+
+GPB_FINAL @interface E2ESuite : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *senderPubKey;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *pubKeysHash;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *nonce;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *tag;
+
+@property(nonatomic, readwrite, strong, null_resettable) E2ECiphers *ciphers;
+/** Test to see if @c ciphers has been set. */
+@property(nonatomic, readwrite) BOOL hasCiphers;
+
+@end
+
+#pragma mark - E2ECiphers
+
+typedef GPB_ENUM(E2ECiphers_FieldNumber) {
+  E2ECiphers_FieldNumber_ItemsArray = 1,
+};
+
+GPB_FINAL @interface E2ECiphers : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<E2ECipher*> *itemsArray;
+/** The number of items in @c itemsArray without causing the container to be created. */
+@property(nonatomic, readonly) NSUInteger itemsArray_Count;
+
+@end
+
+#pragma mark - E2ECipher
+
+typedef GPB_ENUM(E2ECipher_FieldNumber) {
+  E2ECipher_FieldNumber_UserId = 1,
+  E2ECipher_FieldNumber_DeviceId = 2,
+  E2ECipher_FieldNumber_Cipher = 3,
+};
+
+GPB_FINAL @interface E2ECipher : GPBMessage
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *userId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSData *cipher;
 
 @end
 

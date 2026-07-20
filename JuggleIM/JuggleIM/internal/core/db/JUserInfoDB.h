@@ -27,11 +27,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (JGroupMember *)getGroupMemberIn:(NSString *)groupId
                             userId:(NSString *)userId;
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId;
+
 - (void)insertUserInfos:(NSArray <JUserInfo *> *)userInfos;
 
 - (void)insertGroupInfos:(NSArray <JGroupInfo *> *)groupInfos;
 
-- (void)insertGroupMembers:(NSArray<JGroupMember *> *)members;
+- (void)insertGroupMembers:(NSArray <JGroupMember *> *)members;
+
+- (void)insertFriendInfos:(NSArray <JFriendInfo *> *)friends;
+
+- (NSArray <JUserInfo *> *)getUserInfoList:(NSArray <NSString *> *)userIdList;
+
+- (NSArray <JGroupInfo *> *)getGroupInfoList:(NSArray <NSString *> *)groupIdList;
 
 + (NSString *)alterUserTableAddType;
 + (NSString *)createGroupMemberTable;
@@ -39,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)alterUserTableAddUpdatedTime;
 + (NSString *)alterGroupTableAddUpdatedTime;
 + (NSString *)alterGroupMemberTableAddUpdatedTime;
++ (NSString *)createFriendTable;
++ (NSString *)createFriendIndex;
 
 @end
 

@@ -7,9 +7,9 @@
 
 #import "JProfileDB.h"
 
-//profile 最新版本
+//Latest profile version.
 #define jProfileTableVersion 1
-//NSUserDefault 中保存 profile 数据库版本的 key
+//Key for saving the profile database version in NSUserDefaults.
 #define jProfileTableVersionKey @"ProfileVersion"
 
 NSString *const kCreateSyncTable = @"CREATE TABLE IF NOT EXISTS profile ("
@@ -22,6 +22,8 @@ NSString *const kSetValue = @"INSERT OR REPLACE INTO profile (key, value) values
 NSString *const kConversationTime = @"conversation_time";
 NSString *const kSendTime = @"send_time";
 NSString *const kReceiveTime = @"receive_time";
+NSString *const kPublicKey = @"public_key";
+NSString *const kPrivateKey = @"private_key";
 
 NSString *const kValue = @"value";
 
@@ -81,6 +83,32 @@ NSString *const kValue = @"value";
     return time;
 }
 
+- (NSData *)getE2EEPubKey {
+    __block NSData *pubKey = nil;
+    [self.dbHelper executeQuery:kGetValue
+           withArgumentsInArray:@[kPublicKey]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            NSString *str = [resultSet stringForColumn:kValue];
+            pubKey = [self dataFromHexString:str];
+        }
+    }];
+    return pubKey;
+}
+
+- (NSData *)getE2EEPriKey {
+    __block NSData *priKey = nil;
+    [self.dbHelper executeQuery:kGetValue
+           withArgumentsInArray:@[kPrivateKey]
+                     syncResult:^(JFMResultSet * _Nonnull resultSet) {
+        if ([resultSet next]) {
+            NSString *str = [resultSet stringForColumn:kValue];
+            priKey = [self dataFromHexString:str];
+        }
+    }];
+    return priKey;
+}
+
 - (void)setConversationSyncTime:(long long)time {
     [self.dbHelper executeUpdate:kSetValue
             withArgumentsInArray:@[kConversationTime, [NSString stringWithFormat:@"%lld", time]]];
@@ -96,11 +124,50 @@ NSString *const kValue = @"value";
             withArgumentsInArray:@[kReceiveTime, [NSString stringWithFormat:@"%lld", time]]];
 }
 
+- (void)setE2EEWithPubKey:(NSData *)pubKey priKey:(NSData *)priKey {
+    [self.dbHelper executeUpdate:kSetValue
+            withArgumentsInArray:@[kPublicKey, [self hexStringWith:pubKey]]];
+    [self.dbHelper executeUpdate:kSetValue
+            withArgumentsInArray:@[kPrivateKey,[self hexStringWith:priKey]]];
+}
+
 - (instancetype)initWithDBHelper:(JDBHelper *)dbHelper {
     if (self = [super init]) {
         self.dbHelper = dbHelper;
     }
     return self;
+}
+
+- (NSString *)hexStringWith:(NSData *)data {
+    if (!data) {
+        return @"";
+    }
+    const uint8_t *bytes = data.bytes;
+    NSMutableString *hex = [NSMutableString stringWithCapacity:data.length * 2];
+    for (NSUInteger i = 0; i < data.length; i++) {
+        [hex appendFormat:@"%02x", bytes[i]];
+    }
+    return hex;
+}
+
+- (NSData *)dataFromHexString:(NSString *)hexStr {
+    if (!hexStr || hexStr.length % 2 != 0) return nil;
+    
+    NSUInteger len = hexStr.length / 2;
+    uint8_t *buf = malloc(len);
+    if (!buf) return nil;
+    
+    unsigned int tempVal;
+    for (NSUInteger i = 0; i < len; i++) {
+        NSString *sub = [hexStr substringWithRange:NSMakeRange(i*2, 2)];
+        NSScanner *scanner = [NSScanner scannerWithString:sub];
+        [scanner scanHexInt:&tempVal];
+        buf[i] = (uint8_t)tempVal;
+    }
+    
+    NSData *data = [NSData dataWithBytes:buf length:len];
+    free(buf);
+    return data;
 }
 
 @end

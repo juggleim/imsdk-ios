@@ -2,7 +2,7 @@
 //  JMessageOptions.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/6/18.
+//  Created by Zheng Kai on 2024/6/18.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,20 +11,20 @@
 
 @interface JMessageOptions : NSObject
 
-/// @ 信息（非 @ 消息本字段为 nil）
+/// mention info (nil for non-mention messages)
 @property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
 
-/// 引用消息
+/// Referenced message
 @property (nonatomic, copy) NSString *referredMsgId;
 
-/// 推送信息
+/// Push info
 @property (nonatomic, strong) JPushData *pushData;
 
-/// 消息生存周期，单位毫秒。例：86400000 = 24 * 60 * 60 * 1000，该消息1天后会被自动删除。
-/// 默认值为 0，表示不自动销毁。
+/// Message lifetime, in milliseconds. Example: 86400000 = 24 * 60 * 60 * 1000; this message will be automatically deleted after 1 day.
+/// The default value is 0, which means no automatic destruction.
 @property (nonatomic, assign) long long lifeTime;
 
-/// 消息已读后的生存周期，单位毫秒。通常小于 lifeTime。
-/// 默认值为 0，表示读后不自动销毁。
+/// Message lifetime after being read, in milliseconds. Usually less than lifeTime.
+/// The default value is 0, which means no automatic destruction after read.
 @property (nonatomic, assign) long long lifeTimeAfterRead;
 @end

@@ -12,13 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JGroupMessageReadInfoDetail : NSObject
 
-/// 群消息已读数量
+/// Group message read count
 @property (nonatomic, assign) int readCount;
-/// 群成员总数
+/// Total group member count
 @property (nonatomic, assign) int memberCount;
-/// 已读用户列表
+/// List of users who have read
 @property (nonatomic, copy) NSArray <JGroupMessageMemberReadDetail *> *readMembers;
-/// 未读用户列表
+/// List of users who have not read
 @property (nonatomic, copy) NSArray <JGroupMessageMemberReadDetail *> *unreadMembers;
 
 @end

@@ -11,51 +11,51 @@
 
 @protocol JChatroomDelegate <NSObject>
 
-/// 当前用户加入聊天室
-/// - Parameter chatroomId: 聊天室 id
+/// Current user joined the chatroom.
+/// - Parameter chatroomId: Chatroom ID.
 - (void)chatroomDidJoin:(NSString *)chatroomId;
 
-/// 当前用户退出聊天室
-/// - Parameter chatroomId: 聊天室 id
+/// Current user left the chatroom.
+/// - Parameter chatroomId: Chatroom ID.
 - (void)chatroomDidQuit:(NSString *)chatroomId;
 
-/// 加入聊天室失败
+/// Failed to join the chatroom.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - errorCode: 错误码
+///   - chatroomId: Chatroom ID.
+///   - errorCode: Error code.
 - (void)chatroomJoinFail:(NSString *)chatroomId
                errorCode:(JErrorCode)errorCode;
 
-/// 退出聊天室失败
+/// Failed to leave the chatroom.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - errorCode: 错误码
+///   - chatroomId: Chatroom ID.
+///   - errorCode: Error code.
 - (void)chatroomQuitFail:(NSString *)chatroomId
                errorCode:(JErrorCode)errorCode;
 
-/// 当前用户被踢出聊天室
-/// - Parameter chatroomId: 聊天室 id
+/// Current user was kicked from the chatroom.
+/// - Parameter chatroomId: Chatroom ID.
 - (void)chatroomDidKick:(NSString *)chatroomId;
 
-/// 聊天室被销毁
-/// - Parameter chatroomId: 聊天室 id
+/// Chatroom was destroyed.
+/// - Parameter chatroomId: Chatroom ID.
 - (void)chatroomDidDestroy:(NSString *)chatroomId;
 
 @end
 
 @protocol JChatroomAttributesDelegate <NSObject>
 
-/// 聊天室属性更新（新增或者 value 有变化）
+/// Chatroom attributes were updated.
 /// - Parameters:
-///   - attributes: 更新的聊天室属性列表
-///   - chatroomId: 聊天室 id
+///   - attributes: Updated chatroom attribute list.
+///   - chatroomId: Chatroom ID.
 - (void)attributesDidUpdate:(NSDictionary <NSString *, NSString *> *)attributes
                 forChatroom:(NSString *)chatroomId;
 
-/// 聊天室属性删除
+/// Chatroom attributes were deleted.
 /// - Parameters:
-///   - attributes: 删除的聊天室属性列表
-///   - chatroomId: 聊天室 id
+///   - attributes: Deleted chatroom attribute list.
+///   - chatroomId: Chatroom ID.
 - (void)attributesDidDelete:(NSDictionary <NSString *, NSString *> *)attributes
                 forChatroom:(NSString *)chatroomId;
 
@@ -63,68 +63,68 @@
 
 @protocol JChatroomProtocol <NSObject>
 
-/// 加入聊天室
+/// Joins a chatroom.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
+///   - chatroomId: Chatroom ID.
 - (void)joinChatroom:(NSString *)chatroomId;
 
-/// 加入聊天室
+/// Joins a chatroom.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - count: 加入聊天室时获取的历史消息数量
+///   - chatroomId: Chatroom ID.
+///   - count: Number of historical messages to fetch when joining the chatroom.
 - (void)joinChatroom:(NSString *)chatroomId
     prevMessageCount:(int)count;
 
-/// 加入聊天室
+/// Joins a chatroom.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - count: 加入聊天室时获取的历史消息数量
-///   - isAutoCreate: 当聊天室不存在时是否自动创建（默认不创建）
+///   - chatroomId: Chatroom ID.
+///   - count: Number of historical messages to fetch when joining the chatroom.
+///   - isAutoCreate: Whether to automatically create the chatroom when it does not exist. The default is not to create it.
 - (void)joinChatroom:(NSString *)chatroomId
     prevMessageCount:(int)count
         isAutoCreate:(BOOL)isAutoCreate;
 
-/// 退出聊天室
-/// - Parameter chatroomId: 聊天室 id
+/// Leaves a chatroom.
+/// - Parameter chatroomId: Chatroom ID.
 - (void)quitChatroom:(NSString *)chatroomId;
 
-/// 获取聊天室信息
+/// Gets chatroom information.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - option: 拉取 option
-///   - successBlock: 成功回调
-///   - errorBlock: 失败回调
+///   - chatroomId: Chatroom ID.
+///   - option: Fetch option.
+///   - successBlock: Success callback.
+///   - errorBlock: Failure callback.
 //- (void)getChatroomInfo:(NSString *)chatroomId
 //                 option:(JChatroomInfoOptions *)option
 //                success:(void (^)(JChatroomInfo *chatroomInfo))successBlock
 //                  error:(void (^)(JErrorCode code))errorBlock;
 
-/// 设置聊天室属性。
+/// Sets chatroom attributes.
 /// - Parameters:
-///   - attributes: 聊天室属性，key 和 value 都是字符串，最多支持设置 100 个不同的属性。非当前用户设置的 key 在客户端不能进行操作（返回 JErrorCodeChatroomKeyUnauthorized）。
-///   - chatroomId: 聊天室 id
-///   - completeBlock: 完成回调。
-///                    code 返回 JErrorCodeNone 时表示所有属性都设置成功。
-///                    其它 code 表示存在设置失败的 key，所有设置失败的 key 都会回调，并返回对应的错误码，可以从 JErrorCode 的定义中找到对应的错误码。
+///   - attributes: Chatroom attributes. Keys and values are strings. Up to 100 different attributes can be set. Keys not set by the current user cannot be operated on by the client and return JErrorCodeChatroomKeyUnauthorized.
+///   - chatroomId: Chatroom ID.
+///   - completeBlock: Completion callback.
+///                    JErrorCodeNone means all attributes were set successfully.
+///                    Other codes mean some keys failed to be set. All failed keys are returned with their corresponding error codes, which can be found in the JErrorCode definitions.
 - (void)setAttributes:(NSDictionary <NSString *, NSString *> *)attributes
           forChatroom:(NSString *)chatroomId
              complete:(void (^)(JErrorCode code, NSDictionary<NSString *, NSNumber *> *failedKeys))completeBlock;
 
-/// 删除聊天室属性
+/// Deletes chatroom attributes.
 /// - Parameters:
-///   - keys: 待删除的属性 key 列表。非当前用户设置的 key 不能删除。
-///   - chatroomId: 聊天室 id
-///   - completeBlock: 完成回调。
-///                    code 返回 JErrorCodeNone 时表示所有属性都删除成功。
-///                    其它 code 表示存在删除失败的 key，所有删除失败的 key 都会回调，并返回对应的错误码，可以从 JErrorCode 的定义中找到对应的错误码。
+///   - keys: Attribute key list to delete. Keys not set by the current user cannot be deleted.
+///   - chatroomId: Chatroom ID.
+///   - completeBlock: Completion callback.
+///                    JErrorCodeNone means all attributes were deleted successfully.
+///                    Other codes mean some keys failed to be deleted. All failed keys are returned with their corresponding error codes, which can be found in the JErrorCode definitions.
 - (void)removeAttributes:(NSArray <NSString *> *)keys
              forChatroom:(NSString *)chatroomId
                 complete:(void (^)(JErrorCode code, NSDictionary<NSString *, NSNumber *> *failedKeys))completeBlock;
 
-/// 获取聊天室所有属性
+/// Gets all chatroom attributes.
 /// - Parameters:
-///   - chatroomId: 聊天室 id
-///   - completeBlock: 完成回调，JErrorCodeNone 表示获取成功。
+///   - chatroomId: Chatroom ID.
+///   - completeBlock: Completion callback. JErrorCodeNone indicates success.
 - (void)getAllAttributesFromChatroom:(NSString *)chatroomId
                             complete:(void (^)(JErrorCode code, NSDictionary <NSString *, NSString *> *attributes))completeBlock;
 

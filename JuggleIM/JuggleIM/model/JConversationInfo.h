@@ -13,26 +13,34 @@
 
 
 @interface JConversationInfo : NSObject
-/// 会话标识
+/// Conversation identifier
 @property (nonatomic, strong) JConversation *conversation;
-/// 当前会话的消息未读数
+/// Unread message count for the current conversation
 @property (nonatomic, assign) int unreadCount;
-/// 会话是否未读状态
+/// Whether the conversation is unread
 @property (nonatomic, assign) BOOL hasUnread;
-/// 会话排序时间（服务端时间）
+/// Conversation sort time (server time)
 @property (nonatomic, assign) long long sortTime;
-/// 会话中的最后一条消息
+/// Last message in the conversation
 @property (nonatomic, strong) JMessage *lastMessage;
-/// 是否置顶
+/// Whether the conversation is pinned
 @property (nonatomic, assign) BOOL isTop;
-/// 会话置顶时间
+/// Conversation pinned time
 @property (nonatomic, assign) long long topTime;
-/// 是否免打扰
+/// Whether Do Not Disturb is enabled
 @property (nonatomic, assign) BOOL mute;
-/// 会话草稿
+/// Conversation draft
 @property (nonatomic, copy) NSString *draft;
-/// @信息
+/// Mention info
 @property (nonatomic, strong) JConversationMentionInfo * mentionInfo;
+/// Conversation name (displayed according to the default rules)
+@property (nonatomic, copy) NSString *displayName;
+/// Conversation remark name (group conversations use the group remark name; one-to-one conversations use the friend remark name)
+@property (nonatomic, copy) NSString *alias;
+/// Conversation real name (group conversations use the group name; one-to-one conversations use the user name)
+@property (nonatomic, copy) NSString *name;
+/// Conversation avatar
+@property (nonatomic, copy) NSString *portrait;
 
 @end
 

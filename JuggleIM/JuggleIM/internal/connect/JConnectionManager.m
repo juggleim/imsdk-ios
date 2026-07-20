@@ -21,6 +21,7 @@
 #import "JConnEventUtil.h"
 #import "JConnEvent.h"
 #import "JConnSuperState.h"
+#import "JUtility.h"
 
 @interface JConnectionManager () <JWebSocketConnectDelegate>
 @property (nonatomic, strong) JIMCore *core;
@@ -36,6 +37,8 @@
 @property (nonatomic, assign) BOOL isBackground;
 @property (nonatomic, strong) JIntervalGenerator *intervalGenerator;
 @property (nonatomic, strong) JReachability *reachability;
+@property (nonatomic, copy) NSString *signKey;
+@property (nonatomic, strong) NSDictionary <NSString *, NSString *> *connectHeaders;
 
 @property (nonatomic, strong) JStateMachine *stateMachine;
 @property (nonatomic, strong) JConnSuperState *superState;
@@ -70,7 +73,7 @@
 }
 
 - (void)connectWithToken:(NSString *)token {
-    JLogI(@"CON-Connect", @"token is %@", token);
+    JLogI(@"CON-Connect", @"token is %@", [JUtility maskToken:token]);
     if (token.length == 0) {
         token = @"";
     }
@@ -85,8 +88,8 @@
 
 - (void)registerDeviceToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        JLogE(@"CON-Token", @"tokenData 类型错误，请直接将 didRegisterForRemoteNotificationsWithDeviceToken 方法中的 "
-              @"deviceToken 传入");
+        JLogE(@"CON-Token", @"tokenData type error. Please pass the deviceToken from "
+              @"didRegisterForRemoteNotificationsWithDeviceToken directly.");
         return;
     }
     JLogI(@"CON-Token", @"");
@@ -108,8 +111,8 @@
 
 - (void)registerVoIPToken:(NSData *)tokenData {
     if (![tokenData isKindOfClass:[NSData class]]) {
-        JLogE(@"CON-Token", @"VoIP tokenData 类型错误，请直接将 pushRegistry:didUpdatePushCredentials:forType 方法中的 "
-              @"credentials.token 传入");
+        JLogE(@"CON-Token", @"VoIP tokenData type error. Please pass credentials.token from "
+              @"pushRegistry:didUpdatePushCredentials:forType directly.");
         return;
     }
     JLogI(@"CON-Token", @"VoIP");
@@ -181,6 +184,12 @@
     }];
 }
 
+- (void)setConnectParams:(NSString *)signKey
+                 headers:(NSDictionary<NSString *,NSString *> *)headers {
+    _signKey = signKey;
+    _connectHeaders = headers;
+}
+
 - (JConnectionStatus)getConnectionStatus {
     return (JConnectionStatus)self.core.connectionStatus;
 }
@@ -209,8 +218,10 @@
         [self.chatroomManager connectSuccess];
         [self.callManager connectSuccess];
         [self event:JConnEventConnectDone userInfo:@{@"extra":extra}];
-        [self.conversationManager syncConversations:^{
-            [self.messageManager syncMessages];
+        [self.messageManager checkAndUploadPubKey:^{
+            [self.conversationManager syncConversations:^{
+                [self.messageManager syncMessages];
+            }];
         }];
     } else {
         if ([self checkConnectionFailure:error]) {
@@ -264,7 +275,9 @@
                            token:self.core.token
                        pushToken:self.pushToken
                        voipToken:self.voipPushToken
-                         servers:self.core.servers];
+                         servers:self.core.servers
+                         signKey:self.signKey
+                         headers:self.connectHeaders];
     
 //    JNaviTask *task = [JNaviTask taskWithUrls:self.core.naviUrls
 //                                       appKey:self.core.appKey
@@ -446,7 +459,8 @@
         code == JErrorCodeInternalAppProhibited ||
         code == JErrorCodeInternalUserProhibited ||
         code == JErrorCodeInternalUserKickedByOtherClient ||
-        code == JErrorCodeInternalUserLogOut
+        code == JErrorCodeInternalUserLogOut ||
+        code == JErrorCodeInternalConnectForbidden
         ) {
         return YES;
     }

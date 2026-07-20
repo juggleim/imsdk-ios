@@ -64,12 +64,12 @@ static JLogger *_instance;
     __block NSString *logStr = (keys != nil ? [[NSString alloc] initWithFormat:keys arguments:args] : @"");
     va_end(args);
 
-    //控制台
+    //Console
     if (level <= self.consoleLogLevel) {
         NSLog(@"[JLogger:%@]%@, session : %@", tag, logStr, self.core.session);
     }
 
-    //写文件
+    //Write to file
     if (level <= self.fileLogLevel) {
         dispatch_async(self.logQueue, ^{
             NSDate *date = [NSDate date];
@@ -79,4 +79,13 @@ static JLogger *_instance;
         });
     }
 }
+
+- (NSString *)generateZipFile:(long long)startTime endTime:(long long)endTime {
+    return [self.fileWriter generateZipFile:startTime endTime:endTime];
+}
+
+- (void)removeZipFile:(NSString *)fileName {
+    [self.fileWriter removeZipFile:fileName];
+}
+
 @end

@@ -8,11 +8,11 @@
 #import "JMessageDB.h"
 #import "JContentTypeCenter.h"
 
-//message 最新版本
+//Latest message version.
 //deprecated
 #define jMessageTableVersion 3
 //deprecated
-//NSUserDefault 中保存 message 数据库版本的 key
+//Key for saving the message database version in NSUserDefaults.
 #define jMessageTableVersionKey @"MessageVersion"
 
 NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
@@ -46,14 +46,20 @@ NSString *const kCreateMessageTable = @"CREATE TABLE IF NOT EXISTS message ("
                                         "read_time INTEGER"
                                         ")";
 NSString *const kCreateMessageIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message ON message(message_uid)";
-NSString *const kCreateClientUidIndex = @"CREATE UNIQUE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
+// client_uid is used as a lookup key, but it is not globally unique in practice
+// for all message rows. Keep it as a normal index to avoid index build failures
+// on legacy databases and to preserve inserts with empty clientUid.
+NSString *const kCreateClientUidIndex = @"CREATE INDEX IF NOT EXISTS idx_message_client_uid ON message(client_uid)";
 NSString *const jCreateMessageDTConversationTSIndex2 = @"CREATE INDEX IF NOT EXISTS idx_message_ds_conversation_ts2 ON message(destroy_time, conversation_type, conversation_id, subchannel, timestamp)";
 NSString *const jCreateMessageDestroyTimeIndex = @"CREATE INDEX IF NOT EXISTS idx_message_destroy_time ON message(destroy_time)";
 NSString *const jCreateMessageTimestampIndex = @"CREATE INDEX IF NOT EXISTS idx_message_timestamp ON message(timestamp)";
 NSString *const jCreateMessageConversationSubchannelIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_subchannel ON message(conversation_type, conversation_id, subchannel)";
+NSString *const jCreateMessageConversationSubchannelTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_subchannel_ts ON message(conversation_type, conversation_id, subchannel, timestamp)";
 NSString *const jDropIndexMessageConversation = @"DROP INDEX IF EXISTS idx_message_conversation";
 NSString *const jDropIndexMessageConversationTS = @"DROP INDEX IF EXISTS idx_message_conversation_ts";
 NSString *const jDropIndexMessageDSConversationTS = @"DROP INDEX IF EXISTS idx_message_ds_conversation_ts";
+NSString *const jCreateMessageStateIndex = @"CREATE INDEX IF NOT EXISTS idx_message_state ON message(state)";
+NSString *const jCreateMessageSenderIndex = @"CREATE INDEX IF NOT EXISTS idx_message_sender ON message(sender)";
 NSString *const kAlterAddFlags = @"ALTER TABLE message ADD COLUMN flags INTEGER";
 NSString *const kAlterAddLifeTime = @"ALTER TABLE message ADD COLUMN life_time INTEGER DEFAULT 0";
 NSString *const kAlterAddLifeTimeAfterRead = @"ALTER TABLE message ADD COLUMN life_time_after_read INTEGER DEFAULT 0";
@@ -88,6 +94,7 @@ NSString *const jUpdateDestroyTime = @"UPDATE message SET destroy_time = ? WHERE
 NSString *const jMessageSendFail = @"UPDATE message SET state = ? WHERE id = ?";
 NSString *const jDeleteMessage = @"UPDATE message SET is_deleted = 1 WHERE";
 NSString *const jClearMessages = @"UPDATE message SET is_deleted = 1 WHERE conversation_type = ? AND conversation_id = ? AND subchannel = ? AND timestamp <= ?";
+NSString *const jPurgeMessages = @"DELETE FROM message WHERE timestamp < ?";
 NSString *const jAndSenderIs = @" AND sender = ?";
 NSString *const jUpdateMessage = @"UPDATE message SET type = ?, content = ?, search_content = ?, mention_info = ?,refer_msg_id = ? WHERE id = ?";
 
@@ -109,6 +116,7 @@ NSString *const jUpdateMessageLocalAttribute = @"UPDATE message SET local_attrib
 NSString *const jClearChatroomMessagesExclude = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id NOT IN ";
 NSString *const jClearChatroomMessagesIn = @"DELETE FROM message WHERE conversation_type = 3 AND conversation_id = ?";
 NSString *const jSearchMessageInConversations = @"SELECT conversation_type, conversation_id, subchannel, count(*) AS match_count FROM message WHERE is_deleted = 0 AND (destroy_time = 0 OR destroy_time > ?)";
+NSString *const jBatchSetStateFail = @"UPDATE message set state = 3 WHERE state = 1 OR state = 4";
 NSString *const jGroupByConversation = @" GROUP BY conversation_type, conversation_id, subchannel";
 NSString *const jMessageConversationType = @"conversation_type";
 NSString *const jMessageConversationId = @"conversation_id";
@@ -138,7 +146,7 @@ NSString *const jLifeTimeAfterRead = @"life_time_after_read";
 NSString *const jDestroyTime = @"destroy_time";
 NSString *const jReadTime = @"read_time";
 NSString *const jMessageSubChannel = @"subchannel";
-
+ 
 //deprecated
 NSString *const kCreateMessageConversationIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation ON message(conversation_type, conversation_id)";
 NSString *const jCreateMessageConversationTSIndex = @"CREATE INDEX IF NOT EXISTS idx_message_conversation_ts ON message(conversation_type, conversation_id, timestamp)";
@@ -190,19 +198,33 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 - (void)insertMessages:(NSArray<JConcreteMessage *> *)messages {
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         [messages enumerateObjectsUsingBlock:^(JConcreteMessage * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            JConcreteMessage *m = nil;
-            //messageId 排重
+            JConcreteMessage *old = nil;
+            //Deduplicate by messageId.
             if (obj.messageId.length > 0) {
-                m = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
+                old = [self getMessageWithMessageId:obj.messageId currentTime:0 inDb:db];
             }
-            //clientUid 排重
-            if (!m && obj.clientUid.length > 0) {
-                m = [self getMessageWithClientUid:obj.clientUid inDb:db];
+            //Deduplicate by clientUid.
+            if (!old && obj.clientUid.length > 0) {
+                old = [self getMessageWithClientUid:obj.clientUid inDb:db];
             }
-            if (m) {
-                obj.clientMsgNo = m.clientMsgNo;
+            if (old) {
+                obj.clientMsgNo = old.clientMsgNo;
                 obj.existed = YES;
-                if (m.messageId.length == 0) {
+                
+                if ([old.contentType isEqualToString:[JStreamTextMessage contentType]]) {
+                    JStreamTextMessage *oldStreamText = (JStreamTextMessage *) old.content;
+                    JStreamTextMessage *newStreamText = (JStreamTextMessage *) obj.content;
+                    if (!oldStreamText.isFinished && newStreamText.isFinished) {
+                        [self updateMessageContent:newStreamText
+                                       contentType:[JStreamTextMessage contentType]
+                                     withMessageId:obj.messageId
+                                              inDb:db];
+                    }
+                    if (oldStreamText.seq > newStreamText.seq) {
+                        obj.content = oldStreamText;
+                    }
+                }
+                if (old.messageId.length == 0) {
                     [self updateMessageAfterSend:obj.clientMsgNo
                                        messageId:obj.messageId
                                        timestamp:obj.timestamp
@@ -405,7 +427,21 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
             withArgumentsInArray:args];
 }
 
-//被删除的消息也能查出来
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+    NSString *sql = jPurgeMessages;
+    NSMutableArray *args = [NSMutableArray array];
+    [args addObject:@(timestamp)];
+    if (conversationTypes.count > 0) {
+        sql = [sql stringByAppendingString:jAndConversationTypeIn];
+        sql = [sql stringByAppendingString:[self.dbHelper getQuestionMarkPlaceholder:conversationTypes.count]];
+        [args addObjectsFromArray:conversationTypes];
+    }
+    [self.dbHelper executeUpdate:sql withArgumentsInArray:args];
+    [self.dbHelper executeUpdate:@"VACUUM" withArgumentsInArray:nil];
+}
+
+//Deleted messages can also be queried.
 - (NSArray<JMessage *> *)getMessagesByMessageIds:(NSArray<NSString *> *)messageIds {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (messageIds.count == 0) {
@@ -437,7 +473,7 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     return [messages copy];
 }
 
-//被删除的消息也能查出来
+//Deleted messages can also be queried.
 - (NSArray<JMessage *> *)getMessagesByClientMsgNos:(NSArray<NSNumber *> *)clientMsgNos {
     NSMutableArray<JMessage *> *result = [[NSMutableArray alloc] init];
     if (clientMsgNos.count == 0) {
@@ -788,6 +824,10 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
             withArgumentsInArray:@[chatroomId]];
 }
 
+- (void)batchSetStateFail {
+    [self.dbHelper executeUpdate:jBatchSetStateFail withArgumentsInArray:nil];
+}
+
 - (void)createTables {
     [self.dbHelper executeUpdate:kCreateMessageTable withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:kCreateMessageIndex withArgumentsInArray:nil];
@@ -796,6 +836,9 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
     [self.dbHelper executeUpdate:jCreateMessageTimestampIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelIndex withArgumentsInArray:nil];
     [self.dbHelper executeUpdate:jCreateMessageDTConversationTSIndex2 withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageStateIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageSenderIndex withArgumentsInArray:nil];
+    [self.dbHelper executeUpdate:jCreateMessageConversationSubchannelTSIndex withArgumentsInArray:nil];
     [[NSUserDefaults standardUserDefaults] setObject:@(jMessageTableVersion) forKey:jMessageTableVersionKey];
 }
 
@@ -829,14 +872,17 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 - (void)insertMessage:(JMessage *)message inDb:(JFMDatabase *)db {
     long long seqNo = 0;
     long long msgIndex = 0;
-    NSString *clientUid = @"";
+    NSString *clientUid = nil;
     int flags = 0;
     long long lifeTime = 0;
     long long readTime = 0;
     if ([message isKindOfClass:[JConcreteMessage class]]) {
         seqNo = ((JConcreteMessage *)message).seqNo;
         msgIndex = ((JConcreteMessage *)message).msgIndex;
-        clientUid = ((JConcreteMessage *)message).clientUid;
+        NSString *messageClientUid = ((JConcreteMessage *)message).clientUid;
+        if (messageClientUid.length > 0) {
+            clientUid = messageClientUid;
+        }
         flags = ((JConcreteMessage *)message).flags;
         lifeTime = ((JConcreteMessage *)message).lifeTime;
         readTime = ((JConcreteMessage *)message).readTime;
@@ -917,6 +963,21 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
  withArgumentsInArray:@[messageId, @(JMessageStateSent), @(timestamp), @(seqNo), @(count), @(timestamp), @(clientMsgNo)]];
 }
 
+- (void)updateMessageContent:(JMessageContent *)content
+                 contentType:(nonnull NSString *)type
+               withMessageId:(NSString *)messageId
+                        inDb:(JFMDatabase *)db {
+    NSData *data = [content encode];
+    NSString *s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (s.length == 0 || messageId.length == 0) {
+        return;
+    }
+    NSString *sql = [jUpdateMessageContent stringByAppendingString:jMessageIdIs];
+    [db executeUpdate:sql
+ withArgumentsInArray:@[s, type, content.searchContent, messageId]];
+}
+
+
 #pragma mark - update table
 + (NSString *)alterTableAddFlags {
     return kAlterAddFlags;
@@ -944,6 +1005,18 @@ NSString *const jCreateMessageDTConversationTSIndex = @"CREATE INDEX IF NOT EXIS
 
 + (NSString *)addConversationSubchannelIndex {
     return jCreateMessageConversationSubchannelIndex;
+}
+
++ (NSString *)addConversationSubchannelTSIndex {
+    return jCreateMessageConversationSubchannelTSIndex;
+}
+
++ (NSString *)addStateIndex {
+    return jCreateMessageStateIndex;
+}
+
++ (NSString *)addSenderIndex {
+    return jCreateMessageSenderIndex;
 }
 
 + (NSString *)removeConversationIndex {

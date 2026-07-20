@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Description: Creates a media player instance.
 /// Use case: It is often used to play media resource scenes, For example, play video files, push the video of media resources in combination with custom video acquisition, and the remote end can pull the stream for viewing.
 /// When to call: It can be called after the SDK by [createEngine] has been initialized.
-/// Restrictions: Currently, a maximum of 4 instances can be created, after which it will return nil.
+/// Restrictions: Currently, a maximum of 10 instances can be created, after which it will return nil.
 /// Caution: The more instances of a media player, the greater the performance overhead on the device.
 /// Related APIs: User can call [destroyMediaPlayer] function to destroy a media player instance.
 ///

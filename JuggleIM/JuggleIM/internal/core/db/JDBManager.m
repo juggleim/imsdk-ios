@@ -15,6 +15,7 @@
 #import "JUtility.h"
 #import "JVersionDB.h"
 #import "JMomentDB.h"
+#import "JE2EEDB.h"
 
 #define kJetIMDBName @"jetimdb"
 
@@ -26,6 +27,7 @@
 @property (nonatomic, strong) JUserInfoDB *userInfoDB;
 @property (nonatomic, strong) JReactionDB *reactionDB;
 @property (nonatomic, strong) JMomentDB *momentDB;
+@property (nonatomic, strong) JE2EEDB *e2eeDB;
 @property (nonatomic, strong) JVersionDB *versionDB;
 @end
 
@@ -62,6 +64,14 @@
     return [self.profileDb getMessageReceiveSyncTime];
 }
 
+- (NSData *)getE2EEPubKey {
+    return [self.profileDb getE2EEPubKey];
+}
+
+- (NSData *)getE2EEPriKey {
+    return [self.profileDb getE2EEPriKey];
+}
+
 - (void)setConversationSyncTime:(long long)time {
     [self.profileDb setConversationSyncTime:time];
 }
@@ -72,6 +82,10 @@
 
 - (void)setMessageReceiveSyncTime:(long long)time {
     [self.profileDb setMessageReceiveSyncTime:time];
+}
+
+- (void)setE2EEWithPubKey:(NSData *)pubKey priKey:(NSData *)priKey {
+    [self.profileDb setE2EEWithPubKey:pubKey priKey:priKey];
 }
 
 #pragma mark - conversation table
@@ -192,6 +206,31 @@
     self.conversationDb.topConversationsOrderType = type;
 }
 
+#pragma mark - conversation tag info table
+- (void)createConversationTag:(JConversationTagInfo *)tagInfo {
+    [self.conversationDb createConversationTag:tagInfo];
+}
+
+- (void)destroyConversationTag:(NSString *)tagId {
+    [self.conversationDb destroyConversationTag:tagId];
+}
+
+- (void)updateConversationTagName:(NSString *)name forId:(NSString *)tagId {
+    [self.conversationDb updateConversationTagName:name forId:tagId];
+}
+
+- (NSArray<JConversationTagInfo *> *)getConversationTagInfoList {
+    return [self.conversationDb getConversationTagInfoList];
+}
+
+- (NSArray<JConversationTagInfo *> *)getTagsForConversation:(JConversation *)conversation {
+    return [self.conversationDb getTagsForConversation:conversation];
+}
+
+- (void)clearConversationTags {
+    return [self.conversationDb clearConversationTags];
+}
+
 #pragma mark - conversation tag table
 - (void)updateConversationTag:(NSArray<JConcreteConversationInfo *> *)conversations {
     [self.conversationDb updateConversationTag:conversations];
@@ -305,6 +344,11 @@
     [self.messageDb clearMessagesIn:conversation startTime:startTime senderId:senderId];
 }
 
+- (void)purgeMessagesBefore:(long long)timestamp
+          conversationTypes:(NSArray<NSNumber *> *)conversationTypes {
+    [self.messageDb purgeMessagesBefore:timestamp conversationTypes:conversationTypes];
+}
+
 - (void)clearChatroomMessage:(NSString *)chatroomId {
     [self.messageDb clearChatroomMessage:chatroomId];
 }
@@ -375,6 +419,9 @@
     return [self.messageDb clearChatroomMessageExclude:chatroomIds];
 }
 
+- (void)batchSetStateFail {
+    [self.messageDb batchSetStateFail];
+}
 
 #pragma mark - user table
 - (JUserInfo *)getUserInfo:(NSString *)userId {
@@ -389,6 +436,18 @@
     return [self.userInfoDB getGroupMemberIn:groupId userId:userId];
 }
 
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    return [self.userInfoDB getFriendInfo:userId];
+}
+
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    return [self.userInfoDB getUserInfoList:userIdList];
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    return [self.userInfoDB getGroupInfoList:groupIdList];
+}
+
 - (void)insertUserInfos:(NSArray<JUserInfo *> *)userInfos {
     [self.userInfoDB insertUserInfos:userInfos];
 }
@@ -399,6 +458,10 @@
 
 - (void)insertGroupMembers:(NSArray<JGroupMember *> *)members {
     [self.userInfoDB insertGroupMembers:members];
+}
+
+- (void)insertFriendInfos:(NSArray<JFriendInfo *> *)friends {
+    [self.userInfoDB insertFriendInfos:friends];
 }
 
 #pragma mark - reaction table
@@ -422,6 +485,16 @@
 - (NSArray<JMoment *> *)getCachedMomentList:(JGetMomentOption *)option {
     return [self.momentDB getCachedMomentList:option];
 }
+
+#pragma mark - E2EE table
+- (NSArray<JE2EEInfo *> *)getE2EEInfo:(NSString *)userId {
+    return [self.e2eeDB getE2EEInfo:userId];
+}
+
+- (void)updateE2EEInfo:(NSArray <JE2EEInfo *> *)infoList {
+    [self.e2eeDB updateE2EEInfo:infoList];
+}
+
 
 #pragma mark - internal
 - (BOOL)buildDB:(NSString *)appKey
@@ -453,6 +526,7 @@
     [self.userInfoDB createTables];
     [self.reactionDB createTables];
     [self.momentDB createTables];
+    [self.e2eeDB createTables];
     [self.versionDB createTables];
 }
 
@@ -465,7 +539,7 @@
     [self.versionDB updateTables];
 }
 
-//DB 目录
+//DB directory.
 - (NSString *)dbDirectoryWith:(NSString *)appKey
                        userId:(NSString *)userId {
     NSString *path = [JUtility rootPath];
@@ -474,7 +548,7 @@
     return path;
 }
 
-//当 DB 文件存在时返回路径，否则返回 @""
+//Return the path when the DB file exists; otherwise return @"".
 - (NSString *)dbPathWith:(NSString *)appKey
                   userId:(NSString *)userId
     notExistsReturnEmpty:(BOOL)returnEmpty {
@@ -497,6 +571,7 @@
         self.userInfoDB = [[JUserInfoDB alloc] initWithDBHelper:self.dbHelper];
         self.reactionDB = [[JReactionDB alloc] initWithDBHelper:self.dbHelper];
         self.momentDB = [[JMomentDB alloc] initWithDBHelper:self.dbHelper];
+        self.e2eeDB = [[JE2EEDB alloc] initWithDBHelper:self.dbHelper];
         self.versionDB = [[JVersionDB alloc] initWithDBHelper:self.dbHelper];
     }
     return self;

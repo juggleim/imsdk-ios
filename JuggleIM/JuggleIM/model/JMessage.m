@@ -6,6 +6,12 @@
 //
 
 #import "JMessage.h"
+#import "JuggleIM/JIM.h"
+#import "JFriendInfo.h"
+
+@interface JMessage ()
+@property (nonatomic, strong) JUserInfo *userInfo;
+@end
 
 @implementation JMessage
 
@@ -16,6 +22,50 @@
     } else {
         return [super isEqual:object];
     }
+}
+
+- (NSString *)senderDisplayName {
+    NSString *userName;
+    
+    userName = self.friendAlias;
+    if (userName.length > 0) {
+        return userName;
+    }
+    if (self.conversation.conversationType == JConversationTypeGroup) {
+        JGroupMember *groupMember = [JIM.shared.userInfoManager getGroupMember:self.conversation.conversationId userId:self.senderUserId];
+        userName = groupMember.groupDisplayName;
+        if (userName.length == 0) {
+            userName = self.userInfo.userName;
+        }
+    } else {
+        userName = self.userInfo.userName;
+    }
+    return userName;
+}
+
+- (NSString *)friendAlias {
+    JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.senderUserId];
+    return friendInfo.alias;
+}
+
+- (NSString *)groupMemberAlias {
+    JGroupMember *groupMember = [JIM.shared.userInfoManager getGroupMember:self.conversation.conversationId userId:self.senderUserId];
+    return groupMember.groupDisplayName;
+}
+
+- (NSString *)senderName {
+    return self.userInfo.userName;
+}
+
+- (NSString *)senderPortrait {
+    return self.userInfo.portrait;
+}
+
+- (JUserInfo *)userInfo {
+    if (!_userInfo) {
+        _userInfo = [JIM.shared.userInfoManager getUserInfo:self.senderUserId];
+    }
+    return _userInfo;
 }
 
 @end

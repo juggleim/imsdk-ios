@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithCore:(JIMCore *)core
              userInfoManager:(JUserInfoManager *)userInfoManager;
 - (void)connectSuccess;
-// IM 被踢下线
+// IM was kicked offline.
 - (void)imKick;
 - (void)handleActiveCallMessage:(JMessage *)message;
 @end

@@ -13,13 +13,13 @@
 #import <JuggleIM/JUserInfo.h>
 #import <JuggleIM/JMessageOptions.h>
 
-/// 消息方向，发送/接收
+/// Message direction, send/receive
 typedef NS_ENUM(NSUInteger, JMessageDirection) {
     JMessageDirectionSend = 1,
     JMessageDirectionReceive = 2
 };
 
-/// 消息状态
+/// Message status
 typedef NS_ENUM(NSUInteger, JMessageState) {
     JMessageStateUnknown = 0,
     JMessageStateSending,
@@ -30,43 +30,53 @@ typedef NS_ENUM(NSUInteger, JMessageState) {
 
 @interface JMessage : NSObject
 @property (nonatomic, strong) JConversation *conversation;
-/// 消息类型
+/// Message type
 @property (nonatomic, copy) NSString *contentType;
-/// 本端消息唯一编号（只对当前设备生效）
+/// Local unique message number (valid only on the current device)
 @property (nonatomic, assign) long long clientMsgNo;
-/// 消息 id，全局唯一
+/// Message id, globally unique
 @property (nonatomic, copy) NSString *messageId;
-/// 消息方向，发送/接收
+/// Message direction, send/receive
 @property (nonatomic, assign) JMessageDirection direction;
-/// 消息状态
+/// Message status
 @property (nonatomic, assign) JMessageState messageState;
-/// 是否已读
-/// 对接收方而言，用来标识自己是否已经读过该消息
-/// 对发送方而言，用来标识对方是否读过该消息（仅对单聊生效）
+/// Whether the message has been read
+/// For the receiver, indicates whether they have read this message
+/// For the sender, indicates whether the other party has read this message (only valid for one-to-one chats)
 @property (nonatomic, assign) BOOL hasRead;
-/// 消息发送的时间戳（服务端时间，单位毫秒）
+/// Timestamp when the message was sent (server time, in milliseconds)
 @property (nonatomic, assign) long long timestamp;
-/// 发送者 userId
+/// Sender userId
 @property (nonatomic, copy) NSString *senderUserId;
-/// 消息内容
+/// Message content
 @property (nonatomic, strong) JMessageContent *content;
-/// 群消息阅读信息（只对群消息生效）
+/// Group message read info (only valid for group messages)
 @property (nonatomic, strong) JGroupMessageReadInfo *groupReadInfo;
-/// @ 信息（非 @ 消息本字段为 nil）
+/// Mention info (nil for non-mention messages)
 @property (nonatomic, strong) JMessageMentionInfo *mentionInfo;
-/// 引用消息
+/// Referenced message
 @property (nonatomic, strong) JMessage *referredMsg;
-/// 消息本地属性（仅对本端生效，不会同步到服务端） 
+/// Local message attributes (valid only locally and not synced to the server)
 @property (nonatomic, copy) NSString *localAttribute;
-/// 是否被编辑
+/// Whether the message has been edited
 @property (nonatomic, assign) BOOL isEdit;
-/// 是否被删除
+/// Whether the message has been deleted
 @property (nonatomic, assign) BOOL isDeleted;
-/// 消息销毁时间戳（服务器时间，单位毫秒）。
-/// 由消息的发送时间，加上发送消息时 JMessageOptions 的 lifeTime 和 lifeTimeAfterRead 共同决定，取其中较小的那个时间戳。
-/// 默认值为 0，表示不自动销毁。
+/// Message destruction timestamp (server time, in milliseconds).
+/// Determined by the message sent time plus the lifeTime and lifeTimeAfterRead in JMessageOptions when sending; the earlier timestamp is used.
+/// The default value is 0, which means no automatic destruction.
 @property (nonatomic, assign) long long destroyTime;
-/// 消息已读后的生存周期，单位毫秒。
-/// 默认值为 0，表示读后不自动销毁。
+/// Message lifetime after being read, in milliseconds.
+/// The default value is 0, which means no automatic destruction after read.
 @property (nonatomic, assign) long long lifeTimeAfterRead;
+/// Sender name (displayed according to the default rules)
+@property (nonatomic, copy) NSString *senderDisplayName;
+/// Sender friend remark
+@property (nonatomic, copy) NSString *friendAlias;
+/// Sender group member remark
+@property (nonatomic, copy) NSString *groupMemberAlias;
+/// Sender real name
+@property (nonatomic, copy) NSString *senderName;
+/// Sender avatar URL
+@property (nonatomic, copy) NSString *senderPortrait;
 @end

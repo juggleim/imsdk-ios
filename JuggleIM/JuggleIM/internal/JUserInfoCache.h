@@ -9,6 +9,7 @@
 #import "JUserInfo.h"
 #import "JGroupInfo.h"
 #import "JGroupMember.h"
+#import "JFriendInfo.h"
 
 @interface JUserInfoCache : NSObject
 - (void)clearCache;
@@ -22,5 +23,8 @@
                           userId:(NSString *)userId;
 - (void)putGroupMember:(JGroupMember *)groupMember;
 - (void)putGroupMemberList:(NSArray <JGroupMember *> *)groupMemberList;
+- (JFriendInfo *)getFriendInfo:(NSString *)userId;
+- (void)putFriendInfo:(JFriendInfo *)friendInfo;
+- (void)putFriendInfoList:(NSArray <JFriendInfo *> *)friendInfoList;
 @end
 

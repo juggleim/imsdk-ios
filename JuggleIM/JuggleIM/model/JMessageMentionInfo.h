@@ -14,17 +14,17 @@ typedef NS_ENUM(NSUInteger, JMentionType) {
     
     JMentionTypeDefault = 0,
     /*!
-     @ 所有人
+     mention everyone
      */
     JMentionTypeAll = 1,
 
     /*!
-     @ 指定用户
+     mention specified users
      */
     JMentionTypeSomeOne = 2,
 
     /*!
-     @ 所有人和指定用户
+     mention everyone and specified users
      */
     JMentionTypeAllAndSomeOne = 3,
 };

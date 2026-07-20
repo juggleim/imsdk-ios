@@ -493,7 +493,27 @@ open class SBUBaseChannelViewModel: NSObject {
         if let message = message {
             self.upsertMessagesInList(messages: [message], needReload: true)
         }
-    }    
+    }
+    
+    public func resendMediaMessage(failedMessage: JMessage) {
+        self.deleteMessagesInList(clientMsgNos: [failedMessage.clientMsgNo], needReload: true)
+        
+        let message = JIM.shared().messageManager.resendMediaMessage(failedMessage) { progress, message in
+            
+        } success: { sendMessage in
+            self.upsertMessagesInList(messages: [sendMessage!], needReload: true)
+        } error: { code, errorMessage in
+            if let errorMessage = errorMessage {
+                self.upsertMessagesInList(messages: [errorMessage], needReload: true)
+            }
+        } cancel: { cancelMessage in
+            
+        }
+
+        if let message = message {
+            self.upsertMessagesInList(messages: [message], needReload: true)
+        }
+    }
     
     /// Deletes a message with message object.
     /// - Parameter message: `JMessage` based class object

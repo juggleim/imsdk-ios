@@ -64,7 +64,7 @@ withArgumentsInArray:(NSArray *)arguments
             JLogW(@"DB-Duration", @"executeQuery lasts for %lld ms, sql is %@", end1-start, sql);
         }
         if (end2 - end1 > jDbDuration) {
-            JLogW(@"DB-Duration", @"executeQuery result block lasts for %lld ms, sql is %@", end1-start, sql);
+            JLogW(@"DB-Duration", @"executeQuery result block lasts for %lld ms, sql is %@", end2-end1, sql);
         }
         [resultSet close];
     }];

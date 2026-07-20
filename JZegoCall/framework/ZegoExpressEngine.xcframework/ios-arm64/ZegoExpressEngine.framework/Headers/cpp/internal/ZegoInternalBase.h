@@ -159,6 +159,7 @@ class ZegoExpressConvert {
         _config.is_user_status_notify = config.isUserStatusNotify;
         strncpy(_config.token, config.token.c_str(), ZEGO_EXPRESS_MAX_ROOM_TOKEN_VALUE_LEN);
         _config.capability_negotiation_types = config.capabilityNegotiationTypes;
+        _config.room_type = config.roomType;
         return _config;
     }
 
@@ -182,11 +183,16 @@ class ZegoExpressConvert {
     }
 
     static zego_canvas O2ICanvas(const ZegoCanvas &canvas) {
-        zego_canvas _canvas;
+        zego_canvas _canvas = {};
         _canvas.view = canvas.view;
         _canvas.view_mode = zego_view_mode(canvas.viewMode);
         _canvas.background_color = canvas.backgroundColor;
         _canvas.alpha_blend = canvas.alphaBlend;
+        _canvas.rotation = canvas.rotation;
+        _canvas.mirror = canvas.mirror;
+        strncpy(_canvas.view_context, canvas.viewContext.c_str(),
+                sizeof(_canvas.view_context) / sizeof(_canvas.view_context[0]));
+
         return _canvas;
     }
 
@@ -212,6 +218,9 @@ class ZegoExpressConvert {
         quality.totalSendBytes = _quality.total_send_bytes;
         quality.audioSendBytes = _quality.audio_send_bytes;
         quality.videoSendBytes = _quality.video_send_bytes;
+
+        quality.audioTrafficControlRate = _quality.audio_traffic_control_rate;
+        quality.videoTrafficControlRate = _quality.video_traffic_control_rate;
 
         return quality;
     }
@@ -495,6 +504,11 @@ class ZegoExpressConvert {
         }
         strncpy(_input.advanced_config, advanceConfig.c_str(), ZEGO_EXPRESS_MAX_COMMON_LEN);
 
+        _input.blur_info.top_padding = input.blurInfo.topPadding;
+        _input.blur_info.left_padding = input.blurInfo.leftPadding;
+        _input.blur_info.right_padding = input.blurInfo.rightPadding;
+        _input.blur_info.bottom_padding = input.blurInfo.bottomPadding;
+
         return _input;
     }
 
@@ -735,6 +749,37 @@ class ZegoExpressConvert {
         i_params.mode = static_cast<zego_dummy_capture_image_mode>(o_params.mode);
 
         return i_params;
+    }
+
+    static zego_rect O2IRect(const ZegoRect &o_rect) {
+        zego_rect i_rect;
+        i_rect.left = o_rect.x;
+        i_rect.top = o_rect.y;
+        i_rect.right = o_rect.x + o_rect.width;
+        i_rect.bottom = o_rect.y + o_rect.height;
+        return i_rect;
+    }
+
+    static zego_screen_capture_config
+    O2IScreenCaptureConfig(const ZegoScreenCaptureConfig &o_config) {
+        zego_screen_capture_config i_config;
+        memset(&i_config, 0, sizeof(zego_screen_capture_config));
+        i_config.capture_video = o_config.captureVideo;
+        i_config.capture_audio = o_config.captureAudio;
+        i_config.microphone_volume = o_config.microphoneVolume;
+        i_config.application_volume = o_config.applicationVolume;
+        i_config.audio_param = O2IAudioFrameParam(o_config.audioParam);
+        i_config.crop_rect = O2IRect(o_config.cropRect);
+
+        return i_config;
+    }
+
+    static zego_publisher_take_snapshot_config
+    O2IPublisherTakeSnapshotConfig(const ZegoPublisherTakeSnapshotConfig &o_config) {
+        zego_publisher_take_snapshot_config i_config = {};
+        i_config.position = static_cast<zego_publisher_take_snapshot_position>(o_config.position);
+
+        return i_config;
     }
 };
 

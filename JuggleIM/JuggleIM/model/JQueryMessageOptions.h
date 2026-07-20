@@ -10,17 +10,17 @@
 #import <JuggleIM/JMessage.h>
 
 @interface JQueryMessageOptions : NSObject
-//指定搜索内容
+//Specified search content
 @property (nonatomic, copy) NSString *searchContent;
-//指定消息发送者 id
+//Specified message sender id
 @property (nonatomic, copy) NSArray <NSString *> *senderUserIds;
-//指定消息类型
+//Specified message type
 @property (nonatomic, copy) NSArray <NSString *> *contentTypes;
-//指定会话
+//Specified conversation
 @property (nonatomic, copy) NSArray <JConversation *> *conversations;
-//指定消息状态
+//Specified message status
 @property (nonatomic, copy) NSArray <NSNumber *> *states;
-//指定会话类型
+//Specified conversation type
 @property (nonatomic, copy) NSArray <NSNumber *> *conversationTypes;
 
 @end

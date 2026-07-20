@@ -11,17 +11,17 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JThumbnailPackedImageMessage : JMediaMessageContent
-/// 缩略图
+/// Thumbnail
 @property (nonatomic, strong) UIImage *thumbnailImage;
-/// 原图
+/// Original image
 @property (nonatomic, strong) UIImage *originalImage;
-/// 图片高度
+/// Image height
 @property (nonatomic, assign) int height;
-/// 图片宽度
+/// Image width
 @property (nonatomic, assign) int width;
-/// 图片大小，单位：KB
+/// Image size, in KB
 @property (nonatomic, assign) long long size;
-/// 扩展字段
+/// Extra field
 @property (nonatomic, copy) NSString *extra;
 
 + (instancetype)messageWithImage:(UIImage *)image;

@@ -11,10 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JPushData : NSObject
 
-/// 推送内容，用于通知栏的展示
+/// Push title, used for display in the notification bar
+@property (nonatomic, copy) NSString *title;
+
+/// Push content, used for display in the notification bar
 @property (nonatomic, copy) NSString *content;
 
-/// 扩展字段，可以携带自定义 json
+/// Extra field, can carry custom JSON
 @property (nonatomic, copy) NSString *extra;
 
 @end

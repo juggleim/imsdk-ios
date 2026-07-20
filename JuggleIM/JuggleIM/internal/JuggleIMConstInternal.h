@@ -7,7 +7,7 @@
 
 #define JPlatform @"iOS"
 #define JDeviceCompany @"Apple"
-#define JIMVersion @"1.8.31"
+#define JIMVersion @"1.9.0"
 #define jNaviAppKey @"x-appkey"
 #define jNaviToken @"x-token"
 
@@ -17,71 +17,86 @@
 
 typedef NS_ENUM(NSUInteger, JErrorCodeInternal) {
     JErrorCodeInternalNone = 0,
-    //未传 AppKey
+    // AppKey is missing.
     JErrorCodeInternalAppKeyEmpty = 11001,
-    //未传 Token
+    // Token is missing.
     JErrorCodeInternalTokenEmpty = 11002,
-    //AppKey 不存在
+    // AppKey does not exist.
     JErrorCodeInternalAppKeyInvalid = 11003,
-    //Token 不合法
+    // Token is invalid.
     JErrorCodeInternalTokenIllegal = 11004,
-    //Token 未授权
+    // Token is unauthorized.
     JErrorCodeInternalTokenUnauthorized = 11005,
-    //Token 已过期
+    // Token has expired.
     JErrorCodeInternalTokenExpired = 11006,
-    //App 已封禁
+    // App is prohibited.
     JErrorCodeInternalAppProhibited = 11009,
-    //用户被封禁
+    // User is prohibited.
     JErrorCodeInternalUserProhibited = 11010,
-    //用户被踢下线
+    // User was kicked offline by another client.
     JErrorCodeInternalUserKickedByOtherClient = 11011,
-    //用户注销下线
+    // User logged out.
     JErrorCodeInternalUserLogOut = 11012,
     
-    //非好友关系
+    // Not a friend relationship.
     JErrorCodeInternalNotFriend = 12009,
-    //没有操作权限
+    // No operation permission.
     JErrorCodeInternalNoOperationPermission = 12010,
-    //消息不存在
+    // Message does not exist.
     JErrorCodeInternalRemoteMessageNotExist = 12011,
-    //收藏重复消息
+    // Duplicate favorite message.
     JErrorCodeInternalAddDuplicateFavoriteMessage = 12012,
+    // E2EE keys hash mismatch. Refresh the public key list from the server.
+    JErrorCodeInternalPubKeysHashMismatch = 12013,
     
-    //群组不存在
+    // Group does not exist.
     JErrorCodeInternalGroupNotExist = 13001,
-    //不是群成员
+    // Not a group member.
     JErrorCodeInternalNotGroupMember = 13002,
     
-    //聊天室不存在
+    // Chatroom does not exist.
     JErrorCodeInternalChatroomNotExist = 14005,
-    //聊天室已销毁
+    // Chatroom has been destroyed.
     JErrorCodeInternalChatroomDestroyed = 14006,
     
+    // There is an unfinished call in the conversation.
+    JErrorCodeInternalCallConversationBinded = 16011,
+    
+    // Connection is forbidden.
+    JErrorCodeInternalConnectForbidden = 21000,
     JErrorCodeInternalWebSocketFailure = 21001,
     JErrorCodeInternalNaviFailure = 21002,
     JErrorCodeInternalInvalidParam = 21003,
-    //操作超时
+    // Operation timed out.
     JErrorCodeInternalOperationTimeOut = 21004,
-    //连接不可用
+    // Connection is unavailable.
     JErrorCodeInternalConnectionUnavailable = 21005,
-    //服务器设置错误
+    // Server setting error.
     JErrorCodeInternalServerSetError = 21006,
-    //连接已存在
+    // Connection already exists.
     JErrorCodeInternalConnectionAlreadyExist = 21007,
+    // Friend does not exist.
+    JErrorCodeInternalFriendNotExist = 21009,
     
-    //消息不存在
+    // Message does not exist.
     JErrorCodeInternalMessageNotExist = 22001,
-    //消息已被撤回
+    // Message has already been recalled.
     JErrorCodeInternalMessageAlreadyRecalled = 22002,
-    //消息上传失败
+    // Message upload failed.
     JErrorCodeInternalMessageUploadError = 22003,
-    //日志不存在
-    JErrorCodeInternalLogNotExist = 22004,
+    // The key and value in recalled message extras are not NSString.
+    JErrorCodeInternalRecallExtrasTypeNotString = 22004,
+    // Log does not exist.
+    JErrorCodeInternalLogNotExist = 22005,
+    // Peer public key was not found.
+    JErrorCodeInternalOtherSideE2EEInvalid = 22006,
+    // Local public key has not been generated.
+    JErrorCodeInternalLocalPublicKeyInvalid = 22007,
     
-    //批量设置聊天室属性失败
+    // Failed to batch set chatroom attributes.
     JErrorCodeInternalChatroomBatchSetAttributeFail = 24001,
     
-    //加入 LiveKit 房间失败
+    // Failed to join the LiveKit room.
     JErrorCodeInternalJoinLiveKitFail = 25001
 };
 

@@ -421,6 +421,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)takePublishStreamSnapshot:(ZegoPublisherTakeSnapshotCallback)callback
                           channel:(ZegoPublishChannel)channel;
 
+/// Take a snapshot of the publishing stream for the specified publish channel.
+///
+/// Available since: 3.22.0
+/// Description: Take a snapshot of the publishing stream.
+/// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+/// Restrictions: None.
+/// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].
+/// Related callbacks: The screenshot result will be called back through [ZegoPublisherTakeSnapshotCallback].
+/// Related APIs: [takePlayStreamSnapshot].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param config The config of snapshot
+/// @param callback Results of take publish stream snapshot.
+/// @param channel Publish stream channel.
+- (void)takePublishStreamSnapshotByConfig:(ZegoPublisherTakeSnapshotConfig *)config
+                                 callback:(ZegoPublisherTakeSnapshotCallback)callback
+                                  channel:(ZegoPublishChannel)channel;
+
 /// Stops or resumes sending the audio part of a stream.
 ///
 /// Available since: 1.1.0
@@ -854,6 +872,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   1. The static picture cannot be seen in the local preview.
 ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
 ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
 /// Platform differences:
 ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
 ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
@@ -879,6 +898,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///   1. The static picture cannot be seen in the local preview.
 ///   2. External filters, mirroring, watermarks, and snapshots are all invalid.
 ///   3. If the picture aspect ratio is inconsistent with the set code aspect ratio, it will be cropped according to the code aspect ratio.
+///   4. To publish the audio stream, you must call this interface again and set the image path to empty to avoid video billing.
 /// Platform differences:
 ///   1. Windows: Fill in the location of the picture directly, such as "D://dir//image.jpg".
 ///   2. iOS: If it is a full path, add the prefix "file:", such as @"file:/var/image.png"; If it is a assets picture path, add the prefix "asset:", such as @"asset:watermark".
@@ -927,6 +947,20 @@ NS_ASSUME_NONNULL_BEGIN
 /// @return Whether the specified video encoding format is supported; 0 means not supported, and the encoding format cannot be used for publish stream; 1 means support, you can use this encoding format for publish stream; 2 means not confirmed, it is recommended to call this interface later.
 - (int)isVideoEncoderSupported:(ZegoVideoCodecID)codecID
                   codecBackend:(ZegoVideoCodecBackend)codecBackend;
+
+/// Whether the specified video encoding type and implementation are supported.
+///
+/// Available since: 3.23.0 and above
+/// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
+/// When to call: After creating the engine.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
+///
+/// @param codecID Video codec id. Required: Yes.
+/// @param codecBackend Backend implementation of encoder. Required: Yes.
+/// @param callback Results of get video encoder supported.
+- (void)getVideoEncoderSupported:(ZegoVideoCodecID)codecID
+                    codecBackend:(ZegoVideoCodecBackend)codecBackend
+                        callback:(nullable ZegoPublisherGetVideoEncoderSupportedCallback)callback;
 
 #if TARGET_OS_IPHONE
 /// Set the orientation mode of the video.
@@ -1110,6 +1144,22 @@ NS_ASSUME_NONNULL_BEGIN
                            alphaLayout:(ZegoAlphaLayoutType)alphaLayout
                                channel:(ZegoPublishChannel)channel;
 
+/// Enable video encoder enhancement.
+///
+/// Available since: 3.23.0
+/// Description: Call this function to enable or disable video encoder enhancement.
+/// Use cases: Commonly used in video calling, live streaming, and similar scenarios.
+/// Default value: When this function is not called, video encoder enhancement is not enabled by default.
+/// When to call: It needs to be called after [createEngine].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param enable Whether to enable, YES: enable, NO: disable
+/// @param enhanceLevel enhance_level [0.0,1.5], advise 0.9
+/// @param channel Publish stream channel.
+- (void)enableVideoEncoderEnhancement:(BOOL)enable
+                         enhanceLevel:(float)enhanceLevel
+                              channel:(ZegoPublishChannel)channel;
+
 /// Set the camera stabilization mode.
 ///
 /// Available since: 3.13.0
@@ -1139,6 +1189,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Available since: 3.20.0
 /// Description: Turn on or off the face detection. Default is on.
 /// When to call: Called after the engine is created [createEngine].
+/// Restrictions: This interface is disabled when using custom video capture.
 /// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
 ///
 /// @param enable Turn on or off the face detection.

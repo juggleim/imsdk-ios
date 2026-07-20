@@ -696,7 +696,7 @@ open class SBUBaseChannelViewController: SBUBaseViewController, SBUBaseChannelVi
             case .uploading, .sending, .unknown:
                 break
             case .fail:
-                self.baseViewModel?.resendMessage(failedMessage: message)
+                self.baseViewModel?.resendMediaMessage(failedMessage: message)
 //                self.baseChannelModuleDidTapScrollToButton(listComponent, animated: true)
             case .sent:
                 self.openFile(message: message)

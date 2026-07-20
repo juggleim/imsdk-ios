@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JZegoCall'
-  s.version          = '1.8.31'
+  s.version          = '1.9.0'
   s.summary          = 'Juggle Call With Zego.'
 
 # This description is used to generate tags and improve search results.
@@ -14,15 +14,15 @@ Pod::Spec.new do |s|
   Juggle Call With Zego for iOS.
                        DESC
 
-  s.homepage         = 'https://www.juggle.im/'
+  s.homepage         = 'https://juggle.im/'
   s.license          = { :type => "Copyright", :text => "Copyright 2024 Juggle" }
   s.author           = { 'lifei444' => '14392240@qq.com' }
-  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JZegoCall/JZegoCall_v1_8_31.zip' }
+  s.source           = { :http => 'https://downloads.juggle.im/libs/ios/JZegoCall/JZegoCall_v1_9_0.zip' }
 
   s.ios.deployment_target = '12.0'
   
   s.vendored_frameworks = 'JZegoCall.xcframework'
   
   s.dependency "JuggleIM"
-  s.dependency "ZegoExpressEngine"
+  s.dependency "ZegoExpressEngine", "3.22.0"
 end

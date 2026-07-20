@@ -1010,11 +1010,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_release_unity_played_texture)(const
 
 /// Trigger when the [SurfaceTexture] is created.
 ///
-/// Available since: 2.2.0
-/// Description: When the custom video pre-processing is turned on, after calling [setCustomVideoProcessHandler] to set the callback, the SDK receives the original video data and calls back to the developer. After the developer has processed the original image, he must call [sendCustomVideoProcessedTextureData] to send the processed data back to the SDK, otherwise it will cause frame loss.
-/// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
-/// When to Trigger: When the custom video pre-processing is enabled, the SDK collects the original video data.
-/// Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeGLTexture2D].
+/// Available since: 3.22.0
 /// Platform differences: It only takes effect on the Android platform.
 ///
 /// @param seq Increased seq.
@@ -1028,6 +1024,23 @@ ZEGOEXP_API void EXP_CALL zego_register_unity_surface_texture_created_callback(
 #else
 typedef void(EXP_CALL *pfnzego_register_unity_surface_texture_created_callback)(
     zego_on_unity_surface_texture_created callback_func, void *user_context);
+#endif
+
+/// Trigger when the [SurfaceTexture] is destroyed.
+///
+/// Available since: 3.22.0
+/// Platform differences: It only takes effect on the Android platform.
+///
+/// @param seq Increased seq.
+/// @param user_context Context of user.
+typedef void (*zego_on_unity_surface_texture_destroyed)(int seq, void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_unity_surface_texture_destroyed_callback(
+    zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_unity_surface_texture_destroyed_callback)(
+    zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

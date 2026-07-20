@@ -10,9 +10,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JMediaMessageContent : JMessageContent
-/// 本地路径
+/// Local path
 @property (nonatomic, copy, nullable) NSString *localPath;
-/// 远端地址
+/// Remote address
 @property (nonatomic, copy, nullable) NSString *url;
 
 @end

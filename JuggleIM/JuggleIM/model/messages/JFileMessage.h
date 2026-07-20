@@ -10,13 +10,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JFileMessage : JMediaMessageContent
-/// 文件名称
+/// File name
 @property (nonatomic, copy) NSString *name;
-/// 文件大小，单位：Byte
+/// File size, in bytes
 @property (nonatomic, assign) long long size;
-/// 文件类型
+/// File type
 @property (nonatomic, copy) NSString *type;
-/// 扩展字段
+/// Extra field
 @property (nonatomic, copy) NSString *extra;
 @end
 

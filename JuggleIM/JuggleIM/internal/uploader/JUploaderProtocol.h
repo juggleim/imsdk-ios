@@ -2,7 +2,7 @@
 //  JUploaderProtocol.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/7/10.
+//  Created by Zheng Kai on 2024/7/10.
 //
 
 #import <Foundation/Foundation.h>

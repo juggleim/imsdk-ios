@@ -11,6 +11,7 @@
 @interface JUserInfoManager ()
 @property (nonatomic, strong) JIMCore *core;
 @property (nonatomic, strong) JUserInfoCache *cache;
+@property (nonatomic, strong) NSHashTable <id<JUserStatusDelegate>> *userStatusDelegates;
 @end
 
 @implementation JUserInfoManager
@@ -47,6 +48,22 @@
     return groupInfo;
 }
 
+- (NSArray<JUserInfo *> *)getUserInfoList:(NSArray<NSString *> *)userIdList {
+    NSArray <JUserInfo *> *userInfoList = [self.core.dbManager getUserInfoList:userIdList];
+    for (JUserInfo *userInfo in userInfoList) {
+        [self.cache putUserInfo:userInfo];
+    }
+    return userInfoList;
+}
+
+- (NSArray<JGroupInfo *> *)getGroupInfoList:(NSArray<NSString *> *)groupIdList {
+    NSArray <JGroupInfo *> *groupInfoList = [self.core.dbManager getGroupInfoList:groupIdList];
+    for (JGroupInfo *groupInfo in groupInfoList) {
+        [self.cache putGroupInfo:groupInfo];
+    }
+    return groupInfoList;
+}
+
 - (JGroupMember *)getGroupMember:(NSString *)groupId userId:(NSString *)userId {
     JGroupMember *groupMember = [self.cache getGroupMember:groupId userId:userId];
     if (groupMember) {
@@ -55,6 +72,16 @@
     groupMember = [self.core.dbManager getGroupMember:groupId userId:userId];
     [self.cache putGroupMember:groupMember];
     return groupMember;
+}
+
+- (JFriendInfo *)getFriendInfo:(NSString *)userId {
+    JFriendInfo *friendInfo = [self.cache getFriendInfo:userId];
+    if (friendInfo) {
+        return friendInfo;
+    }
+    friendInfo = [self.core.dbManager getFriendInfo:userId];
+    [self.cache putFriendInfo:friendInfo];
+    return friendInfo;
 }
 
 - (void)insertUserInfoList:(NSArray<JUserInfo *> *)userInfoList {
@@ -80,5 +107,165 @@
     [self.cache putGroupMemberList:groupMemberList];
     [self.core.dbManager insertGroupMembers:groupMemberList];
 }
+
+- (void)insertFriendInfoList:(NSArray<JFriendInfo *> *)friendInfoList {
+    if (friendInfoList.count == 0) {
+        return;
+    }
+    [self.cache putFriendInfoList:friendInfoList];
+    [self.core.dbManager insertFriendInfos:friendInfoList];
+}
+
+- (void)userStatusChange:(JUserStatus *)userStatus {
+    dispatch_async(self.core.delegateQueue, ^{
+        [self.userStatusDelegates.allObjects enumerateObjectsUsingBlock:^(id<JUserStatusDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([obj respondsToSelector:@selector(userStatusDidChange:)]) {
+                [obj userStatusDidChange:userStatus];
+            }
+        }];
+    });
+}
+
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (userId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchUserInfo:userId
+                               success:^(JUserInfo * _Nonnull userInfo) {
+        [self.cache putUserInfo:userInfo];
+        [self.core.dbManager insertUserInfos:@[userInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(userInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo *))successBlock
+                 error:(void (^)(JErrorCode))errorBlock {
+    if (groupId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchGroupInfo:groupId
+                                success:^(JGroupInfo * _Nonnull groupInfo) {
+        [self.cache putGroupInfo:groupInfo];
+        [self.core.dbManager insertGroupInfos:@[groupInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(groupInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)fetchFriendInfo:(NSString *)userId
+                success:(void (^)(JFriendInfo *))successBlock
+                  error:(void (^)(JErrorCode))errorBlock {
+    if (userId.length == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket fetchFriendInfo:userId
+                           currentUserId:self.core.userId
+                                 success:^(JFriendInfo *friendInfo) {
+        if (!friendInfo) {
+            dispatch_async(self.core.delegateQueue, ^{
+                if (errorBlock) {
+                    errorBlock(JErrorCodeFriendNotExist);
+                }
+            });
+            return;
+        }
+        [self.cache putFriendInfo:friendInfo];
+        [self.core.dbManager insertFriendInfos:@[friendInfo]];
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(friendInfo);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)getUserStatus:(NSArray<NSString *> *)userIdList
+              success:(void (^)(NSArray<JUserStatus *> *))successBlock
+                error:(void (^)(JErrorCode))errorBlock {
+    if (userIdList.count == 0) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock(JErrorCodeInvalidParam);
+            }
+        });
+        return;
+    }
+    [self.core.webSocket getUserStatus:userIdList
+                         currentUserId:self.core.userId
+                               success:^(NSArray<JUserStatus *> * _Nonnull statusList) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (successBlock) {
+                successBlock(statusList);
+            }
+        });
+    } error:^(JErrorCodeInternal code) {
+        dispatch_async(self.core.delegateQueue, ^{
+            if (errorBlock) {
+                errorBlock((JErrorCode)code);
+            }
+        });
+    }];
+}
+
+- (void)addUserStatusDelegate:(id<JUserStatusDelegate>)delegate { 
+    dispatch_async(self.core.delegateQueue, ^{
+        if (!delegate) {
+            return;
+        }
+        [self.userStatusDelegates addObject:delegate];
+    });
+}
+
+#pragma mark - getter
+- (NSHashTable<id<JUserStatusDelegate>> *)userStatusDelegates {
+    if (!_userStatusDelegates) {
+        _userStatusDelegates = [NSHashTable weakObjectsHashTable];
+    }
+    return _userStatusDelegates;
+}
+
 
 @end

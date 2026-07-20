@@ -33,7 +33,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
         NSString *md5Str = [self md5EncryptStr:lastUUID bateNum:16 isLowercaseStr:YES];
         NSData *data = [md5Str dataUsingEncoding:NSUTF8StringEncoding];
         NSMutableString *base64UUID = [[data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]
-            mutableCopy]; // base64 格式的字符串
+            mutableCopy]; // base64 formatted string
         if ([base64UUID containsString:@"="]) {
             [base64UUID replaceOccurrencesOfString:@"="
                                         withString:@""
@@ -84,9 +84,9 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 }
 
 /**
- *  获取当前使用的网络类型
+ *  Gets the currently used network type.
  *
- *  @return 当前使用的网络类型
+ *  @return The currently used network type.
  */
 + (NSString *)currentNetWork {
     CTTelephonyNetworkInfo *netInfo = [[CTTelephonyNetworkInfo alloc] init];
@@ -114,9 +114,9 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 }
 
 /**
- *  获取当前运营商名称
+ *  Gets the current carrier name.
  *
- *  @return 当前运营商名称，iPad等无SIM卡设备返回nil
+ *  @return The current carrier name. Returns nil for devices without a SIM card, such as iPad.
  */
 + (NSString *)currentCarrier {
 
@@ -316,6 +316,23 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     return [NSData dataWithBytesNoCopy:bytes length:length];
 }
 
++ (NSString *)signatureWithNonce:(NSString *)nonce
+                       timestamp:(NSString *)timestamp
+                         signKey:(NSString *)signKey {
+    NSString *raw = [NSString stringWithFormat:@"%@%@%@", nonce ?: @"", timestamp ?: @"", signKey ?: @""];
+    NSData *rawData = [raw dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *keyData = [(signKey ?: @"") dataUsingEncoding:NSUTF8StringEncoding];
+    unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+
+    CCHmac(kCCHmacAlgSHA256, keyData.bytes, keyData.length, rawData.bytes, rawData.length, digest);
+
+    NSMutableString *signature = [NSMutableString stringWithCapacity:CC_SHA256_DIGEST_LENGTH * 2];
+    for (NSInteger i = 0; i < CC_SHA256_DIGEST_LENGTH; i++) {
+        [signature appendFormat:@"%02x", digest[i]];
+    }
+    return signature;
+}
+
 + (NSString *)rootPath {
     NSString *path =
             NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES)[0];
@@ -364,13 +381,13 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 #pragma mark - private
 + (NSString *)md5EncryptStr:(NSString *)str bateNum:(NSInteger)bateNum isLowercaseStr:(BOOL)isLowercaseStr {
     NSString *md5Str = nil;
-    const char *input = [str UTF8String]; // UTF8转码
+    const char *input = [str UTF8String]; // UTF-8 transcoding
     unsigned char result[CC_MD5_DIGEST_LENGTH];
     CC_MD5(input, (CC_LONG)strlen(input), result);
     NSMutableString *digestStr =
-        [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2]; //直接先获取32位md5字符串,16位是通过它演化而来
+        [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2]; //Get the 32-character MD5 string first; the 16-character string is derived from it.
     for (NSInteger i = 0; i < CC_MD5_DIGEST_LENGTH; i++) {
-        [digestStr appendFormat:isLowercaseStr ? @"%02x" : @"%02X", result[i]]; //%02x即小写,%02X即大写
+        [digestStr appendFormat:isLowercaseStr ? @"%02x" : @"%02X", result[i]]; //%02x is lowercase, %02X is uppercase.
     }
     if (bateNum == 32) {
         md5Str = digestStr;
@@ -392,21 +409,21 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     struct ifaddrs *tempAddr = NULL;
     int success = 0;
     
-    // 获取所有网络接口信息
+    // Get all network interface information.
     success = getifaddrs(&interfaces);
     if (success == 0) {
         tempAddr = interfaces;
-        // 遍历所有接口
+        // Iterate over all interfaces.
         while (tempAddr != NULL) {
             if (tempAddr->ifa_addr != NULL) {
-                // 检查是否为 IPv4 地址且不是回环地址
+                // Check whether this is an IPv4 address and not a loopback address.
                 if (tempAddr->ifa_addr->sa_family == AF_INET && !(tempAddr->ifa_flags & IFF_LOOPBACK)) {
-                    // 接口名称通常以 "en"（以太网）或 "wlan"（无线）开头
+                    // Interface names usually start with "en" (Ethernet) or "wlan" (wireless).
                     if ([[NSString stringWithUTF8String:tempAddr->ifa_name] hasPrefix:@"en"] ||
                         [[NSString stringWithUTF8String:tempAddr->ifa_name] hasPrefix:@"wlan"]) {
-                        // 转换为 IPv4 地址字符串
+                        // Convert to an IPv4 address string.
                         localIP = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)tempAddr->ifa_addr)->sin_addr)];
-                        break; // 找到第一个有效地址后退出
+                        break; // Exit after finding the first valid address.
                     }
                 }
             }
@@ -414,8 +431,50 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
         }
     }
     
-    // 释放资源
+    // Release resources.
     freeifaddrs(interfaces);
     return localIP;
+}
+
++ (NSString *)maskAppKey:(NSString *)string {
+    if (string.length == 0) {
+        return @"";
+    }
+    NSMutableString *result = [NSMutableString stringWithString:string];
+
+    if (string.length > 3) {
+        [result replaceCharactersInRange:NSMakeRange(0, 4) withString:@"****"];
+    }
+
+    if (string.length > 11) {
+        [result replaceCharactersInRange:NSMakeRange(8, 4) withString:@"****"];
+    }
+
+    return result;
+}
+
++ (NSString *)maskToken:(NSString *)string {
+    if (!string || string.length == 0) {
+        return @"";
+    }
+    
+    NSInteger length = string.length;
+    NSMutableString *result = [NSMutableString stringWithString:string];
+    
+    for (NSInteger i = 0; i < length; i++) {
+        BOOL needKeep = NO;
+        
+        if (i >= length - 10) {
+            needKeep = YES;
+        } else if (i >= length - 30 && i <= length - 21) {
+            needKeep = YES;
+        }
+        
+        if (!needKeep) {
+            [result replaceCharactersInRange:NSMakeRange(i, 1) withString:@"*"];
+        }
+    }
+    
+    return result;
 }
 @end

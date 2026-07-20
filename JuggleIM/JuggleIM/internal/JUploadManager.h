@@ -2,7 +2,7 @@
 //  JUploadManager.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/7/9.
+//  Created by Zheng Kai on 2024/7/9.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,4 +22,3 @@
               error:(void (^)(JErrorCode code))errorBlock;
 
 @end
-

@@ -12,13 +12,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JConcreteConversationInfo : JConversationInfo
-@property (nonatomic, assign) long long lastReadMessageIndex;//最后一条读过的消息的未读数 index
-@property (nonatomic, assign) long long lastMessageIndex;//最后一条消息的未读数 index
+@property (nonatomic, assign) long long lastReadMessageIndex;//Unread index of the last read message.
+@property (nonatomic, assign) long long lastMessageIndex;//Unread index of the last message.
 @property (nonatomic, assign) long long syncTime;
 @property (nonatomic, strong) JGroupInfo *groupInfo;
 @property (nonatomic, strong) JUserInfo *targetUserInfo;
+@property (nonatomic, strong) JFriendInfo *friendInfo;
 @property (nonatomic, copy) NSArray <JUserInfo *> * mentionUserList;
-/// 会话标签数组
+/// Conversation tag array.
 @property (nonatomic, copy) NSArray <NSString *> *tagIdList;
 @end
 

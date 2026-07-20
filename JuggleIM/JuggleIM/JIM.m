@@ -56,11 +56,11 @@ static JIM *_instance;
 }
 
 - (void)initWithAppKey:(NSString *)appKey {
-    JLogI(@"J-Init", @"appKey is %@", appKey);
+    JLogI(@"J-Init", @"appKey is %@", [JUtility maskAppKey:appKey]);
     if ([self.core.appKey isEqualToString:appKey]) {
         return;
     }
-    //appKey 更新了，则原来缓存的 userId 和 token 不再适用
+    // When appKey changes, the previously cached userId and token are no longer valid.
     self.core.appKey = appKey;
     self.core.userId = @"";
     self.core.token = @"";
@@ -96,6 +96,14 @@ static JIM *_instance;
 
 - (long long)getTimeDifference {
     return [self.core getTimeDifference];
+}
+
+- (NSString *)generateZipFile:(long long)startTime endTime:(long long)endTime {
+    return [JLogger.shared generateZipFile:startTime endTime:endTime];
+}
+
+- (void)removeZipFile:(NSString *)fileName {
+    [JLogger.shared removeZipFile:fileName];
 }
 
 @end

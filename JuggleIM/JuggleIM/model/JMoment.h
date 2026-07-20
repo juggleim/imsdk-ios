@@ -14,19 +14,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JMoment : NSObject
-/// 朋友圈 id
+/// Moment id
 @property (nonatomic, copy) NSString *momentId;
-/// 朋友圈的文本内容
+/// Text content of the moment
 @property (nonatomic, copy) NSString *content;
-/// 朋友圈的媒体内容列表（图片或者视频）
+/// Media content list of the moment (images or videos)
 @property (nonatomic, copy) NSArray <JMomentMedia *> *mediaArray;
-/// 朋友圈的发送者
+/// Moment sender
 @property (nonatomic, strong) JUserInfo *userInfo;
-/// 朋友圈的点赞列表（支持多种类型的点赞，此处最多给出最新的 20 个）
+/// Moment reaction list (supports multiple reaction types)
 @property (nonatomic, copy) NSArray <JMomentReaction *> *reactionArray;
-/// 朋友圈的评论列表（此处最多给出最新的 10 条）
+/// Moment comment list (contains at most the latest 10 entries here)
 @property (nonatomic, copy) NSArray <JMomentComment *> *commentArray;
-/// 朋友圈的创建时间
+/// Moment created time
 @property (nonatomic, assign) long long createTime;
 
 + (JMoment *)momentWith:(NSDictionary *)dictionary;

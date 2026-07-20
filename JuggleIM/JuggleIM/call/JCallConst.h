@@ -8,79 +8,79 @@
 #ifndef JCallConst_h
 #define JCallConst_h
 
-/// 通话状态
+/// Call status.
 typedef NS_ENUM(NSInteger, JCallStatus) {
-    /// 无通话
+    /// No active call.
     JCallStatusIdle = 0,
-    /// 被呼叫
+    /// Incoming status.
     JCallStatusIncoming = 1,
-    /// 呼出
+    /// Outgoing status.
     JCallStatusOutgoing = 2,
-    /// 连接中
+    /// Connecting status.
     JCallStatusConnecting = 3,
-    /// 连接成功
+    /// Connected status.
     JCallStatusConnected = 4,
-    /// 主动加入
+    /// Joining proactively.
     JCallStatusJoin = 5
 };
 
 typedef NS_ENUM(NSInteger, JCallMediaType) {
-    /// 语音通话
+    /// Audio call.
     JCallMediaTypeVoice = 0,
-    /// 视频通话
+    /// Video call.
     JCallMediaTypeVideo = 1
 };
 
-/// 通话结束原因
+/// Call finish reason.
 typedef NS_ENUM(NSInteger, JCallFinishReason) {
-    /// 未知原因
+    /// Unknown reason.
     JCallFinishReasonUnknown = 0,
-    /// 当前用户挂断已接通的来电
+    /// Current user hung up a connected call.
     JCallFinishReasonHangup = 1,
-    /// 当前用户拒接来电
+    /// Current user declined the incoming call.
     JCallFinishReasonDecline = 2,
-    /// 当前用户忙线
+    /// Current user was busy.
     JCallFinishReasonBusy = 3,
-    /// 当前用户未接听
+    /// Current user did not answer.
     JCallFinishReasonNoResponse = 4,
-    /// 当前用户取消呼叫
+    /// Current user canceled the call.
     JCallFinishReasonCancel = 5,
-    /// 对端用户挂断已接通的来电
+    /// The remote user hung up a connected call.
     JCallFinishReasonOtherSideHangup = 6,
-    /// 对端用户拒接来电
+    /// The remote user declined the incoming call.
     JCallFinishReasonOtherSideDecline = 7,
-    /// 对端用户忙线
+    /// The remote user was busy.
     JCallFinishReasonOtherSideBusy = 8,
-    /// 对端用户未接听
+    /// The remote user did not answer.
     JCallFinishReasonOtherSideNoResponse = 9,
-    /// 对端用户取消呼叫
+    /// The remote user canceled the call.
     JCallFinishReasonOtherSideCancel = 10,
-    /// 房间被销毁
+    /// The room was destroyed.
     JCallFinishReasonRoomDestroy = 11,
-    /// 网络出错
+    /// Network error.
     JCallFinishReasonNetworkError = 12,
-    /// 当前用户在其它端接听来电
+    /// Current user accepted the incoming call on another client.
     JCallFinishReasonAcceptOnOtherClient = 13,
-    /// 当前用户在其它端挂断来电
+    /// Current user hung up the call on another client.
     JCallFinishReasonHangupOnOtherClient = 14
 };
 
 typedef NS_ENUM(NSInteger, JCallErrorCode) {
-    /// 成功
+    /// Success.
     JCallSuccess = 0,
-    /// 已在通话中
+    /// Already in a call.
     JCallErrorCodeCallExist = 1,
-    /// 没被邀请时不能接听通话
+    /// Cannot accept a call when not invited.
     JCallErrorCodeCantAcceptWhileNotInvited = 2,
-    /// 接听失败
+    /// Failed to accept the call.
     JCallErrorCodeAcceptFail = 3,
-    /// 加入 Media 房间失败
+    /// Failed to join the media room.
     JCallErrorCodeJoinMediaRoomFail = 4,
-    /// 参数错误
+    /// Invalid parameter.
     JCallErrorCodeInvalidParameter = 5,
-    /// 邀请失败
+    /// Failed to invite users.
     JCallErrorCodeInviteFail = 6,
-    /// 加入房间失败
+    /// Failed to join the room.
     JCallErrorCodeJoinRoomFail = 7
 };
 

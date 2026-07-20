@@ -12,12 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JGetMomentOption : NSObject
 
-/// 查询朋友圈的起始时间戳，0 表示当前时间
+/// Starting timestamp for querying moments; 0 means the current time
 @property (nonatomic, assign) long long startTime;
-/// 拉取数量，最大不超过 50
+/// Fetch count，maximum 50
 @property (nonatomic, assign) int count;
-/// 拉取方向
+/// Fetch direction
 @property (nonatomic, assign) JPullDirection direction;
+/// Fetch the moment list published by the specified user. Empty means fetching the moment list for all friends. Only the getMomentList API supports this; the getCachedMomentList API does not support this parameter
+@property (nonatomic, copy, nullable) NSString *userId;
 
 - (NSDictionary *)toDictionary;
 

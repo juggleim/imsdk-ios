@@ -57,7 +57,7 @@ typedef GPB_ENUM(RtcChannel) {
   RtcChannel_LivekitRtc = 1,
   RtcChannel_Agora = 2,
 
-  /** 自建音视频，保留 */
+  /** Self-hosted audio/video, reserved */
   RtcChannel_JuggleRtc = 11,
 };
 
@@ -328,6 +328,7 @@ typedef GPB_ENUM(RtcRoom_FieldNumber) {
   RtcRoom_FieldNumber_RtcMediaType = 5,
   RtcRoom_FieldNumber_Ext = 6,
   RtcRoom_FieldNumber_Auth = 7,
+  RtcRoom_FieldNumber_AttachedConver = 8,
   RtcRoom_FieldNumber_MembersArray = 51,
 };
 
@@ -350,6 +351,10 @@ GPB_FINAL @interface RtcRoom : GPBMessage
 @property(nonatomic, readwrite, strong, null_resettable) RtcAuth *auth;
 /** Test to see if @c auth has been set. */
 @property(nonatomic, readwrite) BOOL hasAuth;
+
+@property(nonatomic, readwrite, strong, null_resettable) ConverIndex *attachedConver;
+/** Test to see if @c attachedConver has been set. */
+@property(nonatomic, readwrite) BOOL hasAttachedConver;
 
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
@@ -515,7 +520,7 @@ GPB_FINAL @interface RtcRoomEvent : GPBMessage
 
 @property(nonatomic, readwrite) RtcRoomEventType roomEventType;
 
-/** 事件相关人的列表 */
+/** List of members related to the event */
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<RtcMember*> *membersArray;
 /** The number of items in @c membersArray without causing the container to be created. */
 @property(nonatomic, readonly) NSUInteger membersArray_Count;

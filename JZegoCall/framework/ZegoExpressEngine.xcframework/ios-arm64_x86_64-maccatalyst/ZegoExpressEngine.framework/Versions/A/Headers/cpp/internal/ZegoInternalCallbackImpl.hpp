@@ -12,6 +12,7 @@
 #include "ZegoInternalCopyrightedMusic.hpp"
 #include "ZegoInternalMediaDataPublisher.hpp"
 #include "ZegoInternalMediaPlayer.hpp"
+#include "ZegoInternalPictureCapturer.hpp"
 #include "ZegoInternalRangeAudio.hpp"
 #include "ZegoInternalRangeScene.hpp"
 #include "ZegoInternalRealTimeSequentialDataManager.hpp"
@@ -36,7 +37,9 @@ class ZegoInternalCallbackCenter {
     declearMultiRawMember(zego_seq, ZegoPublisherSetStreamExtraInfoCallback);
     declearMultiRawMember(zego_seq, ZegoPublisherUpdateCdnUrlCallback);
     declearMultiRawMember(zego_seq, ZegoPublisherTakeSnapshotCallback);
+    declearMultiRawMember(zego_seq, ZegoPublisherGetVideoEncoderSupportedCallback);
     declearMultiRawMember(std::string, ZegoPlayerTakeSnapshotCallback);
+    declearMultiRawMember(zego_seq, ZegoPlayerGetVideoDecoderSupportedCallback);
     declearMultiRawMember(zego_seq, ZegoRealTimeSequentialDataSentCallback);
     declearMultiRawMember(zego_seq, ZegoIMSendBroadcastMessageCallback);
     declearMultiRawMember(zego_seq, ZegoIMSendBarrageMessageCallback);
@@ -62,8 +65,10 @@ class ZegoInternalCallbackCenter {
     declearMultiRawMember(zego_seq, ZegoTestNetworkConnectivityCallback);
     declearMultiRawMember(zego_seq, ZegoNetworkProbeResultCallback);
     declearMultiRawMember(zego_seq, ZegoUploadLogResultCallback);
+    declearMultiRawMember(zego_seq, ZegoAudioCaptureDeviceEnableCallback);
     declearSingleShareMember(ZegoExpressCopyrightedMusicImp);
     declearMultiShareMember(ZegoExpressAIVoiceChangerImpl);
+    declearMultiShareMember(ZegoExpressPictureCapturerImpl);
 
     void clearHandlerData() {
         mIZegoEventHandler = nullptr;
@@ -74,7 +79,9 @@ class ZegoInternalCallbackCenter {
         mZegoPublisherSetStreamExtraInfoCallback.clear();
         mZegoPublisherUpdateCdnUrlCallback.clear();
         mZegoPublisherTakeSnapshotCallback.clear();
+        mZegoPublisherGetVideoEncoderSupportedCallback.clear();
         mZegoPlayerTakeSnapshotCallback.clear();
+        mZegoPlayerGetVideoDecoderSupportedCallback.clear();
         mZegoIMSendBroadcastMessageCallback.clear();
         mZegoIMSendBarrageMessageCallback.clear();
         mZegoIMSendCustomCommandCallback.clear();
@@ -101,6 +108,7 @@ class ZegoInternalCallbackCenter {
         mZegoExpressRangeAudioImp.clear();
         mZegoExpressRealTimeSequentialDataManagerImp.clear();
         mZegoExpressAIVoiceChangerImpl.clear();
+        mZegoExpressPictureCapturerImpl.clear();
     }
 
     void clearContainerData() {
@@ -231,7 +239,10 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(
                 &ZegoInternalCallbackCenter::zego_on_publisher_dummy_capture_image_path_error),
             ZegoVoidPtr(this));
-
+        oInternalOriginBridge->registerPublisherGetVideoEncoderSupportedResultCallback(
+            ZegoVoidPtr(
+                &ZegoInternalCallbackCenter::zego_on_publisher_get_video_encoder_supported_result),
+            ZegoVoidPtr(this));
         oInternalOriginBridge->registerPlayerStateUpdateCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_player_state_update),
             ZegoVoidPtr(this));
@@ -276,6 +287,10 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_player_video_super_resolution_update),
             ZegoVoidPtr(this));
 #endif
+        oInternalOriginBridge->registerPlayerGetVideoDecoderSupportedResultCallback(
+            ZegoVoidPtr(
+                &ZegoInternalCallbackCenter::zego_on_player_get_video_decoder_supported_result),
+            ZegoVoidPtr(this));
 
         oInternalOriginBridge->registerLocalDeviceExceptionOccurredCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_local_device_exception_occurred),
@@ -325,6 +340,9 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(this));
         oInternalOriginBridge->registerAudioVADStateUpdateCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_audio_vad_state_update),
+            ZegoVoidPtr(this));
+        oInternalOriginBridge->registerAudioCaptrueDeviceEnableCallback(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_audio_capture_device_enable),
             ZegoVoidPtr(this));
 
         oInternalOriginBridge->registerRealTimeSequentialDataSentCallback(
@@ -498,6 +516,13 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_captured_data_record_progress_update),
             ZegoVoidPtr(this));
 
+        oInternalOriginBridge->registerRecordingRemoteDataStateUpdateCallback(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_remote_data_record_state_update),
+            ZegoVoidPtr(this));
+        oInternalOriginBridge->registerRecordingRemoteDataProgressUpdateCallback(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_remote_data_record_progress_update),
+            ZegoVoidPtr(this));
+
         oInternalOriginBridge->registerProcessCapturedAudioDataCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_process_captured_audio_data),
             ZegoVoidPtr(this));
@@ -617,6 +642,13 @@ class ZegoInternalCallbackCenter {
             ZegoVoidPtr(this));
         oInternalOriginBridge->registerScreenCaptureSourceCaptureRectCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_screen_capture_source_rect_changed),
+            ZegoVoidPtr(this));
+        oInternalOriginBridge->registerScreenCaptureExceptionOccurred(
+            ZegoVoidPtr(
+                &ZegoInternalCallbackCenter::zego_on_screen_capture_mobile_exception_occurred),
+            ZegoVoidPtr(this));
+        oInternalOriginBridge->registerScreenCaptureStart(
+            ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_screen_capture_mobile_start),
             ZegoVoidPtr(this));
         oInternalOriginBridge->registerNetworkTimeSynchronizedCallback(
             ZegoVoidPtr(&ZegoInternalCallbackCenter::zego_on_network_time_synchronized),
@@ -793,6 +825,8 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerPublisherLowFpsWarningCallback(nullptr, nullptr);
         oInternalOriginBridge->registerPublisherDummyCaptureImagePathErrorCallback(nullptr,
                                                                                    nullptr);
+        oInternalOriginBridge->registerPublisherGetVideoEncoderSupportedResultCallback(nullptr,
+                                                                                       nullptr);
 
         oInternalOriginBridge->registerPlayerStateUpdateCallback(nullptr, nullptr);
         oInternalOriginBridge->registerPlayerSwitchedCallback(nullptr, nullptr);
@@ -807,6 +841,8 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerPlayerTakeSnapshotResultCallback(nullptr, nullptr);
         oInternalOriginBridge->registerPlayerLowFpsWarningCallback(nullptr, nullptr);
         oInternalOriginBridge->registerPlayerVideoSuperResolutionUpdate(nullptr, nullptr);
+        oInternalOriginBridge->registerPlayerGetVideoDecoderSupportedResultCallback(nullptr,
+                                                                                    nullptr);
 
         oInternalOriginBridge->registerAudioRouteChangeCallback(nullptr, nullptr);
         oInternalOriginBridge->registerAudioDeviceStateChangedCallback(nullptr, nullptr);
@@ -821,6 +857,7 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerCapturedAudioSpectrumUpdateCallback(nullptr, nullptr);
         oInternalOriginBridge->registerRemoteAudioSpectrumUpdateCallback(nullptr, nullptr);
         oInternalOriginBridge->registerAudioVADStateUpdateCallback(nullptr, nullptr);
+        oInternalOriginBridge->registerAudioCaptrueDeviceEnableCallback(nullptr, nullptr);
 
         oInternalOriginBridge->registerRealTimeSequentialDataSentCallback(nullptr, nullptr);
         oInternalOriginBridge->registerReceiveRealTimeSequentialDataCallback(nullptr, nullptr);
@@ -884,6 +921,8 @@ class ZegoInternalCallbackCenter {
         oInternalOriginBridge->registerRecordingCapturedDataStateUpdateCallback(nullptr, nullptr);
         oInternalOriginBridge->registerRecordingCapturedDataProgressUpdateCallback(nullptr,
                                                                                    nullptr);
+        oInternalOriginBridge->registerRecordingRemoteDataStateUpdateCallback(nullptr, nullptr);
+        oInternalOriginBridge->registerRecordingRemoteDataProgressUpdateCallback(nullptr, nullptr);
 
         oInternalOriginBridge->registerProcessCapturedAudioDataCallback(nullptr, nullptr);
         oInternalOriginBridge->registerProcessCapturedAudioDataAfterUsedHeadphoneMonitorCallback(
@@ -1524,6 +1563,18 @@ class ZegoInternalCallbackCenter {
         ZEGO_SWITCH_THREAD_ING
     }
 
+    static void zego_on_publisher_get_video_encoder_supported_result(int support, zego_seq seq,
+                                                                     void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto callback =
+            oInternalCallbackCenter->eraseZegoPublisherGetVideoEncoderSupportedCallback(seq);
+        ZEGO_SWITCH_THREAD_PRE_STATIC
+        if (callback) {
+            callback(support);
+        }
+        ZEGO_SWITCH_THREAD_ING
+    }
+
     // PLAYER CALLBACK
     static void zego_on_player_state_update(const char *stream_id, zego_player_state state,
                                             zego_error error_code, const char *extend_data,
@@ -1592,6 +1643,10 @@ class ZegoInternalCallbackCenter {
         auto handler = oInternalCallbackCenter->getIZegoEventHandler();
         std::string streamID = stream_id;
 
+        // sync callback
+        if (handler) {
+            handler->onPlayerSyncRecvAudioFirstFrame(streamID);
+        }
         auto weakHandler = std::weak_ptr<IZegoEventHandler>(handler);
         ZEGO_SWITCH_THREAD_PRE_STATIC
         auto handlerInMain = weakHandler.lock();
@@ -1623,6 +1678,10 @@ class ZegoInternalCallbackCenter {
         auto handler = oInternalCallbackCenter->getIZegoEventHandler();
         std::string streamID = stream_id;
 
+        // sync callback
+        if (handler) {
+            handler->onPlayerSyncRecvRenderVideoFirstFrame(streamID);
+        }
         auto weakHandler = std::weak_ptr<IZegoEventHandler>(handler);
         ZEGO_SWITCH_THREAD_PRE_STATIC
         auto handlerInMain = weakHandler.lock();
@@ -1748,6 +1807,18 @@ class ZegoInternalCallbackCenter {
         ZEGO_SWITCH_THREAD_ING
     }
 #endif
+
+    static void zego_on_player_get_video_decoder_supported_result(int support, zego_seq seq,
+                                                                  void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto callback =
+            oInternalCallbackCenter->eraseZegoPlayerGetVideoDecoderSupportedCallback(seq);
+        ZEGO_SWITCH_THREAD_PRE_STATIC
+        if (callback) {
+            callback(support);
+        }
+        ZEGO_SWITCH_THREAD_ING
+    }
 
     // DEVICE CALLBACK
     static void zego_on_audio_device_state_changed(enum zego_update_type update_type,
@@ -1965,6 +2036,17 @@ class ZegoInternalCallbackCenter {
             handlerInMain->onAudioVADStateUpdate((ZegoAudioVADStableStateMonitorType)monitor_type,
                                                  (ZegoAudioVADType)type);
         ZEGO_SWITCH_THREAD_ING
+    }
+
+    static void zego_on_audio_capture_device_enable(zego_error error_code, zego_seq seq,
+                                                    void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto callback = oInternalCallbackCenter->eraseZegoAudioCaptureDeviceEnableCallback(seq);
+        if (callback) {
+            ZEGO_SWITCH_THREAD_PRE_STATIC
+            callback(error_code);
+            ZEGO_SWITCH_THREAD_ING
+        }
     }
 
     static void
@@ -2713,6 +2795,51 @@ class ZegoInternalCallbackCenter {
         ZEGO_SWITCH_THREAD_ING
     }
 
+    static void zego_on_remote_data_record_state_update(zego_data_record_state state,
+                                                        zego_error error_code,
+                                                        zego_data_record_config _config,
+                                                        const char *stream_id, void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto weakHandler = std::weak_ptr<IZegoDataRecordEventHandler>(
+            oInternalCallbackCenter->getIZegoDataRecordEventHandler());
+        ZegoDataRecordConfig config = ZegoExpressConvert::I2ODataRecordConfig(_config);
+        std::string recorder_stream_id;
+        if (nullptr != stream_id) {
+            recorder_stream_id = stream_id;
+        }
+
+        ZEGO_SWITCH_THREAD_PRE_STATIC
+        auto handler = weakHandler.lock();
+        if (handler)
+            handler->onRemoteDataRecordStateUpdate(ZegoDataRecordState(state), error_code, config,
+                                                   recorder_stream_id);
+        ZEGO_SWITCH_THREAD_ING
+    }
+
+    static void
+    zego_on_remote_data_record_progress_update(zego_data_remote_record_progress _progress,
+                                               zego_data_record_config _config,
+                                               const char *stream_id, void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+        auto weakHandler = std::weak_ptr<IZegoDataRecordEventHandler>(
+            oInternalCallbackCenter->getIZegoDataRecordEventHandler());
+        ZegoDataRecordConfig config = ZegoExpressConvert::I2ODataRecordConfig(_config);
+        ZegoDataRemoteRecordProgress progress;
+        progress.duration = _progress.duration;
+        progress.currentFileSize = _progress.current_file_size;
+        progress.quality = ZegoExpressConvert::I2OPlayQuality(_progress.quality);
+        std::string recorder_stream_id;
+        if (nullptr != stream_id) {
+            recorder_stream_id = stream_id;
+        }
+
+        ZEGO_SWITCH_THREAD_PRE_STATIC
+        auto handler = weakHandler.lock();
+        if (handler)
+            handler->onRemoteDataRecordProgressUpdate(progress, config, recorder_stream_id);
+        ZEGO_SWITCH_THREAD_ING
+    }
+
     static void zego_on_process_captured_audio_data(unsigned char *data, unsigned int data_length,
                                                     struct zego_audio_frame_param *_param,
                                                     double timestamp, void *user_context) {
@@ -3237,6 +3364,28 @@ class ZegoInternalCallbackCenter {
 
         if (screenCaptureSource) {
             screenCaptureSource->zego_on_screen_capture_source_rect_changed(rect);
+        }
+    }
+
+    static void zego_on_screen_capture_mobile_exception_occurred(
+        enum zego_screen_capture_exception_type exception_type, void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+
+        // Android 特有回调，C++ 无法切线程
+        auto handler = oInternalCallbackCenter->getIZegoEventHandler();
+        if (handler) {
+            handler->onScreenCaptureExceptionOccurred(
+                static_cast<ZegoScreenCaptureExceptionType>(exception_type));
+        }
+    }
+
+    static void zego_on_screen_capture_mobile_start(void *user_context) {
+        ZEGO_UNUSED_VARIABLE(user_context);
+
+        // Android 特有回调，C++ 无法切线程
+        auto handler = oInternalCallbackCenter->getIZegoEventHandler();
+        if (handler) {
+            handler->onScreenCaptureStart();
         }
     }
 

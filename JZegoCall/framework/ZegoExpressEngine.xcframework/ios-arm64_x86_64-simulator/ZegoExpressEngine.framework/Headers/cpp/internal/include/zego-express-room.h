@@ -218,7 +218,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_renew_token)(const char *room_id, c
 /// Use cases: You can set some room-related business attributes, such as whether someone is Co-hosting.
 /// When to call /Trigger: After logging in the room successful.
 /// Restrictions: For restrictions on the use of this function, please refer to https://docs.zegocloud.com/article/7611 or contact ZEGO technical support.
-/// Caution: 'key' is non NULL. The length of key and value is limited, please refer to Restrictions. The newly set key and value will overwrite the old setting.
+/// Caution: For key and value restrictions, please refer to Restrictions. Newly set values ​​will overwrite old ones.
 /// Related callbacks: Other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function.
 /// Related APIs: None.
 ///

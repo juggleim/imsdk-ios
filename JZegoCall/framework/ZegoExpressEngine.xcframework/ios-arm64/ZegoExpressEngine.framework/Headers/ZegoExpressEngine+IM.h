@@ -42,9 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Available since: 1.2.1
 /// Description: Send a broadcast message to the room, users who have entered the same room can receive the message, and the message is reliable.
-/// Use cases: Generally used when the number of people in the live room does not exceed 500.
+/// Use cases: Generally used in the live room.
 /// When to call: After calling [loginRoom] to log in to the room.
-/// Restrictions: It is not supported when the number of people online in the room exceeds 500. If you need to increase the limit, please contact ZEGO technical support to apply for evaluation. The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user calling this interface from the client side is 2. For restrictions on the use of this function, please contact ZEGO technical support.
+/// Restrictions: The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user to call this interface within a single room is 2. For restrictions on the use of this function, please contact ZEGO technical support.
 /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
 /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
@@ -83,10 +83,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Sends a Custom Command to the specified users in the same room.
 ///
 /// Available since: 1.2.1
-/// Description: After calling this function, users in the same room who have entered the room can receive the message, the message is unreliable.
-/// Use cases: Generally used in scenarios where there is a large number of messages sent and received in the room and the reliability of the messages is not required, such as live barrage.
+/// Description: Send point-to-point signaling to other users who have logged into the same room, and the message is reliable.
+/// Use cases: Generally used for remote control signaling or message sending between users.
 /// When to call: After calling [loginRoom] to log in to the room.
-/// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
+/// Restrictions: The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
 /// Related callbacks: The room custom command can be received through [onIMRecvCustomCommand].
 /// Related APIs: Broadcast messages can be sent through the [sendBroadcastMessage] function, and barrage messages can be sent through the [sendBarrageMessage] function.
 /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
@@ -107,10 +107,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Sends a transparent message in room.
 ///
 /// Available since: 1.2.1
-/// Description: After calling this function, users in the same room who have entered the room can receive the message, the message is unreliable.
-/// Use cases: It is generally used when the number of people in the live room is not more than 500. The frequency of custom messages sent to a single user in the same room cannot be higher than 200 /s .
+/// Description: Send point-to-point signaling to other users who have logged into the same room.
+/// Use cases: Generally used for remote control signaling or message sending between users.
 /// When to call: After calling [loginRoom] to log in to the room.
-/// Restrictions: Generally used when the number of people in the live room does not exceed 500.The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
+/// Restrictions: The frequency of sending barrage messages in the same room cannot be higher than 20 messages/s. For restrictions on the use of this function, please contact ZEGO technical support.
 /// Related callbacks: When sending a message, Mode is specified for ZegoRoomTransparentMessageModeOnlyClient or ZegoRoomTransparentMessageModeClientAndServer can pass [onRecvRoomTransparentMessage] received sends the message content.
 /// Privacy reminder: Please do not fill in sensitive user information in this interface, including but not limited to mobile phone number, ID number, passport number, real name, etc.
 ///

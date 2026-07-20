@@ -216,6 +216,52 @@
     }
 }
 
+- (void)onPlayerRenderCameraVideoFirstFrame:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPlayerRenderCameraVideoFirstFrame:)]) {
+        [sHandler onPlayerRenderCameraVideoFirstFrame:streamID];
+    }
+}
+
+- (void)onPlayerRecvVideoFirstFrame:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPlayerRecvVideoFirstFrame:)]) {
+        [sHandler onPlayerRecvVideoFirstFrame:streamID];
+    }
+}
+
+- (void)onMobileScreenCaptureStart {
+    if (@available(iOS 12.0, *)) {
+        if ([sHandler respondsToSelector:@selector(onMobileScreenCaptureStart)]) {
+            [sHandler onMobileScreenCaptureStart];
+        }
+    }
+}
+
+- (void)onMobileScreenCaptureExceptionOccurred:(ZegoScreenCaptureExceptionType)exceptionType {
+    if (@available(iOS 12.0, *)) {
+        if ([sHandler respondsToSelector:@selector(onMobileScreenCaptureExceptionOccurred:)]) {
+            [sHandler onMobileScreenCaptureExceptionOccurred:exceptionType];
+        }
+    }
+}
+
+- (void)onPublisherCapturedVideoFirstFrame:(ZegoPublishChannel)channel {
+    if ([sHandler respondsToSelector:@selector(onPublisherCapturedVideoFirstFrame:)]) {
+        [sHandler onPublisherCapturedVideoFirstFrame:channel];
+    }
+}
+
+- (void)onPublisherSendVideoFirstFrame:(ZegoPublishChannel)channel {
+    if ([sHandler respondsToSelector:@selector(onPublisherSendVideoFirstFrame:)]) {
+        [sHandler onPublisherSendVideoFirstFrame:channel];
+    }
+}
+
+- (void)onPublisherQualityUpdate:(ZegoPublishStreamQuality *)quality streamID:(NSString *)streamID {
+    if ([sHandler respondsToSelector:@selector(onPublisherQualityUpdate:streamID:)]) {
+        [sHandler onPublisherQualityUpdate:quality streamID:streamID];
+    }
+}
+
 - (void)onRemoteSoundLevelUpdate:(NSDictionary<NSString *,NSNumber *> *)soundLevels {
     if ([self.delegate respondsToSelector:@selector(soundLevelDidUpdate:)]) {
         NSMutableDictionary *dic = [NSMutableDictionary dictionary];

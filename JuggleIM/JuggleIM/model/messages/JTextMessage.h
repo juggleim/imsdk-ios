@@ -12,12 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JTextMessage : JMessageContent
 
 /*!
- 文本消息的内容
+ Text message content
  */
 @property (nonatomic, copy) NSString *content;
 
 /*!
- 扩展字段
+ Extra field
  */
 @property (nonatomic, copy) NSString *extra;
 

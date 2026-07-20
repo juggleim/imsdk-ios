@@ -2,7 +2,7 @@
 //  JClearTotlaUnreadMessage.h
 // JuggleIM
 //
-//  Created by 郑开 on 2024/6/28.
+//  Created by Zheng Kai on 2024/6/28.
 //
 
 #import <JuggleIM/JuggleIM.h>

@@ -20,6 +20,8 @@
 #import "JPushData.h"
 #import "JRtcRoom.h"
 #import "JGroupMessageReadInfoDetail.h"
+#import "JE2EEInfo.h"
+#import "JPBData.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -64,10 +66,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)callDidInvite:(JRtcRoom *)room
               inviter:(JUserInfo *)inviter
           targetUsers:(NSArray <JUserInfo *> *)targetUsers;
-// 用户主动挂断
+// User actively hangs up.
 - (void)callDidHangup:(JRtcRoom *)room
                  user:(JUserInfo *)user;
-// 用户掉线或者被踢出通话
+// User goes offline or is kicked out of the call.
 - (void)callDidQuit:(JRtcRoom *)room
             members:(NSArray <JCallMember *> *)members;
 - (void)callDidAccept:(JRtcRoom *)room
@@ -86,7 +88,9 @@ NS_ASSUME_NONNULL_BEGIN
           token:(NSString *)token
       pushToken:(NSString *)pushToken
       voipToken:(NSString *)voipToken
-        servers:(NSArray *)servers;
+        servers:(NSArray *)servers
+        signKey:(NSString *)signKey
+        headers:(NSDictionary <NSString *, NSString *> *)headers;
 
 - (void)disconnect:(BOOL)needPush;
 
@@ -108,18 +112,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setMessagePreprocessor:(id<JMessagePreprocessor>)preprocessor;
 
-- (void)sendIMMessage:(JMessageContent *)content
-       inConversation:(JConversation *)conversation
-          clientMsgNo:(long long)clientMsgNo
-            clientUid:(NSString *)clientUid
+- (void)setE2EEProvider:(id<JE2EEProvider>)provider;
+
+- (void)sendIMMessage:(JConcreteMessage *)message
             mergeInfo:(JMergeInfo *)mergeInfo
           isBroadcast:(BOOL)isBroadcast
                userId:(NSString *)userId
-          mentionInfo:(JMessageMentionInfo *)mentionInfo
-      referredMessage:(JConcreteMessage *)referredMessage
-             pushData:(JPushData *)pushData
-             lifeTime:(long long)lifeTime
-    lifeTimeAfterRead:(long long)lifeTimeAfterRead
+        currentPubKey:(NSData *)currentPubKey
+        currentPriKey:(NSData *)currentPriKey
+         e2eeInfoList:(NSArray<JE2EEInfo *> *)e2eeInfoList
               success:(void (^)(long long clientMsgNo, NSString *msgId, long long timestamp, long long seqNo,  NSString * _Nullable contentType, JMessageContent * _Nullable content, int groupMemberCount))successBlock
                 error:(void (^)(JErrorCodeInternal errorCode, long long clientMsgNo))errorBlock;
 
@@ -361,6 +362,27 @@ inConversation:(JConversation *)conversation
                     success:(void (^)(NSArray <JMessageReaction *> *reactionList))successBlock
                       error:(void (^)(JErrorCodeInternal code))errorBlock;
 
+- (void)createConversationTag:(NSString *)tagId
+                         name:(NSString *)name
+                       userId:(NSString *)userId
+                      success:(void (^)(long long timestamp))successBlock
+                        error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)destroyConversationTag:(NSString *)tagId
+                        userId:(NSString *)userId
+                       success:(void (^)(long long timestamp))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)updateConversationTagName:(NSString *)name
+                            forId:(NSString *)tagId
+                           userId:(NSString *)userId
+                          success:(void (^)(long long timestamp))successBlock
+                            error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)getConversationTagList:(NSString *)userId
+                       success:(void (^)(NSArray <JConversationTagInfo *> *tagList))successBlock
+                         error:(void (^)(JErrorCodeInternal))errorBlock;
+
 - (void)addConversationList:(NSArray <JConversation *> *)conversationList
                       toTag:(NSString *)tagId
                      userId:(NSString *)userId
@@ -372,6 +394,35 @@ inConversation:(JConversation *)conversation
                         userId:(NSString *)userId
                        success:(void (^)(void))successBlock
                          error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)fetchUserInfo:(NSString *)userId
+              success:(void (^)(JUserInfo *))successBlock
+                error:(void (^)(JErrorCodeInternal))errorBlock;
+
+- (void)fetchGroupInfo:(NSString *)groupId
+               success:(void (^)(JGroupInfo *groupInfo))successBlock
+                 error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)fetchFriendInfo:(NSString *)userId
+          currentUserId:(NSString *)currentUserId
+                success:(void (^)(JFriendInfo * _Nullable friendInfo))successBlock
+                  error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getUserStatus:(NSArray <NSString *> *)userIdList
+        currentUserId:(NSString *)currentUserId
+              success:(void (^)(NSArray <JUserStatus *> *statusList))successBlock
+                error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)getPubKeys:(NSString *)userId
+     currentUserId:(NSString *)currentUserId
+           success:(void (^)(NSArray <JE2EEInfo *> *infoList))successBlock
+             error:(void (^)(JErrorCodeInternal code))errorBlock;
+
+- (void)uploadPubKey:(NSData *)pubKey
+            deviceId:(NSString *)deviceId
+       currentUserId:(NSString *)currentUserId
+             success:(void (^)(void))successBlock
+               error:(void (^)(JErrorCodeInternal))errorBlock;
 
 - (void)sendPing;
 

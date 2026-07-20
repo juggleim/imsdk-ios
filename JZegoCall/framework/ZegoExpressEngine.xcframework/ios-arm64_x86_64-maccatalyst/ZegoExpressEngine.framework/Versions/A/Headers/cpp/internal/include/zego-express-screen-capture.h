@@ -214,7 +214,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_window_activa
 /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
 /// Restrictions: Only available on Windows/macOS.
 ///
-/// @param visible Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
+/// @param visible Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is true.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
@@ -242,22 +242,22 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_hight_light)(
     bool enable, struct zego_layer_border_config config, int instance_index);
 #endif
 
-/// Whether to collect the sound of the window process during window collection
+/// Set whether to collect sound
 ///
-/// Available since: 3.13.0
-/// Description: Whether to collect the sound of the window process during window collection.
-/// When to call: Before starting the collection [startScreencapture].
-/// Restrictions: Only applicable to Windows 10 and above versions.
+/// Available since: 3.23.0
+/// Description: Set whether to collect sound.
+/// When to call: At any time, it takes effect after starting screen capture. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeScreenCapture, and the screen acquisition and streaming channels are the same.
+/// Restrictions: Only applicable to Windows 8 and above versions.
 ///
 /// @param enable Whether to collect sound. true for collection, false for no collection, default false.
-/// @param audio_param Audio collection parameters.
+/// @param config Audio collection parameters.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture(
-    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture_with_config(
+    bool enable, struct zego_screen_capture_audio_config config, int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture)(
-    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture_with_config)(
+    bool enable, struct zego_screen_capture_audio_config config, int instance_index);
 #endif
 
 /// Callback for screen capture data
@@ -457,7 +457,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_update_screen_capture_config_mobile
 /// Description: The callback triggered when the mobile screen capture source exception occurred.
 /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
 /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-/// Restrictions: Only available on Android.
+/// Restrictions: Only available on Android and iOS.
 ///
 /// @param exception_type Screen capture exception type.
 /// @param user_context Context of user.
@@ -478,7 +478,7 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_exception_occurred
 /// Description: The callback triggered when calling the start mobile screen capture.
 /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
 /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-/// Restrictions: Only available on Android.
+/// Restrictions: Only available on Android and iOS.
 ///
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_mobile_start)(void *user_context);
@@ -489,6 +489,25 @@ ZEGOEXP_API void EXP_CALL zego_register_screen_capture_mobile_start_callback(
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_start_callback)(
     zego_on_screen_capture_mobile_start callback_func, void *user_context);
+#endif
+
+/// [Deprecated] Whether to collect the sound of the window process during window collection
+///
+/// Available since: 3.13.0
+/// Description: Whether to collect the sound of the window process during window collection.
+/// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
+/// Restrictions: Only applicable to Windows 10 and above versions.
+///
+/// @deprecated Deprecated since 3.23.0, please use the method with the same name with [config] parameter instead.
+/// @param enable Whether to collect sound. true for collection, false for no collection, default false.
+/// @param audio_param Audio collection parameters.
+/// @param instance_index The screen capture source instance index.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture(
+    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture)(
+    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
 #endif
 
 ZEGO_END_DECLS
