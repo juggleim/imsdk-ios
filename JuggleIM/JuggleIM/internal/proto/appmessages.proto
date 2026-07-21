@@ -90,6 +90,9 @@ message PushData{
   string pushId = 2;
   string pushText = 3;
   string pushExtraData = 4;
+  PushLevel pushLevel = 5;
+  bool isVoip = 6;
+  string jPushOptions = 7;
 
   //internal fields
   int32 badge = 50;
@@ -1007,4 +1010,10 @@ message E2ECipher{
   string userId = 1;
   string deviceId = 2;
   bytes cipher = 3;
+}
+
+enum PushLevel{
+  DefaultPuhsLevel = 0;
+  IgnoreSpeedControl = 1;
+  IgnoreUndisturb = 2;
 }

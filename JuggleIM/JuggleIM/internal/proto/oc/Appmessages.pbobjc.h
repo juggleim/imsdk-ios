@@ -352,6 +352,28 @@ GPBEnumDescriptor *OssType_EnumDescriptor(void);
  **/
 BOOL OssType_IsValidValue(int32_t value);
 
+#pragma mark - Enum PushLevel
+
+typedef GPB_ENUM(PushLevel) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  PushLevel_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  PushLevel_DefaultPuhsLevel = 0,
+  PushLevel_IgnoreSpeedControl = 1,
+  PushLevel_IgnoreUndisturb = 2,
+};
+
+GPBEnumDescriptor *PushLevel_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL PushLevel_IsValidValue(int32_t value);
+
 #pragma mark - AppmessagesRoot
 
 /**
@@ -635,6 +657,9 @@ typedef GPB_ENUM(PushData_FieldNumber) {
   PushData_FieldNumber_PushId = 2,
   PushData_FieldNumber_PushText = 3,
   PushData_FieldNumber_PushExtraData = 4,
+  PushData_FieldNumber_PushLevel = 5,
+  PushData_FieldNumber_IsVoip = 6,
+  PushData_FieldNumber_JPushOptions = 7,
   PushData_FieldNumber_Badge = 50,
   PushData_FieldNumber_MsgId = 51,
   PushData_FieldNumber_SenderId = 52,
@@ -652,6 +677,12 @@ GPB_FINAL @interface PushData : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *pushExtraData;
 
+@property(nonatomic, readwrite) PushLevel pushLevel;
+
+@property(nonatomic, readwrite) BOOL isVoip;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *jPushOptions;
+
 /** internal fields */
 @property(nonatomic, readwrite) int32_t badge;
 
@@ -664,6 +695,18 @@ GPB_FINAL @interface PushData : GPBMessage
 @property(nonatomic, readwrite) ChannelType channelType;
 
 @end
+
+/**
+ * Fetches the raw value of a @c PushData's @c pushLevel property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t PushData_PushLevel_RawValue(PushData *message);
+/**
+ * Sets the raw value of an @c PushData's @c pushLevel property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetPushData_PushLevel_RawValue(PushData *message, int32_t value);
 
 /**
  * Fetches the raw value of a @c PushData's @c channelType property, even
