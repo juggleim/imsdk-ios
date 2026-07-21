@@ -39,7 +39,7 @@
 }
 
 - (void)configureNavigationBar {
-    self.navigationItem.title = @"用户信息";
+    self.navigationItem.title = @"User Info";
     UIBarButtonItem *leftButton = [SBUBarButtonItem backButtonWithTarget:self selector:@selector(leftBarButtonItemPressed:)];
     self.navigationItem.leftBarButtonItem = leftButton;
 }
@@ -187,17 +187,17 @@
     [HttpManager.shared applyFriendWithUserId:self.userId completion:^(NSInteger code) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (code == 0) {
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"已发送好友申请" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"Friend request sent" preferredStyle:UIAlertControllerStyleAlert];
                 [alertController
-                    addAction:[UIAlertAction actionWithTitle:@"确认"
+                    addAction:[UIAlertAction actionWithTitle:@"Confirm"
                                                        style:UIAlertActionStyleDestructive
                                                      handler:^(UIAlertAction *_Nonnull action){
                 }]];
                 [self presentViewController:alertController animated:true completion:nil];
             } else {
-                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"发送好友申请失败" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"Failed to send friend request" preferredStyle:UIAlertControllerStyleAlert];
                 [alertController
-                    addAction:[UIAlertAction actionWithTitle:@"确认"
+                    addAction:[UIAlertAction actionWithTitle:@"Confirm"
                                                        style:UIAlertActionStyleDestructive
                                                      handler:^(UIAlertAction *_Nonnull action){
                 }]];
@@ -230,7 +230,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     BaseSettingTableViewCell *cell = [[BaseSettingTableViewCell alloc] init];
     [cell setCellStyle:DefaultStyle];
-    cell.leftLabel.text = @"设置备注";
+    cell.leftLabel.text = @"Set remark";
     return cell;
 }
 
@@ -276,7 +276,7 @@
         _conversationButton = [[UIButton alloc] init];
         _conversationButton.backgroundColor = ColorFromRGB(0x0099ff);
         _conversationButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [_conversationButton setTitle:@"发起会话" forState:UIControlStateNormal];
+        [_conversationButton setTitle:@"Start Chat" forState:UIControlStateNormal];
         [_conversationButton addTarget:self action:@selector(startChat) forControlEvents:UIControlEventTouchUpInside];
         _conversationButton.layer.masksToBounds = YES;
         _conversationButton.layer.cornerRadius = 5.f;
@@ -291,7 +291,7 @@
         _addFriendButton = [[UIButton alloc] init];
         _addFriendButton.backgroundColor = ColorFromRGB(0x0099ff);
         _addFriendButton.translatesAutoresizingMaskIntoConstraints = NO;
-        [_addFriendButton setTitle:@"添加好友" forState:UIControlStateNormal];
+        [_addFriendButton setTitle:NSLocalizedString(@"Add Friend", @"") forState:UIControlStateNormal];
         [_addFriendButton addTarget:self action:@selector(addFriend) forControlEvents:UIControlEventTouchUpInside];
         _addFriendButton.layer.masksToBounds = YES;
         _addFriendButton.layer.cornerRadius = 5.f;
@@ -305,7 +305,7 @@
     if (!_audioCallButton) {
         _audioCallButton = [[UIButton alloc] init];
         _audioCallButton.backgroundColor = ColorFromRGB(0xffffff);
-        [_audioCallButton setTitle:@"语音通话" forState:UIControlStateNormal];
+        [_audioCallButton setTitle:@"Voice Call" forState:UIControlStateNormal];
         [_audioCallButton setTitleColor:ColorFromRGB(0x000000) forState:UIControlStateNormal];
         [_audioCallButton addTarget:self action:@selector(audioCall) forControlEvents:UIControlEventTouchUpInside];
         _audioCallButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -319,7 +319,7 @@
     if (!_videoCallButton) {
         _videoCallButton = [[UIButton alloc] init];
         _videoCallButton.backgroundColor = ColorFromRGB(0xffffff);
-        [_videoCallButton setTitle:@"视频通话" forState:UIControlStateNormal];
+        [_videoCallButton setTitle:@"Video Call" forState:UIControlStateNormal];
         [_videoCallButton setTitleColor:ColorFromRGB(0x000000) forState:UIControlStateNormal];
         [_videoCallButton addTarget:self action:@selector(videoCall) forControlEvents:UIControlEventTouchUpInside];
         _videoCallButton.translatesAutoresizingMaskIntoConstraints = NO;

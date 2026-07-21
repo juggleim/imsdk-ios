@@ -12,7 +12,7 @@ class SwitchAccountViewController: UIViewController {
     var switchAccount: JCUser?
     let titleLabel: UILabel = {
         let title = UILabel()
-        title.text = "点击以切换账号"
+        title.text = NSLocalizedString("Tap to switch account", comment: "")
         return title
     }()
     
@@ -27,7 +27,7 @@ class SwitchAccountViewController: UIViewController {
     
     let addButton: UIButton = {
         let button = UIButton()
-        button.setTitle("添加账号", for: .normal)
+        button.setTitle(NSLocalizedString("Add account", comment: ""), for: .normal)
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.layer.cornerRadius = 5
         button.addTarget(self, action: #selector(onAdd), for: .touchUpInside)
@@ -36,7 +36,7 @@ class SwitchAccountViewController: UIViewController {
     
     let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("取消", for: .normal)
+        button.setTitle(NSLocalizedString("Cancel", comment: ""), for: .normal)
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.layer.cornerRadius = 5
         button.addTarget(self, action: #selector(onCancel), for: .touchUpInside)

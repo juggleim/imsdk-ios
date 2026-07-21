@@ -23,7 +23,7 @@ class ViewController: UIViewController {
     
     var serverSettingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("服务器设置", for: .normal)
+        button.setTitle(NSLocalizedString("Server Settings", comment: ""), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         button.setTitleColor(UIColor(hex: "#0091FF"), for: .normal)
         button.titleLabel?.adjustsFontSizeToFitWidth = true
@@ -93,7 +93,11 @@ class ViewController: UIViewController {
         
         let coreVersion: String = JIM.shared().getSDKVersion()
         let uikitVersion: String = JuggleUI.version
-        versionLabel.text = "UIKit v\(uikitVersion)\tSDK v\(coreVersion)"
+        versionLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("UIKit v%@\tSDK v%@", comment: ""),
+            uikitVersion,
+            coreVersion
+        )
         
         let (phone, code, isAutoLogin) = loadLoginInfo()
         if phone != nil {

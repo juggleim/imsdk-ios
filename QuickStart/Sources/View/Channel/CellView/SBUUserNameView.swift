@@ -104,7 +104,7 @@ open class SBUUserNameView: SBUView {
         self.username = username
         
         let attributeName = NSMutableAttributedString(string: username)
-        if username.hasSuffix(" 智能体") {
+        if username.hasSuffix(" assistant") {
             let range = NSRange(location: username.count-4, length: 4)
             attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
             let font = UIFont.systemFont(ofSize: 8.0, weight: .regular)

@@ -46,13 +46,13 @@ typedef NS_ENUM(NSUInteger, BaseSettingCellStyle) {
 - (void)setCellStyle:(BaseSettingCellStyle)style;
 
 /*!
- 设置imageView方法
- @param imageView   cell中左边或者右边的imageView
- @param imageStr    image的name或者url
- @param imageSize   image的尺寸大小
- @param LeftOrRight 为了设置约束，需要告诉方法是设置左边还是右边的imageView
-                    0:表示设置左边的imageView。
-                    1:表示设置右边的imageView。
+ Set imageView helper
+ @param imageView   left or right imageView in the cell
+ @param imageStr    image name or URL
+ @param imageSize   image size
+ @param LeftOrRight tells the helper whether to configure the left or right imageView
+                    0: configure the left imageView.
+                    1: configure the right imageView.
  */
 - (void)setImageView:(UIImageView *)imageView
             ImageStr:(NSString *)imageStr

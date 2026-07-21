@@ -26,7 +26,7 @@ class GroupNotifyMessage: JMessageContent {
     let typeString = "type"
     let operatorString = "operator"
     let nameString = "name"
-    let digestString = "[群通知]"
+    let digestString = NSLocalizedString("[Group notification]", comment: "")
     
     var type: GroupNotifyType = .other
     var members: [JUserInfo] = []
@@ -94,7 +94,7 @@ class GroupNotifyMessage: JMessageContent {
            let operatorId = operatorInfo?.userId, currentUserId == operatorId {
             isSender = true
         }
-        let sender = isSender ? "你" : (operatorInfo?.userName ?? "")
+        let sender = isSender ? NSLocalizedString("You", comment: "") : (operatorInfo?.userName ?? "")
         var userList: String = ""
         for member in members {
             if let name = member.userName {
@@ -111,7 +111,7 @@ class GroupNotifyMessage: JMessageContent {
                    currentUserId == member.userId {
                     isOwner = true
                 }
-                newOwner = isOwner ? "你" : member.userName ?? ""
+                newOwner = isOwner ? NSLocalizedString("You", comment: "") : member.userName ?? ""
             }
         }
         
@@ -121,15 +121,15 @@ class GroupNotifyMessage: JMessageContent {
         
         switch type {
         case .addMember:
-            return "\(sender) 邀请 \(userList) 加入群聊"
+            return String.localizedStringWithFormat(NSLocalizedString("%@ invited %@ to the group chat", comment: ""), sender, userList)
         case .removeMember:
-            return "\(sender) 将 \(userList) 移除群聊"
+            return String.localizedStringWithFormat(NSLocalizedString("%@ removed %@ from the group chat", comment: ""), sender, userList)
         case .rename:
-            return "\(sender) 修改群名称为 \"\(name)\""
+            return String.localizedStringWithFormat(NSLocalizedString("%@ changed the group name to \"%@\"", comment: ""), sender, name)
         case .changeOwner:
-            return "\(newOwner) 已成为新群主"
+            return String.localizedStringWithFormat(NSLocalizedString("%@ is now the new group owner", comment: ""), newOwner)
         case .join:
-            return "\(sender) 加入群聊"
+            return String.localizedStringWithFormat(NSLocalizedString("%@ joined the group chat", comment: ""), sender)
         case .other:
             return ""
         }

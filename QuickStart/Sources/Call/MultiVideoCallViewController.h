@@ -12,35 +12,35 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MultiVideoCallViewController : BaseCallViewController
 
 /*!
- 通话呼入时，最上方显示的邀请者头像View
+ Avatar view of the inviter shown at the top during incoming calls
  */
 @property(nonatomic, strong) UIImageView *inviterPortraitView;
 
 /*!
- 通话呼入时，最上方显示的邀请者名字Label
+ Name label of the inviter shown at the top during incoming calls
  */
 @property(nonatomic, strong) UILabel *inviterNameLabel;
 
 /*!
- 全屏的用户的名称Label
+ Full-screen user name label
  */
 @property(nonatomic, strong) UILabel *mainNameLabel;
 
 /*!
- 通话呼入时，用户列表说明的Label
+ User list description label during incoming calls
  */
 @property(nonatomic, strong) UILabel *userCollectionTitleLabel;
 
 /*!
- 用户视频列表的CollectionView
+ User video list collection view
  */
 @property(nonatomic, strong) UICollectionView *userCollectionView;
 
 /*!
- 用户视频列表CollectionView所使用的Layout
+ Layout used by the user video list collection view
 
  @discussion
- 默认使用的是RCVideoMultiCallUserCollectionLayout，您也可以自定义Layout。
+ RCVideoMultiCallUserCollectionLayout is used by default, and you can customize the layout.
  */
 @property(nonatomic, strong) UICollectionViewLayout *userCollectionViewLayout;
 

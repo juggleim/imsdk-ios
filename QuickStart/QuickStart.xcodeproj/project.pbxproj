@@ -243,6 +243,10 @@
 		A09645D12BF36BD000290775 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A09645CF2BF36BD000290775 /* Main.storyboard */; };
 		A09645D32BF36BD300290775 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A09645D22BF36BD300290775 /* Assets.xcassets */; };
 		A09645D62BF36BD300290775 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A09645D42BF36BD300290775 /* LaunchScreen.storyboard */; };
+		A1B2C3D4E5F60708090A0B0C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B0A /* Localizable.strings */; };
+		A1B2C3D4E5F60708090A0B0D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B0B /* Localizable.strings */; };
+		A1B2C3D4E5F60708090A0B0E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B10 /* InfoPlist.strings */; };
+		A1B2C3D4E5F60708090A0B0F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B11 /* InfoPlist.strings */; };
 		A09645E52BF39EA300290775 /* NibCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645E42BF39EA300290775 /* NibCustomView.swift */; };
 		A09645EC2BF3A27A00290775 /* SBUColorSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645EB2BF3A27A00290775 /* SBUColorSet.swift */; };
 		A09645EE2BF3A2E800290775 /* SBUFontSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09645ED2BF3A2E800290775 /* SBUFontSet.swift */; };
@@ -615,6 +619,10 @@
 		A09645D22BF36BD300290775 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A09645D52BF36BD300290775 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A09645D72BF36BD300290775 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B0A /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B0B /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = zh-Hans.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B10 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B11 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = zh-Hans.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A09645E42BF39EA300290775 /* NibCustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibCustomView.swift; sourceTree = "<group>"; };
 		A09645EB2BF3A27A00290775 /* SBUColorSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBUColorSet.swift; sourceTree = "<group>"; };
 		A09645ED2BF3A2E800290775 /* SBUFontSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBUFontSet.swift; sourceTree = "<group>"; };
@@ -1442,6 +1450,10 @@
 				A09645D22BF36BD300290775 /* Assets.xcassets */,
 				A09645D42BF36BD300290775 /* LaunchScreen.storyboard */,
 				A09645D72BF36BD300290775 /* Info.plist */,
+				A1B2C3D4E5F60708090A0B0A /* Localizable.strings */,
+				A1B2C3D4E5F60708090A0B0B /* Localizable.strings */,
+				A1B2C3D4E5F60708090A0B10 /* InfoPlist.strings */,
+				A1B2C3D4E5F60708090A0B11 /* InfoPlist.strings */,
 				A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */,
 				A02FA3C02D19A5F6002A4E0B /* OCConst.h */,
 				A047B7422D27E5BB00710683 /* GlobalConfig.swift */,
@@ -1850,6 +1862,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				zh-Hans,
 				Base,
 			);
 			mainGroup = A09645BD2BF36BD000290775;
@@ -1878,6 +1891,10 @@
 				A07F3C0A2BF4A2280087920B /* Base.xcconfig in Resources */,
 				A07F3C892BF4A2290087920B /* SBUMenuCell.xib in Resources */,
 				A07950162D1C09EE0045EFE9 /* Podfile in Resources */,
+				A1B2C3D4E5F60708090A0B0C /* Localizable.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0D /* Localizable.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0E /* InfoPlist.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0F /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2416,9 +2433,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -2465,9 +2482,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

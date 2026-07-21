@@ -163,7 +163,7 @@ extension SBUGroupChannelListModule {
             
             let leaveAction = UIContextualAction(
                 style: .normal,
-                title: "删除"
+                title: NSLocalizedString("Delete", comment: "")
             ) { [weak self] _, _, actionHandler in
                 guard let self = self else { return }
                 self.delegate?.groupChannelListModule(self, didSelectLeave: conversationInfo)
@@ -201,9 +201,11 @@ extension SBUGroupChannelListModule {
             let itemSize: CGFloat = 40.0
             
             let mute = conversationInfo.mute
-            var title = "消息免打扰"
+            var title = NSLocalizedString("Do Not Disturb", comment: "")
             if mute {
-                title = "消息提醒"
+                title = NSLocalizedString("Message alerts", comment: "")
+            } else {
+                title = NSLocalizedString("Do Not Disturb", comment: "")
             }
             let alarmAction = UIContextualAction(
                 style: .normal,
@@ -266,7 +268,7 @@ extension SBUGroupChannelListModule.List {
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.size.height
 
-        // 当滚动到接近当前数据列表末尾时加载更多数据
+        // Load more data when scrolling near the end of the current list
         if offsetY > contentHeight - frameHeight - 100 {
             self.delegate?.baseChannelListModuledidDetectPreloading(self)
         }
@@ -280,15 +282,15 @@ extension SBUGroupChannelListModule.List {
         var actions: [UIContextualAction] = []
         
         guard let conversationInfo = self.conversationInfoList?[indexPath.row] else { return nil }
-        let leaveAction = UIContextualAction(style: .destructive, title: "删除") { action, sourceView, completeHandler in
+        let leaveAction = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "")) { action, sourceView, completeHandler in
             self.delegate?.groupChannelListModule(self, didSelectLeave: conversationInfo)
             completeHandler(true)
         }
         
-        var title = "消息免打扰"
+        var title = NSLocalizedString("Do Not Disturb", comment: "")
         let mute = conversationInfo.mute
         if mute {
-            title = "消息提醒"
+            title = NSLocalizedString("Message alerts", comment: "")
         }
         let alarmAction = UIContextualAction(style: .normal, title: title) { action, sourceView, completeHandler in
             self.delegate?.groupChannelListModule(self, didSelectMute: !mute, conversationInfo: conversationInfo)
@@ -296,10 +298,10 @@ extension SBUGroupChannelListModule.List {
         }
         alarmAction.backgroundColor = UIColor.orange
         
-        title = "设置未读"
+        title = NSLocalizedString("Mark as unread", comment: "")
         var unreadFlag = false
         if conversationInfo.unreadCount > 0 || conversationInfo.hasUnread {
-            title = "设置已读"
+            title = NSLocalizedString("Mark as read", comment: "")
             unreadFlag = true
         }
         let setUnreadAction = UIContextualAction(style: .normal, title: title) { action, sourceView, completeHandler in

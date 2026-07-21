@@ -55,7 +55,7 @@
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputMetadataObjects:(NSArray<__kindof AVMetadataObject *> *)metadataObjects
               fromConnection:(AVCaptureConnection *)connection {
-    // 获取扫一扫结果
+    // Get the QR code scan result
     if (metadataObjects && metadataObjects.count > 0) {
         [self pauseScanning];
         AVMetadataMachineReadableCodeObject *metadataObject = metadataObjects[0];
@@ -70,9 +70,9 @@
 - (void)showErrorAlertView {
     dispatch_async(dispatch_get_main_queue(), ^{
         UIAlertController *alertController =
-            [UIAlertController alertControllerWithTitle:nil message:@"无法识别的二维码" preferredStyle:UIAlertControllerStyleAlert];
+            [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"Unrecognized QR code", @"") preferredStyle:UIAlertControllerStyleAlert];
         [alertController
-            addAction:[UIAlertAction actionWithTitle:@"确认"
+            addAction:[UIAlertAction actionWithTitle:@"Confirm"
                                                style:UIAlertActionStyleDestructive
                                              handler:^(UIAlertAction *_Nonnull action){
             [self.navigationController popViewControllerAnimated:true];
@@ -82,7 +82,7 @@
 }
 
 - (void)setNavi {
-    self.navigationItem.title = @"扫一扫";
+    self.navigationItem.title = NSLocalizedString(@"Scan QR Code", @"");
 }
 
 - (void)checkCameraAuthorizationStatus {
@@ -95,28 +95,28 @@
     }];
 }
 
-/** 校验是否有相机权限 */
+/** Check whether camera permission is granted */
 - (void)checkCameraAuthorizationStatusWithGrand:(void (^)(BOOL granted))permissionGranted {
     AVAuthorizationStatus videoAuthStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
 
     switch (videoAuthStatus) {
-    // 已授权
+    // Authorized
     case AVAuthorizationStatusAuthorized: {
         permissionGranted(YES);
     } break;
-    // 未询问用户是否授权
+    // Permission has not been requested yet
     case AVAuthorizationStatusNotDetermined: {
-        // 提示用户授权
+        // Prompt the user to grant permission
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo
                                  completionHandler:^(BOOL granted) {
                                      permissionGranted(granted);
                                  }];
     } break;
-    // 用户拒绝授权或权限受限
+    // Permission denied or restricted
     case AVAuthorizationStatusRestricted:
     case AVAuthorizationStatusDenied: {
-        [self showAlertController:@"您没有照片访问权限，请前往“设置-隐私-照片”选项中，允许访问您的手机照片"
-                      cancelTitle:@"确认"];
+        [self showAlertController:@"You do not have Photos access permission. Go to Settings > Privacy > Photos and allow access to your photos"
+                      cancelTitle:@"Confirm"];
         permissionGranted(NO);
     } break;
     default:
@@ -160,7 +160,7 @@
         [self.session addOutput:videoDataOutput];
     }
 #if TARGET_IPHONE_SIMULATOR
-// 模拟器设置不了，会crash
+// This cannot be configured in the simulator and will crash
 #else
     if ([metadataOutput.availableMetadataObjectTypes containsObject:AVMetadataObjectTypeQRCode]) {
         metadataOutput.metadataObjectTypes = @[ AVMetadataObjectTypeQRCode ];

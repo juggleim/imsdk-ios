@@ -1,0 +1,3 @@
+"NSCameraUsageDescription" = "App 需要您的同意，才能访问相机";
+"NSMicrophoneUsageDescription" = "App 需要您的同意，才能访问麦克风";
+"NSPhotoLibraryUsageDescription" = "App 需要您的同意，才能访问相册";

@@ -30,7 +30,7 @@
 }
 
 - (void)setGroupInfo {
-    self.infoLabel.text = [NSString stringWithFormat:@"群内已有 %ld 人", self.group.memberCount];
+    self.infoLabel.text = [NSString stringWithFormat:@"%ld members in the group", self.group.memberCount];
 
     self.nameLabel.text = self.group.groupName;
     if ([self.group.portrait isEqualToString:@""]) {
@@ -40,7 +40,7 @@
 }
 
 - (void)setNaviItem {
-    self.navigationItem.title = @"群信息";
+    self.navigationItem.title = NSLocalizedString(@"Group Info", @"");
     UIBarButtonItem *left = [SBUBarButtonItem backButtonWithTarget:self selector:@selector(leftBarButtonItemPressed)];
     self.navigationItem.leftBarButtonItem = left;
 }
@@ -100,9 +100,9 @@
                 [weakSelf pushChatVC];
             } else {
                 UIAlertController *alertController =
-                    [UIAlertController alertControllerWithTitle:nil message:@"加入群组失败" preferredStyle:UIAlertControllerStyleAlert];
+                    [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"Failed to join group", @"") preferredStyle:UIAlertControllerStyleAlert];
                 [alertController
-                    addAction:[UIAlertAction actionWithTitle:@"确认"
+                    addAction:[UIAlertAction actionWithTitle:@"Confirm"
                                                        style:UIAlertActionStyleDestructive
                                                      handler:^(UIAlertAction *_Nonnull action){
                     [self.navigationController popViewControllerAnimated:true];
@@ -166,7 +166,7 @@
         _joinButton.backgroundColor = ColorFromRGB(0x368ae8);
         [_joinButton setTitleColor:ColorFromRGB(0xffffff) forState:(UIControlStateNormal)];
         _joinButton.titleLabel.font = [UIFont systemFontOfSize:17];
-        [_joinButton setTitle:@"加入该群" forState:(UIControlStateNormal)];
+        [_joinButton setTitle:NSLocalizedString(@"Join Group", @"") forState:(UIControlStateNormal)];
         [_joinButton addTarget:self
                         action:@selector(didClickJoinAction)
               forControlEvents:(UIControlEventTouchUpInside)];

@@ -315,7 +315,7 @@ open class SBUContentBaseMessageCell: SBUBaseMessageCell {
             if let sender = JIM.shared().userInfoManager.getUserInfo(senderId), let name = sender.userName {
                 username = name
                 if sender.type == .bot {
-                    username.append(" 智能体")
+                    username.append(" Assistant")
                 }
             }
             userNameView.configure(username: username)

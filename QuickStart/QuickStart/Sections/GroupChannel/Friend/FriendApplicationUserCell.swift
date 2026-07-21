@@ -44,27 +44,27 @@ class FriendApplicationUserCell: BaseUserCell {
         
         switch user.friendApplicationStatus {
         case .outgoingApply:
-            self.actionButton.setTitle("申请中", for: .selected)
+            self.actionButton.setTitle(NSLocalizedString("Pending", comment: ""), for: .selected)
             self.actionButton.isSelected = true
             self.actionButton.isUserInteractionEnabled = false
         case .outgoingAccept:
-            self.actionButton.setTitle("对方已接受", for: .selected)
+            self.actionButton.setTitle(NSLocalizedString("Accepted by the other side", comment: ""), for: .selected)
             self.actionButton.isSelected = true
             self.actionButton.isUserInteractionEnabled = false
         case .outgoingExpired:
-            self.actionButton.setTitle("无应答", for: .selected)
+            self.actionButton.setTitle(NSLocalizedString("No response", comment: ""), for: .selected)
             self.actionButton.isSelected = true
             self.actionButton.isUserInteractionEnabled = false
         case .incomingApply:
-            self.actionButton.setTitle("同意", for: .normal)
+            self.actionButton.setTitle(NSLocalizedString("Accept", comment: ""), for: .normal)
             self.actionButton.isSelected = false
             self.actionButton.isUserInteractionEnabled = true
         case .incomingAccept:
-            self.actionButton.setTitle("已接受", for: .selected)
+            self.actionButton.setTitle(NSLocalizedString("Accepted", comment: ""), for: .selected)
             self.actionButton.isSelected = true
             self.actionButton.isUserInteractionEnabled = false
         case .incomingExpired:
-            self.actionButton.setTitle("已超时", for: .selected)
+            self.actionButton.setTitle(NSLocalizedString("Timed out", comment: ""), for: .selected)
             self.actionButton.isSelected = true
             self.actionButton.isUserInteractionEnabled = false
         case .none:
@@ -94,4 +94,3 @@ class FriendApplicationUserCell: BaseUserCell {
         }
     }
 }
-

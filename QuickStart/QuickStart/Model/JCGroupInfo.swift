@@ -17,7 +17,7 @@ import JuggleIM
 
 class JCGroupInfo: JGroupInfo {
     @objc var memberCount: Int = 0
-    // 只包含前 20 个成员
+    // Includes only the first 20 members
     var members: [JCUser] = []
     var owner: JCUser?
     @objc var myRole: GroupRole = .member

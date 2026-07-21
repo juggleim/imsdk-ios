@@ -42,7 +42,7 @@
         [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *filePath =
         [cachPath stringByAppendingPathComponent:[NSString stringWithFormat:@"CachedIcons/%@",
-                                                                            fileName]]; // 保存文件的名称
+                                                                            fileName]]; // file name used for saving
 
     NSString *dirPath = [cachPath stringByAppendingPathComponent:[NSString stringWithFormat:@"CachedIcons"]];
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -76,8 +76,8 @@
     if (text.length <= 0) {
         return [self hexStringToColor:@"#D45246"];
     }
-    //设置背景色
-    text = [text uppercaseString]; //设置为大写
+    //set the background color
+    text = [text uppercaseString]; //convert to uppercase
     int asciiCode = [text characterAtIndex:0];
     int colorIndex = asciiCode % 7;
     NSArray *colorList =
@@ -121,14 +121,14 @@
 }
 
 /**
- 绘制图片
+ Draw image
 
- @param color 背景色
- @param size 大小
- @param text 文字
- @param textAttributes 字体设置
- @param isCircular 是否圆形
- @return 图片
+ @param color background color
+ @param size size
+ @param text text
+ @param textAttributes font attributes
+ @param isCircular whether circular
+ @return image
  */
 + (UIImage *)imageWithColor:(UIColor *)color
                        size:(CGSize)size

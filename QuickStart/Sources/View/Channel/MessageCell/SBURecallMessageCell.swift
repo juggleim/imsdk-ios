@@ -16,9 +16,9 @@ class SBURecallMessageCell: BaseNotifyMessageCell {
             if let user = JIM.shared().userInfoManager.getUserInfo(message?.senderUserId) {
                 userName = user.userName ?? userName
             }
-            tip = "\(userName) 撤回了一条消息"
+            tip = "\(userName) recalled a message"
         } else {
-            tip = "你 撤回了一条消息"
+            tip = "You recalled a message"
         }
         self.messageLabel.text = tip
     }

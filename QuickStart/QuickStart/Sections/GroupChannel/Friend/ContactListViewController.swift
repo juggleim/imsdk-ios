@@ -59,7 +59,7 @@ class ContactListViewController: BaseTableListViewController {
     }
     
     @objc func onClickMenu() {
-        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] phoneNumber in
+        let okButton = SBUAlertButtonItem(title: "Confirm") {[weak self] phoneNumber in
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
@@ -72,11 +72,11 @@ class ContactListViewController: BaseTableListViewController {
                 }
             }
         }
-        let cancelButton = SBUAlertButtonItem(title: "取消") { _ in }
+        let cancelButton = SBUAlertButtonItem(title: NSLocalizedString("Cancel", comment: "")) { _ in }
         SBUAlertView.show(
-            title: "添加好友",
+            title: NSLocalizedString("Add Friend", comment: ""),
             needInputField: true,
-            placeHolder: "输入手机号码",
+            placeHolder: "Enter phone number",
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton
@@ -112,8 +112,8 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
         if indexPath.section == 0 {
             if indexPath.row == 0 {
                 user = JCUser()
-                user.userId = "新朋友"
-                user.userName = "新朋友"
+                user.userId = NSLocalizedString("New Friends", comment: "")
+                user.userName = NSLocalizedString("New Friends", comment: "")
                 
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
@@ -121,16 +121,16 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 return cell
             } else if indexPath.row == 1 {
                 user = JCUser()
-                user.userId = "群组"
-                user.userName = "群组"
+                user.userId = "Groups"
+                user.userName = "Groups"
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
                 cell.configure(type: .group, user: user)
                 return cell
             } else if indexPath.row == 2 {
                 user = JCUser()
-                user.userId = "聊天室"
-                user.userName = "聊天室"
+                user.userId = NSLocalizedString("Chatroom", comment: "")
+                user.userName = NSLocalizedString("Chatroom", comment: "")
                 let cell = NewFriendsUserCell()
                 cell.selectionStyle = .none
                 cell.configure(type: .group, user: user)
@@ -187,7 +187,7 @@ extension ContactListViewController: UITableViewDataSource, UITableViewDelegate 
                 return nil
             }
             var actions: [UIContextualAction] = []
-            let deleteAction = UIContextualAction(style: .destructive, title: "删除") { _, _, actionHandler in
+            let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, actionHandler in
                 HttpManager.shared.deleteFriends(userIds: [user.userId]) { code in
                     if code == 0 {
                         self.loadFriends()

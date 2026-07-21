@@ -42,6 +42,6 @@ class FriendNotifyMessage: JMessageContent {
     }
     
     override func conversationDigest() -> String {
-        return "好友通知"
+        return NSLocalizedString("Friend Notification", comment: "")
     }
 }

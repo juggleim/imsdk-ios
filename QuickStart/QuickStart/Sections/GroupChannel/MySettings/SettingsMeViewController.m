@@ -42,7 +42,7 @@
 }
 
 - (void)configureNavigationBar {
-    self.navigationItem.title = @"个人信息";
+    self.navigationItem.title = NSLocalizedString(@"Profile", @"");
     UIBarButtonItem *leftButton = [SBUBarButtonItem backButtonWithTarget:self selector:@selector(leftBarButtonItemPressed:)];
     self.navigationItem.leftBarButtonItem = leftButton;
 }
@@ -69,10 +69,10 @@
     BaseSettingTableViewCell *cell = [[BaseSettingTableViewCell alloc] init];
     if (indexPath.row == 0) {
         [cell setImageView:cell.rightImageView ImageStr:ProfileManager.shared.currentUserInfo.portrait imageSize:CGSizeMake(65, 65) LeftOrRight:1];
-        cell.leftLabel.text = @"头像";
+        cell.leftLabel.text = NSLocalizedString(@"Avatar", @"");
     } else if (indexPath.row == 1) {
         [cell setCellStyle:RightLabelStyle];
-        cell.leftLabel.text = @"昵称";
+        cell.leftLabel.text = NSLocalizedString(@"Nickname", @"");
         cell.rightLabel.text = ProfileManager.shared.currentUserInfo.userName;
     }
     return cell;
@@ -88,11 +88,11 @@
 
 #pragma mark - private
 - (void)selectUserImage {
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-    UIAlertAction *takePictureAction = [UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Cancel", @"") style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *takePictureAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"Take Photo", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self pushToImagePickerController:UIImagePickerControllerSourceTypeCamera];
     }];
-    UIAlertAction *myAlbumAction = [UIAlertAction actionWithTitle:@"我的相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *myAlbumAction = [UIAlertAction actionWithTitle:NSLocalizedString(@"My Album", @"") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self pushToImagePickerController:UIImagePickerControllerSourceTypePhotoLibrary];
     }];
     
@@ -117,7 +117,7 @@
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                 picker.sourceType = sourceType;
             } else {
-                NSLog(@"模拟器无法连接相机");
+                NSLog(@"%@", NSLocalizedString(@"The simulator cannot connect to the camera", @""));
             }
         } else {
             picker.sourceType = sourceType;
@@ -133,11 +133,11 @@
     NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
 
     if ([mediaType isEqual:@"public.image"]) {
-        //获取原图
+        // Get the original image
         UIImage *originImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-        //获取截取区域
+        // Get the crop rect
         CGRect captureRect = [[info objectForKey:UIImagePickerControllerCropRect] CGRectValue];
-        //获取截取区域的图像
+        // Get the cropped image for the crop rect
         UIImage *captureImage =
             [UIImage getSubImage:originImage Rect:captureRect imageOrientation:originImage.imageOrientation];
         UIImage *scaleImage = [UIImage scaleImage:captureImage toScale:0.8];

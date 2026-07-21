@@ -26,10 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ForwardAlertViewDelegate <NSObject>
 
 /**
- 点击某个按钮
+ Called when a button is tapped
 
  @param alertView alertView
- @param buttonIndex 0代表取消，1代表确定
+ @param buttonIndex 0 means Cancel, 1 means Confirm
  */
 - (void)forwardAlertView:(ForwardAlertView *)alertView
             conversation:(JConversation *)conversation

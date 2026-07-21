@@ -13,25 +13,25 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MultiCallUserCell : UICollectionViewCell
 
 /*!
- 用户的头像View（视频时会使用此View作为用户的视频View）
+ User avatar view (used as the video view during calls)
  */
 @property(nonatomic, strong) UIImageView *headerImageView;
 
 /*!
- 用户名字的Label
+ User name label
  */
 @property(nonatomic, strong) UILabel *nameLabel;
 
 /*!
- 用户状态的Label
+ User status label
  */
 @property(nonatomic, strong) UIImageView *statusView;
 
 /*!
- 设置用户通话信息和通话状态
+ Set user call info and call status
 
- @param model      用户通话信息的Model
- @param callStatus 用户通话状态
+ @param model      user call info model
+ @param callStatus user call status
  */
 - (void)setModel:(JCallMember *)model status:(JCallStatus)callStatus;
 

@@ -32,7 +32,7 @@ class MainChannelTabbarController: UITabBarController {
         super.viewDidLoad()
         
         channelsViewController.headerComponent?.titleView = UIView()
-        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: "消息")
+        channelsViewController.headerComponent?.leftBarButton = self.createLeftTitleItem(text: NSLocalizedString("Messages", comment: ""))
         
         self.channelsNavigationController = UINavigationController(
             rootViewController: channelsViewController
@@ -78,12 +78,12 @@ class MainChannelTabbarController: UITabBarController {
             ? SBUColorSet.primary200
             : SBUColorSet.primary300
         channelsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "消息"
+            text: NSLocalizedString("Messages", comment: "")
         )
         channelsViewController.tabBarItem = self.createTabItem(type: .channels)
         
         contactListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "通讯录"
+            text: NSLocalizedString("Contacts", comment: "")
         )
         contactListViewController.tabBarItem = self.createTabItem(type: .contacts)
         
@@ -93,12 +93,12 @@ class MainChannelTabbarController: UITabBarController {
 //        groupListViewController.tabBarItem = self.createTabItem(type: .groups)
         
         botListViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "智能体"
+            text: NSLocalizedString("Assistant", comment: "")
         )
         botListViewController.tabBarItem = self.createTabItem(type: .bots)
         
         settingsViewController.navigationItem.leftBarButtonItem = self.createLeftTitleItem(
-            text: "我"
+            text: NSLocalizedString("Me", comment: "")
         )
         settingsViewController.tabBarItem = self.createTabItem(type: .mySettings)
         
@@ -149,11 +149,11 @@ class MainChannelTabbarController: UITabBarController {
         let tag: Int
         switch type {
         case .channels:
-            title = "消息"
+            title = NSLocalizedString("Messages", comment: "")
             icon = UIImage(named: "iconChatFilled")?.resize(with: iconSize)
             tag = 0
         case .contacts:
-            title = "通讯录"
+            title = NSLocalizedString("Contacts", comment: "")
             icon = UIImage(named: "iconMembersCustom")?.resize(with: iconSize)
             tag = 1
 //        case .groups:
@@ -161,11 +161,11 @@ class MainChannelTabbarController: UITabBarController {
 //            icon = UIImage(named: "imgGroupchannel")?.resize(with: iconSize)
 //            tag = 2
         case .bots:
-            title = "智能体"
+            title = NSLocalizedString("Assistant", comment: "")
             icon = UIImage(named: "iconBot")?.resize(with: iconSize)
             tag = 3
         case .mySettings:
-            title = "我"
+            title = NSLocalizedString("Me", comment: "")
             icon = UIImage(named: "iconSettingsFilled")?.resize(with: iconSize)
             tag = 4
         }

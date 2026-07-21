@@ -66,7 +66,7 @@ static NSString *forwardCellIdentifier = @"forwardCellIdentifier";
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
     UILabel *label = [[UILabel alloc] init];
-    label.text = @"最近聊天";
+    label.text = NSLocalizedString(@"Recent chats", @"");
     label.font = [UIFont systemFontOfSize:13.5];
     label.textColor = ColorFromRGB(0x939393);
     [view addSubview:label];
@@ -107,7 +107,7 @@ static NSString *forwardCellIdentifier = @"forwardCellIdentifier";
         UIWindow *window = [[UIApplication sharedApplication] keyWindow];
         MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:window];
         dispatch_async(dispatch_get_main_queue(), ^{
-            hud.label.text = @"发送中";
+            hud.label.text = NSLocalizedString(@"Sending", @"");
             [window addSubview:hud];
             [window bringSubviewToFront:hud];
             [hud showAnimated:YES];
@@ -192,8 +192,8 @@ static NSString *forwardCellIdentifier = @"forwardCellIdentifier";
 }
 
 - (void)setupNavi {
-    self.title = @"选择一个聊天";
-    UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithTitle:@"取消"
+    self.title = NSLocalizedString(@"Select a chat", @"");
+    UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"")
                                                                     style:UIBarButtonItemStylePlain
                                                                    target:self
                                                                    action:@selector(onLeftButtonClick:)];

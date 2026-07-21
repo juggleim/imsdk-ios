@@ -21,9 +21,9 @@
 
 #define CallTopGGradientHeight 100
 #define CallBottomGradientHeight (([UIScreen mainScreen].bounds.size.height == 812) ? 242.0f : 208.0f)
-//  判断是否为iphoneX，是iphoneX，底部按钮整体上移34
+//  Check whether the device is iPhone X; if so, move the bottom buttons up by 34
 #define CallExtraSpace (([UIScreen mainScreen].bounds.size.height == 812) ? 34.0f : 0.0f)
-// iphoneX顶部额外加上statusbar的30（实际刘海的高度）
+// Add 30 to the top area of iPhone X for the status bar (the actual notch height)
 #define CallStatusBarHeight (([UIScreen mainScreen].bounds.size.height == 812) ? 30.0f : 0.0f)
 
 #endif /* CallTheme_h */

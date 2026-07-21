@@ -171,12 +171,12 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
     /// Open the user edit action sheet.
     @objc func onClickEdit() {
         let changeNameItem = SBUActionSheetItem(
-            title: "修改昵称",
+            title: NSLocalizedString("Edit nickname", comment: ""),
             color: theme.itemTextColor,
             image: nil
         ) {}
         let changeImageItem = SBUActionSheetItem(
-            title: "修改头像",
+            title: NSLocalizedString("Change avatar", comment: ""),
             color: theme.itemTextColor,
             image: nil
         ) {}
@@ -214,9 +214,9 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
         SBUAlertView.show(
-            title: "修改昵称",
+            title: NSLocalizedString("Edit nickname", comment: ""),
             needInputField: true,
-            placeHolder: "输入昵称",
+            placeHolder: NSLocalizedString("Enter nickname", comment: ""),
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton
@@ -278,7 +278,7 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         
         let switchButton = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
         switchButton.backgroundColor = UIColor(red: 31.0 / 255.0, green: 124.0 / 255.0, blue: 252.0 / 255.0, alpha: 1.0)
-        switchButton.setTitle("切换账号", for: .normal)
+        switchButton.setTitle(NSLocalizedString("Switch account", comment: ""), for: .normal)
         switchButton.layer.cornerRadius = 5.f
         switchButton.layer.borderWidth = 0.5
         switchButton.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
@@ -287,7 +287,7 @@ open class MySettingsViewController: UIViewController, UINavigationControllerDel
         
         let quitButton = UIButton(frame: CGRect(x: 10, y: 80, width: self.view.bounds.size.width-20.0, height: 42))
         quitButton.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
-        quitButton.setTitle("退出登录", for: .normal)
+        quitButton.setTitle(NSLocalizedString("Log out", comment: ""), for: .normal)
         quitButton.layer.cornerRadius = 5.f
         quitButton.layer.borderWidth = 0.5
         quitButton.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
@@ -327,11 +327,11 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .privacyPolicy:
-            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: "隐私协议")
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/privacy.html", titleString: NSLocalizedString("Privacy Policy", comment: ""))
             vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .userAgreement:
-            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: "用户协议")
+            let vc = SettingsWebViewController(url: "https://www.juggle.im/jc/user.html", titleString: NSLocalizedString("Terms of Service", comment: ""))
             vc.hidesBottomBarWhenPushed = true
             self.navigationController?.pushViewController(vc, animated: true)
         case .none:
@@ -346,27 +346,27 @@ extension MySettingsViewController: UITableViewDataSource, UITableViewDelegate {
             switch type {
             case .qrcode:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "我的二维码"
+                cell.leftLabel.text = NSLocalizedString("My QR Code", comment: "")
                 return cell
 //            case .setLanguage:
 //                let cell = getArrowCell()
-//                cell.leftLabel.text = "语言设置"
+//                cell.leftLabel.text = NSLocalizedString("Language Settings", comment: "")
 //                return cell
             case .push:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "推送设置"
+                cell.leftLabel.text = NSLocalizedString("Push Settings", comment: "")
                 return cell
             case .globalDisturb:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "全局免打扰"
+                cell.leftLabel.text = NSLocalizedString("Global Do Not Disturb", comment: "")
                 return cell
             case .privacyPolicy:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "隐私协议"
+                cell.leftLabel.text = NSLocalizedString("Privacy Policy", comment: "")
                 return cell
             case .userAgreement:
                 let cell = getArrowCell()
-                cell.leftLabel.text = "用户协议"
+                cell.leftLabel.text = NSLocalizedString("Terms of Service", comment: "")
                 return cell
             }
         }

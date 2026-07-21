@@ -11,7 +11,7 @@ class UnknownMessageCell: BaseNotifyMessageCell {
     override func configure(with configuration: SBUBaseMessageCellParams) {
         self.messageLabel.numberOfLines = 0
         self.messageLabel.textAlignment = .center
-        self.messageLabel.text = "无法识别的消息"
+        self.messageLabel.text = NSLocalizedString("Unrecognized message", comment: "")
         self.layoutIfNeeded()
     }
 }
