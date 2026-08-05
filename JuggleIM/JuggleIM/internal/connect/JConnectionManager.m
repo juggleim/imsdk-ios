@@ -207,11 +207,13 @@
 - (void)connectCompleteWithCode:(JErrorCodeInternal)error
                          userId:(NSString *)userId
                         session:(NSString *)session
+                     enableE2EE:(BOOL)enableE2EE
                           extra:(NSString *)extra {
     if (error == JErrorCodeInternalNone) {
         [self.intervalGenerator reset];
         self.core.userId = userId;
         self.core.session = session;
+        self.core.enableE2EE = enableE2EE;
         [self openDB];
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];

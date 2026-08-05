@@ -3462,6 +3462,12 @@
 }
 
 - (void)checkAndUploadPubKey:(void (^)(void))completeBlock {
+    if (!self.core.enableE2EE) {
+        if (completeBlock) {
+            completeBlock();
+        }
+        return;
+    }
     if (self.pubKey && self.priKey) {
         if (completeBlock) {
             completeBlock();

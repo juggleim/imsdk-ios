@@ -29,6 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)connectCompleteWithCode:(JErrorCodeInternal)error
                          userId:(NSString *)userId
                         session:(NSString *)session
+                     enableE2EE:(BOOL)enableE2EE
                           extra:(NSString *)extra;
 - (void)disconnectWithCode:(JErrorCodeInternal)error
                      extra:(NSString *)extra;

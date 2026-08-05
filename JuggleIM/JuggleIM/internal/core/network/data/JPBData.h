@@ -95,6 +95,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *session;
 @property (nonatomic, copy) NSString *extra;
+@property (nonatomic, assign) BOOL enableE2EE;
 @end
 
 @interface JPublishMsgAck : NSObject

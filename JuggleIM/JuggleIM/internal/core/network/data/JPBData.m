@@ -2053,6 +2053,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.code = body.code;
             a.session = body.session;
             a.extra = body.ext;
+            a.enableE2EE = body.openE2Ee;
             obj.connectAck = a;
             obj.timestamp = body.timestamp;
         }

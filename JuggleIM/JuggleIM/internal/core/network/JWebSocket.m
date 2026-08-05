@@ -1509,8 +1509,8 @@ inConversation:(JConversation *)conversation
             NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
             if (httpNumber.longValue == 403) {
                 JLogE(@"WS-Connect", @"webSocket 403");
-                if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
-                    [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" extra:@""];
+                if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
+                    [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO extra:@""];
                 }
             } else {
                 if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
@@ -1538,8 +1538,8 @@ inConversation:(JConversation *)conversation
                 NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
                 if (httpNumber.longValue == 403) {
                     JLogE(@"WS-Connect", @"webSocket 403");
-                    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
-                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" extra:@""];
+                    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
+                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO extra:@""];
                     }
                 } else {
                     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
@@ -1843,10 +1843,11 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
-    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:extra:)]) {
+    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
         [self.connectDelegate connectCompleteWithCode:connectAck.code
                                                userId:connectAck.userId
                                               session:connectAck.session
+                                           enableE2EE:connectAck.enableE2EE
                                                 extra:connectAck.extra];
     }
 }
