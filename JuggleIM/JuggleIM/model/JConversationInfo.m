@@ -20,7 +20,8 @@
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
         displayName = self.gInfo.groupName;
-    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+    } else if (self.conversation.conversationType == JConversationTypePrivate
+        || self.conversation.conversationType == JConversationTypePrivateE2EE) {
         JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
         displayName = friendInfo.alias;
         if (displayName.length == 0) {
@@ -35,7 +36,8 @@
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
         alias = self.gInfo.groupName;
-    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+    } else if (self.conversation.conversationType == JConversationTypePrivate
+        || self.conversation.conversationType == JConversationTypePrivateE2EE) {
         JFriendInfo *friendInfo = [JIM.shared.userInfoManager getFriendInfo:self.conversation.conversationId];
         alias = friendInfo.alias;
     }
@@ -47,7 +49,8 @@
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
         name = self.gInfo.groupName;
-    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+    } else if (self.conversation.conversationType == JConversationTypePrivate
+        || self.conversation.conversationType == JConversationTypePrivateE2EE) {
         name = self.userInfo.userName;
     }
     return name;
@@ -58,7 +61,8 @@
     if (self.conversation.conversationType == JConversationTypeGroup
         || self.conversation.conversationType == JConversationTypePublicService) {
         portrait = self.gInfo.portrait;
-    } else if (self.conversation.conversationType == JConversationTypePrivate) {
+    } else if (self.conversation.conversationType == JConversationTypePrivate
+        || self.conversation.conversationType == JConversationTypePrivateE2EE) {
         portrait = self.userInfo.portrait;
     }
     return portrait;

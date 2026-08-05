@@ -11,7 +11,7 @@ class SettingsPushViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "推送设置"
+        self.titleView.text = NSLocalizedString("Push Settings", comment: "")
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -35,7 +35,7 @@ extension SettingsPushViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = BaseSettingTableViewCell()
         cell.setCellStyle(.DefaultStyle)
-        cell.leftLabel.text = "推送语言设置"
+        cell.leftLabel.text = NSLocalizedString("Push Language Settings", comment: "")
         return cell
     }
     

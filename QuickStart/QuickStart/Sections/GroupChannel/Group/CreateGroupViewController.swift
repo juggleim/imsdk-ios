@@ -32,7 +32,7 @@ class CreateGroupViewController: BaseTableListViewController {
     override func configNavigationItem() {
         super.configNavigationItem()
         let rightItem =  UIBarButtonItem(
-            title: "创建",
+            title: "Create",
             style: .plain,
             target: self,
             action: #selector(onClickMenu)

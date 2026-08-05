@@ -50,14 +50,14 @@
 #pragma mark - helper
 - (void)configData {
     if (self.conversation.conversationType == JConversationTypeGroup) {
-        self.countLabel.text = [NSString stringWithFormat:@"%ld 人", self.group.memberCount];
+        self.countLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%ld people", @""), self.group.memberCount];
         if (self.group.portrait.length == 0) {
             self.portraitImageView.image = [PortraitUtil defaultPortraitImageWith:self.group.groupId name:self.group.groupName type:JConversationTypeGroup];
         } else {
             [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:self.group.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
         }
         self.nameLabel.text = self.group.groupName;
-        self.infoLabel.text = @"扫一扫群二维码，立刻加入该群";
+        self.infoLabel.text = NSLocalizedString(@"Scan the group QR code to join immediately", @"");
         [HttpManager.shared getGroupQRCodeWithGroupId:self.group.groupId
                                            completion:^(NSInteger code, NSString * _Nullable base64) {
             if (code != 0) {
@@ -80,7 +80,7 @@
             [self.portraitImageView sd_setImageWithURL:[NSURL URLWithString:userInfo.portrait] placeholderImage:[UIImage imageNamed:@"iconUser"]];
         }
         self.nameLabel.text = userInfo.userName;
-        self.infoLabel.text = @"扫一扫二维码，加我为好友";
+        self.infoLabel.text = NSLocalizedString(@"Scan the QR code to add me as a friend", @"");
         [HttpManager.shared getUserQRCodeWithCompletion:^(NSInteger code, NSString * _Nullable base64) {
             if (code != 0) {
                 return;
@@ -99,9 +99,9 @@
 
 - (void)setNaviItem {
     if (self.conversation.conversationType == JConversationTypeGroup) {
-        self.navigationItem.title = @"群二维码";
+        self.navigationItem.title = NSLocalizedString(@"Group QR Code", @"");
     } else {
-        self.navigationItem.title = @"我的二维码";
+        self.navigationItem.title = NSLocalizedString(@"My QR Code", @"");
     }
     UIBarButtonItem *leftButton = [SBUBarButtonItem backButtonWithTarget:self selector:@selector(clickBackBtn)];
     self.navigationItem.leftBarButtonItem = leftButton;
@@ -137,9 +137,9 @@
 - (void)saveImageToPhotos:(UIImage *)image {
     [self savePhotosAlbumWithImage:image authorizationStatusBlock:^{
         UIAlertController *alertController =
-            [UIAlertController alertControllerWithTitle:nil message:@"没有访问权限，请前往“设置-隐私-照片”选项中，允许访问您的照片" preferredStyle:UIAlertControllerStyleAlert];
+            [UIAlertController alertControllerWithTitle:nil message:NSLocalizedString(@"No access permission. Go to Settings > Privacy > Photos and allow access to your photos", @"") preferredStyle:UIAlertControllerStyleAlert];
         [alertController
-            addAction:[UIAlertAction actionWithTitle:@"确认"
+            addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"Confirm", @"")
                                                style:UIAlertActionStyleDestructive
                                              handler:^(UIAlertAction *_Nonnull action){
             [self.navigationController popViewControllerAnimated:true];
@@ -172,9 +172,9 @@
 
 - (void)showHUDWithSuccess:(BOOL)success {
     if (success) {
-        [self.view showHUDMessage:@"图片保存成功"];
+        [self.view showHUDMessage:NSLocalizedString(@"Image saved successfully", @"")];
     } else {
-        [self.view showHUDMessage:@"图片保存失败"];
+        [self.view showHUDMessage:NSLocalizedString(@"Failed to save image", @"")];
     }
 }
 
@@ -396,7 +396,7 @@
         _saveButton = [[UIButton alloc] init];
         [_saveButton setTitleColor:ColorFromRGB(0x0099ff) forState:(UIControlStateNormal)];
         _saveButton.titleLabel.font = [UIFont systemFontOfSize:13];
-        [_saveButton setTitle:@"保存图片" forState:(UIControlStateNormal)];
+        [_saveButton setTitle:NSLocalizedString(@"Save Image", @"") forState:(UIControlStateNormal)];
         [_saveButton addTarget:self
                         action:@selector(didClickSaveAction)
               forControlEvents:(UIControlEventTouchUpInside)];
@@ -409,7 +409,7 @@
         _shareBtn = [[UIButton alloc] init];
         [_shareBtn setTitleColor:ColorFromRGB(0x0099ff) forState:(UIControlStateNormal)];
         _shareBtn.titleLabel.font = [UIFont systemFontOfSize:13];
-        [_shareBtn setTitle:@"分享至 JuggleChat" forState:(UIControlStateNormal)];
+        [_shareBtn setTitle:NSLocalizedString(@"Share to JuggleChat", @"") forState:(UIControlStateNormal)];
         [_shareBtn addTarget:self
                       action:@selector(didShareAction)
             forControlEvents:(UIControlEventTouchUpInside)];

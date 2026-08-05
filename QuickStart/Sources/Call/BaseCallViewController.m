@@ -532,50 +532,50 @@
 }
 
 #pragma mark - JCallSessionDelegate
-/// 通话已接通
+/// Call connected
 - (void)callDidConnect {
     [self resetLayout];
 }
 
-/// 通话已结束
-/// - Parameter finishReason: 结束原因
+/// Call ended
+/// - Parameter finishReason: finish reason
 - (void)callDidFinish:(JCallFinishReason)finishReason {
     NSLog(@"call finish, reason is %ld", finishReason);
     [CallCenter.shared dismissCallViewController:self];
 }
 
-/// 用户被邀请
-/// - Parameter userId: 被邀请的用户 id
+/// User invited
+/// - Parameter userId: invited user ID
 - (void)usersDidInvite:(NSArray<NSString *> *)userIdList
              inviterId:(NSString *)inviterId {
     [self resetLayout];
 }
 
-/// 用户加入通话
-/// - Parameter userId: 用户 id
+/// User joined the call
+/// - Parameter userId: user ID
 - (void)usersDidConnect:(NSArray<NSString *> *)userIdList {
     
 }
 
-/// 用户退出通话
-/// - Parameter userId: 用户 id
+/// User left the call
+/// - Parameter userId: user ID
 - (void)usersDidLeave:(NSArray<NSString *> *)userIdList {
     
 }
 
-/// 用户开启/关闭摄像头
+/// User camera on/off
 /// - Parameters:
-///   - enable: 是否开启
-///   - userId: 用户 id
+///   - enable: whether enabled
+///   - userId: user ID
 - (void)userCamaraDidChange:(BOOL)enable
                      userId:(NSString *)userId {
     [self resetLayout];
 }
 
-/// 用户开启/关闭麦克风
+/// User microphone on/off
 /// - Parameters:
-///   - enable: 是否开启
-///   - userId: 用户 id
+///   - enable: whether enabled
+///   - userId: user ID
 - (void)userMicrophoneDidChange:(BOOL)enable
                          userId:(NSString *)userId {
     [self resetLayout];
@@ -594,8 +594,8 @@
     NSLog(@"videoFirstFrameDidRender, userId is %@", userId);
 }
 
-/// 通话中的错误回调
-/// - Parameter errorCode: 错误码
+/// Call error callback
+/// - Parameter errorCode: error code
 - (void)errorDidOccur:(JCallErrorCode)errorCode {
     
 }
@@ -653,12 +653,12 @@
 
 - (CAGradientLayer *)getGradientLayerWithFrame:(CGRect)frame direction:(BOOL)isUpToDown{
 
-    //为透明度设置渐变效果
+    // Add a gradient for opacity
     UIColor *colorBegin = [UIColor colorWithRed:(0/255.0)  green:(0/255.0)  blue:(0/255.0)  alpha:0.3];
     UIColor *colorEnd = [UIColor colorWithRed:(0/255.0)  green:(0/255.0)  blue:(0/255.0)  alpha:0.0];
     NSArray *colors = [NSArray arrayWithObjects:(id)colorBegin.CGColor, (id)colorEnd.CGColor, nil];
     CAGradientLayer *gradient = [CAGradientLayer layer];
-    //设置开始和结束位置(设置渐变的方向)
+    // Set the start and end positions (gradient direction)
     if (isUpToDown) {
         gradient.startPoint = CGPointMake(0, 0);
         gradient.endPoint = CGPointMake(0, 1);

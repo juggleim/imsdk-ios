@@ -20,7 +20,7 @@ class GroupManageViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "群管理"
+        self.titleView.text = "Group Management"
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
 
@@ -43,17 +43,17 @@ extension GroupManageViewController: UITableViewDataSource, UITableViewDelegate 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             let cell = getArrowCell()
-            cell.leftLabel.text = "变更群主"
+            cell.leftLabel.text = NSLocalizedString("Change group owner", comment: "")
             return cell
         } else if indexPath.row == 1 {
             let cell = getSwitchCell()
-            cell.leftLabel.text = "群组全局禁言"
+            cell.leftLabel.text = NSLocalizedString("Global group mute", comment: "")
             cell.switchButton.isOn = (mute != 0)
             cell.switchButton.addTarget(self, action: #selector(onSetMute(_:)), for: .valueChanged)
             return cell
         } else if indexPath.row == 2 {
             let cell = getSwitchCell()
-            cell.leftLabel.text = "新人入群查看历史"
+            cell.leftLabel.text = "Allow new members to view history"
             cell.switchButton.isOn = (historyMessageVisible != 0)
             cell.switchButton.addTarget(self, action: #selector(onSetHistory(_:)), for: .valueChanged)
             return cell

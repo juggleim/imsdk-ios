@@ -317,7 +317,7 @@ open class SBUGroupChannelViewModel: SBUBaseChannelViewModel {
             return
         }
         var messageIds: [String] = []
-        //只有单聊发，只有收到的消息发，只有没有 hasRead 发
+        // Send only in direct chats, for received messages, and when hasRead is absent
         for message in messages {
             if message.direction == .receive && !message.hasRead {
                 messageIds.append(message.messageId)

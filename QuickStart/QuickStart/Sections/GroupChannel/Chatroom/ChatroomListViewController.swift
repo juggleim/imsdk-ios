@@ -41,7 +41,7 @@ class ChatroomListViewController : BaseTableListViewController {
         super.configNavigationItem()
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
-        self.titleView.text = "聊天室"
+        self.titleView.text = "Chatroom"
     }
     
     @objc func onTapLeftBarButton() {

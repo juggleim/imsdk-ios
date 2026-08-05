@@ -160,7 +160,7 @@
 }
 
 - (void)updateUI {
-    self.titleLabel.text = @"发送给";
+    self.titleLabel.text = NSLocalizedString(@"Send to", @"");
     NSString *displayString = self.messageContent.conversationDigest;
     if (displayString.length > 10) {
         displayString = [[displayString substringToIndex:10] stringByAppendingString:@"..."];
@@ -212,7 +212,7 @@
 - (UIButton *)cancelButton {
     if (!_cancelButton) {
         _cancelButton = [[UIButton alloc] init];
-        [_cancelButton setTitle:@"取消" forState:UIControlStateNormal];
+        [_cancelButton setTitle:NSLocalizedString(@"Cancel", @"") forState:UIControlStateNormal];
         [_cancelButton setTitleColor:ColorFromRGB(0x262626) forState:UIControlStateNormal];
         _cancelButton.titleLabel.font = [UIFont systemFontOfSize:18];
         [_cancelButton addTarget:self action:@selector(cancelButtonEvent) forControlEvents:UIControlEventTouchUpInside];
@@ -223,7 +223,7 @@
 - (UIButton *)confirmButton {
     if (!_confirmButton) {
         _confirmButton = [[UIButton alloc] init];
-        [_confirmButton setTitle:@"发送" forState:UIControlStateNormal];
+        [_confirmButton setTitle:NSLocalizedString(@"Send", @"") forState:UIControlStateNormal];
         [_confirmButton setTitleColor:ColorFromRGB(0x3A91F3) forState:UIControlStateNormal];
         _confirmButton.titleLabel.font = [UIFont systemFontOfSize:18];
         [_confirmButton addTarget:self

@@ -11,27 +11,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MultiAudioCallViewController : BaseCallViewController
 /*!
- 通话呼入时，最上方显示的邀请者头像View
+ Avatar view of the inviter shown at the top during incoming calls
  */
 @property(nonatomic, strong) UIImageView *inviterPortraitView;
 
 /*!
- 通话呼入时，最上方显示的邀请者名字Label
+ Name label of the inviter shown at the top during incoming calls
  */
 @property(nonatomic, strong) UILabel *inviterNameLabel;
 
 /*!
- 通话呼入时，用户列表说明的Label
+ User list description label during incoming calls
  */
 @property(nonatomic, strong) UILabel *userCollectionTitleLabel;
 
 /*!
- 用户头像列表的CollectionView
+ user avatar list collection view
  */
 @property(nonatomic, strong) UICollectionView *userCollectionView;
 
 /*!
- 用户头像列表CollectionView所使用的Layout
+ layout used by the user avatar list collection view
  */
 @property(nonatomic, strong) UICollectionViewLayout *userCollectionViewLayout;
 

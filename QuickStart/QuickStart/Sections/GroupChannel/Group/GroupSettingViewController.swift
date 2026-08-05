@@ -33,7 +33,7 @@ class GroupSettingViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "群组信息"
+        self.titleView.text = NSLocalizedString("Group Info", comment: "")
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -87,7 +87,7 @@ class GroupSettingViewController: BaseTableListViewController {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.bounds.size.width, height: 150))
         let button = UIButton(frame: CGRect(x: 10, y: 29, width: self.view.bounds.size.width-20.0, height: 42))
         button.backgroundColor = UIColor(red: 235.0 / 255.0, green: 70.0 / 255.0, blue: 72.0 / 255.0, alpha: 1.0)
-        button.setTitle("退出并删除", for: .normal)
+        button.setTitle(NSLocalizedString("Leave and Delete", comment: ""), for: .normal)
         button.layer.cornerRadius = 5.f
         button.layer.borderWidth = 0.5
         button.layer.borderColor = UIColor(red: 0xcc / 255.0, green: 0x44 / 255.0, blue: 0x45 / 255.0, alpha: 1.0).cgColor
@@ -145,9 +145,9 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             if indexPath.row == 0 {
-                // 群成员
+                // Members
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "群成员"
+                cell.leftLabel.text = NSLocalizedString("Members", comment: "")
                 if let count = self.groupInfo?.memberCount, count > 0 {
                     cell.rightLabel.text = "\(count)"
                 }
@@ -155,47 +155,47 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             }
         } else if indexPath.section == 1 {
             if indexPath.row == 0 {
-                // 群名称
+                // Group Name
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "群名称"
+                cell.leftLabel.text = NSLocalizedString("Group Name", comment: "")
                 cell.rightLabel.text = self.groupInfo?.groupName ?? ""
                 return cell
             } else if indexPath.row == 1 {
-                // 群二维码
+                // Group QR Code
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "群二维码"
+                cell.leftLabel.text = NSLocalizedString("Group QR Code", comment: "")
                 return cell
             } else if indexPath.row == 2 {
-                // 群公告
+                // Group Announcement
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "群公告"
+                cell.leftLabel.text = NSLocalizedString("Group Announcement", comment: "")
                 return cell
             } else if indexPath.row == 3 {
-                // 群昵称
+                // Group nickname
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "我在本群的昵称"
+                cell.leftLabel.text = NSLocalizedString("My nickname in this group", comment: "")
                 cell.rightLabel.text = self.groupInfo?.groupDisplayName ?? ""
                 return cell
             } else if indexPath.row == 4 {
-                // 群管理
+                // Group Management
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "群管理"
+                cell.leftLabel.text = NSLocalizedString("Group Management", comment: "")
                 return cell
             }
         } else if indexPath.section == 2 {
             if indexPath.row == 0 {
-                // 消息免打扰
+                // Do Not Disturb
                 let cell = getSwitchCell()
-                cell.leftLabel.text = "消息免打扰"
+                cell.leftLabel.text = NSLocalizedString("Do Not Disturb", comment: "")
                 cell.switchButton.addTarget(self, action: #selector(onSetMute(_:)), for: .valueChanged)
                 if let mute = self.conversationInfo?.mute {
                     cell.switchButton.isOn = mute
                 }
                 return cell
             } else if indexPath.row == 1 {
-                // 会话置顶
+                // Pin conversation
                 let cell = getSwitchCell()
-                cell.leftLabel.text = "会话置顶"
+                cell.leftLabel.text = NSLocalizedString("Pin conversation", comment: "")
                 cell.switchButton.addTarget(self, action: #selector(onSetTop(_:)), for: .valueChanged)
                 if let top = self.conversationInfo?.isTop {
                     cell.switchButton.isOn = top
@@ -204,9 +204,9 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
             }
         } else if indexPath.section == 3 {
             if indexPath.row == 0 {
-                // 清除聊天记录
+                // Clear chat history
                 let cell = getRightLabelArrowCell()
-                cell.leftLabel.text = "清除聊天记录"
+                cell.leftLabel.text = NSLocalizedString("Clear chat history", comment: "")
                 return cell
             }
         }
@@ -244,7 +244,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     private func groupNickname() {
-        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] newNickname in
+        let okButton = SBUAlertButtonItem(title: NSLocalizedString("Confirm", comment: "")) {[weak self] newNickname in
             guard let self = self else { return }
             guard let newNickname = newNickname as? String else { return }
             
@@ -328,7 +328,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     private func clearMessages() {
-        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] _ in
+        let okButton = SBUAlertButtonItem(title: NSLocalizedString("Confirm", comment: "")) {[weak self] _ in
             SBULoading.start()
             JIM.shared().messageManager.clearMessages(in: self?.conversationInfo?.conversation, startTime: 0) {
                 SBULoading.stop()
@@ -338,7 +338,7 @@ extension GroupSettingViewController: UITableViewDataSource, UITableViewDelegate
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
         SBUAlertView.show(
-            title: "确定清除聊天记录？",
+            title: NSLocalizedString("Clear chat history?", comment: ""),
             needInputField: false,
             centerYRatio: 0.75,
             confirmButtonItem: okButton,

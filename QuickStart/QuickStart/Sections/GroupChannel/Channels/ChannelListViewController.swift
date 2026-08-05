@@ -35,22 +35,22 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     
     @objc func onClickMenu() {
         let searchUserItem = SBUActionSheetItem(
-            title: "添加好友",
+            title: NSLocalizedString("Add Friend", comment: ""),
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let createGroupItem = SBUActionSheetItem(
-            title: "创建群组",
+            title: "CreateGroups",
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let scanItem = SBUActionSheetItem(
-            title: "扫一扫",
+            title: NSLocalizedString("Scan QR Code", comment: ""),
             color: SBUTheme.channelSettingsTheme.itemTextColor,
             image: nil
         ) {}
         let cancelItem = SBUActionSheetItem(
-            title: "取消",
+            title: NSLocalizedString("Cancel", comment: ""),
             color: SBUTheme.channelSettingsTheme.itemColor
         ) {}
         SBUActionSheet.show(
@@ -61,7 +61,7 @@ class ChannelListViewController: SBUGroupChannelListViewController {
     }
     
     func searchUser() {
-        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] phoneNumber in
+        let okButton = SBUAlertButtonItem(title: "Confirm") {[weak self] phoneNumber in
             guard let phoneNumber = phoneNumber as? String else { return }
             HttpManager.shared.searchUser(phoneNumber: phoneNumber) { code, jcUser in
                 DispatchQueue.main.async {
@@ -74,11 +74,11 @@ class ChannelListViewController: SBUGroupChannelListViewController {
                 }
             }
         }
-        let cancelButton = SBUAlertButtonItem(title: "取消") { _ in }
+        let cancelButton = SBUAlertButtonItem(title: NSLocalizedString("Cancel", comment: "")) { _ in }
         SBUAlertView.show(
-            title: "添加好友",
+            title: NSLocalizedString("Add Friend", comment: ""),
             needInputField: true,
-            placeHolder: "输入手机号码",
+            placeHolder: "Enter phone number",
             centerYRatio: 0.75,
             confirmButtonItem: okButton,
             cancelButtonItem: cancelButton

@@ -160,12 +160,12 @@ open class SBUGroupChannelSettingsViewController: SBUBaseChannelSettingsViewCont
     }
     
     open func groupChannelSettingsModuleDidClearMessages(_ listComponent: SBUGroupChannelSettingsModule.List) {
-        let okButton = SBUAlertButtonItem(title: "确认") {[weak self] _ in
+        let okButton = SBUAlertButtonItem(title: "Confirm") {[weak self] _ in
             self?.viewModel?.clearMessages()
         }
         let cancelButton = SBUAlertButtonItem(title: SBUStringSet.Cancel) { _ in }
         SBUAlertView.show(
-            title: "确定清除聊天记录？",
+            title: "Clear chat history?",
             needInputField: false,
             centerYRatio: 0.75,
             confirmButtonItem: okButton,

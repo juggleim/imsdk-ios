@@ -11,19 +11,19 @@ class SettingsServerViewController: UIViewController {
     let titleView = SBUNavigationTitleView()
     let appKeyField: UITextField = {
         let field = UITextField()
-        field.placeholder = " App Key"
+        field.placeholder = NSLocalizedString("App Key", comment: "")
         field.layer.borderWidth = 1
         return field
     }()
     let serverField: UITextField = {
         let field = UITextField()
-        field.placeholder = " Server url（以 http:// 或者 https:// 开头）"
+        field.placeholder = NSLocalizedString("Server URL (must start with http:// or https://)", comment: "")
         field.layer.borderWidth = 1
         return field
     }()
     let saveButton: UIButton = {
         let button = UIButton()
-        button.setTitle("保存", for: .normal)
+        button.setTitle(NSLocalizedString("Save", comment: ""), for: .normal)
         button.layer.cornerRadius = 5
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.addTarget(self, action: #selector(onSave), for: .touchUpInside)
@@ -31,7 +31,7 @@ class SettingsServerViewController: UIViewController {
     }()
     let cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("取消", for: .normal)
+        button.setTitle(NSLocalizedString("Cancel", comment: ""), for: .normal)
         button.layer.cornerRadius = 5
         button.backgroundColor = UIColor(hex: "#0091FF")
         button.addTarget(self, action: #selector(onCancel), for: .touchUpInside)
@@ -54,11 +54,11 @@ class SettingsServerViewController: UIViewController {
     
 //    func configNavigationItem() {
 //        titleView.textAlignment = .center
-//        titleView.text = "服务器设置"
+//        titleView.text = "Server Settings"
 //        self.navigationItem.titleView = titleView
 //        let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
 //        self.navigationItem.leftBarButtonItem = leftButton
-//        let rightButton = UIBarButtonItem(title: "保存", style: .plain, target: self, action: #selector(onSave))
+//        let rightButton = UIBarButtonItem(title: NSLocalizedString("Save", comment: ""), style: .plain, target: self, action: #selector(onSave))
 //        self.navigationItem.rightBarButtonItem = rightButton
 //    }
     
@@ -99,7 +99,7 @@ class SettingsServerViewController: UIViewController {
             server.isEmpty ||
             !checkServerPrefix(server: server) {
             SBUAlertView.show(
-                title: "输入不合法",
+                title: NSLocalizedString("Invalid input", comment: ""),
                 confirmButtonItem: SBUAlertButtonItem(
                     title: SBUStringSet.OK,
                     completionHandler: { _ in

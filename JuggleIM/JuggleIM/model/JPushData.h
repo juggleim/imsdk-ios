@@ -20,6 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// Extra field, can carry custom JSON
 @property (nonatomic, copy) NSString *extra;
 
+/// Options for jiguang(Aurora), can carry JSON
+@property (nonatomic, copy) NSString *jgOptions;
+
 @end
 
 NS_ASSUME_NONNULL_END

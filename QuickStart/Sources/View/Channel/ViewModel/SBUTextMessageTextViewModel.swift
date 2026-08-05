@@ -78,21 +78,21 @@ public struct SBUTextMessageTextViewModel {
         } else if let callMessage = message?.content as? JCallFinishNotifyMessage {
             switch callMessage.finishType {
             case .cancel:
-                text = "已取消"
+                text = NSLocalizedString("Cancelled", comment: "")
             case .reject:
-                text = "已拒绝"
+                text = NSLocalizedString("Declined", comment: "")
             case .noResponse:
-                text = "未接听"
+                text = NSLocalizedString("Unanswered", comment: "")
             case .complete:
                 let timeString = SBUTextMessageTextViewModel.getStringForTime(callMessage.duration)
-                text = "通话时长 \(timeString)"
+                text = String.localizedStringWithFormat(NSLocalizedString("Call duration %@", comment: ""), timeString)
             @unknown default:
                 break
             }
         } else if let streamTextMessage = message?.content as? StreamTextMessage {
             text = streamTextMessage.content ?? ""
         } else {
-            text = "unknown"
+            text = NSLocalizedString("unknown", comment: "")
         }
         
         if let isEdited = isEdited {

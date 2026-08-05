@@ -22,7 +22,7 @@ class EmojiManager {
                 utf16Values.append(value)
             }
         }
-        // 组合两个 UTF-16 代码单元为一个 UTF-32 代码单元
+        // Combine two UTF-16 code units into one UTF-32 code unit
         let utf32Value = (UInt32(utf16Values[0]) << 10) + UInt32(utf16Values[1]) - 0x35fdc00
         if let scalar = UnicodeScalar(utf32Value) {
             return String(scalar)

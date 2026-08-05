@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) NSString *token;
 @property (nonatomic, copy) NSString *userId;
 @property (nonatomic, copy) NSString *session;
+@property (nonatomic, assign) BOOL enableE2EE;
 @property (nonatomic, strong) JWebSocket *webSocket;
 @property (nonatomic, strong) dispatch_queue_t sendQueue;
 @property (nonatomic, strong) dispatch_queue_t receiveQueue;

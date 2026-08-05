@@ -85,7 +85,7 @@ class ContactCardMessageCell: SBUContentBaseMessageCell {
             uiImage: image
         )
         
-        typeLabel.text = "个人名片"
+        typeLabel.text = NSLocalizedString("Contact card", comment: "")
         
         if configuration.messagePosition == .left {
             nameLabel.textColor = self.theme.userMessageLeftTextColor

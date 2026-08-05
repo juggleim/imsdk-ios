@@ -2,8 +2,8 @@
 
 @interface UITextViewAndPlaceholder : UITextView
 
-@property (nonatomic, copy) NSString *myPlaceholder; //文字
+@property (nonatomic, copy) NSString *myPlaceholder; // Text
 
-@property (nonatomic, strong) UIColor *myPlaceholderColor; //文字颜色
+@property (nonatomic, strong) UIColor *myPlaceholderColor; // Text color
 
 @end

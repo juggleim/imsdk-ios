@@ -280,7 +280,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
             name = user?.userName ?? ""
             attributeName = NSMutableAttributedString(string: name)
             if user?.type == .bot {
-                name.append(" 智能体")
+                name.append(" assistant")
                 attributeName = NSMutableAttributedString(string: name)
                 let range = NSRange(location: name.count-4, length: 4)
                 attributeName.addAttribute(.foregroundColor, value: UIColor.blue, range: range)
@@ -321,7 +321,7 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
         // Last message
         self.messageLabel.lineBreakMode = .byTruncatingTail
         if let draft = conversationInfo.draft, draft.count > 0 {
-            let content = "[草稿] \(draft)"
+            let content = "[Draft] \(draft)"
             let attributeString = NSMutableAttributedString(string: content)
             let range = NSRange(location: 0, length: 4)
             attributeString.addAttribute(.foregroundColor, value: UIColor.red, range: range)
@@ -333,9 +333,9 @@ open class SBUGroupChannelCell: SBUBaseChannelCell {
                 if let user = JIM.shared().userInfoManager.getUserInfo(lastMessage.senderUserId) {
                     userName = user.userName ?? userName
                 }
-                tip = "\(userName) 撤回了一条消息"
+                tip = "\(userName) recalled a message"
             } else {
-                tip = "你 撤回了一条消息"
+                tip = "You recalled a message"
             }
             self.messageLabel.text = tip
         } else if let digest = conversationInfo.lastMessage?.content?.conversationDigest() {

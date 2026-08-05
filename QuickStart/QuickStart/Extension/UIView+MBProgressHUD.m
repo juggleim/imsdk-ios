@@ -67,7 +67,7 @@ CGFloat const MBPHUDShowTime = 2.0f;
     dispatch_async(dispatch_get_main_queue(), ^{
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self animated:YES];
         hud.mode = MBProgressHUDModeAnnularDeterminate;
-        hud.label.text = @"Loading...";
+        hud.label.text = NSLocalizedString(@"Loading...", @"");
         hud.removeFromSuperViewOnHide = YES;
         self.loadingView = hud;
     });

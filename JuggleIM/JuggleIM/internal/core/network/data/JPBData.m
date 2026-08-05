@@ -359,6 +359,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         pbPushData.title = message.pushData.title;
         pbPushData.pushText = message.pushData.content;
         pbPushData.pushExtraData = message.pushData.extra;
+        pbPushData.jPushOptions = message.pushData.jgOptions;
         upMsg.pushData = pbPushData;
     }
     upMsg.lifeTime = message.lifeTime;
@@ -2052,6 +2053,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.code = body.code;
             a.session = body.session;
             a.extra = body.ext;
+            a.enableE2EE = body.openE2Ee;
             obj.connectAck = a;
             obj.timestamp = body.timestamp;
         }

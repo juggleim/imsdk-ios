@@ -37,7 +37,7 @@ class ContactCardMessage: JMessageContent {
     }
     
     override func conversationDigest() -> String {
-        "[个人名片]"
+        "[Contact card]"
     }
     
     override func encode() -> Data {

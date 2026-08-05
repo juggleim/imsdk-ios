@@ -59,7 +59,7 @@ static CallCenter *_instance;
 }
 
 - (void)dismissCallViewController:(UIViewController *)vc {
-    //呼应 present 的延时，否则 dismiss 执行完了 present 还没走
+    // Match the present delay, otherwise dismiss may finish before present starts
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         for (UIWindow *window in self.callWindows) {
             if (window.rootViewController == vc) {
@@ -74,7 +74,7 @@ static CallCenter *_instance;
 }
 
 - (void)presentCallViewController:(UIViewController *)viewController {
-    //后台回前台的瞬间 activationState 是 UISceneActivationStateForegroundInactive
+    // When returning from background to foreground, activationState can briefly be UISceneActivationStateForegroundInactive
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         UIWindowScene *scene = nil;
         for (UIWindowScene *s in UIApplication.sharedApplication.connectedScenes) {
@@ -94,8 +94,8 @@ static CallCenter *_instance;
         [activityWindow makeKeyAndVisible];
         CATransition *animation = [CATransition animation];
         [animation setDuration:0.3];
-        animation.type = kCATransitionMoveIn;     //可更改为其他方式
-        animation.subtype = kCATransitionFromTop; //可更改为其他方式
+        animation.type = kCATransitionMoveIn;     // Can be changed to another transition
+        animation.subtype = kCATransitionFromTop; // Can be changed to another transition
         [[activityWindow layer] addAnimation:animation forKey:nil];
         [self.callWindows addObject:activityWindow];
     });

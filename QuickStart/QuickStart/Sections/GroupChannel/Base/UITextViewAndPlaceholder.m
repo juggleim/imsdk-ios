@@ -25,26 +25,26 @@
 
         self.backgroundColor = [UIColor clearColor];
 
-        UILabel *placeholderLabel = [[UILabel alloc] init]; //添加一个占位label
+        UILabel *placeholderLabel = [[UILabel alloc] init]; // Add a placeholder label
 
         placeholderLabel.backgroundColor = [UIColor clearColor];
 
-        placeholderLabel.numberOfLines = 0; //设置可以输入多行文字时可以自动换行
+        placeholderLabel.numberOfLines = 0; // Allow multiline wrapping
 
         [self addSubview:placeholderLabel];
 
-        self.placeholderLabel = placeholderLabel; //赋值保存
+        self.placeholderLabel = placeholderLabel; // Save the label
 
-        self.myPlaceholderColor = ColorFromRGB(0x999999); //设置占位文字默认颜色
+        self.myPlaceholderColor = ColorFromRGB(0x999999); // Default placeholder color
 
-        self.font = [UIFont systemFontOfSize:16]; //设置默认的字体
+        self.font = [UIFont systemFontOfSize:16]; // Default font
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(textDidChange)
                                                      name:UITextViewTextDidChangeNotification
-                                                   object:self]; //通知:监听文字的改变
+                                                   object:self]; // Observe text changes
 
-        //设置可以上下拖动
+        // Allow vertical dragging
         [self setScrollEnabled:YES];
         self.userInteractionEnabled = YES;
         self.showsVerticalScrollIndicator = YES;
@@ -74,7 +74,7 @@
 
     [super layoutSubviews];
 
-    //根据文字计算高度
+    // Calculate height from text
 
     CGSize maxSize = CGSizeMake(self.frame.size.width, MAXFLOAT);
 
@@ -96,11 +96,11 @@
 
     _myPlaceholder = [myPlaceholder copy];
 
-    //设置文字
+    // Set text
 
     self.placeholderLabel.text = myPlaceholder;
 
-    //重新计算子控件frame
+    // Recalculate subview frames
 
     [self setNeedsLayout];
 }
@@ -109,7 +109,7 @@
 
     _myPlaceholderColor = myPlaceholderColor;
 
-    //设置颜色
+    // Set color
 
     self.placeholderLabel.textColor = myPlaceholderColor;
 }
@@ -118,7 +118,7 @@
 
     [super setText:text];
 
-    [self textDidChange]; //这里调用的就是 UITextViewTextDidChangeNotification 通知的回调
+    [self textDidChange]; //This is the UITextViewTextDidChangeNotification callback
 }
 
 - (void)textDidChange {

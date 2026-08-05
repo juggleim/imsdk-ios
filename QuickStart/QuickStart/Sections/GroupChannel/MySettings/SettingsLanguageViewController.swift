@@ -11,7 +11,7 @@ class SettingsLanguageViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "语言设置"
+        self.titleView.text = NSLocalizedString("Language Settings", comment: "")
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -42,9 +42,9 @@ extension SettingsLanguageViewController: UITableViewDataSource, UITableViewDele
         }
         
         if indexPath.row == 0 {
-            cell.leftLabel.text = "中文"
+            cell.leftLabel.text = NSLocalizedString("Chinese", comment: "")
         } else if indexPath.row == 1 {
-            cell.leftLabel.text = "English"
+            cell.leftLabel.text = NSLocalizedString("English", comment: "")
         }
         return cell
     }

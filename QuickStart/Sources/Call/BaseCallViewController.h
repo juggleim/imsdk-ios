@@ -15,62 +15,62 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) UIView *backgroundView;
 
 /*!
- 蒙层View
+ Overlay view
  */
 @property(nonatomic, strong) UIVisualEffectView *blurView;
 
 /*!
- 提示Label
+ Hint label
  */
 @property(nonatomic, strong) UILabel *tipsLabel;
 
 /*!
- 最小化Button
+ Minimize button
  */
 @property(nonatomic, strong) UIButton *minimizeButton;
 
 /*!
- 加人Button
+ Add people button
  */
 @property(nonatomic, strong) UIButton *inviteUserButton;
 
 /*!
- 通话时长Label
+ Call duration label
  */
 @property(nonatomic, strong) UILabel *timeLabel;
 
 /*!
- 静音Button
+ Mute button
  */
 @property(nonatomic, strong) UIButton *muteButton;
 
 
 /*!
- 扬声器Button
+ Speaker button
  */
 @property(nonatomic, strong) UIButton *speakerButton;
 
 
 /*!
- 接听Button
+ Answer button
  */
 @property(nonatomic, strong) UIButton *acceptButton;
 
 
 /*!
- 挂断Button
+ Hang up button
  */
 @property(nonatomic, strong) UIButton *hangupButton;
 
 
 /*!
- 关闭摄像头的Button
+ Camera off button
  */
 @property(nonatomic, strong) UIButton *cameraCloseButton;
 
 
 /*!
- 切换前后摄像头的Button
+ Switch camera button
  */
 @property(nonatomic, strong) UIButton *cameraSwitchButton;
 

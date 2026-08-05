@@ -12,32 +12,32 @@
 @interface SingleCallViewController ()
 
 /*!
- 对端的头像View
+ Avatar view for the remote party
  */
 @property(nonatomic, strong) UIImageView *remotePortraitView;
 
 /*!
- 对端的名字Label
+ Name label for the remote party
  */
 @property(nonatomic, strong) UILabel *mainNameLabel;
 
 /*!
- 用户状态的view
+ User status view
  */
 @property(nonatomic, strong) UILabel *statusView;
 
 /*!
- 全屏的视频View
+ Full-screen video view
  */
 @property(nonatomic, strong) UIView *mainVideoView;
 
 /*!
- 通话接通后，界面右上角的视频View
+ Video view in the top-right corner after the call connects
  */
 @property(nonatomic, strong) UIView *subVideoView;
 
 @property(nonatomic, strong) JUserInfo *remoteUserInfo;
-/// 是否切换了自己和对方的视频 view（默认对方为 mainView，自己为 subView）
+/// Whether the local and remote video views are swapped (default remote = mainView, local = subView)
 @property(nonatomic, assign) BOOL switchMainSubVideo;
 @end
 

@@ -12,7 +12,7 @@ class SettingsDisturbViewController: BaseTableListViewController {
     var disturbTime: GlobalConst.SettingDisturbTime = .noDisturb
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "全局免打扰"
+        self.titleView.text = NSLocalizedString("Global Do Not Disturb", comment: "")
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }
@@ -68,15 +68,15 @@ extension SettingsDisturbViewController: UITableViewDataSource, UITableViewDeleg
             cell = BaseSelectTableViewCell(selected: false)
         }
         if indexPath.row == 0 {
-            cell.leftLabel.text = "允许通知"
+            cell.leftLabel.text = NSLocalizedString("Allow notifications", comment: "")
         } else if indexPath.row == 1 {
-            cell.leftLabel.text = "免打扰时段 08:00 ~ 12:00"
+            cell.leftLabel.text = NSLocalizedString("Do not disturb 08:00 - 12:00", comment: "")
         } else if indexPath.row == 2 {
-            cell.leftLabel.text = "免打扰时段 19:00 ~ 20:00"
+            cell.leftLabel.text = NSLocalizedString("Do not disturb 19:00 - 20:00", comment: "")
         } else if indexPath.row == 3 {
-            cell.leftLabel.text = "免打扰时段 23:00 ~ 06:00"
+            cell.leftLabel.text = NSLocalizedString("Do not disturb 23:00 - 06:00", comment: "")
         } else if indexPath.row == 4 {
-            cell.leftLabel.text = "全天免打扰"
+            cell.leftLabel.text = NSLocalizedString("All-day do not disturb", comment: "")
         }
         
         return cell

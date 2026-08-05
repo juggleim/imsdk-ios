@@ -721,6 +721,48 @@ BOOL OssType_IsValidValue(int32_t value__) {
   }
 }
 
+#pragma mark - Enum PushLevel
+
+GPBEnumDescriptor *PushLevel_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
+    static const char *valueNames =
+        "DefaultPuhsLevel\000IgnoreSpeedControl\000Igno"
+        "reUndisturb\000";
+    static const int32_t values[] = {
+        PushLevel_DefaultPuhsLevel,
+        PushLevel_IgnoreSpeedControl,
+        PushLevel_IgnoreUndisturb,
+    };
+    static const char *extraTextFormatInfo = "\003\000\020\000\001\022\000\002\017\000";
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(PushLevel)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:PushLevel_IsValidValue
+                                            flags:GPBEnumDescriptorInitializationFlag_None
+                              extraTextFormatInfo:extraTextFormatInfo];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL PushLevel_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case PushLevel_DefaultPuhsLevel:
+    case PushLevel_IgnoreSpeedControl:
+    case PushLevel_IgnoreUndisturb:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
 #pragma mark - Nil_Class
 
 @implementation Nil_Class
@@ -1496,6 +1538,9 @@ void SetMentionInfo_MentionType_RawValue(MentionInfo *message, int32_t value) {
 @dynamic pushId;
 @dynamic pushText;
 @dynamic pushExtraData;
+@dynamic pushLevel;
+@dynamic isVoip;
+@dynamic jPushOptions;
 @dynamic badge;
 @dynamic msgId;
 @dynamic senderId;
@@ -1504,12 +1549,14 @@ void SetMentionInfo_MentionType_RawValue(MentionInfo *message, int32_t value) {
 
 typedef struct PushData__storage_ {
   uint32_t _has_storage_[1];
+  PushLevel pushLevel;
   int32_t badge;
   ChannelType channelType;
   NSString *title;
   NSString *pushId;
   NSString *pushText;
   NSString *pushExtraData;
+  NSString *jPushOptions;
   NSString *msgId;
   NSString *senderId;
   NSString *converId;
@@ -1559,10 +1606,37 @@ typedef struct PushData__storage_ {
         .dataType = GPBDataTypeString,
       },
       {
+        .name = "pushLevel",
+        .dataTypeSpecific.enumDescFunc = PushLevel_EnumDescriptor,
+        .number = PushData_FieldNumber_PushLevel,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(PushData__storage_, pushLevel),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "isVoip",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PushData_FieldNumber_IsVoip,
+        .hasIndex = 5,
+        .offset = 6,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "jPushOptions",
+        .dataTypeSpecific.clazz = Nil,
+        .number = PushData_FieldNumber_JPushOptions,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(PushData__storage_, jPushOptions),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeString,
+      },
+      {
         .name = "badge",
         .dataTypeSpecific.clazz = Nil,
         .number = PushData_FieldNumber_Badge,
-        .hasIndex = 4,
+        .hasIndex = 8,
         .offset = (uint32_t)offsetof(PushData__storage_, badge),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeInt32,
@@ -1571,7 +1645,7 @@ typedef struct PushData__storage_ {
         .name = "msgId",
         .dataTypeSpecific.clazz = Nil,
         .number = PushData_FieldNumber_MsgId,
-        .hasIndex = 5,
+        .hasIndex = 9,
         .offset = (uint32_t)offsetof(PushData__storage_, msgId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
@@ -1580,7 +1654,7 @@ typedef struct PushData__storage_ {
         .name = "senderId",
         .dataTypeSpecific.clazz = Nil,
         .number = PushData_FieldNumber_SenderId,
-        .hasIndex = 6,
+        .hasIndex = 10,
         .offset = (uint32_t)offsetof(PushData__storage_, senderId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
@@ -1589,7 +1663,7 @@ typedef struct PushData__storage_ {
         .name = "converId",
         .dataTypeSpecific.clazz = Nil,
         .number = PushData_FieldNumber_ConverId,
-        .hasIndex = 7,
+        .hasIndex = 11,
         .offset = (uint32_t)offsetof(PushData__storage_, converId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
@@ -1598,7 +1672,7 @@ typedef struct PushData__storage_ {
         .name = "channelType",
         .dataTypeSpecific.enumDescFunc = ChannelType_EnumDescriptor,
         .number = PushData_FieldNumber_ChannelType,
-        .hasIndex = 8,
+        .hasIndex = 12,
         .offset = (uint32_t)offsetof(PushData__storage_, channelType),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldHasEnumDescriptor | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeEnum,
@@ -1614,7 +1688,7 @@ typedef struct PushData__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\007\002\006\000\003\010\000\004\r\0003\005\0004\010\0005H\0006\013\000";
+        "\n\002\006\000\003\010\000\004\r\000\005\t\000\006\006\000\007\014\0003\005\0004\010\0005H\0006\013\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG
@@ -1626,6 +1700,18 @@ typedef struct PushData__storage_ {
 }
 
 @end
+
+int32_t PushData_PushLevel_RawValue(PushData *message) {
+  GPBDescriptor *descriptor = [PushData descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:PushData_FieldNumber_PushLevel];
+  return GPBGetMessageRawEnumField(message, field);
+}
+
+void SetPushData_PushLevel_RawValue(PushData *message, int32_t value) {
+  GPBDescriptor *descriptor = [PushData descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:PushData_FieldNumber_PushLevel];
+  GPBSetMessageRawEnumField(message, field, value);
+}
 
 int32_t PushData_ChannelType_RawValue(PushData *message) {
   GPBDescriptor *descriptor = [PushData descriptor];

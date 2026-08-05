@@ -14,7 +14,7 @@ class AddFriendViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "添加好友"
+        self.titleView.text = NSLocalizedString("Add Friend", comment: "")
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
     }

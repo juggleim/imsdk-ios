@@ -78,10 +78,10 @@
 }
 
 - (void)configureNavigationBar {
-    self.navigationItem.title = @"修改昵称";
+    self.navigationItem.title = NSLocalizedString(@"Edit nickname", @"");
     UIBarButtonItem *leftButton = [SBUBarButtonItem backButtonWithTarget:self selector:@selector(leftBarButtonItemPressed:)];
     self.navigationItem.leftBarButtonItem = leftButton;
-    self.rightButton = [[UIBarButtonItem alloc] initWithTitle:@"保存"
+    self.rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Save", @"")
                                                                     style:(UIBarButtonItemStylePlain)
                                                                    target:self
                                                                    action:@selector(clickRightBtn)];
@@ -124,7 +124,7 @@
 - (MBProgressHUD *)hud {
     if (!_hud) {
         MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-        hud.label.text = @"修改中...";
+        hud.label.text = NSLocalizedString(@"Updating...", @"");
         _hud = hud;
     }
     return _hud;

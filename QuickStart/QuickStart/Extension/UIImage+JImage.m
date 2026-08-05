@@ -3,12 +3,12 @@
 @implementation UIImage (JImage)
 
 /**
- *  修改图片size
+ *  Resize image
  *
- *  @param image      原图片
- *  @param targetSize 要修改的size
+ *  @param image      original image
+ *  @param targetSize target size
  *
- *  @return 修改后的图片
+ *  @return resized image
  */
 + (UIImage *)image:(UIImage *)image byScalingToSize:(CGSize)targetSize {
     UIImage *sourceImage = image;

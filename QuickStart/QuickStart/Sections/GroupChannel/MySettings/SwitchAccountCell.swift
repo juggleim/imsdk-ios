@@ -13,7 +13,7 @@ class SwitchAccountCell: UITableViewCell {
     let userIdLabel = UILabel()
     let inUseLabel: UILabel = {
         let title = UILabel()
-        title.text = "当前使用"
+        title.text = NSLocalizedString("Current account", comment: "")
         title.isHidden = true
         title.textColor = UIColor(hex: "#0086ff")
         return title

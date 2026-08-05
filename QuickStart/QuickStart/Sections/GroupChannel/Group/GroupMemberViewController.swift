@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 public enum GroupMemberVCSelectType {
-    // 点击进入会话页面
+    // Navigate to the conversation screen on tap
     case chat
-    // 点击回调
+    // Tap callback
     case callback
 }
 
@@ -43,7 +43,7 @@ public class GroupMemberViewController: BaseTableListViewController {
     
     override func configNavigationItem() {
         super.configNavigationItem()
-        self.titleView.text = "群成员"
+        self.titleView.text = "Members"
         let leftButton = SBUBarButtonItem.backButton(target: self, selector: #selector(onTapLeftBarButton))
         self.navigationItem.leftBarButtonItem = leftButton
 

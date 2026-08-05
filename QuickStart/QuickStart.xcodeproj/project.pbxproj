@@ -331,6 +331,10 @@
 		A0E68E622D2FA94400640324 /* ContactCardMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */; };
 		A0E68E642D2FB6BE00640324 /* SelectSingleFriendViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */; };
 		A0F3DEDC2C4A6BBE006F2D58 /* JuggleIM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */; };
+		A1B2C3D4E5F60708090A0B0C /* en.lproj/Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B0A /* en.lproj/Localizable.strings */; };
+		A1B2C3D4E5F60708090A0B0D /* zh-Hans.lproj/Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B0B /* zh-Hans.lproj/Localizable.strings */; };
+		A1B2C3D4E5F60708090A0B0E /* en.lproj/InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B10 /* en.lproj/InfoPlist.strings */; };
+		A1B2C3D4E5F60708090A0B0F /* zh-Hans.lproj/InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60708090A0B11 /* zh-Hans.lproj/InfoPlist.strings */; };
 		DC2D390516BEA0D0DB7E8AD6 /* libPods-QuickStart.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B432E44EB399ACFFD7C716A0 /* libPods-QuickStart.a */; };
 /* End PBXBuildFile section */
 
@@ -713,6 +717,10 @@
 		A0E68E612D2FA94400640324 /* ContactCardMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCardMessageCell.swift; sourceTree = "<group>"; };
 		A0E68E632D2FB6BE00640324 /* SelectSingleFriendViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSingleFriendViewController.swift; sourceTree = "<group>"; };
 		A0F3DEDB2C4A6BBE006F2D58 /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60708090A0B0A /* en.lproj/Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B0B /* zh-Hans.lproj/Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B10 /* en.lproj/InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A1B2C3D4E5F60708090A0B11 /* zh-Hans.lproj/InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B432E44EB399ACFFD7C716A0 /* libPods-QuickStart.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QuickStart.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C927DE0EBD99F3D755BD3119 /* Pods-QuickStart.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.debug.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.debug.xcconfig"; sourceTree = "<group>"; };
 		E767E7CEDF58FDF6196B4298 /* Pods-QuickStart.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QuickStart.release.xcconfig"; path = "Target Support Files/Pods-QuickStart/Pods-QuickStart.release.xcconfig"; sourceTree = "<group>"; };
@@ -1442,6 +1450,10 @@
 				A09645D22BF36BD300290775 /* Assets.xcassets */,
 				A09645D42BF36BD300290775 /* LaunchScreen.storyboard */,
 				A09645D72BF36BD300290775 /* Info.plist */,
+				A1B2C3D4E5F60708090A0B0A /* en.lproj/Localizable.strings */,
+				A1B2C3D4E5F60708090A0B0B /* zh-Hans.lproj/Localizable.strings */,
+				A1B2C3D4E5F60708090A0B10 /* en.lproj/InfoPlist.strings */,
+				A1B2C3D4E5F60708090A0B11 /* zh-Hans.lproj/InfoPlist.strings */,
 				A0A3A5402D1418A5009AD7C3 /* GlobalConst.swift */,
 				A02FA3C02D19A5F6002A4E0B /* OCConst.h */,
 				A047B7422D27E5BB00710683 /* GlobalConfig.swift */,
@@ -1850,6 +1862,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				"zh-Hans",
 				Base,
 			);
 			mainGroup = A09645BD2BF36BD000290775;
@@ -1878,6 +1891,10 @@
 				A07F3C0A2BF4A2280087920B /* Base.xcconfig in Resources */,
 				A07F3C892BF4A2290087920B /* SBUMenuCell.xib in Resources */,
 				A07950162D1C09EE0045EFE9 /* Podfile in Resources */,
+				A1B2C3D4E5F60708090A0B0C /* en.lproj/Localizable.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0D /* zh-Hans.lproj/Localizable.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0E /* en.lproj/InfoPlist.strings in Resources */,
+				A1B2C3D4E5F60708090A0B0F /* zh-Hans.lproj/InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2416,9 +2433,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -2430,7 +2447,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9.0;
+				MARKETING_VERSION = 1.9.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -2465,9 +2482,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问相机";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App 需要您的同意，才能访问相册";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -2479,7 +2496,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.9.0;
+				MARKETING_VERSION = 1.9.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",

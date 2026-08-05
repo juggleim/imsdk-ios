@@ -102,11 +102,11 @@
 }
 
 - (void)muteSpeaker:(BOOL)isMute { 
-    //TODO: 上层实现
+    // TODO: implement in the upper layer
 }
 
 - (void)setSpeakerEnable:(BOOL)isEnable { 
-    //TODO: 上层实现
+    // TODO: implement in the upper layer
 }
 
 - (void)setVideoView:(UIView *)view roomId:(NSString *)roomId userId:(NSString *)userId {

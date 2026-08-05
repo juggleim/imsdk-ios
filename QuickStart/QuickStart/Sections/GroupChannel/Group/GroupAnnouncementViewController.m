@@ -29,7 +29,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.navigationItem.title = @"群公告";
+    self.navigationItem.title = NSLocalizedString(@"Group Announcement", @"");
     self.view.backgroundColor = ColorFromRGB(0xf5f6f9);
     [self setNaviItem];
     [self registerNotification];
@@ -47,18 +47,18 @@
 
 #pragma mark - helper
 - (void)sendAnnouncement {
-    //发布中的时候显示转圈的进度
+    //Show a spinning progress indicator while publishing
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     hud.yOffset = -46.f;
     hud.minSize = CGSizeMake(120, 120);
     hud.color = [ColorFromRGB(0x343637) colorWithAlphaComponent:0.5];
     hud.margin = 0;
     [hud show:YES];
-    //发布成功后，使用自定义图片
+    //Use a custom image after successful publishing
     NSString *txt = self.announcementContent.text;
-    //去除收尾的空格
+    //trim leading and trailing spaces
     txt = [txt stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    //去除收尾的换行
+    //trim leading and trailing newlines
     txt = [txt stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     [HttpManager.shared setGroupAnnouncementWithGroupId:self.groupId content:txt completion:^(NSInteger code) {
@@ -71,16 +71,16 @@
                 hud.customView = customView;
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
                                dispatch_get_main_queue(), ^{
-                                   //显示成功的图片后返回
+                                   //Return after showing the success image
                                    [self.navigationController popViewControllerAnimated:YES];
                                });
             } else {
                 [hud hide:YES];
                 [NormalAlertView
-                    showAlertWithMessage:@"群公告发送失败"
+                    showAlertWithMessage:NSLocalizedString(@"Failed to send group announcement", @"")
                            highlightText:nil
                                leftTitle:nil
-                              rightTitle:@"确定"
+                              rightTitle:NSLocalizedString(@"Confirm", @"")
                                   cancel:nil
                                  confirm:nil];
             }
@@ -99,7 +99,7 @@
                                                object:nil];
 }
 
-//键盘将要弹出
+//Keyboard will show
 - (void)keyboardWillShow:(NSNotification *)aNotification {
     CGRect keyboardRect = [[[aNotification userInfo] objectForKey:UIKeyboardBoundsUserInfoKey] CGRectValue];
     [self.announcementContent mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -114,7 +114,7 @@
     }];
 }
 
-//键盘将要隐藏
+//Keyboard will hide
 - (void)keyboardWillHide:(NSNotification *)aNotification {
     [self.announcementContent mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view).offset(14);
@@ -131,10 +131,10 @@
 - (void)clickLeftBtn:(id)sender {
     [self.announcementContent resignFirstResponder];
     if (self.announcementString && ![self.announcementContent.text isEqualToString:self.announcementString]) {
-        [NormalAlertView showAlertWithMessage:@"退出本次编辑"
+        [NormalAlertView showAlertWithMessage:NSLocalizedString(@"Exit this edit", @"")
             highlightText:nil
-            leftTitle:@"继续编辑"
-            rightTitle:@"退出"
+            leftTitle:NSLocalizedString(@"Continue editing", @"")
+            rightTitle:NSLocalizedString(@"Exit", @"")
             cancel:^{
 
             }
@@ -149,10 +149,10 @@
 - (void)clickRightBtn:(id)sender {
     [self.announcementContent resignFirstResponder];
     if (self.announcementString && self.announcementContent.text.length == 0) {
-        [NormalAlertView showAlertWithMessage:@"确定清空群公告？"
+        [NormalAlertView showAlertWithMessage:NSLocalizedString(@"Clear the group announcement?", @"")
             highlightText:@""
-            leftTitle:@"取消"
-            rightTitle:@"确定"
+            leftTitle:NSLocalizedString(@"Cancel", @"")
+            rightTitle:NSLocalizedString(@"Confirm", @"")
             cancel:^{
 
             }
@@ -161,10 +161,10 @@
             }];
     } else {
         [NormalAlertView
-            showAlertWithMessage:@"该公告会通知全部群成员，是否发布？"
+            showAlertWithMessage:NSLocalizedString(@"This announcement will notify all group members. Publish it?", @"")
             highlightText:@""
-            leftTitle:@"取消"
-            rightTitle:@"发布"
+            leftTitle:NSLocalizedString(@"Cancel", @"")
+            rightTitle:NSLocalizedString(@"Publish", @"")
             cancel:^{
 
             }
@@ -175,14 +175,14 @@
 }
 
 - (void)setNaviItem {
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"完成"
+    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", @"")
                                                                     style:(UIBarButtonItemStylePlain)
                                                                    target:self
                                                                    action:@selector(clickRightBtn:)];
     self.navigationItem.rightBarButtonItem = rightButton;
     self.navigationItem.rightBarButtonItem.enabled = NO;
 
-    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:@"取消"
+    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"")
                                                                    style:(UIBarButtonItemStylePlain)
                                                                   target:self
                                                                   action:@selector(clickLeftBtn:)];
@@ -205,7 +205,7 @@
                 weakSelf.announcementContent.text = content;
             }
             weakSelf.updateTime.text = [NSString
-                stringWithFormat:@"发布时间：00:00"];
+                stringWithFormat:NSLocalizedString(@"Publish time: %@", @""), @"00:00"];
         });
     }];
 }
@@ -243,7 +243,7 @@
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView.text.length > MaxLength) {
         textView.text = [textView.text substringToIndex:MaxLength];
-        [self.view showHUDMessage:@"字数已超限"];
+        [self.view showHUDMessage:NSLocalizedString(@"Character limit exceeded", @"")];
     }
     if ([textView.text isEqualToString:self.announcementString]) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -260,7 +260,7 @@
         _announcementContent.delegate = self;
         _announcementContent.font = [UIFont systemFontOfSize:14.f];
         _announcementContent.textColor = [UIColor blackColor];
-        _announcementContent.myPlaceholder = @"请编辑群公告";
+        _announcementContent.myPlaceholder = NSLocalizedString(@"Please edit the group announcement", @"");
     }
     return _announcementContent;
 }
@@ -270,7 +270,7 @@
         _guideLabel = [[UILabel alloc] init];
         _guideLabel.textColor = ColorFromRGB(0x939393);
         _guideLabel.font = [UIFont systemFontOfSize:13];
-        _guideLabel.text = @"发布后将以系统消息发送群聊，全员成员可见";
+        _guideLabel.text = NSLocalizedString(@"After publishing, it will be sent to the group chat as a system message and visible to all members", @"");
     }
     return _guideLabel;
 }

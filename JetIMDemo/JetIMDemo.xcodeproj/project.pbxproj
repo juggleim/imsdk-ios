@@ -13,6 +13,8 @@
 		A08AA1FE2B148B9C008B114C /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA1FD2B148B9C008B114C /* SceneDelegate.m */; };
 		A08AA2012B148B9C008B114C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA2002B148B9C008B114C /* ViewController.m */; };
 		A08AA2042B148B9C008B114C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2022B148B9C008B114C /* Main.storyboard */; };
+		B1B2C3D4E5F60708090A0B10 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60708090A0B12 /* InfoPlist.strings */; };
+		B1B2C3D4E5F60708090A0B11 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1B2C3D4E5F60708090A0B13 /* InfoPlist.strings */; };
 		A08AA2062B148B9E008B114C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2052B148B9E008B114C /* Assets.xcassets */; };
 		A08AA2092B148B9E008B114C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A08AA2072B148B9E008B114C /* LaunchScreen.storyboard */; };
 		A08AA20C2B148B9E008B114C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA20B2B148B9E008B114C /* main.m */; };
@@ -49,6 +51,8 @@
 		A08AA2052B148B9E008B114C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A08AA2082B148B9E008B114C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A08AA20A2B148B9E008B114C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1B2C3D4E5F60708090A0B12 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B1B2C3D4E5F60708090A0B13 /* InfoPlist.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = zh-Hans.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A08AA20B2B148B9E008B114C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A09727622CB6EC0400E08BC4 /* JuggleCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JuggleCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0CE9A332CD4C103008B405C /* JZegoCall.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JZegoCall.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +103,8 @@
 				A08AA2052B148B9E008B114C /* Assets.xcassets */,
 				A08AA2072B148B9E008B114C /* LaunchScreen.storyboard */,
 				A08AA20A2B148B9E008B114C /* Info.plist */,
+				B1B2C3D4E5F60708090A0B12 /* InfoPlist.strings */,
+				B1B2C3D4E5F60708090A0B13 /* InfoPlist.strings */,
 				A08AA20B2B148B9E008B114C /* main.m */,
 			);
 			path = JetIMDemo;
@@ -158,6 +164,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				zh-Hans,
 				Base,
 			);
 			mainGroup = A08AA1ED2B148B9C008B114C;
@@ -178,6 +185,8 @@
 				A08AA2092B148B9E008B114C /* LaunchScreen.storyboard in Resources */,
 				A08AA2062B148B9E008B114C /* Assets.xcassets in Resources */,
 				A08AA2042B148B9C008B114C /* Main.storyboard in Resources */,
+				B1B2C3D4E5F60708090A0B10 /* InfoPlist.strings in Resources */,
+				B1B2C3D4E5F60708090A0B11 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,8 +348,8 @@
 				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -372,8 +381,8 @@
 				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = JetIMDemo/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App 需要您的同意，才能访问摄像头";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App 需要您的同意，才能访问麦克风";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

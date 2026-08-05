@@ -169,7 +169,7 @@
 //        }
 //    } else if (updateType == ZegoUpdateTypeDelete) {
 //        [self removeUserList:userIdList];
-//        //暂不处理
+//        // Not handled yet
 //    }
     if ([sHandler respondsToSelector:@selector(onRoomUserUpdate:userList:roomID:)]) {
         [sHandler onRoomUserUpdate:updateType userList:userList roomID:roomID];

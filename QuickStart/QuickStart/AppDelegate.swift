@@ -74,13 +74,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         JIM.shared().connectionManager.registerVoIPToken(pushCredentials.token)
         SBULog.info("voip token did register")
-
-//        let deviceToken = pushCredentials.token.map { String(format: "%02x", $0) }.joined()
-//        print("VoIP 推送令牌: \(deviceToken)")
     }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
-        print("收到 VoIP 推送: \(payload.dictionaryPayload)")
+        print("Received VoIP push: \(payload.dictionaryPayload)")
+        // Show the notification here
     }
 
     // MARK: UISceneSession Lifecycle
