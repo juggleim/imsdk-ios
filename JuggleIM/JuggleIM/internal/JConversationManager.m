@@ -1270,6 +1270,7 @@
             if (!isBroadcast || message.direction != JMessageDirectionSend) {
                 info.sortTime = message.timestamp;
             }
+            info.mute = message.isMute;
             info.lastMessage = message;
         }
     }
