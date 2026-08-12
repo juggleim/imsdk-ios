@@ -28,6 +28,20 @@
     return NO;
 }
 
+- (NSUInteger)hash {
+    NSUInteger hash = self.conversationType;
+    hash = hash * 31u + self.conversationId.hash;
+    hash = hash * 31u + self.subChannel.hash;
+    return hash;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    JConversation *conversation = [[[self class] allocWithZone:zone] initWithConversationType:self.conversationType
+                                                                               conversationId:self.conversationId];
+    conversation.subChannel = self.subChannel;
+    return conversation;
+}
+
 - (NSString *)subChannel {
     if (!_subChannel) {
         _subChannel = @"";

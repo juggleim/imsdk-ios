@@ -607,15 +607,17 @@ NSString *const jDropConversationTagIndex1 = @"DROP INDEX IF EXISTS idx_conversa
     NSMutableArray *arguments = [NSMutableArray array];
     [self.dbHelper executeTransaction:^(JFMDatabase * _Nonnull db, BOOL * _Nonnull rollback) {
         for (JConcreteConversationInfo *info in conversations) {
-            if (info.tagIdList.count > 0) {
-                [db executeUpdate:jClearTagByConversation, @(info.conversation.conversationType), info.conversation.conversationId, info.conversation.subChannel];
-                for (NSString *tagId in info.tagIdList) {
+            [db executeUpdate:jClearTagByConversation, @(info.conversation.conversationType), info.conversation.conversationId, info.conversation.subChannel];
+            if (info.tagInfoList.count > 0) {
+                for (JConversationTagInfo *tagInfo in info.tagInfoList) {
+                    NSString *tagId = tagInfo.tagId;
                     sql = [sql stringByAppendingFormat:@"%@", [self.dbHelper getQuestionMarkPlaceholder:4]];
                     sql = [sql stringByAppendingFormat:@", "];
                     [arguments addObject:tagId];
                     [arguments addObject:@(info.conversation.conversationType)];
                     [arguments addObject:info.conversation.conversationId];
                     [arguments addObject:info.conversation.subChannel];
+                    [db executeUpdate:jInsertConversationTagInfo, tagId, tagInfo.name, @(tagInfo.type)];
                 }
             }
         }

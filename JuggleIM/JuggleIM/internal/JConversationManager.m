@@ -1179,7 +1179,8 @@
 }
 
 - (void)addOrUpdateConversationsIfNeed:(NSArray <JConcreteMessage *> *)messages {
-    NSMutableArray * conversations = [NSMutableArray array];
+    NSMutableArray *conversations = [NSMutableArray array];
+    NSMutableDictionary <JConversation *, NSArray <JConversationTagInfo *> *> *newTagInfoListDic = [NSMutableDictionary dictionary];
     for (JConcreteMessage * message in messages) {
         if (message.timestamp <= self.core.conversationSyncTime) {
             continue;
@@ -1273,6 +1274,75 @@
             info.mute = message.isMute;
             info.lastMessage = message;
         }
+
+        newTagInfoListDic[message.conversation] = message.conversationTagInfoList ?: @[];
+    }
+    NSMutableArray <JConcreteConversationInfo *> *tagUpdateConversations = [NSMutableArray array];
+    NSMutableDictionary <NSString *, NSMutableArray <JConversation *> *> *addedTagConversationDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary <NSString *, NSMutableArray <JConversation *> *> *removedTagConversationDic = [NSMutableDictionary dictionary];
+    [newTagInfoListDic enumerateKeysAndObjectsUsingBlock:^(JConversation * _Nonnull conversation, NSArray<JConversationTagInfo *> * _Nonnull newTagInfoList, BOOL * _Nonnull stop) {
+        NSArray <JConversationTagInfo *> *localTagInfoList = [self getTagsForConversation:conversation];
+        NSMutableSet <NSString *> *localTagIdSet = [NSMutableSet set];
+        for (JConversationTagInfo *tagInfo in localTagInfoList) {
+            if (tagInfo.tagId.length > 0) {
+                [localTagIdSet addObject:tagInfo.tagId];
+            }
+        }
+        NSMutableSet <NSString *> *newTagIdSet = [NSMutableSet set];
+        for (JConversationTagInfo *tagInfo in newTagInfoList) {
+            if (tagInfo.tagId.length > 0 && ![newTagIdSet containsObject:tagInfo.tagId]) {
+                [newTagIdSet addObject:tagInfo.tagId];
+            }
+        }
+        if (![localTagIdSet isEqualToSet:newTagIdSet]) {
+            NSMutableSet <NSString *> *addedTagIdSet = [newTagIdSet mutableCopy];
+            [addedTagIdSet minusSet:localTagIdSet];
+            NSMutableSet <NSString *> *removedTagIdSet = [localTagIdSet mutableCopy];
+            [removedTagIdSet minusSet:newTagIdSet];
+
+            JConcreteConversationInfo *tagConversationInfo = [[JConcreteConversationInfo alloc] init];
+            tagConversationInfo.conversation = conversation;
+            tagConversationInfo.tagInfoList = newTagInfoList;
+            [tagUpdateConversations addObject:tagConversationInfo];
+
+            for (JConversationTagInfo *tagInfo in newTagInfoList) {
+                if ([addedTagIdSet containsObject:tagInfo.tagId]) {
+                    NSMutableArray <JConversation *> *conversationList = addedTagConversationDic[tagInfo.tagId];
+                    if (conversationList == nil) {
+                        conversationList = [NSMutableArray array];
+                        addedTagConversationDic[tagInfo.tagId] = conversationList;
+                    }
+                    [conversationList addObject:conversation];
+                }
+            }
+            for (JConversationTagInfo *tagInfo in localTagInfoList) {
+                if ([removedTagIdSet containsObject:tagInfo.tagId]) {
+                    NSMutableArray <JConversation *> *conversationList = removedTagConversationDic[tagInfo.tagId];
+                    if (conversationList == nil) {
+                        conversationList = [NSMutableArray array];
+                        removedTagConversationDic[tagInfo.tagId] = conversationList;
+                    }
+                    [conversationList addObject:conversation];
+                }
+            }
+        }
+    }];
+    if (tagUpdateConversations.count > 0) {
+        [self.core.dbManager updateConversationTag:tagUpdateConversations];
+        dispatch_async(self.core.delegateQueue, ^{
+            [self.tagDelegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationTagDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [addedTagConversationDic enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull tagId, NSMutableArray<JConversation *> * _Nonnull conversationList, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationsDidAddToTag:conversations:)]) {
+                        [obj conversationsDidAddToTag:tagId conversations:conversationList];
+                    }
+                }];
+                [removedTagConversationDic enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull tagId, NSMutableArray<JConversation *> * _Nonnull conversationList, BOOL * _Nonnull stop) {
+                    if ([obj respondsToSelector:@selector(conversationsDidRemoveFromTag:conversations:)]) {
+                        [obj conversationsDidRemoveFromTag:tagId conversations:conversationList];
+                    }
+                }];
+            }];
+        });
     }
     [self.core.dbManager insertConversations:conversations completion:^(NSArray<JConcreteConversationInfo *> * _Nonnull insertConversations, NSArray<JConcreteConversationInfo *> * _Nonnull updateConversations) {
         dispatch_async(self.core.delegateQueue, ^{

@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL isMute;
 /// Encrypted message hash retry count.
 @property (nonatomic, assign) int hashCount;
+@property (nonatomic, copy) NSArray <JConversationTagInfo *> *conversationTagInfoList;
 @end
 
 NS_ASSUME_NONNULL_END

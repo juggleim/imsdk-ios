@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, JConversationType) {
 };
 
 
-@interface JConversation : NSObject
+@interface JConversation : NSObject <NSCopying>
 
 // Conversation id
 @property(nonatomic, copy) NSString *conversationId;

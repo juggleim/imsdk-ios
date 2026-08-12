@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) JFriendInfo *friendInfo;
 @property (nonatomic, copy) NSArray <JUserInfo *> * mentionUserList;
 /// Conversation tag array.
-@property (nonatomic, copy) NSArray <NSString *> *tagIdList;
+@property (nonatomic, copy) NSArray <JConversationTagInfo *> *tagInfoList;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -2481,6 +2481,14 @@ typedef NS_ENUM(NSUInteger, JQos) {
     msg.lifeTimeAfterRead = downMsg.lifeTimeAfterRead;
     msg.readTime = downMsg.readTime;
     msg.isMute = downMsg.undisturbType;
+    if (downMsg.converTagsArray_Count > 0) {
+        NSMutableArray *tagInfoArray = [NSMutableArray array];
+        for (ConverTag *converTag in downMsg.converTagsArray) {
+            JConversationTagInfo *tagInfo = [self conversationTagInfoWith:converTag];
+            [tagInfoArray addObject:tagInfo];
+        }
+        msg.conversationTagInfoList = [tagInfoArray copy];
+    }
     
     return msg;
 }
@@ -2767,11 +2775,12 @@ typedef NS_ENUM(NSUInteger, JQos) {
     }
     info.hasUnread = conversation.unreadTag;
     if (conversation.converTagsArray_Count > 0) {
-        NSMutableArray <NSString *> *tagIdList = [NSMutableArray array];
+        NSMutableArray <JConversationTagInfo *> *tagInfoList = [NSMutableArray array];
         for (ConverTag *pbTag in conversation.converTagsArray) {
-            [tagIdList addObject:pbTag.tag];
+            JConversationTagInfo *tagInfo = [self conversationTagInfoWith:pbTag];
+            [tagInfoList addObject:tagInfo];
         }
-        info.tagIdList = [tagIdList copy];
+        info.tagInfoList = [tagInfoList copy];
     }
     return info;
 }
