@@ -1275,7 +1275,9 @@
             info.lastMessage = message;
         }
 
-        newTagInfoListDic[message.conversation] = message.conversationTagInfoList ?: @[];
+        if (message.direction == JMessageDirectionReceive) {
+            newTagInfoListDic[message.conversation] = message.conversationTagInfoList ?: @[];
+        }
     }
     NSMutableArray <JConcreteConversationInfo *> *tagUpdateConversations = [NSMutableArray array];
     NSMutableDictionary <NSString *, NSMutableArray <JConversation *> *> *addedTagConversationDic = [NSMutableDictionary dictionary];
