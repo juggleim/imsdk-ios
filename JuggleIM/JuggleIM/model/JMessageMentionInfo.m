@@ -12,6 +12,7 @@
 #define jMentionUserId @"id"
 #define jMentionUserName @"name"
 #define jMentionUserPortrait @"portrait"
+#define jMentionUserExtra @"extra"
 
 @implementation JMessageMentionInfo
 
@@ -25,6 +26,9 @@
             [userDic setObject:user.userId?:@"" forKey:jMentionUserId];
             [userDic setObject:user.userName?:@"" forKey:jMentionUserName];
             [userDic setObject:user.portrait?:@"" forKey:jMentionUserPortrait];
+            if (user.extraDic.count > 0) {
+                [userDic setObject:user.extraDic forKey:jMentionUserExtra];
+            }
             [users addObject:userDic];
         }
         [dic setObject:users forKey:jTargetUsers];
@@ -53,6 +57,7 @@
             userInfo.userId = userDic[jMentionUserId]?:@"";
             userInfo.userName = userDic[jMentionUserName]?:@"";
             userInfo.portrait = userDic[jMentionUserPortrait]?:@"";
+            userInfo.extraDic = userDic[jMentionUserExtra];
             [users addObject:userInfo];
         }
         info.targetUsers = users;
