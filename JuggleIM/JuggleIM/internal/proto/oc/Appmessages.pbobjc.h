@@ -2249,6 +2249,7 @@ typedef GPB_ENUM(QryMentionMsgsReq_FieldNumber) {
   QryMentionMsgsReq_FieldNumber_Order = 5,
   QryMentionMsgsReq_FieldNumber_LatestReadIndex = 6,
   QryMentionMsgsReq_FieldNumber_SubChannel = 7,
+  QryMentionMsgsReq_FieldNumber_OnlyUnread = 8,
 };
 
 GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
@@ -2266,6 +2267,8 @@ GPB_FINAL @interface QryMentionMsgsReq : GPBMessage
 @property(nonatomic, readwrite) int64_t latestReadIndex;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *subChannel;
+
+@property(nonatomic, readwrite) BOOL onlyUnread;
 
 @end
 

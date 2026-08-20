@@ -341,11 +341,13 @@ typedef struct ConnectMsgBody__storage_ {
 @dynamic timestamp;
 @dynamic ext;
 @dynamic openE2Ee;
+@dynamic mentionClearType;
 @dynamic secretNegotiateAck;
 
 typedef struct ConnectAckMsgBody__storage_ {
   uint32_t _has_storage_[1];
   int32_t code;
+  int32_t mentionClearType;
   NSString *userId;
   NSString *session;
   NSString *ext;
@@ -415,10 +417,19 @@ typedef struct ConnectAckMsgBody__storage_ {
         .dataType = GPBDataTypeBool,
       },
       {
+        .name = "mentionClearType",
+        .dataTypeSpecific.clazz = Nil,
+        .number = ConnectAckMsgBody_FieldNumber_MentionClearType,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(ConnectAckMsgBody__storage_, mentionClearType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeInt32,
+      },
+      {
         .name = "secretNegotiateAck",
         .dataTypeSpecific.clazz = Nil,
         .number = ConnectAckMsgBody_FieldNumber_SecretNegotiateAck,
-        .hasIndex = 7,
+        .hasIndex = 8,
         .offset = (uint32_t)offsetof(ConnectAckMsgBody__storage_, secretNegotiateAck),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeBytes,
@@ -434,7 +445,7 @@ typedef struct ConnectAckMsgBody__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\003\002\006\000\007\007A\000e\022\000";
+        "\004\002\006\000\007\007A\000\010\020\000e\022\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

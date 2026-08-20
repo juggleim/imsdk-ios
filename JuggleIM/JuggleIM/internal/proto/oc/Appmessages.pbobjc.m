@@ -6333,6 +6333,7 @@ void SetMentionMsg_MentionType_RawValue(MentionMsg *message, int32_t value) {
 @dynamic order;
 @dynamic latestReadIndex;
 @dynamic subChannel;
+@dynamic onlyUnread;
 
 typedef struct QryMentionMsgsReq__storage_ {
   uint32_t _has_storage_[1];
@@ -6415,6 +6416,15 @@ typedef struct QryMentionMsgsReq__storage_ {
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
         .dataType = GPBDataTypeString,
       },
+      {
+        .name = "onlyUnread",
+        .dataTypeSpecific.clazz = Nil,
+        .number = QryMentionMsgsReq_FieldNumber_OnlyUnread,
+        .hasIndex = 7,
+        .offset = 8,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom | GPBFieldClearHasIvarOnZero),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:GPBObjCClass(QryMentionMsgsReq)
@@ -6426,7 +6436,7 @@ typedef struct QryMentionMsgsReq__storage_ {
                                          flags:(GPBDescriptorInitializationFlags)(GPBDescriptorInitializationFlag_UsesClassRefs | GPBDescriptorInitializationFlag_Proto3OptionalKnown | GPBDescriptorInitializationFlag_ClosedEnumSupportKnown)];
     #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
       static const char *extraTextFormatInfo =
-        "\005\001\010\000\002\013\000\003\t\000\006\017\000\007\n\000";
+        "\006\001\010\000\002\013\000\003\t\000\006\017\000\007\n\000\010\n\000";
       [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
     #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     #if defined(DEBUG) && DEBUG

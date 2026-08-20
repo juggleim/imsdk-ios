@@ -208,12 +208,14 @@
                          userId:(NSString *)userId
                         session:(NSString *)session
                      enableE2EE:(BOOL)enableE2EE
+               mentionClearType:(int)mentionClearType
                           extra:(NSString *)extra {
     if (error == JErrorCodeInternalNone) {
         [self.intervalGenerator reset];
         self.core.userId = userId;
         self.core.session = session;
         self.core.enableE2EE = enableE2EE;
+        self.core.mentionClearType = mentionClearType;
         [self openDB];
         [self.messageManager connectSuccess];
         [self.conversationManager connectSuccess];

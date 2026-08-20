@@ -665,6 +665,7 @@ inConversation:(JConversation *)conversation
                      count:(int)count
                  direction:(JPullDirection)direction
              lastReadIndex:(long long)lastReadIndex
+                onlyUnread:(BOOL)onlyUnread
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock {
     dispatch_async(self.sendQueue, ^{
@@ -674,6 +675,7 @@ inConversation:(JConversation *)conversation
                                               count:count
                                           direction:direction
                                       lastReadIndex:lastReadIndex
+                                         onlyUnread:onlyUnread
                                               index:self.cmdIndex++];
         JLogI(@"WS-Send", @"get mention message");
         JQryHisMsgsObj *obj = [[JQryHisMsgsObj alloc] init];
@@ -1509,8 +1511,8 @@ inConversation:(JConversation *)conversation
             NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
             if (httpNumber.longValue == 403) {
                 JLogE(@"WS-Connect", @"webSocket 403");
-                if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
-                    [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO extra:@""];
+                if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:mentionClearType:extra:)]) {
+                    [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO mentionClearType:-1 extra:@""];
                 }
             } else {
                 if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
@@ -1538,8 +1540,8 @@ inConversation:(JConversation *)conversation
                 NSNumber *httpNumber = error.userInfo[@"HTTPResponseStatusCode"];
                 if (httpNumber.longValue == 403) {
                     JLogE(@"WS-Connect", @"webSocket 403");
-                    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
-                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO extra:@""];
+                    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:mentionClearType:extra:)]) {
+                        [self.connectDelegate connectCompleteWithCode:JErrorCodeInternalConnectForbidden userId:@"" session:@"" enableE2EE:NO mentionClearType:-1 extra:@""];
                     }
                 } else {
                     if ([self.connectDelegate respondsToSelector:@selector(webSocketDidFail)]) {
@@ -1843,11 +1845,12 @@ inConversation:(JConversation *)conversation
 }
 
 - (void)handleConnectAckMsg:(JConnectAck *)connectAck {
-    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:extra:)]) {
+    if ([self.connectDelegate respondsToSelector:@selector(connectCompleteWithCode:userId:session:enableE2EE:mentionClearType:extra:)]) {
         [self.connectDelegate connectCompleteWithCode:connectAck.code
                                                userId:connectAck.userId
                                               session:connectAck.session
                                            enableE2EE:connectAck.enableE2EE
+                                     mentionClearType:connectAck.mentionClearType
                                                 extra:connectAck.extra];
     }
 }

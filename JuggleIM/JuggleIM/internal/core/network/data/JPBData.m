@@ -1067,6 +1067,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
                          count:(int)count
                      direction:(JPullDirection)direction
                  lastReadIndex:(long long)lastReadIndex
+                    onlyUnread:(BOOL)onlyUnread
                          index:(int)index {
     QryMentionMsgsReq *req = [[QryMentionMsgsReq alloc] init];
     req.targetId = conversation.conversationId;
@@ -1082,6 +1083,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
         req.order = 1;
     }
     req.latestReadIndex = lastReadIndex;
+    req.onlyUnread = onlyUnread;
     
     QueryMsgBody *body = [[QueryMsgBody alloc] init];
     body.index = index;
@@ -2054,6 +2056,7 @@ typedef NS_ENUM(NSUInteger, JQos) {
             a.session = body.session;
             a.extra = body.ext;
             a.enableE2EE = body.openE2Ee;
+            a.mentionClearType = body.mentionClearType;
             obj.connectAck = a;
             obj.timestamp = body.timestamp;
         }

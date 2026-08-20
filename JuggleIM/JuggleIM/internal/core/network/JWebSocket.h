@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
                          userId:(NSString *)userId
                         session:(NSString *)session
                      enableE2EE:(BOOL)enableE2EE
+               mentionClearType:(int)mentionClearType
                           extra:(NSString *)extra;
 - (void)disconnectWithCode:(JErrorCodeInternal)error
                      extra:(NSString *)extra;
@@ -217,6 +218,7 @@ inConversation:(JConversation *)conversation
                      count:(int)count
                  direction:(JPullDirection)direction
              lastReadIndex:(long long)lastReadIndex
+                onlyUnread:(BOOL)onlyUnread
                    success:(void (^)(NSArray<JConcreteMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCodeInternal code))errorBlock;
 

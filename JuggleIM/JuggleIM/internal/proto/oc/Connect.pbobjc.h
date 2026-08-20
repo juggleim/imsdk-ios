@@ -151,6 +151,7 @@ typedef GPB_ENUM(ConnectAckMsgBody_FieldNumber) {
   ConnectAckMsgBody_FieldNumber_Timestamp = 4,
   ConnectAckMsgBody_FieldNumber_Ext = 5,
   ConnectAckMsgBody_FieldNumber_OpenE2Ee = 7,
+  ConnectAckMsgBody_FieldNumber_MentionClearType = 8,
   ConnectAckMsgBody_FieldNumber_SecretNegotiateAck = 101,
 };
 
@@ -167,6 +168,8 @@ GPB_FINAL @interface ConnectAckMsgBody : GPBMessage
 @property(nonatomic, readwrite, copy, null_resettable) NSString *ext;
 
 @property(nonatomic, readwrite) BOOL openE2Ee;
+
+@property(nonatomic, readwrite) int32_t mentionClearType;
 
 /** Secret negotiation response */
 @property(nonatomic, readwrite, copy, null_resettable) NSData *secretNegotiateAck;

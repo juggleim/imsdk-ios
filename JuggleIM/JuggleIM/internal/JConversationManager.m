@@ -151,7 +151,9 @@
         [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearUnreadCountBy:conversation
                                            msgIndex:info.lastMessageIndex];
-        [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
+        if (weakSelf.core.mentionClearType == 0) {
+            [weakSelf.core.dbManager setMentionInfo:conversation mentionInfoJson:@""];
+        }
         [weakSelf.core.dbManager setUnread:NO conversation:conversation];
         [weakSelf noticeTotalUnreadCountChange];
         JConversationInfo * info = [self.core.dbManager getConversationInfo:conversation];
@@ -308,7 +310,7 @@
         JLogI(@"CONV-ClearTotal", @"success");
         [weakSelf.messageManager updateSendSyncTime:timestamp];
         [weakSelf.core.dbManager clearTotalUnreadCount];
-        [weakSelf.core.dbManager clearMentionInfo];
+        [weakSelf clearMentionInfo];
         [weakSelf.core.dbManager clearUnreadTag];
         [weakSelf noticeTotalUnreadCountChange];
         dispatch_async(weakSelf.core.delegateQueue, ^{
@@ -747,7 +749,9 @@
         for (JConcreteConversationInfo * conv in content.conversations) {
             //Update database.
             [self.core.dbManager clearUnreadCountBy:conv.conversation msgIndex:conv.lastReadMessageIndex];
-            [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
+            if (self.core.mentionClearType == 0) {
+                [self.core.dbManager setMentionInfo:conv.conversation mentionInfoJson:@""];
+            }
             [self.core.dbManager setUnread:NO conversation:conv.conversation];
             
             //Get conversation object.
@@ -853,7 +857,7 @@
 
 - (void)conversationsDidClearTotalUnread:(long long)clearTime { 
     [self.core.dbManager clearTotalUnreadCount];
-    [self.core.dbManager clearMentionInfo];
+    [self clearMentionInfo];
     [self.core.dbManager clearUnreadTag];
     [self noticeTotalUnreadCountChange];
 }
@@ -890,12 +894,38 @@
         return;
     }
     JConcreteConversationInfo * conversationInfo = (JConcreteConversationInfo *)[self getConversationInfo:conversation];
-    if (conversationInfo == nil || conversationInfo.lastMessage == nil || conversationInfo.lastMessage.clientMsgNo < 0) {
+    if (conversationInfo == nil) {
         return;
     }
-    if ([messageIds containsObject:conversationInfo.lastMessage.messageId]) {
+    BOOL isUpdateMention = NO;
+    if (conversation.conversationType == JConversationTypeGroup) {
+        NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:conversationInfo.mentionInfo.mentionMsgList];
+        NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
+        for (NSString * messageId in messageIds) {
+            if (messageId.length == 0) {
+                continue;
+            }
+            JConversationMentionMessage * temp = [[JConversationMentionMessage alloc] init];
+            temp.msgId = messageId;
+            if ([mentionMessages containsObject:temp]) {
+                [removeMentionMessage addObject:temp];
+            }
+        }
+        if (removeMentionMessage.count != 0) {
+            [mentionMessages removeObjectsInArray:removeMentionMessage];
+            conversationInfo.mentionInfo.mentionMsgList = mentionMessages;
+            [self.core.dbManager setMentionInfo:conversation mentionInfoJson:[conversationInfo.mentionInfo encodeToJson]];
+            isUpdateMention = YES;
+        }
+    }
+    BOOL isUpdateLastMessage = NO;
+    if (conversationInfo.lastMessage.messageId.length > 0
+        && [messageIds containsObject:conversationInfo.lastMessage.messageId]) {
         conversationInfo.lastMessage.hasRead = YES;
         [self.core.dbManager setLastMessageHasRead:conversation];
+        isUpdateLastMessage = YES;
+    }
+    if (isUpdateMention || isUpdateLastMessage) {
         dispatch_async(self.core.delegateQueue, ^{
             [self.delegates.allObjects enumerateObjectsUsingBlock:^(id<JConversationDelegate>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj respondsToSelector:@selector(conversationInfoDidUpdate:)]) {
@@ -963,7 +993,13 @@
 }
 
 #pragma mark - internal
--(JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
+- (void)clearMentionInfo {
+    if (self.core.mentionClearType == 0) {
+        [self.core.dbManager clearMentionInfo];
+    }
+}
+
+- (JConcreteConversationInfo *)getConversationAfterCommonResolved:(JConversation *)conversation lastMessage:(JConcreteMessage *)lastMessage{
     if (conversation == nil) {
         return nil;
     }

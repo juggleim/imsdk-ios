@@ -1510,15 +1510,51 @@
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
                      error:(void (^)(JErrorCode))errorBlock {
+    [self getMentionMessages:conversation
+                       count:count
+                        time:time
+                   direction:direction
+                  onlyUnread:NO
+                     success:successBlock
+                       error:errorBlock];
+}
+
+- (void)getUnreadMentionMessages:(JConversation *)conversation
+                           count:(int)count
+                            time:(long long)time
+                       direction:(JPullDirection)direction
+                         success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
+                           error:(void (^)(JErrorCode))errorBlock {
+    [self getMentionMessages:conversation
+                       count:count
+                        time:time
+                   direction:direction
+                  onlyUnread:YES
+                     success:successBlock
+                       error:errorBlock];
+}
+
+- (void)getMentionMessages:(JConversation *)conversation
+                     count:(int)count
+                      time:(long long)time
+                 direction:(JPullDirection)direction
+                onlyUnread:(BOOL)onlyUnread
+                   success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
+                     error:(void (^)(JErrorCode))errorBlock {
     if (count > 100) {
         count = 100;
     }
     JConcreteConversationInfo *conversationInfo = [self.core.dbManager getConversationInfo:conversation];
+    long long lastReadIndex = 0;
+    if (self.core.mentionClearType == 0) {
+        lastReadIndex = conversationInfo.lastReadMessageIndex;
+    }
     [self.core.webSocket getMentionMessages:conversation
                                        time:time
                                       count:count
                                   direction:direction
-                              lastReadIndex:conversationInfo.lastReadMessageIndex
+                              lastReadIndex:lastReadIndex
+                                 onlyUnread:onlyUnread
                                     success:^(NSArray<JConcreteMessage *> * _Nonnull messages, BOOL isFinished) {
         JLogI(@"MSG-GetMention", @"success");
         [self insertRemoteMessages:messages];

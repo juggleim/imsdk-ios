@@ -96,6 +96,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
 @property (nonatomic, copy) NSString *session;
 @property (nonatomic, copy) NSString *extra;
 @property (nonatomic, assign) BOOL enableE2EE;
+@property (nonatomic, assign) int mentionClearType;
 @end
 
 @interface JPublishMsgAck : NSObject
@@ -393,6 +394,7 @@ typedef NS_ENUM(NSUInteger, JPBRtcRoomEventType) {
                          count:(int)count
                      direction:(JPullDirection)direction
                  lastReadIndex:(long long)lastReadIndex
+                    onlyUnread:(BOOL)onlyUnread
                          index:(int)index;
 
 - (NSData *)clearTotalUnreadCountMessages:(NSString *)userId
