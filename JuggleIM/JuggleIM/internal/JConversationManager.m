@@ -898,7 +898,8 @@
         return;
     }
     BOOL isUpdateMention = NO;
-    if (conversation.conversationType == JConversationTypeGroup) {
+    if (conversation.conversationType == JConversationTypeGroup
+        && conversationInfo.mentionInfo.mentionMsgList.count > 0) {
         NSMutableArray <JConversationMentionMessage *> * mentionMessages = [NSMutableArray arrayWithArray:conversationInfo.mentionInfo.mentionMsgList];
         NSMutableArray <JConversationMentionMessage *> * removeMentionMessage = [NSMutableArray array];
         for (NSString * messageId in messageIds) {
@@ -1241,7 +1242,7 @@
         JConversationMentionInfo * mentionInfo;
         if (hasMention) {
             NSMutableArray <JConversationMentionMessage *> * msgs = [NSMutableArray array];
-            JConversationMentionMessage * msg = [[JConversationMentionMessage alloc]init];
+            JConversationMentionMessage * msg = [[JConversationMentionMessage alloc] init];
             msg.senderId = message.senderUserId;
             msg.msgId = message.messageId;
             msg.msgTime = message.timestamp;

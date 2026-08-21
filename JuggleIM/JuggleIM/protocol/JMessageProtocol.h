@@ -496,7 +496,7 @@
 - (void)searchConversationsWithMessageContent:(JQueryMessageOptions *)option
                                      complete:(void (^)(NSArray<JSearchConversationsResult*> *result))completeBlock;
 
-/// Gets mention messages in the specified conversation.
+/// Gets unread mention messages in the specified conversation.
 /// - Parameters:
 ///   - conversation: Conversation identifier.
 ///   - count: Fetch count. Values over 100 are treated as 100.
@@ -510,21 +510,6 @@
                  direction:(JPullDirection)direction
                    success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
                      error:(void (^)(JErrorCode code))errorBlock;
-
-/// Gets unread mention messages in the specified conversation.
-/// - Parameters:
-///   - conversation: Conversation identifier.
-///   - count: Fetch count. Values over 100 are treated as 100.
-///   - time: Message timestamp. Pass 0 for the current time.
-///   - direction: Query direction.
-///   - successBlock: Success callback.
-///   - errorBlock: Failure callback.
-- (void)getUnreadMentionMessages:(JConversation *)conversation
-                           count:(int)count
-                            time:(long long)time
-                       direction:(JPullDirection)direction
-                         success:(void (^)(NSArray<JMessage *> *messages, BOOL isFinished))successBlock
-                           error:(void (^)(JErrorCode code))errorBlock;
 
 /// Sets top.
 /// - Parameters:

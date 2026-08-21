@@ -1514,21 +1514,6 @@
                        count:count
                         time:time
                    direction:direction
-                  onlyUnread:NO
-                     success:successBlock
-                       error:errorBlock];
-}
-
-- (void)getUnreadMentionMessages:(JConversation *)conversation
-                           count:(int)count
-                            time:(long long)time
-                       direction:(JPullDirection)direction
-                         success:(void (^)(NSArray<JMessage *> *, BOOL))successBlock
-                           error:(void (^)(JErrorCode))errorBlock {
-    [self getMentionMessages:conversation
-                       count:count
-                        time:time
-                   direction:direction
                   onlyUnread:YES
                      success:successBlock
                        error:errorBlock];
