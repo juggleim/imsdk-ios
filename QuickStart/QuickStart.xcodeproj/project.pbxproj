@@ -2432,7 +2432,7 @@
 				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
+				INFOPLIST_KEY_CFBundleDisplayName = JuggleChatDemo;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";
@@ -2481,7 +2481,7 @@
 				DEVELOPMENT_TEAM = ZCU438AGJ6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
+				INFOPLIST_KEY_CFBundleDisplayName = JuggleChatDemo;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App needs your permission to access the camera";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App needs your permission to access the microphone";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "App needs your permission to access the photo library";

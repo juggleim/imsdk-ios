@@ -409,7 +409,7 @@
         _shareBtn = [[UIButton alloc] init];
         [_shareBtn setTitleColor:ColorFromRGB(0x0099ff) forState:(UIControlStateNormal)];
         _shareBtn.titleLabel.font = [UIFont systemFontOfSize:13];
-        [_shareBtn setTitle:NSLocalizedString(@"Share to JuggleChat", @"") forState:(UIControlStateNormal)];
+        [_shareBtn setTitle:NSLocalizedString(@"Share to JuggleChatDemo", @"") forState:(UIControlStateNormal)];
         [_shareBtn addTarget:self
                       action:@selector(didShareAction)
             forControlEvents:(UIControlEventTouchUpInside)];
