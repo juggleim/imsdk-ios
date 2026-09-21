@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JVoiceMessage : JMediaMessageContent
-/// Voice message audio duration, in seconds
+/// Voice message audio duration, in milliseconds
 @property (nonatomic, assign) long duration;
 /// Extra field
 @property (nonatomic, copy) NSString *extra;
