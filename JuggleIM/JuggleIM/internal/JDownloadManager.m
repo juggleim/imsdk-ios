@@ -58,6 +58,9 @@
     dispatch_async(self.downloadQueue, ^{
         JDownloader *downloader = [self.downloadDic objectForKey:messageId];
         [downloader cancel];
+        dispatch_async(self.downloadQueue, ^{
+            [self.downloadDic removeObjectForKey:messageId];
+        });
     });
 }
 
