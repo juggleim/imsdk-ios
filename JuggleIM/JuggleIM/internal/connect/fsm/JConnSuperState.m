@@ -23,7 +23,7 @@
             
         case JConnEventConnectDone:
             // do nothing
-            // Handled by the connecting state.
+            // Handled by the connecting/waiting state.
             // Ignored in other states.
             break;
             

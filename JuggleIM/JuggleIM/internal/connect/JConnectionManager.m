@@ -313,6 +313,7 @@
 - (void)leaveConnected {
     [self.core.webSocket stopHeartbeat];
     [self.core.webSocket pushRemainCmdAndCallbackError];
+    [self.core.webSocket reset];
 }
 
 - (void)disconnectExist:(BOOL)receivePush {

@@ -108,6 +108,12 @@ typedef NS_ENUM(NSUInteger, JWebSocketStatus) {
     });
 }
 
+- (void)reset {
+    dispatch_async(self.sendQueue, ^{
+        [self resetSws];
+    });
+}
+
 - (void)startHeartbeat {
     [self.heartbeatManager start];
 }
