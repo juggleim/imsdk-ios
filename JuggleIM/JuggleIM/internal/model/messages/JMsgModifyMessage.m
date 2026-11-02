@@ -27,8 +27,12 @@
         self.originalMessageTime = [(NSNumber *)time longLongValue];
     }
     self.messageType = json[jModifyMsgType]?:@"";
-    NSString *contentString = json[jModifyMsgContent];
-    NSData *contentData = [[NSData alloc] initWithBase64EncodedString:contentString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    id content = json[jModifyMsgContent];
+    if (![content isKindOfClass:[NSString class]]) {
+        return;
+    }
+    NSData *contentData = [[NSData alloc] initWithBase64EncodedString:content
+                                                              options:NSDataBase64DecodingIgnoreUnknownCharacters];
     self.messageContent = [[JContentTypeCenter shared] contentWithData:contentData contentType:self.messageType];
 }
 
