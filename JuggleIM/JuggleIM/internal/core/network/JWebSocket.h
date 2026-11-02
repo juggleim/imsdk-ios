@@ -92,6 +92,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)disconnect:(BOOL)needPush;
 
+- (void)reset;
+
 - (void)startHeartbeat;
 
 - (void)stopHeartbeat;

@@ -50,6 +50,15 @@
             result = YES;
             break;
             
+        case JConnEventConnectDone:
+        {
+            NSString *extra = userInfo[@"extra"];
+            [self.connectionManager transitionToConnectedState];
+            [self.connectionManager notifyConnected:extra];
+            result = YES;
+            break;
+        }
+            
         case JConnEventReconnectTimerFire:
             [self.connectionManager transitionToConnectingState];
             result = YES;

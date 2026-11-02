@@ -23,8 +23,8 @@
             
         case JConnEventConnectDone:
             // do nothing
-            // connecting 状态处理
-            // 其它状态下忽略
+            // Handled by the connecting/waiting state.
+            // Ignored in other states.
             break;
             
         case JConnEventNetworkAvailable:
