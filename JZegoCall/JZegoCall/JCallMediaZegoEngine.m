@@ -41,7 +41,7 @@
 }
 
 - (void)leaveRoom:(NSString *)roomId {
-    [[ZegoExpressEngine sharedEngine] logoutRoom];
+    [[ZegoExpressEngine sharedEngine] logoutRoom:roomId];
 }
 
 - (void)startPreview:(UIView *)view {
