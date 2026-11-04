@@ -2412,7 +2412,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZCU438AGJ6;
+				DEVELOPMENT_TEAM = F49YLDF2JQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
@@ -2435,7 +2435,7 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -2461,7 +2461,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZCU438AGJ6;
+				DEVELOPMENT_TEAM = F49YLDF2JQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = QuickStart/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = JuggleChat;
@@ -2484,7 +2484,7 @@
 					"-ObjC",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat;
+				PRODUCT_BUNDLE_IDENTIFIER = com.juggle.chat3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
