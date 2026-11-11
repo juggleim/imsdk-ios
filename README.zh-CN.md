@@ -43,6 +43,20 @@ JuggleIM 为 JuggleIM 实时消息体系提供 iOS 客户端 SDK，适合需要�
 
 ### 安装
 
+**Swift Package Manager（推荐）**
+
+在 Xcode 中选择 **File > Add Package Dependencies…**，输入：
+
+```
+https://github.com/Juggleim/juggleim-ios-spm
+```
+
+版本规则选 **Up to Next Major Version**，把 `JuggleIM` 添加到 App target。要求 iOS 12.0 及以上。
+
+> 通话插件（Zego、Agora、LiveKit）目前仍只通过 CocoaPods 提供。
+
+**CocoaPods**
+
 如果你是基于当前仓库做本地开发，可以在 App 工程的 Podfile 中使用本地路径引入：
 
 ```ruby

@@ -43,6 +43,20 @@ JuggleIM provides the iOS client SDK for the JuggleIM realtime messaging stack. 
 
 ### Install
 
+**Swift Package Manager (recommended)**
+
+In Xcode, choose **File > Add Package Dependencies…** and enter:
+
+```
+https://github.com/Juggleim/juggleim-ios-spm
+```
+
+Select **Up to Next Major Version** and add `JuggleIM` to your app target. Requires iOS 12.0 or later.
+
+> The Zego, Agora and LiveKit call plugins are currently available through CocoaPods only.
+
+**CocoaPods**
+
 For local development from this repository, add the podspecs by path in your app target:
 
 ```ruby
