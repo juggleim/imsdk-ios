@@ -197,6 +197,7 @@
 		A08A9A572D5DE532009EE779 /* JGroupMember.h in Headers */ = {isa = PBXBuildFile; fileRef = A08A9A552D5DE532009EE779 /* JGroupMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08A9A582D5DE532009EE779 /* JGroupMember.m in Sources */ = {isa = PBXBuildFile; fileRef = A08A9A562D5DE532009EE779 /* JGroupMember.m */; };
 		A08AA1E72B148B68008B114C /* JuggleIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA1E62B148B68008B114C /* JuggleIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A0F1A0022EF0000000000002 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A0F1A0012EF0000000000001 /* PrivacyInfo.xcprivacy */; };
 		A08AA21D2B148BFF008B114C /* JIM.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA21B2B148BFF008B114C /* JIM.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A08AA21E2B148BFF008B114C /* JIM.m in Sources */ = {isa = PBXBuildFile; fileRef = A08AA21C2B148BFF008B114C /* JIM.m */; };
 		A08AA2232B1499C9008B114C /* JConnectionProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A08AA2212B14934F008B114C /* JConnectionProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -658,6 +659,7 @@
 		A08A9A562D5DE532009EE779 /* JGroupMember.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMember.m; sourceTree = "<group>"; };
 		A08AA1E32B148B68008B114C /* JuggleIM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JuggleIM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A08AA1E62B148B68008B114C /* JuggleIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JuggleIM.h; sourceTree = "<group>"; };
+		A0F1A0012EF0000000000001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A08AA21B2B148BFF008B114C /* JIM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JIM.h; sourceTree = "<group>"; };
 		A08AA21C2B148BFF008B114C /* JIM.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JIM.m; sourceTree = "<group>"; };
 		A08AA2212B14934F008B114C /* JConnectionProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JConnectionProtocol.h; sourceTree = "<group>"; };
@@ -1150,6 +1152,7 @@
 				A08AA21B2B148BFF008B114C /* JIM.h */,
 				A08AA21C2B148BFF008B114C /* JIM.m */,
 				A08AA25A2B14BB34008B114C /* JuggleIMConst.h */,
+				A0F1A0012EF0000000000001 /* PrivacyInfo.xcprivacy */,
 			);
 			path = JuggleIM;
 			sourceTree = "<group>";
@@ -2054,6 +2057,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0F1A0022EF0000000000002 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

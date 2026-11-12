@@ -11,3 +11,5 @@ DerivedData
 */*.xcworkspace/xcshareddata
 */Podfile.lock
 docs
+.swiftpm
+.derived-data-log-*
