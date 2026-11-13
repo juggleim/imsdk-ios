@@ -9,7 +9,8 @@ let package = Package(
         .library(name: "JAgoraCall", targets: ["JAgoraCall", "JAgoraCallSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Juggleim/juggleim-ios-spm.git", exact: "__VERSION__"),
+        // Any JuggleIM from the minimum this plugin was built against up to the next major.
+        .package(url: "https://github.com/Juggleim/juggleim-ios-spm.git", "__JUGGLEIM_MIN__"..<"__JUGGLEIM_NEXT_MAJOR__"),
         // Same SDK as the ShengwangRtcEngine_iOS pod used by JAgoraCall.podspec.
         .package(url: "https://github.com/Shengwang-Lab/ShengwangRtcEngine_iOS.git", exact: "__DEP_VERSION__")
     ],

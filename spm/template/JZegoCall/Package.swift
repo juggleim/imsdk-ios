@@ -9,7 +9,8 @@ let package = Package(
         .library(name: "JZegoCall", targets: ["JZegoCall", "JZegoCallSupport"])
     ],
     dependencies: [
-        .package(url: "https://github.com/Juggleim/juggleim-ios-spm.git", exact: "__VERSION__"),
+        // Any JuggleIM from the minimum this plugin was built against up to the next major.
+        .package(url: "https://github.com/Juggleim/juggleim-ios-spm.git", "__JUGGLEIM_MIN__"..<"__JUGGLEIM_NEXT_MAJOR__"),
         .package(url: "https://github.com/zegolibrary/express-video-ios.git", exact: "__DEP_VERSION__")
     ],
     targets: [

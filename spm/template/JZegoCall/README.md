@@ -11,14 +11,14 @@ In Xcode: **File > Add Package Dependencies…**, enter the repository URL:
 https://github.com/Juggleim/jzegocall-ios-spm
 ```
 
-Choose **Exact Version** `__VERSION__` and add the `JZegoCall` library to your app target.
-It brings in the matching JuggleIM and Zego SDK automatically.
+Choose **Up to Next Major Version** from `__VERSION__` and add the `JZegoCall` library to your app target.
+It brings in JuggleIM and Zego SDK automatically.
 
 Or in `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Juggleim/jzegocall-ios-spm", exact: "__VERSION__")
+    .package(url: "https://github.com/Juggleim/jzegocall-ios-spm", from: "__VERSION__")
 ],
 targets: [
     .target(name: "YourApp", dependencies: [
@@ -27,8 +27,8 @@ targets: [
 ]
 ```
 
-JZegoCall __VERSION__ requires exactly JuggleIM __VERSION__ and ZegoExpressEngine __DEP_VERSION__ (github.com/zegolibrary/express-video-ios).
-If your app also depends on `juggleim-ios-spm` directly, use the same version.
+JZegoCall __VERSION__ works with JuggleIM __JUGGLEIM_MIN__ or later within the same major version (below __JUGGLEIM_NEXT_MAJOR__), and requires ZegoExpressEngine __DEP_VERSION__ (github.com/zegolibrary/express-video-ios).
+If your app also depends on `juggleim-ios-spm` directly, any version in that range works, so JuggleIM can be upgraded without changing this package.
 
 Requirements: iOS 12.0 or later.
 

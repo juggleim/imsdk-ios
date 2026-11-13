@@ -40,7 +40,7 @@ import JuggleIM
 
 ## Call plugins
 
-Call plugins are separate packages: [jzegocall-ios-spm](https://github.com/Juggleim/jzegocall-ios-spm) (Zego), [jagoracall-ios-spm](https://github.com/Juggleim/jagoracall-ios-spm) (Agora) and [jlivekitcall-ios-spm](https://github.com/Juggleim/jlivekitcall-ios-spm) (LiveKit). Use the same version as JuggleIM.
+Call plugins are separate packages: [jzegocall-ios-spm](https://github.com/Juggleim/jzegocall-ios-spm) (Zego), [jagoracall-ios-spm](https://github.com/Juggleim/jagoracall-ios-spm) (Agora) and [jlivekitcall-ios-spm](https://github.com/Juggleim/jlivekitcall-ios-spm) (LiveKit). Each plugin works with any JuggleIM in the same major version starting from the minimum listed in its README, so JuggleIM can be upgraded on its own.
 
 ## License
 
