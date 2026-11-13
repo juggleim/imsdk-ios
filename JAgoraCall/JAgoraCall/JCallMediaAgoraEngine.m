@@ -116,6 +116,12 @@
     [self.engine switchCamera];
 }
 
+- (void)enableAEC:(BOOL)isEnable {
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
+}
+
 #pragma mark - AgoraRtcEngineDelegate
 - (void)rtcEngine:(AgoraRtcEngineKit *)engine didUserInfoUpdatedWithUserId:(NSUInteger)uid userInfo:(AgoraUserInfo *)userInfo {
     [self.userDic setObject:@(uid) forKey:userInfo.userAccount];

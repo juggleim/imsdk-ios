@@ -7,7 +7,7 @@
 
 #import "JCallMediaLiveKitEngine.h"
 @import LiveKitClient;
-#import <JuggleIM/JuggleIMConst.h>
+#import <JuggleIM/JIM.h>
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
@@ -163,6 +163,12 @@
     [capturer setWithCameraPosition:p completionHandler:^(BOOL b, NSError * _Nullable e) {
         
     }];
+}
+
+- (void)enableAEC:(BOOL)isEnable {
+}
+
+- (void)setVideoDenoiseParams:(JCallVideoDenoiseParams *)params {
 }
 
 #pragma mark - RoomDelegate
