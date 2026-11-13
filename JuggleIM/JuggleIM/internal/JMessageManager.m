@@ -3281,7 +3281,8 @@
             return;
         }
         
-        if (obj.flags & JMessageFlagIsCmd) {
+        if ((obj.flags & JMessageFlagIsCmd)
+            && !(obj.flags & JMessageFlagIsUserCmd)) {
             return;
         }
         if (obj.existed) {

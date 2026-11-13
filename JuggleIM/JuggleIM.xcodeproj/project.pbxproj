@@ -59,6 +59,8 @@
 		A024C3982D353557005C369C /* JMessageReactionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C3962D353557005C369C /* JMessageReactionItem.m */; };
 		A024C39B2D353814005C369C /* JMessageReaction.h in Headers */ = {isa = PBXBuildFile; fileRef = A024C3992D353814005C369C /* JMessageReaction.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A024C39C2D353814005C369C /* JMessageReaction.m in Sources */ = {isa = PBXBuildFile; fileRef = A024C39A2D353814005C369C /* JMessageReaction.m */; };
+		A039D38330A6AEC8001017B1 /* JUserCommandMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = A039D38130A6AEC7001017B1 /* JUserCommandMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A039D38430A6AEC8001017B1 /* JUserCommandMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = A039D38230A6AEC7001017B1 /* JUserCommandMessage.m */; };
 		A03AED912EB34EF400C73302 /* JGroupMessageReadInfoDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = A03AED902EB34EF400C73302 /* JGroupMessageReadInfoDetail.m */; };
 		A03AED922EB34EF400C73302 /* JGroupMessageReadInfoDetail.h in Headers */ = {isa = PBXBuildFile; fileRef = A03AED8F2EB34EF400C73302 /* JGroupMessageReadInfoDetail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A03AED952EB34FCC00C73302 /* JGroupMessageMemberReadDetail.m in Sources */ = {isa = PBXBuildFile; fileRef = A03AED942EB34FCC00C73302 /* JGroupMessageMemberReadDetail.m */; };
@@ -517,6 +519,8 @@
 		A024C3962D353557005C369C /* JMessageReactionItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReactionItem.m; sourceTree = "<group>"; };
 		A024C3992D353814005C369C /* JMessageReaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JMessageReaction.h; sourceTree = "<group>"; };
 		A024C39A2D353814005C369C /* JMessageReaction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JMessageReaction.m; sourceTree = "<group>"; };
+		A039D38130A6AEC7001017B1 /* JUserCommandMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JUserCommandMessage.h; sourceTree = "<group>"; };
+		A039D38230A6AEC7001017B1 /* JUserCommandMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JUserCommandMessage.m; sourceTree = "<group>"; };
 		A03AED8F2EB34EF400C73302 /* JGroupMessageReadInfoDetail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupMessageReadInfoDetail.h; sourceTree = "<group>"; };
 		A03AED902EB34EF400C73302 /* JGroupMessageReadInfoDetail.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JGroupMessageReadInfoDetail.m; sourceTree = "<group>"; };
 		A03AED932EB34FCC00C73302 /* JGroupMessageMemberReadDetail.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JGroupMessageMemberReadDetail.h; sourceTree = "<group>"; };
@@ -1197,6 +1201,8 @@
 				A0222A992BD25B7F00253311 /* JMessageMentionInfo.m */,
 				A09645752BECCDF800290775 /* JMediaMessageContent.h */,
 				A096457D2BECE42200290775 /* JMediaMessageContent.m */,
+				A039D38130A6AEC7001017B1 /* JUserCommandMessage.h */,
+				A039D38230A6AEC7001017B1 /* JUserCommandMessage.m */,
 				A017F92D2C3BD47D00D527B0 /* JChatroomInfo.h */,
 				A017F92E2C3BD47D00D527B0 /* JChatroomInfo.m */,
 				A017F9312C3BD57600D527B0 /* JChatroomMember.h */,
@@ -1746,6 +1752,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A039D38330A6AEC8001017B1 /* JUserCommandMessage.h in Headers */,
 				A0BA533E2FB1CBBA004015EA /* JUserStatus.h in Headers */,
 				A07C03FE2F99FDAB00C54A01 /* JConversationTagInfo.h in Headers */,
 				A0146ED92F2B47710019A026 /* JStreamTextMessage.h in Headers */,
@@ -2103,6 +2110,7 @@
 				A08AA35F2B19CB77008B114C /* GPBType.pbobjc.m in Sources */,
 				A0A702002C09A91B0032D9F1 /* JWebSocketCommandManager.m in Sources */,
 				A08AA40E2B19EEDB008B114C /* JIMSRConstants.m in Sources */,
+				A039D38430A6AEC8001017B1 /* JUserCommandMessage.m in Sources */,
 				A09728122CC7783B00E08BC4 /* JCallState.m in Sources */,
 				5B4DB6972BFC3C0D00DD18B6 /* JCleanMsgMessage.m in Sources */,
 				A07F3CB62BFC791E0087920B /* JLogger.m in Sources */,

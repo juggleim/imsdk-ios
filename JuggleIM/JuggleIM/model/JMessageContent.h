@@ -26,7 +26,8 @@ typedef NS_OPTIONS(int32_t, JMessageFlag) {
     //Whether this is a broadcast message (these messages update the sender conversation list but not the conversation sort order; receivers treat them like normal messages)
     JMessageFlagIsBroadcast = 1 << 7,
     //Whether this is an encrypted message
-    JMessageFlagIsE2EE = 1 << 11
+    JMessageFlagIsE2EE = 1 << 11,
+    JMessageFlagIsUserCmd = 1 << 12
 };
 
 NS_ASSUME_NONNULL_BEGIN
